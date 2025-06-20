@@ -1,7 +1,0 @@
-2025-06-18 16:45:41.210 [info] Creating Indexing Repo client:  https://repo42.cursor.sh
-2025-06-18 16:45:41.210 [info] Creating repo client with backend url: https://repo42.cursor.sh
-2025-06-18 16:45:41.462 [warning] No repository found: /root (candidates: )
-2025-06-18 16:45:41.578 [error] Git indexing job failed: Error: Error creating embedding client: "/root" does not appear to be a git repository
-
-Caused by:
-    Missing HEAD at '.git/HEAD'
