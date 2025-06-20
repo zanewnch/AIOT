@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能診所技術架構圖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .architecture-diagram {
+            padding: 40px;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .layer {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 12px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .layer-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        /* 層級顏色 */
+        .frontend {
+            background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+            border-left: 5px solid #01579b;
+        }
+
+        .frontend .layer-title {
+            background: #01579b;
+        }
+
+        .core {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border-left: 5px solid #4a148c;
+        }
+
+        .core .layer-title {
+            background: #4a148c;
+        }
+
+        .data {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border-left: 5px solid #1b5e20;
+        }
+
+        .data .layer-title {
+            background: #1b5e20;
+        }
+
+        .monitor {
+            background: linear-gradient(135deg, #fff3e0, #ffcc80);
+            border-left: 5px solid #e65100;
+        }
+
+        .monitor .layer-title {
+            background: #e65100;
+        }
+
+        .deploy {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+            border-left: 5px solid #880e4f;
+        }
+
+        .deploy .layer-title {
+            background: #880e4f;
+        }
+
+        .recommend {
+            background: linear-gradient(135deg, #f1f8e9, #dcedc8);
+            border-left: 5px solid #33691e;
+        }
+
+        .recommend .layer-title {
+            background: #33691e;
+        }
+
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .module {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .module:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .module h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .module p {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .flow-arrows {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .arrow {
+            position: absolute;
+            background: #667eea;
+            height: 3px;
+            opacity: 0.7;
+            animation: flowAnimation 2s ease-in-out infinite;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #667eea;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        @keyframes flowAnimation {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .data-flow {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border-left: 5px solid #6c757d;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .flow-step:hover {
+            transform: translateX(10px);
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-arrow {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-left: 15px;
+        }
+
+                 .pdf-download-section {
+             text-align: center;
+             padding: 30px;
+             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         }
+
+         .pdf-btn {
+             background: linear-gradient(45deg, #fff, #f8f9fa);
+             color: #333;
+             border: none;
+             padding: 15px 30px;
+             font-size: 1.1em;
+             font-weight: bold;
+             border-radius: 25px;
+             cursor: pointer;
+             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+             transition: all 0.3s ease;
+             display: inline-flex;
+             align-items: center;
+             gap: 10px;
+             font-family: 'Microsoft JhengHei', sans-serif;
+         }
+
+         .pdf-btn:hover {
+             transform: translateY(-3px);
+             box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+             background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+         }
+
+         .pdf-btn:active {
+             transform: translateY(-1px);
+             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+         }
+
+         .pdf-btn:disabled {
+             opacity: 0.6;
+             cursor: not-allowed;
+             transform: none;
+             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+         }
+
+         /* 隱藏PDF下載按鈕在PDF生成時 */
+         @media print {
+             .pdf-download-section {
+                 display: none !important;
+             }
+         }
+
+         @media (max-width: 768px) {
+             .modules {
+                 grid-template-columns: 1fr;
+             }
+             
+             .header h1 {
+                 font-size: 2em;
+             }
+             
+             .architecture-diagram {
+                 padding: 20px;
+             }
+
+             .pdf-btn {
+                 padding: 12px 24px;
+                 font-size: 1em;
+             }
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 智能診所技術架構圖</h1>
+            <p>AI-powered Medical Clinic Platform Architecture</p>
+        </div>
+
+        <div class="architecture-diagram">
+            <!-- 前端互動層 -->
+            <div class="layer frontend">
+                <div class="layer-title">前端互動層 (User Interaction)</div>
+                <div class="modules">
+                    <div class="module">
+                        <h3>🖥️ 網頁/應用程式介面</h3>
+                        <p>病患透過前端介面輸入問題或需求，如療程查詢、病症問答或後續追蹤建議</p>
+                    </div>
+                    <div class="module">
+                        <h3>🔗 API Gateway</h3>
+                        <p>前端介面呼叫後端 API，將用戶輸入傳遞至核心處理層</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心處理層 -->
+            <div class="layer core">
+                <div class="layer-title">核心處理層 (LLM & RAG Workflow)</div>
+                <div class="modules">
+                    <div class="module">
+                        <h3>🤖 Gemini 系列模型</h3>
+                        <p>Google Vertex AI Model Garden 的 Gemini 模型，支援自然語言生成、摘要、分類與多輪對話</p>
+                    </div>
+                    <div class="module">
+                        <h3>🔄 RAG 模組</h3>
+                        <p>向量資料庫與檢索增強生成，透過語意近似度查詢相關知識</p>
+                    </div>
+                    <div class="module">
+                        <h3>🎯 問題分類代理</h3>
+                        <p>判斷問題類型（問答、推薦或排班），智能路由處理</p>
+                    </div>
+                    <div class="module">
+                        <h3>📊 資料調用代理</h3>
+                        <p>從向量資料庫或排班系統提取相關資料</p>
+                    </div>
+                    <div class="module">
+                        <h3>💬 回應生成代理</h3>
+                        <p>整合查詢結果與 LLM 回應，生成最終答案</p>
+                    </div>
+                    <div class="module">
+                        <h3>🔍 語意查詢引擎</h3>
+                        <p>透過 Embedding API 進行向量化，實現語意搜尋</p>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- 資料儲存層 -->
+            <div class="layer data">
+                <div class="layer-title">資料儲存層 (Data Layer)</div>
+                <div class="modules">
+                    <div class="module">
+                        <h3>🧠 向量資料庫</h3>
+                        <p>pgvector 或 Pinecone，儲存醫療知識的語意向量，支援快速語意查詢</p>
+                    </div>
+                    <div class="module">
+                        <h3>🗄️ 結構化資料庫</h3>
+                        <p>Cloud SQL，儲存排班資料、病患記錄等結構化資訊</p>
+                    </div>
+                    <div class="module">
+                        <h3>📚 醫療知識庫</h3>
+                        <p>療程資料、醫學文章等專業知識內容庫</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模型評估與監控層 -->
+            <div class="layer monitor">
+                <div class="layer-title">模型評估與監控層</div>
+                <div class="modules">
+                    <div class="module">
+                        <h3>📈 Vertex AI Evaluation</h3>
+                        <p>評估 LLM 回應的準確性、一致性、完整性與毒性過濾</p>
+                    </div>
+                    <div class="module">
+                        <h3>🔍 系統監控</h3>
+                        <p>Cloud Trace 與 Cloud Logging，追蹤 API 延遲、錯誤率與服務健康狀態</p>
+                    </div>
+                    <div class="module">
+                        <h3>📊 Looker Studio</h3>
+                        <p>可視化 RAG 命中率與回應品質，提供即時監控儀表板</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 部署與服務層 -->
+            <div class="layer deploy">
+                <div class="layer-title">部署與服務層 (Serving & DevOps)</div>
+                <div class="modules">
+                    <div class="module">
+                        <h3>⚡ Vertex AI Agent Engine</h3>
+                        <p>Fully-managed 部署方案，適合快速上線</p>
+                    </div>
+                    <div class="module">
+                        <h3>🚀 FastAPI / Cloud Run</h3>
+                        <p>自建服務，支援客製化與彈性擴充</p>
+                    </div>
+                    <div class="module">
+                        <h3>🏗️ Terraform</h3>
+                        <p>基礎設施即代碼，確保環境一致性</p>
+                    </div>
+                    <div class="module">
+                        <h3>🔄 CI/CD Pipeline</h3>
+                        <p>Cloud Build 實現持續整合與部署流程</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 資料與控制流 -->
+            <div class="data-flow">
+                <div class="layer-title" style="background: #6c757d; color: white; display: inline-block; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px;">
+                    🔄 資料與控制流
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">病患輸入問題（前端介面）</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">問題經 API Gateway 傳至核心處理層</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">問題分類代理判斷處理路徑</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">RAG 流程：問題向量化 → 向量資料庫查詢 → 知識片段檢索</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">代理協作整合 LLM 回應與檢索資料</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">回應返回前端，同時記錄於監控系統</div>
+                    <div class="step-arrow">✓</div>
+                </div>
+            </div>
+
+            <!-- 圖例 -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #01579b;"></div>
+                    <span>前端互動層</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4a148c;"></div>
+                    <span>核心處理層</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1b5e20;"></div>
+                    <span>資料儲存層</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e65100;"></div>
+                    <span>評估監控層</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #880e4f;"></div>
+                    <span>部署服務層</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF下載按鈕 -->
+    <div class="pdf-download-section">
+        <button id="downloadPdfBtn" class="pdf-btn">
+            📄 下載架構圖 PDF
+        </button>
+    </div>
+
+    <!-- 引入html2pdf.js庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        // 添加互動效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const modules = document.querySelectorAll('.module');
+            
+            modules.forEach(module => {
+                module.addEventListener('click', function() {
+                    // 添加點擊效果
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+
+                // 滑鼠懸停時顯示詳細資訊
+                module.addEventListener('mouseenter', function() {
+                    const title = this.querySelector('h3').textContent;
+                    const description = this.querySelector('p').textContent;
+                    
+                    // 可以在這裡添加工具提示或詳細說明
+                    console.log(`模組: ${title}\n說明: ${description}`);
+                });
+            });
+
+            // 流程步驟動畫
+            const flowSteps = document.querySelectorAll('.flow-step');
+            
+            function animateSteps() {
+                flowSteps.forEach((step, index) => {
+                    setTimeout(() => {
+                        step.style.animation = 'none';
+                        step.offsetHeight; // 觸發重繪
+                        step.style.animation = 'flowAnimation 1s ease-in-out';
+                    }, index * 200);
+                });
+            }
+
+            // 每5秒執行一次流程動畫
+            setInterval(animateSteps, 5000);
+
+            // 響應式調整
+            function adjustLayout() {
+                const container = document.querySelector('.architecture-diagram');
+                if (window.innerWidth < 768) {
+                    container.style.padding = '20px 10px';
+                } else {
+                    container.style.padding = '40px';
+                }
+            }
+
+            window.addEventListener('resize', adjustLayout);
+            adjustLayout();
+
+            // 滾動時的視覺效果
+            function handleScroll() {
+                const layers = document.querySelectorAll('.layer');
+                const windowHeight = window.innerHeight;
+                
+                layers.forEach(layer => {
+                    const layerTop = layer.getBoundingClientRect().top;
+                    const layerHeight = layer.offsetHeight;
+                    
+                    if (layerTop < windowHeight - layerHeight * 0.1) {
+                        layer.style.opacity = '1';
+                        layer.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+
+            // 初始化層級動畫
+            const layers = document.querySelectorAll('.layer');
+            layers.forEach(layer => {
+                layer.style.opacity = '0';
+                layer.style.transform = 'translateY(30px)';
+                layer.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            });
+
+                         window.addEventListener('scroll', handleScroll);
+             handleScroll(); // 初始執行
+
+             // PDF下載功能
+             const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+             
+             downloadPdfBtn.addEventListener('click', function() {
+                 // 禁用按鈕並顯示載入狀態
+                 downloadPdfBtn.disabled = true;
+                 downloadPdfBtn.innerHTML = '⏳ 正在生成PDF...';
+                 
+                 // 獲取要轉換的容器元素（不包含PDF按鈕）
+                 const element = document.querySelector('.container');
+                 
+                 // 配置選項
+                 const opt = {
+                     margin: [0.5, 0.5, 0.5, 0.5], // 頁邊距 (英吋)
+                     filename: '智能診所技術架構圖.pdf',
+                     image: { 
+                         type: 'jpeg', 
+                         quality: 0.98 
+                     },
+                     html2canvas: { 
+                         scale: 2, // 提高解析度
+                         useCORS: true,
+                         allowTaint: true,
+                         backgroundColor: '#ffffff'
+                     },
+                     jsPDF: { 
+                         unit: 'in', 
+                         format: 'a4', 
+                         orientation: 'portrait',
+                         compress: true
+                     },
+                     pagebreak: { 
+                         mode: ['avoid-all', 'css', 'legacy'],
+                         before: '.layer'
+                     }
+                 };
+                 
+                 // 生成PDF
+                 html2pdf().set(opt).from(element).save().then(function() {
+                     // 恢復按鈕狀態
+                     downloadPdfBtn.disabled = false;
+                     downloadPdfBtn.innerHTML = '📄 下載架構圖 PDF';
+                     
+                     // 顯示成功訊息
+                     alert('✅ PDF 下載成功！');
+                 }).catch(function(error) {
+                     console.error('PDF生成失敗:', error);
+                     
+                     // 恢復按鈕狀態
+                     downloadPdfBtn.disabled = false;
+                     downloadPdfBtn.innerHTML = '📄 下載架構圖 PDF';
+                     
+                     // 顯示錯誤訊息
+                     alert('❌ PDF 生成失敗，請重試。');
+                 });
+             });
+         });
+    </script>
+</body>
+</html>

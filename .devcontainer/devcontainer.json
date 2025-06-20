@@ -1,0 +1,36 @@
+{
+  "name": "AIOT Development Environment",
+  "dockerComposeFile": [
+    "../Docker/AIOT/docker-compose.yml"
+  ],
+  "service": "aiot-frontend",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash"
+  },
+  
+  "extensions": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-json"
+  ],
+  
+  "forwardPorts": [3000, 8000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend (React + Vite)",
+      "onAutoForward": "notify"
+    },
+    "8000": {
+      "label": "Backend (Express.js)",
+      "onAutoForward": "notify"
+    }
+  },
+  
+  "postCreateCommand": "npm install",
+  
+  "remoteUser": "node"
+} 

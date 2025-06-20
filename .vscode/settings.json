@@ -1,0 +1,10 @@
+{
+  "git.ignoreLimitWarning": true,
+  "cSpell.words": [
+    "adminpassword",
+    "AIOT",
+    "appuser",
+    "mysqldb"
+  ],
+  "dotnet.preferCSharpExtension": true
+}

@@ -1,0 +1,12 @@
+2025-06-18 16:45:16.031 [info] Extension host with pid 320 started
+2025-06-18 16:45:16.436 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2025-06-18 16:45:16.519 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2025-06-18 16:45:16.520 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2025-06-18 16:45:17.362 [info] Eager extensions activated
+2025-06-18 16:45:17.363 [info] ExtensionService#_doActivateExtension anysphere.cursor-retrieval, startup: false, activationEvent: 'onStartupFinished'
+2025-06-18 16:45:17.364 [info] ExtensionService#_doActivateExtension anysphere.cursor-shadow-workspace, startup: false, activationEvent: 'onStartupFinished'
+2025-06-18 16:45:17.364 [info] ExtensionService#_doActivateExtension anysphere.cursor-tokenize, startup: false, activationEvent: 'onStartupFinished'
+2025-06-18 16:45:17.365 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2025-06-18 16:45:17.369 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2025-06-18 16:45:26.568 [info] Extension host terminating: received terminate message from renderer
+2025-06-18 16:45:26.609 [info] Extension host with pid 320 exiting with code 0

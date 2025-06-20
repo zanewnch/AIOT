@@ -68,3 +68,36 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+恭喜！容器重啟問題已完全解決！
+所有 AIOT 容器現在都正常運行了：
+✅ 最終狀態：
+🟢 前端 (AIOT-fe): 正常運行在 0.0.0.0:3000->3000/tcp
+🟢 後端 (AIOT-be): 正常運行在 0.0.0.0:8000->8000/tcp
+🟢 MySQL (AIOT-mysqldb): 健康狀態
+🟢 MongoDB (AIOT-mongodb): 健康狀態
+🔧 解決的關鍵問題：
+TailwindCSS 配置問題 ✅
+移除了有問題的 @tailwindcss/vite 插件
+創建了正確的 postcss.config.js 和 tailwind.config.js
+添加了標準的 TailwindCSS 依賴
+後端路由路徑問題 ✅
+修復了 app.js 中的錯誤路由引用路徑
+從 ./public/stylesheets/routes/ 改為 ../public/stylesheets/routes/
+MongoDB 健康檢查問題 ✅
+將過時的 mongo 指令更新為 mongosh
+模組系統衝突 ✅
+移除了 "type": "module" 配置
+修復了 ES6/CommonJS 混用問題
+Dockerfile 配置問題 ✅
+添加了正確的 CMD 指令
+修復了依賴安裝順序
+🌐 現在你可以訪問：
+Frontend: http://localhost:3000 (React + Vite + TailwindCSS)
+Backend: http://localhost:8000 (Express.js API)
+📝 下一步建議：
+如果需要開發時的熱重載，可以重新啟用 volume mounts
+可以開始開發你的 AIOT 應用功能了
+所有服務都已正確配置和運行
+你的 Docker Compose 設置現在完全正常運行了！🚀

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AI 醫療問答與客服平台 - 技術架構圖</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            margin: 2em;
+            background: #f5f6fa;
+        }
+
+        .arch-grid {
+            display: grid;
+            grid-template-rows: repeat(5, 110px);
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 0px;
+            position: relative;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 32px 24px 0 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .layer-label {
+            grid-column: 1 / 7;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding: 4px 0 8px 0;
+            border-bottom: 1.5px solid #ddd;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+
+        .node {
+            background: #fff;
+            border-radius: 8px;
+            border: 2px solid #bbb;
+            min-width: 120px;
+            min-height: 40px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 1px 4px #0001;
+            color: #333;
+            line-height: 1.4;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 層顏色 */
+        .frontend {
+            border-color: #1976d2;
+            color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .core {
+            border-color: #7b1fa2;
+            color: #7b1fa2;
+            background: #f3e5f5;
+        }
+
+        .data {
+            border-color: #388e3c;
+            color: #388e3c;
+            background: #e8f5e9;
+        }
+
+        .monitor {
+            border-color: #f57c00;
+            color: #f57c00;
+            background: #fff3e0;
+        }
+
+        .deploy {
+            border-color: #c2185b;
+            color: #c2185b;
+            background: #fce4ec;
+        }
+
+        /* SVG箭頭層 */
+        .svg-arrows {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @media (max-width: 900px) {
+            .arch-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align:center; margin-bottom:32px;">AI 醫療問答與客服平台 - 技術架構圖</h1>
+    <div style="position:relative;">
+        <div class="arch-grid" id="arch-grid">
+            <!-- 前端互動層 -->
+            <div class="layer-label" style="grid-row:1;">前端互動層 (User Interaction)</div>
+            <div class="node frontend" id="frontend" style="grid-row:2; grid-column:3/5;">網頁/應用程式<br>API 呼叫</div>
+            <!-- 核心處理層 -->
+            <div class="layer-label" style="grid-row:3;">核心處理層 (LLM & RAG Workflow)</div>
+            <div class="node core" id="llm" style="grid-row:4; grid-column:2;">LLM 問答模組<br>Gemini on Vertex AI</div>
+            <div class="node core" id="rag" style="grid-row:4; grid-column:3;">RAG 模組</div>
+            <div class="node core" id="adk" style="grid-row:4; grid-column:4;">代理協作<br>Google ADK</div>
+            <div class="node core" id="embedding" style="grid-row:5; grid-column:2;">Embedding API</div>
+            <div class="node core" id="vector" style="grid-row:5; grid-column:3;">向量資料庫<br>pgvector/Pinecone</div>
+            <div class="node core" id="response" style="grid-row:5; grid-column:4;">回應生成代理</div>
+            <!-- 資料儲存層 -->
+            <div class="layer-label" style="grid-row:6;">資料儲存層 (Data Layer)</div>
+            <div class="node data" id="vectorstore" style="grid-row:7; grid-column:2;">向量資料庫<br>語意查詢</div>
+            <div class="node data" id="sql" style="grid-row:7; grid-column:4;">結構化資料庫<br>Cloud SQL</div>
+            <!-- 評估與監控層 -->
+            <div class="layer-label" style="grid-row:8;">評估與監控層</div>
+            <div class="node monitor" id="eval" style="grid-row:9; grid-column:2;">模型評估<br>Vertex AI Evaluation</div>
+            <div class="node monitor" id="monitoring" style="grid-row:9; grid-column:3;">系統監控<br>Cloud Trace/Logging
+            </div>
+            <div class="node monitor" id="looker" style="grid-row:9; grid-column:4;">可視化<br>Looker Studio</div>
+            <!-- 部署與服務層 -->
+            <div class="layer-label" style="grid-row:10;">部署與服務層 (Serving & DevOps)</div>
+            <div class="node deploy" id="vertexai" style="grid-row:11; grid-column:1;">Vertex AI<br>Agent Engine</div>
+            <div class="node deploy" id="fastapi" style="grid-row:11; grid-column:2;">FastAPI/<br>Cloud Run</div>
+            <div class="node deploy" id="terraform" style="grid-row:11; grid-column:3;">基礎設施<br>Terraform</div>
+            <div class="node deploy" id="cicd" style="grid-row:11; grid-column:4;">CI/CD<br>Cloud Build</div>
+            <div class="node deploy" id="autoscale" style="grid-row:11; grid-column:5;">彈性部署<br>Auto Scaling</div>
+        </div>
+        <svg class="svg-arrows" id="svg-arrows"></svg>
+    </div>
+    <script>
+        // 箭頭繪製（SVG，節點精準對齊）
+        function getNodeCenter(node) {
+            const rect = node.getBoundingClientRect();
+            const parentRect = document.getElementById('arch-grid').getBoundingClientRect();
+            return {
+                x: rect.left - parentRect.left + rect.width / 2,
+                y: rect.top - parentRect.top + rect.height / 2
+            };
+        }
+
+        function drawSVGArrow(svg, from, to, color = '#888', text = '') {
+            const markerId = 'arrowhead-' + color.replace('#', '');
+            if (!document.getElementById(markerId)) {
+                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                marker.setAttribute('id', markerId);
+                marker.setAttribute('markerWidth', '10');
+                marker.setAttribute('markerHeight', '7');
+                marker.setAttribute('refX', '10');
+                marker.setAttribute('refY', '3.5');
+                marker.setAttribute('orient', 'auto');
+                marker.setAttribute('markerUnits', 'strokeWidth');
+                marker.innerHTML = `<polygon points="0 0, 10 3.5, 0 7" fill="${color}"/>`;
+                svg.appendChild(marker);
+            }
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', from.x);
+            line.setAttribute('y1', from.y);
+            line.setAttribute('x2', to.x);
+            line.setAttribute('y2', to.y);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', '2.5');
+            line.setAttribute('marker-end', `url(#${markerId})`);
+            svg.appendChild(line);
+            if (text) {
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2 - 8;
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', midX);
+                label.setAttribute('y', midY);
+                label.setAttribute('fill', color);
+                label.setAttribute('font-size', '13px');
+                label.setAttribute('font-weight', 'bold');
+                label.setAttribute('text-anchor', 'middle');
+                label.textContent = text;
+                svg.appendChild(label);
+            }
+        }
+
+        function drawAllSVGArrows() {
+            const svg = document.getElementById('svg-arrows');
+            svg.innerHTML = '';
+            // 取得所有節點
+            const frontend = document.getElementById('frontend');
+            const llm = document.getElementById('llm');
+            const rag = document.getElementById('rag');
+            const adk = document.getElementById('adk');
+            const embedding = document.getElementById('embedding');
+            const vector = document.getElementById('vector');
+            const response = document.getElementById('response');
+            const vectorstore = document.getElementById('vectorstore');
+            // 主要資料流
+            drawSVGArrow(svg, getNodeCenter(frontend), getNodeCenter(llm), '#1976d2', 'API 請求');
+            drawSVGArrow(svg, getNodeCenter(llm), getNodeCenter(rag), '#7b1fa2', 'RAG 查詢');
+            drawSVGArrow(svg, getNodeCenter(rag), getNodeCenter(embedding), '#7b1fa2', 'Embedding');
+            drawSVGArrow(svg, getNodeCenter(embedding), getNodeCenter(vector), '#7b1fa2', '向量查詢');
+            drawSVGArrow(svg, getNodeCenter(vector), getNodeCenter(rag), '#7b1fa2', '查詢結果');
+            drawSVGArrow(svg, getNodeCenter(rag), getNodeCenter(adk), '#7b1fa2', 'RAG 結果');
+            drawSVGArrow(svg, getNodeCenter(adk), getNodeCenter(response), '#7b1fa2', '回應生成');
+            drawSVGArrow(svg, getNodeCenter(response), getNodeCenter(frontend), '#1976d2', 'API 回應');
+            // RAG→向量資料庫
+            drawSVGArrow(svg, getNodeCenter(vector), getNodeCenter(vectorstore), '#388e3c', '儲存/查詢');
+        }
+        window.addEventListener('load', drawAllSVGArrows);
+        window.addEventListener('resize', function () {
+            setTimeout(drawAllSVGArrows, 200);
+        });
+    </script>
+</body>
+
+</html>

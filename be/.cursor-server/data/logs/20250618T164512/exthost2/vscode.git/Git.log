@@ -1,0 +1,33 @@
+2025-06-18 16:45:41.095 [info] [main] Log level: Info
+2025-06-18 16:45:41.095 [info] [main] Validating found git in: "git"
+2025-06-18 16:45:41.095 [info] [main] Using git "2.30.2" from "git"
+2025-06-18 16:45:41.095 [info] [Model][doInitialScan] Initial repository scan started
+2025-06-18 16:45:41.095 [info] > git rev-parse --show-toplevel [24ms]
+2025-06-18 16:45:41.095 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.104 [info] > git rev-parse --show-toplevel [2ms]
+2025-06-18 16:45:41.104 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.114 [info] > git rev-parse --show-toplevel [3ms]
+2025-06-18 16:45:41.114 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.122 [info] > git rev-parse --show-toplevel [2ms]
+2025-06-18 16:45:41.122 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.129 [info] > git rev-parse --show-toplevel [1ms]
+2025-06-18 16:45:41.129 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.133 [info] [Model][doInitialScan] Initial repository scan completed - repositories (0), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2025-06-18 16:45:41.163 [info] > git symbolic-ref --short refs/remotes/origin/HEAD [5ms]
+2025-06-18 16:45:41.163 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.187 [info] > git rev-parse --verify origin/main [17ms]
+2025-06-18 16:45:41.187 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.204 [info] > git rev-parse --verify origin/master [13ms]
+2025-06-18 16:45:41.204 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.211 [info] > git rev-parse --verify origin/develop [1ms]
+2025-06-18 16:45:41.211 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.219 [info] > git branch -r [2ms]
+2025-06-18 16:45:41.219 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:45:41.228 [info] > git config --get init.defaultBranch [3ms]
+2025-06-18 16:45:50.185 [info] > git config --global user.name [1ms]
+2025-06-18 16:45:50.190 [info] > git config --global user.email [1ms]
+2025-06-18 16:45:50.191 [info] [main] Stored git author name in global state: Zane Wang <140219691+zanewnch@users.noreply.github.com>
+2025-06-18 16:47:08.880 [info] > git status [3ms]
+2025-06-18 16:47:08.880 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-06-18 16:48:05.877 [info] > git status [2ms]
+2025-06-18 16:48:05.878 [info] fatal: not a git repository (or any of the parent directories): .git

@@ -1,21 +1,22 @@
 # Backend Dockerfile - Express.js with TypeScript
-FROM node:18-alpine
+FROM node:18-bullseye
 
 WORKDIR /app
 
-# # Install dependencies
-# RUN npm install
+# Copy package files first for better caching
+COPY package*.json ./
 
+# Install all dependencies (including devDependencies for development)
+RUN npm install
 
+# Copy source code
+COPY . .
 
-# # Copy source code
-# COPY backend/src ./src
-
-# # Build TypeScript code
+# Build TypeScript code (if needed)
 # RUN npm run build
 
-# # Expose port
-# EXPOSE 8000
+# Expose port
+EXPOSE 8000
 
-# # Start the application
-# CMD ["npm", "start"]
+# Start the application
+CMD ["npm", "start"]
