@@ -1,7 +1,7 @@
 # Backend Dockerfile - Express.js with TypeScript
 FROM node:18-bullseye
 
-WORKDIR /app
+WORKDIR /app/be
 
 # Copy package files first for better caching
 COPY package*.json ./

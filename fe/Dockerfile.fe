@@ -1,7 +1,7 @@
 # Frontend Dockerfile - React with Vite
 FROM node:18-bullseye
 
-WORKDIR /app
+WORKDIR /app/fe
 
 # Copy package files first for better caching
 COPY package*.json ./
