@@ -3,7 +3,8 @@ export type DeviceType = 'sensor' | 'controller' | 'actuator';
 // 設備狀態，限制可用狀態
 export type DeviceStatus = 'online' | 'offline' | 'error';
 
-export interface Device {
+export class Device {
+
     /**
      * 設備的唯一識別碼（通常為 UUID 或資料庫自動產生的 ID）
      */
@@ -32,4 +33,22 @@ export interface Device {
      * 設備最後一次上線時間（可選）
      */
     lastSeen?: Date;
+
+    constructor(
+        id: string,
+        name: string,
+        type: DeviceType,
+        status: DeviceStatus,
+        location?: string,
+        metadata?: Record<string, any>,
+        lastSeen?: Date
+    ) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.status = status;
+        this.location = location;
+        this.metadata = metadata || {};
+        this.lastSeen = lastSeen || new Date();
+    }
 }
