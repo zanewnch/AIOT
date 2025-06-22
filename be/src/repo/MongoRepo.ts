@@ -2,7 +2,7 @@ import {
   connectMongo,
   getMongoDB,
   disconnectMongo,
-} from "../utils/mongoConfig";
+} from "../infrastructure/mongoConfig";
 import { Collection, ObjectId } from "mongodb";
 
 // 定義 MongoDB 集合的介面
