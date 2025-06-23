@@ -29,8 +29,8 @@ import { Sequelize } from 'sequelize-typescript';
 import { UserModel } from '../models/rbac/UserModel.js';
 import { RoleModel } from '../models/rbac/RoleModel.js';
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
-import { UserRoleModel } from '../models/rbac/UserRoleModel.js';
-import { RolePermissionModel } from '../models/rbac/RolePermissionModel.js';
+import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
+import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
 
 const sequelize = new Sequelize({
   host: process.env.DB_HOST || 'aiot-mysqldb',

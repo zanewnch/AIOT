@@ -104,6 +104,11 @@ export const getMongoUrl = (): string => {
   return buildMongoUrl();
 };
 
+// Legacy alias exports for backward compatibility
+export const connectMongo = connectMongoDB;
+export const disconnectMongo = disconnectMongoDB;
+export const getMongoDB = getMongoose;
+
 export default {
   connectMongoDB,
   disconnectMongoDB,

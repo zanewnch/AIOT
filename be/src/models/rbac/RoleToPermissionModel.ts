@@ -19,9 +19,17 @@ import {
 } from 'sequelize-typescript';
 import { RoleModel } from './RoleModel.js';
 import { PermissionModel } from './PermissionModel.js';
+import type { Optional } from 'sequelize';
+
+type RolePermissionAttributes = {
+  roleId: number;
+  permissionId: number;
+};
+
+type RolePermissionCreationAttributes = RolePermissionAttributes;
 
 @Table({ tableName: 'role_permissions', timestamps: true })
-export class RolePermissionModel extends Model<RolePermissionModel> {
+export class RolePermissionModel extends Model<RolePermissionAttributes, RolePermissionCreationAttributes> implements RolePermissionAttributes {
   @PrimaryKey
   @ForeignKey(() => RoleModel)
   @Column(DataType.BIGINT)

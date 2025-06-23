@@ -33,11 +33,20 @@ import {
 } from 'sequelize-typescript';
 import { UserModel } from './UserModel.js';
 import { PermissionModel } from './PermissionModel.js';
-import { UserRoleModel } from './UserRoleModel.js';
-import { RolePermissionModel } from './RolePermissionModel.js';
+import { UserRoleModel } from './UserToRoleModel.js';
+import { RolePermissionModel } from './RoleToPermissionModel.js';
+import type { Optional } from 'sequelize';
+
+type RoleAttributes = {
+  id: number;
+  name: string;
+  displayName: string;
+};
+
+type RoleCreationAttributes = Optional<RoleAttributes, 'id'>;
 
 @Table({ tableName: 'roles', timestamps: true })
-export class RoleModel extends Model<RoleModel> {
+export class RoleModel extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.BIGINT)

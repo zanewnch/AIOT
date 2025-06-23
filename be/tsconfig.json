@@ -14,6 +14,8 @@
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
     "noEmitOnError": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [

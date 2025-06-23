@@ -29,12 +29,34 @@ import {
   AllowNull,
   Unique,
   BelongsToMany,
+  CreatedAt,
+  UpdatedAt,
 } from 'sequelize-typescript';
-import { RoleModel } from './RoleModel.js';
-import { UserRoleModel } from './UserRoleModel.js';
+import type { Optional } from 'sequelize';
 
+import { RoleModel } from './RoleModel.js';
+import { UserRoleModel } from './UserToRoleModel.js';
+
+// Define attributes interfaces for TypeScript
+type UserAttributes = {
+  id: number;
+  username: string;
+  passwordHash: string;
+  email?: string;
+};
+
+type UserCreationAttributes = Optional<UserAttributes, 'id'>;
+
+/**
+ * 泛型只影响基类（base class, parent class）的行为:
+ * - `Model<UserAttributes, UserCreationAttributes>` 约束 Sequelize 方法（如 `findOne`、`create`）的输入输出类型，但不保证 `UserModel` 实例的属性符合 `UserAttributes`。
+ * - `implements UserAttributes` 为实例添加类型约束，确保 TypeScript 检查 `UserModel` 实例是否包含 `UserAttributes` 定义的所有属性，保证访问实例属性（如 `user.email`）时的类型安全。
+ *
+ * 简而言之:
+ * 泛型约束基类 `Model` 的行为，`implements` 约束 `UserModel` 本身的结构，两者互补，共同保证类型安全。
+ */
 @Table({ tableName: 'users', timestamps: true })
-export class UserModel extends Model<UserModel> {
+export class UserModel extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.BIGINT)
@@ -51,6 +73,14 @@ export class UserModel extends Model<UserModel> {
 
   @Column(DataType.STRING(255))
   declare email?: string;
+
+  @CreatedAt
+  @Column(DataType.DATE)
+  declare createdAt: Date;
+
+  @UpdatedAt
+  @Column(DataType.DATE)
+  declare updatedAt: Date;
 
   @BelongsToMany(() => RoleModel, () => UserRoleModel)
   declare roles?: RoleModel[];

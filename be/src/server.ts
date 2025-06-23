@@ -3,6 +3,7 @@
 import app from './app.js';
 import debug from 'debug';
 import http from 'http';
+import sequelize from './infrastructure/SequelizeConfig.js';
 
 const debugLogger = debug('aiot:server');
 
@@ -18,11 +19,20 @@ app.set('port', port);
 const server = http.createServer(app);
 
 /**
- * Listen on provided port, on all network interfaces.
+ * 等待 Sequelize 同步後再啟動 HTTP server。
  */
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+(async () => {
+  try {
+    await sequelize.sync();
+    console.log('✅ Database synced');
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  } catch (err) {
+    console.error('❌ Database sync failed', err);
+    process.exit(1);
+  }
+})();
 
 /**
  * Normalize a port into a number, string, or false.

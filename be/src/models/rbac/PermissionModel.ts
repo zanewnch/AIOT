@@ -15,6 +15,9 @@
  * Associations
  * ────────────
  * PermissionModel ↔ RoleModel  (Many-to-Many) through RolePermissionModel
+ * 
+ * 
+ * 
  */
 import {
   Table,
@@ -28,10 +31,19 @@ import {
   BelongsToMany,
 } from 'sequelize-typescript';
 import { RoleModel } from './RoleModel.js';
-import { RolePermissionModel } from './RolePermissionModel.js';
+import { RolePermissionModel } from './RoleToPermissionModel.js';
+import type { Optional } from 'sequelize';
+
+type PermissionAttributes = {
+  id: number;
+  name: string;
+  description?: string;
+};
+
+type PermissionCreationAttributes = Optional<PermissionAttributes, 'id'>;
 
 @Table({ tableName: 'permissions', timestamps: true })
-export class PermissionModel extends Model<PermissionModel> {
+export class PermissionModel extends Model<PermissionAttributes, PermissionCreationAttributes> implements PermissionAttributes {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.BIGINT)

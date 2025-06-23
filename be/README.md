@@ -94,3 +94,9 @@ Build and run with Docker:
 docker build -f Dockerfile.be -t aiot-app .
 docker run -p 8000:8000 aiot-app
 ``` 
+
+
+完成以下功能
+這是IOT 的 backend system
+總共有command device devicedata, event, rbac 這些 data source
+

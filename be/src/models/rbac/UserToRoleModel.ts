@@ -18,11 +18,19 @@ import {
   ForeignKey,
   PrimaryKey,
 } from 'sequelize-typescript';
+import type { Optional } from 'sequelize';
 import { UserModel } from './UserModel.js';
 import { RoleModel } from './RoleModel.js';
 
+type UserRoleAttributes = {
+  userId: number;
+  roleId: number;
+};
+
+type UserRoleCreationAttributes = UserRoleAttributes;
+
 @Table({ tableName: 'user_roles', timestamps: true })
-export class UserRoleModel extends Model<UserRoleModel> {
+export class UserRoleModel extends Model<UserRoleAttributes, UserRoleCreationAttributes> implements UserRoleAttributes {
   @PrimaryKey
   @ForeignKey(() => UserModel)
   @Column(DataType.BIGINT)
