@@ -105,3 +105,7 @@ docker run -p 8000:8000 aiot-app
 應該要往 optimization 去想
 不要往 UX, business logic requirement 去想, 原因是因為會很浪費時間去設計使用者的需求跟體驗 但我又沒有真正的user(client), 
 更好的做法是: 問AI: 考問 senior backend developer 的 interview questions
+
+
+下一步 是對 rbac table 的 testing
+找一下 postman newman 的相關資訊 跟 使用jest testing

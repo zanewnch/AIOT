@@ -64,7 +64,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
 // routes
-app.use('/api/init', initRouter);
+app.use('/api/init', initRouter.router);
 
 // Auth routes
 app.use('/api/auth', jwtAuthController.router);
