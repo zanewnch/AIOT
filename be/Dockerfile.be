@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 8000
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm install && npm start"]
