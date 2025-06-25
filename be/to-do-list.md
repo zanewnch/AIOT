@@ -9,3 +9,6 @@
 # date 2025-06-25
 
 - [ ] 先寫好 api 的 requirement 才知道自己總共有哪些要處理, 跟寫好to-do-list
+
+
+target: rabbitMQ
