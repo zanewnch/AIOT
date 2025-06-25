@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { DIContainer } from '../utils/RBACContainer.js';
+import { RBACContainer } from '../utils/RBACContainer.js';
 import {
     IUserController,
     IRoleController,
@@ -19,23 +19,19 @@ class RBACController implements IRBACController {
     private userToRoleController: IUserToRoleController;
     private roleToPermissionController: IRoleToPermissionController;
 
-
-
-    constructor() {
+    constructor(container?: RBACContainer) {
         this.router = Router();
 
-        // 使用DI容器獲取依賴
-        const container = DIContainer.getInstance();
-        this.userController = container.getUserController();
-        this.roleController = container.getRoleController();
-        this.permissionController = container.getPermissionController();
-        this.userToRoleController = container.getUserToRoleController();
-        this.roleToPermissionController = container.getRoleToPermissionController();
+        // 使用傳入的容器或預設容器
+        const rbacContainer = container || RBACContainer.getInstance();
+        this.userController = rbacContainer.getUserController();
+        this.roleController = rbacContainer.getRoleController();
+        this.permissionController = rbacContainer.getPermissionController();
+        this.userToRoleController = rbacContainer.getUserToRoleController();
+        this.roleToPermissionController = rbacContainer.getRoleToPermissionController();
 
         this.initializeRoutes();
     }
-
-
 
     private initializeRoutes(): void {
         // 將各個controller的路由掛載到主router上
@@ -47,4 +43,5 @@ class RBACController implements IRBACController {
     }
 }
 
-export default new RBACController();
+// 導出類別而不是實例，讓 Factory 可以創建實例
+export default RBACController;

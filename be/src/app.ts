@@ -11,10 +11,10 @@ import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { UserModel } from './models/rbac/UserModel.js';
 import jwtAuthController from './controller/JWTAuthController.js';
-import rbacController from './controller/RBACController.js';
+import { RBACFactory } from './utils/RBACFactory.js';
 
 // passport JWT config
-/* 
+/*
 是的，引入并配置好 Passport-JWT 以后，你就不需要再在每个接口里手动去解析、验签、校验过期时间之类了。
 
 流程是这样的：
@@ -69,11 +69,12 @@ app.use('/api/init', initRouter.router);
 // Auth routes
 app.use('/api/auth', jwtAuthController.router);
 
-// RBAC routes (protected)
+// RBAC routes (protected) - 使用 Factory 創建實例
+const rbacController = RBACFactory.createDefaultRBACController();
 app.use('/api/rbac', passport.authenticate('jwt', { session: false }), rbacController.router);
 
 // error handling
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-export default app; 
+export default app;

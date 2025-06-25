@@ -1,161 +1,172 @@
 import {
-  connectMongo,
-  getMongoDB,
-  disconnectMongo,
-} from "../infrastructure/mongoConfig";
-import { Collection, ObjectId } from "mongodb";
+  connectMongoDB,
+  disconnectMongoDB,
+} from "../infrastructure/MongoDBConfig";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
-// 定義 MongoDB 集合的介面
-interface User {
-  _id?: ObjectId;
+// 定義 Mongoose 文件介面
+interface IUser extends Document {
   name: string;
   email: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Device {
-  _id?: ObjectId;
+interface IDevice extends Document {
   deviceId: string;
   name: string;
   type: string;
   status: "online" | "offline";
-  userId: ObjectId;
+  userId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface DeviceData {
-  _id?: ObjectId;
-  deviceId: ObjectId;
+interface IDeviceData extends Document {
+  deviceId: mongoose.Types.ObjectId;
   sensorType: string;
   value: number;
   unit: string;
   timestamp: Date;
 }
 
+// 定義 Mongoose Schema
+const userSchema = new Schema<IUser>({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+}, {
+  timestamps: true  // 自動添加 createdAt 和 updatedAt
+});
+
+const deviceSchema = new Schema<IDevice>({
+  deviceId: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  type: { type: String, required: true },
+  status: { type: String, enum: ["online", "offline"], required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+}, {
+  timestamps: true
+});
+
+const deviceDataSchema = new Schema<IDeviceData>({
+  deviceId: { type: Schema.Types.ObjectId, ref: 'Device', required: true },
+  sensorType: { type: String, required: true },
+  value: { type: Number, required: true },
+  unit: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+});
+
+// 創建索引
+deviceDataSchema.index({ deviceId: 1 });
+deviceDataSchema.index({ timestamp: 1 });
+deviceDataSchema.index({ deviceId: 1, timestamp: -1 });
+
 class MongoRepository {
-  private usersCollection!: Collection<User>;
-  private devicesCollection!: Collection<Device>;
-  private deviceDataCollection!: Collection<DeviceData>;
+  private UserModel: Model<IUser>;
+  private DeviceModel: Model<IDevice>;
+  private DeviceDataModel: Model<IDeviceData>;
 
-  async initialize(): Promise<void> {
-    const db = await connectMongo();
-    this.usersCollection = db.collection<User>("users");
-    this.devicesCollection = db.collection<Device>("devices");
-    this.deviceDataCollection = db.collection<DeviceData>("deviceData");
-
-    // 建立索引以提高查詢效能
-    await this.createIndexes();
+  constructor() {
+    this.UserModel = mongoose.model<IUser>('User', userSchema);
+    this.DeviceModel = mongoose.model<IDevice>('Device', deviceSchema);
+    this.DeviceDataModel = mongoose.model<IDeviceData>('DeviceData', deviceDataSchema);
   }
 
-  private async createIndexes(): Promise<void> {
-    // Users 集合索引
-    await this.usersCollection.createIndex({ email: 1 }, { unique: true });
-
-    // Devices 集合索引
-    await this.devicesCollection.createIndex({ deviceId: 1 }, { unique: true });
-    await this.devicesCollection.createIndex({ userId: 1 });
-
-    // DeviceData 集合索引
-    await this.deviceDataCollection.createIndex({ deviceId: 1 });
-    await this.deviceDataCollection.createIndex({ timestamp: 1 });
-    await this.deviceDataCollection.createIndex({ deviceId: 1, timestamp: -1 });
+  async initialize(): Promise<void> {
+    await connectMongoDB();
+    console.log("📦 MongoRepository 初始化完成");
   }
 
   // User 相關操作
   async createUser(
-    user: Omit<User, "_id" | "createdAt" | "updatedAt">
-  ): Promise<ObjectId> {
-    const now = new Date();
-    const result = await this.usersCollection.insertOne({
-      ...user,
-      createdAt: now,
-      updatedAt: now,
-    });
-    return result.insertedId;
+    user: { name: string; email: string }
+  ): Promise<string> {
+    const newUser = new this.UserModel(user);
+    const result = await newUser.save();
+    return result._id?.toString() || '';
   }
 
-  async getUserById(id: string): Promise<User | null> {
-    return await this.usersCollection.findOne({ _id: new ObjectId(id) });
+  async getUserById(id: string): Promise<IUser | null> {
+    return await this.UserModel.findById(id);
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
-    return await this.usersCollection.findOne({ email });
+  async getUserByEmail(email: string): Promise<IUser | null> {
+    return await this.UserModel.findOne({ email });
   }
 
   // Device 相關操作
   async createDevice(
-    device: Omit<Device, "_id" | "createdAt" | "updatedAt">
-  ): Promise<ObjectId> {
-    const now = new Date();
-    const result = await this.devicesCollection.insertOne({
+    device: { deviceId: string; name: string; type: string; status: "online" | "offline"; userId: string }
+  ): Promise<string> {
+    const newDevice = new this.DeviceModel({
       ...device,
-      createdAt: now,
-      updatedAt: now,
+      userId: new mongoose.Types.ObjectId(device.userId)
     });
-    return result.insertedId;
+    const result = await newDevice.save();
+    return result._id?.toString() || '';
   }
 
-  async getDevicesByUserId(userId: string): Promise<Device[]> {
-    return await this.devicesCollection
-      .find({ userId: new ObjectId(userId) })
-      .toArray();
+  async getDevicesByUserId(userId: string): Promise<IDevice[]> {
+    return await this.DeviceModel.find({ userId: new mongoose.Types.ObjectId(userId) });
   }
 
   async updateDeviceStatus(
     deviceId: string,
     status: "online" | "offline"
   ): Promise<boolean> {
-    const result = await this.devicesCollection.updateOne(
-      { _id: new ObjectId(deviceId) },
-      {
-        $set: {
-          status,
-          updatedAt: new Date(),
-        },
-      }
+    const result = await this.DeviceModel.updateOne(
+      { _id: deviceId },
+      { $set: { status } }
     );
     return result.modifiedCount > 0;
   }
 
   // DeviceData 相關操作
-  async insertDeviceData(data: Omit<DeviceData, "_id">): Promise<ObjectId> {
-    const result = await this.deviceDataCollection.insertOne(data);
-    return result.insertedId;
+  async insertDeviceData(data: {
+    deviceId: string;
+    sensorType: string;
+    value: number;
+    unit: string;
+    timestamp?: Date;
+  }): Promise<string> {
+    const newDeviceData = new this.DeviceDataModel({
+      ...data,
+      deviceId: new mongoose.Types.ObjectId(data.deviceId),
+      timestamp: data.timestamp || new Date()
+    });
+    const result = await newDeviceData.save();
+    return result._id?.toString() || '';
   }
 
   async getLatestDeviceData(
     deviceId: string,
     limit: number = 10
-  ): Promise<DeviceData[]> {
-    return await this.deviceDataCollection
-      .find({ deviceId: new ObjectId(deviceId) })
+  ): Promise<IDeviceData[]> {
+    return await this.DeviceDataModel
+      .find({ deviceId: new mongoose.Types.ObjectId(deviceId) })
       .sort({ timestamp: -1 })
-      .limit(limit)
-      .toArray();
+      .limit(limit);
   }
 
   async getDeviceDataByTimeRange(
     deviceId: string,
     startTime: Date,
     endTime: Date
-  ): Promise<DeviceData[]> {
-    return await this.deviceDataCollection
+  ): Promise<IDeviceData[]> {
+    return await this.DeviceDataModel
       .find({
-        deviceId: new ObjectId(deviceId),
+        deviceId: new mongoose.Types.ObjectId(deviceId),
         timestamp: {
           $gte: startTime,
           $lte: endTime,
         },
       })
-      .sort({ timestamp: 1 })
-      .toArray();
+      .sort({ timestamp: 1 });
   }
 
   // 清理方法
   async disconnect(): Promise<void> {
-    await disconnectMongo();
+    await disconnectMongoDB();
   }
 }
 
