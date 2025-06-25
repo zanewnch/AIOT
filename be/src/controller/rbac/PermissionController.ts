@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { PermissionModel } from '../../models/rbac/PermissionModel.js';
-import { IPermissionController } from '../../types/index.js';
+import { IPermissionController } from '../../types/controllers/IPermissionController.js';
+
 
 export class PermissionController implements IPermissionController {
     public router: Router;

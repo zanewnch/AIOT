@@ -7,12 +7,8 @@ import {
     IUserToRoleController,
     IRoleToPermissionController,
     IRBACController
-} from '../../types/index.js';
-import { UserController } from './UserController.js';
-import { RoleController } from './RoleController.js';
-import { PermissionController } from './PermissionController.js';
-import { UserToRoleController } from './UserToRoleController.js';
-import { RoleToPermissionController } from './RoleToPermissionController.js';
+} from '../../types/controllers/index.js';
+
 
 class RBACController implements IRBACController {
     public router: Router;
@@ -27,13 +23,12 @@ class RBACController implements IRBACController {
     constructor() {
         this.router = Router();
 
-        //  不使用container 也不使用factory 感覺被改的有點亂
-        // 用最簡單的方法來實現DI
-        this.userController = new UserController();
-        this.roleController = new RoleController();
-        this.permissionController = new PermissionController();
-        this.userToRoleController = new UserToRoleController();
-        this.roleToPermissionController = new RoleToPermissionController();
+        const rbacContainer = RBACContainer.getInstance();
+        this.userController = rbacContainer.getUserController();
+        this.roleController = rbacContainer.getRoleController();
+        this.permissionController = rbacContainer.getPermissionController();
+        this.userToRoleController = rbacContainer.getUserToRoleController();
+        this.roleToPermissionController = rbacContainer.getRoleToPermissionController();
 
         this.initializeRoutes();
     }

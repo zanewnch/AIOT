@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
-import { IRoleController } from '../../types/index.js';
+import { IRoleController } from '../../types/controllers/IRoleController.js';
 
 export class RoleController implements IRoleController {
     public router: Router;

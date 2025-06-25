@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
-import { IUserToRoleController } from '../../types/index.js';
+import { IUserToRoleController } from '../../types/controllers/IUserToRoleController.js';
 
 export class UserToRoleController implements IUserToRoleController {
     public router: Router;

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { PermissionModel } from '../../models/rbac/PermissionModel.js';
-import { IRoleToPermissionController } from '../../types/index.js';
+import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js';
 
 export class RoleToPermissionController implements IRoleToPermissionController {
     public router: Router;
