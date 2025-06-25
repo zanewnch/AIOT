@@ -6,7 +6,7 @@ import {
     IUserToRoleController,
     IRoleToPermissionController
 } from '../types/index.js';
-import RBACController from '../controller/RBACController.js';
+import RBACController from '../controller/rbac/RBACController.js';
 
 // 引入具體實現，讓 Factory 負責創建
 import { UserController } from '../controller/rbac/UserController.js';

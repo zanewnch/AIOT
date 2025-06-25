@@ -72,7 +72,6 @@ export class RBACContainer {
     // 這樣整個應用程式只會有一個RBAC容器，確保依賴管理的一致性
     // 注意：不再自動註冊服務，需要外部提供
     private constructor() {
-        // 移除自動註冊，讓 Factory 負責決定要註冊什麼
     }
 
     /**
