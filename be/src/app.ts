@@ -6,12 +6,12 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
 import initRouter from './controller/InitializationController.js';
-import { notFoundHandler, errorHandler } from './middleware/errorHandleMiddleware.js';
+import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js';
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { UserModel } from './models/rbac/UserModel.js';
 import jwtAuthController from './controller/JWTAuthController.js';
-import { RBACFactory } from './utils/RBACFactory.js';
+import RBACController from './controller/rbac/RBACController.js';
 
 // passport JWT config
 /*
@@ -69,12 +69,12 @@ app.use('/api/init', initRouter.router);
 // Auth routes
 app.use('/api/auth', jwtAuthController.router);
 
-// RBAC routes (protected) - 使用 Factory 創建實例，內部已包含 JWT 認證
-const rbacController = RBACFactory.createDefaultRBACController();
+// RBAC routes (protected) - 創建 RBAC 控制器實例，內部已包含 JWT 認證
+const rbacController = new RBACController();
 app.use('/api/rbac', rbacController.router);
 
 // error handling
-app.use(notFoundHandler);
-app.use(errorHandler);
+app.use(ErrorHandleMiddleware.notFound);
+app.use(ErrorHandleMiddleware.handle);
 
 export default app;
