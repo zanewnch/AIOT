@@ -4,6 +4,7 @@ import app from './app.js';
 import debug from 'debug';
 import http from 'http';
 import sequelize from './infrastructure/SequelizeConfig.js';
+import { createRabbitChannel } from './infrastructure/RabbitMQConfig.js';
 
 const debugLogger = debug('aiot:server');
 
@@ -24,6 +25,9 @@ const server = http.createServer(app);
 (async () => {
   try {
     await sequelize.sync();
+    const rabbitChannel = await createRabbitChannel();
+    console.log('✅ RabbitMQ ready');
+    app.locals.rabbitMQChannel = rabbitChannel;
     console.log('✅ Database synced');
     server.listen(port);
     server.on('error', onError);
