@@ -27,7 +27,7 @@ describe('PermissionController', () => {
     });
 
     describe('getPermissions', () => {
-        it('應該成功返回所有權限', async () => {
+        test('應該成功返回所有權限', async () => {
             const mockPermissions = [
                 { id: 1, name: 'read_users', description: '讀取使用者' },
                 { id: 2, name: 'write_users', description: '寫入使用者' }
@@ -41,7 +41,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith(mockPermissions);
         });
 
-        it('應該在發生錯誤時返回 500 狀態碼', async () => {
+        test('應該在發生錯誤時返回 500 狀態碼', async () => {
             const mockError = new Error('Database error');
             (PermissionModel.findAll as jest.Mock).mockRejectedValue(mockError);
 
@@ -65,7 +65,7 @@ describe('PermissionController', () => {
             mockRequest.params = { permissionId: '1' };
         });
 
-        it('應該成功返回指定 ID 的權限', async () => {
+        test('應該成功返回指定 ID 的權限', async () => {
             const mockPermission = { id: 1, name: 'read_users', description: '讀取使用者' };
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(mockPermission);
 
@@ -75,7 +75,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith(mockPermission);
         });
 
-        it('應該在權限不存在時返回 404 狀態碼', async () => {
+        test('應該在權限不存在時返回 404 狀態碼', async () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             await permissionController.getPermissionById(mockRequest as Request, mockResponse as Response);
@@ -85,7 +85,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Permission not found' });
         });
 
-        it('應該在發生錯誤時返回 500 狀態碼', async () => {
+        test('應該在發生錯誤時返回 500 狀態碼', async () => {
             const mockError = new Error('Database error');
             (PermissionModel.findByPk as jest.Mock).mockRejectedValue(mockError);
 
@@ -112,7 +112,7 @@ describe('PermissionController', () => {
             };
         });
 
-        it('應該成功創建新權限', async () => {
+        test('應該成功創建新權限', async () => {
             const mockCreatedPermission = {
                 id: 1,
                 name: 'new_permission',
@@ -132,7 +132,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith(mockCreatedPermission);
         });
 
-        it('應該在發生錯誤時返回 500 狀態碼', async () => {
+        test('應該在發生錯誤時返回 500 狀態碼', async () => {
             const mockError = new Error('Database error');
             (PermissionModel.create as jest.Mock).mockRejectedValue(mockError);
 
@@ -160,7 +160,7 @@ describe('PermissionController', () => {
             };
         });
 
-        it('應該成功更新權限', async () => {
+        test('應該成功更新權限', async () => {
             const mockPermission = {
                 id: 1,
                 name: 'old_permission',
@@ -179,7 +179,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith(mockPermission);
         });
 
-        it('應該在權限不存在時返回 404 狀態碼', async () => {
+        test('應該在權限不存在時返回 404 狀態碼', async () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             await permissionController.updatePermission(mockRequest as Request, mockResponse as Response);
@@ -189,7 +189,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Permission not found' });
         });
 
-        it('應該在發生錯誤時返回 500 狀態碼', async () => {
+        test('應該在發生錯誤時返回 500 狀態碼', async () => {
             const mockError = new Error('Database error');
             (PermissionModel.findByPk as jest.Mock).mockRejectedValue(mockError);
 
@@ -213,7 +213,7 @@ describe('PermissionController', () => {
             mockRequest.params = { permissionId: '1' };
         });
 
-        it('應該成功刪除權限', async () => {
+        test('應該成功刪除權限', async () => {
             const mockPermission = {
                 id: 1,
                 name: 'permission_to_delete',
@@ -229,7 +229,7 @@ describe('PermissionController', () => {
             expect(mockResponse.send).toHaveBeenCalled();
         });
 
-        it('應該在權限不存在時返回 404 狀態碼', async () => {
+        test('應該在權限不存在時返回 404 狀態碼', async () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             await permissionController.deletePermission(mockRequest as Request, mockResponse as Response);
@@ -239,7 +239,7 @@ describe('PermissionController', () => {
             expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Permission not found' });
         });
 
-        it('應該在發生錯誤時返回 500 狀態碼', async () => {
+        test('應該在發生錯誤時返回 500 狀態碼', async () => {
             const mockError = new Error('Database error');
             (PermissionModel.findByPk as jest.Mock).mockRejectedValue(mockError);
 
@@ -259,7 +259,7 @@ describe('PermissionController', () => {
     });
 
     describe('路由初始化', () => {
-        it('應該正確初始化所有路由', () => {
+        test('應該正確初始化所有路由', () => {
             const router = permissionController.router;
             expect(router).toBeDefined();
 

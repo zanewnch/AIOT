@@ -1,39 +1,76 @@
 import { Router, Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { UserModel } from '../models/rbac/UserModel.js';
+import { AuthService, IAuthService } from '../service/AuthService.js';
 
 class JWTAuthController {
   public router: Router;
+  private authService: IAuthService;
 
-  constructor() {
+  constructor(authService: IAuthService = new AuthService()) {
+    this.authService = authService;
     this.router = Router();
     this.initializeRoutes();
   }
 
   private initializeRoutes(): void {
-    this.router.post('/login', this.login);
+    this.router.post('/login', this.login.bind(this));
+    this.router.post('/logout', this.logout.bind(this));
   }
 
   private async login(req: Request, res: Response): Promise<void> {
     try {
       const { username, password } = req.body;
-      const user = await UserModel.findOne({ where: { username } });
-      if (!user) {
-        res.status(401).json({ message: 'Invalid credentials' });
+
+      // 參數驗證
+      if (!username || !password) {
+        res.status(400).json({ message: 'Username and password are required' });
         return;
       }
-      const match = await bcrypt.compare(password, user.passwordHash);
-      if (!match) {
-        res.status(401).json({ message: 'Invalid credentials' });
+
+      // 調用 service 層進行登入
+      const result = await this.authService.login(username, password);
+
+      if (!result.success) {
+        res.status(401).json({ message: result.message });
         return;
       }
-      const payload = { sub: user.id };
-      const token = jwt.sign(payload, process.env.JWT_SECRET || 'your_jwt_secret_here', { expiresIn: '1h' });
-      res.json({ token });
+
+      // 設置 httpOnly cookie 來儲存 JWT
+      res.cookie('jwt', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // 只在 HTTPS 時設為 true
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000 // 1 小時 (與 JWT 過期時間一致)
+      });
+
+      res.json({
+        token: result.token,
+        message: result.message
+      });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Login failed', error: (err as Error).message });
+      console.error('Login controller error:', err);
+      res.status(500).json({
+        message: 'Internal server error',
+        error: (err as Error).message
+      });
+    }
+  }
+
+  private async logout(req: Request, res: Response): Promise<void> {
+    try {
+      // 清除 JWT cookie
+      res.clearCookie('jwt', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+      });
+
+      res.json({ message: 'Logout successful' });
+    } catch (err) {
+      console.error('Logout controller error:', err);
+      res.status(500).json({
+        message: 'Internal server error',
+        error: (err as Error).message
+      });
     }
   }
 }
