@@ -41,6 +41,7 @@ class RBACController implements IRBACController {
         this.router.use('/users', this.userToRoleController.router);
         this.router.use('/roles', this.roleToPermissionController.router);
     }
+    
 }
 
 // 導出類別而不是實例，讓 Factory 可以創建實例
