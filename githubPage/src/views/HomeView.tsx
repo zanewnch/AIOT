@@ -1,5 +1,5 @@
 import React from 'react';
-import './HomeViewStyle.scss';
+import '../styles/HomeViewStyle.scss';
 
 function HomeView() {
   return (
