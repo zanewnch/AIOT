@@ -11,7 +11,7 @@ export default defineConfig({
     postcss: "./postcss.config.js",
   },
   esbuild: {
-    loader: "jsx",
+    loader: "tsx",
     include: /src\/.*\.[jt]sx?$/,
     exclude: [],
   },
