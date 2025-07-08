@@ -109,7 +109,7 @@ export const connectMongo = connectMongoDB;
 export const disconnectMongo = disconnectMongoDB;
 export const getMongoDB = getMongoose;
 
-export default {
+export {
   connectMongoDB,
   disconnectMongoDB,
   getMongoose,

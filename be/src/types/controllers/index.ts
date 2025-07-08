@@ -1,8 +1,8 @@
 // Controller interfaces unified exports
 
-export { IUserController } from './IUserController';
-export { IRoleController } from './IRoleController';
-export { IPermissionController } from './IPermissionController';
-export { IUserToRoleController } from './IUserToRoleController';
-export { IRoleToPermissionController } from './IRoleToPermissionController';
-export { IRBACController } from './IRBACController';
+export type { IUserController } from './IUserController';
+export type { IRoleController } from './IRoleController';
+export type { IPermissionController } from './IPermissionController';
+export type { IUserToRoleController } from './IUserToRoleController';
+export type { IRoleToPermissionController } from './IRoleToPermissionController';
+export type { IRBACController } from './IRBACController';

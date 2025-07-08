@@ -11,7 +11,7 @@ import {
 } from '../../types/controllers/index.js';
 
 
-class RBACController implements IRBACController {
+export class RBACController implements IRBACController {
     public router: Router;
 
     // 依賴interface而不是具體實現
@@ -50,5 +50,3 @@ class RBACController implements IRBACController {
 
 }
 
-// 導出類別而不是實例，讓 Factory 可以創建實例
-export default RBACController;
