@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { seedRbacDemo } from '../service/RbacInitService.js';
 
-class InitializationController {
+export class InitializationController {
   public router: Router;
 
   constructor() {
@@ -30,4 +30,4 @@ class InitializationController {
   }
 }
 
-export default new InitializationController();
+

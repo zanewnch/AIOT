@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { AuthService, IAuthService } from '../service/AuthService.js';
 
-class JWTAuthController {
+export class JWTAuthController {
   public router: Router;
   private authService: IAuthService;
 
@@ -75,4 +75,3 @@ class JWTAuthController {
   }
 }
 
-export default new JWTAuthController();
