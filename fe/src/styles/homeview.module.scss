@@ -11,7 +11,6 @@
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
   @include theme-transition;
   overflow-x: hidden; // 防止水平滾動
@@ -20,26 +19,28 @@
 // Main content layout
 .mainContent {
   display: grid;
-  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(200px, 240px);
-  max-width: 1400px;
-  margin: 0 auto;
-  gap: 40px;
-  padding: 0 24px;
+  grid-template-columns: minmax(120px, 140px) 1fr; // 只有 sidebar 和 content 兩欄
+  gap: 0; // 移除間距讓內容完全貼齊
+  padding: 0; // 移除所有 padding
   
   // 確保內容不會溢出
-  min-height: 0;
-  width: 100%;
+  min-height: calc(100vh - 64px); // 設定最小高度填滿可用空間
+  width: 100vw; // 使用視窗寬度確保填滿整個寬度
 }
 
 
 
 // Content area styles
 .contentArea {
-  padding: 32px 0;
+  padding: 0; // 移除 padding 讓內容完全填滿
   max-width: none; // 移除固定寬度限制
   min-width: 0; // 允許收縮
   overflow-wrap: break-word; // 改善長單詞換行
   word-wrap: break-word;
+  height: calc(100vh - 64px); // 填滿可用空間，扣除 navbar 高度
+  display: flex;
+  flex-direction: column;
+  width: 100%; // 確保填滿父容器寬度
 }
 
 .breadcrumb {
@@ -227,8 +228,10 @@
 // Responsive design
 @media (max-width: 1200px) {
   .mainContent {
-    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(180px, 200px);
-    gap: 32px;
+    grid-template-columns: minmax(110px, 130px) 1fr; // 保持兩欄布局
+    gap: 0; // 保持無間距
+    padding: 0; // 移除所有 padding
+    width: 100vw; // 確保填滿視窗寬度
   }
   
   .contentHeader {
@@ -241,19 +244,20 @@
 @media (max-width: 1024px) {
   .mainContent {
     grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 0 20px;
+    gap: 0; // 保持無間距
+    padding: 0; // 小屏幕也移除 padding 讓內容完全填滿
+    width: 100vw; // 確保填滿視窗寬度
     
-    // 隱藏側邊欄和目錄 (在小螢幕上)
-    > :first-child,
-    .toc {
+    // 隱藏側邊欄 (在小螢幕上)
+    > :first-child {
       display: none;
     }
   }
   
   .contentArea {
-    max-width: 800px; // 在單欄模式下限制內容寬度
-    margin: 0 auto;
+    max-width: none; // 在單欄模式下不限制內容寬度
+    margin: 0;
+    width: 100%; // 確保填滿父容器寬度
   }
   
   .contentHeader {
@@ -269,11 +273,13 @@
 
 @media (max-width: 768px) {
   .mainContent {
-    padding: 0 16px;
+    padding: 0; // 移除 padding 讓內容完全填滿
+    width: 100vw; // 確保填滿視窗寬度
   }
 
   .contentArea {
-    padding: 24px 0;
+    padding: 0; // 保持無 padding 讓內容完全填滿
+    height: calc(100vh - 56px); // 調整小螢幕的 navbar 高度
     
     .contentHeader {
       margin-bottom: 24px;
@@ -300,7 +306,13 @@
 
 @media (max-width: 480px) {
   .mainContent {
-    padding: 0 12px;
+    padding: 0; // 極小屏幕也移除 padding
+    width: 100vw; // 確保填滿視窗寬度
+  }
+
+  .contentArea {
+    padding: 0; // 確保在極小螢幕也無 padding
+    height: calc(100vh - 56px); // 確保在極小螢幕也有正確高度
   }
   
   .contentHeader {

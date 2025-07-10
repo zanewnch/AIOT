@@ -2,23 +2,42 @@
 
 // Sidebar styles
 .sidebar {
-  padding: 32px 0;
-  border-right: 1px solid var(--border-color);
-  padding-right: 24px;
+  padding: 0;
+  border-right: none; // 移除右側邊框讓內容完全貼齊
   @include theme-transition;
-  overflow-y: auto; // 允許側邊欄滾動
-  height: fit-content;
-  max-height: calc(100vh - 120px); // 限制最大高度
+  overflow-y: auto;
+  min-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+}
+
+.sidebarHeader {
+  padding: 20px 16px 16px 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 8px;
+
+  .brandTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    @include theme-transition;
+  }
 }
 
 .sidebarSection {
-  margin-bottom: 32px;
+  padding: 0 16px;
+  margin-bottom: 24px;
 
   h3 {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     @include theme-transition;
   }
 
@@ -34,21 +53,22 @@
 .sidebarNav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .sidebarLink {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
-  padding: 8px 12px;
-  border-radius: 6px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 8px;
   @include theme-transition;
-  word-break: break-word; // 改善中文換行
-  hyphens: auto; // 自動斷字
+  word-break: break-word;
+  hyphens: auto;
 
   &:hover {
     background-color: var(--hover-bg);
@@ -58,11 +78,13 @@
   &.active {
     background-color: var(--active-bg);
     color: var(--text-primary);
-    font-weight: 500;
+    font-weight: 600;
   }
 }
 
 .sidebarIcon {
   font-size: 16px;
-  flex-shrink: 0; // 防止圖標被壓縮
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
 } 
