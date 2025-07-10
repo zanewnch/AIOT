@@ -1,0 +1,283 @@
+@import '../styles/themes.scss';
+
+// Header styles
+.header {
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  @include theme-transition;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow: hidden; // 防止內容溢出
+
+  .nav-brand {
+    flex-shrink: 0;
+    
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      @include theme-transition;
+      white-space: nowrap; // 防止品牌名稱換行
+    }
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-width: 0; // 允許收縮
+    overflow: hidden; // 防止溢出
+
+    .nav-center {
+      display: flex;
+      gap: 32px;
+      overflow: hidden; // 防止導航項目溢出
+      
+      a {
+        @include link-base;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0; // 防止導航項目被壓縮
+      }
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 20px;
+      background-color: var(--border-color);
+      @include theme-transition;
+      flex-shrink: 0; // 防止分隔線被壓縮
+    }
+
+    .language-selector {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 6px;
+      @include theme-transition;
+      white-space: nowrap; // 防止語言選擇器換行
+      flex-shrink: 0; // 防止被壓縮
+
+      &:hover {
+        background-color: var(--hover-bg);
+        color: var(--text-primary);
+      }
+
+      .dropdown-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0; // 防止圖標被壓縮
+      }
+    }
+
+    .search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex-shrink: 1; // 允許搜索框收縮
+      min-width: 0; // 允許搜索框收縮
+
+      .search-input {
+        @include card-base;
+        padding: 8px 12px;
+        color: var(--text-primary);
+        font-size: 14px;
+        width: 240px;
+        min-width: 120px; // 設置最小寬度
+        max-width: 100%; // 防止溢出
+        
+        &::placeholder {
+          color: var(--text-muted);
+        }
+        
+        &:focus {
+          outline: none;
+          border-color: var(--accent-color);
+        }
+      }
+
+      .search-shortcut {
+        position: absolute;
+        right: 8px;
+        background-color: var(--bg-tertiary);
+        color: var(--text-muted);
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 500;
+        @include theme-transition;
+        flex-shrink: 0; // 防止快捷鍵提示被壓縮
+      }
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0; // 防止操作按鈕被壓縮
+
+      a {
+        @include link-base;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap; // 防止連結換行
+      }
+
+      .signup-btn {
+        @include button-base;
+        background-color: var(--accent-color);
+        color: white;
+        padding: 8px 16px;
+        font-size: 14px;
+        white-space: nowrap; // 防止按鈕文字換行
+
+        &:hover {
+          background-color: var(--accent-hover);
+        }
+      }
+    }
+  }
+}
+
+// Responsive design for Navbar
+@media (max-width: 1200px) {
+  .navbar {
+    .nav-right {
+      gap: 20px;
+      
+      .nav-center {
+        gap: 24px;
+      }
+      
+      .search-container {
+        .search-input {
+          width: 200px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 0 20px;
+    
+    .nav-right {
+      gap: 16px;
+      
+      .nav-center {
+        display: none;
+      }
+
+      .nav-divider {
+        display: none;
+      }
+
+      .search-container {
+        .search-input {
+          width: 180px;
+          min-width: 100px;
+        }
+      }
+
+      .nav-actions {
+        gap: 16px;
+        
+        a {
+          display: none;
+          
+          // 只保留重要的連結
+          &:nth-child(1),
+          &:nth-child(2) {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+    
+    .nav-brand {
+      h2 {
+        font-size: 18px;
+      }
+    }
+
+    .nav-right {
+      gap: 12px;
+      
+      .language-selector {
+        padding: 6px 8px;
+        
+        span {
+          display: none; // 隱藏文字，只保留圖標
+        }
+      }
+      
+      .search-container {
+        display: none; // 在小螢幕上隱藏搜索框
+      }
+      
+      .nav-actions {
+        gap: 12px;
+        
+        a {
+          display: none; // 隱藏所有導航連結
+        }
+        
+        .signup-btn {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+    height: 56px; // 減少導航欄高度
+    
+    .nav-brand {
+      h2 {
+        font-size: 16px;
+      }
+    }
+    
+    .nav-right {
+      gap: 8px;
+      
+      .language-selector {
+        display: none; // 在很小的螢幕上隱藏語言選擇器
+      }
+      
+      .nav-actions {
+        .signup-btn {
+          padding: 4px 10px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+} 

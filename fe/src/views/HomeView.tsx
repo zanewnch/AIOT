@@ -1,40 +1,76 @@
 import React from 'react';
-import './HomeViewStyle.scss';
+import { Navbar, Sidebar } from '../components';
+import styles from '../styles/homeview.module.scss';
 
-function HomeView() {
+export function HomeView() {
   return (
-    <div className="home-view">
-      <nav className="navbar">
-        <div className="nav-brand">
-          <a href="#">Your Name</a>
-        </div>
-        <div className="nav-links">
-          <a href="#about">About</a>
-          <a href="#blog">Blog</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </nav>
+    <div className={styles.homeView}>
+      <Navbar />
 
-      <main className="main-content">
-        <section className="hero-section">
-          <h1 className="hero-title">Crafting Digital Experiences</h1>
-          <p className="hero-subtitle">
-            Hi, I'm [Your Name], a passionate developer and creator. Welcome to my personal space where I share my thoughts, projects, and journey in the world of tech.
-          </p>
-          <button className="cta-button">Explore My Work</button>
-        </section>
+      {/* Main Content */}
+      <main className={styles.mainContent}>
+        {/* Sidebar Navigation */}
+        <Sidebar />
+
+        {/* Content Area */}
+        <div className={styles.contentArea}>
+          <div className={styles.breadcrumb}>
+            <span>快速入門</span>
+          </div>
+
+          <div className={styles.contentHeader}>
+            <h1>Claude Code 概覽</h1>
+            <button className={styles.copyPageBtn}>
+              📋 Copy page
+            </button>
+          </div>
+
+          <div className={styles.contentBody}>
+            <p className={styles.contentIntro}>
+              了解 Claude Code，這個存在於您終端機中的代理編程工具，理解您的程式碼庫，並透過自然語言指令幫助您快速編程。
+            </p>
+
+            <p className={styles.contentDescription}>
+              透過直接整合您的開發環境，Claude Code 簡化您的工作流程，無需額外的伺服器或複雜的設定。
+            </p>
+
+            <section className={styles.contentSection}>
+              <h2>基本使用</h2>
+              <p>要安裝 Claude Code，請使用 NPM：</p>
+              
+              <div className={styles.codeBlock}>
+                <code>npm install -g @anthropic-ai/claude-code</code>
+                <button className={styles.copyBtn}>📋</button>
+              </div>
+
+              <p>更詳細的安裝說明，請參閱<a href="#setup" className={styles.contentLink}>設定 Claude Code</a>。</p>
+
+              <p>要執行 Claude Code，只需呼叫 <code className={styles.inlineCode}>claude</code> CLI：</p>
+
+              <div className={styles.codeBlock}>
+                <code>claude</code>
+                <button className={styles.copyBtn}>📋</button>
+              </div>
+
+              <p>然後您可以直接從動式 Claude Code REPL 會話中提示 Claude。</p>
+            </section>
+          </div>
+        </div>
+
+        {/* Table of Contents */}
+        <aside className={styles.toc}>
+          <h3>On this page</h3>
+          <nav className={styles.tocNav}>
+            <a href="#basic-usage">基本使用</a>
+            <a href="#why-choose">為什麼選擇 Claude Code？</a>
+            <a href="#quickstart">加速開發</a>
+            <a href="#security">安全性和隱私設計</a>
+            <a href="#enterprise">企業整合</a>
+            <a href="#next-steps">下一步</a>
+            <a href="#resources">其他資源</a>
+          </nav>
+        </aside>
       </main>
-
-      <footer className="footer">
-        <div className="social-links">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
-        </div>
-        <p className="copyright">&copy; 2025 [Your Name]. All Rights Reserved.</p>
-      </footer>
     </div>
   );
 }
-
-export default HomeView;

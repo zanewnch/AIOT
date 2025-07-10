@@ -1,0 +1,68 @@
+@import '../styles/themes.scss';
+
+// Sidebar styles
+.sidebar {
+  padding: 32px 0;
+  border-right: 1px solid var(--border-color);
+  padding-right: 24px;
+  @include theme-transition;
+  overflow-y: auto; // 允許側邊欄滾動
+  height: fit-content;
+  max-height: calc(100vh - 120px); // 限制最大高度
+}
+
+.sidebarSection {
+  margin-bottom: 32px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    @include theme-transition;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    @include theme-transition;
+  }
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  @include theme-transition;
+  word-break: break-word; // 改善中文換行
+  hyphens: auto; // 自動斷字
+
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background-color: var(--active-bg);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+}
+
+.sidebarIcon {
+  font-size: 16px;
+  flex-shrink: 0; // 防止圖標被壓縮
+} 
