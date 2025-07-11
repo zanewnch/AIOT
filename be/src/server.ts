@@ -15,13 +15,13 @@ import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js';
 import { UserModel } from './models/rbac/UserModel.js';
 import { JwtPayload } from './middleware/jwtAuthMiddleware.js';
 import { Sequelize } from 'sequelize-typescript';
-import { UserModel } from './models/rbac/UserModel.js';
+import { RTKDataModel } from './models/RTKDataModel.js';
 import { RoleModel } from './models/rbac/RoleModel.js';
 import { PermissionModel } from './models/rbac/PermissionModel.js';
 import { UserRoleModel } from './models/rbac/UserToRoleModel.js';
 import { RolePermissionModel } from './models/rbac/RoleToPermissionModel.js';
 import amqp from 'amqplib';
-import { DeviceController, InitializationController, JWTAuthController, RBACController } from './controller/index.js';
+import { InitController, JWTAuthController, RBACController } from './controller/index.js';
 
 const debugLogger = debug('aiot:server');
 
@@ -29,7 +29,7 @@ class Server {
   private app: express.Application;
   private server: http.Server;
   private port: number | string | false;
-  private sequelize: Sequelize;
+  private sequelize!: Sequelize;
   private rabbitConnection: any = null;
   private rabbitChannel: any = null;
 
@@ -37,8 +37,10 @@ class Server {
     this.app = express();
     this.port = this.normalizePort(process.env.PORT || '8000');
     this.server = http.createServer(this.app);
-    this.setupSequelize();
 
+    // setup
+    this.setupRabbitMQ();
+    this.setupSequelize();
     this.setupPassport();
     this.setupMiddleware();
     this.setupErrorHandling();
@@ -53,7 +55,7 @@ class Server {
       password: process.env.DB_PASSWORD || 'admin',
       port: parseInt(process.env.DB_PORT || '3306'),
       dialect: 'mysql',
-      models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel],
+      models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, RTKDataModel],
       logging: process.env.NODE_ENV === 'development' ? console.log : false,
     });
   }
@@ -192,16 +194,15 @@ class Server {
 
   private async setupRoutes(): Promise<void> {
     // 初始化控制器
-    const initController = new InitializationController();
+    const initController = new InitController();
     const jwtAuthController = new JWTAuthController();
     const rbacController = new RBACController();
-    const deviceController = await DeviceController.create();
 
     // 設置路由
     this.app.use('/api/init', initController.router);
     this.app.use('/api/auth', jwtAuthController.router);
     this.app.use('/api/rbac', rbacController.router);
-    this.app.use('/api', deviceController.router);
+    
 
     console.log('✅ All controllers initialized and routes configured');
   }
