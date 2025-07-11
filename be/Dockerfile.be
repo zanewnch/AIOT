@@ -1,22 +1,24 @@
-# Backend Dockerfile - Express.js with TypeScript
 FROM node:18-bullseye
 
 WORKDIR /app/be
 
-# Copy package files first for better caching
+# 複製 package 檔案
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies for development)
+# 建置階段：安裝依賴
 RUN npm install
 
-# Copy source code
+# 建置階段：安裝全域套件（如果真的需要）
+RUN npm install -g @anthropic-ai/claude-code @google/gemini-cli
+
+# 建置階段：設定 Git（如果真的需要）
+RUN git config --global user.name "zanewnch" && \
+    git config --global user.email "zanewnch@gmail.com"
+
+# 複製程式碼
 COPY . .
 
-# Build TypeScript code (if needed)
-# RUN npm run build
-
-# Expose port
 EXPOSE 8000
 
-# Start the application
-# CMD ["sh", "-c", "npm install && npm start"]
+# 執行階段：只啟動應用
+# CMD ["npm", "start"]
