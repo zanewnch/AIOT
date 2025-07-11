@@ -1,12 +1,14 @@
 import { Router, Request, Response } from 'express';
-import { seedRbacDemo } from '../service/RbacInitService.js';
+import { RbacInitService } from '../service/RbacInitService.js';
 
 export class InitializationController {
   public router: Router;
+  private rbacInitService: RbacInitService;
 
   constructor() {
     this.router = Router();
     this.initializeRoutes();
+    this.rbacInitService = new RbacInitService();
   }
 
   private initializeRoutes(): void {
@@ -21,7 +23,7 @@ export class InitializationController {
 
   private async seedRbacDemo(req: Request, res: Response): Promise<void> {
     try {
-      const result = await seedRbacDemo();
+      const result = await this.rbacInitService.seedRbacDemo();
       res.json({ ok: true, ...result });
     } catch (err) {
       console.error('RBAC demo init failed', err);
