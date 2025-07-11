@@ -2,10 +2,27 @@ import { Router, Request, Response } from 'express';
 import { PermissionModel } from '../../models/rbac/PermissionModel.js';
 import { IPermissionController } from '../../types/controllers/IPermissionController.js';
 
-
+/**
+ * 權限管理控制器，處理系統權限的CRUD操作
+ * 
+ * 提供權限的創建、查詢、更新和刪除功能。
+ * 權限是RBAC系統中的基本單位，定義了使用者可以執行的具體操作。
+ * 
+ * @group Controllers
+ * @example
+ * ```typescript
+ * const permissionController = new PermissionController();
+ * app.use('/api/rbac/permissions', permissionController.router);
+ * ```
+ */
 export class PermissionController implements IPermissionController {
     public router: Router;
 
+    /**
+     * 初始化權限控制器實例
+     * 
+     * 設置路由器和所有權限相關的API端點
+     */
     constructor() {
         this.router = Router();
         this.initializeRoutes();
@@ -22,51 +39,33 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * /permissions:
-     *   get:
-     *     summary: 取得所有權限
-     *     description: 獲取系統中所有權限的列表
-     *     tags:
-     *       - Permissions
-     *     responses:
-     *       200:
-     *         description: 成功取得權限列表
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: array
-     *               items:
-     *                 type: object
-     *                 properties:
-     *                   id:
-     *                     type: integer
-     *                     description: 權限ID
-     *                   name:
-     *                     type: string
-     *                     description: 權限名稱
-     *                   description:
-     *                     type: string
-     *                     description: 權限描述
-     *                   createdAt:
-     *                     type: string
-     *                     format: date-time
-     *                     description: 建立時間
-     *                   updatedAt:
-     *                     type: string
-     *                     format: date-time
-     *                     description: 更新時間
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to fetch permissions"
-     *                 error:
-     *                   type: string
+     * 獲取所有權限列表
+     * 
+     * 返回系統中所有可用的權限，包含id、名稱、描述和時間戳訊息。
+     * 
+     * @param req - Express請求物件（未使用）
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * GET /api/rbac/permissions
+     * ```
+     * 
+     * 回應格式:
+     * ```json
+     * [
+     *   {
+     *     "id": 1,
+     *     "name": "read_users",
+     *     "description": "允許讀取使用者資料",
+     *     "createdAt": "2024-01-01T00:00:00.000Z",
+     *     "updatedAt": "2024-01-01T00:00:00.000Z"
+     *   }
+     * ]
+     * ```
+     * 
+     * @throws {500} 伺服器错誤 - 無法獲取權限列表
      */
     public async getPermissions(req: Request, res: Response): Promise<void> {
         try {
@@ -79,66 +78,32 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * /permissions/{permissionId}:
-     *   get:
-     *     summary: 根據ID取得權限
-     *     description: 根據權限ID獲取特定權限的詳細資訊
-     *     tags:
-     *       - Permissions
-     *     parameters:
-     *       - in: path
-     *         name: permissionId
-     *         required: true
-     *         description: 權限的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     responses:
-     *       200:
-     *         description: 成功取得權限資訊
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 id:
-     *                   type: integer
-     *                   description: 權限ID
-     *                 name:
-     *                   type: string
-     *                   description: 權限名稱
-     *                 description:
-     *                   type: string
-     *                   description: 權限描述
-     *                 createdAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 建立時間
-     *                 updatedAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 更新時間
-     *       404:
-     *         description: 權限不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Permission not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to fetch permission"
-     *                 error:
-     *                   type: string
+     * 根據權限ID獲取特定權限詳細資訊
+     * 
+     * 查找並返回指定權限的完整資訊，包含所有屬性和時間戳。
+     * 
+     * @param req - Express請求物件，包含permissionId參數
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * GET /api/rbac/permissions/1
+     * ```
+     * 
+     * 成功回應:
+     * ```json
+     * {
+     *   "id": 1,
+     *   "name": "read_users",
+     *   "description": "允許讀取使用者資料",
+     *   "createdAt": "2024-01-01T00:00:00.000Z",
+     *   "updatedAt": "2024-01-01T00:00:00.000Z"
+     * }
+     * ```
+     * 
+     * @throws {404} 權限不存在
+     * @throws {500} 伺服器错誤 - 無法獲取權限
      */
     public async getPermissionById(req: Request, res: Response): Promise<void> {
         try {
@@ -156,66 +121,37 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * /permissions:
-     *   post:
-     *     summary: 建立新權限
-     *     description: 在系統中建立一個新的權限
-     *     tags:
-     *       - Permissions
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             required:
-     *               - name
-     *             properties:
-     *               name:
-     *                 type: string
-     *                 description: 權限名稱
-     *                 example: "read_users"
-     *               description:
-     *                 type: string
-     *                 description: 權限描述
-     *                 example: "允許讀取使用者資料"
-     *     responses:
-     *       201:
-     *         description: 權限建立成功
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 id:
-     *                   type: integer
-     *                   description: 權限ID
-     *                 name:
-     *                   type: string
-     *                   description: 權限名稱
-     *                 description:
-     *                   type: string
-     *                   description: 權限描述
-     *                 createdAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 建立時間
-     *                 updatedAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 更新時間
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to create permission"
-     *                 error:
-     *                   type: string
+     * 創建新的權限
+     * 
+     * 在系統中建立一個新的權限，需要提供權限名稱，描述為可選項。
+     * 
+     * @param req - Express請求物件，包含name和description
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * POST /api/rbac/permissions
+     * Content-Type: application/json
+     * 
+     * {
+     *   "name": "read_users",
+     *   "description": "允許讀取使用者資料"
+     * }
+     * ```
+     * 
+     * 成功回應:
+     * ```json
+     * {
+     *   "id": 1,
+     *   "name": "read_users",
+     *   "description": "允許讀取使用者資料",
+     *   "createdAt": "2024-01-01T00:00:00.000Z",
+     *   "updatedAt": "2024-01-01T00:00:00.000Z"
+     * }
+     * ```
+     * 
+     * @throws {500} 伺服器错誤 - 無法建立權限
      */
     public async createPermission(req: Request, res: Response): Promise<void> {
         try {
@@ -229,81 +165,27 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * /permissions/{permissionId}:
-     *   put:
-     *     summary: 更新權限
-     *     description: 根據權限ID更新特定權限的資訊
-     *     tags:
-     *       - Permissions
-     *     parameters:
-     *       - in: path
-     *         name: permissionId
-     *         required: true
-     *         description: 權限的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               name:
-     *                 type: string
-     *                 description: 權限名稱
-     *                 example: "read_users"
-     *               description:
-     *                 type: string
-     *                 description: 權限描述
-     *                 example: "允許讀取使用者資料"
-     *     responses:
-     *       200:
-     *         description: 權限更新成功
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 id:
-     *                   type: integer
-     *                   description: 權限ID
-     *                 name:
-     *                   type: string
-     *                   description: 權限名稱
-     *                 description:
-     *                   type: string
-     *                   description: 權限描述
-     *                 createdAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 建立時間
-     *                 updatedAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 更新時間
-     *       404:
-     *         description: 權限不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Permission not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to update permission"
-     *                 error:
-     *                   type: string
+     * 更新指定權限的資訊
+     * 
+     * 根據權限ID查找並更新其名稱和描述。如果權限不存在則返回404错誤。
+     * 
+     * @param req - Express請求物件，包含permissionId參數和name、description
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * PUT /api/rbac/permissions/1
+     * Content-Type: application/json
+     * 
+     * {
+     *   "name": "read_all_users",
+     *   "description": "允許讀取所有使用者資料"
+     * }
+     * ```
+     * 
+     * @throws {404} 權限不存在
+     * @throws {500} 伺服器错誤 - 無法更新權限
      */
     public async updatePermission(req: Request, res: Response): Promise<void> {
         try {
@@ -323,44 +205,21 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * /permissions/{permissionId}:
-     *   delete:
-     *     summary: 刪除權限
-     *     description: 根據權限ID刪除特定的權限
-     *     tags:
-     *       - Permissions
-     *     parameters:
-     *       - in: path
-     *         name: permissionId
-     *         required: true
-     *         description: 權限的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     responses:
-     *       204:
-     *         description: 權限刪除成功
-     *       404:
-     *         description: 權限不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Permission not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to delete permission"
-     *                 error:
-     *                   type: string
+     * 刪除指定的權限
+     * 
+     * 根據權限ID查找並刪除指定的權限。成功刪除後返回204狀態碼。
+     * 
+     * @param req - Express請求物件，包含permissionId參數
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * DELETE /api/rbac/permissions/1
+     * ```
+     * 
+     * @throws {404} 權限不存在
+     * @throws {500} 伺服器错誤 - 無法刪除權限
      */
     public async deletePermission(req: Request, res: Response): Promise<void> {
         try {

@@ -3,9 +3,27 @@ import { UserModel } from '../../models/rbac/UserModel.js';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { IUserController } from '../../types/controllers/IUserController.js';
 
+/**
+ * 使用者管理控制器，處理系統使用者的CRUD操作
+ * 
+ * 提供使用者的創建、查詢、更新和刪除功能。
+ * 使用者是RBAC系統的基礎實體，與角色形成多對多關係。
+ * 
+ * @group Controllers
+ * @example
+ * ```typescript
+ * const userController = new UserController();
+ * app.use('/api/rbac/users', userController.router);
+ * ```
+ */
 export class UserController implements IUserController {
     public router: Router;
 
+    /**
+     * 初始化使用者控制器實例
+     * 
+     * 設置路由器和所有使用者相關的API端點
+     */
     constructor() {
         this.router = Router();
         this.initializeRoutes();
@@ -22,54 +40,34 @@ export class UserController implements IUserController {
     }
 
     /**
-     * /users:
-     *   get:
-     *     summary: 取得所有使用者
-     *     description: 獲取系統中所有使用者的列表
-     *     tags:
-     *       - Users
-     *     responses:
-     *       200:
-     *         description: 成功取得使用者列表
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: array
-     *               items:
-     *                 type: object
-     *                 properties:
-     *                   id:
-     *                     type: integer
-     *                     description: 使用者ID
-     *                   username:
-     *                     type: string
-     *                     description: 使用者名稱
-     *                   email:
-     *                     type: string
-     *                     description: 電子郵件
-     *                   passwordHash:
-     *                     type: string
-     *                     description: 密碼雜湊值
-     *                   createdAt:
-     *                     type: string
-     *                     format: date-time
-     *                     description: 建立時間
-     *                   updatedAt:
-     *                     type: string
-     *                     format: date-time
-     *                     description: 更新時間
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to fetch users"
-     *                 error:
-     *                   type: string
+     * 獲取所有使用者列表
+     * 
+     * 返回系統中所有可用的使用者，包含id、使用者名、電子郵件和時間戳訊息。
+     * 
+     * @param req - Express請求物件（未使用）
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * GET /api/rbac/users
+     * ```
+     * 
+     * 回應格式:
+     * ```json
+     * [
+     *   {
+     *     "id": 1,
+     *     "username": "admin",
+     *     "email": "admin@example.com",
+     *     "passwordHash": "$2b$10$...",
+     *     "createdAt": "2024-01-01T00:00:00.000Z",
+     *     "updatedAt": "2024-01-01T00:00:00.000Z"
+     *   }
+     * ]
+     * ```
+     * 
+     * @throws {500} 伺服器错誤 - 無法獲取使用者列表
      */
     public async getUsers(req: Request, res: Response): Promise<void> {
         try {
@@ -82,69 +80,33 @@ export class UserController implements IUserController {
     }
 
     /**
-     * /users/{userId}:
-     *   get:
-     *     summary: 根據ID取得使用者
-     *     description: 根據使用者ID獲取特定使用者的詳細資訊
-     *     tags:
-     *       - Users
-     *     parameters:
-     *       - in: path
-     *         name: userId
-     *         required: true
-     *         description: 使用者的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     responses:
-     *       200:
-     *         description: 成功取得使用者資訊
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 id:
-     *                   type: integer
-     *                   description: 使用者ID
-     *                 username:
-     *                   type: string
-     *                   description: 使用者名稱
-     *                 email:
-     *                   type: string
-     *                   description: 電子郵件
-     *                 passwordHash:
-     *                   type: string
-     *                   description: 密碼雜湊值
-     *                 createdAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 建立時間
-     *                 updatedAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 更新時間
-     *       404:
-     *         description: 使用者不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "User not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to fetch user"
-     *                 error:
-     *                   type: string
+     * 根據使用者ID獲取特定使用者詳細資訊
+     * 
+     * 查找並返回指定使用者的完整資訊，包含所有屬性和時間戳。
+     * 
+     * @param req - Express請求物件，包含userId參數
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * GET /api/rbac/users/1
+     * ```
+     * 
+     * 成功回應:
+     * ```json
+     * {
+     *   "id": 1,
+     *   "username": "admin",
+     *   "email": "admin@example.com",
+     *   "passwordHash": "$2b$10$...",
+     *   "createdAt": "2024-01-01T00:00:00.000Z",
+     *   "updatedAt": "2024-01-01T00:00:00.000Z"
+     * }
+     * ```
+     * 
+     * @throws {404} 使用者不存在
+     * @throws {500} 伺服器错誤 - 無法獲取使用者
      */
     public async getUserById(req: Request, res: Response): Promise<void> {
         try {
@@ -162,76 +124,39 @@ export class UserController implements IUserController {
     }
 
     /**
-     * /users:
-     *   post:
-     *     summary: 建立新使用者
-     *     description: 在系統中建立一個新的使用者
-     *     tags:
-     *       - Users
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             required:
-     *               - username
-     *               - passwordHash
-     *               - email
-     *             properties:
-     *               username:
-     *                 type: string
-     *                 description: 使用者名稱
-     *                 example: "john_doe"
-     *               passwordHash:
-     *                 type: string
-     *                 description: 密碼雜湊值
-     *                 example: "$2b$10$..."
-     *               email:
-     *                 type: string
-     *                 format: email
-     *                 description: 電子郵件地址
-     *                 example: "john.doe@example.com"
-     *     responses:
-     *       201:
-     *         description: 使用者建立成功
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 id:
-     *                   type: integer
-     *                   description: 使用者ID
-     *                 username:
-     *                   type: string
-     *                   description: 使用者名稱
-     *                 email:
-     *                   type: string
-     *                   description: 電子郵件
-     *                 passwordHash:
-     *                   type: string
-     *                   description: 密碼雜湊值
-     *                 createdAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 建立時間
-     *                 updatedAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 更新時間
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to create user"
-     *                 error:
-     *                   type: string
+     * 創建新的使用者
+     * 
+     * 在系統中建立一個新的使用者，需要提供使用者名、密碼雜湊值和電子郵件。
+     * 
+     * @param req - Express請求物件，包含username、passwordHash和email
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * POST /api/rbac/users
+     * Content-Type: application/json
+     * 
+     * {
+     *   "username": "john_doe",
+     *   "passwordHash": "$2b$10$...",
+     *   "email": "john.doe@example.com"
+     * }
+     * ```
+     * 
+     * 成功回應:
+     * ```json
+     * {
+     *   "id": 1,
+     *   "username": "john_doe",
+     *   "email": "john.doe@example.com",
+     *   "passwordHash": "$2b$10$...",
+     *   "createdAt": "2024-01-01T00:00:00.000Z",
+     *   "updatedAt": "2024-01-01T00:00:00.000Z"
+     * }
+     * ```
+     * 
+     * @throws {500} 伺服器错誤 - 無法建立使用者
      */
     public async createUser(req: Request, res: Response): Promise<void> {
         try {
@@ -245,89 +170,28 @@ export class UserController implements IUserController {
     }
 
     /**
-     * /users/{userId}:
-     *   put:
-     *     summary: 更新使用者
-     *     description: 根據使用者ID更新特定使用者的資訊
-     *     tags:
-     *       - Users
-     *     parameters:
-     *       - in: path
-     *         name: userId
-     *         required: true
-     *         description: 使用者的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               username:
-     *                 type: string
-     *                 description: 使用者名稱
-     *                 example: "john_doe"
-     *               passwordHash:
-     *                 type: string
-     *                 description: 密碼雜湊值
-     *                 example: "$2b$10$..."
-     *               email:
-     *                 type: string
-     *                 format: email
-     *                 description: 電子郵件地址
-     *                 example: "john.doe@example.com"
-     *     responses:
-     *       200:
-     *         description: 使用者更新成功
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 id:
-     *                   type: integer
-     *                   description: 使用者ID
-     *                 username:
-     *                   type: string
-     *                   description: 使用者名稱
-     *                 email:
-     *                   type: string
-     *                   description: 電子郵件
-     *                 passwordHash:
-     *                   type: string
-     *                   description: 密碼雜湊值
-     *                 createdAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 建立時間
-     *                 updatedAt:
-     *                   type: string
-     *                   format: date-time
-     *                   description: 更新時間
-     *       404:
-     *         description: 使用者不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "User not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to update user"
-     *                 error:
-     *                   type: string
+     * 更新指定使用者的資訊
+     * 
+     * 根據使用者ID查找並更新其使用者名、密碼雜湊值和電子郵件。如果使用者不存在則返回404错誤。
+     * 
+     * @param req - Express請求物件，包含userId參數和username、passwordHash、email
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * PUT /api/rbac/users/1
+     * Content-Type: application/json
+     * 
+     * {
+     *   "username": "john_doe_updated",
+     *   "passwordHash": "$2b$10$...",
+     *   "email": "john.updated@example.com"
+     * }
+     * ```
+     * 
+     * @throws {404} 使用者不存在
+     * @throws {500} 伺服器错誤 - 無法更新使用者
      */
     public async updateUser(req: Request, res: Response): Promise<void> {
         try {
@@ -347,44 +211,21 @@ export class UserController implements IUserController {
     }
 
     /**
-     * /users/{userId}:
-     *   delete:
-     *     summary: 刪除使用者
-     *     description: 根據使用者ID刪除特定的使用者
-     *     tags:
-     *       - Users
-     *     parameters:
-     *       - in: path
-     *         name: userId
-     *         required: true
-     *         description: 使用者的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     responses:
-     *       204:
-     *         description: 使用者刪除成功
-     *       404:
-     *         description: 使用者不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "User not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to delete user"
-     *                 error:
-     *                   type: string
+     * 刪除指定的使用者
+     * 
+     * 根據使用者ID查找並刪除指定的使用者。成功刪除後返回204狀態碼。
+     * 
+     * @param req - Express請求物件，包含userId參數
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * DELETE /api/rbac/users/1
+     * ```
+     * 
+     * @throws {404} 使用者不存在
+     * @throws {500} 伺服器错誤 - 無法刪除使用者
      */
     public async deleteUser(req: Request, res: Response): Promise<void> {
         try {

@@ -3,9 +3,27 @@ import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { PermissionModel } from '../../models/rbac/PermissionModel.js';
 import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js';
 
+/**
+ * 角色權限關聯控制器，處理角色與權限之間的關聯關係
+ * 
+ * 提供角色權限分配、查詢和移除功能。
+ * 管理RBAC系統中角色和權限之間的多對多關係。
+ * 
+ * @group Controllers
+ * @example
+ * ```typescript
+ * const roleToPermissionController = new RoleToPermissionController();
+ * app.use('/api/rbac/roles', roleToPermissionController.router);
+ * ```
+ */
 export class RoleToPermissionController implements IRoleToPermissionController {
     public router: Router;
 
+    /**
+     * 初始化角色權限關聯控制器實例
+     * 
+     * 設置路由器和所有角色權限關聯的API端點
+     */
     constructor() {
         this.router = Router();
         this.initializeRoutes();
@@ -19,68 +37,34 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     }
 
     /**
-     * /roles/{roleId}/permissions:
-     *   get:
-     *     summary: 取得角色的權限
-     *     description: 根據角色ID獲取該角色被分配的所有權限
-     *     tags:
-     *       - Role-Permission Relations
-     *     parameters:
-     *       - in: path
-     *         name: roleId
-     *         required: true
-     *         description: 角色的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     responses:
-     *       200:
-     *         description: 成功取得角色權限列表
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: array
-     *               items:
-     *                 type: object
-     *                 properties:
-     *                   id:
-     *                     type: integer
-     *                     description: 權限ID
-     *                   name:
-     *                     type: string
-     *                     description: 權限名稱
-     *                   description:
-     *                     type: string
-     *                     description: 權限描述
-     *                   createdAt:
-     *                     type: string
-     *                     format: date-time
-     *                     description: 建立時間
-     *                   updatedAt:
-     *                     type: string
-     *                     format: date-time
-     *                     description: 更新時間
-     *       404:
-     *         description: 角色不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Role not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to fetch role permissions"
-     *                 error:
-     *                   type: string
+     * 獲取指定角色的所有權限
+     * 
+     * 根據角色ID查詢該角色被分配的所有權限列表，包含權限的完整訊息。
+     * 
+     * @param req - Express請求物件，包含roleId參數
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * GET /api/rbac/roles/1/permissions
+     * ```
+     * 
+     * 回應格式:
+     * ```json
+     * [
+     *   {
+     *     "id": 1,
+     *     "name": "read_users",
+     *     "description": "允許讀取使用者資料",
+     *     "createdAt": "2024-01-01T00:00:00.000Z",
+     *     "updatedAt": "2024-01-01T00:00:00.000Z"
+     *   }
+     * ]
+     * ```
+     * 
+     * @throws {404} 角色不存在
+     * @throws {500} 伺服器错誤 - 無法獲取角色權限
      */
     public async getRolePermissions(req: Request, res: Response): Promise<void> {
         try {
@@ -98,67 +82,33 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     }
 
     /**
-     * /roles/{roleId}/permissions:
-     *   post:
-     *     summary: 分配權限給角色
-     *     description: 將一個或多個權限分配給指定的角色
-     *     tags:
-     *       - Role-Permission Relations
-     *     parameters:
-     *       - in: path
-     *         name: roleId
-     *         required: true
-     *         description: 角色的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             required:
-     *               - permissionIds
-     *             properties:
-     *               permissionIds:
-     *                 type: array
-     *                 description: 要分配的權限ID陣列
-     *                 items:
-     *                   type: integer
-     *                 example: [1, 2, 3]
-     *     responses:
-     *       200:
-     *         description: 權限分配成功
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Permissions assigned to role"
-     *       404:
-     *         description: 角色不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Role not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to assign permissions"
-     *                 error:
-     *                   type: string
+     * 分配權限給指定角色
+     * 
+     * 將一個或多個權限分配給指定的角色，建立角色和權限之間的關聯關係。
+     * 
+     * @param req - Express請求物件，包含roleId參數和permissionIds陣列
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * POST /api/rbac/roles/1/permissions
+     * Content-Type: application/json
+     * 
+     * {
+     *   "permissionIds": [1, 2, 3]
+     * }
+     * ```
+     * 
+     * 成功回應:
+     * ```json
+     * {
+     *   "message": "Permissions assigned to role"
+     * }
+     * ```
+     * 
+     * @throws {404} 角色不存在
+     * @throws {500} 伺服器错誤 - 無法分配權限
      */
     public async assignPermissionsToRole(req: Request, res: Response): Promise<void> {
         try {
@@ -179,58 +129,28 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     }
 
     /**
-     * /roles/{roleId}/permissions/{permissionId}:
-     *   delete:
-     *     summary: 移除角色的權限
-     *     description: 從指定角色移除特定的權限
-     *     tags:
-     *       - Role-Permission Relations
-     *     parameters:
-     *       - in: path
-     *         name: roleId
-     *         required: true
-     *         description: 角色的唯一識別碼
-     *         schema:
-     *           type: integer
-     *       - in: path
-     *         name: permissionId
-     *         required: true
-     *         description: 權限的唯一識別碼
-     *         schema:
-     *           type: integer
-     *     responses:
-     *       200:
-     *         description: 權限移除成功
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Permission removed from role"
-     *       404:
-     *         description: 角色不存在
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Role not found"
-     *       500:
-     *         description: 伺服器錯誤
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 message:
-     *                   type: string
-     *                   example: "Failed to remove permission"
-     *                 error:
-     *                   type: string
+     * 從角色中移除指定權限
+     * 
+     * 從指定角色中移除特定的權限，斷開它們之間的關聯關係。
+     * 
+     * @param req - Express請求物件，包含roleId和permissionId參數
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     * 
+     * @example
+     * ```bash
+     * DELETE /api/rbac/roles/1/permissions/1
+     * ```
+     * 
+     * 成功回應:
+     * ```json
+     * {
+     *   "message": "Permission removed from role"
+     * }
+     * ```
+     * 
+     * @throws {404} 角色不存在
+     * @throws {500} 伺服器错誤 - 無法移除權限
      */
     public async removePermissionFromRole(req: Request, res: Response): Promise<void> {
         try {

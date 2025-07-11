@@ -1,10 +1,30 @@
 import { Router, Request, Response } from 'express';
 import { AuthService, IAuthService } from '../service/AuthService.js';
 
+/**
+ * JWT驗證控制器，處理使用者登入和登出功能
+ * 
+ * 提供基於JWT的使用者身份驗證，包括登入時的JWT發放和登出時的cookie清除。
+ * 使用httpOnly cookie來安全地儲存JWT token，提升安全性。
+ * 
+ * @group Controllers
+ * @example
+ * ```typescript
+ * const authController = new JWTAuthController();
+ * app.use('/api/', authController.router);
+ * ```
+ */
 export class JWTAuthController {
   public router: Router;
   private authService: IAuthService;
 
+  /**
+   * 初始化JWT驗證控制器實例
+   * 
+   * 設置驗證服務、路由器和相關路由配置
+   * 
+   * @param authService - 驗證服務實例，預設使用AuthService
+   */
   constructor(authService: IAuthService = new AuthService()) {
     this.authService = authService;
     this.router = Router();
@@ -16,6 +36,35 @@ export class JWTAuthController {
     this.router.post('/auth/logout', this.logout.bind(this));
   }
 
+  /**
+   * 處理使用者登入請求
+   * 
+   * 驗證使用者憑證並發放JWT token。成功登入後會設置httpOnly cookie
+   * 來安全地儲存JWT，同時在回應中返回token供前端使用。
+   * 
+   * @param req - Express請求物件，包含username和password
+   * @param res - Express回應物件
+   * @returns Promise<void>
+   * 
+   * @example
+   * ```bash
+   * POST /api/auth/login
+   * Content-Type: application/json
+   * 
+   * {
+   *   "username": "admin",
+   *   "password": "password123"
+   * }
+   * ```
+   * 
+   * 成功回應:
+   * ```json
+   * {
+   *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+   *   "message": "Login successful"
+   * }
+   * ```
+   */
   private async login(req: Request, res: Response): Promise<void> {
     try {
       const { username, password } = req.body;
@@ -55,6 +104,28 @@ export class JWTAuthController {
     }
   }
 
+  /**
+   * 處理使用者登出請求
+   * 
+   * 清除儲存在cookie中的JWT token，完成使用者登出流程。
+   * 此操作會移除httpOnly cookie，確保token無法再被使用。
+   * 
+   * @param req - Express請求物件（未使用）
+   * @param res - Express回應物件
+   * @returns Promise<void>
+   * 
+   * @example
+   * ```bash
+   * POST /api/auth/logout
+   * ```
+   * 
+   * 成功回應:
+   * ```json
+   * {
+   *   "message": "Logout successful"
+   * }
+   * ```
+   */
   private async logout(req: Request, res: Response): Promise<void> {
     try {
       // 清除 JWT cookie
