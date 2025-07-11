@@ -19,7 +19,6 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     }
 
     /**
-     * @swagger
      * /roles/{roleId}/permissions:
      *   get:
      *     summary: 取得角色的權限
@@ -99,7 +98,6 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     }
 
     /**
-     * @swagger
      * /roles/{roleId}/permissions:
      *   post:
      *     summary: 分配權限給角色
@@ -181,7 +179,6 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     }
 
     /**
-     * @swagger
      * /roles/{roleId}/permissions/{permissionId}:
      *   delete:
      *     summary: 移除角色的權限

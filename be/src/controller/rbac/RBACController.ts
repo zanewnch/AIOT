@@ -41,11 +41,11 @@ export class RBACController implements IRBACController {
         this.router.use(this.jwtAuth.authenticate);
 
         // 將各個controller的路由掛載到主router上
-        this.router.use('/users', this.userController.router);
-        this.router.use('/roles', this.roleController.router);
-        this.router.use('/permissions', this.permissionController.router);
-        this.router.use('/users', this.userToRoleController.router);
-        this.router.use('/roles', this.roleToPermissionController.router);
+        this.router.use('/rbac/users', this.userController.router);
+        this.router.use('/rbac/roles', this.roleController.router);
+        this.router.use('/rbac/permissions', this.permissionController.router);
+        this.router.use('/rbac/users', this.userToRoleController.router);
+        this.router.use('/rbac/roles', this.roleToPermissionController.router);
     }
 
 }

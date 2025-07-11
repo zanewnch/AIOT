@@ -86,3 +86,8 @@ export class RequestUtils {
   }
 }
 
+// 創建一個預設的 RequestUtils 實例
+export const apiClient = new RequestUtils(
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+);
+

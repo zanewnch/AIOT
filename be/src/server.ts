@@ -21,7 +21,7 @@ import { PermissionModel } from './models/rbac/PermissionModel.js';
 import { UserRoleModel } from './models/rbac/UserToRoleModel.js';
 import { RolePermissionModel } from './models/rbac/RoleToPermissionModel.js';
 import amqp from 'amqplib';
-import { InitController, JWTAuthController, RBACController } from './controller/index.js';
+import { InitController, JWTAuthController, RBACController, SwaggerController } from './controller/index.js';
 
 const debugLogger = debug('aiot:server');
 
@@ -35,7 +35,7 @@ class Server {
 
   constructor() {
     this.app = express();
-    this.port = this.normalizePort(process.env.PORT || '8000');
+    this.port = this.normalizePort(process.env.PORT || '8010');
     this.server = http.createServer(this.app);
 
     // setup
@@ -49,7 +49,7 @@ class Server {
 
   private setupSequelize(): void {
     this.sequelize = new Sequelize({
-      host: process.env.DB_HOST || 'aiot-mysqldb',
+      host: process.env.DB_HOST || 'localhost',
       database: process.env.DB_NAME || 'main_db',
       username: process.env.DB_USER || 'admin',
       password: process.env.DB_PASSWORD || 'admin',
@@ -190,6 +190,9 @@ class Server {
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
     this.app.use(express.static(path.join(__dirname, '../public')));
+    
+    // 提供 TypeDoc 文檔
+    this.app.use('/docs', express.static(path.join(__dirname, '../docs')));
   }
 
   private async setupRoutes(): Promise<void> {
@@ -197,12 +200,13 @@ class Server {
     const initController = new InitController();
     const jwtAuthController = new JWTAuthController();
     const rbacController = new RBACController();
+    const swaggerController = new SwaggerController();
 
     // 設置路由
-    this.app.use('/api/init', initController.router);
-    this.app.use('/api/auth', jwtAuthController.router);
-    this.app.use('/api/rbac', rbacController.router);
-    
+    this.app.use('/api/', initController.router);
+    this.app.use('/api/', jwtAuthController.router);
+    this.app.use('/api/', rbacController.router);
+    this.app.use('/api/', swaggerController.router);
 
     console.log('✅ All controllers initialized and routes configured');
   }

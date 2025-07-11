@@ -11,7 +11,7 @@ interface MongoConfig {
 
 // MongoDB 連接配置 - 基於 docker-compose.yml 設定
 const mongoConfig: MongoConfig = {
-  host: process.env.NODE_ENV === "development" ? "aiot-mongodb" : "localhost",
+  host: "localhost",
   port: 27017,
   database: "main_db",
   username: "admin",

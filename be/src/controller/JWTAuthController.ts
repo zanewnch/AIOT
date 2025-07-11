@@ -12,8 +12,8 @@ export class JWTAuthController {
   }
 
   private initializeRoutes(): void {
-    this.router.post('/login', this.login.bind(this));
-    this.router.post('/logout', this.logout.bind(this));
+    this.router.post('/auth/login', this.login.bind(this));
+    this.router.post('/auth/logout', this.logout.bind(this));
   }
 
   private async login(req: Request, res: Response): Promise<void> {

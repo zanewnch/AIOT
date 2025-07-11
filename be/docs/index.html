@@ -1,0 +1,164 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>AIOT Backend API Documentation - v0.0.0</title><meta name="description" content="Documentation for AIOT Backend API Documentation"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="https://github.com/zanewnch/AIOT" class="title">AIOT Backend API Documentation - v0.0.0</a><div id="tsd-toolbar-links"><a href="https://github.com/zanewnch/AIOT">GitHub</a><a href="/api-docs">API Docs</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>AIOT Backend API Documentation - v0.0.0</h1></div><div class="tsd-panel tsd-typography"><h1 id="aiot-express-application" class="tsd-anchor-link">AIOT Express Application<a href="#aiot-express-application" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1><p>A Node.js Express application built with TypeScript following modern best practices.</p>
+<h2 id="📁-project-structure" class="tsd-anchor-link">📁 Project Structure<a href="#📁-project-structure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code><span class="hl-0">app</span><span class="hl-1">/</span><br/><span class="hl-1">├── </span><span class="hl-0">src</span><span class="hl-1">/                    # </span><span class="hl-0">Source</span><span class="hl-1"> </span><span class="hl-0">code</span><br/><span class="hl-1">│   ├── </span><span class="hl-0">app</span><span class="hl-1">.</span><span class="hl-0">ts</span><span class="hl-1">             # </span><span class="hl-0">Express</span><span class="hl-1"> </span><span class="hl-0">app</span><span class="hl-1"> </span><span class="hl-0">configuration</span><br/><span class="hl-1">│   ├── </span><span class="hl-0">server</span><span class="hl-1">.</span><span class="hl-0">ts</span><span class="hl-1">          # </span><span class="hl-0">Server</span><span class="hl-1"> </span><span class="hl-0">entry</span><span class="hl-1"> </span><span class="hl-0">point</span><br/><span class="hl-1">│   ├── </span><span class="hl-0">routes</span><span class="hl-1">/            # </span><span class="hl-0">Route</span><span class="hl-1"> </span><span class="hl-0">handlers</span><br/><span class="hl-1">│   │   ├── </span><span class="hl-0">index</span><span class="hl-1">.</span><span class="hl-0">ts</span><span class="hl-1">       # </span><span class="hl-0">Home</span><span class="hl-1"> </span><span class="hl-0">routes</span><br/><span class="hl-1">│   │   └── </span><span class="hl-0">users</span><span class="hl-1">.</span><span class="hl-0">ts</span><span class="hl-1">       # </span><span class="hl-0">User</span><span class="hl-1"> </span><span class="hl-2">API</span><span class="hl-1"> </span><span class="hl-0">routes</span><br/><span class="hl-1">│   ├── </span><span class="hl-0">controllers</span><span class="hl-1">/       # </span><span class="hl-0">Business</span><span class="hl-1"> </span><span class="hl-0">logic</span><br/><span class="hl-1">│   │   └── </span><span class="hl-0">userController</span><span class="hl-1">.</span><span class="hl-0">ts</span><br/><span class="hl-1">│   ├── </span><span class="hl-0">middleware</span><span class="hl-1">/        # </span><span class="hl-0">Custom</span><span class="hl-1"> </span><span class="hl-0">middleware</span><br/><span class="hl-1">│   │   └── </span><span class="hl-0">errorHandler</span><span class="hl-1">.</span><span class="hl-0">ts</span><br/><span class="hl-1">│   └── </span><span class="hl-0">types</span><span class="hl-1">/             # </span><span class="hl-0">TypeScript</span><span class="hl-1"> </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">definitions</span><br/><span class="hl-1">│       └── index.ts</span><br/><span class="hl-1">├── public/                # Static assets</span><br/><span class="hl-1">│   ├── css/              # Stylesheets</span><br/><span class="hl-1">│   ├── js/               # Client-side JavaScript</span><br/><span class="hl-1">│   └── images/           # Images</span><br/><span class="hl-1">├── views/                 # Template files (Jade/Pug)</span><br/><span class="hl-1">├── dist/                  # Compiled TypeScript output</span><br/><span class="hl-1">└── Dockerfile.be          # Docker configuration</span>
+</code><button>Copy</button></pre>
+
+<h2 id="🚀-getting-started" class="tsd-anchor-link">🚀 Getting Started<a href="#🚀-getting-started" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li>Node.js (v18+ recommended)</li>
+<li>npm or yarn</li>
+</ul>
+<h3 id="installation" class="tsd-anchor-link">Installation<a href="#installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ol>
+<li>Install dependencies:</li>
+</ol>
+<pre><code class="bash"><span class="hl-5">npm</span><span class="hl-1"> </span><span class="hl-6">install</span>
+</code><button type="button">Copy</button></pre>
+
+<ol start="2">
+<li>Development mode (with hot reload):</li>
+</ol>
+<pre><code class="bash"><span class="hl-5">npm</span><span class="hl-1"> </span><span class="hl-6">run</span><span class="hl-1"> </span><span class="hl-6">dev</span>
+</code><button type="button">Copy</button></pre>
+
+<ol start="3">
+<li>Build for production:</li>
+</ol>
+<pre><code class="bash"><span class="hl-5">npm</span><span class="hl-1"> </span><span class="hl-6">run</span><span class="hl-1"> </span><span class="hl-6">build</span>
+</code><button type="button">Copy</button></pre>
+
+<ol start="4">
+<li>Run production build:</li>
+</ol>
+<pre><code class="bash"><span class="hl-5">npm</span><span class="hl-1"> </span><span class="hl-6">run</span><span class="hl-1"> </span><span class="hl-6">serve</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="📝-available-scripts" class="tsd-anchor-link">📝 Available Scripts<a href="#📝-available-scripts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li><code>npm start</code> - Start with tsx (development)</li>
+<li><code>npm run dev</code> - Development mode with nodemon</li>
+<li><code>npm run build</code> - Compile TypeScript to JavaScript</li>
+<li><code>npm run build:watch</code> - Watch mode compilation</li>
+<li><code>npm run serve</code> - Run compiled JavaScript</li>
+</ul>
+<h2 id="🛠-api-endpoints" class="tsd-anchor-link">🛠 API Endpoints<a href="#🛠-api-endpoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li><code>GET /</code> - Home page</li>
+<li><code>GET /api/users</code> - Get all users</li>
+<li><code>GET /api/users/:id</code> - Get user by ID</li>
+</ul>
+<h2 id="🔧-technologies-used" class="tsd-anchor-link">🔧 Technologies Used<a href="#🔧-technologies-used" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li><strong>Node.js</strong> - Runtime environment</li>
+<li><strong>Express.js</strong> - Web framework</li>
+<li><strong>TypeScript</strong> - Type safety</li>
+<li><strong>Jade/Pug</strong> - Template engine</li>
+<li><strong>tsx</strong> - TypeScript execution</li>
+<li><strong>nodemon</strong> - Development auto-reload</li>
+</ul>
+<h2 id="🏗-development" class="tsd-anchor-link">🏗 Development<a href="#🏗-development" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>The project uses:</p>
+<ul>
+<li>ES Modules (<code>&quot;type&quot;: &quot;module&quot;</code> in package.json)</li>
+<li>Strict TypeScript configuration</li>
+<li>Organized folder structure following Node.js best practices</li>
+<li>Error handling middleware</li>
+<li>Type-safe API responses</li>
+</ul>
+<h2 id="📚-api-documentation-swagger" class="tsd-anchor-link">📚 API Documentation (Swagger)<a href="#📚-api-documentation-swagger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="概念與架構" class="tsd-anchor-link">概念與架構<a href="#概念與架構" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>本專案使用獨立 YAML 文件的方式來管理 Swagger API 文檔，與 TypeDoc 內部程式碼文檔完全分離：</p>
+<h4 id="🔄-架構變更-yaml-驅動" class="tsd-anchor-link">🔄 <strong>架構變更 (YAML 驅動)</strong><a href="#🔄-架構變更-yaml-驅動" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><strong>TypeDoc</strong>: 內部程式碼文檔（<code>npm run docs:generate</code>）</li>
+<li><strong>Swagger</strong>: API 文檔（獨立 YAML 文件驅動）</li>
+<li><strong>分離關注點</strong>: 程式碼文檔 vs API 規格文檔</li>
+</ul>
+<h4 id="backend-設定" class="tsd-anchor-link">Backend 設定<a href="#backend-設定" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ol>
+<li>
+<p><strong>獨立 YAML 文檔</strong></p>
+<ul>
+<li>主要規格文件：<code>/docs/swagger.yaml</code></li>
+<li>包含完整的 OpenAPI 3.0 規格定義</li>
+<li>所有 API 端點、模式、安全配置都在此文件中</li>
+</ul>
+</li>
+<li>
+<p><strong>配置檔案</strong></p>
+<pre><code class="typescript"><span class="hl-7">// /src/config/swaggerConfig.ts</span><br/><span class="hl-8">import</span><span class="hl-1"> </span><span class="hl-0">yaml</span><span class="hl-1"> </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-6">&#39;js-yaml&#39;</span><span class="hl-1">;</span><br/><span class="hl-8">import</span><span class="hl-1"> </span><span class="hl-0">fs</span><span class="hl-1"> </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-6">&#39;fs&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-7">// 讀取獨立的 YAML 文檔</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-2">swaggerPath</span><span class="hl-1"> = </span><span class="hl-0">path</span><span class="hl-1">.</span><span class="hl-5">join</span><span class="hl-1">(</span><span class="hl-0">__dirname</span><span class="hl-1">, </span><span class="hl-6">&#39;../../docs/swagger.yaml&#39;</span><span class="hl-1">);</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-2">swaggerDocument</span><span class="hl-1"> = </span><span class="hl-0">fs</span><span class="hl-1">.</span><span class="hl-5">readFileSync</span><span class="hl-1">(</span><span class="hl-0">swaggerPath</span><span class="hl-1">, </span><span class="hl-6">&#39;utf8&#39;</span><span class="hl-1">);</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-2">specs</span><span class="hl-1"> = </span><span class="hl-0">yaml</span><span class="hl-1">.</span><span class="hl-5">load</span><span class="hl-1">(</span><span class="hl-0">swaggerDocument</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li>
+<p><strong>API 端點</strong></p>
+<ul>
+<li><code>/api/swagger.json</code> - 返回 OpenAPI spec JSON（供前端使用）</li>
+<li><code>/api/docs</code> - Swagger UI 頁面（備用方案）</li>
+</ul>
+</li>
+<li>
+<p><strong>依賴管理</strong></p>
+<pre><code class="bash"><span class="hl-7"># 安裝 YAML 解析器</span><br/><span class="hl-5">npm</span><span class="hl-1"> </span><span class="hl-6">install</span><span class="hl-1"> </span><span class="hl-6">js-yaml</span><span class="hl-1"> </span><span class="hl-6">@types/js-yaml</span><br/><br/><span class="hl-7"># 移除舊的依賴（已不需要）</span><br/><span class="hl-5">npm</span><span class="hl-1"> </span><span class="hl-6">uninstall</span><span class="hl-1"> </span><span class="hl-6">swagger-jsdoc</span><span class="hl-1"> </span><span class="hl-6">@types/swagger-jsdoc</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+</ol>
+<h4 id="🎯-yaml-文檔結構" class="tsd-anchor-link">🎯 <strong>YAML 文檔結構</strong><a href="#🎯-yaml-文檔結構" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="yaml"><span class="hl-7"># /docs/swagger.yaml</span><br/><span class="hl-9">openapi</span><span class="hl-1">: </span><span class="hl-10">3.0.0</span><br/><span class="hl-9">info</span><span class="hl-1">:</span><br/><span class="hl-1">  </span><span class="hl-9">title</span><span class="hl-1">: </span><span class="hl-11">AIOT API</span><br/><span class="hl-1">  </span><span class="hl-9">version</span><span class="hl-1">: </span><span class="hl-10">1.0.0</span><br/><span class="hl-1">  </span><span class="hl-9">description</span><span class="hl-1">: </span><span class="hl-11">API documentation for AIOT project</span><br/><br/><span class="hl-9">paths</span><span class="hl-1">:</span><br/><span class="hl-1">  </span><span class="hl-9">/api/init/rbac-demo</span><span class="hl-1">:</span><br/><span class="hl-1">    </span><span class="hl-9">post</span><span class="hl-1">:</span><br/><span class="hl-1">      </span><span class="hl-9">tags</span><span class="hl-1">: [</span><span class="hl-11">Initialization</span><span class="hl-1">]</span><br/><span class="hl-1">      </span><span class="hl-9">summary</span><span class="hl-1">: </span><span class="hl-11">Initialize RBAC demo data</span><br/><span class="hl-1">      </span><span class="hl-7"># ... 完整的端點定義</span><br/><br/><span class="hl-9">components</span><span class="hl-1">:</span><br/><span class="hl-1">  </span><span class="hl-9">schemas</span><span class="hl-1">:</span><br/><span class="hl-1">    </span><span class="hl-9">User</span><span class="hl-1">:</span><br/><span class="hl-1">      </span><span class="hl-9">type</span><span class="hl-1">: </span><span class="hl-11">object</span><br/><span class="hl-1">      </span><span class="hl-9">properties</span><span class="hl-1">:</span><br/><span class="hl-1">        </span><span class="hl-9">id</span><span class="hl-1">: { </span><span class="hl-9">type</span><span class="hl-1">: </span><span class="hl-11">integer</span><span class="hl-1"> }</span><br/><span class="hl-1">        </span><span class="hl-9">username</span><span class="hl-1">: { </span><span class="hl-9">type</span><span class="hl-1">: </span><span class="hl-11">string</span><span class="hl-1"> }</span><br/><span class="hl-1">        </span><span class="hl-7"># ... 完整的模式定義</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="frontend-整合" class="tsd-anchor-link">Frontend 整合<a href="#frontend-整合" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ol>
+<li>
+<p><strong>前端組件</strong></p>
+<ul>
+<li><code>SwaggerDocPage.tsx</code> - 完整的文檔頁面</li>
+<li>通過 API 調用獲取 <code>/api/swagger.json</code></li>
+</ul>
+</li>
+<li>
+<p><strong>資料流程</strong></p>
+<pre><code><span class="hl-1">/</span><span class="hl-0">docs</span><span class="hl-1">/</span><span class="hl-0">swagger</span><span class="hl-1">.</span><span class="hl-0">yaml</span><span class="hl-1"> → </span><span class="hl-0">js</span><span class="hl-1">-</span><span class="hl-0">yaml</span><span class="hl-1"> </span><span class="hl-0">解析</span><span class="hl-1"> → /</span><span class="hl-0">api</span><span class="hl-1">/</span><span class="hl-0">swagger</span><span class="hl-1">.</span><span class="hl-0">json</span><br/><span class="hl-0">Frontend</span><span class="hl-1"> </span><span class="hl-0">調用</span><span class="hl-1"> → </span><span class="hl-0">swagger</span><span class="hl-1">-</span><span class="hl-0">ui</span><span class="hl-1">-</span><span class="hl-0">react</span><span class="hl-1"> </span><span class="hl-0">渲染</span>
+</code><button>Copy</button></pre>
+
+</li>
+</ol>
+<h4 id="📝-文檔維護方式" class="tsd-anchor-link">📝 <strong>文檔維護方式</strong><a href="#📝-文檔維護方式" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ol>
+<li>
+<p><strong>更新 API 文檔</strong>：</p>
+<ul>
+<li>直接編輯 <code>/docs/swagger.yaml</code></li>
+<li>無需修改程式碼註釋</li>
+<li>重啟服務器即可看到變更</li>
+</ul>
+</li>
+<li>
+<p><strong>添加新端點</strong>：</p>
+<pre><code class="yaml"><span class="hl-7"># 在 swagger.yaml 中添加</span><br/><span class="hl-9">/api/new-endpoint</span><span class="hl-1">:</span><br/><span class="hl-1">  </span><span class="hl-9">get</span><span class="hl-1">:</span><br/><span class="hl-1">    </span><span class="hl-9">tags</span><span class="hl-1">: [</span><span class="hl-11">NewFeature</span><span class="hl-1">]</span><br/><span class="hl-1">    </span><span class="hl-9">summary</span><span class="hl-1">: </span><span class="hl-11">New endpoint description</span><br/><span class="hl-1">    </span><span class="hl-9">responses</span><span class="hl-1">:</span><br/><span class="hl-1">      </span><span class="hl-11">&#39;200&#39;</span><span class="hl-1">:</span><br/><span class="hl-1">        </span><span class="hl-9">description</span><span class="hl-1">: </span><span class="hl-11">Success response</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+</ol>
+<h4 id="使用方式" class="tsd-anchor-link">使用方式<a href="#使用方式" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><strong>前端整合</strong>：在 React 應用中使用 <code>SwaggerDocPage</code> 組件</li>
+<li><strong>獨立訪問</strong>：訪問 <code>http://localhost:8000/api/docs</code></li>
+<li><strong>JSON 規格</strong>：<code>http://localhost:8000/api/swagger.json</code></li>
+</ul>
+<h4 id="優點" class="tsd-anchor-link">優點<a href="#優點" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><strong>文檔與程式碼分離</strong>：更清晰的關注點分離</li>
+<li><strong>易於維護</strong>：統一的 YAML 文件管理</li>
+<li><strong>版本控制友好</strong>：YAML 格式更適合 Git diff</li>
+<li><strong>團隊協作</strong>：非開發人員也可以編輯文檔</li>
+<li><strong>工具整合</strong>：支援各種 OpenAPI 工具鏈</li>
+</ul>
+<h4 id="typedoc-vs-swagger" class="tsd-anchor-link">TypeDoc vs Swagger<a href="#typedoc-vs-swagger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li>
+<p><strong>TypeDoc</strong>:</p>
+<ul>
+<li>用途：內部程式碼文檔、API 參考</li>
+<li>來源：TypeScript 註釋</li>
+<li>訪問：<code>npm run docs:generate &amp;&amp; npm run docs:serve</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Swagger</strong>:</p>
+<ul>
+<li>用途：外部 API 文檔、API 測試</li>
+<li>來源：獨立 YAML 文件</li>
+<li>訪問：<code>/api/docs</code> 或前端整合</li>
+</ul>
+</li>
+</ul>
+<h2 id="🐳-docker" class="tsd-anchor-link">🐳 Docker<a href="#🐳-docker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Build and run with Docker:</p>
+<pre><code class="bash"><span class="hl-5">docker</span><span class="hl-1"> </span><span class="hl-6">build</span><span class="hl-1"> </span><span class="hl-3">-f</span><span class="hl-1"> </span><span class="hl-6">Dockerfile.be</span><span class="hl-1"> </span><span class="hl-3">-t</span><span class="hl-1"> </span><span class="hl-6">aiot-app</span><span class="hl-1"> </span><span class="hl-6">.</span><br/><span class="hl-5">docker</span><span class="hl-1"> </span><span class="hl-6">run</span><span class="hl-1"> </span><span class="hl-3">-p</span><span class="hl-1"> </span><span class="hl-6">8000:8000</span><span class="hl-1"> </span><span class="hl-6">aiot-app</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#aiot-express-application"><span>AIOT <wbr/>Express <wbr/>Application</span></a><ul><li><a href="#📁-project-structure"><span>📁 <wbr/>Project <wbr/>Structure</span></a></li><li><a href="#🚀-getting-started"><span>🚀 <wbr/>Getting <wbr/>Started</span></a></li><li><ul><li><a href="#prerequisites"><span>Prerequisites</span></a></li><li><a href="#installation"><span>Installation</span></a></li></ul></li><li><a href="#📝-available-scripts"><span>📝 <wbr/>Available <wbr/>Scripts</span></a></li><li><a href="#🛠-api-endpoints"><span>🛠 <wbr/>API <wbr/>Endpoints</span></a></li><li><a href="#🔧-technologies-used"><span>🔧 <wbr/>Technologies <wbr/>Used</span></a></li><li><a href="#🏗-development"><span>🏗 <wbr/>Development</span></a></li><li><a href="#📚-api-documentation-swagger"><span>📚 <wbr/>API <wbr/>Documentation (<wbr/>Swagger)</span></a></li><li><ul><li><a href="#概念與架構"><span>概念與架構</span></a></li><li><ul><li><a href="#🔄-架構變更-yaml-驅動"><span>🔄 架構變更 (<wbr/>YAML 驅動)</span></a></li><li><a href="#backend-設定"><span>Backend 設定</span></a></li><li><a href="#🎯-yaml-文檔結構"><span>🎯 <wbr/>YAML 文檔結構</span></a></li><li><a href="#frontend-整合"><span>Frontend 整合</span></a></li><li><a href="#📝-文檔維護方式"><span>📝 文檔維護方式</span></a></li><li><a href="#使用方式"><span>使用方式</span></a></li><li><a href="#優點"><span>優點</span></a></li><li><a href="#typedoc-vs-swagger"><span>Type<wbr/>Doc vs <wbr/>Swagger</span></a></li></ul></li></ul></li><li><a href="#🐳-docker"><span>🐳 <wbr/>Docker</span></a></li></ul></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/zanewnch/AIOT" class="tsd-nav-link">GitHub</a><a href="/api-docs" class="tsd-nav-link">API Docs</a></nav><nav class="tsd-navigation"><a href="modules.html">AIOT Backend API Documentation - v0.0.0</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

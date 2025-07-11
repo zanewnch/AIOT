@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 
 export const db = mysql.createPool({
-  host: process.env.DB_HOST || "aiot-mysqldb",
+  host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "admin",
   password: process.env.DB_PASSWORD || "admin",
   database: process.env.DB_NAME || "main_db",

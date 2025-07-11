@@ -1,0 +1,77 @@
+{
+  "entryPoints": [
+    "./src/controller",
+    "./src/models/rbac",
+    "./src/types",
+    "./src/utils",
+    "./src/middleware"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "./docs",
+  "theme": "default",
+  "includeVersion": true,
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeInternal": false,
+  "readme": "./README.md",
+  "name": "AIOT Backend API Documentation",
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Controllers",
+    "Services", 
+    "Models",
+    "Types",
+    "Repositories",
+    "Middleware",
+    "Utils",
+    "*"
+  ],
+  "groupOrder": [
+    "Controllers",
+    "Services",
+    "Models", 
+    "Types",
+    "Repositories",
+    "Middleware",
+    "Utils",
+    "*"
+  ],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Method",
+    "Accessor"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "titleLink": "https://github.com/zanewnch/AIOT",
+  "navigationLinks": {
+    "GitHub": "https://github.com/zanewnch/AIOT",
+    "API Docs": "/api-docs"
+  },
+  "skipErrorChecking": true,
+  "exclude": [
+    "**/node_modules/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/infrastructure/**",
+    "**/service/Device*.ts",
+    "**/service/RabbitMQService.ts",
+    "**/repo/**"
+  ]
+}

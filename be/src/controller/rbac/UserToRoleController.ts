@@ -19,7 +19,6 @@ export class UserToRoleController implements IUserToRoleController {
     }
 
     /**
-     * @swagger
      * /users/{userId}/roles:
      *   get:
      *     summary: 取得使用者的角色
@@ -99,7 +98,6 @@ export class UserToRoleController implements IUserToRoleController {
     }
 
     /**
-     * @swagger
      * /users/{userId}/roles:
      *   post:
      *     summary: 分配角色給使用者
@@ -181,7 +179,6 @@ export class UserToRoleController implements IUserToRoleController {
     }
 
     /**
-     * @swagger
      * /users/{userId}/roles/{roleId}:
      *   delete:
      *     summary: 移除使用者的角色

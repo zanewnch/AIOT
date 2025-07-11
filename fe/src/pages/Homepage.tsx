@@ -1,9 +1,9 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar, Sidebar } from '../components';
-import styles from '../styles/homeview.module.scss';
+import styles from '../styles/homepage.module.scss';
 
-export function HomeView() {
+export function Homepage() {
   return (
     <div className={styles.homeView}>
       <Navbar />

@@ -1,0 +1,311 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>UserController | AIOT Backend API Documentation - v0.0.0</title><meta name="description" content="Documentation for AIOT Backend API Documentation"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="https://github.com/zanewnch/AIOT" class="title">AIOT Backend API Documentation - v0.0.0</a><div id="tsd-toolbar-links"><a href="https://github.com/zanewnch/AIOT">GitHub</a><a href="/api-docs">API Docs</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="../modules/controller_rbac_UserController.html">controller/rbac/UserController</a></li><li><a href="" aria-current="page">UserController</a></li></ul><h1>Class UserController</h1></div><section class="tsd-panel"><h4>Implements</h4><ul class="tsd-hierarchy"><li><a href="../interfaces/types_controllers_IUserController.IUserController.html" class="tsd-signature-type tsd-kind-interface">IUserController</a></li></ul></section><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L6">src/controller/rbac/UserController.ts:6</a></li></ul></aside><section class="tsd-panel-group tsd-index-group"><section class="tsd-panel tsd-index-panel"><details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h5 class="tsd-index-heading uppercase">Index</h5></summary><div class="tsd-accordion-details"><section class="tsd-index-section"><h3 class="tsd-index-heading">Constructors</h3><div class="tsd-index-list"><a href="#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section><section class="tsd-index-section"><h3 class="tsd-index-heading">Methods</h3><div class="tsd-index-list"><a href="#initializeroutes" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>initialize<wbr/>Routes</span></a>
+<a href="#getusers" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Users</span></a>
+<a href="#getuserbyid" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>User<wbr/>By<wbr/>Id</span></a>
+<a href="#createuser" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>User</span></a>
+<a href="#updateuser" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>User</span></a>
+<a href="#deleteuser" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>delete<wbr/>User</span></a>
+</div></section><section class="tsd-index-section"><h3 class="tsd-index-heading">Properties</h3><div class="tsd-index-list"><a href="#router" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>router</span></a>
+</div></section></div></details></section></section><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Constructors</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="constructorusercontroller"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">UserController</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">UserController</a><a href="#constructorusercontroller" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">UserController</a></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L9">src/controller/rbac/UserController.ts:9</a></li></ul></aside></div></li></ul></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Methods</h2></summary><section><section class="tsd-panel tsd-member tsd-is-private"><h3 class="tsd-anchor-link" id="initializeroutes"><code class="tsd-tag">Private</code><span>initialize<wbr/>Routes</span><a href="#initializeroutes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-private"><li class=""><div class="tsd-signature tsd-anchor-link" id="initializeroutes-1"><span class="tsd-kind-call-signature">initializeRoutes</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#initializeroutes-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L14">src/controller/rbac/UserController.ts:14</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="getusers"><span>get<wbr/>Users</span><a href="#getusers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="getusers-1"><span class="tsd-kind-call-signature">getUsers</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">req</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">res</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Response</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#getusers-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>/users:
+get:
+summary: 取得所有使用者
+description: 獲取系統中所有使用者的列表
+tags:
+- Users
+responses:
+200:
+description: 成功取得使用者列表
+content:
+application/json:
+schema:
+type: array
+items:
+type: object
+properties:
+id:
+type: integer
+description: 使用者ID
+username:
+type: string
+description: 使用者名稱
+email:
+type: string
+description: 電子郵件
+passwordHash:
+type: string
+description: 密碼雜湊值
+createdAt:
+type: string
+format: date-time
+description: 建立時間
+updatedAt:
+type: string
+format: date-time
+description: 更新時間
+500:
+description: 伺服器錯誤
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;Failed to fetch users&quot;
+error:
+type: string</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">req</span>: <span class="tsd-signature-type">Request</span></span></li><li><span><span class="tsd-kind-parameter">res</span>: <span class="tsd-signature-type">Response</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Implementation of <a href="../interfaces/types_controllers_IUserController.IUserController.html">IUserController</a>.<a href="../interfaces/types_controllers_IUserController.IUserController.html#getusers">getUsers</a></p><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L74">src/controller/rbac/UserController.ts:74</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="getuserbyid"><span>get<wbr/>User<wbr/>By<wbr/>Id</span><a href="#getuserbyid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="getuserbyid-1"><span class="tsd-kind-call-signature">getUserById</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">req</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">res</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Response</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#getuserbyid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>/users/{userId}:
+get:
+summary: 根據ID取得使用者
+description: 根據使用者ID獲取特定使用者的詳細資訊
+tags:
+- Users
+parameters:
+- in: path
+name: userId
+required: true
+description: 使用者的唯一識別碼
+schema:
+type: integer
+responses:
+200:
+description: 成功取得使用者資訊
+content:
+application/json:
+schema:
+type: object
+properties:
+id:
+type: integer
+description: 使用者ID
+username:
+type: string
+description: 使用者名稱
+email:
+type: string
+description: 電子郵件
+passwordHash:
+type: string
+description: 密碼雜湊值
+createdAt:
+type: string
+format: date-time
+description: 建立時間
+updatedAt:
+type: string
+format: date-time
+description: 更新時間
+404:
+description: 使用者不存在
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;User not found&quot;
+500:
+description: 伺服器錯誤
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;Failed to fetch user&quot;
+error:
+type: string</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">req</span>: <span class="tsd-signature-type">Request</span></span></li><li><span><span class="tsd-kind-parameter">res</span>: <span class="tsd-signature-type">Response</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Implementation of <a href="../interfaces/types_controllers_IUserController.IUserController.html">IUserController</a>.<a href="../interfaces/types_controllers_IUserController.IUserController.html#getuserbyid">getUserById</a></p><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L149">src/controller/rbac/UserController.ts:149</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="createuser"><span>create<wbr/>User</span><a href="#createuser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="createuser-1"><span class="tsd-kind-call-signature">createUser</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">req</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">res</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Response</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#createuser-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>/users:
+post:
+summary: 建立新使用者
+description: 在系統中建立一個新的使用者
+tags:
+- Users
+requestBody:
+required: true
+content:
+application/json:
+schema:
+type: object
+required:
+- username
+- passwordHash
+- email
+properties:
+username:
+type: string
+description: 使用者名稱
+example: &quot;john_doe&quot;
+passwordHash:
+type: string
+description: 密碼雜湊值
+example: &quot;$2b$10$...&quot;
+email:
+type: string
+format: email
+description: 電子郵件地址
+example: &quot;<a href="mailto:john.doe@example.com">john.doe@example.com</a>&quot;
+responses:
+201:
+description: 使用者建立成功
+content:
+application/json:
+schema:
+type: object
+properties:
+id:
+type: integer
+description: 使用者ID
+username:
+type: string
+description: 使用者名稱
+email:
+type: string
+description: 電子郵件
+passwordHash:
+type: string
+description: 密碼雜湊值
+createdAt:
+type: string
+format: date-time
+description: 建立時間
+updatedAt:
+type: string
+format: date-time
+description: 更新時間
+500:
+description: 伺服器錯誤
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;Failed to create user&quot;
+error:
+type: string</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">req</span>: <span class="tsd-signature-type">Request</span></span></li><li><span><span class="tsd-kind-parameter">res</span>: <span class="tsd-signature-type">Response</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Implementation of <a href="../interfaces/types_controllers_IUserController.IUserController.html">IUserController</a>.<a href="../interfaces/types_controllers_IUserController.IUserController.html#createuser">createUser</a></p><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L236">src/controller/rbac/UserController.ts:236</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="updateuser"><span>update<wbr/>User</span><a href="#updateuser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="updateuser-1"><span class="tsd-kind-call-signature">updateUser</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">req</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">res</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Response</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#updateuser-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>/users/{userId}:
+put:
+summary: 更新使用者
+description: 根據使用者ID更新特定使用者的資訊
+tags:
+- Users
+parameters:
+- in: path
+name: userId
+required: true
+description: 使用者的唯一識別碼
+schema:
+type: integer
+requestBody:
+required: true
+content:
+application/json:
+schema:
+type: object
+properties:
+username:
+type: string
+description: 使用者名稱
+example: &quot;john_doe&quot;
+passwordHash:
+type: string
+description: 密碼雜湊值
+example: &quot;$2b$10$...&quot;
+email:
+type: string
+format: email
+description: 電子郵件地址
+example: &quot;<a href="mailto:john.doe@example.com">john.doe@example.com</a>&quot;
+responses:
+200:
+description: 使用者更新成功
+content:
+application/json:
+schema:
+type: object
+properties:
+id:
+type: integer
+description: 使用者ID
+username:
+type: string
+description: 使用者名稱
+email:
+type: string
+description: 電子郵件
+passwordHash:
+type: string
+description: 密碼雜湊值
+createdAt:
+type: string
+format: date-time
+description: 建立時間
+updatedAt:
+type: string
+format: date-time
+description: 更新時間
+404:
+description: 使用者不存在
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;User not found&quot;
+500:
+description: 伺服器錯誤
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;Failed to update user&quot;
+error:
+type: string</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">req</span>: <span class="tsd-signature-type">Request</span></span></li><li><span><span class="tsd-kind-parameter">res</span>: <span class="tsd-signature-type">Response</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Implementation of <a href="../interfaces/types_controllers_IUserController.IUserController.html">IUserController</a>.<a href="../interfaces/types_controllers_IUserController.IUserController.html#updateuser">updateUser</a></p><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L332">src/controller/rbac/UserController.ts:332</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="deleteuser"><span>delete<wbr/>User</span><a href="#deleteuser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="deleteuser-1"><span class="tsd-kind-call-signature">deleteUser</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">req</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">res</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Response</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#deleteuser-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>/users/{userId}:
+delete:
+summary: 刪除使用者
+description: 根據使用者ID刪除特定的使用者
+tags:
+- Users
+parameters:
+- in: path
+name: userId
+required: true
+description: 使用者的唯一識別碼
+schema:
+type: integer
+responses:
+204:
+description: 使用者刪除成功
+404:
+description: 使用者不存在
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;User not found&quot;
+500:
+description: 伺服器錯誤
+content:
+application/json:
+schema:
+type: object
+properties:
+message:
+type: string
+example: &quot;Failed to delete user&quot;
+error:
+type: string</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">req</span>: <span class="tsd-signature-type">Request</span></span></li><li><span><span class="tsd-kind-parameter">res</span>: <span class="tsd-signature-type">Response</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Implementation of <a href="../interfaces/types_controllers_IUserController.IUserController.html">IUserController</a>.<a href="../interfaces/types_controllers_IUserController.IUserController.html#deleteuser">deleteUser</a></p><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L389">src/controller/rbac/UserController.ts:389</a></li></ul></aside></div></li></ul></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Properties</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="router"><span>router</span><a href="#router" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">router</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Router</span></div><aside class="tsd-sources"><p>Implementation of <a href="../interfaces/types_controllers_IUserController.IUserController.html">IUserController</a>.<a href="../interfaces/types_controllers_IUserController.IUserController.html#router">router</a></p><ul><li>Defined in <a href="https://github.com/zanewnch/AIOT/blob/09460e45d197204e6829e881bf55be4e0ad2dd80/be/src/controller/rbac/UserController.ts#L7">src/controller/rbac/UserController.ts:7</a></li></ul></aside></section></section></details></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary><div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary><div><a href="#initializeroutes" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>initialize<wbr/>Routes</span></a><a href="#getusers"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Users</span></a><a href="#getuserbyid"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>User<wbr/>By<wbr/>Id</span></a><a href="#createuser"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>User</span></a><a href="#updateuser"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>User</span></a><a href="#deleteuser"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>delete<wbr/>User</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary><div><a href="#router"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>router</span></a></div></details></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/zanewnch/AIOT" class="tsd-nav-link">GitHub</a><a href="/api-docs" class="tsd-nav-link">API Docs</a></nav><nav class="tsd-navigation"><a href="../modules.html">AIOT Backend API Documentation - v0.0.0</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

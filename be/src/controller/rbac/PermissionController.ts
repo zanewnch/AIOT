@@ -22,7 +22,6 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * @swagger
      * /permissions:
      *   get:
      *     summary: 取得所有權限
@@ -80,7 +79,6 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * @swagger
      * /permissions/{permissionId}:
      *   get:
      *     summary: 根據ID取得權限
@@ -158,7 +156,6 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * @swagger
      * /permissions:
      *   post:
      *     summary: 建立新權限
@@ -232,7 +229,6 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * @swagger
      * /permissions/{permissionId}:
      *   put:
      *     summary: 更新權限
@@ -327,7 +323,6 @@ export class PermissionController implements IPermissionController {
     }
 
     /**
-     * @swagger
      * /permissions/{permissionId}:
      *   delete:
      *     summary: 刪除權限

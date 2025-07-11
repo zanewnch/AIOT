@@ -22,7 +22,6 @@ export class UserController implements IUserController {
     }
 
     /**
-     * @swagger
      * /users:
      *   get:
      *     summary: 取得所有使用者
@@ -83,7 +82,6 @@ export class UserController implements IUserController {
     }
 
     /**
-     * @swagger
      * /users/{userId}:
      *   get:
      *     summary: 根據ID取得使用者
@@ -164,7 +162,6 @@ export class UserController implements IUserController {
     }
 
     /**
-     * @swagger
      * /users:
      *   post:
      *     summary: 建立新使用者
@@ -248,7 +245,6 @@ export class UserController implements IUserController {
     }
 
     /**
-     * @swagger
      * /users/{userId}:
      *   put:
      *     summary: 更新使用者
@@ -351,7 +347,6 @@ export class UserController implements IUserController {
     }
 
     /**
-     * @swagger
      * /users/{userId}:
      *   delete:
      *     summary: 刪除使用者

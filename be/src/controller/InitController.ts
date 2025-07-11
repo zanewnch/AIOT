@@ -2,11 +2,28 @@ import { Router, Request, Response } from 'express';
 import { RbacInitService } from '../service/RbacInitService.js';
 import { RTKInitService } from '../service/RTKInitService.js';
 
+/**
+ * 初始化控制器，處理系統初始化相關的API請求
+ * 
+ * 提供系統演示資料的初始化功能，包括RBAC權限控制和RTK定位資料。
+ * 所有初始化操作都是冪等的，多次執行不會產生重複資料。
+ * 
+ * @group Controllers
+ * @example
+ * ```typescript
+ * const initController = new InitController();
+ * app.use('/api/', initController.router);
+ * ```
+ */
 export class InitController {
   public router: Router;
   private rbacInitService: RbacInitService;
   private rtkInitService: RTKInitService;
 
+  /**
+   * 初始化控制器實例
+   * 設置路由和必要的服務依賴
+   */
   constructor() {
     this.router = Router();
     this.initializeRoutes();
@@ -21,7 +38,7 @@ export class InitController {
      * 一次性插入 RBAC demo 資料。
      * 如果資料已存在，不會重覆建立，仍回傳 200。
      */
-    this.router.post('/rbac-demo', this.seedRbacDemo);
+    this.router.post('/init/rbac-demo', this.seedRbacDemo);
 
     /**
      * POST /api/init/rtk-demo
@@ -29,10 +46,33 @@ export class InitController {
      * 一次性插入 RTK demo 資料。
      * 如果資料已存在，不會重覆建立，仍回傳 200。
      */
-    this.router.post('/rtk-demo', this.seedRTKDemo);
+    this.router.post('/init/rtk-demo', this.seedRTKDemo);
   }
 
-  private async seedRbacDemo(req: Request, res: Response): Promise<void> {
+  /**
+   * 初始化RBAC演示資料
+   * 
+   * 創建預設的使用者、角色和權限資料供系統演示使用。
+   * 此操作是冪等的，不會創建重複的資料。
+   * 
+   * @param req - Express請求物件
+   * @param res - Express回應物件
+   * @returns Promise<void>
+   * 
+   * @example
+   * ```bash
+   * POST /api/init/rbac-demo
+   * ```
+   * 
+   * 成功回應:
+   * ```json
+   * {
+   *   "ok": true,
+   *   "message": "RBAC demo data initialized"
+   * }
+   * ```
+   */
+  private async seedRbacDemo(_req: Request, res: Response): Promise<void> {
     try {
       const result = await this.rbacInitService.seedRbacDemo();
       res.json({ ok: true, ...result });
@@ -42,7 +82,30 @@ export class InitController {
     }
   }
 
-  private async seedRTKDemo(req: Request, res: Response): Promise<void> {
+  /**
+   * 初始化RTK演示資料
+   * 
+   * 創建RTK定位系統的演示資料，包括基站和定位記錄。
+   * 此操作是冪等的，不會創建重複的資料。
+   * 
+   * @param req - Express請求物件
+   * @param res - Express回應物件
+   * @returns Promise<void>
+   * 
+   * @example
+   * ```bash
+   * POST /api/init/rtk-demo
+   * ```
+   * 
+   * 成功回應:
+   * ```json
+   * {
+   *   "ok": true,
+   *   "message": "RTK demo data initialized"
+   * }
+   * ```
+   */
+  private async seedRTKDemo(_req: Request, res: Response): Promise<void> {
     try {
       const result = await this.rtkInitService.seedRTKDemo();
       res.json({ ok: true, ...result });

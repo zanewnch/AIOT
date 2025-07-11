@@ -34,6 +34,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             <span className={styles.sidebarIcon}>📊</span>
             Table Viewer
           </Link>
+          <Link 
+            to="/api-docs" 
+            className={`${styles.sidebarLink} ${location.pathname === '/api-docs' ? styles.active : ''}`}
+          >
+            <span className={styles.sidebarIcon}>📚</span>
+            API 文檔
+          </Link>
         </nav>
       </div>
     </aside>

@@ -21,7 +21,6 @@ export class RoleController implements IRoleController {
     }
 
     /**
-     * @swagger
      * /roles:
      *   get:
      *     summary: 取得所有角色
@@ -79,7 +78,6 @@ export class RoleController implements IRoleController {
     }
 
     /**
-     * @swagger
      * /roles/{roleId}:
      *   get:
      *     summary: 根據ID取得角色
@@ -157,7 +155,6 @@ export class RoleController implements IRoleController {
     }
 
     /**
-     * @swagger
      * /roles:
      *   post:
      *     summary: 建立新角色
@@ -231,7 +228,6 @@ export class RoleController implements IRoleController {
     }
 
     /**
-     * @swagger
      * /roles/{roleId}:
      *   put:
      *     summary: 更新角色
@@ -326,7 +322,6 @@ export class RoleController implements IRoleController {
     }
 
     /**
-     * @swagger
      * /roles/{roleId}:
      *   delete:
      *     summary: 刪除角色
