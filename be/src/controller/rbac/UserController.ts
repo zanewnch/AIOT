@@ -29,6 +29,19 @@ export class UserController implements IUserController {
         this.initializeRoutes();
     }
 
+    /**
+     * 初始化使用者控制器的路由配置
+     * 
+     * 設定所有使用者相關的API端點路由，包括：
+     * - GET / - 獲取所有使用者列表
+     * - POST / - 創建新使用者
+     * - GET /:userId - 根據ID獲取特定使用者
+     * - PUT /:userId - 更新指定使用者
+     * - DELETE /:userId - 刪除指定使用者
+     * 
+     * @private
+     * @returns {void}
+     */
     private initializeRoutes(): void {
         this.router.route('/')
             .get(this.getUsers.bind(this))

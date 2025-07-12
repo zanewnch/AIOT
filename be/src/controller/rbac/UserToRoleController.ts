@@ -29,6 +29,17 @@ export class UserToRoleController implements IUserToRoleController {
         this.initializeRoutes();
     }
 
+    /**
+     * 初始化使用者角色關聯控制器的路由配置
+     * 
+     * 設定所有使用者角色關聯相關的API端點路由，包括：
+     * - GET /:userId/roles - 獲取指定使用者的所有角色
+     * - POST /:userId/roles - 分配角色給指定使用者
+     * - DELETE /:userId/roles/:roleId - 從使用者中移除指定角色
+     * 
+     * @private
+     * @returns {void}
+     */
     private initializeRoutes(): void {
         this.router.route('/:userId/roles')
             .get(this.getUserRoles.bind(this))

@@ -28,6 +28,19 @@ export class RoleController implements IRoleController {
         this.initializeRoutes();
     }
 
+    /**
+     * 初始化角色控制器的路由配置
+     * 
+     * 設定所有角色相關的API端點路由，包括：
+     * - GET / - 獲取所有角色列表
+     * - POST / - 創建新角色
+     * - GET /:roleId - 根據ID獲取特定角色
+     * - PUT /:roleId - 更新指定角色
+     * - DELETE /:roleId - 刪除指定角色
+     * 
+     * @private
+     * @returns {void}
+     */
     private initializeRoutes(): void {
         this.router.route('/')
             .get(this.getRoles.bind(this))

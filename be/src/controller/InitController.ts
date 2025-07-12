@@ -31,6 +31,14 @@ export class InitController {
     this.rtkInitService = new RTKInitService();
   }
 
+  /**
+   * 初始化路由配置
+   * 
+   * 設置初始化相關的API路由，包括RBAC和RTK演示資料的初始化端點。
+   * 
+   * @private
+   * @returns {void}
+   */
   private initializeRoutes(): void {
     /**
      * POST /api/init/rbac-demo

@@ -79,6 +79,21 @@ export class DeviceCommandService {
     });
   }
 
+  /**
+   * 生成唯一的指令識別碼
+   * 
+   * 產生一個由時間戳和隨機字串組成的唯一識別碼，用於追蹤和識別裝置指令。
+   * 格式為 'cmd_[時間戳]_[隨機字串]'，確保每個指令都有獨特的識別碼。
+   * 
+   * @private
+   * @returns {string} 唯一的指令識別碼
+   * 
+   * @example
+   * ```typescript
+   * const commandId = this.generateCommandId();
+   * // 回傳類似 'cmd_1634567890123_abc123def' 的字串
+   * ```
+   */
   private generateCommandId(): string {
     return `cmd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }

@@ -61,6 +61,20 @@ export class RBACController implements IRBACController {
         this.initializeRoutes();
     }
 
+    /**
+     * 初始化RBAC主控制器的路由配置
+     * 
+     * 統一設置所有RBAC相關的路由，包括：
+     * - 為所有路由應用JWT驗證中間件
+     * - 掛載使用者管理路由到 /rbac/users
+     * - 掛載角色管理路由到 /rbac/roles
+     * - 掛載權限管理路由到 /rbac/permissions
+     * - 掛載使用者角色關聯路由到 /rbac/users
+     * - 掛載角色權限關聯路由到 /rbac/roles
+     * 
+     * @private
+     * @returns {void}
+     */
     private initializeRoutes(): void {
         // 所有 RBAC 路由都需要 JWT 認證
         this.router.use(this.jwtAuth.authenticate);

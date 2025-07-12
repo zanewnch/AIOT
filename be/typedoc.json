@@ -17,6 +17,11 @@
   "excludePrivate": false,
   "excludeProtected": false,
   "excludeInternal": false,
+  "visibilityFilters": {
+    "private": true,
+    "protected": true,
+    "inherited": true
+  },
   "readme": "./README.md",
   "name": "AIOT Backend API Documentation",
   "categorizeByGroup": true,
@@ -72,7 +77,7 @@
     "GitHub": "https://github.com/zanewnch/AIOT",
     "API Docs": "/api-docs"
   },
-  "customCss": "./public/typedoc-custom.css",
+  // "customCss": "./public/typedoc-custom.css",
   "skipErrorChecking": true,
   "exclude": [
     "**/node_modules/**",

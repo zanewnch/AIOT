@@ -29,6 +29,14 @@ export class RBACContainer {
 
 
 
+    /**
+     * 私有建構函數
+     * 
+     * 使用單例模式的私有建構函數，防止從外部直接創建實例。
+     * 在建構過程中自動註冊所有必要的 RBAC 服務。
+     * 
+     * @private
+     */
     private constructor() {
         this.registerServices();
     }
@@ -44,7 +52,13 @@ export class RBACContainer {
     }
 
     /**
-     * 註冊所有服務
+     * 註冊所有 RBAC 服務
+     * 
+     * 初始化並註冊所有 RBAC 相關的控制器到服務容器中。包括使用者、角色、
+     * 權限管理等控制器，為依賴注入和服務管理提供基礎。
+     * 
+     * @private
+     * @returns {void}
      */
     private registerServices(): void {
         // 註冊各個控制器

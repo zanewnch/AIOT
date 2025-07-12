@@ -28,6 +28,19 @@ export class PermissionController implements IPermissionController {
         this.initializeRoutes();
     }
 
+    /**
+     * 初始化權限控制器的路由配置
+     * 
+     * 設定所有權限相關的API端點路由，包括：
+     * - GET / - 獲取所有權限列表
+     * - POST / - 創建新權限
+     * - GET /:permissionId - 根據ID獲取特定權限
+     * - PUT /:permissionId - 更新指定權限
+     * - DELETE /:permissionId - 刪除指定權限
+     * 
+     * @private
+     * @returns {void}
+     */
     private initializeRoutes(): void {
         this.router.route('/')
             .get(this.getPermissions.bind(this))

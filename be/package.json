@@ -14,8 +14,8 @@
     "docs:serve": "npx http-server docs -p 8001 -o",
     "docs:watch": "typedoc --watch",
     "docs:clean": "rm -rf docs",
-    "docs:compile-scss": "sass src/styles/typedoc-custom.scss:public/typedoc-custom.css",
-    "docs:watch-scss": "sass --watch src/styles/typedoc-custom.scss:public/typedoc-custom.css"
+    "docs:compile-scss": "sass src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css",
+    "docs:watch-scss": "sass --watch src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css"
   },
   "dependencies": {
     "@types/amqplib": "^0.10.7",

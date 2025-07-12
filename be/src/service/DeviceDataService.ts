@@ -167,6 +167,21 @@ export class DeviceDataService {
     return result;
   }
 
+  /**
+   * 生成唯一的資料識別碼
+   * 
+   * 產生一個由時間戳和隨機字串組成的唯一識別碼，用於追蹤和識別裝置資料記錄。
+   * 格式為 'data_[時間戳]_[隨機字串]'，確保每筆資料都有獨特的識別碼。
+   * 
+   * @private
+   * @returns {string} 唯一的資料識別碼
+   * 
+   * @example
+   * ```typescript
+   * const dataId = this.generateDataId();
+   * // 回傳類似 'data_1634567890123_abc123def' 的字串
+   * ```
+   */
   private generateDataId(): string {
     return `data_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }

@@ -31,6 +31,15 @@ export class JWTAuthController {
     this.initializeRoutes();
   }
 
+  /**
+   * 初始化路由配置
+   * 
+   * 設置所有驗證相關的路由端點，包括登入和登出路由。
+   * 使用bind方法確保方法調用時this指向正確的實例。
+   * 
+   * @private
+   * @returns {void}
+   */
   private initializeRoutes(): void {
     this.router.post('/auth/login', this.login.bind(this));
     this.router.post('/auth/logout', this.logout.bind(this));
@@ -42,9 +51,11 @@ export class JWTAuthController {
    * 驗證使用者憑證並發放JWT token。成功登入後會設置httpOnly cookie
    * 來安全地儲存JWT，同時在回應中返回token供前端使用。
    * 
-   * @param req - Express請求物件，包含username和password
-   * @param res - Express回應物件
-   * @returns Promise<void>
+   * @private
+   * @param {Request} req - Express請求物件，包含username和password
+   * @param {Response} res - Express回應物件
+   * @returns {Promise<void>}
+   * @throws {Error} 當內部伺服器錯誤發生時拋出錯誤
    * 
    * @example
    * ```bash
@@ -110,9 +121,11 @@ export class JWTAuthController {
    * 清除儲存在cookie中的JWT token，完成使用者登出流程。
    * 此操作會移除httpOnly cookie，確保token無法再被使用。
    * 
-   * @param req - Express請求物件（未使用）
-   * @param res - Express回應物件
-   * @returns Promise<void>
+   * @private
+   * @param {Request} req - Express請求物件（未使用）
+   * @param {Response} res - Express回應物件
+   * @returns {Promise<void>}
+   * @throws {Error} 當內部伺服器錯誤發生時拋出錯誤
    * 
    * @example
    * ```bash
@@ -126,7 +139,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private async logout(req: Request, res: Response): Promise<void> {
+  private async logout(_req: Request, res: Response): Promise<void> {
     try {
       // 清除 JWT cookie
       res.clearCookie('jwt', {

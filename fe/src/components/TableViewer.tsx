@@ -1,26 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/TableViewer.module.scss';
-import { RequestUtils } from 'utils/RequestUtils';
 import { RTKData } from 'types/IRTKData';
+import { getTableData } from '../services/RTKService';
 
 
 interface TableViewerProps {
   className?: string;
 }
-
-
-const requestUtils = new RequestUtils();
-const getRTKData = async () => {
-  try{
-    const data = await requestUtils.get('/rtk');
-    console.log(data);
-    return data;
-  }catch(error){
-    console.error('Error fetching RTK data:', error);
-  }
-}
-
-
 
 const dummyRTKData: RTKData[] = [
   { id: 1, longitude: 121.5654, latitude: 25.0330, altitude: 45.2, timestamp: '2024-01-15 10:30:15' },
@@ -33,52 +19,109 @@ const dummyRTKData: RTKData[] = [
   { id: 8, longitude: 121.5667, latitude: 25.0445, altitude: 39.3, timestamp: '2024-01-15 10:37:28' },
 ];
 
+type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK';
+
+const tableConfigs = {
+  permission: { title: 'Permission Table', endpoint: '/permissions' },
+  role: { title: 'Role Table', endpoint: '/roles' },
+  roletopermission: { title: 'Role to Permission Table', endpoint: '/role-permissions' },
+  user: { title: 'User Table', endpoint: '/users' },
+  usertorole: { title: 'User to Role Table', endpoint: '/user-roles' },
+  RTK: { title: 'RTK Table', endpoint: '/rtk' }
+};
+
 export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
-
-
-  const [rtkData, setRtkData] = useState<RTKData[]>([]);
-
+  const [activeTable, setActiveTable] = useState<TableType>('RTK');
+  const [tableData, setTableData] = useState<any[]>([]);
 
   useEffect(() => {
-    getRTKData().then((data) => {
-      setRtkData(data);
+    const config = tableConfigs[activeTable];
+    getTableData(config.endpoint).then((data) => {
+      setTableData(data || []);
     });
-  }, []);
+  }, [activeTable]);
+
+  const renderTable = () => {
+    const data = activeTable === 'RTK' ? dummyRTKData : tableData;
+
+    if (activeTable === 'RTK') {
+      return (
+        <table className={styles.table} style={{ '--row-count': data.length } as React.CSSProperties}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>經度 (Longitude)</th>
+              <th>緯度 (Latitude)</th>
+              <th>海拔 (Altitude)</th>
+              <th>時間戳記 (Timestamp)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item: RTKData) => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.longitude.toFixed(4)}</td>
+                <td>{item.latitude.toFixed(4)}</td>
+                <td>{item.altitude.toFixed(1)}m</td>
+                <td>{item.timestamp}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+
+    if (data.length === 0) {
+      return <div className={styles.noData}>No data available</div>;
+    }
+
+    const columns = Object.keys(data[0]);
+    return (
+      <table className={styles.table} style={{ '--row-count': data.length } as React.CSSProperties}>
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column}>{column}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr key={item.id || index}>
+              {columns.map((column) => (
+                <td key={column}>{item[column]}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
 
   return (
     <div className={`${styles.tableViewerRoot} ${className || ''}`}>
       <div className={styles.tableContainer}>
+        <div className={styles.tabsContainer}>
+          {Object.entries(tableConfigs).map(([key, config]) => (
+            <button
+              key={key}
+              className={`${styles.tab} ${activeTable === key ? styles.active : ''}`}
+              onClick={() => setActiveTable(key as TableType)}
+            >
+              {config.title}
+            </button>
+          ))}
+        </div>
+
         <div className={styles.tableHeader}>
-          <h2>RTK Table</h2>
-          <span className={styles.recordCount}>{dummyRTKData.length} records</span>
+          <h2>{tableConfigs[activeTable].title}</h2>
+          <span className={styles.recordCount}>
+            {activeTable === 'RTK' ? dummyRTKData.length : tableData.length} records
+          </span>
         </div>
 
         <div className={styles.tableWrapper}>
-          <table
-            className={styles.table}
-            style={{ '--row-count': dummyRTKData.length } as React.CSSProperties}
-          >
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>經度 (Longitude)</th>
-                <th>緯度 (Latitude)</th>
-                <th>海拔 (Altitude)</th>
-                <th>時間戳記 (Timestamp)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dummyRTKData.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.longitude.toFixed(4)}</td>
-                  <td>{item.latitude.toFixed(4)}</td>
-                  <td>{item.altitude.toFixed(1)}m</td>
-                  <td>{item.timestamp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {renderTable()}
         </div>
       </div>
     </div>

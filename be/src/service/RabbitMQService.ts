@@ -165,7 +165,22 @@ export class RabbitMQService {
     console.log(`🔄 Device status change published: ${device.id} -> ${device.status}`);
   }
 
-  // 輔助方法
+  /**
+   * 獲取指令優先級數值
+   * 
+   * 將字串型別的優先級轉換為數值，用於RabbitMQ消息的優先級設定。
+   * 數值越高表示優先級越高，系統會優先處理高優先級的指令。
+   * 
+   * @private
+   * @param {('low' | 'normal' | 'high')} [priority] - 優先級字串，可選參數
+   * @returns {number} 優先級數值 - high: 10, normal: 5, low: 1, 預設: 5
+   * 
+   * @example
+   * ```typescript
+   * const priority = this.getCommandPriority('high'); // 回傳 10
+   * const defaultPriority = this.getCommandPriority(); // 回傳 5
+   * ```
+   */
   private getCommandPriority(priority?: 'low' | 'normal' | 'high'): number {
     switch (priority) {
       case 'high': return 10;
@@ -175,6 +190,25 @@ export class RabbitMQService {
     }
   }
 
+  /**
+   * 獲取事件路由鍵
+   * 
+   * 根據事件類型產生對應的RabbitMQ路由鍵。路由鍵用於決定消息應該
+   * 被發送到哪個佇列，確保不同類型的事件能夠被正確的消費者處理。
+   * 
+   * @private
+   * @param {string} eventType - 事件類型名稱
+   * @returns {string} RabbitMQ路由鍵
+   * 
+   * @example
+   * ```typescript
+   * const routingKey = this.getEventRoutingKey('device_offline');
+   * // 回傳 RABBITMQ_CONFIG.routingKeys.DEVICE_OFFLINE
+   * 
+   * const customKey = this.getEventRoutingKey('custom_event');
+   * // 回傳 'event.custom_event'
+   * ```
+   */
   private getEventRoutingKey(eventType: string): string {
     switch (eventType) {
       case 'device_offline':

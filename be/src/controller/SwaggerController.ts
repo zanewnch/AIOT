@@ -23,6 +23,14 @@ export class SwaggerController {
     this.setupRoutes();
   }
 
+  /**
+   * 設置路由配置
+   * 
+   * 初始化所有Swagger相關的路由，包括JSON端點和UI介面。
+   * 
+   * @private
+   * @returns {void}
+   */
   private setupRoutes(): void {
     // API 端點返回 JSON spec
     this.router.get('/swagger.json', this.getSwaggerSpec);

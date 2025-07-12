@@ -29,6 +29,17 @@ export class RoleToPermissionController implements IRoleToPermissionController {
         this.initializeRoutes();
     }
 
+    /**
+     * 初始化角色權限關聯控制器的路由配置
+     * 
+     * 設定所有角色權限關聯相關的API端點路由，包括：
+     * - GET /:roleId/permissions - 獲取指定角色的所有權限
+     * - POST /:roleId/permissions - 分配權限給指定角色
+     * - DELETE /:roleId/permissions/:permissionId - 從角色中移除指定權限
+     * 
+     * @private
+     * @returns {void}
+     */
     private initializeRoutes(): void {
         this.router.route('/:roleId/permissions')
             .get(this.getRolePermissions.bind(this))

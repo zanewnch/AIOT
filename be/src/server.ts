@@ -47,6 +47,15 @@ class Server {
     this.setupShutdownHandlers();
   }
 
+  /**
+   * 設定 Sequelize 資料庫連線
+   * 
+   * 初始化 Sequelize ORM 來連線 MySQL 資料庫，設定連線參數、登錄資料庫模型。
+   * 使用環境變數來設定資料庫連線參數，支援開發模式下的 SQL 日誌輸出。
+   * 
+   * @private
+   * @returns {void}
+   */
   private setupSequelize(): void {
     this.sequelize = new Sequelize({
       host: process.env.DB_HOST || 'localhost',
@@ -60,6 +69,16 @@ class Server {
     });
   }
 
+  /**
+   * 設定 RabbitMQ 訊息佇列連線
+   * 
+   * 初始化 RabbitMQ 連線，包括建立連線、通道、交換器和佇列等拓朴結構。
+   * 設定裝置指令、事件和狀態更新的訊息交換機制，支援系統的異步通訊。
+   * 
+   * @private
+   * @returns {Promise<void>} 無回傳值的 Promise
+   * @throws {Error} 當 RabbitMQ 連線失敗或拓朴設定失敗時拋出錯誤
+   */
   private async setupRabbitMQ(): Promise<void> {
     const url = process.env.RABBITMQ_URL || 'amqp://localhost:5672';
     
@@ -110,6 +129,18 @@ class Server {
     }
   }
 
+  /**
+   * 設定 RabbitMQ 拓朴結構
+   * 
+   * 建立 RabbitMQ 的交換器、佇列和綁定關係。包括裝置事件、裝置資料的交換器，
+   * 以及相對應的佇列和路由綁定。確保訊息能夠正確地在系統各組件間傳遞。
+   * 
+   * @private
+   * @param {any} channel - RabbitMQ 通道物件
+   * @param {any} config - RabbitMQ 配置物件，包含交換器、佇列和路由鍵配置
+   * @returns {Promise<void>} 無回傳值的 Promise
+   * @throws {Error} 當交換器或佇列建立失敗時拋出錯誤
+   */
   private async setupRabbitMQTopology(channel: any, config: any): Promise<void> {
     try {
       // 創建交換機
@@ -141,6 +172,15 @@ class Server {
     }
   }
 
+  /**
+   * 關閉 RabbitMQ 連線
+   * 
+   * 安全地關閉 RabbitMQ 通道和連線，釋放資源。在系統關閉或重新連線時呼叫，
+   * 確保沒有資源洩漏。即使關閉過程中發生錯誤也會正常處理。
+   * 
+   * @private
+   * @returns {Promise<void>} 無回傳值的 Promise
+   */
   private async closeRabbitConnection(): Promise<void> {
     try {
       if (this.rabbitChannel) {
@@ -156,6 +196,15 @@ class Server {
     }
   }
 
+  /**
+   * 設定 Passport JWT 認證策略
+   * 
+   * 初始化 Passport.js 的 JWT 認證策略，設定 JWT 的提取方式和秘鑰。
+   * 用於驗證來自用戶端的 JWT 令牌，確保 API 的安全性。
+   * 
+   * @private
+   * @returns {void}
+   */
   private setupPassport(): void {
     const jwtOptions = {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -175,6 +224,15 @@ class Server {
     this.app.use(passport.initialize());
   }
 
+  /**
+   * 設定 Express 中間件
+   * 
+   * 配置 Express 應用程式的中間件，包括視圖引擎、日誌記錄、JSON 解析、
+   * Cookie 處理、靜態檔案服務等。同時設定 TypeDoc 文檔的服務路徑。
+   * 
+   * @private
+   * @returns {void}
+   */
   private setupMiddleware(): void {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
@@ -195,6 +253,15 @@ class Server {
     this.app.use('/docs', express.static(path.join(__dirname, '../docs')));
   }
 
+  /**
+   * 設定應用程式路由
+   * 
+   * 初始化所有控制器並設定對應的 API 路由。包括初始化、JWT 認證、
+   * RBAC 權限管理和 Swagger 文檔等控制器的路由設定。
+   * 
+   * @private
+   * @returns {Promise<void>} 無回傳值的 Promise
+   */
   private async setupRoutes(): Promise<void> {
     // 初始化控制器
     const initController = new InitController();
@@ -211,11 +278,29 @@ class Server {
     console.log('✅ All controllers initialized and routes configured');
   }
 
+  /**
+   * 設定錯誤處理中間件
+   * 
+   * 配置應用程式的錯誤處理中間件，包括 404 找不到資源和一般錯誤處理。
+   * 確保應用程式能夠優雅地處理各種錯誤情況並回傳適當的錯誤訊息。
+   * 
+   * @private
+   * @returns {void}
+   */
   private setupErrorHandling(): void {
     this.app.use(ErrorHandleMiddleware.notFound);
     this.app.use(ErrorHandleMiddleware.handle);
   }
 
+  /**
+   * 設定關閉信號處理器
+   * 
+   * 設定系統信號處理器，監聽 SIGTERM 和 SIGINT 信號來實現優雅的應用程式關閉。
+   * 當接收到關閉信號時，會執行清理作業並安全地關閉應用程式。
+   * 
+   * @private
+   * @returns {void}
+   */
   private setupShutdownHandlers(): void {
     process.on('SIGTERM', async () => {
       console.log('🔄 SIGTERM received, shutting down gracefully...');
@@ -257,6 +342,23 @@ class Server {
     }
   }
 
+  /**
+   * 正規化連接埠號
+   * 
+   * 將字串型別的連接埠值轉換為適當的類型。如果是數字則轉換為整數，
+   * 如果是有效的管道名稱則保持字串，如果無效則回傳 false。
+   * 
+   * @private
+   * @param {string} val - 要正規化的連接埠值
+   * @returns {number | string | false} 正規化後的連接埠值
+   * 
+   * @example
+   * ```typescript
+   * const port = this.normalizePort('3000'); // 回傳 3000 (整數)
+   * const pipe = this.normalizePort('/tmp/socket'); // 回傳 '/tmp/socket' (字串)
+   * const invalid = this.normalizePort('-1'); // 回傳 false
+   * ```
+   */
   private normalizePort(val: string): number | string | false {
     const portNum = parseInt(val, 10);
 
@@ -271,6 +373,17 @@ class Server {
     return false;
   }
 
+  /**
+   * 處理伺服器錯誤事件
+   * 
+   * 處理伺服器啟動過程中的錯誤，特別是監聽連接埠相關的錯誤。
+   * 對於權限不足和連接埠被佔用的情況會列印錯誤訊息並結束程序。
+   * 
+   * @private
+   * @param {NodeJS.ErrnoException} error - Node.js 錯誤物件
+   * @returns {void}
+   * @throws {Error} 對於非監聽相關的錯誤會重新拋出
+   */
   private onError(error: NodeJS.ErrnoException): void {
     if (error.syscall !== 'listen') {
       throw error;
@@ -294,6 +407,15 @@ class Server {
     }
   }
 
+  /**
+   * 處理伺服器成功監聽事件
+   * 
+   * 當伺服器成功開始監聽指定的連接埠或管道時觸發。在控制台輸出
+   * 伺服器啟動成功的訊息，包含所監聽的連接埠或管道資訊。
+   * 
+   * @private
+   * @returns {void}
+   */
   private onListening(): void {
     const addr = this.server.address();
     const bind = typeof addr === 'string'
@@ -303,6 +425,15 @@ class Server {
     console.log('🚀 Server listening on ' + bind);
   }
 
+  /**
+   * 優雅的應用程式關閉
+   * 
+   * 實現優雅的應用程式關閉流程，包括關閉資料庫連線、RabbitMQ 連線和 HTTP 伺服器。
+   * 確保所有資源在系統關閉前都被正确地釋放，防止數據遺失或資源洩漏。
+   * 
+   * @private
+   * @returns {Promise<void>} 無回傳值的 Promise
+   */
   private async gracefulShutdown(): Promise<void> {
     try {
       console.log('🔌 Closing RabbitMQ connection...');

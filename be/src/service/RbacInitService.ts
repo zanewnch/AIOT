@@ -84,10 +84,24 @@ export class RbacInitService {
    * 建立預設角色
    * 建立系統的三個基本角色：管理員、編輯者、檢視者
    * 
-   * @param result 統計結果物件，用於記錄建立的角色數量
-   * @returns Promise<Record<string, RoleModel>> 角色名稱對應角色模型的對照表
-   * 
    * @private
+   * @param {Record<string, number>} result - 統計結果物件，用於記錄建立的角色數量
+   * @returns {Promise<Record<string, RoleModel>>} 角色名稱對應角色模型的對照表
+   * 
+   * @example
+   * ```typescript
+   * const result = { roles: 0 };
+   * const roleMap = await this.seedRoles(result);
+   * console.log(roleMap.admin); // RoleModel instance for admin role
+   * ```
+   * 
+   * @remarks
+   * 建立的角色包含：
+   * - admin: 系統管理員角色
+   * - editor: 編輯者角色
+   * - viewer: 檢視者角色
+   * 
+   * 若角色已存在，則不會重複建立，但會回傳現有的角色實例
    */
   private async seedRoles(result: Record<string, number>) {
     const rolesData = [
