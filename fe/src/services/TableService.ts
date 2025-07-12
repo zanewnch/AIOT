@@ -25,12 +25,14 @@ interface User {
   updatedAt: string;
 }
 
-interface RTKResponse {
-  ok: boolean;
-  message?: string;
-  error?: string;
-  [key: string]: any;
+interface RTKData {
+  id: number;
+  longitude: number;
+  latitude: number;
+  altitude: number;
+  timestamp: string;
 }
+
 
 export class TableService {
   /**
@@ -104,15 +106,38 @@ export class TableService {
   }
 
   /**
-   * 取得表格資料
+   * 取得 RTK 定位資料
+   * GET /api/rtk/data
    */
-  static async getRTKData(endpoint: string): Promise<RTKResponse> {
+  static async getRTKData(): Promise<RTKData[]> {
     try {
-      const response = await apiClient.get<RTKResponse>(endpoint);
+      const response = await apiClient.get<RTKData[]>('/api/rtk/data');
       return response;
     } catch (error: any) {
-      console.error(`Error fetching data from ${endpoint}:`, error);
-      throw new Error(error.response?.data?.message || `Failed to fetch data from ${endpoint}`);
+      console.error('Failed to fetch RTK data:', error);
+      throw new Error(error.response?.data?.message || 'Failed to fetch RTK data');
+    }
+  }
+
+  // 統一的 table 資料獲取方法
+  static async getTableData(tableType: string, id?: number): Promise<any[]> {
+    switch (tableType) {
+      case 'permission':
+        return this.getPermissions();
+      case 'role':
+        return this.getRoles();
+      case 'roletopermission':
+        if (!id) throw new Error('Role ID is required for role-to-permission data');
+        return this.getRoleToPermission(id);
+      case 'user':
+        return this.getUsers();
+      case 'usertorole':
+        if (!id) throw new Error('User ID is required for user-to-role data');
+        return this.getUserToRole(id);
+      case 'RTK':
+        return this.getRTKData();
+      default:
+        throw new Error(`Unknown table type: ${tableType}`);
     }
   }
 }

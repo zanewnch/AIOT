@@ -9,12 +9,18 @@ export default defineConfig({
   },
   css: {
     postcss: "./postcss.config.js",
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
   },
   esbuild: {
     include: /src\/.*\.[jt]sx?$/,
     exclude: [],
   },
   optimizeDeps: {
+    include: ["react", "react-dom"],
     esbuildOptions: {
       loader: {
         ".js": "jsx",

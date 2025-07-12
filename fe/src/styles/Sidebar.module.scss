@@ -1,4 +1,4 @@
-@import '../styles/themes.scss';
+@use '../styles/themes.scss' as *;
 
 // Sidebar styles
 .sidebar {

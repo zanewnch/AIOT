@@ -15,6 +15,6 @@ date: 2025-06-26
 - [ ] githubpage 這個也run 一個container, 為了port 使用正確且方便
 
 # date 2025-07-12
-- [ ] 看typedoc 然後把fe request 寫好
+- [x] 看typedoc 然後把fe request 寫好
 - [ ] 寫table 的request method and tsx
-- [ ] 分析tsdoc 介面的問題 為什麼controller 還是分散開來
+- [x] 分析tsdoc 介面的問題 為什麼controller 還是分散開來

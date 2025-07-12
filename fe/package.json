@@ -4,13 +4,15 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "@babel/runtime": "^7.27.6",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
+    "lodash": "^4.17.21",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.23.0",
-    "swagger-ui-react": "^5.26.2"
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

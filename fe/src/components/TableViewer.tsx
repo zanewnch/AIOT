@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/TableViewer.module.scss';
 import { RTKData } from 'types/IRTKData';
-import { RTKService } from '../services/TableService';
+import { TableService } from '../services/TableService';
 
 
 interface TableViewerProps {
@@ -22,12 +22,12 @@ const dummyRTKData: RTKData[] = [
 type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK';
 
 const tableConfigs = {
-  permission: { title: 'Permission Table', endpoint: '/permissions' },
-  role: { title: 'Role Table', endpoint: '/roles' },
-  roletopermission: { title: 'Role to Permission Table', endpoint: '/role-permissions' },
-  user: { title: 'User Table', endpoint: '/users' },
-  usertorole: { title: 'User to Role Table', endpoint: '/user-roles' },
-  RTK: { title: 'RTK Table', endpoint: '/rtk' }
+  permission: { title: 'Permission Table' },
+  role: { title: 'Role Table' },
+  roletopermission: { title: 'Role to Permission Table' },
+  user: { title: 'User Table' },
+  usertorole: { title: 'User to Role Table' },
+  RTK: { title: 'RTK Table' }
 };
 
 export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
@@ -35,14 +35,39 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   const [tableData, setTableData] = useState<any[]>([]);
 
   useEffect(() => {
-    const config = tableConfigs[activeTable];
-    RTKService.getRTKData(config.endpoint).then((data) => {
-      setTableData(data.data || []);
-    });
+    const loadTableData = async () => {
+      try {
+        let data: any[] = [];
+        
+        // For relation tables, we need to provide an ID (using first available item)
+        if (activeTable === 'roletopermission') {
+          // Get roles first, then get permissions for the first role
+          const roles = await TableService.getRoles();
+          if (roles.length > 0) {
+            data = await TableService.getRoleToPermission(roles[0].id);
+          }
+        } else if (activeTable === 'usertorole') {
+          // Get users first, then get roles for the first user
+          const users = await TableService.getUsers();
+          if (users.length > 0) {
+            data = await TableService.getUserToRole(users[0].id);
+          }
+        } else {
+          data = await TableService.getTableData(activeTable);
+        }
+        
+        setTableData(data);
+      } catch (error) {
+        console.error(`Failed to load ${activeTable} data:`, error);
+        setTableData([]);
+      }
+    };
+
+    loadTableData();
   }, [activeTable]);
 
   const renderTable = () => {
-    const data = activeTable === 'RTK' ? dummyRTKData : tableData;
+    const data = tableData.length > 0 ? tableData : (activeTable === 'RTK' ? dummyRTKData : []);
 
     if (activeTable === 'RTK') {
       return (
@@ -116,7 +141,7 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
         <div className={styles.tableHeader}>
           <h2>{tableConfigs[activeTable].title}</h2>
           <span className={styles.recordCount}>
-            {activeTable === 'RTK' ? dummyRTKData.length : tableData.length} records
+            {tableData.length > 0 ? tableData.length : (activeTable === 'RTK' ? dummyRTKData.length : 0)} records
           </span>
         </div>
 
