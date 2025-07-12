@@ -7,7 +7,7 @@ import { AuthService, IAuthService } from '../service/AuthService.js';
  * 提供基於JWT的使用者身份驗證，包括登入時的JWT發放和登出時的cookie清除。
  * 使用httpOnly cookie來安全地儲存JWT token，提升安全性。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const authController = new JWTAuthController();
@@ -122,7 +122,7 @@ export class JWTAuthController {
    * 此操作會移除httpOnly cookie，確保token無法再被使用。
    * 
    * @private
-   * @param {Request} req - Express請求物件（未使用）
+   * @param {Request} _req - Express請求物件（未使用）
    * @param {Response} res - Express回應物件
    * @returns {Promise<void>}
    * @throws {Error} 當內部伺服器錯誤發生時拋出錯誤

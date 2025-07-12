@@ -8,7 +8,7 @@ import { specs } from '../config/swaggerConfig.js';
  * 提供API文檔的存取功能，包括JSON格式的OpenAPI規格和交互式UI介面。
  * 支援前端整合和獨立的文檔瀏覽。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const swaggerController = new SwaggerController();

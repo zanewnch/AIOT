@@ -9,7 +9,7 @@ import { IRoleToPermissionController } from '../../types/controllers/IRoleToPerm
  * 提供角色權限分配、查詢和移除功能。
  * 管理RBAC系統中角色和權限之間的多對多關係。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const roleToPermissionController = new RoleToPermissionController();

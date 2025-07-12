@@ -16,3 +16,5 @@ date: 2025-06-26
 
 # date 2025-07-12
 - [ ] 看typedoc 然後把fe request 寫好
+- [ ] 寫table 的request method and tsx
+- [ ] 分析tsdoc 介面的問題 為什麼controller 還是分散開來

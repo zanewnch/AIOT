@@ -9,7 +9,7 @@ import { IUserController } from '../../types/controllers/IUserController.js';
  * 提供使用者的創建、查詢、更新和刪除功能。
  * 使用者是RBAC系統的基礎實體，與角色形成多對多關係。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const userController = new UserController();

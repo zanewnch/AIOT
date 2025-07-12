@@ -10,7 +10,7 @@
     "build:watch": "tsc --watch",
     "serve": "node ./dist/server.js",
     "test": "jest --watchAll",
-    "docs:generate": "npm run docs:compile-scss && typedoc",
+    "docs:generate": "typedoc",
     "docs:serve": "npx http-server docs -p 8001 -o",
     "docs:watch": "typedoc --watch",
     "docs:clean": "rm -rf docs",
@@ -64,6 +64,7 @@
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.7",
+    "typedoc-theme-hierarchy": "^6.0.0",
     "typescript": "^5.8.3"
   }
 }

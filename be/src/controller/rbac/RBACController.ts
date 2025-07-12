@@ -17,7 +17,7 @@ import {
  * 所有RBAC相關的路由都會通過JWT驗證中間件進行保護。
  * 使用依賴注入容器來管理各個子控制器的實例。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const rbacController = new RBACController();

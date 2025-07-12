@@ -8,7 +8,7 @@ import { IPermissionController } from '../../types/controllers/IPermissionContro
  * 提供權限的創建、查詢、更新和刪除功能。
  * 權限是RBAC系統中的基本單位，定義了使用者可以執行的具體操作。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const permissionController = new PermissionController();

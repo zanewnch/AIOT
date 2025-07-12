@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/TableViewer.module.scss';
 import { RTKData } from 'types/IRTKData';
-import { getTableData } from '../services/RTKService';
+import { RTKService } from '../services/TableService';
 
 
 interface TableViewerProps {
@@ -36,8 +36,8 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
 
   useEffect(() => {
     const config = tableConfigs[activeTable];
-    getTableData(config.endpoint).then((data) => {
-      setTableData(data || []);
+    RTKService.getRTKData(config.endpoint).then((data) => {
+      setTableData(data.data || []);
     });
   }, [activeTable]);
 

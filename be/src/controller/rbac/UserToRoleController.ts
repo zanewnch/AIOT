@@ -9,7 +9,7 @@ import { IUserToRoleController } from '../../types/controllers/IUserToRoleContro
  * 提供使用者角色分配、查詢和移除功能。
  * 管理RBAC系統中使用者和角色之間的多對多關係。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const userToRoleController = new UserToRoleController();

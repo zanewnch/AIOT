@@ -8,7 +8,7 @@ import { RTKInitService } from '../service/RTKInitService.js';
  * 提供系統演示資料的初始化功能，包括RBAC權限控制和RTK定位資料。
  * 所有初始化操作都是冪等的，多次執行不會產生重複資料。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const initController = new InitController();

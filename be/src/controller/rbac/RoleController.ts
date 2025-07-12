@@ -8,7 +8,7 @@ import { IRoleController } from '../../types/controllers/IRoleController.js';
  * 提供角色的創建、查詢、更新和刪除功能。
  * 角色是RBAC系統中的重要概念，用於組織和管理權限的集合。
  * 
- * @group Controllers
+ * @module Controllers
  * @example
  * ```typescript
  * const roleController = new RoleController();
