@@ -31,8 +31,6 @@ export class ErrorHandleMiddleware {
    * 當請求的路由不存在時，創建一個404錯誤並傳遞給錯誤處理中間件。
    * 此中間件應該放置在所有其他路由定義之後，作為路由的最後捕獲器。
    * 
-   * @static
-   * @method notFound
    * @param {Request} req - Express請求物件，包含請求的詳細資訊
    * @param {Response} res - Express回應物件（在此方法中未直接使用）
    * @param {NextFunction} next - Express下一個中間件函數，用於傳遞錯誤
@@ -73,8 +71,6 @@ export class ErrorHandleMiddleware {
    * - 開發環境：包含完整的錯誤堆疊資訊
    * - 生產環境：只顯示錯誤訊息，隱藏堆疊追蹤
    * 
-   * @static
-   * @method handle
    * @param {any} err - 錯誤物件，可能包含status、message、stack等屬性
    * @param {Request} req - Express請求物件，用於判斷回應類型和環境
    * @param {Response} res - Express回應物件，用於發送錯誤回應

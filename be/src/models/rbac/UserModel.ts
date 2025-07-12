@@ -38,14 +38,14 @@ import { RoleModel } from './RoleModel.js';
 import { UserRoleModel } from './UserToRoleModel.js';
 
 // Define attributes interfaces for TypeScript
-type UserAttributes = {
+export type UserAttributes = {
   id: number;
   username: string;
   passwordHash: string;
   email?: string;
 };
 
-type UserCreationAttributes = Optional<UserAttributes, 'id'>;
+export type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
 /**
  * 泛型只影响基类（base class, parent class）的行为:

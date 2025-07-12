@@ -1,10 +1,14 @@
 {
   "entryPoints": [
     "./src/controller",
-    "./src/models/rbac",
+    "./src/models",
     "./src/types",
     "./src/utils",
-    "./src/middleware"
+    "./src/middleware",
+    "./src/service",
+    "./src/repo",
+    "./src/infrastructure",
+    "./src/config"
   ],
   "entryPointStrategy": "expand",
   "out": "./docs",
@@ -18,21 +22,25 @@
   "categorizeByGroup": true,
   "categoryOrder": [
     "Controllers",
-    "Services", 
+    "Services",
     "Models",
     "Types",
     "Repositories",
     "Middleware",
+    "Infrastructure",
+    "Config",
     "Utils",
     "*"
   ],
   "groupOrder": [
     "Controllers",
     "Services",
-    "Models", 
+    "Models",
     "Types",
     "Repositories",
     "Middleware",
+    "Infrastructure",
+    "Config",
     "Utils",
     "*"
   ],
@@ -64,14 +72,11 @@
     "GitHub": "https://github.com/zanewnch/AIOT",
     "API Docs": "/api-docs"
   },
+  "customCss": "./public/typedoc-custom.css",
   "skipErrorChecking": true,
   "exclude": [
     "**/node_modules/**",
     "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/infrastructure/**",
-    "**/service/Device*.ts",
-    "**/service/RabbitMQService.ts",
-    "**/repo/**"
+    "**/*.spec.ts"
   ]
 }

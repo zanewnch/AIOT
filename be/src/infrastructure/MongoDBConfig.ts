@@ -19,7 +19,7 @@ import mongoose from "mongoose";
  * };
  * ```
  */
-interface MongoConfig {
+export interface MongoConfig {
   /** MongoDB主機地址 */
   host: string;
   /** MongoDB端口號 */
@@ -40,7 +40,6 @@ interface MongoConfig {
  * 基於docker-compose.yml設定的預設MongoDB連接參數。
  * 在生產環境中應該透過環境變數覆蓋這些設定。
  * 
- * @constant
  * @type {MongoConfig}
  */
 const mongoConfig: MongoConfig = {
@@ -89,7 +88,6 @@ const buildMongoUrl = (): string => {
  * 包含連接池、超時時間和緩衝設定等MongoDB連接的優化參數。
  * 這些設定針對生產環境進行了調優。
  * 
- * @constant
  * @type {mongoose.ConnectOptions}
  */
 const mongoOptions = {
@@ -114,7 +112,6 @@ const mongoOptions = {
  * 包含完整的錯誤處理、連接事件監聽和日誌記錄。
  * 連接失敗時會終止程序。
  * 
- * @async
  * @function connectMongoDB
  * @returns {Promise<typeof mongoose>} Mongoose實例
  * 
@@ -176,7 +173,6 @@ export const connectMongoDB = async (): Promise<typeof mongoose> => {
  * 安全地關閉與MongoDB的連接。只有在連接存在時才會執行斷開操作，
  * 包含錯誤處理以確保斷開過程的穩定性。
  * 
- * @async
  * @function disconnectMongoDB
  * @returns {Promise<void>}
  * 

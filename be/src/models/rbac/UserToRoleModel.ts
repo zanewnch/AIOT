@@ -18,16 +18,15 @@ import {
   ForeignKey,
   PrimaryKey,
 } from 'sequelize-typescript';
-import type { Optional } from 'sequelize';
 import { UserModel } from './UserModel.js';
 import { RoleModel } from './RoleModel.js';
 
-type UserRoleAttributes = {
+export type UserRoleAttributes = {
   userId: number;
   roleId: number;
 };
 
-type UserRoleCreationAttributes = UserRoleAttributes;
+export type UserRoleCreationAttributes = UserRoleAttributes;
 
 @Table({ tableName: 'user_roles', timestamps: true })
 export class UserRoleModel extends Model<UserRoleAttributes, UserRoleCreationAttributes> implements UserRoleAttributes {

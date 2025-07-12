@@ -21,12 +21,12 @@ import { RoleModel } from './RoleModel.js';
 import { PermissionModel } from './PermissionModel.js';
 import type { Optional } from 'sequelize';
 
-type RolePermissionAttributes = {
+export type RolePermissionAttributes = {
   roleId: number;
   permissionId: number;
 };
 
-type RolePermissionCreationAttributes = RolePermissionAttributes;
+export type RolePermissionCreationAttributes = RolePermissionAttributes;
 
 @Table({ tableName: 'role_permissions', timestamps: true })
 export class RolePermissionModel extends Model<RolePermissionAttributes, RolePermissionCreationAttributes> implements RolePermissionAttributes {

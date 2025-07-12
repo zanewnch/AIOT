@@ -13,3 +13,6 @@ date: 2025-06-26
 - [ ] 使用rabbitMQ
 - [ ] 使用gemini CLI
 - [ ] githubpage 這個也run 一個container, 為了port 使用正確且方便
+
+# date 2025-07-12
+- [ ] 看typedoc 然後把fe request 寫好

@@ -9,7 +9,6 @@ import mysql from "mysql2/promise";
  * 配置優先使用環境變數，如果環境變數不存在則使用預設值。
  * 這種設計允許在不同環境（開發、測試、生產）中使用不同的資料庫配置。
  * 
- * @constant
  * @type {mysql.Pool}
  * 
  * @example

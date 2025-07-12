@@ -55,7 +55,6 @@ export class InitController {
    * 創建預設的使用者、角色和權限資料供系統演示使用。
    * 此操作是冪等的，不會創建重複的資料。
    * 
-   * @param req - Express請求物件
    * @param res - Express回應物件
    * @returns Promise<void>
    * 
@@ -72,7 +71,7 @@ export class InitController {
    * }
    * ```
    */
-  private async seedRbacDemo(_req: Request, res: Response): Promise<void> {
+  public async seedRbacDemo(_req: Request, res: Response): Promise<void> {
     try {
       const result = await this.rbacInitService.seedRbacDemo();
       res.json({ ok: true, ...result });
@@ -88,7 +87,6 @@ export class InitController {
    * 創建RTK定位系統的演示資料，包括基站和定位記錄。
    * 此操作是冪等的，不會創建重複的資料。
    * 
-   * @param req - Express請求物件
    * @param res - Express回應物件
    * @returns Promise<void>
    * 
@@ -105,7 +103,7 @@ export class InitController {
    * }
    * ```
    */
-  private async seedRTKDemo(_req: Request, res: Response): Promise<void> {
+  public async seedRTKDemo(_req: Request, res: Response): Promise<void> {
     try {
       const result = await this.rtkInitService.seedRTKDemo();
       res.json({ ok: true, ...result });

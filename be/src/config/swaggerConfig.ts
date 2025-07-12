@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 讀取獨立的 Swagger YAML 文檔
-const swaggerPath = path.join(__dirname, '../../docs/swagger.yaml');
+const swaggerPath = path.join(__dirname, '../assets/swagger.yaml');
 
 let specs: any;
 

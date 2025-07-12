@@ -73,7 +73,7 @@ npm run dev
 ```
 
 ### Environment Variables
-```env
+```bash
 # Database Configuration
 DB_HOST=localhost
 DB_NAME=main_db

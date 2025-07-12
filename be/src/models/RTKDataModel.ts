@@ -39,7 +39,7 @@ import type { Optional } from 'sequelize';
  * RTK 資料屬性介面
  * 定義 RTK 定位資料的完整屬性結構
  */
-type RTKDataAttributes = {
+export type RTKDataAttributes = {
     /** 主鍵識別碼 */
     id: number;
     /** 緯度座標（度） */
@@ -52,7 +52,7 @@ type RTKDataAttributes = {
  * RTK 資料建立屬性介面
  * 建立新記錄時 id 欄位為可選（自動產生）
  */
-type RTKDataCreationAttributes = Optional<RTKDataAttributes, 'id'>;
+export type RTKDataCreationAttributes = Optional<RTKDataAttributes, 'id'>;
 
 @Table({ tableName: 'rtk_data', timestamps: true })
 export class RTKDataModel extends Model<RTKDataAttributes, RTKDataCreationAttributes> implements RTKDataAttributes {
