@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { RbacInitService } from '../service/RbacInitService.js';
 import { RTKInitService } from '../service/RTKInitService.js';
 
@@ -79,13 +79,12 @@ export class InitController {
    * }
    * ```
    */
-  public async seedRbacDemo(_req: Request, res: Response): Promise<void> {
+  public async seedRbacDemo(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await this.rbacInitService.seedRbacDemo();
       res.json({ ok: true, ...result });
     } catch (err) {
-      console.error('RBAC demo init failed', err);
-      res.status(500).json({ ok: false, message: 'init failed', error: (err as Error).message });
+      next(err);
     }
   }
 
@@ -111,13 +110,12 @@ export class InitController {
    * }
    * ```
    */
-  public async seedRTKDemo(_req: Request, res: Response): Promise<void> {
+  public async seedRTKDemo(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await this.rtkInitService.seedRTKDemo();
       res.json({ ok: true, ...result });
     } catch (err) {
-      console.error('RTK demo init failed', err);
-      res.status(500).json({ ok: false, message: 'init failed', error: (err as Error).message });
+      next(err);
     }
   }
 }

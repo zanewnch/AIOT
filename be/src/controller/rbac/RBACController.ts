@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, NextFunction } from 'express';
 import { RBACContainer } from '../../utils/RBACContainer.js';
 import { JwtAuthMiddleware } from '../../middleware/jwtAuthMiddleware.js';
 import {

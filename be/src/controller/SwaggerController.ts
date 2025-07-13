@@ -1,6 +1,6 @@
-import { Request, Response, Router } from 'express';
+import { Request, Response, Router, NextFunction } from 'express';
 import swaggerUi from 'swagger-ui-express';
-import { specs } from '../config/swaggerConfig.js';
+import { specs } from '../configs/swaggerConfig.js';
 
 /**
  * Swagger文檔控制器
@@ -63,8 +63,12 @@ export class SwaggerController {
    * }
    * ```
    */
-  private getSwaggerSpec = (_req: Request, res: Response): void => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(specs);
+  private getSwaggerSpec = (_req: Request, res: Response, next: NextFunction): void => {
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      res.send(specs);
+    } catch (error) {
+      next(error);
+    }
   };
 }

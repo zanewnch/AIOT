@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import styles from '../styles/TableViewer.module.scss';
+import styles from '../../styles/TableViewer.module.scss';
 import { RTKData } from 'types/IRTKData';
-import { TableService } from '../services/TableService';
+import { TableService } from '../../services/TableService';
 
 
 interface TableViewerProps {
   className?: string;
 }
 
-const dummyRTKData: RTKData[] = [
-  { id: 1, longitude: 121.5654, latitude: 25.0330, altitude: 45.2, timestamp: '2024-01-15 10:30:15' },
-  { id: 2, longitude: 121.5204, latitude: 25.0478, altitude: 38.7, timestamp: '2024-01-15 10:31:22' },
-  { id: 3, longitude: 121.5436, latitude: 25.0176, altitude: 52.1, timestamp: '2024-01-15 10:32:45' },
-  { id: 4, longitude: 121.5581, latitude: 25.0408, altitude: 41.8, timestamp: '2024-01-15 10:33:18' },
-  { id: 5, longitude: 121.5123, latitude: 25.0267, altitude: 36.4, timestamp: '2024-01-15 10:34:56' },
-  { id: 6, longitude: 121.5789, latitude: 25.0512, altitude: 48.9, timestamp: '2024-01-15 10:35:33' },
-  { id: 7, longitude: 121.5345, latitude: 25.0389, altitude: 44.6, timestamp: '2024-01-15 10:36:41' },
-  { id: 8, longitude: 121.5667, latitude: 25.0445, altitude: 39.3, timestamp: '2024-01-15 10:37:28' },
-];
 
 type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK';
 
@@ -37,28 +27,33 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   useEffect(() => {
     const loadTableData = async () => {
       try {
+        console.log(`🔄 TableViewer: Loading data for table: ${activeTable}`);
         let data: any[] = [];
         
         // For relation tables, we need to provide an ID (using first available item)
         if (activeTable === 'roletopermission') {
+          console.log('📋 TableViewer: Loading roletopermission data...');
           // Get roles first, then get permissions for the first role
           const roles = await TableService.getRoles();
           if (roles.length > 0) {
             data = await TableService.getRoleToPermission(roles[0].id);
           }
         } else if (activeTable === 'usertorole') {
+          console.log('👤 TableViewer: Loading usertorole data...');
           // Get users first, then get roles for the first user
           const users = await TableService.getUsers();
           if (users.length > 0) {
             data = await TableService.getUserToRole(users[0].id);
           }
         } else {
+          console.log(`📊 TableViewer: Loading ${activeTable} data using getTableData...`);
           data = await TableService.getTableData(activeTable);
         }
         
+        console.log(`✅ TableViewer: Loaded ${data.length} records for ${activeTable}:`, data);
         setTableData(data);
       } catch (error) {
-        console.error(`Failed to load ${activeTable} data:`, error);
+        console.error(`❌ TableViewer: Failed to load ${activeTable} data:`, error);
         setTableData([]);
       }
     };
@@ -67,9 +62,11 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   }, [activeTable]);
 
   const renderTable = () => {
-    const data = tableData.length > 0 ? tableData : (activeTable === 'RTK' ? dummyRTKData : []);
+    const data = tableData;
+    console.log(`🎨 TableViewer: Rendering table for ${activeTable} with ${data.length} records`);
 
     if (activeTable === 'RTK') {
+      console.log('🗺️ TableViewer: Rendering RTK table with data:', data);
       return (
         <table className={styles.table} style={{ '--row-count': data.length } as React.CSSProperties}>
           <thead>
@@ -141,7 +138,7 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
         <div className={styles.tableHeader}>
           <h2>{tableConfigs[activeTable].title}</h2>
           <span className={styles.recordCount}>
-            {tableData.length > 0 ? tableData.length : (activeTable === 'RTK' ? dummyRTKData.length : 0)} records
+            {tableData.length} records
           </span>
         </div>
 

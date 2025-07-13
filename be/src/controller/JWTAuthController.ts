@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { AuthService, IAuthService } from '../service/AuthService.js';
 
 /**
@@ -76,7 +76,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private async login(req: Request, res: Response): Promise<void> {
+  private async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { username, password } = req.body;
 
@@ -107,11 +107,7 @@ export class JWTAuthController {
         message: result.message
       });
     } catch (err) {
-      console.error('Login controller error:', err);
-      res.status(500).json({
-        message: 'Internal server error',
-        error: (err as Error).message
-      });
+      next(err);
     }
   }
 
@@ -139,7 +135,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private async logout(_req: Request, res: Response): Promise<void> {
+  private async logout(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // 清除 JWT cookie
       res.clearCookie('jwt', {
@@ -150,11 +146,7 @@ export class JWTAuthController {
 
       res.json({ message: 'Logout successful' });
     } catch (err) {
-      console.error('Logout controller error:', err);
-      res.status(500).json({
-        message: 'Internal server error',
-        error: (err as Error).message
-      });
+      next(err);
     }
   }
 }

@@ -111,10 +111,13 @@ export class TableService {
    */
   static async getRTKData(): Promise<RTKData[]> {
     try {
+      console.log('🚀 TableService: Requesting RTK data from /api/rtk/data');
       const response = await apiClient.get<RTKData[]>('/api/rtk/data');
+      console.log('📡 TableService: Received RTK data response:', response);
+      console.log('📡 TableService: Response length:', response.length);
       return response;
     } catch (error: any) {
-      console.error('Failed to fetch RTK data:', error);
+      console.error('❌ TableService: Failed to fetch RTK data:', error);
       throw new Error(error.response?.data?.message || 'Failed to fetch RTK data');
     }
   }

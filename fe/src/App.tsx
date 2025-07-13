@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Homepage } from "./pages/Homepage";
-import { TableViewer } from "./components/TableViewer";
-import { HomeContent } from "./components/HomeContent";
+import { TableViewer } from "./components/HomeContent/TableViewer";
+import { HomeContent } from "./components/HomeContent/HomeContent";
 import SwaggerDocPage from "./pages/SwaggerDocPage";
 
 function App() {

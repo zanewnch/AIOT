@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 export class RequestUtils {
   private apiClient: AxiosInstance;
 
-  constructor(baseURL: string = 'http://localhost:8000/', timeout: number = 10000) {
+  constructor(baseURL: string = 'http://localhost:8010/', timeout: number = 10000) {
     this.apiClient = axios.create({
       baseURL,
       timeout,
@@ -88,6 +88,6 @@ export class RequestUtils {
 
 // 創建一個預設的 RequestUtils 實例
 export const apiClient = new RequestUtils(
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8010'
 );
 

@@ -18,7 +18,7 @@ RUN git config --global user.name "zanewnch" && \
 # 複製程式碼
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3010
 
 # 執行階段：只啟動應用
 # CMD ["npm", "start"]

@@ -9,7 +9,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3010](http://localhost:3010) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
@@ -73,7 +73,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 恭喜！容器重啟問題已完全解決！
 所有 AIOT 容器現在都正常運行了：
 ✅ 最終狀態：
-🟢 前端 (AIOT-fe): 正常運行在 0.0.0.0:3000->3000/tcp
+🟢 前端 (AIOT-fe): 正常運行在 0.0.0.0:3010->3010/tcp
 🟢 後端 (AIOT-be): 正常運行在 0.0.0.0:8000->8000/tcp
 🟢 MySQL (AIOT-mysqldb): 健康狀態
 🟢 MongoDB (AIOT-mongodb): 健康狀態
@@ -94,7 +94,7 @@ Dockerfile 配置問題 ✅
 添加了正確的 CMD 指令
 修復了依賴安裝順序
 🌐 現在你可以訪問：
-Frontend: http://localhost:3000 (React + Vite + TailwindCSS)
+Frontend: http://localhost:3010 (React + Vite + TailwindCSS)
 Backend: http://localhost:8000 (Express.js API)
 📝 下一步建議：
 如果需要開發時的熱重載，可以重新啟用 volume mounts

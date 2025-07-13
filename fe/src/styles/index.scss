@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Libertinus+Math&family=Noto+Serif+TC:wght@200..900&display=swap');
-
 @use 'tailwindcss/base';
 @use 'tailwindcss/components';
 @use 'tailwindcss/utilities';
-
 @use './themes.scss' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Libertinus+Math&family=Noto+Serif+TC:wght@200..900&display=swap');
 
 html, body {
   margin: 0;

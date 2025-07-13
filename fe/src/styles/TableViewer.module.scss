@@ -25,6 +25,55 @@
   overflow: hidden; // 確保圓角邊緣正確顯示
 }
 
+.tabsContainer {
+  display: flex;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 12px 12px 0 0;
+  padding: 8px 16px 0 16px;
+  gap: 2px;
+  @include theme-transition;
+}
+
+.tab {
+  padding: 12px 20px;
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+  }
+  
+  &.active {
+    background-color: var(--bg-primary);
+    color: var(--accent-color);
+    font-weight: 600;
+    border-bottom: 2px solid var(--accent-color);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: var(--bg-primary);
+      z-index: 1;
+    }
+  }
+  
+  @include theme-transition;
+}
+
 .tableHeader {
   display: flex;
   justify-content: space-between;
@@ -196,6 +245,18 @@
     border-radius: 8px; // 在小屏幕上使用較小的圓角
   }
   
+  .tabsContainer {
+    padding: 6px 12px 0 12px;
+    gap: 1px;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    border-radius: 6px 6px 0 0;
+  }
+  
   .tableHeader {
     flex-direction: column;
     align-items: flex-start;
@@ -230,6 +291,19 @@
 @media (max-width: 480px) {
   .tableContainer {
     padding: 0; // 極小屏幕也保持無 padding
+  }
+  
+  .tabsContainer {
+    padding: 4px 8px 0 8px;
+    flex-wrap: wrap;
+  }
+  
+  .tab {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-width: auto;
+    flex: 1;
+    text-align: center;
   }
   
   .tableHeader {
