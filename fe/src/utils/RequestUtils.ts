@@ -19,7 +19,7 @@ export class RequestUtils {
     // 請求攔截器
     this.apiClient.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,7 +37,7 @@ export class RequestUtils {
       },
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('token');
+          localStorage.removeItem('authToken');
           window.location.href = '/login';
         }
         return Promise.reject(error);
@@ -72,12 +72,12 @@ export class RequestUtils {
 
   // 設置認證 token
   setAuthToken(token: string): void {
-    localStorage.setItem('token', token);
+    localStorage.setItem('authToken', token);
   }
 
   // 清除認證 token
   clearAuthToken(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
   }
 
   // 設置 base URL
