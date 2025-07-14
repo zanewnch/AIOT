@@ -1,5 +1,8 @@
 import { apiClient } from '../utils/RequestUtils';
 
+// 通知回調類型
+type NotificationCallback = (type: 'success' | 'error', message: string) => void;
+
 interface Role {
   id: number;
   name: string;
@@ -35,6 +38,20 @@ interface RTKData {
 
 
 export class TableService {
+  private static notifyCallback?: NotificationCallback;
+
+  // 設定通知回調
+  static setNotificationCallback(callback: NotificationCallback) {
+    this.notifyCallback = callback;
+  }
+
+  // 發送通知
+  private static notify(type: 'success' | 'error', message: string) {
+    if (this.notifyCallback) {
+      this.notifyCallback(type, message);
+    }
+  }
+
   /**
    * 取得 RBAC 角色列表
    * GET /api/rbac/roles
@@ -42,9 +59,12 @@ export class TableService {
   static async getRoles(): Promise<Role[]> {
     try {
       const response = await apiClient.get<Role[]>('/api/rbac/roles');
+      this.notify('success', `成功獲取 ${response.length} 個角色資料`);
       return response;
     } catch (error: any) {
       console.error('Failed to fetch roles:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      this.notify('error', `獲取角色資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || 'Failed to fetch roles');
     }
   }
@@ -56,9 +76,12 @@ export class TableService {
   static async getPermissions(): Promise<Permission[]> {
     try {
       const response = await apiClient.get<Permission[]>('/api/rbac/permissions');
+      this.notify('success', `成功獲取 ${response.length} 個權限資料`);
       return response;
     } catch (error: any) {
       console.error('Failed to fetch permissions:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      this.notify('error', `獲取權限資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || 'Failed to fetch permissions');
     }
   }
@@ -70,9 +93,12 @@ export class TableService {
   static async getRoleToPermission(roleId: number): Promise<Permission[]> {
     try {
       const response = await apiClient.get<Permission[]>(`/api/rbac/roles/${roleId}/permissions`);
+      this.notify('success', `成功獲取角色權限關聯資料`);
       return response;
     } catch (error: any) {
       console.error(`Failed to fetch permissions for role ${roleId}:`, error);
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      this.notify('error', `獲取角色權限關聯資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || `Failed to fetch permissions for role ${roleId}`);
     }
   }
@@ -84,9 +110,12 @@ export class TableService {
   static async getUsers(): Promise<User[]> {
     try {
       const response = await apiClient.get<User[]>('/api/rbac/users');
+      this.notify('success', `成功獲取 ${response.length} 個用戶資料`);
       return response;
     } catch (error: any) {
       console.error('Failed to fetch users:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      this.notify('error', `獲取用戶資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || 'Failed to fetch users');
     }
   }
@@ -98,9 +127,12 @@ export class TableService {
   static async getUserToRole(userId: number): Promise<Role[]> {
     try {
       const response = await apiClient.get<Role[]>(`/api/rbac/users/${userId}/roles`);
+      this.notify('success', `成功獲取用戶角色關聯資料`);
       return response;
     } catch (error: any) {
       console.error(`Failed to fetch roles for user ${userId}:`, error);
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      this.notify('error', `獲取用戶角色關聯資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || `Failed to fetch roles for user ${userId}`);
     }
   }
@@ -115,9 +147,12 @@ export class TableService {
       const response = await apiClient.get<RTKData[]>('/api/rtk/data');
       console.log('📡 TableService: Received RTK data response:', response);
       console.log('📡 TableService: Response length:', response.length);
+      this.notify('success', `成功獲取 ${response.length} 筆 RTK 定位資料`);
       return response;
     } catch (error: any) {
       console.error('❌ TableService: Failed to fetch RTK data:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Connection failed';
+      this.notify('error', `獲取 RTK 定位資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || 'Failed to fetch RTK data');
     }
   }

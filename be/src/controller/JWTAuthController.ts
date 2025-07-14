@@ -41,8 +41,8 @@ export class JWTAuthController {
    * @returns {void}
    */
   private initializeRoutes(): void {
-    this.router.post('/auth/login', this.login.bind(this));
-    this.router.post('/auth/logout', this.logout.bind(this));
+    this.router.post('/api/auth/login', this.login.bind(this));
+    this.router.post('/api/auth/logout', this.logout.bind(this));
   }
 
   /**

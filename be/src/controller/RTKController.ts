@@ -9,9 +9,11 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { RTKDataModel } from '../models/RTKDataModel.js';
+import { JwtAuthMiddleware } from '../middleware/jwtAuthMiddleware.js';
 
 export class RTKController {
   public router: Router;
+  private jwtAuth: JwtAuthMiddleware;
 
   /**
    * 初始化控制器實例
@@ -19,6 +21,7 @@ export class RTKController {
    */
   constructor() {
     this.router = Router();
+    this.jwtAuth = new JwtAuthMiddleware();
     this.initializeRoutes();
   }
 
@@ -35,15 +38,16 @@ export class RTKController {
      * GET /api/rtk/data
      * -------------------------------------------------
      * 取得所有 RTK 定位資料
+     * 需要 JWT 驗證
      */
-    this.router.get('/rtk/data', this.getRTKData);
+    this.router.get('/api/rtk/data', this.jwtAuth.authenticate, this.getRTKData);
   }
 
   /**
    * 取得所有 RTK 定位資料
    * GET /api/rtk/data
    */
-  private async getRTKData(_req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getRTKData(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       console.log('🔍 RTKController: Starting getRTKData...');
       

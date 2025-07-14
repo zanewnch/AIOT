@@ -33,11 +33,11 @@ export class SwaggerController {
    */
   private setupRoutes(): void {
     // API 端點返回 JSON spec
-    this.router.get('/swagger.json', this.getSwaggerSpec);
+    this.router.get('/api/swagger.json', this.getSwaggerSpec);
     
     // 備用的 Swagger UI 路由
-    this.router.use('/docs', swaggerUi.serve);
-    this.router.get('/docs', swaggerUi.setup(specs));
+    this.router.use('/api/docs', swaggerUi.serve);
+    this.router.get('/api/docs', swaggerUi.setup(specs));
   }
 
   /**

@@ -46,7 +46,7 @@ export class InitController {
      * 一次性插入 RBAC demo 資料。
      * 如果資料已存在，不會重覆建立，仍回傳 200。
      */
-    this.router.post('/init/rbac-demo', this.seedRbacDemo);
+    this.router.post('/api/init/rbac-demo', this.seedRbacDemo.bind(this));
 
     /**
      * POST /api/init/rtk-demo
@@ -54,7 +54,7 @@ export class InitController {
      * 一次性插入 RTK demo 資料。
      * 如果資料已存在，不會重覆建立，仍回傳 200。
      */
-    this.router.post('/init/rtk-demo', this.seedRTKDemo);
+    this.router.post('/api/init/rtk-demo', this.seedRTKDemo.bind(this));
   }
 
   /**

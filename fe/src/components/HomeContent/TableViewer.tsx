@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from '../../styles/TableViewer.module.scss';
 import { RTKData } from 'types/IRTKData';
 import { TableService } from '../../services/TableService';
+import { useNotification } from '../../context/NotificationContext';
 
 
 interface TableViewerProps {
@@ -23,6 +24,12 @@ const tableConfigs = {
 export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   const [activeTable, setActiveTable] = useState<TableType>('RTK');
   const [tableData, setTableData] = useState<any[]>([]);
+  const { addNotification } = useNotification();
+
+  // 設定 TableService 的通知回調
+  useEffect(() => {
+    TableService.setNotificationCallback(addNotification);
+  }, [addNotification]);
 
   useEffect(() => {
     const loadTableData = async () => {

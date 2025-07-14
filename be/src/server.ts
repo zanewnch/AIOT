@@ -10,7 +10,8 @@ import { createSequelizeInstance } from './config/database.js';
 import { RabbitMQManager } from './config/rabbitmq.js';
 import { setupPassportJWT } from './config/auth.js';
 import { getServerConfig, setupExpressMiddleware } from './config/server.js';
-import { InitController, JWTAuthController, RBACController, RTKController, SwaggerController } from './controller/index.js';
+import { InitController, JWTAuthController, RTKController, SwaggerController } from './controller/index.js';
+import { UserController, RoleController, PermissionController, UserToRoleController, RoleToPermissionController } from './controller/rbac/index.js';
 
 const debugLogger = debug('aiot:server');
 
@@ -32,7 +33,6 @@ class Server {
     this.setupSequelize();
     this.setupPassport();
     this.setupMiddleware();
-    this.setupErrorHandling();
     this.setupShutdownHandlers();
   }
 
@@ -65,16 +65,28 @@ class Server {
     // 初始化控制器
     const initController = new InitController();
     const jwtAuthController = new JWTAuthController();
-    const rbacController = new RBACController();
     const rtkController = new RTKController();
     const swaggerController = new SwaggerController();
+    
+    // 初始化 RBAC 子控制器
+    const userController = new UserController();
+    const roleController = new RoleController();
+    const permissionController = new PermissionController();
+    const userToRoleController = new UserToRoleController();
+    const roleToPermissionController = new RoleToPermissionController();
 
     // 設置路由
-    this.app.use('/api/', initController.router);
-    this.app.use('/api/', jwtAuthController.router);
-    this.app.use('/api/', rbacController.router);
-    this.app.use('/api/', rtkController.router);
-    this.app.use('/api/', swaggerController.router);
+    this.app.use('/', initController.router);
+    this.app.use('/', jwtAuthController.router);
+    this.app.use('/', rtkController.router);
+    this.app.use('/', swaggerController.router);
+    
+    // 設置 RBAC 路由
+    this.app.use('/api/rbac/users', userController.router);
+    this.app.use('/api/rbac/roles', roleController.router);
+    this.app.use('/api/rbac/permissions', permissionController.router);
+    this.app.use('/api/rbac/users', userToRoleController.router);
+    this.app.use('/api/rbac/roles', roleToPermissionController.router);
 
     console.log('✅ All controllers initialized and routes configured');
   }
@@ -115,8 +127,14 @@ class Server {
       this.app.locals.rabbitMQChannel = this.rabbitMQManager.getChannel();
 
       await this.setupRoutes();
+      this.setupErrorHandling();
 
-      this.server.listen(this.port as number, '0.0.0.0');
+      if (typeof this.port === 'number') {
+        this.server.listen(this.port);
+      } else {
+        console.error('❌ Invalid port configuration:', this.port);
+        process.exit(1);
+      }
       this.server.on('error', (error) => this.onError(error));
       this.server.on('listening', () => this.onListening());
     } catch (err) {
