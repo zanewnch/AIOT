@@ -41,7 +41,7 @@ export class RoleController implements IRoleController {
      * @private
      * @returns {void}
      */
-    private initializeRoutes(): void {
+    private initializeRoutes = (): void => {
         this.router.route('/')
             .get(this.getRoles.bind(this))
             .post(this.createRole.bind(this));

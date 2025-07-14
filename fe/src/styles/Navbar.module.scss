@@ -65,6 +65,42 @@
 .navRight {
   display: flex;
   align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.username {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  @include theme-transition;
+}
+
+.logoutButton {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  @include theme-transition;
+  
+  &:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 // Responsive design for Navbar

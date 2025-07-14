@@ -33,7 +33,7 @@ export class RTKController {
    * @private
    * @returns {void}
    */
-  private initializeRoutes(): void {
+  private initializeRoutes = (): void => {
     /**
      * GET /api/rtk/data
      * -------------------------------------------------

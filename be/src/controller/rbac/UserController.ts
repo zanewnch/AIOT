@@ -42,7 +42,7 @@ export class UserController implements IUserController {
      * @private
      * @returns {void}
      */
-    private initializeRoutes(): void {
+    private initializeRoutes = (): void => {
         this.router.route('/')
             .get(this.getUsers.bind(this))
             .post(this.createUser.bind(this));

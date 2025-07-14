@@ -40,7 +40,7 @@ export class JWTAuthController {
    * @private
    * @returns {void}
    */
-  private initializeRoutes(): void {
+  private initializeRoutes = (): void => {
     this.router.post('/api/auth/login', this.login.bind(this));
     this.router.post('/api/auth/logout', this.logout.bind(this));
   }
@@ -76,7 +76,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+  private login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { username, password } = req.body;
 
@@ -135,7 +135,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private async logout(_req: Request, res: Response, next: NextFunction): Promise<void> {
+  private logout = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // 清除 JWT cookie
       res.clearCookie('jwt', {

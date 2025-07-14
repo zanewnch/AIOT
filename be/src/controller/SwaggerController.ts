@@ -31,7 +31,7 @@ export class SwaggerController {
    * @private
    * @returns {void}
    */
-  private setupRoutes(): void {
+  private setupRoutes = (): void => {
     // API 端點返回 JSON spec
     this.router.get('/api/swagger.json', this.getSwaggerSpec);
     

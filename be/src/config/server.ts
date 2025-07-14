@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import passport from 'passport';
+import cors from 'cors';
 
 export interface ServerConfig {
   port: number | string | false;
@@ -32,6 +33,16 @@ export const setupExpressMiddleware = (app: express.Application): void => {
   app.set('views', config.viewsPath);
   app.set('view engine', config.viewEngine);
   app.set('port', config.port);
+
+  // CORS 配置
+  app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+      ? process.env.FRONTEND_URL 
+      : 'http://localhost:3010',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
   app.use(logger('dev'));
   app.use(express.json());

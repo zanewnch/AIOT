@@ -41,7 +41,7 @@ export class PermissionController implements IPermissionController {
      * @private
      * @returns {void}
      */
-    private initializeRoutes(): void {
+    private initializeRoutes = (): void => {
         this.router.route('/')
             .get(this.getPermissions.bind(this))
             .post(this.createPermission.bind(this));

@@ -40,7 +40,7 @@ export class RoleToPermissionController implements IRoleToPermissionController {
      * @private
      * @returns {void}
      */
-    private initializeRoutes(): void {
+    private initializeRoutes = (): void => {
         this.router.route('/:roleId/permissions')
             .get(this.getRolePermissions.bind(this))
             .post(this.assignPermissionsToRole.bind(this));

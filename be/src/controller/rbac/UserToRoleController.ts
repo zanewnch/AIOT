@@ -40,7 +40,7 @@ export class UserToRoleController implements IUserToRoleController {
      * @private
      * @returns {void}
      */
-    private initializeRoutes(): void {
+    private initializeRoutes = (): void => {
         this.router.route('/:userId/roles')
             .get(this.getUserRoles.bind(this))
             .post(this.assignRolesToUser.bind(this));

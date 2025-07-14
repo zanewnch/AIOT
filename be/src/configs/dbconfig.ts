@@ -12,7 +12,7 @@ export interface DatabaseConfig {
   username: string;
   password: string;
   port: number;
-  dialect: string;
+  dialect: 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql';
   logging: boolean | ((sql: string) => void);
 }
 

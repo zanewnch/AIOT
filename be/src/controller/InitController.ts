@@ -39,14 +39,14 @@ export class InitController {
    * @private
    * @returns {void}
    */
-  private initializeRoutes(): void {
+  private initializeRoutes = (): void => {
     /**
      * POST /api/init/rbac-demo
      * -------------------------------------------------
      * 一次性插入 RBAC demo 資料。
      * 如果資料已存在，不會重覆建立，仍回傳 200。
      */
-    this.router.post('/api/init/rbac-demo', this.seedRbacDemo.bind(this));
+    this.router.post('/api/init/rbac-demo', this.seedRbacDemo);
 
     /**
      * POST /api/init/rtk-demo
@@ -54,7 +54,15 @@ export class InitController {
      * 一次性插入 RTK demo 資料。
      * 如果資料已存在，不會重覆建立，仍回傳 200。
      */
-    this.router.post('/api/init/rtk-demo', this.seedRTKDemo.bind(this));
+    this.router.post('/api/init/rtk-demo', this.seedRTKDemo);
+
+    /**
+     * POST /api/init/admin-user
+     * -------------------------------------------------
+     * 創建系統管理員帳號。
+     * 用戶名：admin，密碼：admin，具有完整系統權限。
+     */
+    this.router.post('/api/init/admin-user', this.createAdminUser);
   }
 
   /**
@@ -79,7 +87,7 @@ export class InitController {
    * }
    * ```
    */
-  public async seedRbacDemo(_req: Request, res: Response, next: NextFunction): Promise<void> {
+  public seedRbacDemo = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await this.rbacInitService.seedRbacDemo();
       res.json({ ok: true, ...result });
@@ -110,9 +118,43 @@ export class InitController {
    * }
    * ```
    */
-  public async seedRTKDemo(_req: Request, res: Response, next: NextFunction): Promise<void> {
+  public seedRTKDemo = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await this.rtkInitService.seedRTKDemo();
+      res.json({ ok: true, ...result });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * 創建系統管理員帳號
+   * 
+   * 創建一個具有完整權限的管理員用戶供系統管理使用。
+   * 此操作是冪等的，如果管理員已存在則不會重複創建。
+   * 
+   * @param _req - Express請求物件（未使用）
+   * @param res - Express回應物件
+   * @param next - Express next函數
+   * @returns Promise<void>
+   * 
+   * @example
+   * ```bash
+   * POST /api/init/admin-user
+   * ```
+   * 
+   * 成功回應:
+   * ```json
+   * {
+   *   "ok": true,
+   *   "success": true,
+   *   "message": "Admin user 'admin' created successfully with full permissions"
+   * }
+   * ```
+   */
+  public createAdminUser = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const result = await this.rbacInitService.createAdminUser();
       res.json({ ok: true, ...result });
     } catch (err) {
       next(err);

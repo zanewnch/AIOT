@@ -22,6 +22,7 @@
  * ```
  */
 
+import bcrypt from 'bcrypt';
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 import { RoleModel } from '../models/rbac/RoleModel.js';
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
@@ -78,6 +79,156 @@ export class RbacInitService {
     await this.seedUserRoles(userMap, roleMap, result);
 
     return result;
+  }
+
+  /**
+   * 創建系統管理員帳號
+   * 創建一個具有完整權限的管理員用戶
+   * 
+   * @param username 管理員用戶名（預設：admin）
+   * @param password 管理員密碼（預設：admin）
+   * @param email 管理員郵箱（預設：admin@admin.com）
+   * @returns Promise<{success: boolean, message: string}> 創建結果
+   * 
+   * @example
+   * ```typescript
+   * const rbacService = new RbacInitService();
+   * const result = await rbacService.createAdminUser('admin', 'admin');
+   * console.log(result.message);
+   * ```
+   */
+  async createAdminUser(
+    username: string = 'admin',
+    password: string = 'admin',
+    email: string = 'admin@admin.com'
+  ): Promise<{success: boolean, message: string}> {
+    try {
+      // 1. 創建必要的權限
+      const permissions = await this.createAdminPermissions();
+      
+      // 2. 創建或獲取 admin 角色
+      const adminRole = await this.createAdminRole();
+      
+      // 3. 關聯角色與權限
+      await this.linkRolePermissions(adminRole, permissions);
+      
+      // 4. 創建管理員用戶
+      const passwordHash = await bcrypt.hash(password, 10);
+      const [user, userCreated] = await UserModel.findOrCreate({
+        where: { username },
+        defaults: {
+          username,
+          email,
+          passwordHash,
+        },
+      });
+
+      if (!userCreated) {
+        return {
+          success: true,
+          message: `Admin user '${username}' already exists`,
+        };
+      }
+
+      // 5. 指派 admin 角色給用戶
+      await UserRoleModel.findOrCreate({
+        where: { userId: user.id, roleId: adminRole.id },
+        defaults: { userId: user.id, roleId: adminRole.id },
+      });
+
+      return {
+        success: true,
+        message: `Admin user '${username}' created successfully with full permissions`,
+      };
+    } catch (error) {
+      console.error('Error creating admin user:', error);
+      return {
+        success: false,
+        message: `Failed to create admin user: ${error}`,
+      };
+    }
+  }
+
+  /**
+   * 創建管理員權限
+   * 創建系統所需的所有權限
+   */
+  private async createAdminPermissions(): Promise<PermissionModel[]> {
+    const permissionsData = [
+      // 用戶管理權限
+      { name: 'user:create', description: 'Create users' },
+      { name: 'user:read', description: 'Read users' },
+      { name: 'user:update', description: 'Update users' },
+      { name: 'user:delete', description: 'Delete users' },
+      
+      // 角色管理權限
+      { name: 'role:create', description: 'Create roles' },
+      { name: 'role:read', description: 'Read roles' },
+      { name: 'role:update', description: 'Update roles' },
+      { name: 'role:delete', description: 'Delete roles' },
+      
+      // 權限管理權限
+      { name: 'permission:create', description: 'Create permissions' },
+      { name: 'permission:read', description: 'Read permissions' },
+      { name: 'permission:update', description: 'Update permissions' },
+      { name: 'permission:delete', description: 'Delete permissions' },
+      
+      // 數據訪問權限
+      { name: 'data:view', description: 'View data' },
+      { name: 'data:edit', description: 'Edit data' },
+      { name: 'data:delete', description: 'Delete data' },
+      
+      // RTK 數據權限
+      { name: 'rtk:read', description: 'Read RTK data' },
+      { name: 'rtk:create', description: 'Create RTK data' },
+      { name: 'rtk:update', description: 'Update RTK data' },
+      { name: 'rtk:delete', description: 'Delete RTK data' },
+      
+      // 系統管理權限
+      { name: 'system:admin', description: 'System administration' },
+    ];
+
+    const permissions: PermissionModel[] = [];
+    
+    for (const permData of permissionsData) {
+      const [permission] = await PermissionModel.findOrCreate({
+        where: { name: permData.name },
+        defaults: permData,
+      });
+      permissions.push(permission);
+    }
+    
+    return permissions;
+  }
+
+  /**
+   * 創建管理員角色
+   */
+  private async createAdminRole(): Promise<RoleModel> {
+    const [adminRole] = await RoleModel.findOrCreate({
+      where: { name: 'admin' },
+      defaults: {
+        name: 'admin',
+        displayName: 'System Administrator',
+      },
+    });
+    
+    return adminRole;
+  }
+
+  /**
+   * 關聯角色與權限
+   */
+  private async linkRolePermissions(
+    role: RoleModel,
+    permissions: PermissionModel[]
+  ): Promise<void> {
+    for (const permission of permissions) {
+      await RolePermissionModel.findOrCreate({
+        where: { roleId: role.id, permissionId: permission.id },
+        defaults: { roleId: role.id, permissionId: permission.id },
+      });
+    }
   }
 
   /**

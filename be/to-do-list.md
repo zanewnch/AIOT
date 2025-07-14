@@ -16,5 +16,9 @@ date: 2025-06-26
 
 # date 2025-07-12
 - [x] 看typedoc 然後把fe request 寫好
-- [ ] 寫table 的request method and tsx
+- [x] 寫table 的request method and tsx
 - [x] 分析tsdoc 介面的問題 為什麼controller 還是分散開來
+
+# date 2025-07-15
+- [ ] 繼續修tableviewer
+- [ ] 問AI 怎樣算熟ts 怎樣算熟sql 怎樣算熟express react 這種方式去學
