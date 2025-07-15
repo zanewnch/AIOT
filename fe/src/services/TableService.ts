@@ -3,7 +3,7 @@ import { apiClient } from '../utils/RequestUtils';
 // 通知回調類型
 type NotificationCallback = (type: 'success' | 'error', message: string) => void;
 
-interface Role {
+export interface Role {
   id: number;
   name: string;
   displayName: string;
@@ -11,7 +11,7 @@ interface Role {
   updatedAt: string;
 }
 
-interface Permission {
+export interface Permission {
   id: number;
   name: string;
   description: string;
@@ -19,11 +19,25 @@ interface Permission {
   updatedAt: string;
 }
 
-interface User {
+export interface User {
   id: number;
   username: string;
   email: string;
   passwordHash: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RoleToPermission {
+  roleId: number;
+  permissionId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserToRole {
+  userId: number;
+  roleId: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -154,6 +168,91 @@ export class TableService {
       const errorMsg = error.response?.data?.message || error.message || 'Connection failed';
       this.notify('error', `獲取 RTK 定位資料失敗: ${errorMsg}`);
       throw new Error(error.response?.data?.message || 'Failed to fetch RTK data');
+    }
+  }
+
+  /**
+   * 更新 RTK 定位資料
+   * PUT /api/rtk/data/:id
+   */
+  static async updateRTKData(id: number, data: {
+    latitude: number;
+    longitude: number;
+    altitude: number;
+    timestamp: string;
+  }): Promise<{ success: boolean; message?: string; data?: any }> {
+    try {
+      console.log(`🔄 TableService: Updating RTK data with ID: ${id}`, data);
+      const response = await apiClient.put(`/api/rtk/data/${id}`, data);
+      console.log('✅ TableService: RTK data updated successfully:', response);
+      this.notify('success', '成功更新 RTK 定位資料');
+      return response;
+    } catch (error: any) {
+      console.error('❌ TableService: Failed to update RTK data:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+      this.notify('error', `更新 RTK 定位資料失敗: ${errorMsg}`);
+      return {
+        success: false,
+        message: errorMsg
+      };
+    }
+  }
+
+  /**
+   * 更新權限資料
+   * PUT /api/rbac/permissions/:id
+   */
+  static async updatePermission(id: number, data: {
+    name: string;
+    description: string;
+  }): Promise<{ success: boolean; message?: string; data?: any }> {
+    try {
+      const response = await apiClient.put(`/api/rbac/permissions/${id}`, data);
+      this.notify('success', '成功更新權限資料');
+      return { success: true, data: response };
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+      this.notify('error', `更新權限資料失敗: ${errorMsg}`);
+      return { success: false, message: errorMsg };
+    }
+  }
+
+  /**
+   * 更新角色資料
+   * PUT /api/rbac/roles/:id
+   */
+  static async updateRole(id: number, data: {
+    name: string;
+    displayName: string;
+  }): Promise<{ success: boolean; message?: string; data?: any }> {
+    try {
+      const response = await apiClient.put(`/api/rbac/roles/${id}`, data);
+      this.notify('success', '成功更新角色資料');
+      return { success: true, data: response };
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+      this.notify('error', `更新角色資料失敗: ${errorMsg}`);
+      return { success: false, message: errorMsg };
+    }
+  }
+
+  /**
+   * 更新用戶資料
+   * PUT /api/rbac/users/:id
+   */
+  static async updateUser(id: number, data: {
+    username: string;
+    email: string;
+    passwordHash?: string;
+  }): Promise<{ success: boolean; message?: string; data?: any }> {
+    try {
+      const response = await apiClient.put(`/api/rbac/users/${id}`, data);
+      this.notify('success', '成功更新用戶資料');
+      return { success: true, data: response };
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+      this.notify('error', `更新用戶資料失敗: ${errorMsg}`);
+      return { success: false, message: errorMsg };
     }
   }
 

@@ -109,10 +109,13 @@ export class AuthService implements IAuthService {
             }
 
             // 生成 JWT
-            const payload = { sub: user.id };
+            const payload = { 
+                sub: user.id,
+                username: user.username 
+            };
             const token = jwt.sign(
                 payload,
-                process.env.JWT_SECRET || 'your_jwt_secret_here',
+                process.env.JWT_SECRET || 'zanewnch',
                 { expiresIn: '1h' }
             );
 

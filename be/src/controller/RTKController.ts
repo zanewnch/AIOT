@@ -41,6 +41,14 @@ export class RTKController {
      * 需要 JWT 驗證
      */
     this.router.get('/api/rtk/data', this.jwtAuth.authenticate, this.getRTKData);
+    
+    /**
+     * PUT /api/rtk/data/:id
+     * -------------------------------------------------
+     * 更新指定 RTK 定位資料
+     * 需要 JWT 驗證
+     */
+    this.router.put('/api/rtk/data/:id', this.jwtAuth.authenticate, this.updateRTKData);
   }
 
   /**
@@ -72,6 +80,65 @@ export class RTKController {
 
       res.status(200).json(formattedData);
     } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * 更新指定 RTK 定位資料
+   * PUT /api/rtk/data/:id
+   */
+  public async updateRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { latitude, longitude, altitude, timestamp } = req.body;
+
+      console.log(`🔄 RTKController: Updating RTK data with ID: ${id}`);
+      console.log('📝 RTKController: Update data:', { latitude, longitude, altitude, timestamp });
+
+      // 驗證必要欄位
+      if (!latitude || !longitude) {
+        res.status(400).json({
+          success: false,
+          message: 'Latitude and longitude are required'
+        });
+        return;
+      }
+
+      // 檢查記錄是否存在
+      const existingRecord = await RTKDataModel.findByPk(id);
+      if (!existingRecord) {
+        res.status(404).json({
+          success: false,
+          message: 'RTK data not found'
+        });
+        return;
+      }
+
+      // 更新記錄
+      const updatedRecord = await existingRecord.update({
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude)
+      });
+
+      console.log('✅ RTKController: RTK data updated successfully:', updatedRecord.toJSON());
+
+      // 返回更新後的格式化資料
+      const formattedData = {
+        id: updatedRecord.id,
+        latitude: updatedRecord.latitude,
+        longitude: updatedRecord.longitude,
+        altitude: parseFloat(altitude) || 45.0,
+        timestamp: timestamp || updatedRecord.updatedAt?.toISOString().replace('T', ' ').substring(0, 19) || ''
+      };
+
+      res.status(200).json({
+        success: true,
+        message: 'RTK data updated successfully',
+        data: formattedData
+      });
+    } catch (error) {
+      console.error('❌ RTKController: Error updating RTK data:', error);
       next(error);
     }
   }
