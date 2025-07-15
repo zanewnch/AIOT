@@ -1,9 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
+import notificationReducer from './notificationSlice';
+import authReducer from './authSlice';
+import themeReducer from './themeSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    notifications: notificationReducer,
+    auth: authReducer,
+    theme: themeReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

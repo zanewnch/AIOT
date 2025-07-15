@@ -4,16 +4,23 @@ import { TableViewer } from "./components/HomeContent/TableViewer";
 import { HomeContent } from "./components/HomeContent/HomeContent";
 import SwaggerDocPage from "./pages/SwaggerDocPage";
 import LoginPage from "./pages/LoginPage";
-import { NotificationProvider } from "./context/NotificationContext";
-import { AuthProvider } from "./context/AuthContext";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "./store";
+import { initializeAuth } from "./store/authSlice";
 import { NotificationContainer } from "./components/Notification/NotificationContainer";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
+    const dispatch = useDispatch<AppDispatch>();
+
+    // 初始化認證狀態
+    useEffect(() => {
+        dispatch(initializeAuth());
+    }, [dispatch]);
+
     return (
-        <AuthProvider>
-            <NotificationProvider>
-                <BrowserRouter>
+        <BrowserRouter>
                     <Routes>
                         {/* 公開路由 */}
                         <Route path="/login" element={<LoginPage />} />
@@ -31,8 +38,6 @@ function App() {
                     </Routes>
                     <NotificationContainer />
                 </BrowserRouter>
-            </NotificationProvider>
-        </AuthProvider>
     );
 }
 

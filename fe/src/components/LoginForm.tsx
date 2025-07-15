@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppDispatch } from '../store';
+import { login, clearError, selectIsLoading, selectAuthError } from '../store/authSlice';
 import { LoginRequest } from '../services/AuthService';
 import styles from '../styles/LoginForm.module.scss';
 
@@ -10,7 +12,9 @@ import styles from '../styles/LoginForm.module.scss';
  * 與認證上下文整合，處理登入邏輯。
  */
 export const LoginForm: React.FC = () => {
-  const { login, isLoading, error, clearError } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectAuthError);
   const [formData, setFormData] = useState<LoginRequest>({
     username: '',
     password: '',
@@ -37,7 +41,7 @@ export const LoginForm: React.FC = () => {
 
     // 清除全域錯誤
     if (error) {
-      clearError();
+      dispatch(clearError());
     }
   };
 
@@ -70,9 +74,9 @@ export const LoginForm: React.FC = () => {
     }
 
     try {
-      await login(formData);
+      await dispatch(login(formData)).unwrap();
     } catch (error) {
-      // 錯誤已經在 AuthContext 中處理
+      // 錯誤已經在 Redux slice 中處理
       console.error('Login failed:', error);
     }
   };

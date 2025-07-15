@@ -1,9 +1,12 @@
 import React from 'react';
-import { useNotification } from '../../context/NotificationContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store';
+import { removeNotification } from '../../store/notificationSlice';
 import styles from './NotificationContainer.module.scss';
 
 export const NotificationContainer: React.FC = () => {
-  const { notifications, removeNotification } = useNotification();
+  const notifications = useSelector((state: RootState) => state.notifications.notifications);
+  const dispatch = useDispatch();
 
   return (
     <div className={styles.notificationContainer}>
@@ -11,7 +14,7 @@ export const NotificationContainer: React.FC = () => {
         <div
           key={notification.id}
           className={`${styles.notification} ${styles[notification.type]}`}
-          onClick={() => removeNotification(notification.id)}
+          onClick={() => dispatch(removeNotification(notification.id))}
         >
           <div className={styles.message}>
             {notification.message}
@@ -20,7 +23,7 @@ export const NotificationContainer: React.FC = () => {
             className={styles.closeButton}
             onClick={(e) => {
               e.stopPropagation();
-              removeNotification(notification.id);
+              dispatch(removeNotification(notification.id));
             }}
           >
             ×

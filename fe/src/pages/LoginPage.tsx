@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginForm } from '../components/LoginForm';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
+import { selectIsAuthenticated, selectIsLoading } from '../store/authSlice';
 
 /**
  * 登入頁面組件
@@ -10,7 +11,8 @@ import { useAuth } from '../context/AuthContext';
  * 如果使用者已經登入，會自動重定向到首頁。
  */
 export const LoginPage: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const isLoading = useSelector(selectIsLoading);
   const navigate = useNavigate();
 
   /**

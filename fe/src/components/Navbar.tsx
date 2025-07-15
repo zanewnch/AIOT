@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
-import { useAuth } from '../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppDispatch } from '../store';
+import { logout, selectUser } from '../store/authSlice';
 import styles from '../styles/Navbar.module.scss';
 
 interface NavbarProps {
@@ -11,11 +13,12 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ 
   brandName = "IOT"
 }) => {
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector(selectUser);
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await dispatch(logout()).unwrap();
     } catch (error) {
       console.error('Logout failed:', error);
     }

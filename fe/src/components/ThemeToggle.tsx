@@ -1,12 +1,14 @@
 import React from 'react';
-import { useTheme } from '../hooks/useTheme';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectTheme, toggleTheme } from '../store/themeSlice';
 import '../styles/ThemeToggle.scss';
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const theme = useSelector(selectTheme);
+  const dispatch = useDispatch();
 
   const handleToggle = () => {
-    toggleTheme();
+    dispatch(toggleTheme());
   };
 
   return (
