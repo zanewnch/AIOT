@@ -3,6 +3,7 @@ import userReducer from './userSlice';
 import notificationReducer from './notificationSlice';
 import authReducer from './authSlice';
 import themeReducer from './themeSlice';
+import tableReducer from './tableSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     notifications: notificationReducer,
     auth: authReducer,
     theme: themeReducer,
+    table: tableReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
