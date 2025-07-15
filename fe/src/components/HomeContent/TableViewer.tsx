@@ -14,7 +14,7 @@ import { RTKData } from 'types/IRTKData';
 import { TableService } from '../../services/TableService';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
-import { addNotification } from '../../store/notifications/actions';
+import { addNotificationWithAutoRemove } from '../../store/notificationSlice';
 
 // 組件屬性定義
 interface TableViewerProps {
@@ -78,7 +78,7 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   設定回調，造成性能浪費： */
   useEffect(() => {
     TableService.setNotificationCallback((type, message) => 
-      dispatch(addNotification(type, message))
+      dispatch(addNotificationWithAutoRemove({ type, message }))
     );
   }, [dispatch]);
 
@@ -344,14 +344,14 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
                             )
                           );
 
-                          dispatch(addNotification('success', '數據已更新'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'success', message: '數據已更新' }));
                           setShowEditModal(false);
                         } else {
-                          dispatch(addNotification('error', response.message || '更新失敗'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'error', message: response.message || '更新失敗' }));
                         }
                       } catch (error) {
                         console.error('更新數據失敗:', error);
-                        dispatch(addNotification('error', '更新數據時發生錯誤'));
+                        dispatch(addNotificationWithAutoRemove({ type: 'error', message: '更新數據時發生錯誤' }));
                       }
                     }}
                   >
@@ -434,14 +434,14 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
                               item.id === editingItem.id ? editingItem : item
                             )
                           );
-                          dispatch(addNotification('success', '權限已更新'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'success', message: '權限已更新' }));
                           setShowEditModal(false);
                         } else {
-                          dispatch(addNotification('error', response.message || '更新失敗'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'error', message: response.message || '更新失敗' }));
                         }
                       } catch (error) {
                         console.error('更新權限失敗:', error);
-                        dispatch(addNotification('error', '更新權限時發生錯誤'));
+                        dispatch(addNotificationWithAutoRemove({ type: 'error', message: '更新權限時發生錯誤' }));
                       }
                     }}
                   >
@@ -524,14 +524,14 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
                               item.id === editingItem.id ? editingItem : item
                             )
                           );
-                          dispatch(addNotification('success', '角色已更新'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'success', message: '角色已更新' }));
                           setShowEditModal(false);
                         } else {
-                          dispatch(addNotification('error', response.message || '更新失敗'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'error', message: response.message || '更新失敗' }));
                         }
                       } catch (error) {
                         console.error('更新角色失敗:', error);
-                        dispatch(addNotification('error', '更新角色時發生錯誤'));
+                        dispatch(addNotificationWithAutoRemove({ type: 'error', message: '更新角色時發生錯誤' }));
                       }
                     }}
                   >
@@ -624,14 +624,14 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
                               item.id === editingItem.id ? editingItem : item
                             )
                           );
-                          dispatch(addNotification('success', '用戶已更新'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'success', message: '用戶已更新' }));
                           setShowEditModal(false);
                         } else {
-                          dispatch(addNotification('error', response.message || '更新失敗'));
+                          dispatch(addNotificationWithAutoRemove({ type: 'error', message: response.message || '更新失敗' }));
                         }
                       } catch (error) {
                         console.error('更新用戶失敗:', error);
-                        dispatch(addNotification('error', '更新用戶時發生錯誤'));
+                        dispatch(addNotificationWithAutoRemove({ type: 'error', message: '更新用戶時發生錯誤' }));
                       }
                     }}
                   >
