@@ -28,6 +28,7 @@ import { RoleModel } from '../models/rbac/RoleModel.js';
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
 import { UserModel } from '../models/rbac/UserModel.js';
 import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
+import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
 
 /**
  * RBAC 初始化服務類別
@@ -299,7 +300,7 @@ export class RbacInitService {
 
   /**
    * 建立示範使用者
-   * 建立測試用的使用者帳戶
+   * 建立 5000 筆測試用使用者帳戶供壓力測試使用
    * 
    * @param result 統計結果物件，用於記錄建立的使用者數量
    * @returns Promise<Record<string, UserModel>> 使用者名稱對應使用者模型的對照表
@@ -307,16 +308,71 @@ export class RbacInitService {
    * @private
    */
   private async seedUsers(result: Record<string, number>) {
-    const usersData = [
-      { username: 'alice', email: 'alice@mail.com', passwordHash: '$2a$10$...' },
-      { username: 'bob', email: 'bob@mail.com', passwordHash: '$2a$10$...' },
-    ];
-    const userMap: Record<string, UserModel> = {};
+    const TARGET_COUNT = 5000;
+    const BATCH_SIZE = 1000; // 分批處理避免記憶體問題
     
-    for (const data of usersData) {
-      const [user, created] = await UserModel.findOrCreate({ where: { username: data.username }, defaults: data });
-      if (created) result.users += 1;
-      userMap[data.username] = user;
+    console.log(`正在生成 ${TARGET_COUNT} 筆使用者測試資料...`);
+    
+    // 預設密碼 hash (對應明文 "password123")
+    const defaultPasswordHash = await bcrypt.hash('password123', 10);
+    
+    const userMap: Record<string, UserModel> = {};
+    let totalCreated = 0;
+    
+    // 分批處理使用者創建
+    for (let batchStart = 0; batchStart < TARGET_COUNT; batchStart += BATCH_SIZE) {
+      const batchEnd = Math.min(batchStart + BATCH_SIZE, TARGET_COUNT);
+      const usersData = [];
+      
+      // 生成當前批次的使用者資料
+      for (let i = batchStart; i < batchEnd; i++) {
+        const userId = i + 1;
+        usersData.push({
+          username: `user_${userId.toString().padStart(5, '0')}`,
+          email: `user${userId}@test.com`,
+          passwordHash: defaultPasswordHash,
+        });
+      }
+      
+      console.log(`正在處理第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 (${batchStart + 1}-${batchEnd})...`);
+      
+      // 批量創建使用者
+      const createdUsers = await UserModel.bulkCreate(
+        usersData,
+        { 
+          ignoreDuplicates: true, // 忽略重複項目
+          returning: true, // 返回創建的記錄
+        }
+      );
+      
+      // 將創建的使用者加入 userMap
+      for (let i = 0; i < createdUsers.length; i++) {
+        const user = createdUsers[i];
+        userMap[user.username] = user;
+      }
+      
+      totalCreated += createdUsers.length;
+      console.log(`批次完成，已創建 ${createdUsers.length} 筆使用者資料`);
+    }
+    
+    result.users = totalCreated;
+    console.log(`成功創建總計 ${totalCreated} 筆使用者資料`);
+    
+    // 為了保持原有邏輯的相容性，確保 alice 和 bob 存在
+    const legacyUsers = [
+      { username: 'alice', email: 'alice@mail.com', passwordHash: defaultPasswordHash },
+      { username: 'bob', email: 'bob@mail.com', passwordHash: defaultPasswordHash },
+    ];
+    
+    for (const data of legacyUsers) {
+      if (!userMap[data.username]) {
+        const [user, created] = await UserModel.findOrCreate({ 
+          where: { username: data.username }, 
+          defaults: data 
+        });
+        if (created) result.users += 1;
+        userMap[data.username] = user;
+      }
     }
     
     return userMap;
@@ -397,5 +453,208 @@ export class RbacInitService {
       });
       if (created) result.userRoles += 1;
     }
+  }
+
+  /**
+   * 建立 RBAC 示範資料（支援進度回調）
+   * 與 seedRbacDemo 相同功能，但支援進度追蹤回調
+   * 
+   * @param progressCallback 進度回調函數
+   * @returns Promise<Record<string, number>> 包含各類型資料建立數量的統計結果
+   */
+  async seedRbacDemoWithProgress(progressCallback?: ProgressCallback): Promise<Record<string, number>> {
+    const result = {
+      users: 0,
+      roles: 0,
+      permissions: 0,
+      userRoles: 0,
+      rolePermissions: 0,
+    } as Record<string, number>;
+
+    // 通知開始建立角色
+    if (progressCallback) {
+      progressCallback({
+        taskId: '',
+        status: 'running' as any,
+        stage: TaskStage.CREATING_RELATIONSHIPS,
+        percentage: 0,
+        current: 5000, // RTK 部分已完成
+        total: 10000,
+        message: '正在建立角色...',
+        startTime: new Date(),
+        lastUpdated: new Date()
+      });
+    }
+
+    const roleMap = await this.seedRoles(result);
+    
+    // 通知建立權限
+    if (progressCallback) {
+      progressCallback({
+        taskId: '',
+        status: 'running' as any,
+        stage: TaskStage.CREATING_RELATIONSHIPS,
+        percentage: 0,
+        current: 5100,
+        total: 10000,
+        message: '正在建立權限...',
+        startTime: new Date(),
+        lastUpdated: new Date()
+      });
+    }
+    
+    const permMap = await this.seedPermissions(result);
+    
+    // 通知建立使用者（這是最耗時的部分）
+    if (progressCallback) {
+      progressCallback({
+        taskId: '',
+        status: 'running' as any,
+        stage: TaskStage.INSERTING_USERS,
+        percentage: 0,
+        current: 5200,
+        total: 10000,
+        message: '正在建立使用者...',
+        startTime: new Date(),
+        lastUpdated: new Date()
+      });
+    }
+    
+    const userMap = await this.seedUsersWithProgress(result, progressCallback);
+    
+    // 通知建立關聯關係
+    if (progressCallback) {
+      progressCallback({
+        taskId: '',
+        status: 'running' as any,
+        stage: TaskStage.CREATING_RELATIONSHIPS,
+        percentage: 0,
+        current: 9500,
+        total: 10000,
+        message: '正在建立角色權限關聯...',
+        startTime: new Date(),
+        lastUpdated: new Date()
+      });
+    }
+    
+    await this.seedRolePermissions(roleMap, permMap, result);
+    
+    if (progressCallback) {
+      progressCallback({
+        taskId: '',
+        status: 'running' as any,
+        stage: TaskStage.CREATING_RELATIONSHIPS,
+        percentage: 0,
+        current: 9800,
+        total: 10000,
+        message: '正在建立使用者角色關聯...',
+        startTime: new Date(),
+        lastUpdated: new Date()
+      });
+    }
+    
+    await this.seedUserRoles(userMap, roleMap, result);
+
+    return result;
+  }
+
+  /**
+   * 建立示範使用者（支援進度回調）
+   * 建立 5000 筆測試用使用者帳戶供壓力測試使用，支援進度追蹤
+   * 
+   * @param result 統計結果物件，用於記錄建立的使用者數量
+   * @param progressCallback 進度回調函數
+   * @returns Promise<Record<string, UserModel>> 使用者名稱對應使用者模型的對照表
+   * 
+   * @private
+   */
+  private async seedUsersWithProgress(
+    result: Record<string, number>, 
+    progressCallback?: ProgressCallback
+  ): Promise<Record<string, UserModel>> {
+    const TARGET_COUNT = 5000;
+    const BATCH_SIZE = 1000; // 分批處理避免記憶體問題
+    
+    console.log(`正在生成 ${TARGET_COUNT} 筆使用者測試資料...`);
+    
+    // 預設密碼 hash (對應明文 "password123")
+    const defaultPasswordHash = await bcrypt.hash('password123', 10);
+    
+    const userMap: Record<string, UserModel> = {};
+    let totalCreated = 0;
+    
+    // 分批處理使用者創建
+    for (let batchStart = 0; batchStart < TARGET_COUNT; batchStart += BATCH_SIZE) {
+      const batchEnd = Math.min(batchStart + BATCH_SIZE, TARGET_COUNT);
+      const usersData = [];
+      
+      // 生成當前批次的使用者資料
+      for (let i = batchStart; i < batchEnd; i++) {
+        const userId = i + 1;
+        usersData.push({
+          username: `user_${userId.toString().padStart(5, '0')}`,
+          email: `user${userId}@test.com`,
+          passwordHash: defaultPasswordHash,
+        });
+      }
+      
+      console.log(`正在處理第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 (${batchStart + 1}-${batchEnd})...`);
+      
+      // 通知進度
+      if (progressCallback) {
+        const current = 5200 + batchStart; // 基礎進度 + 當前批次進度
+        progressCallback({
+          taskId: '',
+          status: 'running' as any,
+          stage: TaskStage.INSERTING_USERS,
+          percentage: 0, // 會被 ProgressService 重新計算
+          current,
+          total: 10000,
+          message: `正在插入第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次使用者資料 (${batchStart + 1}-${batchEnd})`,
+          startTime: new Date(),
+          lastUpdated: new Date()
+        });
+      }
+      
+      // 批量創建使用者
+      const createdUsers = await UserModel.bulkCreate(
+        usersData,
+        { 
+          ignoreDuplicates: true, // 忽略重複項目
+          returning: true, // 返回創建的記錄
+        }
+      );
+      
+      // 將創建的使用者加入 userMap
+      for (let i = 0; i < createdUsers.length; i++) {
+        const user = createdUsers[i];
+        userMap[user.username] = user;
+      }
+      
+      totalCreated += createdUsers.length;
+      console.log(`批次完成，已創建 ${createdUsers.length} 筆使用者資料`);
+    }
+    
+    result.users = totalCreated;
+    console.log(`成功創建總計 ${totalCreated} 筆使用者資料`);
+    
+    // 為了保持原有邏輯的相容性，確保 alice 和 bob 存在
+    const legacyUsers = [
+      { username: 'alice', email: 'alice@mail.com', passwordHash: defaultPasswordHash },
+      { username: 'bob', email: 'bob@mail.com', passwordHash: defaultPasswordHash },
+    ];
+    
+    for (const data of legacyUsers) {
+      if (!userMap[data.username]) {
+        const [user, created] = await UserModel.findOrCreate({ 
+          where: { username: data.username }, 
+          defaults: data 
+        });
+        if (created) result.users += 1;
+        userMap[data.username] = user;
+      }
+    }
+    
+    return userMap;
   }
 }

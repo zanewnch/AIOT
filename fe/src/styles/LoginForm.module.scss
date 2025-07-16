@@ -3,17 +3,18 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   padding: 20px;
 }
 
 .loginCard {
-  background: white;
+  background: #2d3748;
   border-radius: 12px;
   padding: 40px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4a5568;
   
   @media (max-width: 480px) {
     padding: 30px 20px;
@@ -23,7 +24,7 @@
 .title {
   text-align: center;
   margin-bottom: 30px;
-  color: #333;
+  color: #e2e8f0;
   font-size: 28px;
   font-weight: 600;
 }
@@ -42,49 +43,56 @@
 
 .label {
   font-weight: 500;
-  color: #555;
+  color: #cbd5e0;
   font-size: 14px;
 }
 
 .input {
   padding: 12px 16px;
-  border: 2px solid #e1e5e9;
+  border: 2px solid #4a5568;
   border-radius: 8px;
   font-size: 16px;
+  background-color: #1a202c;
+  color: #e2e8f0;
   transition: border-color 0.2s ease;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #63b3ed;
   }
   
   &:disabled {
-    background-color: #f8f9fa;
+    background-color: #2d3748;
+    opacity: 0.6;
     cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: #718096;
   }
 }
 
 .inputError {
-  border-color: #dc3545;
+  border-color: #fc8181;
   
   &:focus {
-    border-color: #dc3545;
+    border-color: #fc8181;
   }
 }
 
 .fieldError {
-  color: #dc3545;
+  color: #fc8181;
   font-size: 12px;
   margin-top: 4px;
 }
 
 .errorMessage {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: #2d1b1e;
+  color: #fc8181;
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 20px;
-  border: 1px solid #f5c6cb;
+  border: 1px solid #4a1d2b;
   font-size: 14px;
 }
 
@@ -138,19 +146,20 @@
 .demoCredentials {
   margin-top: 30px;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: #1a202c;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #4299e1;
+  border: 1px solid #2d3748;
   
   h4 {
     margin: 0 0 10px 0;
-    color: #495057;
+    color: #e2e8f0;
     font-size: 14px;
   }
   
   p {
     margin: 5px 0;
-    color: #6c757d;
+    color: #a0aec0;
     font-size: 13px;
     font-family: 'Courier New', monospace;
   }

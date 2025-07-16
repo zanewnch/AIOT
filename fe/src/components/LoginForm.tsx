@@ -141,9 +141,8 @@ export const LoginForm: React.FC = () => {
         </form>
 
         <div className={styles.demoCredentials}>
-          <h4>Demo Credentials:</h4>
-          <p>Username: admin</p>
-          <p>Password: password123</p>
+          <h4>New User?</h4>
+          <p>Please register to create your account</p>
         </div>
       </div>
     </div>

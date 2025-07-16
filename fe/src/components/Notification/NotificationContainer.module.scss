@@ -81,3 +81,18 @@
     opacity: 1;
   }
 }
+
+@keyframes fadeOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification.removing {
+  animation: fadeOut 0.3s ease-in forwards;
+}
