@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { IUserController } from '../../types/controllers/IUserController.js';
@@ -13,44 +13,17 @@ import { IUserController } from '../../types/controllers/IUserController.js';
  * @example
  * ```typescript
  * const userController = new UserController();
- * app.use('/api/rbac/users', userController.router);
+ * // Routes are handled separately in rbacRoutes.ts
  * ```
  */
 export class UserController implements IUserController {
-    public router: Router;
-
     /**
      * 初始化使用者控制器實例
-     * 
-     * 設置路由器和所有使用者相關的API端點
      */
     constructor() {
-        this.router = Router();
-        this.initializeRoutes();
+        // Controller only contains business logic
     }
 
-    /**
-     * 初始化使用者控制器的路由配置
-     * 
-     * 設定所有使用者相關的API端點路由，包括：
-     * - GET / - 獲取所有使用者列表
-     * - POST / - 創建新使用者
-     * - GET /:userId - 根據ID獲取特定使用者
-     * - PUT /:userId - 更新指定使用者
-     * - DELETE /:userId - 刪除指定使用者
-     * 
-     * @private
-     * @returns {void}
-     */
-    private initializeRoutes = (): void => {
-        this.router.route('/')
-            .get(this.getUsers.bind(this))
-            .post(this.createUser.bind(this));
-        this.router.route('/:userId')
-            .get(this.getUserById.bind(this))
-            .put(this.updateUser.bind(this))
-            .delete(this.deleteUser.bind(this));
-    }
 
     /**
      * 獲取所有使用者列表

@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { IRoleController } from '../../types/controllers/IRoleController.js';
 
@@ -12,44 +12,17 @@ import { IRoleController } from '../../types/controllers/IRoleController.js';
  * @example
  * ```typescript
  * const roleController = new RoleController();
- * app.use('/api/rbac/roles', roleController.router);
+ * // Routes are handled separately in rbacRoutes.ts
  * ```
  */
 export class RoleController implements IRoleController {
-    public router: Router;
-
     /**
      * 初始化角色控制器實例
-     * 
-     * 設置路由器和所有角色相關的API端點
      */
     constructor() {
-        this.router = Router();
-        this.initializeRoutes();
+        // Controller only contains business logic
     }
 
-    /**
-     * 初始化角色控制器的路由配置
-     * 
-     * 設定所有角色相關的API端點路由，包括：
-     * - GET / - 獲取所有角色列表
-     * - POST / - 創建新角色
-     * - GET /:roleId - 根據ID獲取特定角色
-     * - PUT /:roleId - 更新指定角色
-     * - DELETE /:roleId - 刪除指定角色
-     * 
-     * @private
-     * @returns {void}
-     */
-    private initializeRoutes = (): void => {
-        this.router.route('/')
-            .get(this.getRoles.bind(this))
-            .post(this.createRole.bind(this));
-        this.router.route('/:roleId')
-            .get(this.getRoleById.bind(this))
-            .put(this.updateRole.bind(this))
-            .delete(this.deleteRole.bind(this));
-    }
 
     /**
      * 獲取所有角色列表

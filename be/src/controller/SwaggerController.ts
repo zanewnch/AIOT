@@ -1,5 +1,4 @@
-import { Request, Response, Router, NextFunction } from 'express';
-import swaggerUi from 'swagger-ui-express';
+import { Request, Response, NextFunction } from 'express';
 import { specs } from '../configs/swaggerConfig.js';
 
 /**
@@ -16,29 +15,10 @@ import { specs } from '../configs/swaggerConfig.js';
  * ```
  */
 export class SwaggerController {
-  public router: Router;
-
   constructor() {
-    this.router = Router();
-    this.setupRoutes();
+    // Controller 現在只負責業務邏輯，路由已移至 swaggerRoutes.ts
   }
 
-  /**
-   * 設置路由配置
-   * 
-   * 初始化所有Swagger相關的路由，包括JSON端點和UI介面。
-   * 
-   * @private
-   * @returns {void}
-   */
-  private setupRoutes = (): void => {
-    // API 端點返回 JSON spec
-    this.router.get('/api/swagger.json', this.getSwaggerSpec);
-    
-    // 備用的 Swagger UI 路由
-    this.router.use('/api/docs', swaggerUi.serve);
-    this.router.get('/api/docs', swaggerUi.setup(specs));
-  }
 
   /**
    * 獲取OpenAPI規格文件
@@ -63,7 +43,7 @@ export class SwaggerController {
    * }
    * ```
    */
-  private getSwaggerSpec = (_req: Request, res: Response, next: NextFunction): void => {
+  public getSwaggerSpec = (_req: Request, res: Response, next: NextFunction): void => {
     try {
       res.setHeader('Content-Type', 'application/json');
       res.send(specs);

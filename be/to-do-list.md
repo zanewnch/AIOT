@@ -26,3 +26,4 @@ date: 2025-06-26
 # date 2025-07-17
 - [ ] jwt reddis
 - [ ] permission logic 實作
+micro service

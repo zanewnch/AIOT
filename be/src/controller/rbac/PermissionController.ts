@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { PermissionModel } from '../../models/rbac/PermissionModel.js';
 import { IPermissionController } from '../../types/controllers/IPermissionController.js';
 
@@ -12,44 +12,17 @@ import { IPermissionController } from '../../types/controllers/IPermissionContro
  * @example
  * ```typescript
  * const permissionController = new PermissionController();
- * app.use('/api/rbac/permissions', permissionController.router);
+ * // Routes are handled separately in rbacRoutes.ts
  * ```
  */
 export class PermissionController implements IPermissionController {
-    public router: Router;
-
     /**
      * 初始化權限控制器實例
-     * 
-     * 設置路由器和所有權限相關的API端點
      */
     constructor() {
-        this.router = Router();
-        this.initializeRoutes();
+        // Controller only contains business logic
     }
 
-    /**
-     * 初始化權限控制器的路由配置
-     * 
-     * 設定所有權限相關的API端點路由，包括：
-     * - GET / - 獲取所有權限列表
-     * - POST / - 創建新權限
-     * - GET /:permissionId - 根據ID獲取特定權限
-     * - PUT /:permissionId - 更新指定權限
-     * - DELETE /:permissionId - 刪除指定權限
-     * 
-     * @private
-     * @returns {void}
-     */
-    private initializeRoutes = (): void => {
-        this.router.route('/')
-            .get(this.getPermissions.bind(this))
-            .post(this.createPermission.bind(this));
-        this.router.route('/:permissionId')
-            .get(this.getPermissionById.bind(this))
-            .put(this.updatePermission.bind(this))
-            .delete(this.deletePermission.bind(this));
-    }
 
     /**
      * 獲取所有權限列表

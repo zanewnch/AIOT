@@ -11,7 +11,7 @@ src/controller/
 ├── index.ts                    # 統一入口文件
 ├── DeviceController.ts         # 設備控制器 (RabbitMQ 集成)
 ├── InitController.ts           # 初始化控制器
-├── JWTAuthController.ts        # JWT 認證控制器
+├── AuthController.ts           # 認證控制器
 └── rbac/                       # RBAC 控制器目錄
     ├── index.ts                # RBAC 控制器統一入口
     ├── RBACController.ts       # 主 RBAC 控制器
@@ -89,7 +89,7 @@ const rbacController = new RBACController();
 ```
 setupControllers
 ├── InitController (同步)
-├── JWTAuthController (同步)
+├── AuthController (同步)
 ├── RBACController (同步)
 └── DeviceController (異步, 需要 RabbitMQ)
 ```

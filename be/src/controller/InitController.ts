@@ -19,7 +19,7 @@ import { backgroundTaskHandler } from '../utils/backgroundTask.js';
  * ```
  */
 export class InitController {
-  public router: Router;
+  
   private rbacInitService: RbacInitService;
   private rtkInitService: RTKInitService;
 
@@ -28,55 +28,11 @@ export class InitController {
    * 設置路由和必要的服務依賴
    */
   constructor() {
-    this.router = Router();
-    this.initializeRoutes();
+    
     this.rbacInitService = new RbacInitService();
     this.rtkInitService = new RTKInitService();
   }
 
-  /**
-   * 初始化路由配置
-   *
-   * 設置初始化相關的API路由，包括RBAC和RTK演示資料的初始化端點。
-   *
-   * @private
-   * @returns {void}
-   */
-  private initializeRoutes = (): void => {
-    /**
-     * POST /api/init/rbac-demo
-     * -------------------------------------------------
-     * 一次性插入 RBAC demo 資料。
-     * 如果資料已存在，不會重覆建立，仍回傳 200。
-     */
-    this.router.post('/api/init/rbac-demo', this.seedRbacDemo);
-
-    /**
-     * POST /api/init/rtk-demo
-     * -------------------------------------------------
-     * 一次性插入 RTK demo 資料。
-     * 如果資料已存在，不會重覆建立，仍回傳 200。
-     */
-    this.router.post('/api/init/rtk-demo', this.seedRTKDemo);
-
-    /**
-     * POST /api/init/admin-user
-     * -------------------------------------------------
-     * 創建系統管理員帳號。
-     * 用戶名：admin，密碼：admin，具有完整系統權限。
-     */
-    this.router.post('/api/init/admin-user', this.createAdminUser);
-
-    /**
-     * POST /api/init/stress-test-data
-     * -------------------------------------------------
-     * 生成大量測試資料供壓力測試使用。
-     * 包含 5000 筆 RTK 資料和 5000 筆使用者資料。
-     * 返回 taskId 供進度追蹤使用。
-     */
-    this.router.post('/api/init/stress-test-data', this.createStressTestData);
-
-  }
 
   /**
    * 初始化RBAC演示資料

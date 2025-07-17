@@ -7,49 +7,18 @@
  * - GET /api/rtk/data - 取得所有 RTK 定位資料
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { RTKDataModel } from '../models/RTKDataModel.js';
-import { JwtAuthMiddleware } from '../middleware/jwtAuthMiddleware.js';
 
 export class RTKController {
-  public router: Router;
-  private jwtAuth: JwtAuthMiddleware;
-
   /**
    * 初始化控制器實例
-   * 設置路由和必要的服務依賴
+   * 控制器現在只負責業務邏輯，路由已移至 rtkRoutes.ts
    */
   constructor() {
-    this.router = Router();
-    this.jwtAuth = new JwtAuthMiddleware();
-    this.initializeRoutes();
+    // Controller 現在只負責業務邏輯，路由已移至 rtkRoutes.ts
   }
 
-  /**
-   * 初始化路由配置
-   * 
-   * 設置 RTK 相關的 API 路由
-   * 
-   * @private
-   * @returns {void}
-   */
-  private initializeRoutes = (): void => {
-    /**
-     * GET /api/rtk/data
-     * -------------------------------------------------
-     * 取得所有 RTK 定位資料
-     * 需要 JWT 驗證
-     */
-    this.router.get('/api/rtk/data', this.jwtAuth.authenticate, this.getRTKData);
-    
-    /**
-     * PUT /api/rtk/data/:id
-     * -------------------------------------------------
-     * 更新指定 RTK 定位資料
-     * 需要 JWT 驗證
-     */
-    this.router.put('/api/rtk/data/:id', this.jwtAuth.authenticate, this.updateRTKData);
-  }
 
   /**
    * 取得所有 RTK 定位資料

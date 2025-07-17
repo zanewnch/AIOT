@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, Router } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { progressService } from '../service/ProgressService.js';
 
 /**
@@ -7,26 +7,10 @@ import { progressService } from '../service/ProgressService.js';
  * 提供通用的進度查詢和即時進度串流功能
  */
 export class ProgressController {
-  public router: Router;
-
   constructor() {
-    this.router = Router();
-    this.setupRoutes();
+    // Controller 現在只負責業務邏輯，路由已移至 progressRoutes.ts
   }
 
-  private setupRoutes = (): void => {
-    /**
-     * GET /api/progress/:taskId
-     * 取得指定任務的當前進度
-     */
-    this.router.get('/:taskId', this.getProgress);
-
-    /**
-     * GET /api/progress/:taskId/stream
-     * 取得指定任務的即時進度串流（SSE）
-     */
-    this.router.get('/:taskId/stream', this.getProgressStream);
-  }
   /**
    * 取得指定任務的進度資訊
    * 

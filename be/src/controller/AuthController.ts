@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { AuthService, IAuthService } from '../service/AuthService.js';
 
 /**
- * JWT驗證控制器，處理使用者登入和登出功能
+ * 認證控制器，處理使用者登入和登出功能
  * 
  * 提供基於JWT的使用者身份驗證，包括登入時的JWT發放和登出時的cookie清除。
  * 使用httpOnly cookie來安全地儲存JWT token，提升安全性。
@@ -10,16 +10,16 @@ import { AuthService, IAuthService } from '../service/AuthService.js';
  * @module Controllers
  * @example
  * ```typescript
- * const authController = new JWTAuthController();
+ * const authController = new AuthController();
  * app.use('/api/', authController.router);
  * ```
  */
-export class JWTAuthController {
-  public router: Router;
+export class AuthController {
+  
   private authService: IAuthService;
 
   /**
-   * 初始化JWT驗證控制器實例
+   * 初始化認證控制器實例
    * 
    * 設置驗證服務、路由器和相關路由配置
    * 
@@ -27,23 +27,9 @@ export class JWTAuthController {
    */
   constructor(authService: IAuthService = new AuthService()) {
     this.authService = authService;
-    this.router = Router();
-    this.initializeRoutes();
+    
   }
 
-  /**
-   * 初始化路由配置
-   * 
-   * 設置所有驗證相關的路由端點，包括登入和登出路由。
-   * 使用bind方法確保方法調用時this指向正確的實例。
-   * 
-   * @private
-   * @returns {void}
-   */
-  private initializeRoutes = (): void => {
-    this.router.post('/api/auth/login', this.login.bind(this));
-    this.router.post('/api/auth/logout', this.logout.bind(this));
-  }
 
   /**
    * 處理使用者登入請求
@@ -51,7 +37,7 @@ export class JWTAuthController {
    * 驗證使用者憑證並發放JWT token。成功登入後會設置httpOnly cookie
    * 來安全地儲存JWT，同時在回應中返回token供前端使用。
    * 
-   * @private
+   * @public
    * @param {Request} req - Express請求物件，包含username和password
    * @param {Response} res - Express回應物件
    * @returns {Promise<void>}
@@ -76,7 +62,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { username, password } = req.body;
 
@@ -125,7 +111,7 @@ export class JWTAuthController {
    * 清除儲存在cookie中的JWT token，完成使用者登出流程。
    * 此操作會移除httpOnly cookie，確保token無法再被使用。
    * 
-   * @private
+   * @public
    * @param {Request} req - Express請求物件
    * @param {Response} res - Express回應物件
    * @returns {Promise<void>}
@@ -143,7 +129,7 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // 取得 JWT token
       const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');

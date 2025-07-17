@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { IUserToRoleController } from '../../types/controllers/IUserToRoleController.js';
@@ -13,39 +13,17 @@ import { IUserToRoleController } from '../../types/controllers/IUserToRoleContro
  * @example
  * ```typescript
  * const userToRoleController = new UserToRoleController();
- * app.use('/api/rbac/users', userToRoleController.router);
+ * // Routes are handled separately in rbacRoutes.ts
  * ```
  */
 export class UserToRoleController implements IUserToRoleController {
-    public router: Router;
-
     /**
      * 初始化使用者角色關聯控制器實例
-     * 
-     * 設置路由器和所有使用者角色關聯的API端點
      */
     constructor() {
-        this.router = Router();
-        this.initializeRoutes();
+        // Controller only contains business logic
     }
 
-    /**
-     * 初始化使用者角色關聯控制器的路由配置
-     * 
-     * 設定所有使用者角色關聯相關的API端點路由，包括：
-     * - GET /:userId/roles - 獲取指定使用者的所有角色
-     * - POST /:userId/roles - 分配角色給指定使用者
-     * - DELETE /:userId/roles/:roleId - 從使用者中移除指定角色
-     * 
-     * @private
-     * @returns {void}
-     */
-    private initializeRoutes = (): void => {
-        this.router.route('/:userId/roles')
-            .get(this.getUserRoles.bind(this))
-            .post(this.assignRolesToUser.bind(this));
-        this.router.delete('/:userId/roles/:roleId', this.removeRoleFromUser.bind(this));
-    }
 
     /**
      * 獲取指定使用者的所有角色

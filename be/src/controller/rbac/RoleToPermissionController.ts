@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { RoleModel } from '../../models/rbac/RoleModel.js';
 import { PermissionModel } from '../../models/rbac/PermissionModel.js';
 import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js';
@@ -13,39 +13,17 @@ import { IRoleToPermissionController } from '../../types/controllers/IRoleToPerm
  * @example
  * ```typescript
  * const roleToPermissionController = new RoleToPermissionController();
- * app.use('/api/rbac/roles', roleToPermissionController.router);
+ * // Routes are handled separately in rbacRoutes.ts
  * ```
  */
 export class RoleToPermissionController implements IRoleToPermissionController {
-    public router: Router;
-
     /**
      * 初始化角色權限關聯控制器實例
-     * 
-     * 設置路由器和所有角色權限關聯的API端點
      */
     constructor() {
-        this.router = Router();
-        this.initializeRoutes();
+        // Controller only contains business logic
     }
 
-    /**
-     * 初始化角色權限關聯控制器的路由配置
-     * 
-     * 設定所有角色權限關聯相關的API端點路由，包括：
-     * - GET /:roleId/permissions - 獲取指定角色的所有權限
-     * - POST /:roleId/permissions - 分配權限給指定角色
-     * - DELETE /:roleId/permissions/:permissionId - 從角色中移除指定權限
-     * 
-     * @private
-     * @returns {void}
-     */
-    private initializeRoutes = (): void => {
-        this.router.route('/:roleId/permissions')
-            .get(this.getRolePermissions.bind(this))
-            .post(this.assignPermissionsToRole.bind(this));
-        this.router.delete('/:roleId/permissions/:permissionId', this.removePermissionFromRole.bind(this));
-    }
 
     /**
      * 獲取指定角色的所有權限
