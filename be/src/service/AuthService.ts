@@ -139,6 +139,14 @@ export class AuthService implements IAuthService {
                 { expiresIn: '1h' }
             );
 
+            // 清除該使用者的所有現有會話（實現單一裝置限制）
+            // 這個做法是為了讓使用者只能在一個裝置上登入，避免多重登入(同時多個裝置登入同一個帳號的情況)
+            try {
+                await SessionService.clearAllUserSessions(user.id);
+            } catch (clearError) {
+                console.error('Failed to clear existing sessions:', clearError);
+            }
+
             // 將會話資料存儲到 Redis
             try {
                 await SessionService.setUserSession(user.id, user.username, token, {

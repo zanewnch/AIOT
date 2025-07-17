@@ -16,6 +16,8 @@
  */
 
 import { UserModel } from '../models/rbac/UserModel.js';
+import { RoleModel } from '../models/rbac/RoleModel.js';
+import { PermissionModel } from '../models/rbac/PermissionModel.js';
 
 /**
  * 使用者資料存取介面
@@ -35,6 +37,13 @@ export interface IUserRepository {
      * @returns Promise<UserModel | null> 使用者模型或 null（若找不到）
      */
     findById(id: number): Promise<UserModel | null>;
+    
+    /**
+     * 根據使用者 ID 查詢使用者（包含角色和權限）
+     * @param id 使用者 ID
+     * @returns Promise<UserModel | null> 使用者模型或 null（若找不到）
+     */
+    findByIdWithRolesAndPermissions(id: number): Promise<UserModel | null>;
     
     /**
      * 建立新的使用者記錄
@@ -89,6 +98,46 @@ export class UserRepository implements IUserRepository {
      */
     async findById(id: number): Promise<UserModel | null> {
         return await UserModel.findByPk(id);
+    }
+
+    /**
+     * 根據使用者 ID 查詢使用者（包含角色和權限）
+     * 用於權限檢查時一次性取得使用者的所有角色和權限資訊
+     * 
+     * @param id 使用者的主鍵 ID
+     * @returns Promise<UserModel | null> 包含角色和權限的使用者模型，若不存在則回傳 null
+     * 
+     * @example
+     * ```typescript
+     * const userRepo = new UserRepository();
+     * const user = await userRepo.findByIdWithRolesAndPermissions(123);
+     * if (user && user.roles) {
+     *   console.log(`使用者角色：${user.roles.map(r => r.name).join(', ')}`);
+     *   user.roles.forEach(role => {
+     *     if (role.permissions) {
+     *       console.log(`角色 ${role.name} 的權限：${role.permissions.map(p => p.name).join(', ')}`);
+     *     }
+     *   });
+     * }
+     * ```
+     */
+    async findByIdWithRolesAndPermissions(id: number): Promise<UserModel | null> {
+        return await UserModel.findByPk(id, {
+            include: [
+                {
+                    model: RoleModel,
+                    as: 'roles',
+                    include: [
+                        {
+                            model: PermissionModel,
+                            as: 'permissions',
+                            through: { attributes: [] } // 不包含中間表屬性
+                        }
+                    ],
+                    through: { attributes: [] } // 不包含中間表屬性
+                }
+            ]
+        });
     }
 
     /**

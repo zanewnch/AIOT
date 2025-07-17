@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repo/UserRepo.js';
 import { SessionService } from '../service/SessionService.js';
+import '../types/express.js';
 
 /**
  * JWT 負載介面，包含使用者識別和令牌元資料
