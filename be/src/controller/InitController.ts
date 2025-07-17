@@ -3,14 +3,14 @@ import { RbacInitService } from '../service/RbacInitService.js';
 import { RTKInitService } from '../service/RTKInitService.js';
 import { progressService } from '../service/ProgressService.js';
 import { TaskStage, TaskStatus } from '../types/ProgressTypes.js';
-import { createBackgroundTaskHandler } from '../utils/backgroundTask.js';
+import { backgroundTaskHandler } from '../utils/backgroundTask.js';
 
 /**
  * 初始化控制器，處理系統初始化相關的API請求
- * 
+ *
  * 提供系統演示資料的初始化功能，包括RBAC權限控制和RTK定位資料。
  * 所有初始化操作都是冪等的，多次執行不會產生重複資料。
- * 
+ *
  * @module Controllers
  * @example
  * ```typescript
@@ -36,9 +36,9 @@ export class InitController {
 
   /**
    * 初始化路由配置
-   * 
+   *
    * 設置初始化相關的API路由，包括RBAC和RTK演示資料的初始化端點。
-   * 
+   *
    * @private
    * @returns {void}
    */
@@ -80,18 +80,18 @@ export class InitController {
 
   /**
    * 初始化RBAC演示資料
-   * 
+   *
    * 創建預設的使用者、角色和權限資料供系統演示使用。
    * 此操作是冪等的，不會創建重複的資料。
-   * 
+   *
    * @param res - Express回應物件
    * @returns Promise<void>
-   * 
+   *
    * @example
    * ```bash
    * POST /api/init/rbac-demo
    * ```
-   * 
+   *
    * 成功回應:
    * ```json
    * {
@@ -111,18 +111,18 @@ export class InitController {
 
   /**
    * 初始化RTK演示資料
-   * 
+   *
    * 創建RTK定位系統的演示資料，包括基站和定位記錄。
    * 此操作是冪等的，不會創建重複的資料。
-   * 
+   *
    * @param res - Express回應物件
    * @returns Promise<void>
-   * 
+   *
    * @example
    * ```bash
    * POST /api/init/rtk-demo
    * ```
-   * 
+   *
    * 成功回應:
    * ```json
    * {
@@ -142,20 +142,20 @@ export class InitController {
 
   /**
    * 創建系統管理員帳號
-   * 
+   *
    * 創建一個具有完整權限的管理員用戶供系統管理使用。
    * 此操作是冪等的，如果管理員已存在則不會重複創建。
-   * 
+   *
    * @param _req - Express請求物件（未使用）
    * @param res - Express回應物件
    * @param next - Express next函數
    * @returns Promise<void>
-   * 
+   *
    * @example
    * ```bash
    * POST /api/init/admin-user
    * ```
-   * 
+   *
    * 成功回應:
    * ```json
    * {
@@ -176,23 +176,23 @@ export class InitController {
 
   /**
    * 創建壓力測試資料（背景任務）
-   * 
+   *
    * 啟動背景任務生成大量測試資料，立即返回 taskId 供進度追蹤。
    * 包括：
    * - 5000 筆 RTK 定位資料（台灣地區隨機座標）
    * - 5000 筆使用者資料（自動生成的測試帳號）
    * - 基本的 RBAC 角色權限資料
-   * 
+   *
    * @param _req - Express請求物件（未使用）
    * @param res - Express回應物件
    * @param next - Express next函數
    * @returns Promise<void>
-   * 
+   *
    * @example
    * ```bash
    * POST /api/init/stress-test-data
    * ```
-   * 
+   *
    * 成功回應:
    * ```json
    * {
@@ -204,7 +204,7 @@ export class InitController {
    * }
    * ```
    */
-  public createStressTestData = createBackgroundTaskHandler(
+  public createStressTestData = backgroundTaskHandler(
     {
       totalWork: 10000, // 5000 RTK + 5000 Users
       initialMessage: '正在初始化壓力測試資料...',
@@ -216,7 +216,7 @@ export class InitController {
 
   /**
    * 執行壓力測試資料創建的背景任務
-   * 
+   *
    * @param taskId 任務識別碼
    * @returns Promise<void>
    * @private
@@ -224,34 +224,34 @@ export class InitController {
   private executeStressTestDataCreation = async (taskId: string): Promise<void> => {
     try {
       console.log(`開始執行壓力測試資料創建任務: ${taskId}`);
-      
+
       // 更新狀態為執行中
       progressService.updateProgress(taskId, {
         status: TaskStatus.RUNNING,
         stage: TaskStage.INITIALIZING,
         message: '正在初始化...'
       });
-      
+
       // 建立進度回調
       const progressCallback = progressService.createProgressCallback(taskId);
-      
+
       // 階段 1: RTK 資料生成
       progressService.updateProgress(taskId, {
         stage: TaskStage.GENERATING_RTK,
         message: '正在生成 RTK 資料...'
       });
-      
+
       const rtkResult = await this.rtkInitService.seedRTKDemoWithProgress(progressCallback);
-      
-      // 階段 2: RBAC 資料生成  
+
+      // 階段 2: RBAC 資料生成
       progressService.updateProgress(taskId, {
         stage: TaskStage.GENERATING_USERS,
         current: 5000, // RTK 完成
         message: '正在生成使用者資料...'
       });
-      
+
       const rbacResult = await this.rbacInitService.seedRbacDemoWithProgress(progressCallback);
-      
+
       // 任務完成
       const finalResult = {
         rtk: rtkResult,
@@ -263,10 +263,10 @@ export class InitController {
           totalPermissions: rbacResult.permissions
         }
       };
-      
+
       progressService.completeTask(taskId, finalResult, '壓力測試資料創建完成');
       console.log(`壓力測試資料創建任務完成: ${taskId}`);
-      
+
     } catch (error) {
       console.error(`壓力測試資料創建任務失敗: ${taskId}`, error);
       progressService.failTask(taskId, error instanceof Error ? error.message : '未知錯誤');
