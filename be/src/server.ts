@@ -6,12 +6,13 @@ import debug from 'debug';
 import http from 'http';
 
 import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js';
-import { createSequelizeInstance } from './config/database.js';
-import { RabbitMQManager } from './config/rabbitmq.js';
-import { setupPassportJWT } from './config/auth.js';
-import { getServerConfig, setupExpressMiddleware } from './config/server.js';
+import { createSequelizeInstance } from './configs/dbConfig.js';
+import { RabbitMQManager } from './configs/rabbitmqConfig.js';
+import { setupPassportJWT } from './configs/authConfig.js';
+import { redisConfig } from './configs/redisConfig.js';
 import { InitController, JWTAuthController, RTKController, SwaggerController, ProgressController } from './controller/index.js';
 import { UserController, RoleController, PermissionController, UserToRoleController, RoleToPermissionController } from './controller/rbac/index.js';
+import { getServerConfig, setupExpressMiddleware } from './configs/serverConfig.js';
 
 const debugLogger = debug('aiot:server');
 
@@ -44,6 +45,10 @@ class Server {
     await this.rabbitMQManager.connect();
   }
 
+  private async setupRedis(): Promise<void> {
+    await redisConfig.connect();
+  }
+
   private setupPassport(): void {
     setupPassportJWT();
   }
@@ -54,10 +59,10 @@ class Server {
 
   /**
    * 設定應用程式路由
-   * 
+   *
    * 初始化所有控制器並設定對應的 API 路由。包括初始化、JWT 認證、
    * RBAC 權限管理和 Swagger 文檔等控制器的路由設定。
-   * 
+   *
    * @private
    * @returns {Promise<void>} 無回傳值的 Promise
    */
@@ -68,7 +73,7 @@ class Server {
     const rtkController = new RTKController();
     const swaggerController = new SwaggerController();
     const progressController = new ProgressController();
-    
+
     // 初始化 RBAC 子控制器
     const userController = new UserController();
     const roleController = new RoleController();
@@ -81,14 +86,14 @@ class Server {
     this.app.use('/', jwtAuthController.router);
     this.app.use('/', rtkController.router);
     this.app.use('/', swaggerController.router);
-    
+
     // 設置 RBAC 路由
     this.app.use('/api/rbac/users', userController.router);
     this.app.use('/api/rbac/roles', roleController.router);
     this.app.use('/api/rbac/permissions', permissionController.router);
     this.app.use('/api/rbac/users', userToRoleController.router);
     this.app.use('/api/rbac/roles', roleToPermissionController.router);
-    
+
     // 設置進度追蹤路由
     this.app.use('/api/progress', progressController.router);
 
@@ -112,7 +117,7 @@ class Server {
     });
   }
 
-  /** 
+  /**
   main function to start the server
   - sync database
   - create rabbitmq channel
@@ -125,6 +130,9 @@ class Server {
     try {
       await this.sequelize.sync();
       console.log('✅ Database synced');
+
+      await this.setupRedis();
+      console.log('✅ Redis connected');
 
       await this.setupRabbitMQ();
       console.log('✅ RabbitMQ ready');
@@ -150,10 +158,10 @@ class Server {
 
   /**
    * 處理伺服器錯誤事件
-   * 
+   *
    * 處理伺服器啟動過程中的錯誤，特別是監聽連接埠相關的錯誤。
    * 對於權限不足和連接埠被佔用的情況會列印錯誤訊息並結束程序。
-   * 
+   *
    * @private
    * @param {NodeJS.ErrnoException} error - Node.js 錯誤物件
    * @returns {void}
@@ -182,10 +190,10 @@ class Server {
 
   /**
    * 處理伺服器成功監聽事件
-   * 
+   *
    * 當伺服器成功開始監聽指定的連接埠或管道時觸發。在控制台輸出
    * 伺服器啟動成功的訊息，包含所監聽的連接埠或管道資訊。
-   * 
+   *
    * @private
    * @returns {void}
    */
@@ -200,10 +208,10 @@ class Server {
 
   /**
    * 優雅的應用程式關閉
-   * 
+   *
    * 實現優雅的應用程式關閉流程，包括關閉資料庫連線、RabbitMQ 連線和 HTTP 伺服器。
    * 確保所有資源在系統關閉前都被正确地釋放，防止數據遺失或資源洩漏。
-   * 
+   *
    * @private
    * @returns {Promise<void>} 無回傳值的 Promise
    */
@@ -211,6 +219,9 @@ class Server {
     try {
       console.log('🔌 Closing RabbitMQ connection...');
       await this.rabbitMQManager.close();
+
+      console.log('🔴 Closing Redis connection...');
+      await redisConfig.disconnect();
 
       console.log('🗃️ Closing database connection...');
       await this.sequelize.close();

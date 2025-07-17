@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repo/UserRepo.js';
+import { SessionService } from '../service/SessionService.js';
 
 /**
  * JWT 負載介面，包含使用者識別和令牌元資料
@@ -79,15 +80,27 @@ class JwtAuthMiddleware {
                 return;
             }
 
+            // 首先檢查 Redis 會話
+            const sessionData = await SessionService.getUserSession(token);
+            if (!sessionData) {
+                res.status(401).json({ message: 'Session expired or invalid' });
+                return;
+            }
+
+            // 驗證 JWT 簽章
             const decoded = this.verifyToken(token);
             if (!decoded) {
+                // JWT 無效，同時清除 Redis 會話
+                await SessionService.deleteUserSession(token, sessionData.userId);
                 res.status(401).json({ message: 'Invalid or expired token' });
                 return;
             }
 
-            // 從資料庫獲取用戶資訊
+            // 從資料庫獲取用戶資訊（確保使用者仍然存在且有效）
             const user = await this.userRepository.findById(decoded.sub);
             if (!user) {
+                // 使用者不存在，清除會話
+                await SessionService.deleteUserSession(token, sessionData.userId);
                 res.status(401).json({ message: 'User not found' });
                 return;
             }
@@ -134,9 +147,18 @@ class JwtAuthMiddleware {
                 return;
             }
 
+            // 檢查 Redis 會話
+            const sessionData = await SessionService.getUserSession(token);
+            if (!sessionData) {
+                // 會話無效也繼續，但不設置 user
+                next();
+                return;
+            }
+
             const decoded = this.verifyToken(token);
             if (!decoded) {
-                // token 無效也繼續，但不設置 user
+                // token 無效，清除會話並繼續
+                await SessionService.deleteUserSession(token, sessionData.userId);
                 next();
                 return;
             }
@@ -148,6 +170,9 @@ class JwtAuthMiddleware {
                     id: user.id,
                     username: user.username
                 };
+            } else {
+                // 使用者不存在，清除會話
+                await SessionService.deleteUserSession(token, sessionData.userId);
             }
 
             next();

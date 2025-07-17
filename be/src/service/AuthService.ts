@@ -19,6 +19,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRepository, IUserRepository } from '../repo/UserRepo.js';
 import { UserModel } from '../models/rbac/UserModel.js';
+import { SessionService } from './SessionService.js';
 
 /**
  * 登入結果介面
@@ -44,9 +45,26 @@ export interface IAuthService {
      * 使用者登入驗證
      * @param username 使用者名稱
      * @param password 使用者密碼
+     * @param userAgent 使用者代理字串（可選）
+     * @param ipAddress IP 位址（可選）
      * @returns Promise<LoginResult> 登入結果
      */
-    login(username: string, password: string): Promise<LoginResult>;
+    login(username: string, password: string, userAgent?: string, ipAddress?: string): Promise<LoginResult>;
+
+    /**
+     * 使用者登出
+     * @param token JWT Token
+     * @param userId 使用者 ID（可選）
+     * @returns Promise<boolean> 登出是否成功
+     */
+    logout(token: string, userId?: number): Promise<boolean>;
+
+    /**
+     * 驗證會話
+     * @param token JWT Token
+     * @returns Promise<UserModel | null> 使用者資料或 null
+     */
+    validateSession(token: string): Promise<UserModel | null>;
 }
 
 /**
@@ -67,16 +85,18 @@ export class AuthService implements IAuthService {
 
     /**
      * 使用者登入驗證
-     * 執行完整的登入流程，包含使用者查詢、密碼驗證和 JWT Token 產生
+     * 執行完整的登入流程，包含使用者查詢、密碼驗證、JWT Token 產生和 Redis 會話管理
      * 
      * @param username 使用者名稱
      * @param password 使用者明文密碼
+     * @param userAgent 使用者代理字串（可選）
+     * @param ipAddress IP 位址（可選）
      * @returns Promise<LoginResult> 包含登入結果、Token 和使用者資訊
      * 
      * @example
      * ```typescript
      * const authService = new AuthService();
-     * const result = await authService.login('alice', 'password123');
+     * const result = await authService.login('alice', 'password123', req.get('user-agent'), req.ip);
      * 
      * if (result.success) {
      *   console.log(`登入成功，Token: ${result.token}`);
@@ -88,7 +108,7 @@ export class AuthService implements IAuthService {
      * 
      * @throws 內部錯誤會被捕獲並回傳失敗結果，不會拋出例外
      */
-    async login(username: string, password: string): Promise<LoginResult> {
+    async login(username: string, password: string, userAgent?: string, ipAddress?: string): Promise<LoginResult> {
         try {
             // 查找用戶
             const user = await this.userRepository.findByUsername(username);
@@ -119,6 +139,19 @@ export class AuthService implements IAuthService {
                 { expiresIn: '1h' }
             );
 
+            // 將會話資料存儲到 Redis
+            try {
+                await SessionService.setUserSession(user.id, user.username, token, {
+                    ttl: 3600, // 1 小時
+                    userAgent,
+                    ipAddress
+                });
+            } catch (sessionError) {
+                console.error('Failed to store session in Redis:', sessionError);
+                // 即使 Redis 失敗，仍然返回成功的登入結果
+                // 這確保當 Redis 不可用時系統仍能運作
+            }
+
             return {
                 success: true,
                 token,
@@ -131,6 +164,48 @@ export class AuthService implements IAuthService {
                 success: false,
                 message: 'Login failed'
             };
+        }
+    }
+
+    /**
+     * 使用者登出
+     * 清除 Redis 中的會話資料
+     * 
+     * @param token JWT Token
+     * @param userId 使用者 ID（可選，用於清理使用者會話集合）
+     * @returns Promise<boolean> 登出是否成功
+     */
+    async logout(token: string, userId?: number): Promise<boolean> {
+        try {
+            await SessionService.deleteUserSession(token, userId);
+            return true;
+        } catch (error) {
+            console.error('Logout error:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 驗證會話
+     * 檢查 Redis 中的會話狀態並返回使用者資料
+     * 
+     * @param token JWT Token
+     * @returns Promise<UserModel | null> 使用者資料或 null
+     */
+    async validateSession(token: string): Promise<UserModel | null> {
+        try {
+            // 首先檢查 Redis 會話
+            const sessionData = await SessionService.getUserSession(token);
+            if (!sessionData) {
+                return null;
+            }
+
+            // 從資料庫取得最新的使用者資料
+            const user = await this.userRepository.findById(sessionData.userId);
+            return user;
+        } catch (error) {
+            console.error('Session validation error:', error);
+            return null;
         }
     }
 }

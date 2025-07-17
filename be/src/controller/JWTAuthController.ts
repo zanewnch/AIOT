@@ -86,8 +86,12 @@ export class JWTAuthController {
         return;
       }
 
-      // 調用 service 層進行登入
-      const result = await this.authService.login(username, password);
+      // 取得使用者代理和 IP 位址
+      const userAgent = req.get('user-agent');
+      const ipAddress = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+
+      // 調用 service 層進行登入（包含 Redis 會話管理）
+      const result = await this.authService.login(username, password, userAgent, ipAddress);
 
       if (!result.success) {
         res.status(401).json({ message: result.message });
@@ -104,7 +108,11 @@ export class JWTAuthController {
 
       res.json({
         token: result.token,
-        message: result.message
+        message: result.message,
+        user: {
+          id: result.user?.id,
+          username: result.user?.username
+        }
       });
     } catch (err) {
       next(err);
@@ -118,7 +126,7 @@ export class JWTAuthController {
    * 此操作會移除httpOnly cookie，確保token無法再被使用。
    * 
    * @private
-   * @param {Request} _req - Express請求物件（未使用）
+   * @param {Request} req - Express請求物件
    * @param {Response} res - Express回應物件
    * @returns {Promise<void>}
    * @throws {Error} 當內部伺服器錯誤發生時拋出錯誤
@@ -135,8 +143,16 @@ export class JWTAuthController {
    * }
    * ```
    */
-  private logout = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  private logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // 取得 JWT token
+      const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');
+      
+      if (token) {
+        // 從 Redis 清除會話
+        await this.authService.logout(token);
+      }
+
       // 清除 JWT cookie
       res.clearCookie('jwt', {
         httpOnly: true,
