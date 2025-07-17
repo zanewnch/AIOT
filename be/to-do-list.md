@@ -11,8 +11,8 @@
 date: 2025-06-26
 
 - [ ] 使用rabbitMQ
-- [ ] 使用gemini CLI
-- [ ] githubpage 這個也run 一個container, 為了port 使用正確且方便
+- [x] 使用gemini CLI
+- [x] githubpage 這個也run 一個container, 為了port 使用正確且方便
 
 # date 2025-07-12
 - [x] 看typedoc 然後把fe request 寫好
@@ -20,5 +20,9 @@ date: 2025-06-26
 - [x] 分析tsdoc 介面的問題 為什麼controller 還是分散開來
 
 # date 2025-07-15
-- [ ] 繼續修tableviewer
+- [x] 繼續修tableviewer
 - [ ] 問AI 怎樣算熟ts 怎樣算熟sql 怎樣算熟express react 這種方式去學
+
+# date 2025-07-17
+- [ ] jwt reddis
+- [ ] permission logic 實作
