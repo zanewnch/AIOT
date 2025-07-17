@@ -2,8 +2,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { RbacInitService } from '../service/RbacInitService.js';
 import { RTKInitService } from '../service/RTKInitService.js';
 import { progressService } from '../service/ProgressService.js';
-import { TaskStatus, TaskStage } from '../types/ProgressTypes.js';
-import { v4 as uuidv4 } from 'uuid';
+import { TaskStage, TaskStatus } from '../types/ProgressTypes.js';
+import { createBackgroundTaskHandler } from '../utils/backgroundTask.js';
 
 /**
  * 初始化控制器，處理系統初始化相關的API請求
@@ -76,13 +76,6 @@ export class InitController {
      */
     this.router.post('/api/init/stress-test-data', this.createStressTestData);
 
-    /**
-     * GET /api/init/progress/:taskId
-     * -------------------------------------------------
-     * SSE 端點，提供任務進度的即時串流更新。
-     * 客戶端可透過此端點接收進度事件。
-     */
-    this.router.get('/api/init/progress/:taskId', this.getProgressStream);
   }
 
   /**
@@ -211,89 +204,15 @@ export class InitController {
    * }
    * ```
    */
-  public createStressTestData = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      // 生成唯一任務 ID
-      const taskId = uuidv4();
-      const totalWork = 10000; // 5000 RTK + 5000 Users
-      
-      // 建立進度追蹤任務
-      progressService.createTask(taskId, totalWork, '正在初始化壓力測試資料...');
-      
-      // 立即回應，任務在背景執行
-      res.json({
-        ok: true,
-        taskId,
-        status: TaskStatus.STARTED,
-        message: 'Background task initiated',
-        progressUrl: `/api/init/progress/${taskId}`
-      });
-      
-      // 在背景執行實際任務
-      this.executeStressTestDataCreation(taskId).catch(error => {
-        console.error('Background task failed:', error);
-        progressService.failTask(taskId, error.message || 'Unknown error occurred');
-      });
-      
-    } catch (err) {
-      next(err);
-    }
-  }
+  public createStressTestData = createBackgroundTaskHandler(
+    {
+      totalWork: 10000, // 5000 RTK + 5000 Users
+      initialMessage: '正在初始化壓力測試資料...',
+      taskName: 'StressTestDataCreation'
+    },
+    (taskId) => this.executeStressTestDataCreation(taskId)
+  );
 
-  /**
-   * 取得任務進度串流（SSE）
-   * 
-   * 建立 Server-Sent Events 連線，即時推送任務執行進度。
-   * 
-   * @param req - Express請求物件
-   * @param res - Express回應物件
-   * @param next - Express next函數
-   * @returns Promise<void>
-   * 
-   * @example
-   * ```bash
-   * GET /api/init/progress/12345678-1234-1234-1234-123456789012
-   * Accept: text/event-stream
-   * ```
-   * 
-   * SSE 事件格式:
-   * ```
-   * event: progress
-   * data: {"type":"progress","timestamp":1234567890,"data":{"taskId":"...","percentage":25,...}}
-   * 
-   * event: completed
-   * data: {"type":"completed","timestamp":1234567890,"data":{"taskId":"...","percentage":100,...}}
-   * ```
-   */
-  public getProgressStream = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { taskId } = req.params;
-      
-      if (!taskId) {
-        res.status(400).json({ error: 'Task ID is required' });
-        return;
-      }
-      
-      // 檢查任務是否存在
-      const progress = progressService.getProgress(taskId);
-      if (!progress) {
-        res.status(404).json({ error: 'Task not found' });
-        return;
-      }
-      
-      // 建立 SSE 連線
-      const success = progressService.createSSEConnection(taskId, res);
-      if (!success) {
-        res.status(500).json({ error: 'Failed to create SSE connection' });
-        return;
-      }
-      
-      // 連線已由 ProgressService 管理，這裡不需要額外處理
-      
-    } catch (err) {
-      next(err);
-    }
-  }
 
   /**
    * 執行壓力測試資料創建的背景任務
@@ -302,7 +221,7 @@ export class InitController {
    * @returns Promise<void>
    * @private
    */
-  private async executeStressTestDataCreation(taskId: string): Promise<void> {
+  private executeStressTestDataCreation = async (taskId: string): Promise<void> => {
     try {
       console.log(`開始執行壓力測試資料創建任務: ${taskId}`);
       

@@ -10,7 +10,7 @@ import { createSequelizeInstance } from './config/database.js';
 import { RabbitMQManager } from './config/rabbitmq.js';
 import { setupPassportJWT } from './config/auth.js';
 import { getServerConfig, setupExpressMiddleware } from './config/server.js';
-import { InitController, JWTAuthController, RTKController, SwaggerController } from './controller/index.js';
+import { InitController, JWTAuthController, RTKController, SwaggerController, ProgressController } from './controller/index.js';
 import { UserController, RoleController, PermissionController, UserToRoleController, RoleToPermissionController } from './controller/rbac/index.js';
 
 const debugLogger = debug('aiot:server');
@@ -67,6 +67,7 @@ class Server {
     const jwtAuthController = new JWTAuthController();
     const rtkController = new RTKController();
     const swaggerController = new SwaggerController();
+    const progressController = new ProgressController();
     
     // 初始化 RBAC 子控制器
     const userController = new UserController();
@@ -87,6 +88,9 @@ class Server {
     this.app.use('/api/rbac/permissions', permissionController.router);
     this.app.use('/api/rbac/users', userToRoleController.router);
     this.app.use('/api/rbac/roles', roleToPermissionController.router);
+    
+    // 設置進度追蹤路由
+    this.app.use('/api/progress', progressController.router);
 
     console.log('✅ All controllers initialized and routes configured');
   }

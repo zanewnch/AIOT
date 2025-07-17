@@ -40,7 +40,7 @@ export class SSEService {
     this.disconnect();
 
     // 建立新連接
-    const url = `http://localhost:8010/api/init/progress/${taskId}`;
+    const url = `http://localhost:8010/api/progress/${taskId}/stream`;
     this.eventSource = new EventSource(url);
 
     // 儲存回調函數
