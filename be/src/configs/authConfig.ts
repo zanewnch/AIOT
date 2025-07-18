@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import { UserModel } from '../models/rbac/UserModel.js';
-import { JwtPayload } from '../middleware/jwtAuthMiddleware.js';
+import { JwtPayload } from '../middleware/AuthMiddleware.js';
 
 export interface AuthConfig {
   jwtSecret: string;

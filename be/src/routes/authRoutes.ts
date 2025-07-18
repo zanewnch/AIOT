@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AuthController } from '../controller/AuthController.js';
 import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
-import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
+import { ActivityTrackingMiddleware } from '../middleware/ActivityTrackingMiddleware.js';
 
 /**
  * 認證相關路由配置
@@ -21,9 +21,10 @@ const authMiddleware = new AuthMiddleware();
  * POST /api/auth/login
  * 
  * 中間件：
- * - ErrorHandleMiddleware.handle: 統一錯誤處理
+ * - ActivityTrackingMiddleware.trackLogin: 追蹤登入活動
  */
 router.post('/api/auth/login', 
+  ActivityTrackingMiddleware.trackLogin,
   authController.login
 );
 
@@ -33,9 +34,11 @@ router.post('/api/auth/login',
  * 
  * 中間件：
  * - jwtAuth.authenticate: JWT 驗證（需要登入才能登出）
+ * - ActivityTrackingMiddleware.trackLogout: 追蹤登出活動
  */
 router.post('/api/auth/logout',
   authMiddleware.authenticate,
+  ActivityTrackingMiddleware.trackLogout,
   authController.logout
 );
 

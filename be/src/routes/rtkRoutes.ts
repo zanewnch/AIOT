@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { RTKController } from '../controller/RTKController.js';
-import { JwtAuthMiddleware } from '../middleware/jwtAuthMiddleware.js';
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
 /**
@@ -14,7 +14,7 @@ import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
 const router = Router();
 const rtkController = new RTKController();
-const jwtAuth = new JwtAuthMiddleware();
+const jwtAuth = new AuthMiddleware();
 
 /**
  * GET /api/rtk/data

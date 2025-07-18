@@ -10,6 +10,7 @@ import { progressRoutes } from './routes/progressRoutes.js';
 import { rtkRoutes } from './routes/rtkRoutes.js';
 import { swaggerRoutes } from './routes/swaggerRoutes.js';
 import { rbacRoutes } from './routes/rbacRoutes.js';
+import { userRoutes } from './routes/userRoutes.js';
 import { setupExpressMiddleware } from './configs/serverConfig.js';
 
 /**
@@ -95,6 +96,9 @@ export class App {
 
     // 設置進度追蹤路由
     this.app.use('/api/progress', progressRoutes);
+
+    // 設置使用者相關路由 (偏好設定、功能開關、活動追蹤)
+    this.app.use('/', userRoutes);
 
     console.log('✅ All controllers initialized and routes configured');
   }

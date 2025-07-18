@@ -64,7 +64,7 @@ export class AuthController {
    */
   public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { username, password } = req.body;
+      const { username, password, rememberMe } = req.body;
 
       // 參數驗證
       if (!username || !password) {
@@ -84,17 +84,31 @@ export class AuthController {
         return;
       }
 
+      // 根據 rememberMe 設定不同的過期時間
+      const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000; // 30天 or 1小時
+
       // 設置 httpOnly cookie 來儲存 JWT
       res.cookie('jwt', result.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // 只在 HTTPS 時設為 true
         sameSite: 'strict',
-        maxAge: 60 * 60 * 1000 // 1 小時 (與 JWT 過期時間一致)
+        maxAge: cookieMaxAge
       });
+
+      // 設置記住我狀態的 cookie
+      if (rememberMe) {
+        res.cookie('remember_me', 'true', {
+          httpOnly: false, // 允許前端讀取來顯示狀態
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: cookieMaxAge
+        });
+      }
 
       res.json({
         token: result.token,
         message: result.message,
+        rememberMe: rememberMe || false,
         user: {
           id: result.user?.id,
           username: result.user?.username
@@ -145,6 +159,17 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict'
       });
+
+      // 清除記住我 cookie
+      res.clearCookie('remember_me', {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+      });
+
+      // 清除其他相關 cookie
+      res.clearCookie('user_preferences');
+      res.clearCookie('feature_flags');
 
       res.json({ message: 'Logout successful' });
     } catch (err) {

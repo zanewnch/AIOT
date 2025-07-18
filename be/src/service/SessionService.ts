@@ -171,7 +171,7 @@ export class SessionService {
 
     try {
       const result = await redis.expire(sessionKey, ttl);
-      return result;
+      return result === 1;
     } catch (error) {
       console.error('Failed to extend session:', error);
       return false;
