@@ -13,4 +13,8 @@ export interface IRoleToPermissionController {
     getRolePermissions(req: Request, res: Response): Promise<void>;
     assignPermissionsToRole(req: Request, res: Response): Promise<void>;
     removePermissionFromRole(req: Request, res: Response): Promise<void>;
+    createRolePermission(req: Request, res: Response): Promise<void>;
+    getRolePermissionById(req: Request, res: Response): Promise<void>;
+    updateRolePermission(req: Request, res: Response): Promise<void>;
+    deleteRolePermission(req: Request, res: Response): Promise<void>;
 }

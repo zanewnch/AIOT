@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ProgressController } from '../controller/ProgressController.js';
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
 /**
@@ -13,10 +14,14 @@ import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
 const router = Router();
 const progressController = new ProgressController();
+const authMiddleware = new AuthMiddleware();
 
 /**
  * GET /api/progress/:taskId
  * 取得指定任務的當前進度
+ * 
+ * 中間件：
+ * - jwtAuth.authenticate: JWT 驗證（需要登入才能查看進度）
  * 
  * @example
  * ```bash
@@ -37,12 +42,16 @@ const progressController = new ProgressController();
  * ```
  */
 router.get('/:taskId', 
+  authMiddleware.authenticate,
   progressController.getProgress
 );
 
 /**
  * GET /api/progress/:taskId/stream
  * 取得指定任務的即時進度串流（SSE）
+ * 
+ * 中間件：
+ * - jwtAuth.authenticate: JWT 驗證（需要登入才能查看進度串流）
  * 
  * 使用 Server-Sent Events (SSE) 提供即時進度更新。
  * 客戶端可以監聽 'progress' 和 'completed' 事件。
@@ -63,6 +72,7 @@ router.get('/:taskId',
  * ```
  */
 router.get('/:taskId/stream', 
+  authMiddleware.authenticate,
   progressController.getProgressStream
 );
 

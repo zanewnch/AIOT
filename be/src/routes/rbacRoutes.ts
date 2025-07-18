@@ -4,7 +4,7 @@ import { RoleController } from '../controller/rbac/RoleController.js';
 import { PermissionController } from '../controller/rbac/PermissionController.js';
 import { UserToRoleController } from '../controller/rbac/UserToRoleController.js';
 import { RoleToPermissionController } from '../controller/rbac/RoleToPermissionController.js';
-import { JwtAuthMiddleware } from '../middleware/jwtAuthMiddleware.js';
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { PermissionMiddleware } from '../middleware/permissionMiddleware.js';
 import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
@@ -27,7 +27,7 @@ const userToRoleController = new UserToRoleController();
 const roleToPermissionController = new RoleToPermissionController();
 
 // 初始化中間件
-const jwtAuth = new JwtAuthMiddleware();
+const authMiddleware = new AuthMiddleware();
 const permissionMiddleware = new PermissionMiddleware();
 
 // =================================================================
@@ -40,7 +40,7 @@ const permissionMiddleware = new PermissionMiddleware();
  * 需要權限：user.read
  */
 router.get('/users', 
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('user.read'),
   userController.getUsers
 );
@@ -51,7 +51,7 @@ router.get('/users',
  * 需要權限：user.create
  */
 router.post('/users',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('user.create'),
   userController.createUser
 );
@@ -62,7 +62,7 @@ router.post('/users',
  * 需要權限：user.read
  */
 router.get('/users/:userId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('user.read'),
   userController.getUserById
 );
@@ -73,7 +73,7 @@ router.get('/users/:userId',
  * 需要權限：user.update
  */
 router.put('/users/:userId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('user.update'),
   userController.updateUser
 );
@@ -84,7 +84,7 @@ router.put('/users/:userId',
  * 需要權限：user.delete
  */
 router.delete('/users/:userId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('user.delete'),
   userController.deleteUser
 );
@@ -99,7 +99,7 @@ router.delete('/users/:userId',
  * 需要權限：role.read
  */
 router.get('/roles',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('role.read'),
   roleController.getRoles
 );
@@ -110,7 +110,7 @@ router.get('/roles',
  * 需要權限：role.create
  */
 router.post('/roles',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('role.create'),
   roleController.createRole
 );
@@ -121,7 +121,7 @@ router.post('/roles',
  * 需要權限：role.read
  */
 router.get('/roles/:roleId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('role.read'),
   roleController.getRoleById
 );
@@ -132,7 +132,7 @@ router.get('/roles/:roleId',
  * 需要權限：role.update
  */
 router.put('/roles/:roleId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('role.update'),
   roleController.updateRole
 );
@@ -143,7 +143,7 @@ router.put('/roles/:roleId',
  * 需要權限：role.delete
  */
 router.delete('/roles/:roleId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('role.delete'),
   roleController.deleteRole
 );
@@ -158,7 +158,7 @@ router.delete('/roles/:roleId',
  * 需要權限：permission.read
  */
 router.get('/permissions',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('permission.read'),
   permissionController.getPermissions
 );
@@ -169,7 +169,7 @@ router.get('/permissions',
  * 需要權限：permission.create
  */
 router.post('/permissions',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('permission.create'),
   permissionController.createPermission
 );
@@ -180,7 +180,7 @@ router.post('/permissions',
  * 需要權限：permission.read
  */
 router.get('/permissions/:permissionId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('permission.read'),
   permissionController.getPermissionById
 );
@@ -191,7 +191,7 @@ router.get('/permissions/:permissionId',
  * 需要權限：permission.update
  */
 router.put('/permissions/:permissionId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('permission.update'),
   permissionController.updatePermission
 );
@@ -202,7 +202,7 @@ router.put('/permissions/:permissionId',
  * 需要權限：permission.delete
  */
 router.delete('/permissions/:permissionId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requirePermission('permission.delete'),
   permissionController.deletePermission
 );
@@ -217,7 +217,7 @@ router.delete('/permissions/:permissionId',
  * 需要權限：user.read + role.read
  */
 router.get('/user-roles',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['user.read', 'role.read']),
   userToRoleController.getUserRoles
 );
@@ -228,7 +228,7 @@ router.get('/user-roles',
  * 需要權限：user.update + role.assign
  */
 router.post('/user-roles',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['user.update', 'role.assign']),
   userToRoleController.createUserRole
 );
@@ -239,7 +239,7 @@ router.post('/user-roles',
  * 需要權限：user.read + role.read
  */
 router.get('/user-roles/:userRoleId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['user.read', 'role.read']),
   userToRoleController.getUserRoleById
 );
@@ -250,7 +250,7 @@ router.get('/user-roles/:userRoleId',
  * 需要權限：user.update + role.assign
  */
 router.put('/user-roles/:userRoleId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['user.update', 'role.assign']),
   userToRoleController.updateUserRole
 );
@@ -261,7 +261,7 @@ router.put('/user-roles/:userRoleId',
  * 需要權限：user.update + role.revoke
  */
 router.delete('/user-roles/:userRoleId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['user.update', 'role.revoke']),
   userToRoleController.deleteUserRole
 );
@@ -276,7 +276,7 @@ router.delete('/user-roles/:userRoleId',
  * 需要權限：role.read + permission.read
  */
 router.get('/role-permissions',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['role.read', 'permission.read']),
   roleToPermissionController.getRolePermissions
 );
@@ -287,7 +287,7 @@ router.get('/role-permissions',
  * 需要權限：role.update + permission.assign
  */
 router.post('/role-permissions',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['role.update', 'permission.assign']),
   roleToPermissionController.createRolePermission
 );
@@ -298,7 +298,7 @@ router.post('/role-permissions',
  * 需要權限：role.read + permission.read
  */
 router.get('/role-permissions/:rolePermissionId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['role.read', 'permission.read']),
   roleToPermissionController.getRolePermissionById
 );
@@ -309,7 +309,7 @@ router.get('/role-permissions/:rolePermissionId',
  * 需要權限：role.update + permission.assign
  */
 router.put('/role-permissions/:rolePermissionId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['role.update', 'permission.assign']),
   roleToPermissionController.updateRolePermission
 );
@@ -320,7 +320,7 @@ router.put('/role-permissions/:rolePermissionId',
  * 需要權限：role.update + permission.revoke
  */
 router.delete('/role-permissions/:rolePermissionId',
-  jwtAuth.authenticate,
+  authMiddleware.authenticate,
   permissionMiddleware.requireAllPermissions(['role.update', 'permission.revoke']),
   roleToPermissionController.deleteRolePermission
 );

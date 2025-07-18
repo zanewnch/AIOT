@@ -156,4 +156,73 @@ export class UserToRoleController implements IUserToRoleController {
             res.status(500).json({ message: 'Failed to remove role', error: (error as Error).message });
         }
     }
+
+    /**
+     * 創建使用者角色關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async createUserRole(req: Request, res: Response): Promise<void> {
+        await this.assignRolesToUser(req, res);
+    }
+
+    /**
+     * 根據ID獲取特定使用者角色關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async getUserRoleById(req: Request, res: Response): Promise<void> {
+        try {
+            const { userRoleId } = req.params;
+            // 這裡假設 userRoleId 是 userId
+            const user = await UserModel.findByPk(userRoleId, { include: [RoleModel] });
+            if (!user) {
+                res.status(404).json({ message: 'User role not found' });
+                return;
+            }
+            res.json(user);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Failed to fetch user role', error: (error as Error).message });
+        }
+    }
+
+    /**
+     * 更新使用者角色關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async updateUserRole(req: Request, res: Response): Promise<void> {
+        await this.assignRolesToUser(req, res);
+    }
+
+    /**
+     * 刪除使用者角色關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async deleteUserRole(req: Request, res: Response): Promise<void> {
+        try {
+            const { userRoleId } = req.params;
+            const { roleId } = req.body;
+            const user = await UserModel.findByPk(userRoleId);
+            if (!user) {
+                res.status(404).json({ message: 'User not found' });
+                return;
+            }
+            await user.$remove('roles', Number(roleId));
+            res.json({ message: 'User role deleted' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Failed to delete user role', error: (error as Error).message });
+        }
+    }
 }

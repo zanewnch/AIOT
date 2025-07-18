@@ -156,4 +156,73 @@ export class RoleToPermissionController implements IRoleToPermissionController {
             res.status(500).json({ message: 'Failed to remove permission', error: (error as Error).message });
         }
     }
+
+    /**
+     * 創建角色權限關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async createRolePermission(req: Request, res: Response): Promise<void> {
+        await this.assignPermissionsToRole(req, res);
+    }
+
+    /**
+     * 根據ID獲取特定角色權限關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async getRolePermissionById(req: Request, res: Response): Promise<void> {
+        try {
+            const { rolePermissionId } = req.params;
+            // 這裡假設 rolePermissionId 是 roleId
+            const role = await RoleModel.findByPk(rolePermissionId, { include: [PermissionModel] });
+            if (!role) {
+                res.status(404).json({ message: 'Role permission not found' });
+                return;
+            }
+            res.json(role);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Failed to fetch role permission', error: (error as Error).message });
+        }
+    }
+
+    /**
+     * 更新角色權限關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async updateRolePermission(req: Request, res: Response): Promise<void> {
+        await this.assignPermissionsToRole(req, res);
+    }
+
+    /**
+     * 刪除角色權限關聯
+     * 
+     * @param req - Express請求物件
+     * @param res - Express回應物件
+     * @returns Promise<void>
+     */
+    public async deleteRolePermission(req: Request, res: Response): Promise<void> {
+        try {
+            const { rolePermissionId } = req.params;
+            const { permissionId } = req.body;
+            const role = await RoleModel.findByPk(rolePermissionId);
+            if (!role) {
+                res.status(404).json({ message: 'Role not found' });
+                return;
+            }
+            await role.$remove('permissions', Number(permissionId));
+            res.json({ message: 'Role permission deleted' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Failed to delete role permission', error: (error as Error).message });
+        }
+    }
 }

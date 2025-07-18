@@ -13,4 +13,8 @@ export interface IUserToRoleController {
     getUserRoles(req: Request, res: Response): Promise<void>;
     assignRolesToUser(req: Request, res: Response): Promise<void>;
     removeRoleFromUser(req: Request, res: Response): Promise<void>;
+    createUserRole(req: Request, res: Response): Promise<void>;
+    getUserRoleById(req: Request, res: Response): Promise<void>;
+    updateUserRole(req: Request, res: Response): Promise<void>;
+    deleteUserRole(req: Request, res: Response): Promise<void>;
 }

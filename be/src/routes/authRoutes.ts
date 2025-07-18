@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { AuthController } from '../controller/AuthController.js';
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
 /**
@@ -13,6 +14,7 @@ import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
 
 const router = Router();
 const authController = new AuthController();
+const authMiddleware = new AuthMiddleware();
 
 /**
  * 使用者登入路由
@@ -30,9 +32,10 @@ router.post('/api/auth/login',
  * POST /api/auth/logout
  * 
  * 中間件：
- * - ErrorHandleMiddleware.handle: 統一錯誤處理
+ * - jwtAuth.authenticate: JWT 驗證（需要登入才能登出）
  */
 router.post('/api/auth/logout',
+  authMiddleware.authenticate,
   authController.logout
 );
 
