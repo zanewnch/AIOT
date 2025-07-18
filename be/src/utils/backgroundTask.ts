@@ -1,6 +1,13 @@
+// 導入 Express 框架的核心類型 - 用於 HTTP 請求和回應處理
 import { Request, Response, NextFunction } from 'express';
+
+// 導入 UUID 生成器 - 用於生成唯一的任務識別碼
 import { v4 as uuidv4 } from 'uuid';
+
+// 導入進度服務實例 - 用於管理和追蹤背景任務的執行進度
 import { progressService } from '../service/ProgressService.js';
+
+// 導入任務狀態枚舉 - 定義任務執行過程中的各種狀態
 import { TaskStatus } from '../types/ProgressTypes.js';
 
 /**
@@ -22,9 +29,9 @@ import { TaskStatus } from '../types/ProgressTypes.js';
  * @example
  * ```typescript
  * // 基本使用
- * import { createBackgroundTaskHandler } from '../utils/backgroundTask.js';
+ * import { backgroundTaskHandler } from '../utils/backgroundTask.js';
  *
- * const myTaskHandler = createBackgroundTaskHandler(
+ * const myTaskHandler = backgroundTaskHandler(
  *   {
  *     totalWork: 1000,
  *     initialMessage: '正在處理...',
@@ -245,44 +252,59 @@ export const backgroundTaskHandler = <T = any>(
   options: BackgroundTaskOptions | ((params: T) => BackgroundTaskOptions),
   executor: (taskId: string, params: T) => Promise<void>
 ): (req: Request, res: Response, next: NextFunction) => Promise<void> => {
+  // 返回實際的 Express 路由處理函數
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // 從請求中提取參數（可以是 body、query 或 params）
+      // 從 HTTP 請求中提取參數，合併 body、query 和 params
+      // 優先級：params > query > body（後者覆蓋前者）
       const params = {
-        ...req.body,
-        ...req.query,
-        ...req.params
+        ...req.body,      // 請求主體中的參數（通常來自 POST/PUT 請求）
+        ...req.query,     // URL 查詢字符串中的參數
+        ...req.params     // 路由路徑中的動態參數
       } as T;
 
-      // 解析選項（如果是函數則調用）
+      // 解析任務配置選項
+      // 如果 options 是函數，則調用它並傳入提取的參數
+      // 如果 options 是物件，則直接使用
       const resolvedOptions = typeof options === 'function' ? options(params) : options;
 
-      // 生成唯一任務 ID
+      // 生成唯一任務識別碼，使用 UUID v4 確保全域唯一性
       const taskId = uuidv4();
 
-      // 建立進度追蹤任務
+      // 在進度服務中創建新任務記錄
+      // 設定任務的總工作量、初始訊息等基本資訊
       progressService.createTask(taskId, resolvedOptions.totalWork, resolvedOptions.initialMessage);
 
-      // 準備回應數據
+      // 構建 API 回應數據結構
       const responsePayload = {
-        ok: true,
-        taskId,
-        status: TaskStatus.STARTED,
-        message: 'Background task initiated',
+        ok: true,                           // 表示請求成功處理
+        taskId,                             // 任務唯一識別碼
+        status: TaskStatus.STARTED,         // 任務狀態設為已開始
+        message: 'Background task initiated',// 標準成功訊息
+        // 條件性添加進度查詢 URL（除非明確設為 false）
         ...(resolvedOptions.includeProgressUrl !== false && { progressUrl: `/api/progress/${taskId}` }),
+        // 合併用戶自定義的回應數據
         ...resolvedOptions.responseData
       };
 
-      // 立即回應，任務在背景執行
+      // 立即向客戶端返回回應，不等待任務完成
+      // 這是背景任務的核心特性：非阻塞式處理
       res.json(responsePayload);
 
-      // 在背景執行實際任務
+      // 在背景異步執行實際任務
+      // 使用 .catch() 捕獲任務執行過程中的異常
       executor(taskId, params).catch(error => {
+        // 記錄任務執行失敗的詳細資訊
         console.error(`Background task [${resolvedOptions.taskName}] failed:`, error);
+        
+        // 在進度服務中標記任務為失敗狀態
+        // 提供錯誤訊息給進度追蹤系統
         progressService.failTask(taskId, error.message || 'Unknown error occurred');
       });
 
     } catch (err) {
+      // 捕獲任務初始化過程中的同步異常
+      // 將異常傳遞給 Express 的錯誤處理中間件
       next(err);
     }
   };
@@ -308,8 +330,8 @@ export const backgroundTaskHandler = <T = any>(
  *
  * | 使用場景 | 推薦方案 | 特點 |
  * |---------|----------|------|
- * | 簡單任務，無參數 | `createBackgroundTaskHandler` | 輕量、易用 |
- * | 需要動態參數 | `backgroundTaskHandler` | 彈性、強大 |
+ * | 簡單任務，静態配置 | `backgroundTaskHandler` (静態配置) | 輕量、易用 |
+ * | 需要動態參數 | `backgroundTaskHandler` (動態配置) | 彈性、強大 |
  *
  * ### 最佳實踐
  *
