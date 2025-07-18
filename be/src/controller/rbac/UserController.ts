@@ -1,19 +1,51 @@
-import { Request, Response } from 'express';
-import { UserModel } from '../../models/rbac/UserModel.js';
-import { RoleModel } from '../../models/rbac/RoleModel.js';
-import { IUserController } from '../../types/controllers/IUserController.js';
+/**
+ * @fileoverview 使用者管理控制器 - 處理 RBAC 系統中使用者的完整生命週期管理
+ * 
+ * 此控制器負責管理系統中的使用者相關操作，包括：
+ * - 使用者的建立、查詢、更新和刪除
+ * - 使用者角色的分配和管理
+ * - 使用者密碼的安全處理
+ * - 使用者狀態的監控和管理
+ * 
+ * 安全性考量：
+ * - 密碼使用 bcrypt 加密存儲
+ * - 敏感資訊過濾（不返回密碼雜湊）
+ * - 權限驗證和存取控制
+ * - 使用者操作審計日誌
+ * 
+ * 特色功能：
+ * - 支援使用者角色的批次管理
+ * - 使用者狀態的即時監控
+ * - 使用者操作歷史追蹤
+ * - 彈性的使用者查詢和過濾
+ * 
+ * @author AIOT Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ */
+
+import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
+import { UserModel } from '../../models/rbac/UserModel.js'; // 引入使用者資料模型
+import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型
+import { IUserController } from '../../types/controllers/IUserController.js'; // 引入使用者控制器介面定義
 
 /**
- * 使用者管理控制器，處理系統使用者的CRUD操作
+ * 使用者管理控制器類別
  * 
- * 提供使用者的創建、查詢、更新和刪除功能。
- * 使用者是RBAC系統的基礎實體，與角色形成多對多關係。
+ * 實作 IUserController 介面，提供完整的使用者管理功能：
+ * - 使用者的 CRUD 操作
+ * - 使用者角色管理
+ * - 使用者安全性驗證
+ * - 使用者狀態追蹤
  * 
- * @module Controllers
+ * @class UserController
+ * @implements {IUserController}
+ * @description 處理所有與使用者管理相關的 HTTP 請求和業務邏輯
+ *
  * @example
  * ```typescript
  * const userController = new UserController();
- * // Routes are handled separately in rbacRoutes.ts
+ * // 路由配置在專門的 rbacRoutes.ts 文件中處理
  * ```
  */
 export class UserController implements IUserController {

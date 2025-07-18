@@ -1,7 +1,29 @@
-import { Request, Response, NextFunction } from 'express';
-import { UserRepository } from '../repo/UserRepo.js';
-import { PermissionService } from '../service/PermissionService.js';
-import '../types/express.js';
+/**
+ * @fileoverview 權限驗證中間件模組
+ * 
+ * 此模組實作基於角色的存取控制（RBAC）權限驗證系統。
+ * 提供細粒度的權限檢查，支援單一權限、任一權限、所有權限及角色驗證。
+ * 
+ * 權限驗證流程：
+ * 1. 身分驗證：確認使用者已通過 JWT 驗證
+ * 2. 權限檢查：根據不同的驗證模式檢查使用者權限
+ * 3. 資料庫查詢：透過 PermissionService 查詢使用者權限
+ * 4. 結果回傳：通過則繼續，否則回傳 403 錯誤
+ * 
+ * 支援的驗證模式：
+ * - requirePermission：需要特定權限
+ * - requireAnyPermission：需要任一權限（OR 邏輯）
+ * - requireAllPermissions：需要所有權限（AND 邏輯）
+ * - requireRole：需要特定角色
+ * 
+ * @author AIOT Team
+ * @since 1.0.0
+ */
+
+import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
+import { UserRepository } from '../repo/UserRepo.js'; // 引入使用者資料存取層
+import { PermissionService } from '../service/PermissionService.js'; // 引入權限服務層
+import '../types/express.js'; // 引入 Express 類型擴展
 
 /**
  * 權限驗證中間件
@@ -18,22 +40,63 @@ import '../types/express.js';
 
 /**
  * 權限驗證中間件類別
+ * 
+ * 實作基於角色的存取控制（RBAC）系統，提供多種權限驗證模式。
+ * 所有方法都會先檢查使用者是否已通過身分驗證，然後進行權限檢查。
+ * 
+ * @class PermissionMiddleware
+ * @example
+ * ```typescript
+ * import { PermissionMiddleware } from './middleware/permissionMiddleware';
+ * 
+ * const permissionMiddleware = new PermissionMiddleware();
+ * 
+ * // 單一權限驗證
+ * app.post('/api/users', permissionMiddleware.requirePermission('user.create'));
+ * 
+ * // 任一權限驗證
+ * app.put('/api/users/:id', permissionMiddleware.requireAnyPermission(['user.update', 'user.admin']));
+ * 
+ * // 所有權限驗證
+ * app.delete('/api/users/:id', permissionMiddleware.requireAllPermissions(['user.delete', 'user.admin']));
+ * 
+ * // 角色驗證
+ * app.get('/api/admin/stats', permissionMiddleware.requireRole('admin'));
+ * ```
  */
 export class PermissionMiddleware {
+    /** 使用者資料存取層實例，用於查詢使用者資訊 */
     private userRepository: UserRepository;
+    
+    /** 權限服務層實例，用於權限驗證邏輯 */
     private permissionService: PermissionService;
 
     /**
      * 建構函式
-     * @param userRepository 使用者資料存取層
-     * @param permissionService 權限服務層
+     * 
+     * 初始化 PermissionMiddleware 實例，設定依賴注入的服務層。
+     * 如果未提供參數，則使用預設實例。
+     * 
+     * @param {UserRepository} userRepository - 使用者資料存取層實例
+     * @param {PermissionService} permissionService - 權限服務層實例
+     * 
+     * @example
+     * ```typescript
+     * // 使用預設實例
+     * const permissionMiddleware = new PermissionMiddleware();
+     * 
+     * // 使用自訂實例
+     * const customUserRepo = new UserRepository();
+     * const customPermissionService = new PermissionService();
+     * const permissionMiddleware = new PermissionMiddleware(customUserRepo, customPermissionService);
+     * ```
      */
     constructor(
         userRepository: UserRepository = new UserRepository(),
         permissionService: PermissionService = new PermissionService()
     ) {
-        this.userRepository = userRepository;
-        this.permissionService = permissionService;
+        this.userRepository = userRepository; // 設定使用者資料存取層
+        this.permissionService = permissionService; // 設定權限服務層
     }
 
     /**
@@ -59,32 +122,34 @@ export class PermissionMiddleware {
                 // 確認使用者已經通過 JWT 驗證
                 if (!req.user || !req.user.id) {
                     res.status(401).json({ 
-                        message: 'Authentication required',
+                        message: 'Authentication required', // 需要身分驗證
                         error: 'USER_NOT_AUTHENTICATED' 
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
                 // 檢查使用者權限
                 const hasPermission = await this.permissionService.userHasPermission(
-                    req.user.id, 
-                    permissionName
+                    req.user.id, // 使用者 ID
+                    permissionName // 需要檢查的權限名稱
                 );
 
                 if (!hasPermission) {
+                    // 權限不足，回傳 403 禁止存取
                     res.status(403).json({ 
                         message: `Access denied. Required permission: ${permissionName}`,
                         error: 'INSUFFICIENT_PERMISSIONS',
-                        required: permissionName
+                        required: permissionName // 提供需要的權限資訊
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
-                next();
+                next(); // 權限檢查通過，繼續執行下一個中間件
             } catch (error) {
+                // 捕獲權限檢查過程中的任何錯誤
                 console.error('Permission check error:', error);
                 res.status(500).json({ 
-                    message: 'Permission validation failed',
+                    message: 'Permission validation failed', // 權限驗證失敗
                     error: 'PERMISSION_CHECK_ERROR' 
                 });
             }
@@ -109,34 +174,37 @@ export class PermissionMiddleware {
     public requireAnyPermission(permissions: string[]) {
         return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             try {
+                // 確認使用者已經通過 JWT 驗證
                 if (!req.user || !req.user.id) {
                     res.status(401).json({ 
-                        message: 'Authentication required',
+                        message: 'Authentication required', // 需要身分驗證
                         error: 'USER_NOT_AUTHENTICATED' 
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
-                // 檢查使用者是否具有任一權限
+                // 檢查使用者是否具有任一權限（OR 邏輯）
                 const hasAnyPermission = await this.permissionService.userHasAnyPermission(
-                    req.user.id, 
-                    permissions
+                    req.user.id, // 使用者 ID
+                    permissions // 權限名稱陣列
                 );
 
                 if (!hasAnyPermission) {
+                    // 使用者沒有任何一個必要權限
                     res.status(403).json({ 
                         message: `Access denied. Required any of permissions: ${permissions.join(', ')}`,
                         error: 'INSUFFICIENT_PERMISSIONS',
-                        required: permissions
+                        required: permissions // 提供需要的權限清單
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
-                next();
+                next(); // 權限檢查通過，繼續執行下一個中間件
             } catch (error) {
+                // 捕獲權限檢查過程中的任何錯誤
                 console.error('Permission check error:', error);
                 res.status(500).json({ 
-                    message: 'Permission validation failed',
+                    message: 'Permission validation failed', // 權限驗證失敗
                     error: 'PERMISSION_CHECK_ERROR' 
                 });
             }
@@ -161,34 +229,37 @@ export class PermissionMiddleware {
     public requireAllPermissions(permissions: string[]) {
         return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             try {
+                // 確認使用者已經通過 JWT 驗證
                 if (!req.user || !req.user.id) {
                     res.status(401).json({ 
-                        message: 'Authentication required',
+                        message: 'Authentication required', // 需要身分驗證
                         error: 'USER_NOT_AUTHENTICATED' 
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
-                // 檢查使用者是否具有所有權限
+                // 檢查使用者是否具有所有權限（AND 邏輯）
                 const hasAllPermissions = await this.permissionService.userHasAllPermissions(
-                    req.user.id, 
-                    permissions
+                    req.user.id, // 使用者 ID
+                    permissions // 權限名稱陣列
                 );
 
                 if (!hasAllPermissions) {
+                    // 使用者缺少一個或多個必要權限
                     res.status(403).json({ 
                         message: `Access denied. Required all permissions: ${permissions.join(', ')}`,
                         error: 'INSUFFICIENT_PERMISSIONS',
-                        required: permissions
+                        required: permissions // 提供需要的權限清單
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
-                next();
+                next(); // 權限檢查通過，繼續執行下一個中間件
             } catch (error) {
+                // 捕獲權限檢查過程中的任何錯誤
                 console.error('Permission check error:', error);
                 res.status(500).json({ 
-                    message: 'Permission validation failed',
+                    message: 'Permission validation failed', // 權限驗證失敗
                     error: 'PERMISSION_CHECK_ERROR' 
                 });
             }
@@ -213,34 +284,37 @@ export class PermissionMiddleware {
     public requireRole(roleName: string) {
         return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             try {
+                // 確認使用者已經通過 JWT 驗證
                 if (!req.user || !req.user.id) {
                     res.status(401).json({ 
-                        message: 'Authentication required',
+                        message: 'Authentication required', // 需要身分驗證
                         error: 'USER_NOT_AUTHENTICATED' 
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
                 // 檢查使用者角色
                 const hasRole = await this.permissionService.userHasRole(
-                    req.user.id, 
-                    roleName
+                    req.user.id, // 使用者 ID
+                    roleName // 需要檢查的角色名稱
                 );
 
                 if (!hasRole) {
+                    // 使用者沒有所需的角色
                     res.status(403).json({ 
                         message: `Access denied. Required role: ${roleName}`,
                         error: 'INSUFFICIENT_ROLE',
-                        required: roleName
+                        required: roleName // 提供需要的角色資訊
                     });
-                    return;
+                    return; // 中止執行，不調用 next()
                 }
 
-                next();
+                next(); // 角色檢查通過，繼續執行下一個中間件
             } catch (error) {
+                // 捕獲角色檢查過程中的任何錯誤
                 console.error('Role check error:', error);
                 res.status(500).json({ 
-                    message: 'Role validation failed',
+                    message: 'Role validation failed', // 角色驗證失敗
                     error: 'ROLE_CHECK_ERROR' 
                 });
             }

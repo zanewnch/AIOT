@@ -1,19 +1,51 @@
-import { Request, Response } from 'express';
-import { RoleModel } from '../../models/rbac/RoleModel.js';
-import { PermissionModel } from '../../models/rbac/PermissionModel.js';
-import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js';
+/**
+ * @fileoverview 角色權限關聯控制器 - 管理 RBAC 系統中角色與權限的關聯關係
+ * 
+ * 此控制器負責管理角色與權限之間的多對多關聯關係，包括：
+ * - 角色權限的分配和撤銷
+ * - 角色權限的查詢和驗證
+ * - 權限繼承和層級管理
+ * - 角色權限的批次操作
+ * 
+ * 安全性考量：
+ * - 權限分配需要適當的管理權限
+ * - 防止權限提升攻擊
+ * - 確保權限變更的審計追蹤
+ * - 驗證角色和權限的有效性
+ * 
+ * 特色功能：
+ * - 支援權限的批次分配和撤銷
+ * - 權限繼承機制
+ * - 角色權限的即時同步
+ * - 權限衝突檢測和解決
+ * 
+ * @author AIOT Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ */
+
+import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
+import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型
+import { PermissionModel } from '../../models/rbac/PermissionModel.js'; // 引入權限資料模型
+import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js'; // 引入角色權限控制器介面
 
 /**
- * 角色權限關聯控制器，處理角色與權限之間的關聯關係
+ * 角色權限關聯控制器類別
  * 
- * 提供角色權限分配、查詢和移除功能。
- * 管理RBAC系統中角色和權限之間的多對多關係。
+ * 實作 IRoleToPermissionController 介面，提供完整的角色權限管理功能：
+ * - 角色權限的分配與撤銷
+ * - 角色權限的查詢與驗證
+ * - 權限繼承和層級管理
+ * - 角色權限的批次操作
  * 
- * @module Controllers
+ * @class RoleToPermissionController
+ * @implements {IRoleToPermissionController}
+ * @description 處理所有與角色權限關聯相關的 HTTP 請求和業務邏輯
+ *
  * @example
  * ```typescript
  * const roleToPermissionController = new RoleToPermissionController();
- * // Routes are handled separately in rbacRoutes.ts
+ * // 路由配置在專門的 rbacRoutes.ts 文件中處理
  * ```
  */
 export class RoleToPermissionController implements IRoleToPermissionController {

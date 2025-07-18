@@ -1,92 +1,172 @@
-import { Router } from 'express';
-import { UserController } from '../controller/rbac/UserController.js';
-import { RoleController } from '../controller/rbac/RoleController.js';
-import { PermissionController } from '../controller/rbac/PermissionController.js';
-import { UserToRoleController } from '../controller/rbac/UserToRoleController.js';
-import { RoleToPermissionController } from '../controller/rbac/RoleToPermissionController.js';
-import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
-import { PermissionMiddleware } from '../middleware/permissionMiddleware.js';
-import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js';
-
 /**
- * RBAC (Role-Based Access Control) 相關路由配置
+ * @fileoverview RBAC (Role-Based Access Control) 路由配置
  * 
- * 處理使用者、角色、權限及其關聯關係的完整 CRUD 操作路由設定。
- * 包含 JWT 驗證和細粒度權限控制中間件的整合。
+ * 此文件定義了完整的 RBAC 系統路由端點，包括：
+ * - 使用者管理 (CRUD 操作)
+ * - 角色管理 (CRUD 操作)
+ * - 權限管理 (CRUD 操作)
+ * - 使用者角色關聯管理
+ * - 角色權限關聯管理
  * 
- * @module Routes
+ * 所有端點都需要 JWT 認證，並實施細粒度的權限控制。
+ * 支援多重權限驗證，確保操作的安全性。
+ * 
+ * @module Routes/RbacRoutes
+ * @version 1.0.0
+ * @author AIOT Team
  */
 
+import { Router } from 'express'; // 引入 Express 路由器模組
+import { UserController } from '../controller/rbac/UserController.js'; // 引入使用者控制器
+import { RoleController } from '../controller/rbac/RoleController.js'; // 引入角色控制器
+import { PermissionController } from '../controller/rbac/PermissionController.js'; // 引入權限控制器
+import { UserToRoleController } from '../controller/rbac/UserToRoleController.js'; // 引入使用者角色關聯控制器
+import { RoleToPermissionController } from '../controller/rbac/RoleToPermissionController.js'; // 引入角色權限關聯控制器
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js'; // 引入認證中間件
+import { PermissionMiddleware } from '../middleware/permissionMiddleware.js'; // 引入權限驗證中間件
+import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js'; // 引入錯誤處理中間件
+
+/**
+ * 創建 Express 路由器實例
+ * 用於定義 RBAC 相關的路由端點
+ */
 const router = Router();
 
-// 初始化所有 RBAC 控制器
-const userController = new UserController();
-const roleController = new RoleController();
-const permissionController = new PermissionController();
-const userToRoleController = new UserToRoleController();
-const roleToPermissionController = new RoleToPermissionController();
+/**
+ * 初始化所有 RBAC 控制器實例
+ * 分別處理使用者、角色、權限及其關聯的業務邏輯
+ */
+const userController = new UserController(); // 使用者控制器實例
+const roleController = new RoleController(); // 角色控制器實例
+const permissionController = new PermissionController(); // 權限控制器實例
+const userToRoleController = new UserToRoleController(); // 使用者角色關聯控制器實例
+const roleToPermissionController = new RoleToPermissionController(); // 角色權限關聯控制器實例
 
-// 初始化中間件
-const authMiddleware = new AuthMiddleware();
-const permissionMiddleware = new PermissionMiddleware();
+/**
+ * 初始化中間件實例
+ * 提供認證和權限驗證功能
+ */
+const authMiddleware = new AuthMiddleware(); // 認證中間件實例
+const permissionMiddleware = new PermissionMiddleware(); // 權限驗證中間件實例
 
 // =================================================================
 // 使用者管理路由 (Users)
 // =================================================================
 
 /**
- * GET /api/rbac/users
  * 獲取所有使用者列表
- * 需要權限：user.read
+ * 
+ * 此端點返回系統中所有使用者的列表，包括基本資訊和角色關聯。
+ * 支援分頁和搜尋功能，需要 user.read 權限。
+ * 
+ * @route GET /api/rbac/users
+ * @group RBAC - 使用者管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission user.read - 需要使用者讀取權限
+ * @returns {Object} 200 - 使用者列表
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.get('/users', 
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('user.read'),
-  userController.getUsers
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('user.read'), // 驗證使用者讀取權限
+  userController.getUsers // 執行獲取使用者列表
 );
 
 /**
- * POST /api/rbac/users
  * 創建新使用者
- * 需要權限：user.create
+ * 
+ * 此端點用於創建新的使用者帳號，包括基本資訊設定和初始權限配置。
+ * 需要 user.create 權限。
+ * 
+ * @route POST /api/rbac/users
+ * @group RBAC - 使用者管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission user.create - 需要使用者創建權限
+ * @param {Object} body - 使用者資訊
+ * @returns {Object} 201 - 使用者創建成功
+ * @returns {Object} 400 - 請求參數錯誤
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 409 - 使用者已存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.post('/users',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('user.create'),
-  userController.createUser
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('user.create'), // 驗證使用者創建權限
+  userController.createUser // 執行創建使用者
 );
 
 /**
- * GET /api/rbac/users/:userId
  * 根據ID獲取特定使用者
- * 需要權限：user.read
+ * 
+ * 此端點根據使用者ID獲取特定使用者的詳細資訊，包括關聯的角色和權限。
+ * 需要 user.read 權限。
+ * 
+ * @route GET /api/rbac/users/:userId
+ * @param {string} userId - 使用者唯一識別碼
+ * @group RBAC - 使用者管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission user.read - 需要使用者讀取權限
+ * @returns {Object} 200 - 使用者詳細資訊
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 404 - 使用者不存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.get('/users/:userId',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('user.read'),
-  userController.getUserById
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('user.read'), // 驗證使用者讀取權限
+  userController.getUserById // 執行根據ID獲取使用者
 );
 
 /**
- * PUT /api/rbac/users/:userId
  * 更新指定使用者
- * 需要權限：user.update
+ * 
+ * 此端點用於更新使用者的資訊，包括基本資料和設定。
+ * 需要 user.update 權限。
+ * 
+ * @route PUT /api/rbac/users/:userId
+ * @param {string} userId - 使用者唯一識別碼
+ * @group RBAC - 使用者管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission user.update - 需要使用者更新權限
+ * @param {Object} body - 更新的使用者資訊
+ * @returns {Object} 200 - 使用者更新成功
+ * @returns {Object} 400 - 請求參數錯誤
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 404 - 使用者不存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.put('/users/:userId',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('user.update'),
-  userController.updateUser
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('user.update'), // 驗證使用者更新權限
+  userController.updateUser // 執行更新使用者
 );
 
 /**
- * DELETE /api/rbac/users/:userId
  * 刪除指定使用者
- * 需要權限：user.delete
+ * 
+ * 此端點用於刪除使用者帳號，包括相關的角色關聯。
+ * 需要 user.delete 權限。危險操作，需要特別謹慎。
+ * 
+ * @route DELETE /api/rbac/users/:userId
+ * @param {string} userId - 使用者唯一識別碼
+ * @group RBAC - 使用者管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission user.delete - 需要使用者刪除權限
+ * @returns {Object} 200 - 使用者刪除成功
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 404 - 使用者不存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.delete('/users/:userId',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('user.delete'),
-  userController.deleteUser
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('user.delete'), // 驗證使用者刪除權限
+  userController.deleteUser // 執行刪除使用者
 );
 
 // =================================================================
@@ -94,58 +174,119 @@ router.delete('/users/:userId',
 // =================================================================
 
 /**
- * GET /api/rbac/roles
  * 獲取所有角色列表
- * 需要權限：role.read
+ * 
+ * 此端點返回系統中所有角色的列表，包括角色名稱、描述和相關權限。
+ * 支援分頁和搜尋功能，需要 role.read 權限。
+ * 
+ * @route GET /api/rbac/roles
+ * @group RBAC - 角色管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission role.read - 需要角色讀取權限
+ * @returns {Object} 200 - 角色列表
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.get('/roles',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('role.read'),
-  roleController.getRoles
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('role.read'), // 驗證角色讀取權限
+  roleController.getRoles // 執行獲取角色列表
 );
 
 /**
- * POST /api/rbac/roles
  * 創建新角色
- * 需要權限：role.create
+ * 
+ * 此端點用於創建新的角色，包括角色名稱、描述和初始權限配置。
+ * 需要 role.create 權限。
+ * 
+ * @route POST /api/rbac/roles
+ * @group RBAC - 角色管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission role.create - 需要角色創建權限
+ * @param {Object} body - 角色資訊
+ * @returns {Object} 201 - 角色創建成功
+ * @returns {Object} 400 - 請求參數錯誤
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 409 - 角色已存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.post('/roles',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('role.create'),
-  roleController.createRole
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('role.create'), // 驗證角色創建權限
+  roleController.createRole // 執行創建角色
 );
 
 /**
- * GET /api/rbac/roles/:roleId
  * 根據ID獲取特定角色
- * 需要權限：role.read
+ * 
+ * 此端點根據角色ID獲取特定角色的詳細資訊，包括關聯的權限和使用者。
+ * 需要 role.read 權限。
+ * 
+ * @route GET /api/rbac/roles/:roleId
+ * @param {string} roleId - 角色唯一識別碼
+ * @group RBAC - 角色管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission role.read - 需要角色讀取權限
+ * @returns {Object} 200 - 角色詳細資訊
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 404 - 角色不存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.get('/roles/:roleId',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('role.read'),
-  roleController.getRoleById
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('role.read'), // 驗證角色讀取權限
+  roleController.getRoleById // 執行根據ID獲取角色
 );
 
 /**
- * PUT /api/rbac/roles/:roleId
  * 更新指定角色
- * 需要權限：role.update
+ * 
+ * 此端點用於更新角色的資訊，包括角色名稱、描述和設定。
+ * 需要 role.update 權限。
+ * 
+ * @route PUT /api/rbac/roles/:roleId
+ * @param {string} roleId - 角色唯一識別碼
+ * @group RBAC - 角色管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission role.update - 需要角色更新權限
+ * @param {Object} body - 更新的角色資訊
+ * @returns {Object} 200 - 角色更新成功
+ * @returns {Object} 400 - 請求參數錯誤
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 404 - 角色不存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.put('/roles/:roleId',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('role.update'),
-  roleController.updateRole
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('role.update'), // 驗證角色更新權限
+  roleController.updateRole // 執行更新角色
 );
 
 /**
- * DELETE /api/rbac/roles/:roleId
  * 刪除指定角色
- * 需要權限：role.delete
+ * 
+ * 此端點用於刪除角色，包括相關的使用者關聯和權限關聯。
+ * 需要 role.delete 權限。危險操作，需要特別謹慎。
+ * 
+ * @route DELETE /api/rbac/roles/:roleId
+ * @param {string} roleId - 角色唯一識別碼
+ * @group RBAC - 角色管理
+ * @security JWT - 需要有效的 JWT 認證令牌
+ * @permission role.delete - 需要角色刪除權限
+ * @returns {Object} 200 - 角色刪除成功
+ * @returns {Object} 401 - 未授權
+ * @returns {Object} 403 - 權限不足
+ * @returns {Object} 404 - 角色不存在
+ * @returns {Object} 500 - 伺服器錯誤
  */
 router.delete('/roles/:roleId',
-  authMiddleware.authenticate,
-  permissionMiddleware.requirePermission('role.delete'),
-  roleController.deleteRole
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
+  permissionMiddleware.requirePermission('role.delete'), // 驗證角色刪除權限
+  roleController.deleteRole // 執行刪除角色
 );
 
 // =================================================================
@@ -325,4 +466,11 @@ router.delete('/role-permissions/:rolePermissionId',
   roleToPermissionController.deleteRolePermission
 );
 
+/**
+ * 匯出 RBAC 路由模組
+ * 
+ * 將配置好的路由器匯出，供主應用程式使用。
+ * 此路由器包含完整的 RBAC 系統端點，包括使用者、角色、
+ * 權限管理以及它們之間的關聯關係。
+ */
 export { router as rbacRoutes };

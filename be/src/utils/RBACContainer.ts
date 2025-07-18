@@ -1,16 +1,59 @@
 /**
- * RBACContainer - RBAC 依賴注入容器
- * ===================================
- * 負責創建和註冊所有 RBAC 相關的控制器實例。
- * 採用簡單的依賴注入容器模式，不處理路由邏輯。
+ * @fileoverview RBAC 依賴注入容器工具模組
+ * 
+ * 此模組實現了基於角色的存取控制（RBAC）系統的依賴注入容器。
+ * 採用單例模式管理所有 RBAC 相關的控制器實例，提供統一的服務註冊和取得介面。
+ * 
+ * ### 核心功能
+ * - 🔐 **統一管理**: 集中管理所有 RBAC 控制器實例
+ * - 🏗️ **單例模式**: 確保全域只有一個容器實例
+ * - 🔧 **依賴注入**: 提供標準的依賴注入容器功能
+ * - 🎯 **類型安全**: 完整的 TypeScript 類型支援
+ * - 📋 **服務註冊**: 自動註冊和管理所有 RBAC 服務
+ * 
+ * ### 設計模式
+ * - **單例模式**: 確保容器的唯一性
+ * - **工廠模式**: 統一創建和管理控制器實例
+ * - **註冊表模式**: 使用 Map 儲存服務註冊資訊
+ * 
+ * @module Utils/RBACContainer
+ * @version 1.0.0
+ * @author AIOT Team
+ * @since 2024-01-01
+ * 
+ * @example
+ * ```typescript
+ * // 取得容器實例
+ * const container = RBACContainer.getInstance();
+ * 
+ * // 取得特定控制器
+ * const userController = container.getUserController();
+ * const roleController = container.getRoleController();
+ * 
+ * // 通用服務取得
+ * const controller = container.get<IUserController>('UserController');
+ * ```
  */
 
+// 導入使用者控制器類別 - 處理使用者相關的 CRUD 操作
 import { UserController } from '../controller/rbac/UserController.js';
+
+// 導入角色控制器類別 - 處理角色相關的 CRUD 操作
 import { RoleController } from '../controller/rbac/RoleController.js';
+
+// 導入權限控制器類別 - 處理權限相關的 CRUD 操作
 import { PermissionController } from '../controller/rbac/PermissionController.js';
+
+// 導入使用者角色關聯控制器類別 - 處理使用者與角色的關聯操作
 import { UserToRoleController } from '../controller/rbac/UserToRoleController.js';
+
+// 導入角色權限關聯控制器類別 - 處理角色與權限的關聯操作
 import { RoleToPermissionController } from '../controller/rbac/RoleToPermissionController.js';
+
+// 導入 RBAC 容器服務類型定義 - 定義容器可儲存的服務類型聯合
 import { RBACContainerServicesType } from '../types/RBACContainerServicesType.js';
+
+// 導入所有控制器介面類型定義 - 確保類型安全的依賴注入
 import type {
     IUserController,
     IRoleController,

@@ -1,6 +1,6 @@
 /**
- * AuthService - 身份驗證服務層
- * ==============================
+ * @fileoverview 身份驗證服務層
+ * 
  * 負責處理使用者身份驗證相關功能，包含登入驗證、密碼比對和 JWT Token 產生。
  * 提供安全的使用者認證機制，整合 bcrypt 密碼加密和 JWT 憑證管理。
  * 
@@ -8,17 +8,37 @@
  * - 使用者登入驗證
  * - 密碼安全性驗證
  * - JWT Token 產生與管理
+ * - 會話管理（Redis 儲存）
+ * - 單一裝置登入限制
  * 
  * 安全特性：
  * - 使用 bcrypt 進行密碼雜湊比對
  * - JWT Token 具有過期時間限制
  * - 錯誤訊息統一，避免資訊洩露
+ * - 會話狀態由 Redis 管理
+ * - 支援自動清理過期會話
+ * 
+ * 認證流程：
+ * 1. 使用者提交用戶名和密碼
+ * 2. 查詢使用者資料並驗證密碼
+ * 3. 生成 JWT Token
+ * 4. 將會話資料存儲到 Redis
+ * 5. 回傳認證結果
+ * 
+ * @author AIOT 開發團隊
+ * @version 1.0.0
+ * @since 2025-07-18
  */
 
+// 匯入 bcrypt 加密庫，用於密碼雜湊驗證
 import bcrypt from 'bcrypt';
+// 匯入 jsonwebtoken 庫，用於 JWT 憑證生成和驗證
 import jwt from 'jsonwebtoken';
+// 匯入使用者資料存取層，提供使用者資料的查詢功能
 import { UserRepository, IUserRepository } from '../repo/UserRepo.js';
+// 匯入使用者模型，定義使用者資料結構
 import { UserModel } from '../models/rbac/UserModel.js';
+// 匯入會話服務，用於管理使用者登入會話狀態
 import { SessionService } from './SessionService.js';
 
 /**

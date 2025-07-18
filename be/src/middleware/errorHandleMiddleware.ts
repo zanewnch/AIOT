@@ -1,5 +1,21 @@
-import { Request, Response, NextFunction } from 'express';
-import createError from 'http-errors';
+/**
+ * @fileoverview 錯誤處理中間件模組
+ * 
+ * 此模組提供統一的錯誤處理機制，用於 Express 應用程式中的錯誤管理。
+ * 包含 404 錯誤處理和全域錯誤處理器，支援 API 和網頁兩種回應格式。
+ * 
+ * 錯誤處理流程：
+ * 1. 404 錯誤：當路由不存在時觸發
+ * 2. 全域錯誤：所有未捕獲的錯誤都會在此處理
+ * 3. 環境識別：開發環境顯示完整錯誤資訊，生產環境隱藏敏感資訊
+ * 4. 回應格式：根據 Accept 標頭決定 JSON 或 HTML 回應
+ * 
+ * @author AIOT Team
+ * @since 1.0.0
+ */
+
+import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
+import createError from 'http-errors'; // 引入 HTTP 錯誤建立工具
 
 /**
  * 錯誤處理中間件類別
@@ -56,6 +72,7 @@ export class ErrorHandleMiddleware {
    * ```
    */
   static notFound(req: Request, res: Response, next: NextFunction): void {
+    // 建立 404 錯誤並傳遞給錯誤處理中間件
     next(createError(404, `Route ${req.originalUrl} not found`));
   }
 
@@ -127,24 +144,24 @@ export class ErrorHandleMiddleware {
    */
   static handle(err: any, req: Request, res: Response, next: NextFunction): void {
     // 設置本地變數，僅在開發環境中提供錯誤詳細資訊
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.locals.message = err.message; // 設置錯誤訊息供模板引擎使用
+    res.locals.error = req.app.get('env') === 'development' ? err : {}; // 開發環境包含完整錯誤物件
 
     // 設置HTTP狀態碼，預設為500（內部伺服器錯誤）
-    res.status(err.status || 500);
+    res.status(err.status || 500); // 使用錯誤物件的狀態碼，否則預設 500
 
     // 根據請求接受的內容類型決定回應格式
     if (req.accepts('json')) {
       // API回應：返回JSON格式
       res.json({
-        success: false,
-        error: err.message,
+        success: false, // 統一的成功狀態標示
+        error: err.message, // 錯誤訊息
         // 僅在開發環境中包含堆疊追蹤
         ...(req.app.get('env') === 'development' && { stack: err.stack })
       });
     } else {
       // 網頁回應：渲染錯誤頁面模板
-      res.render('error');
+      res.render('error'); // 使用 error.ejs 或 error.hbs 等模板檔案
     }
   }
 }

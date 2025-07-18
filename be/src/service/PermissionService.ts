@@ -1,24 +1,45 @@
-import { UserRepository } from '../repo/UserRepo.js';
-import { getRedisClient } from '../configs/redisConfig.js';
-import type { RedisClientType } from 'redis';
-
 /**
- * 權限服務層
- * ===========
+ * @fileoverview 權限服務層
  * 
- * 提供基於 RBAC 的權限檢查功能，整合 Redis 快取以提升效能
+ * 提供基於 RBAC 的權限檢查功能，整合 Redis 快取以提升效能。
+ * 此服務負責處理使用者權限驗證、角色檢查和權限資料快取管理。
  * 
  * 功能特點：
  * - 使用者權限檢查（單一、任一、全部）
  * - 使用者角色檢查
  * - Redis 快取機制，減少資料庫查詢
  * - 自動快取失效和更新
+ * - 批量權限查詢
  * 
  * 快取策略：
  * - 使用者權限快取：user_permissions:{userId}
  * - 使用者角色快取：user_roles:{userId}
  * - 預設快取時間：1 小時
+ * - 支援強制重新整理快取
+ * 
+ * 使用場景：
+ * - API 路由權限驗證
+ * - 前端頁面權限控制
+ * - 業務邏輯權限檢查
+ * - 批量使用者權限查詢
+ * 
+ * 效能考量：
+ * - 優先使用 Redis 快取
+ * - 資料庫查詢僅在快取失效時執行
+ * - 支援批量操作減少網路開銷
+ * - 自動處理 Redis 連線異常
+ * 
+ * @author AIOT 開發團隊
+ * @version 1.0.0
+ * @since 2025-07-18
  */
+
+// 匯入使用者資料存取層，用於查詢使用者權限相關資料
+import { UserRepository } from '../repo/UserRepo.js';
+// 匯入 Redis 客戶端配置，用於快取管理
+import { getRedisClient } from '../configs/redisConfig.js';
+// 匯入 Redis 客戶端類型定義
+import type { RedisClientType } from 'redis';
 
 /**
  * 使用者權限資料結構
@@ -58,47 +79,80 @@ export class PermissionService {
 
     /**
      * 取得 Redis 客戶端
+     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 
+     * @returns Redis 客戶端實例
+     * @throws Error 當 Redis 連線不可用時拋出錯誤
+     * 
+     * @private
      */
     private getRedisClient(): RedisClientType {
         try {
+            // 嘗試取得 Redis 客戶端實例
             return getRedisClient();
         } catch (error) {
+            // 記錄警告訊息，提示將回退到資料庫查詢
             console.warn('Redis not available, falling back to database queries');
+            // 拋出錯誤以讓上層處理
             throw new Error('Redis connection is not available');
         }
     }
 
     /**
      * 生成使用者權限快取鍵值
+     * 建立特定使用者的權限快取鍵值，格式為 "user_permissions:{userId}"
+     * 
+     * @param userId 使用者 ID
+     * @returns 權限快取鍵值
+     * 
+     * @private
      */
     private getPermissionsCacheKey(userId: number): string {
+        // 組合權限快取鍵值前綴和使用者 ID
         return `${PermissionService.PERMISSIONS_CACHE_PREFIX}${userId}`;
     }
 
     /**
      * 生成使用者角色快取鍵值
+     * 建立特定使用者的角色快取鍵值，格式為 "user_roles:{userId}"
+     * 
+     * @param userId 使用者 ID
+     * @returns 角色快取鍵值
+     * 
+     * @private
      */
     private getRolesCacheKey(userId: number): string {
+        // 組合角色快取鍵值前綴和使用者 ID
         return `${PermissionService.ROLES_CACHE_PREFIX}${userId}`;
     }
 
     /**
      * 從快取取得使用者權限資料
+     * 嘗試從 Redis 快取中取得使用者的權限資料
+     * 
      * @param userId 使用者 ID
-     * @returns 使用者權限資料或 null
+     * @returns 使用者權限資料或 null（當快取不存在或發生錯誤時）
+     * 
+     * @private
      */
     private async getCachedUserPermissions(userId: number): Promise<UserPermissions | null> {
         try {
+            // 取得 Redis 客戶端
             const redis = this.getRedisClient();
+            // 生成快取鍵值
             const cacheKey = this.getPermissionsCacheKey(userId);
+            // 從 Redis 取得快取資料
             const cachedData = await redis.get(cacheKey);
 
+            // 如果快取存在，解析 JSON 資料並回傳
             if (cachedData) {
                 return JSON.parse(cachedData) as UserPermissions;
             }
 
+            // 快取不存在時回傳 null
             return null;
         } catch (error) {
+            // 記錄警告並回傳 null，讓上層回退到資料庫查詢
             console.warn('Failed to get cached permissions:', error);
             return null;
         }

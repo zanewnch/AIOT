@@ -1,6 +1,6 @@
 /**
- * RbacInitService - RBAC 初始化服務層
- * ==================================
+ * @fileoverview RBAC 初始化服務層
+ * 
  * 負責處理角色型存取控制（RBAC）系統的初始化相關業務邏輯。
  * 提供完整的 RBAC 示範資料建立，包含使用者、角色、權限及其關聯關係。
  * 
@@ -10,24 +10,43 @@
  * - 建立示範使用者帳戶
  * - 配置角色與權限的關聯關係
  * - 指派使用者角色
+ * - 支援大量測試資料生成和壓力測試
  * 
  * 使用情境：
  * - 系統首次部署時的 RBAC 資料初始化
  * - 開發環境的測試資料準備
  * - RBAC 功能的示範資料建立
+ * - 壓力測試資料生成
  * 
  * RBAC 架構：
  * ```
  * User ←→ UserRole ←→ Role ←→ RolePermission ←→ Permission
  * ```
+ * 
+ * 安全性考量：
+ * - 所有密碼使用 bcrypt 進行雜湊處理
+ * - 支援重複執行不會產生重複資料
+ * - 分批處理避免記憶體溢出
+ * - 完整的錯誤處理和進度追蹤
+ * 
+ * @author AIOT 開發團隊
+ * @version 1.0.0
+ * @since 2025-07-18
  */
 
+// 匯入 bcrypt 加密庫，用於密碼雜湊處理
 import bcrypt from 'bcrypt';
+// 匯入權限模型，用於權限資料管理
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
+// 匯入角色模型，用於角色資料管理
 import { RoleModel } from '../models/rbac/RoleModel.js';
+// 匯入角色權限關聯模型，用於管理角色與權限的多對多關係
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
+// 匯入使用者模型，用於使用者資料管理
 import { UserModel } from '../models/rbac/UserModel.js';
+// 匯入使用者角色關聯模型，用於管理使用者與角色的多對多關係
 import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
+// 匯入進度追蹤相關類型，用於支援進度回調和任務階段管理
 import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
 
 /**

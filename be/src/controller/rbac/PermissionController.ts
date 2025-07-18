@@ -1,21 +1,45 @@
-import { Request, Response } from 'express';
-import { PermissionModel } from '../../models/rbac/PermissionModel.js';
-import { IPermissionController } from '../../types/controllers/IPermissionController.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+/**
+ * @fileoverview 權限管理控制器 - 處理 RBAC 系統中權限的完整生命週期管理
+ * 
+ * 此控制器負責管理系統中的權限相關操作，包括：
+ * - 權限的建立、查詢、更新和刪除
+ * - 權限的分類和層級管理
+ * - 權限的快取機制優化
+ * - 權限的驗證和存取控制
+ * 
+ * 安全性考量：
+ * - 權限操作需要最高級別的管理權限
+ * - 防止權限濫用和提升攻擊
+ * - 確保權限變更的審計追蹤
+ * - 維護權限系統的完整性
+ * 
+ * 效能優化：
+ * - 整合 Redis 快取機制提升查詢效能
+ * - 權限資料的智能快取策略
+ * - 減少資料庫查詢負載
+ * 
+ * @author AIOT Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ */
+
+import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
+import { PermissionModel } from '../../models/rbac/PermissionModel.js'; // 引入權限資料模型
+import { IPermissionController } from '../../types/controllers/IPermissionController.js'; // 引入權限控制器介面
+import { getRedisClient } from '../../configs/redisConfig.js'; // 引入 Redis 客戶端配置
 
 /**
- * 權限管理控制器，處理系統權限的CRUD操作
+ * 權限管理控制器類別
  * 
- * 提供權限的創建、查詢、更新和刪除功能。
- * 權限是RBAC系統中的基本單位，定義了使用者可以執行的具體操作。
- * 整合 Redis 快取機制以提升查詢效能。
+ * 實作 IPermissionController 介面，提供完整的權限管理功能：
+ * - 權限的 CRUD 操作
+ * - 權限的分類和層級管理
+ * - 權限的快取機制
+ * - 權限的驗證和存取控制
  * 
- * @module Controllers
- * @example
- * ```typescript
- * const permissionController = new PermissionController();
- * // Routes are handled separately in rbacRoutes.ts
- * ```
+ * @class PermissionController
+ * @implements {IPermissionController}
+ * @description 處理所有與權限管理相關的 HTTP 請求和業務邏輯
  */
 export class PermissionController implements IPermissionController {
     private static readonly CACHE_PREFIX = 'permission:';

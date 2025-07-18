@@ -1,20 +1,36 @@
-import { Request, Response } from 'express';
-import { UserModel } from '../../models/rbac/UserModel.js';
-import { RoleModel } from '../../models/rbac/RoleModel.js';
-import { IUserToRoleController } from '../../types/controllers/IUserToRoleController.js';
+/**
+ * @fileoverview 使用者角色關聯控制器 - 管理 RBAC 系統中使用者與角色的關聯關係
+ * 
+ * 此控制器負責管理使用者與角色之間的多對多關聯關係，包括：
+ * - 使用者角色的分配和撤銷
+ * - 使用者角色的查詢和驗證
+ * - 角色繼承和層級管理
+ * - 使用者角色的批次操作
+ * 
+ * 安全性考量：
+ * - 角色分配需要適當的管理權限
+ * - 防止權限提升攻擊
+ * - 確保角色變更的審計追蹤
+ * - 驗證使用者和角色的有效性
+ * 
+ * @author AIOT Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ */
+
+import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
+import { UserModel } from '../../models/rbac/UserModel.js'; // 引入使用者資料模型
+import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型
+import { IUserToRoleController } from '../../types/controllers/IUserToRoleController.js'; // 引入使用者角色控制器介面
 
 /**
- * 使用者角色關聯控制器，處理使用者與角色之間的關聯關係
+ * 使用者角色關聯控制器類別
  * 
- * 提供使用者角色分配、查詢和移除功能。
- * 管理RBAC系統中使用者和角色之間的多對多關係。
+ * 實作 IUserToRoleController 介面，提供完整的使用者角色管理功能
  * 
- * @module Controllers
- * @example
- * ```typescript
- * const userToRoleController = new UserToRoleController();
- * // Routes are handled separately in rbacRoutes.ts
- * ```
+ * @class UserToRoleController
+ * @implements {IUserToRoleController}
+ * @description 處理所有與使用者角色關聯相關的 HTTP 請求和業務邏輯
  */
 export class UserToRoleController implements IUserToRoleController {
     /**
