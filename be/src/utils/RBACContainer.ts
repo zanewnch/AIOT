@@ -64,10 +64,76 @@ import type {
 
 
 
+/**
+ * RBAC 依賴注入容器類別
+ * 
+ * 實現單例模式的依賴注入容器，專門管理 RBAC 系統中的所有控制器實例。
+ * 提供統一的服務註冊、取得和管理功能，確保系統中所有 RBAC 相關的
+ * 控制器都通過此容器進行管理。
+ * 
+ * ### 核心特性
+ * - 🔒 **單例模式**: 確保全域只有一個容器實例
+ * - 🗂️ **服務註冊**: 自動註冊所有 RBAC 控制器
+ * - 🔍 **服務發現**: 提供多種方式取得已註冊的服務
+ * - 🛡️ **類型安全**: 完整的 TypeScript 類型檢查
+ * - 📊 **服務管理**: 支援服務查詢和狀態檢查
+ * 
+ * ### 設計考量
+ * - 使用 Map 資料結構提供高效的服務查找
+ * - 採用 readonly 修飾符確保服務註冊表的不可變性
+ * - 提供專用的 getter 方法確保類型安全
+ * - 支援通用的服務取得方法提供彈性
+ * 
+ * @class RBACContainer
+ * @category Utils
+ * @group RBAC
+ * @since 1.0.0
+ * 
+ * @example
+ * ```typescript
+ * // 取得容器實例（單例模式）
+ * const container = RBACContainer.getInstance();
+ * 
+ * // 取得特定類型的控制器
+ * const userController = container.getUserController();
+ * const roleController = container.getRoleController();
+ * 
+ * // 檢查服務是否已註冊
+ * if (container.hasService('UserController')) {
+ *   const controller = container.get<IUserController>('UserController');
+ * }
+ * 
+ * // 取得所有已註冊的服務名稱
+ * const serviceNames = container.getRegisteredServices();
+ * console.log('已註冊服務:', serviceNames);
+ * ```
+ */
 export class RBACContainer {
+    /**
+     * 靜態單例實例
+     * 
+     * 儲存 RBACContainer 的唯一實例，確保整個應用程式中
+     * 只有一個容器實例存在。
+     * 
+     * @private
+     * @static
+     * @type {RBACContainer}
+     */
     private static instance: RBACContainer;
 
-    // 註冊表：儲存所有已創建的實例
+    /**
+     * 服務註冊表
+     * 
+     * 使用 Map 資料結構儲存所有已註冊的 RBAC 服務實例。
+     * 鍵為服務名稱（字串），值為對應的控制器實例。
+     * 
+     * 使用 readonly 修飾符確保此 Map 實例不會被重新賦值，
+     * 但仍允許對 Map 內容進行修改（如添加或刪除服務）。
+     * 
+     * @private
+     * @readonly
+     * @type {Map<string, RBACContainerServicesType>}
+     */
     private readonly services = new Map<string, RBACContainerServicesType>();
 
 
@@ -75,12 +141,21 @@ export class RBACContainer {
     /**
      * 私有建構函數
      * 
-     * 使用單例模式的私有建構函數，防止從外部直接創建實例。
-     * 在建構過程中自動註冊所有必要的 RBAC 服務。
+     * 實現單例模式的私有建構函數，防止外部直接創建實例。
+     * 在建構過程中自動調用服務註冊方法，確保所有 RBAC 相關的
+     * 控制器都被正確註冊到容器中。
+     * 
+     * ### 執行流程
+     * 1. 初始化服務註冊表（Map）
+     * 2. 調用 registerServices() 註冊所有 RBAC 服務
+     * 3. 完成容器初始化
      * 
      * @private
+     * @constructor
+     * @since 1.0.0
      */
     private constructor() {
+        // 調用服務註冊方法，初始化所有 RBAC 控制器
         this.registerServices();
     }
 
