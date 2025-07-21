@@ -13,6 +13,7 @@ import express from 'express';
 import request from 'supertest';
 import { RoleController } from '../src/controller/rbac/RoleController.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
+import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 
 /**
  * 完整模擬 RoleModel 模組
@@ -57,7 +58,7 @@ describe('RoleController Integration Tests', () => {
         app.use(express.json()); // 啟用 JSON 解析中介軟體
 
         roleController = new RoleController();
-        app.use('/roles', roleController.router); // 掛載測試路由
+        app.use('/api/rbac', rbacRoutes); // 掛載測試路由
 
         // 清除所有模擬函數的呼叫記錄
         jest.clearAllMocks();
@@ -74,7 +75,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findAll as jest.Mock).mockResolvedValue(mockRoles);
 
             const response = await request(app)
-                .get('/roles')
+                .get('/api/rbac/roles')
                 .expect(200);
 
             expect(response.body).toEqual(mockRoles);
@@ -87,7 +88,7 @@ describe('RoleController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .get('/roles')
+                .get('/api/rbac/roles')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -102,7 +103,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findAll as jest.Mock).mockResolvedValue([]);
 
             const response = await request(app)
-                .get('/roles')
+                .get('/api/rbac/roles')
                 .expect(200);
 
             expect(response.body).toEqual([]);
@@ -122,7 +123,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(mockRole);
 
             const response = await request(app)
-                .get('/roles/1')
+                .get('/api/rbac/roles/1')
                 .expect(200);
 
             expect(response.body).toEqual(mockRole);
@@ -133,7 +134,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .get('/roles/999')
+                .get('/api/rbac/roles/999')
                 .expect(404);
 
             expect(response.body).toEqual({ message: 'Role not found' });
@@ -146,7 +147,7 @@ describe('RoleController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .get('/roles/1')
+                .get('/api/rbac/roles/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -163,7 +164,7 @@ describe('RoleController Integration Tests', () => {
 
             // 測試數字 ID
             await request(app)
-                .get('/roles/123')
+                .get('/api/rbac/roles/123')
                 .expect(200);
 
             expect(RoleModel.findByPk).toHaveBeenCalledWith('123');
@@ -187,7 +188,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.create as jest.Mock).mockResolvedValue(mockCreatedRole);
 
             const response = await request(app)
-                .post('/roles')
+                .post('/api/rbac/roles')
                 .send(newRoleData)
                 .expect(201);
 
@@ -207,7 +208,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.create as jest.Mock).mockResolvedValue(mockCreatedRole);
 
             const response = await request(app)
-                .post('/roles')
+                .post('/api/rbac/roles')
                 .send(newRoleData)
                 .expect(201);
 
@@ -222,7 +223,7 @@ describe('RoleController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .post('/roles')
+                .post('/api/rbac/roles')
                 .send(newRoleData)
                 .expect(500);
 
@@ -244,7 +245,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.create as jest.Mock).mockResolvedValue(mockCreatedRole);
 
             const response = await request(app)
-                .post('/roles')
+                .post('/api/rbac/roles')
                 .set('Content-Type', 'application/json')
                 .send(JSON.stringify(newRoleData))
                 .expect(201);
@@ -270,7 +271,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(mockRole);
 
             const response = await request(app)
-                .put('/roles/1')
+                .put('/api/rbac/roles/1')
                 .send(updateData)
                 .expect(200);
 
@@ -296,7 +297,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(mockRole);
 
             const response = await request(app)
-                .put('/roles/1')
+                .put('/api/rbac/roles/1')
                 .send(updateData)
                 .expect(200);
 
@@ -312,7 +313,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .put('/roles/999')
+                .put('/api/rbac/roles/999')
                 .send({ name: 'nonexistent' })
                 .expect(404);
 
@@ -325,7 +326,7 @@ describe('RoleController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .put('/roles/1')
+                .put('/api/rbac/roles/1')
                 .send({ name: 'updated_role' })
                 .expect(500);
 
@@ -350,7 +351,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(mockRole);
 
             const response = await request(app)
-                .delete('/roles/1')
+                .delete('/api/rbac/roles/1')
                 .expect(204);
 
             expect(response.body).toEqual({});
@@ -362,7 +363,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .delete('/roles/999')
+                .delete('/api/rbac/roles/999')
                 .expect(404);
 
             expect(response.body).toEqual({ message: 'Role not found' });
@@ -374,7 +375,7 @@ describe('RoleController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .delete('/roles/1')
+                .delete('/api/rbac/roles/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -389,7 +390,7 @@ describe('RoleController Integration Tests', () => {
     describe('路由整合測試', () => {
         test('應該正確處理不存在的路由', async () => {
             await request(app)
-                .get('/roles/1/nonexistent')
+                .get('/api/rbac/roles/1/nonexistent')
                 .expect(404);
         });
 
@@ -398,7 +399,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.findAll as jest.Mock).mockResolvedValue(mockRoles);
 
             const response = await request(app)
-                .get('/roles')
+                .get('/api/rbac/roles')
                 .expect(200);
 
             expect(response.type).toBe('application/json');
@@ -411,7 +412,7 @@ describe('RoleController Integration Tests', () => {
             (RoleModel.create as jest.Mock).mockResolvedValue(mockCreatedRole);
 
             await request(app)
-                .post('/roles')
+                .post('/api/rbac/roles')
                 .send(newRoleData)
                 .expect(201);
 

@@ -358,4 +358,3 @@ export class UserPreferenceController {
     }
   }
 }
-}

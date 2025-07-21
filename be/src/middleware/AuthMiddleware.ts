@@ -24,7 +24,7 @@ import { Request, Response, NextFunction } from 'express'; // 引入 Express 類
 import jwt from 'jsonwebtoken'; // 引入 JWT 令牌處理庫
 import { UserRepository } from '../repo/UserRepo.js'; // 引入使用者資料存取層
 import { SessionService } from '../service/SessionService.js'; // 引入會話服務層
-import '../types/express.js'; // 引入 Express 類型擴展
+// Express 類型擴展已透過 tsconfig.json 自動載入
 
 /**
  * JWT 負載介面，包含使用者識別和令牌元資料

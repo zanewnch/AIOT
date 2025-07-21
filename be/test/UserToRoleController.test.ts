@@ -432,10 +432,10 @@ describe('UserToRoleController Unit Tests', () => {
         });
     });
 
-    describe('Router initialization', () => {
-        test('應該正確初始化 router 和路由', () => {
-            expect(userToRoleController.router).toBeDefined();
-            expect(typeof userToRoleController.router).toBe('function');
-        });
-    });
+    // describe('Router initialization', () => {
+    //     test('應該正確初始化 router 和路由', () => {
+    //         expect(userToRoleController.router).toBeDefined();
+    //         expect(typeof userToRoleController.router).toBe('function');
+    //     });
+    // });
 });

@@ -31,6 +31,12 @@ const router = Router();
 const userPreferenceController = new UserPreferenceController();
 
 /**
+ * 創建認證中間件實例
+ * 處理 JWT 認證相關功能
+ */
+const authMiddleware = new AuthMiddleware();
+
+/**
  * 取得使用者偏好設定
  * 
  * 此端點用於獲取當前使用者的偏好設定，包括介面主題、語言、
@@ -67,7 +73,7 @@ const userPreferenceController = new UserPreferenceController();
  * }
  */
 router.get('/preferences', 
-  AuthMiddleware.verifyJWT, // 驗證 JWT 認證令牌
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
   userPreferenceController.getUserPreferences.bind(userPreferenceController) // 執行獲取使用者偏好設定
 );
 
@@ -119,7 +125,7 @@ router.get('/preferences',
  * }
  */
 router.put('/preferences', 
-  AuthMiddleware.verifyJWT, // 驗證 JWT 認證令牌
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
   userPreferenceController.updateUserPreferences.bind(userPreferenceController) // 執行更新使用者偏好設定
 );
 
@@ -177,7 +183,7 @@ router.put('/preferences',
  * }
  */
 router.post('/preferences', 
-  AuthMiddleware.verifyJWT, // 驗證 JWT 認證令牌
+  authMiddleware.authenticate, // 驗證 JWT 認證令牌
   userPreferenceController.createUserPreferences.bind(userPreferenceController) // 執行建立使用者偏好設定
 );
 

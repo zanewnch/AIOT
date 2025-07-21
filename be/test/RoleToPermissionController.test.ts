@@ -298,10 +298,10 @@ describe('RoleToPermissionController Unit Tests', () => {
         });
     });
 
-    describe('Router initialization', () => {
-        test('應該正確初始化 router 和路由', () => {
-            expect(roleToPermissionController.router).toBeDefined();
-            expect(typeof roleToPermissionController.router).toBe('function');
-        });
-    });
+    // describe('Router initialization', () => {
+    //     test('應該正確初始化 router 和路由', () => {
+    //         expect(roleToPermissionController.router).toBeDefined();
+    //         expect(typeof roleToPermissionController.router).toBe('function');
+    //     });
+    // });
 });

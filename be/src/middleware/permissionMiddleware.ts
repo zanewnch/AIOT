@@ -23,7 +23,7 @@
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
 import { UserRepository } from '../repo/UserRepo.js'; // 引入使用者資料存取層
 import { PermissionService } from '../service/PermissionService.js'; // 引入權限服務層
-import '../types/express.js'; // 引入 Express 類型擴展
+// Express 類型擴展已透過 tsconfig.json 自動載入
 
 /**
  * 權限驗證中間件

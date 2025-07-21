@@ -12,6 +12,7 @@ import express from 'express';
 import request from 'supertest';
 import { PermissionController } from '../src/controller/rbac/PermissionController.js';
 import { PermissionModel } from '../src/models/rbac/PermissionModel.js';
+import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 
 /**
  * 完整模擬 PermissionModel 模組
@@ -99,7 +100,7 @@ describe('PermissionController Integration Tests', () => {
         app.use(express.json()); // 啟用 JSON 解析中介軟體
 
         permissionController = new PermissionController();
-        app.use('/permissions', permissionController.router); // 掛載測試路由
+        app.use('/api/rbac', rbacRoutes); // 掛載測試路由
 
         // 清除所有模擬函數的呼叫記錄
         jest.clearAllMocks();
@@ -131,7 +132,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findAll as jest.Mock).mockResolvedValue(mockPermissions);
 
             const response = await request(app)
-                .get('/permissions')
+                .get('/api/rbac/permissions')
                 .expect(200);
 
             expect(response.body).toEqual(mockPermissions);
@@ -151,7 +152,7 @@ describe('PermissionController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .get('/permissions')
+                .get('/api/rbac/permissions')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -176,7 +177,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(mockPermission);
 
             const response = await request(app)
-                .get('/permissions/1')
+                .get('/api/rbac/permissions/1')
                 .expect(200);
 
             expect(response.body).toEqual(mockPermission);
@@ -194,7 +195,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .get('/permissions/999')
+                .get('/api/rbac/permissions/999')
                 .expect(404);
 
             expect(response.body).toEqual({ message: 'Permission not found' });
@@ -213,7 +214,7 @@ describe('PermissionController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .get('/permissions/1')
+                .get('/api/rbac/permissions/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -250,7 +251,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.create as jest.Mock).mockResolvedValue(mockCreatedPermission);
 
             const response = await request(app)
-                .post('/permissions')
+                .post('/api/rbac/permissions')
                 .send(newPermission)
                 .expect(201);
 
@@ -280,7 +281,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.create as jest.Mock).mockResolvedValue(mockCreatedPermission);
 
             const response = await request(app)
-                .post('/permissions')
+                .post('/api/rbac/permissions')
                 .send(newPermission)
                 .expect(201);
 
@@ -304,7 +305,7 @@ describe('PermissionController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .post('/permissions')
+                .post('/api/rbac/permissions')
                 .send({ name: 'test_permission' })
                 .expect(500);
 
@@ -341,7 +342,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(mockPermission);
 
             const response = await request(app)
-                .put('/permissions/1')
+                .put('/api/rbac/permissions/1')
                 .send(updateData)
                 .expect(200);
 
@@ -365,7 +366,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .put('/permissions/999')
+                .put('/api/rbac/permissions/999')
                 .send({ name: 'test' })
                 .expect(404);
 
@@ -385,7 +386,7 @@ describe('PermissionController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .put('/permissions/1')
+                .put('/api/rbac/permissions/1')
                 .send({ name: 'test' })
                 .expect(500);
 
@@ -416,7 +417,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(mockPermission);
 
             await request(app)
-                .delete('/permissions/1')
+                .delete('/api/rbac/permissions/1')
                 .expect(204);
 
             expect(PermissionModel.findByPk).toHaveBeenCalledWith('1');
@@ -434,7 +435,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .delete('/permissions/999')
+                .delete('/api/rbac/permissions/999')
                 .expect(404);
 
             expect(response.body).toEqual({ message: 'Permission not found' });
@@ -453,7 +454,7 @@ describe('PermissionController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .delete('/permissions/1')
+                .delete('/api/rbac/permissions/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -474,7 +475,7 @@ describe('PermissionController Integration Tests', () => {
          */
         test('應該拒絕不支援的 HTTP 方法', async () => {
             await request(app)
-                .patch('/permissions/1')
+                .patch('/api/rbac/permissions/1')
                 .expect(404);
         });
 
@@ -490,7 +491,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.findByPk as jest.Mock).mockResolvedValue(mockPermission);
 
             const response = await request(app)
-                .get('/permissions/abc')
+                .get('/api/rbac/permissions/abc')
                 .expect(200);
 
             expect(PermissionModel.findByPk).toHaveBeenCalledWith('abc');
@@ -515,7 +516,7 @@ describe('PermissionController Integration Tests', () => {
             (PermissionModel.create as jest.Mock).mockResolvedValue(mockCreatedPermission);
 
             await request(app)
-                .post('/permissions')
+                .post('/api/rbac/permissions')
                 .set('Content-Type', 'application/json')
                 .send({ name: 'test_permission', description: '測試描述' })
                 .expect(201);

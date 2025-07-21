@@ -11,6 +11,7 @@
  */
 import express from 'express';
 import request from 'supertest';
+import { Router } from 'express';
 import { RoleToPermissionController } from '../src/controller/rbac/RoleToPermissionController.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
 import { PermissionModel } from '../src/models/rbac/PermissionModel.js';
@@ -59,7 +60,14 @@ describe('RoleToPermissionController Integration Tests', () => {
         app.use(express.json()); // 啟用 JSON 解析中介軟體
 
         roleToPermissionController = new RoleToPermissionController();
-        app.use('/roles', roleToPermissionController.router); // 掛載測試路由
+        
+        // 為測試建立簡單的路由配置
+        const testRouter = Router();
+        testRouter.get('/:roleId/permissions', roleToPermissionController.getRolePermissions.bind(roleToPermissionController));
+        testRouter.post('/:roleId/permissions', roleToPermissionController.assignPermissionsToRole.bind(roleToPermissionController));
+        testRouter.delete('/:roleId/permissions/:permissionId', roleToPermissionController.removePermissionFromRole.bind(roleToPermissionController));
+        
+        app.use('/roles', testRouter); // 掛載測試路由
 
         // 清除所有模擬函數的呼叫記錄
         jest.clearAllMocks();

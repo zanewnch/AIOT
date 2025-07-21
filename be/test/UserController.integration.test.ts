@@ -13,6 +13,7 @@ import express from 'express';
 import request from 'supertest';
 import { UserController } from '../src/controller/rbac/UserController.js';
 import { UserModel } from '../src/models/rbac/UserModel.js';
+import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 
 /**
  * 完整模擬 UserModel 模組
@@ -57,7 +58,7 @@ describe('UserController Integration Tests', () => {
         app.use(express.json()); // 啟用 JSON 解析中介軟體
 
         userController = new UserController();
-        app.use('/users', userController.router); // 掛載測試路由
+        app.use('/api/rbac', rbacRoutes); // 掛載測試路由
 
         // 清除所有模擬函數的呼叫記錄
         jest.clearAllMocks();
@@ -95,7 +96,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findAll as jest.Mock).mockResolvedValue(mockUsers);
 
             const response = await request(app)
-                .get('/users')
+                .get('/api/rbac/users')
                 .expect(200);
 
             expect(response.body).toEqual(mockUsers);
@@ -108,7 +109,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .get('/users')
+                .get('/api/rbac/users')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -123,7 +124,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findAll as jest.Mock).mockResolvedValue([]);
 
             const response = await request(app)
-                .get('/users')
+                .get('/api/rbac/users')
                 .expect(200);
 
             expect(response.body).toEqual([]);
@@ -144,7 +145,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
-                .get('/users/1')
+                .get('/api/rbac/users/1')
                 .expect(200);
 
             expect(response.body).toEqual(mockUser);
@@ -155,7 +156,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .get('/users/999')
+                .get('/api/rbac/users/999')
                 .expect(404);
 
             expect(response.body).toEqual({ message: 'User not found' });
@@ -168,7 +169,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .get('/users/1')
+                .get('/api/rbac/users/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -185,7 +186,7 @@ describe('UserController Integration Tests', () => {
 
             // 測試數字 ID
             await request(app)
-                .get('/users/123')
+                .get('/api/rbac/users/123')
                 .expect(200);
 
             expect(UserModel.findByPk).toHaveBeenCalledWith('123');
@@ -210,7 +211,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.create as jest.Mock).mockResolvedValue(mockCreatedUser);
 
             const response = await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .send(newUserData)
                 .expect(201);
 
@@ -235,7 +236,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.create as jest.Mock).mockResolvedValue(mockCreatedUser);
 
             const response = await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .send(newUserData)
                 .expect(201);
 
@@ -254,7 +255,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .send(newUserData)
                 .expect(500);
 
@@ -277,7 +278,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.create as jest.Mock).mockResolvedValue(mockCreatedUser);
 
             const response = await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .set('Content-Type', 'application/json')
                 .send(JSON.stringify(newUserData))
                 .expect(201);
@@ -297,7 +298,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .send(newUserData)
                 .expect(500);
 
@@ -321,7 +322,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .send(newUserData)
                 .expect(500);
 
@@ -353,7 +354,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
-                .put('/users/1')
+                .put('/api/rbac/users/1')
                 .send(updateData)
                 .expect(200);
 
@@ -383,7 +384,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
-                .put('/users/1')
+                .put('/api/rbac/users/1')
                 .send(updateData)
                 .expect(200);
 
@@ -402,7 +403,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .put('/users/999')
+                .put('/api/rbac/users/999')
                 .send({ username: 'nonexistent' })
                 .expect(404);
 
@@ -415,7 +416,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .put('/users/1')
+                .put('/api/rbac/users/1')
                 .send({ username: 'updated_user' })
                 .expect(500);
 
@@ -443,7 +444,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
-                .put('/users/1')
+                .put('/api/rbac/users/1')
                 .send(updateData)
                 .expect(200);
 
@@ -471,7 +472,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .put('/users/1')
+                .put('/api/rbac/users/1')
                 .send({ username: 'duplicate_username' })
                 .expect(500);
 
@@ -496,7 +497,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
-                .delete('/users/1')
+                .delete('/api/rbac/users/1')
                 .expect(204);
 
             expect(response.body).toEqual({});
@@ -508,7 +509,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(null);
 
             const response = await request(app)
-                .delete('/users/999')
+                .delete('/api/rbac/users/999')
                 .expect(404);
 
             expect(response.body).toEqual({ message: 'User not found' });
@@ -520,7 +521,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .delete('/users/1')
+                .delete('/api/rbac/users/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -544,7 +545,7 @@ describe('UserController Integration Tests', () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             const response = await request(app)
-                .delete('/users/1')
+                .delete('/api/rbac/users/1')
                 .expect(500);
 
             expect(response.body).toEqual({
@@ -559,7 +560,7 @@ describe('UserController Integration Tests', () => {
     describe('路由整合測試', () => {
         test('應該正確處理不存在的路由', async () => {
             await request(app)
-                .get('/users/1/nonexistent')
+                .get('/api/rbac/users/1/nonexistent')
                 .expect(404);
         });
 
@@ -568,7 +569,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findAll as jest.Mock).mockResolvedValue(mockUsers);
 
             const response = await request(app)
-                .get('/users')
+                .get('/api/rbac/users')
                 .expect(200);
 
             expect(response.type).toBe('application/json');
@@ -585,7 +586,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.create as jest.Mock).mockResolvedValue(mockCreatedUser);
 
             await request(app)
-                .post('/users')
+                .post('/api/rbac/users')
                 .send(newUserData)
                 .expect(201);
 
@@ -597,7 +598,7 @@ describe('UserController Integration Tests', () => {
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
             await request(app)
-                .get('/users/42')
+                .get('/api/rbac/users/42')
                 .expect(200);
 
             expect(UserModel.findByPk).toHaveBeenCalledWith('42');

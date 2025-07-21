@@ -11,6 +11,7 @@
  */
 import express from 'express';
 import request from 'supertest';
+import { Router } from 'express';
 import { UserToRoleController } from '../src/controller/rbac/UserToRoleController.js';
 import { UserModel } from '../src/models/rbac/UserModel.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
@@ -59,7 +60,14 @@ describe('UserToRoleController Integration Tests', () => {
         app.use(express.json()); // 啟用 JSON 解析中介軟體
 
         userToRoleController = new UserToRoleController();
-        app.use('/users', userToRoleController.router); // 掛載測試路由
+        
+        // 為測試建立簡單的路由配置
+        const testRouter = Router();
+        testRouter.get('/:userId/roles', userToRoleController.getUserRoles.bind(userToRoleController));
+        testRouter.post('/:userId/roles', userToRoleController.assignRolesToUser.bind(userToRoleController));
+        testRouter.delete('/:userId/roles/:roleId', userToRoleController.removeRoleFromUser.bind(userToRoleController));
+        
+        app.use('/users', testRouter); // 掛載測試路由
 
         // 清除所有模擬函數的呼叫記錄
         jest.clearAllMocks();
