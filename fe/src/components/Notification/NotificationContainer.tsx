@@ -13,8 +13,8 @@
 
 import React from 'react'; // 引入 React 核心庫
 import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState } from '../../store'; // 引入 Redux 根狀態類型
-import { removeNotification, startRemoveNotification } from '../../store/notificationSlice'; // 引入通知相關的 Redux actions
+import { RootState } from '../../stores'; // 引入 Redux 根狀態類型
+import { removeNotification, startRemoveNotification } from '../../stores/notificationSlice'; // 引入通知相關的 Redux actions
 import styles from './NotificationContainer.module.scss'; // 引入通知容器樣式
 
 /**

@@ -12,7 +12,7 @@
 
 import React, { useEffect } from 'react'; // 引入 React 庫和 useEffect Hook
 import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux Hook
-import { RootState, AppDispatch } from '../../../store'; // 引入 Redux store 類型
+import { RootState, AppDispatch } from '../../../stores'; // 引入 Redux store 類型
 import { 
   loadRTKData, // 載入 RTK 數據的 action
   updateRTKData, // 更新 RTK 數據的 action
@@ -22,8 +22,8 @@ import {
   updateEditingItem, // 更新正在編輯項目的 action
   SortField, // 排序欄位類型
   SortOrder // 排序順序類型
-} from '../../../store/tableSlice';
-import { addNotificationWithAutoRemove } from '../../../store/notificationSlice'; // 引入通知相關的 action
+} from '../../../stores/tableSlice';
+import { addNotificationWithAutoRemove } from '../../../stores/notificationSlice'; // 引入通知相關的 action
 import { RTKData } from '../../../types/IRTKData'; // 引入 RTK 數據類型定義
 import styles from '../../../styles/TableViewer.module.scss'; // 引入表格檢視器的 SCSS 模組樣式
 

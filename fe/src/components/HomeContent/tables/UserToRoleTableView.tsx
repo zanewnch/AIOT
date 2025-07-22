@@ -12,8 +12,8 @@
 
 import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
 import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState, AppDispatch } from '../../../store'; // 引入 Redux 根狀態和 Dispatch 類型
-import { loadUserToRoleData } from '../../../store/tableSlice'; // 引入載入用戶角色關聯資料的 action
+import { RootState, AppDispatch } from '../../../stores'; // 引入 Redux 根狀態和 Dispatch 類型
+import { loadUserToRoleData } from '../../../stores/tableSlice'; // 引入載入用戶角色關聯資料的 action
 import styles from '../../../styles/TableViewer.module.scss'; // 引入表格樣式
 
 /**

@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom/client'; // 引入 React DOM 客戶端渲染 API
 import { Provider } from 'react-redux'; // 引入 Redux Provider 用於全域狀態管理
 import './styles/index.scss'; // 引入全域樣式表
 import App from './App'; // 引入主要的應用程式組件
-import { store } from './store'; // 引入 Redux store 設定
+import { store } from './stores'; // 引入 Redux store 設定
 
 
 /**

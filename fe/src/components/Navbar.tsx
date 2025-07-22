@@ -14,8 +14,8 @@ import React from 'react'; // 引入 React 庫，用於建立組件
 import { Link } from 'react-router-dom'; // 引入 React Router 的 Link 組件
 import { ThemeToggle } from './ThemeToggle'; // 引入主題切換組件
 import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux 的 Hook
-import { AppDispatch } from '../store'; // 引入 Redux store 的 dispatch 類型
-import { logout, selectUser } from '../store/authSlice'; // 引入認證相關的 action 和選擇器
+import { AppDispatch } from '../stores'; // 引入 Redux store 的 dispatch 類型
+import { logout, selectUser } from '../stores/authSlice'; // 引入認證相關的 action 和選擇器
 import styles from '../styles/Navbar.module.scss'; // 引入導航欄的 SCSS 模組樣式
 
 /**

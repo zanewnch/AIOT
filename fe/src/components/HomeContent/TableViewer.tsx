@@ -14,9 +14,9 @@
 
 import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
 import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState, AppDispatch } from '../../store'; // 引入 Redux 根狀態和 Dispatch 類型
-import { setActiveTable, TableType } from '../../store/tableSlice'; // 引入表格相關的 Redux slice
-import { addNotificationWithAutoRemove } from '../../store/notificationSlice'; // 引入通知相關的 Redux slice
+import { RootState, AppDispatch } from '../../stores'; // 引入 Redux 根狀態和 Dispatch 類型
+import { setActiveTable, TableType } from '../../stores/tableSlice'; // 引入表格相關的 Redux slice
+import { addNotificationWithAutoRemove } from '../../stores/notificationSlice'; // 引入通知相關的 Redux slice
 import { TableService } from '../../services/TableService'; // 引入表格服務
 import { 
   RTKTableView, // RTK 表格視圖組件

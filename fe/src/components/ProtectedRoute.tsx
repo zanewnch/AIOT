@@ -13,7 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Navigate, useLocation } from 'react-router-dom'; // 引入 React Router 的導航組件和路徑 Hook
 import { useSelector } from 'react-redux'; // 引入 Redux 的選擇器 Hook
-import { selectIsAuthenticated, selectIsLoading } from '../store/authSlice'; // 引入認證狀態選擇器
+import { selectIsAuthenticated, selectIsLoading } from '../stores/authSlice'; // 引入認證狀態選擇器
 
 /**
  * 受保護路由組件的屬性介面

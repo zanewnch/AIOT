@@ -12,8 +12,8 @@
 
 import React, { useState } from 'react'; // 引入 React 庫和 useState Hook
 import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux Hook
-import { AppDispatch } from '../store'; // 引入 Redux store 的 dispatch 類型
-import { login, clearError, selectIsLoading, selectAuthError } from '../store/authSlice'; // 引入認證相關的 action 和選擇器
+import { AppDispatch } from '../stores'; // 引入 Redux store 的 dispatch 類型
+import { login, clearError, selectIsLoading, selectAuthError } from '../stores/authSlice'; // 引入認證相關的 action 和選擇器
 import { LoginRequest } from '../services/AuthService'; // 引入登入請求的類型定義
 import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 SCSS 模組樣式
 

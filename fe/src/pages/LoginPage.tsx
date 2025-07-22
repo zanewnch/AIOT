@@ -13,7 +13,7 @@ import React, { useEffect } from 'react'; // 引入 React 核心庫和 useEffect
 import { useNavigate } from 'react-router-dom'; // 引入 React Router 的導航 Hook
 import { LoginForm } from '../components/LoginForm'; // 引入登入表單組件
 import { useSelector } from 'react-redux'; // 引入 Redux 的選擇器 Hook
-import { selectIsAuthenticated, selectIsLoading } from '../store/authSlice'; // 引入認證狀態選擇器
+import { selectIsAuthenticated, selectIsLoading } from '../stores/authSlice'; // 引入認證狀態選擇器
 
 /**
  * 登入頁面組件

@@ -19,8 +19,8 @@ import SwaggerDocPage from "./pages/SwaggerDocPage"; // 引入 API 文檔頁面�
 import LoginPage from "./pages/LoginPage"; // 引入登入頁面組件
 import { useEffect } from "react"; // 引入 React useEffect Hook
 import { useDispatch } from "react-redux"; // 引入 Redux useDispatch Hook
-import { AppDispatch } from "./store"; // 引入 Redux store 的 dispatch 型別
-import { initializeAuth } from "./store/authSlice"; // 引入認證狀態初始化 action
+import { AppDispatch } from "./stores"; // 引入 Redux store 的 dispatch 型別
+import { initializeAuth } from "./stores/authSlice"; // 引入認證狀態初始化 action
 import { NotificationContainer } from "./components/Notification/NotificationContainer"; // 引入通知容器組件
 import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路由組件
 

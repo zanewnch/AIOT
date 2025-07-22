@@ -12,7 +12,7 @@
 
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux 的 Hook
-import { selectTheme, toggleTheme } from '../store/themeSlice'; // 引入主題相關的選擇器和 action
+import { selectTheme, toggleTheme } from '../stores/themeSlice'; // 引入主題相關的選擇器和 action
 import '../styles/ThemeToggle.scss'; // 引入主題切換組件的 SCSS 樣式
 
 /**

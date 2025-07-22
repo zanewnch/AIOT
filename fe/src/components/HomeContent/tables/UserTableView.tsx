@@ -13,15 +13,15 @@
 
 import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
 import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState, AppDispatch } from '../../../store'; // 引入 Redux 根狀態和 Dispatch 類型
+import { RootState, AppDispatch } from '../../../stores'; // 引入 Redux 根狀態和 Dispatch 類型
 import { 
   loadUserData, // 載入用戶資料的 action
   updateUserData, // 更新用戶資料的 action
   openEditModal, // 開啟編輯模態框的 action
   closeEditModal, // 關閉編輯模態框的 action
   updateEditingItem // 更新編輯中項目的 action
-} from '../../../store/tableSlice'; // 引入表格相關的 Redux slice
-import { addNotificationWithAutoRemove } from '../../../store/notificationSlice'; // 引入通知相關的 Redux slice
+} from '../../../stores/tableSlice'; // 引入表格相關的 Redux slice
+import { addNotificationWithAutoRemove } from '../../../stores/notificationSlice'; // 引入通知相關的 Redux slice
 import styles from '../../../styles/TableViewer.module.scss'; // 引入表格樣式
 
 /**
