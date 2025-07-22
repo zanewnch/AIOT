@@ -1,0 +1,8 @@
+Django==4.2.11
+django-cors-headers==4.3.1
+djangorestframework==3.14.0
+requests==2.31.0
+python-dotenv==1.0.0
+ollama==0.1.7
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
