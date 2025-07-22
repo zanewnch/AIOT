@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from .api_urls import api_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/ollama/', include('ollama_service.urls')),
+    path('api/', include(api_urlpatterns)),
 ]
 
 # Add browser reload URLs for development

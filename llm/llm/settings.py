@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_browser_reload',
     'ollama_service',
+    'docs_service',
 ]
 
 MIDDLEWARE = [

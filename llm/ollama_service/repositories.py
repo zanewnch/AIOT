@@ -1,4 +1,4 @@
-from .ollama_client import langchain_client
+from ..configs.client_factory import langchain_client
 from typing import Dict, Any, Optional, Generator, List
 import logging
 
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class LangChainRepository:
     def __init__(self):
         self.client = langchain_client
-        self.model_name = self.client.model_name
+        self.model_name = self.client.config.model.model_name
     
     def generate_chat_response(self, prompt: str, use_rag: bool = False, **kwargs) -> Dict[str, Any]:
         try:
