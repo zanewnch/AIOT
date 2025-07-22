@@ -1,4 +1,4 @@
-from ..configs.client_factory import langchain_client
+from configs.client_factory import langchain_client
 from typing import Dict, Any, Optional, Generator, List
 import logging
 

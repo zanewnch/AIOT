@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 // 引入應用程式的主要 Redux store 實例
 import { store } from '../store/store';
 // 引入基於 Redux 的活動儀表板組件
-import { ActivityDashboardRedux } from '../components/ActivityDashboardRedux';
+import { ActivityDashboard } from '../components/ActivityDashboard';
 // 引入自定義的 Redux hooks 用於活動追蹤、會話管理和頁面追蹤
 import { useActivityRedux, useSessionRedux, usePageTrackingRedux } from '../hooks/useActivityRedux';
 // 引入活動儀表板的 CSS 樣式文件
@@ -97,7 +97,6 @@ const ActivityIntegrationContent: React.FC = () => {
   };
 
   return (
-    {/* 主要容器：使用 CSS 類別定義整體佈局和樣式 */}
     <div className="activity-integration-redux">
       {/* 頁面標題區域：顯示應用程式名稱和說明 */}
       <div className="integration-header">
@@ -192,7 +191,7 @@ const ActivityIntegrationContent: React.FC = () => {
       )}
 
       {/* 主要儀表板組件：顯示活動追蹤的詳細資訊 */}
-      <ActivityDashboardRedux />
+      <ActivityDashboard />
 
       {/* 開發者資訊區域：僅在開發環境中顯示 */}
       {process.env.NODE_ENV === 'development' && (
@@ -300,7 +299,7 @@ export const SimpleReduxActivityApp: React.FC = () => {
         {/* 簡潔的標題 */}
         <h1>簡化版活動追蹤</h1>
         {/* 直接嵌入活動儀表板組件 */}
-        <ActivityDashboardRedux />
+        <ActivityDashboard />
       </div>
     </Provider>
   );
@@ -348,12 +347,12 @@ export const ActivityUsageExample: React.FC = () => {
           <pre className="example-code">
 {`import { Provider } from 'react-redux';
 import { store } from './store/store';
-import { ActivityDashboardRedux } from './components/ActivityDashboardRedux';
+import { ActivityDashboard } from './components/ActivityDashboard';
 
 function App() {
   return (
     <Provider store={store}>
-      <ActivityDashboardRedux />
+      <ActivityDashboard />
     </Provider>
   );
 }`}

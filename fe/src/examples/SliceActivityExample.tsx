@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 // 引入應用程式的主要 Redux store 實例
 import { store } from '../store/store';
 // 引入基於 Redux Slice 的活動儀表板組件
-import { ActivityDashboardSlice, SimpleActivityDashboard } from '../components/ActivityDashboardSlice';
+import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
 // 引入使用 Redux Slice 的自定義 Hook
 import { useActivitySlice } from '../hooks/useActivitySlice';
 
@@ -56,7 +56,6 @@ const SliceActivityContent: React.FC = () => {
   } = useActivitySlice();
 
   return (
-    {/* 主要容器：包含所有 Redux Slice 示例內容 */}
     <div className="slice-activity-example">
       {/* 頁面標題區域：說明使用的技術和目的 */}
       <div className="example-header">
@@ -80,7 +79,7 @@ const SliceActivityContent: React.FC = () => {
       </div>
 
       {/* 主要儀表板：展示活動追蹤的詳細資訊 */}
-      <ActivityDashboardSlice />
+      <ActivityDashboard />
 
       {/* 狀態信息區域：顯示當前系統狀態 */}
       <div className="status-info">
@@ -217,7 +216,6 @@ export const SimpleSliceExample: React.FC = () => {
  */
 export const SliceUsageGuide: React.FC = () => {
   return (
-    {/* 使用指南主容器 */}
     <div className="slice-usage-guide">
       {/* 主標題 */}
       <h1>Redux Slice 使用指南</h1>
