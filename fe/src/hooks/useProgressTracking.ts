@@ -1,27 +1,28 @@
 /**
  * @fileoverview 提供進度追蹤功能的自定義 React Hook
  * 
- * 此 Hook 封裝了與 Server-Sent Events (SSE) 服務的互動，
- * 用於追蹤任務執行的進度狀態，支援即時更新和錯誤處理。
+ * 此 Hook 現在使用 React Query 架構來管理 SSE 連接和進度狀態，
+ * 提供更好的快取、錯誤處理和狀態管理。
  * 
  * 主要功能：
- * - 管理進度追蹤狀態
+ * - 使用 React Query 管理進度追蹤狀態
  * - 連接和斷開 SSE 服務
  * - 處理進度事件和錯誤
  * - 自動清理資源
  * 
  * @author AIOT Team
- * @since 1.0.0
+ * @since 2.0.0 - 重構為使用 React Query
  */
 
-// 從 React 核心庫導入狀態管理和副作用相關的 Hooks
-import { useState, useEffect, useCallback } from 'react';
-// 導入 SSE 服務和相關的類型定義
-import { sseService, ProgressEvent, ProgressInfo } from '../services/SSEService';
+// 導入新的 SSE Query Hook
+import { useSSE } from './useSSEQuery';
+// 導入類型定義
+import { ProgressInfo } from '../types/sse';
 
 /**
  * 進度追蹤狀態介面
  * 定義了進度追蹤過程中的完整狀態結構
+ * @deprecated 請使用 useSSEQuery 中的 ProgressTrackingState
  */
 export interface ProgressState {
   /** 是否正在追蹤進度 */
@@ -35,8 +36,8 @@ export interface ProgressState {
 /**
  * 進度追蹤自定義 Hook
  * 
- * 提供完整的進度追蹤功能，包括開始追蹤、停止追蹤和狀態管理。
- * 使用 SSE 服務來接收即時的進度更新。
+ * 現在使用 React Query 架構來提供進度追蹤功能。
+ * 這個 Hook 是對 useSSE 的簡化包裝，保持向後兼容性。
  * 
  * @returns {Object} 包含進度狀態和操作方法的物件
  * @returns {boolean} isTracking - 是否正在追蹤進度
@@ -55,104 +56,17 @@ export interface ProgressState {
  * // 停止追蹤
  * stopTracking();
  * ```
+ * 
+ * @deprecated 建議直接使用 useSSE 以獲得更多功能
  */
 export const useProgressTracking = () => {
-  // 使用 useState 管理進度追蹤的完整狀態
-  const [progressState, setProgressState] = useState<ProgressState>({
-    isTracking: false,    // 初始狀態：未追蹤
-    progress: null,       // 初始狀態：無進度資訊
-    error: null          // 初始狀態：無錯誤
-  });
-
-  /**
-   * 開始追蹤指定任務的進度
-   * 
-   * 此方法會連接到 SSE 服務，並設置事件處理器來接收進度更新。
-   * 使用 useCallback 來避免不必要的重新渲染。
-   * 
-   * @param {string} taskId - 要追蹤的任務 ID
-   */
-  const startTracking = useCallback((taskId: string) => {
-    // 記錄開始追蹤的日誌
-    console.log(`Starting progress tracking for task: ${taskId}`);
-    
-    // 重置狀態並設置為追蹤中
-    setProgressState({
-      isTracking: true,   // 設置為追蹤中
-      progress: null,     // 清除之前的進度資訊
-      error: null        // 清除之前的錯誤
-    });
-
-    /**
-     * 處理從 SSE 服務接收到的進度事件
-     * 
-     * @param {ProgressEvent} event - 進度事件物件
-     */
-    const handleProgressEvent = (event: ProgressEvent) => {
-      // 記錄接收到的進度事件
-      console.log('Progress event received:', event);
-      
-      // 檢查是否為錯誤事件
-      if (event.type === 'error') {
-        // 更新狀態：設置錯誤訊息並停止追蹤
-        setProgressState(prev => ({
-          ...prev,                                                    // 保留其他狀態
-          isTracking: false,                                         // 停止追蹤
-          error: event.data.error || 'Unknown error occurred'       // 設置錯誤訊息
-        }));
-      } else {
-        // 處理正常的進度事件
-        setProgressState(prev => ({
-          ...prev,                                    // 保留其他狀態
-          progress: event.data,                      // 更新進度資訊
-          isTracking: event.type !== 'completed'     // 如果是完成事件則停止追蹤
-        }));
-      }
-    };
-
-    // 連接到 SSE 服務並註冊事件處理器
-    sseService.connectToTask(taskId, handleProgressEvent);
-  }, []); // 空依賴數組，確保函數引用穩定
-
-  /**
-   * 停止進度追蹤
-   * 
-   * 此方法會斷開 SSE 連接並重置狀態。
-   * 使用 useCallback 來避免不必要的重新渲染。
-   */
-  const stopTracking = useCallback(() => {
-    // 記錄停止追蹤的日誌
-    console.log('Stopping progress tracking');
-    
-    // 斷開 SSE 連接
-    sseService.disconnect();
-    
-    // 重置所有狀態
-    setProgressState({
-      isTracking: false,  // 停止追蹤
-      progress: null,     // 清除進度資訊
-      error: null        // 清除錯誤訊息
-    });
-  }, []); // 空依賴數組，確保函數引用穩定
-
-  /**
-   * 組件清理效果 Hook
-   * 
-   * 當組件卸載時，自動斷開 SSE 連接以避免記憶體洩漏。
-   * 這是 React Hook 的最佳實踐，確保資源得到正確釋放。
-   */
-  useEffect(() => {
-    // 返回清理函數，在組件卸載時執行
-    return () => {
-      // 斷開 SSE 連接
-      sseService.disconnect();
-    };
-  }, []); // 空依賴數組，只在組件掛載和卸載時執行
-
-  // 返回進度狀態和操作方法
+  const sse = useSSE();
+  
   return {
-    ...progressState,    // 展開進度狀態（isTracking, progress, error）
-    startTracking,       // 開始追蹤方法
-    stopTracking        // 停止追蹤方法
+    isTracking: sse.isTracking,
+    progress: sse.progress,
+    error: sse.error,
+    startTracking: sse.startTracking,
+    stopTracking: sse.stopTracking,
   };
 };

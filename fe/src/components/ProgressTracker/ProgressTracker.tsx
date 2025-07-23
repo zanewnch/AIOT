@@ -13,7 +13,7 @@
  */
 
 import React from 'react'; // 引入 React 核心庫
-import { ProgressInfo } from '../../services/SSEService'; // 引入進度信息類型定義
+import { ProgressInfo } from '../../types/sse'; // 引入進度信息類型定義
 
 /**
  * 進度追蹤器組件的屬性介面

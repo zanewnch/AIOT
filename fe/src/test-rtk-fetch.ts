@@ -14,7 +14,7 @@
  * @version 1.0.0
  */
 
-import { TableService } from './services/TableService'; // 引入資料表服務類別，提供資料擷取功能
+import { tableAPI } from './hooks/useTableQuery'; // 引入表格 API 函數
 
 /**
  * 測試 RTK 資料擷取功能的異步函數
@@ -41,22 +41,22 @@ async function testRTKFetch() {
     /**
      * 測試直接的 RTK 資料擷取方法
      * 
-     * @description 使用 TableService.getRTKData() 方法直接獲取 RTK 資料
+     * @description 使用 tableAPI.getRTKData() 方法直接獲取 RTK 資料
      * 這是專門為 RTK 資料設計的方法
      */
     console.log('1. Testing direct getRTKData()...'); // 第一個測試的日誌訊息
-    const directData = await TableService.getRTKData(); // 調用直接的 RTK 資料擷取方法
+    const directData = await tableAPI.getRTKData(); // 調用直接的 RTK 資料擷取方法
     console.log('✅ Direct fetch result:', directData); // 輸出直接擷取的結果
     
     /**
-     * 測試通過通用資料表服務獲取 RTK 資料
+     * 測試通過通用資料表服務獲取 RTK 資料（保持相同的 API）
      * 
-     * @description 使用 TableService.getTableData('RTK') 方法獲取 RTK 資料
-     * 這是通用的資料表查詢方法，通過傳遞 'RTK' 參數來獲取相應資料
+     * @description 使用相同的 tableAPI.getRTKData() 方法再次獲取 RTK 資料
+     * 確保多次調用返回一致的結果
      */
-    console.log('2. Testing via getTableData("RTK")...'); // 第二個測試的日誌訊息
-    const tableData = await TableService.getTableData('RTK'); // 調用通用的資料表查詢方法
-    console.log('✅ Table data fetch result:', tableData); // 輸出通用方法的結果
+    console.log('2. Testing second call to getRTKData()...'); // 第二個測試的日誌訊息
+    const tableData = await tableAPI.getRTKData(); // 再次調用 RTK 資料擷取方法
+    console.log('✅ Second fetch result:', tableData); // 輸出第二次調用的結果
     
     /**
      * 比較兩種方法返回的資料

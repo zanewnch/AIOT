@@ -12,7 +12,7 @@
 
 import React, { useState } from 'react'; // 引入 React 庫和 useState Hook
 import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
-import { LoginRequest } from '../services/AuthService'; // 引入登入請求的類型定義
+import { LoginRequest } from '../types/auth'; // 引入登入請求的類型定義
 import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 SCSS 模組樣式
 
 /**

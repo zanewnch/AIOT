@@ -9,7 +9,7 @@
  * - API 文檔連結
  * 
  * 組件使用了自定義 Hook 來管理進度追蹤和 SSE 連接，
- * 並通過 InitService 與後端 API 進行交互。
+ * 並通過 useInit Hook 與後端 API 進行交互。
  * 
  * @author AI-IOT Development Team
  * @version 1.0.0
@@ -18,7 +18,7 @@
 import { useState } from 'react' // React 狀態管理 Hook
 import { Button } from '../Button' // 自定義按鈕組件
 import { Link } from 'react-router-dom'; // React Router 路由連結組件
-import { InitService } from '../../services/InitService'; // 初始化服務類
+import { useInit } from '../../hooks/useInitQuery'; // 初始化相關 Hook
 import { useProgressTracking } from '../../hooks/useProgressTracking'; // 進度追蹤自定義 Hook
 import { ProgressTracker } from '../ProgressTracker/ProgressTracker'; // 進度追蹤組件
 
@@ -72,6 +72,9 @@ export const HomeContent = () => {
     
     // 使用自定義 Hook 進行進度追蹤（用於 SSE 連接）
     const { progress, isTracking, error, startTracking, stopTracking } = useProgressTracking();
+    
+    // 使用初始化相關的 Hook
+    const { initRbacDemo, initRtkDemo, createAdminUser, createStressTestData } = useInit();
 
     /**
      * 更新載入狀態的輔助函數
@@ -108,8 +111,8 @@ export const HomeContent = () => {
         updateMessage('rbac', '');         // 清空之前的消息
 
         try {
-            // 調用初始化服務進行 RBAC 示例數據初始化
-            const result = await InitService.initRbacDemo();
+            // 調用初始化 Hook 進行 RBAC 示例數據初始化
+            const result = await initRbacDemo();
             
             if (result.ok) {
                 // 初始化成功，顯示成功消息
@@ -143,8 +146,8 @@ export const HomeContent = () => {
         updateMessage('rtk', '');         // 清空之前的消息
 
         try {
-            // 調用初始化服務進行 RTK 示例數據初始化
-            const result = await InitService.initRtkDemo();
+            // 調用初始化 Hook 進行 RTK 示例數據初始化
+            const result = await initRtkDemo();
             
             if (result.ok) {
                 // 初始化成功，顯示成功消息
@@ -178,8 +181,8 @@ export const HomeContent = () => {
         updateMessage('admin', '');         // 清空之前的消息
 
         try {
-            // 調用初始化服務創建管理員用戶
-            const result = await InitService.createAdminUser();
+            // 調用初始化 Hook 創建管理員用戶
+            const result = await createAdminUser();
             
             if (result.ok) {
                 // 創建成功，顯示成功消息
@@ -214,8 +217,8 @@ export const HomeContent = () => {
         updateMessage('stress', '');         // 清空之前的消息
 
         try {
-            // 調用初始化服務創建壓力測試數據
-            const result = await InitService.createStressTestData();
+            // 調用初始化 Hook 創建壓力測試數據
+            const result = await createStressTestData();
             
             if (result.ok) {
                 // 創建任務成功，顯示任務 ID 並開始進度追蹤

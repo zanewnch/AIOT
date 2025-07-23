@@ -15,7 +15,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService, User, LoginRequest, AuthError } from '../services/AuthService';
+import type { User, LoginRequest, AuthError, LoginResponse } from '../types/auth';
 
 /**
  * React Query 查詢鍵
@@ -26,6 +26,103 @@ export const AUTH_QUERY_KEYS = {
 } as const;
 
 /**
+ * API 基礎 URL
+ */
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8010';
+
+/**
+ * API 函數：使用者登入
+ */
+const loginAPI = async (credentials: LoginRequest): Promise<LoginResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
+    }
+
+    const data: LoginResponse = await response.json();
+    
+    // 將 JWT token 存儲在 localStorage 中供後續請求使用
+    localStorage.setItem('authToken', data.token);
+    
+    return data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw { message: error.message, status: 401 } as AuthError;
+    }
+    throw { message: 'An unexpected error occurred', status: 500 } as AuthError;
+  }
+};
+
+/**
+ * API 函數：使用者登出
+ */
+const logoutAPI = async (): Promise<void> => {
+  try {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    localStorage.removeItem('authToken');
+  }
+};
+
+/**
+ * 工具函數：檢查使用者是否已登入
+ */
+const isAuthenticated = (): boolean => {
+  const token = localStorage.getItem('authToken');
+  if (!token) return false;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Date.now() / 1000;
+    return payload.exp > currentTime;
+  } catch (error) {
+    localStorage.removeItem('authToken');
+    return false;
+  }
+};
+
+/**
+ * 工具函數：從 token 中獲取使用者資訊
+ */
+const getCurrentUser = (): User | null => {
+  const token = localStorage.getItem('authToken');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return {
+      id: payload.sub,
+      username: payload.username || `user_${payload.sub}`,
+    };
+  } catch (error) {
+    console.error('Failed to parse token:', error);
+    return null;
+  }
+};
+
+/**
+ * 工具函數：獲取存儲的 token
+ */
+const getToken = (): string | null => {
+  return localStorage.getItem('authToken');
+};
+
+/**
  * 初始化認證狀態的 Query Hook
  * 
  * 用於應用啟動時檢查用戶的認證狀態
@@ -34,8 +131,8 @@ export const useInitializeAuthQuery = () => {
   return useQuery({
     queryKey: AUTH_QUERY_KEYS.INITIALIZE,
     queryFn: async () => {
-      const isAuth = authService.isAuthenticated();
-      const currentUser = authService.getCurrentUser();
+      const isAuth = isAuthenticated();
+      const currentUser = getCurrentUser();
 
       if (isAuth && currentUser) {
         return { isAuthenticated: true, user: currentUser };
@@ -60,8 +157,8 @@ export const useLoginMutation = () => {
 
   return useMutation({
     mutationFn: async (credentials: LoginRequest) => {
-      await authService.login(credentials);
-      const currentUser = authService.getCurrentUser();
+      await loginAPI(credentials);
+      const currentUser = getCurrentUser();
 
       if (currentUser) {
         return { user: currentUser, isAuthenticated: true };
@@ -89,7 +186,7 @@ export const useLogoutMutation = () => {
 
   return useMutation({
     mutationFn: async () => {
-      await authService.logout();
+      await logoutAPI();
       return null;
     },
     onSuccess: () => {
@@ -160,6 +257,15 @@ export const useAuth = () => {
       logout: logoutMutation,
     },
   };
+};
+
+/**
+ * 導出工具函數供其他模組使用
+ */
+export const authUtils = {
+  isAuthenticated,
+  getCurrentUser,
+  getToken,
 };
 
 /**

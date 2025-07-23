@@ -9,9 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { activityService } from '../services/activityService';
 import { useActivityStore } from '../stores/activityStore';
-import type { UserActivity, ActivityStats } from '../stores/activityStore';
+import type { UserActivity, ActivityStats } from '../types/activity';
 
 /**
  * React Query 查詢鍵常量
@@ -21,6 +20,96 @@ export const QUERY_KEYS = {
   USER_ACTIVITY: ['userActivity'] as const,
   ACTIVITY_STATS: ['activityStats'] as const,
 } as const;
+
+/**
+ * API 基礎 URL
+ */
+const API_BASE_URL = '/api/user';
+
+/**
+ * 獲取認證 token
+ */
+const getAuthToken = (): string => {
+  return localStorage.getItem('authToken') || '';
+};
+
+/**
+ * API 函數：獲取用戶活動資料
+ */
+const fetchUserActivity = async (): Promise<UserActivity> => {
+  const response = await fetch(`${API_BASE_URL}/activity`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${getAuthToken()}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user activity');
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+/**
+ * API 函數：獲取活動統計資料
+ */
+const fetchActivityStats = async (): Promise<ActivityStats> => {
+  const response = await fetch(`${API_BASE_URL}/activity/stats`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${getAuthToken()}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch activity stats');
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+/**
+ * API 函數：記錄頁面訪問
+ */
+const recordPageVisitAPI = async (page: string, duration?: number): Promise<void> => {
+  try {
+    await fetch(`${API_BASE_URL}/activity/page-visit`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ page, duration })
+    });
+  } catch (error) {
+    console.error('Failed to record page visit:', error);
+    throw error;
+  }
+};
+
+/**
+ * API 函數：更新會話信息
+ */
+const updateSessionInfoAPI = async (sessionDuration?: number, deviceInfo?: string): Promise<void> => {
+  try {
+    await fetch(`${API_BASE_URL}/activity/session`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sessionDuration, deviceInfo })
+    });
+  } catch (error) {
+    console.error('Failed to update session info:', error);
+    throw error;
+  }
+};
 
 /**
  * 獲取用戶活動數據的 Hook
@@ -38,7 +127,7 @@ export const useUserActivity = () => {
     queryKey: QUERY_KEYS.USER_ACTIVITY,
     queryFn: async (): Promise<UserActivity> => {
       try {
-        const data = await activityService.getUserActivity();
+        const data = await fetchUserActivity();
         setActivity(data);
         setError(null);
         return data;
@@ -71,7 +160,7 @@ export const useActivityStats = () => {
     queryKey: QUERY_KEYS.ACTIVITY_STATS,
     queryFn: async (): Promise<ActivityStats> => {
       try {
-        const data = await activityService.getActivityStats();
+        const data = await fetchActivityStats();
         setStats(data);
         setError(null);
         return data;
@@ -104,7 +193,7 @@ export const useRecordPageVisit = () => {
 
   return useMutation({
     mutationFn: async ({ page, duration }: { page: string; duration?: number }) => {
-      return await activityService.recordPageVisit(page, duration);
+      return await recordPageVisitAPI(page, duration);
     },
     onMutate: async ({ page }) => {
       // 樂觀更新：立即更新本地狀態
@@ -148,7 +237,7 @@ export const useUpdateSessionInfo = () => {
       sessionDuration?: number; 
       deviceInfo?: string; 
     }) => {
-      return await activityService.updateSessionInfo(sessionDuration, deviceInfo);
+      return await updateSessionInfoAPI(sessionDuration, deviceInfo);
     },
     onSuccess: () => {
       // 成功後使用戶活動查詢無效

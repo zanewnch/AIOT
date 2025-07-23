@@ -12,10 +12,9 @@
  * @since 2024-01-01
  */
 
-import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
-import { useTableUIStore, useNotificationStore, TableType } from '../../stores'; // 引入 Zustand stores 和類型
+import React from 'react'; // 引入 React
+import { useTableUIStore, TableType } from '../../stores'; // 引入 Zustand stores 和類型
 import { useTableData } from '../../hooks/useTableQuery'; // 引入表格數據 Hook
-import { TableService } from '../../services/TableService'; // 引入表格服務
 import { 
   RTKTableView, // RTK 表格視圖組件
   PermissionTableView, // 權限表格視圖組件
@@ -71,23 +70,8 @@ const tableConfigs = {
 export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   // 從 Zustand stores 獲取狀態和方法
   const { activeTable, setActiveTable } = useTableUIStore();
-  const { addSuccess, addError } = useNotificationStore();
   
-  /**
-   * 初始化 TableService 的通知回調函數
-   * 
-   * 當組件掛載時，設置表格服務的通知回調函數，
-   * 以便在表格操作時顯示通知消息
-   */
-  useEffect(() => {
-    TableService.setNotificationCallback((type, message) => {
-      if (type === 'success') {
-        addSuccess(message);
-      } else {
-        addError(message);
-      }
-    });
-  }, [addSuccess, addError]); // 依賴項為通知方法，確保穩定性
+  // 注意：通知功能現在由 React Query hooks 直接處理，不再需要 TableService 的回調
 
   /**
    * 處理表格切換操作
