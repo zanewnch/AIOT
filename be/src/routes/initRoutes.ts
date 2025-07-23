@@ -15,8 +15,8 @@
  */
 
 import { Router } from 'express'; // 引入 Express 路由器模組
-import { InitController } from '../controller/InitController.js'; // 引入初始化控制器
-import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js'; // 引入錯誤處理中間件
+import { InitController } from '../controllers/InitController.js'; // 引入初始化控制器
+import { ErrorHandleMiddleware } from '../middlewares/errorHandleMiddleware.js'; // 引入錯誤處理中間件
 
 /**
  * 創建 Express 路由器實例

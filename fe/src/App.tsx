@@ -17,10 +17,7 @@ import { TableViewer } from "./components/HomeContent/TableViewer"; // 引入資
 import { HomeContent } from "./components/HomeContent/HomeContent"; // 引入首頁內容組件
 import SwaggerDocPage from "./pages/SwaggerDocPage"; // 引入 API 文檔頁面組件
 import LoginPage from "./pages/LoginPage"; // 引入登入頁面組件
-import { useEffect } from "react"; // 引入 React useEffect Hook
-import { useDispatch } from "react-redux"; // 引入 Redux useDispatch Hook
-import { AppDispatch } from "./stores"; // 引入 Redux store 的 dispatch 型別
-import { initializeAuth } from "./stores/authSlice"; // 引入認證狀態初始化 action
+import { useAuth } from "./hooks/useAuthQuery"; // 引入認證 Hook
 import { NotificationContainer } from "./components/Notification/NotificationContainer"; // 引入通知容器組件
 import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路由組件
 
@@ -37,22 +34,12 @@ import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路�
  */
 function App() {
     /**
-     * Redux dispatch 函數
+     * 認證狀態管理
      * 
-     * @description 使用 TypeScript 型別安全的 dispatch，確保 action 型別正確
+     * @description 使用 React Query 和自定義 Hook 來管理認證狀態
+     * 自動處理認證狀態的初始化、載入和錯誤狀態
      */
-    const dispatch = useDispatch<AppDispatch>();
-
-    /**
-     * 初始化認證狀態的副作用
-     * 
-     * @description 在組件掛載時執行認證狀態的初始化
-     * 這會檢查 localStorage 中是否存在有效的認證令牌
-     * 並相應地設定用戶的登入狀態
-     */
-    useEffect(() => {
-        dispatch(initializeAuth()); // 派發認證初始化 action
-    }, [dispatch]); // 依賴項：dispatch 函數
+    const { isInitialized } = useAuth();
 
     /**
      * 返回應用程式的 JSX 結構

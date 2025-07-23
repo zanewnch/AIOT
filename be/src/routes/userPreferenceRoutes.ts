@@ -15,8 +15,8 @@
  */
 
 import { Router } from 'express'; // 引入 Express 路由器模組
-import { UserPreferenceController } from '../controller/UserPreferenceController.js'; // 引入使用者偏好設定控制器
-import { AuthMiddleware } from '../middleware/AuthMiddleware.js'; // 引入認證中間件
+import { UserPreferenceController } from '../controllers/UserPreferenceController.js'; // 引入使用者偏好設定控制器
+import { AuthMiddleware } from '../middlewares/AuthMiddleware.js'; // 引入認證中間件
 
 /**
  * 創建 Express 路由器實例

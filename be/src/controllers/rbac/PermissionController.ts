@@ -27,6 +27,10 @@ import { Request, Response } from 'express'; // 引入 Express 的請求和回�
 import { PermissionModel } from '../../models/rbac/PermissionModel.js'; // 引入權限資料模型
 import { IPermissionController } from '../../types/controllers/IPermissionController.js'; // 引入權限控制器介面
 import { getRedisClient } from '../../configs/redisConfig.js'; // 引入 Redis 客戶端配置
+import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 引入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('PermissionController');
 
 /**
  * 權限管理控制器類別
@@ -104,25 +108,41 @@ export class PermissionController implements IPermissionController {
      */
     public async getPermissions(req: Request, res: Response): Promise<void> {
         try {
+            logRequest(req, 'Fetching all permissions', 'info');
+            logger.debug('Getting all permissions with cache support');
+            
             // 先嘗試從 Redis 獲取
-            const redis = this.getRedisClient();
+            let redis;
+            try {
+                redis = this.getRedisClient();
+            } catch (error) {
+                logger.warn('Redis client not available, falling back to database only');
+                redis = null;
+            }
             let permissions;
 
             if (redis) {
+                logger.debug('Checking Redis cache for all permissions');
                 const cachedData = await redis.get(PermissionController.ALL_PERMISSIONS_KEY);
                 if (cachedData) {
+                    logger.info('Permissions loaded from Redis cache');
                     permissions = JSON.parse(cachedData);
                     res.json(permissions);
                     return;
                 }
+                logger.debug('No cached permissions found, querying database');
             }
 
             // Redis 快取不存在，從資料庫獲取
+            logger.debug('Fetching permissions from database');
             permissions = await PermissionModel.findAll();
             const permissionsData = permissions.map(p => p.toJSON());
+            
+            logger.info(`Retrieved ${permissionsData.length} permissions from database`);
 
             // 更新 Redis 快取
             if (redis) {
+                logger.debug('Caching permissions in Redis');
                 await redis.setEx(
                     PermissionController.ALL_PERMISSIONS_KEY,
                     PermissionController.CACHE_TTL,
@@ -134,11 +154,12 @@ export class PermissionController implements IPermissionController {
                     const key = this.getPermissionKey(permission.id);
                     await redis.setEx(key, PermissionController.CACHE_TTL, JSON.stringify(permission));
                 }
+                logger.debug('Permissions cached successfully');
             }
 
             res.json(permissionsData);
         } catch (error) {
-            console.error(error);
+            logger.error('Error fetching permissions:', error);
             res.status(500).json({ message: 'Failed to fetch permissions', error: (error as Error).message });
         }
     }

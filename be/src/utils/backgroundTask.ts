@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
 // 導入進度服務實例 - 用於管理和追蹤背景任務的執行進度
-import { progressService } from '../service/ProgressService.js';
+import { progressService } from '../services/ProgressService.js';
 
 // 導入任務狀態枚舉 - 定義任務執行過程中的各種狀態
 import { TaskStatus } from '../types/ProgressTypes.js';

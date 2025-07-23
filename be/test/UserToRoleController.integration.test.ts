@@ -12,7 +12,7 @@
 import express from 'express';
 import request from 'supertest';
 import { Router } from 'express';
-import { UserToRoleController } from '../src/controller/rbac/UserToRoleController.js';
+import { UserToRoleController } from '../src/controllers/rbac/UserToRoleController.js';
 import { UserModel } from '../src/models/rbac/UserModel.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
 

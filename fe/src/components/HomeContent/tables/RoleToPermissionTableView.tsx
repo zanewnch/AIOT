@@ -10,95 +10,116 @@
  * @since 2024-01-01
  */
 
-import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
-import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState, AppDispatch } from '../../../stores'; // 引入 Redux 根狀態和 Dispatch 類型
-import { loadRoleToPermissionData } from '../../../stores/tableSlice'; // 引入載入角色權限關聯資料的 action
-import styles from '../../../styles/TableViewer.module.scss'; // 引入表格樣式
+import React from 'react';
+import { useRoleToPermissionData } from '../../../hooks/useTableQuery';
+import { useTableUIStore } from '../../../stores/tableStore';
+import LoadingSpinner from '../../common/LoadingSpinner';
+import styles from '../../../styles/TableViewer.module.scss';
 
 /**
  * 角色權限關聯表格視圖組件
  * 
  * 此組件負責顯示角色與權限關聯關係的表格視圖，提供關聯數據的查看功能。
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
- * 
- * @returns {JSX.Element} 角色權限關聯表格視圖的 JSX 元素
- * 
- * @example
- * ```tsx
- * import { RoleToPermissionTableView } from './RoleToPermissionTableView';
- * 
- * function App() {
- *   return <RoleToPermissionTableView />;
- * }
- * ```
  */
 export const RoleToPermissionTableView: React.FC = () => {
-  // 初始化 Redux dispatch 鉤子，用於分派 actions
-  const dispatch = useDispatch<AppDispatch>();
+  // React Query hooks for data
+  const { data: roleToPermissionData, isLoading, error, refetch } = useRoleToPermissionData();
   
-  // 使用 useSelector 從 Redux store 中獲取表格相關的狀態數據
-  const { 
-    roleToPermissionData, // 角色權限關聯資料陣列
-    loading, // 載入狀態物件
-    error // 錯誤狀態物件
-  } = useSelector((state: RootState) => state.table);
+  // Zustand stores for UI state
+  const { sorting, toggleSortOrder } = useTableUIStore();
 
   /**
-   * 組件生命週期 - 載入角色權限關聯資料
-   * 
-   * 當組件首次掛載時，自動載入角色權限關聯資料
+   * 處理排序
    */
-  useEffect(() => {
-    dispatch(loadRoleToPermissionData()); // 分派載入角色權限關聯資料的 action
-  }, [dispatch]); // 依賴項為 dispatch，確保穩定性
+  const handleSort = (field: string) => {
+    toggleSortOrder(field as any);
+  };
 
-  // 載入狀態檢查 - 如果角色權限關聯資料正在載入中，顯示載入提示
-  if (loading.roleToPermission) {
-    return <div className={styles.loading}>Loading role to permission data...</div>;
+  /**
+   * 排序數據
+   */
+  const sortedData = React.useMemo(() => {
+    if (!roleToPermissionData) return [];
+    
+    const sorted = [...roleToPermissionData];
+    sorted.sort((a, b) => {
+      const aValue = a[sorting.field];
+      const bValue = b[sorting.field];
+      
+      if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
+      return 0;
+    });
+    
+    return sorted;
+  }, [roleToPermissionData, sorting]);
+
+  // 載入狀態檢查
+  if (isLoading) {
+    return <LoadingSpinner message="載入角色權限關聯數據中..." />;
   }
 
-  // 錯誤狀態檢查 - 如果載入角色權限關聯資料時發生錯誤，顯示錯誤訊息
-  if (error.roleToPermission) {
-    return <div className={styles.error}>Error: {error.roleToPermission}</div>;
+  // 錯誤狀態檢查
+  if (error) {
+    return (
+      <div className={styles.error}>
+        <span>載入角色權限關聯數據時發生錯誤: {(error as Error).message}</span>
+        <button onClick={() => refetch()} className={styles.retryButton}>
+          重試
+        </button>
+      </div>
+    );
   }
 
-  // 空資料檢查 - 如果沒有角色權限關聯資料，顯示無資料提示
-  if (roleToPermissionData.length === 0) {
-    return <div className={styles.noData}>No role to permission data available</div>;
+  // 空資料檢查
+  if (!roleToPermissionData || roleToPermissionData.length === 0) {
+    return (
+      <div className={styles.noData}>
+        <span>目前沒有角色權限關聯數據</span>
+        <button onClick={() => refetch()} className={styles.refreshButton}>
+          重新載入
+        </button>
+      </div>
+    );
   }
 
-  // 動態獲取表格欄位 - 從第一筆資料中取得所有欄位名稱
+  // 動態獲取表格欄位
   const columns = Object.keys(roleToPermissionData[0]);
 
-  // 渲染角色權限關聯表格視圖的主要內容
   return (
-    <div>
-      {/* 角色權限關聯資料表格 */}
+    <div className={styles.tableContainer}>
+      {/* 角色權限關聯數據表格 */}
       <table 
         className={styles.table} 
-        style={{ '--row-count': roleToPermissionData.length } as React.CSSProperties} // 設置 CSS 自定義屬性，用於樣式計算
+        style={{ '--row-count': sortedData.length } as React.CSSProperties}
       >
         <thead>
           <tr>
-            {/* 動態渲染表格標題列 */}
             {columns.map((column) => (
-              <th key={column}>{column}</th> // 每個欄位的標題
+              <th 
+                key={column} 
+                className={`${styles.sortable} ${sorting.field === column ? styles.sorted : ''}`}
+                onClick={() => handleSort(column)}
+              >
+                <div className={styles.headerContent}>
+                  <span>{column}</span>
+                  {sorting.field === column && (
+                    <span className={styles.sortIcon}>
+                      {sorting.order === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </div>
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {/* 動態渲染角色權限關聯資料行 */}
-          {roleToPermissionData.map((item, index) => (
-            <tr key={item.id || index}> {/* 使用 ID 或索引作為唯一鍵值 */}
-              {/* 動態渲染每個欄位的資料 */}
+          {sortedData.map((item: any, index: number) => (
+            <tr key={item.id || index} className={styles.tableRow}>
               {columns.map((column) => (
-                <td key={column}>
-                  {/* 處理不同類型的資料顯示 */}
-                  {typeof item[column] === 'object' && item[column] !== null
-                    ? JSON.stringify(item[column]) // 物件類型轉換為 JSON 字串
-                    : String(item[column] || '') // 其他類型轉換為字串，空值顯示為空字串
-                  }
+                <td key={column} className={styles.tableCell}>
+                  {item[column]}
                 </td>
               ))}
             </tr>

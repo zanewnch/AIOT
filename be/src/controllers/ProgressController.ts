@@ -9,7 +9,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
-import { progressService } from '../service/ProgressService.js'; // 匯入進度服務處理邏輯
+import { progressService } from '../services/ProgressService.js'; // 匯入進度服務處理邏輯
 
 /**
  * 進度追蹤控制器

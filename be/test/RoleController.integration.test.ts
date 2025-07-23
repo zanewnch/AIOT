@@ -11,7 +11,7 @@
  */
 import express from 'express';
 import request from 'supertest';
-import { RoleController } from '../src/controller/rbac/RoleController.js';
+import { RoleController } from '../src/controllers/rbac/RoleController.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
 import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 

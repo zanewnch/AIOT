@@ -22,8 +22,12 @@
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
 import { UserRepository } from '../repo/UserRepo.js'; // 引入使用者資料存取層
-import { PermissionService } from '../service/PermissionService.js'; // 引入權限服務層
+import { PermissionService } from '../services/PermissionService.js'; // 引入權限服務層
+import { createLogger } from '../configs/loggerConfig.js'; // 引入日誌記錄器
 // Express 類型擴展已透過 tsconfig.json 自動載入
+
+// 創建中間件專用的日誌記錄器
+const logger = createLogger('PermissionMiddleware');
 
 /**
  * 權限驗證中間件
@@ -119,8 +123,11 @@ export class PermissionMiddleware {
     public requirePermission(permissionName: string) {
         return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             try {
+                logger.debug(`Checking permission '${permissionName}' for request: ${req.method} ${req.path}`);
+                
                 // 確認使用者已經通過 JWT 驗證
                 if (!req.user || !req.user.id) {
+                    logger.warn(`Unauthorized request to ${req.method} ${req.path} - No authenticated user`);
                     res.status(401).json({ 
                         message: 'Authentication required', // 需要身分驗證
                         error: 'USER_NOT_AUTHENTICATED' 
@@ -128,6 +135,8 @@ export class PermissionMiddleware {
                     return; // 中止執行，不調用 next()
                 }
 
+                logger.debug(`User ${req.user.id} requesting permission: ${permissionName}`);
+                
                 // 檢查使用者權限
                 const hasPermission = await this.permissionService.userHasPermission(
                     req.user.id, // 使用者 ID
@@ -135,6 +144,7 @@ export class PermissionMiddleware {
                 );
 
                 if (!hasPermission) {
+                    logger.warn(`Access denied for user ${req.user.id} - Missing permission: ${permissionName}`);
                     // 權限不足，回傳 403 禁止存取
                     res.status(403).json({ 
                         message: `Access denied. Required permission: ${permissionName}`,
@@ -144,10 +154,11 @@ export class PermissionMiddleware {
                     return; // 中止執行，不調用 next()
                 }
 
+                logger.info(`Permission granted for user ${req.user.id} - ${permissionName}`);
                 next(); // 權限檢查通過，繼續執行下一個中間件
             } catch (error) {
                 // 捕獲權限檢查過程中的任何錯誤
-                console.error('Permission check error:', error);
+                logger.error('Permission check error:', error);
                 res.status(500).json({ 
                     message: 'Permission validation failed', // 權限驗證失敗
                     error: 'PERMISSION_CHECK_ERROR' 

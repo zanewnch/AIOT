@@ -9,7 +9,7 @@
  * - 驗證錯誤處理、參數處理、回應格式
  */
 import { Request, Response } from 'express';
-import { RoleController } from '../src/controller/rbac/RoleController.js';
+import { RoleController } from '../src/controllers/rbac/RoleController.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
 
 // 模擬 RoleModel

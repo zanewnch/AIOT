@@ -10,7 +10,7 @@
  * - 涵蓋使用者角色分配、查詢、移除的所有場景
  */
 import { Request, Response } from 'express';
-import { UserToRoleController } from '../src/controller/rbac/UserToRoleController.js';
+import { UserToRoleController } from '../src/controllers/rbac/UserToRoleController.js';
 import { UserModel } from '../src/models/rbac/UserModel.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
 

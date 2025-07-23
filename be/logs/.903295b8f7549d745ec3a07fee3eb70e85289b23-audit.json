@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/user/GitHub/AIOT/be/logs/.903295b8f7549d745ec3a07fee3eb70e85289b23-audit.json",
+    "files": [
+        {
+            "date": 1753243905250,
+            "name": "/home/user/GitHub/AIOT/be/logs/app-2025-07-23.log",
+            "hash": "9cca1b779b4bd6e1860ba00c2dc43040712b7b2f6da2e07842fa862bbde0f618"
+        }
+    ],
+    "hashType": "sha256"
+}

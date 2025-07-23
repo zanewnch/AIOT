@@ -15,7 +15,11 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
-import { AuthService, IAuthService } from '../service/AuthService.js'; // 匯入認證服務和介面定義
+import { AuthService, IAuthService } from '../services/AuthService.js'; // 匯入認證服務和介面定義
+import { createLogger, logAuthEvent, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('AuthController');
 
 /**
  * 認證控制器
@@ -109,11 +113,15 @@ export class AuthController {
    */
   public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // 記錄登入請求
+      logRequest(req, `Login attempt for user: ${req.body.username}`, 'info');
+      
       // 從請求主體中解構取得登入資料
       const { username, password, rememberMe } = req.body;
 
       // 參數驗證 - 確保必要欄位存在
       if (!username || !password) {
+        logger.warn(`Login request missing credentials from IP: ${req.ip}`);
         // 回傳 400 錯誤，表示請求參數不完整
         res.status(400).json({ message: 'Username and password are required' });
         return;
@@ -124,11 +132,15 @@ export class AuthController {
       // 取得客戶端 IP 位址，優先使用代理伺服器傳遞的真實 IP
       const ipAddress = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
 
+      logger.info(`Login attempt for user '${username}' from IP: ${ipAddress}`);
+      
       // 調用 service 層進行登入驗證（包含 Redis 會話管理）
       const result = await this.authService.login(username, password, userAgent, ipAddress);
 
       // 檢查登入結果
       if (!result.success) {
+        logger.warn(`Login failed for user '${username}': ${result.message}`);
+        logAuthEvent('login', username, false, { reason: result.message, ip: ipAddress });
         // 回傳 401 錯誤，表示認證失敗
         res.status(401).json({ message: result.message });
         return;
@@ -155,6 +167,14 @@ export class AuthController {
         });
       }
 
+      logger.info(`Login successful for user '${username}' (ID: ${result.user?.id})`);
+      logAuthEvent('login', username, true, { 
+        userId: result.user?.id, 
+        rememberMe: rememberMe || false,
+        ip: ipAddress,
+        userAgent 
+      });
+      
       // 回傳登入成功的回應
       res.json({
         token: result.token, // JWT token（也存在 httpOnly cookie 中）
@@ -166,6 +186,7 @@ export class AuthController {
         }
       });
     } catch (err) {
+      logger.error('Login error:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(err);
     }
@@ -205,11 +226,17 @@ export class AuthController {
    */
   public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      logRequest(req, 'Logout request', 'info');
+      
       // 取得 JWT token，優先從 cookie 取得，其次從 Authorization header 取得
       const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');
       
+      const username = req.user?.username || 'unknown';
+      logger.info(`Logout request from user: ${username}`);
+      
       // 如果存在 token，則從 Redis 清除會話
       if (token) {
+        logger.debug('Clearing session from Redis');
         // 從 Redis 清除會話資料，確保 token 無法再被使用
         await this.authService.logout(token);
       }
@@ -232,9 +259,13 @@ export class AuthController {
       res.clearCookie('user_preferences'); // 清除使用者偏好設定
       res.clearCookie('feature_flags'); // 清除功能開關狀態
 
+      logger.info(`Logout successful for user: ${username}`);
+      logAuthEvent('logout', username, true, { ip: req.ip });
+      
       // 回傳登出成功的回應
       res.json({ message: 'Logout successful' });
     } catch (err) {
+      logger.error('Logout error:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(err);
     }

@@ -11,9 +11,7 @@
  */
 
 import React, { useState } from 'react'; // 引入 React 庫和 useState Hook
-import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux Hook
-import { AppDispatch } from '../stores'; // 引入 Redux store 的 dispatch 類型
-import { login, clearError, selectIsLoading, selectAuthError } from '../stores/authSlice'; // 引入認證相關的 action 和選擇器
+import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
 import { LoginRequest } from '../services/AuthService'; // 引入登入請求的類型定義
 import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 SCSS 模組樣式
 
@@ -32,12 +30,8 @@ import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 S
  * ```
  */
 export const LoginForm: React.FC = () => {
-  // 獲取 Redux dispatch 函數
-  const dispatch = useDispatch<AppDispatch>();
-  // 從 Redux store 獲取載入狀態
-  const isLoading = useSelector(selectIsLoading);
-  // 從 Redux store 獲取認證錯誤
-  const error = useSelector(selectAuthError);
+  // 從認證 Hook 獲取狀態和方法
+  const { login, isLoading, error } = useAuth();
   // 表單資料狀態
   const [formData, setFormData] = useState<LoginRequest>({
     username: '', // 使用者名稱
@@ -69,10 +63,7 @@ export const LoginForm: React.FC = () => {
       }));
     }
 
-    // 清除全域認證錯誤
-    if (error) {
-      dispatch(clearError());
-    }
+    // 錯誤會由 React Query 自動清除
   };
 
   /**
@@ -115,10 +106,10 @@ export const LoginForm: React.FC = () => {
     }
 
     try {
-      // 觸發登入 action 並等待結果
-      await dispatch(login(formData)).unwrap();
+      // 觸發登入並等待結果
+      await login(formData);
     } catch (error) {
-      // 錯誤已經在 Redux slice 中處理，這裡僅記錄日誌
+      // 錯誤已經在 React Query 中處理，這裡僅記錄日誌
       console.error('Login failed:', error);
     }
   };

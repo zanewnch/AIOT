@@ -13,9 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Link } from 'react-router-dom'; // 引入 React Router 的 Link 組件
 import { ThemeToggle } from './ThemeToggle'; // 引入主題切換組件
-import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux 的 Hook
-import { AppDispatch } from '../stores'; // 引入 Redux store 的 dispatch 類型
-import { logout, selectUser } from '../stores/authSlice'; // 引入認證相關的 action 和選擇器
+import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
 import styles from '../styles/Navbar.module.scss'; // 引入導航欄的 SCSS 模組樣式
 
 /**
@@ -49,20 +47,20 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ 
   brandName = "IOT" // 品牌名稱，默認為 "IOT"
 }) => {
-  // 獲取 Redux dispatch 函數，用於觸發 action
-  const dispatch = useDispatch<AppDispatch>();
-  // 從 Redux store 獲取當前使用者資訊
-  const user = useSelector(selectUser);
+  // 從認證 Hook 獲取狀態和方法
+  const { user, logout } = useAuth();
 
   /**
    * 處理使用者登出
    * 
-   * 觸發登出 action，並處理可能的錯誤
+   * 觸發登出並處理可能的錯誤
    */
   const handleLogout = async () => {
     try {
-      // 觸發登出 action 並等待完成
-      await dispatch(logout()).unwrap();
+      // 觸發登出並等待完成
+      await logout();
+      // 登出成功後刷新整個頁面
+      window.location.reload();
     } catch (error) {
       // 登出失敗時記錄錯誤
       console.error('Logout failed:', error);

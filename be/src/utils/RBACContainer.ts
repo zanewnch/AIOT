@@ -36,19 +36,19 @@
  */
 
 // 導入使用者控制器類別 - 處理使用者相關的 CRUD 操作
-import { UserController } from '../controller/rbac/UserController.js';
+import { UserController } from '../controllers/rbac/UserController.js';
 
 // 導入角色控制器類別 - 處理角色相關的 CRUD 操作
-import { RoleController } from '../controller/rbac/RoleController.js';
+import { RoleController } from '../controllers/rbac/RoleController.js';
 
 // 導入權限控制器類別 - 處理權限相關的 CRUD 操作
-import { PermissionController } from '../controller/rbac/PermissionController.js';
+import { PermissionController } from '../controllers/rbac/PermissionController.js';
 
 // 導入使用者角色關聯控制器類別 - 處理使用者與角色的關聯操作
-import { UserToRoleController } from '../controller/rbac/UserToRoleController.js';
+import { UserToRoleController } from '../controllers/rbac/UserToRoleController.js';
 
 // 導入角色權限關聯控制器類別 - 處理角色與權限的關聯操作
-import { RoleToPermissionController } from '../controller/rbac/RoleToPermissionController.js';
+import { RoleToPermissionController } from '../controllers/rbac/RoleToPermissionController.js';
 
 // 導入 RBAC 容器服務類型定義 - 定義容器可儲存的服務類型聯合
 import { RBACContainerServicesType } from '../types/RBACContainerServicesType.js';

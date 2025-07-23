@@ -15,9 +15,9 @@
  */
 
 import { Router } from 'express'; // 引入 Express 路由器模組
-import { AuthController } from '../controller/AuthController.js'; // 引入認證控制器
-import { AuthMiddleware } from '../middleware/AuthMiddleware.js'; // 引入認證中間件
-import { ActivityTrackingMiddleware } from '../middleware/ActivityTrackingMiddleware.js'; // 引入活動追蹤中間件
+import { AuthController } from '../controllers/AuthController.js'; // 引入認證控制器
+import { AuthMiddleware } from '../middlewares/AuthMiddleware.js'; // 引入認證中間件
+import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js'; // 引入活動追蹤中間件
 
 /**
  * 創建 Express 路由器實例

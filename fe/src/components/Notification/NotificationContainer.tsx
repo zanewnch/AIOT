@@ -12,9 +12,7 @@
  */
 
 import React from 'react'; // 引入 React 核心庫
-import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState } from '../../stores'; // 引入 Redux 根狀態類型
-import { removeNotification, startRemoveNotification } from '../../stores/notificationSlice'; // 引入通知相關的 Redux actions
+import { useNotificationStore } from '../../stores/notificationStore'; // 引入通知 Zustand Store
 import styles from './NotificationContainer.module.scss'; // 引入通知容器樣式
 
 /**
@@ -39,10 +37,8 @@ import styles from './NotificationContainer.module.scss'; // 引入通知容器�
  * ```
  */
 export const NotificationContainer: React.FC = () => {
-  // 從 Redux store 中獲取通知列表
-  const notifications = useSelector((state: RootState) => state.notifications.notifications);
-  // 初始化 Redux dispatch 鉤子
-  const dispatch = useDispatch();
+  // 從 Zustand store 中獲取通知列表和操作方法
+  const { notifications, removeNotification, startRemove } = useNotificationStore();
 
   /**
    * 處理通知移除操作
@@ -55,10 +51,10 @@ export const NotificationContainer: React.FC = () => {
    */
   const handleRemove = (notificationId: string) => {
     // 先觸發移除動畫，更新通知的移除狀態
-    dispatch(startRemoveNotification(notificationId));
+    startRemove(notificationId);
     // 等待動畫完成後移除通知（300ms 動畫時間）
     setTimeout(() => {
-      dispatch(removeNotification(notificationId)); // 從狀態中移除通知
+      removeNotification(notificationId); // 從狀態中移除通知
     }, 300);
   };
 

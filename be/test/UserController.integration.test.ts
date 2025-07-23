@@ -11,7 +11,7 @@
  */
 import express from 'express';
 import request from 'supertest';
-import { UserController } from '../src/controller/rbac/UserController.js';
+import { UserController } from '../src/controllers/rbac/UserController.js';
 import { UserModel } from '../src/models/rbac/UserModel.js';
 import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 

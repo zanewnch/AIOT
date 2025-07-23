@@ -12,10 +12,19 @@
 
 import React from 'react'; // 引入 React 核心庫
 import ReactDOM from 'react-dom/client'; // 引入 React DOM 客戶端渲染 API
-import { Provider } from 'react-redux'; // 引入 Redux Provider 用於全域狀態管理
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 引入 React Query
 import './styles/index.scss'; // 引入全域樣式表
 import App from './App'; // 引入主要的應用程式組件
-import { store } from './stores'; // 引入 Redux store 設定
+
+// 創建 React Query Client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+    },
+  },
+});
 
 
 /**
@@ -40,14 +49,14 @@ const root = ReactDOM.createRoot(rootElement);
  * 
  * @description 使用以下包裝組件進行渲染：
  * - React.StrictMode: 啟用嚴格模式，幫助檢測潛在問題
- * - Provider: 提供 Redux store 給整個應用程式
+ * - QueryClientProvider: 提供 React Query Client 給整個應用程式
  * - App: 主要的應用程式組件
  */
 root.render(
   <React.StrictMode> {/* 啟用 React 嚴格模式，檢測副作用和過時的 API */}
-    <Provider store={store}> {/* 提供 Redux store 給所有子組件 */}
+    <QueryClientProvider client={queryClient}> {/* 提供 React Query Client 給所有子組件 */}
       <App /> {/* 渲染主要的應用程式組件 */}
-    </Provider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

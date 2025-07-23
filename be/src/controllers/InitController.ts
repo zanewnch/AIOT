@@ -9,9 +9,9 @@
  */
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
-import { RbacInitService } from '../service/RbacInitService.js'; // 匯入 RBAC 初始化服務
-import { RTKInitService } from '../service/RTKInitService.js'; // 匯入 RTK 初始化服務
-import { progressService } from '../service/ProgressService.js'; // 匯入進度追蹤服務
+import { RbacInitService } from '../services/RbacInitService.js'; // 匯入 RBAC 初始化服務
+import { RTKInitService } from '../services/RTKInitService.js'; // 匯入 RTK 初始化服務
+import { progressService } from '../services/ProgressService.js'; // 匯入進度追蹤服務
 import { TaskStage, TaskStatus } from '../types/ProgressTypes.js'; // 匯入任務狀態和階段定義
 import { backgroundTaskHandler } from '../utils/backgroundTask.js'; // 匯入背景任務處理器
 

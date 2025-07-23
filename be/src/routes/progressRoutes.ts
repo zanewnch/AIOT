@@ -15,9 +15,9 @@
  */
 
 import { Router } from 'express'; // 引入 Express 路由器模組
-import { ProgressController } from '../controller/ProgressController.js'; // 引入進度控制器
-import { AuthMiddleware } from '../middleware/AuthMiddleware.js'; // 引入認證中間件
-import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js'; // 引入錯誤處理中間件
+import { ProgressController } from '../controllers/ProgressController.js'; // 引入進度控制器
+import { AuthMiddleware } from '../middlewares/AuthMiddleware.js'; // 引入認證中間件
+import { ErrorHandleMiddleware } from '../middlewares/errorHandleMiddleware.js'; // 引入錯誤處理中間件
 
 /**
  * 創建 Express 路由器實例

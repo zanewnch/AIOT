@@ -12,7 +12,7 @@
 import express from 'express';
 import request from 'supertest';
 import { Router } from 'express';
-import { RoleToPermissionController } from '../src/controller/rbac/RoleToPermissionController.js';
+import { RoleToPermissionController } from '../src/controllers/rbac/RoleToPermissionController.js';
 import { RoleModel } from '../src/models/rbac/RoleModel.js';
 import { PermissionModel } from '../src/models/rbac/PermissionModel.js';
 

@@ -13,10 +13,8 @@
  */
 
 import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
-import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState, AppDispatch } from '../../stores'; // 引入 Redux 根狀態和 Dispatch 類型
-import { setActiveTable, TableType } from '../../stores/tableSlice'; // 引入表格相關的 Redux slice
-import { addNotificationWithAutoRemove } from '../../stores/notificationSlice'; // 引入通知相關的 Redux slice
+import { useTableUIStore, useNotificationStore, TableType } from '../../stores'; // 引入 Zustand stores 和類型
+import { useTableData } from '../../hooks/useTableQuery'; // 引入表格數據 Hook
 import { TableService } from '../../services/TableService'; // 引入表格服務
 import { 
   RTKTableView, // RTK 表格視圖組件
@@ -71,20 +69,10 @@ const tableConfigs = {
  * ```
  */
 export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
-  // 初始化 Redux hooks
-  const dispatch = useDispatch<AppDispatch>(); // Redux dispatch 鉤子
+  // 從 Zustand stores 獲取狀態和方法
+  const { activeTable, setActiveTable } = useTableUIStore();
+  const { addSuccess, addError } = useNotificationStore();
   
-  // 從 Redux store 中獲取表格相關的狀態數據
-  const { 
-    activeTable, // 當前活動的表格類型
-    rtkData, // RTK 表格數據
-    permissionData, // 權限表格數據
-    roleData, // 角色表格數據
-    userData, // 用戶表格數據
-    roleToPermissionData, // 角色權限關聯表格數據
-    userToRoleData // 用戶角色關聯表格數據
-  } = useSelector((state: RootState) => state.table);
-
   /**
    * 初始化 TableService 的通知回調函數
    * 
@@ -92,45 +80,51 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
    * 以便在表格操作時顯示通知消息
    */
   useEffect(() => {
-    TableService.setNotificationCallback((type, message) => 
-      dispatch(addNotificationWithAutoRemove({ type, message }))
-    );
-  }, [dispatch]); // 依賴項為 dispatch，確保穩定性
+    TableService.setNotificationCallback((type, message) => {
+      if (type === 'success') {
+        addSuccess(message);
+      } else {
+        addError(message);
+      }
+    });
+  }, [addSuccess, addError]); // 依賴項為通知方法，確保穩定性
 
   /**
    * 處理表格切換操作
    * 
    * 當用戶點擊表格切換標籤時，更新活動表格類型
    * 
-   * @param {TableType} tableType - 要切換到的表格類型
+   * @param tableType - 要切換到的表格類型
    */
   const handleTableChange = (tableType: TableType) => {
-    dispatch(setActiveTable(tableType)); // 分派設置活動表格的 action
+    setActiveTable(tableType); // 設置活動表格
   };
 
   /**
    * 獲取當前表格的數據長度
    * 
-   * 根據當前活動的表格類型，返回對應表格的數據記錄數量
+   * 使用 React Query hooks 獲取各表格的數據長度
    * 
-   * @returns {number} 當前表格的數據記錄數量
+   * @returns 當前表格的數據記錄數量
    */
   const getCurrentTableDataLength = () => {
+    const { rtkData, permissionData, roleData, userData, roleToPermissionData, userToRoleData } = useTableData();
+    
     switch (activeTable) {
       case 'RTK':
-        return rtkData.length; // RTK 表格數據長度
+        return rtkData.length;
       case 'permission':
-        return permissionData.length; // 權限表格數據長度
+        return permissionData.length;
       case 'role':
-        return roleData.length; // 角色表格數據長度
+        return roleData.length;
       case 'user':
-        return userData.length; // 用戶表格數據長度
+        return userData.length;
       case 'roletopermission':
-        return roleToPermissionData.length; // 角色權限關聯表格數據長度
+        return roleToPermissionData.length;
       case 'usertorole':
-        return userToRoleData.length; // 用戶角色關聯表格數據長度
+        return userToRoleData.length;
       default:
-        return 0; // 默認返回 0
+        return 0;
     }
   };
 

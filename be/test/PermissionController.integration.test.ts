@@ -10,7 +10,7 @@
  */
 import express from 'express';
 import request from 'supertest';
-import { PermissionController } from '../src/controller/rbac/PermissionController.js';
+import { PermissionController } from '../src/controllers/rbac/PermissionController.js';
 import { PermissionModel } from '../src/models/rbac/PermissionModel.js';
 import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 

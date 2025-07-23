@@ -40,6 +40,11 @@ import { UserRepository } from '../repo/UserRepo.js';
 import { getRedisClient } from '../configs/redisConfig.js';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
+// 匯入日誌記錄器
+import { createLogger, logPermissionCheck } from '../configs/loggerConfig.js';
+
+// 創建服務專用的日誌記錄器
+const logger = createLogger('PermissionService');
 
 /**
  * 使用者權限資料結構
@@ -190,9 +195,11 @@ export class PermissionService {
      */
     private async fetchUserPermissionsFromDB(userId: number): Promise<UserPermissions | null> {
         try {
+            logger.debug(`Querying database for user ${userId} with roles and permissions`);
             const user = await this.userRepository.findByIdWithRolesAndPermissions(userId);
             
             if (!user) {
+                logger.warn(`User ${userId} not found in database`);
                 return null;
             }
 
@@ -201,26 +208,36 @@ export class PermissionService {
             const roles = new Set<string>();
 
             if (user.roles) {
+                logger.debug(`User ${userId} has ${user.roles.length} roles`);
                 for (const role of user.roles) {
                     roles.add(role.name);
+                    logger.debug(`Processing role '${role.name}' for user ${userId}`);
                     
                     if (role.permissions) {
+                        logger.debug(`Role '${role.name}' has ${role.permissions.length} permissions`);
                         for (const permission of role.permissions) {
                             permissions.add(permission.name);
                         }
                     }
                 }
+            } else {
+                logger.warn(`User ${userId} has no roles assigned`);
             }
 
-            return {
+            const result = {
                 userId: user.id,
                 username: user.username,
                 permissions: Array.from(permissions),
                 roles: Array.from(roles),
                 lastUpdated: Date.now()
             };
+
+            logger.info(`User ${userId} (${user.username}) permissions loaded: ${result.permissions.join(', ')}`);
+            logger.info(`User ${userId} (${user.username}) roles: ${result.roles.join(', ')}`);
+
+            return result;
         } catch (error) {
-            console.error('Failed to fetch user permissions from database:', error);
+            logger.error('Failed to fetch user permissions from database:', error);
             return null;
         }
     }
@@ -237,20 +254,27 @@ export class PermissionService {
     ): Promise<UserPermissions | null> {
         const { ttl = PermissionService.DEFAULT_CACHE_TTL, forceRefresh = false } = options;
 
+        logger.debug(`Getting permissions for user ${userId} (forceRefresh: ${forceRefresh})`);
+
         // 如果不強制重新整理，先嘗試從快取取得
         if (!forceRefresh) {
             const cachedPermissions = await this.getCachedUserPermissions(userId);
             if (cachedPermissions) {
+                logger.debug(`Found cached permissions for user ${userId}`);
                 return cachedPermissions;
             }
         }
 
         // 從資料庫取得權限資料
+        logger.debug(`Fetching permissions from database for user ${userId}`);
         const permissions = await this.fetchUserPermissionsFromDB(userId);
         
         if (permissions) {
+            logger.info(`Retrieved permissions for user ${userId}: ${permissions.permissions.length} permissions, ${permissions.roles.length} roles`);
             // 將資料存入快取
             await this.setCachedUserPermissions(userId, permissions, ttl);
+        } else {
+            logger.warn(`No permissions found for user ${userId}`);
         }
 
         return permissions;
@@ -268,13 +292,27 @@ export class PermissionService {
         permissionName: string, 
         options: CacheOptions = {}
     ): Promise<boolean> {
+        logger.debug(`Checking permission '${permissionName}' for user ${userId}`);
+        
         const userPermissions = await this.getUserPermissions(userId, options);
         
         if (!userPermissions) {
+            logger.warn(`User ${userId} not found or has no permissions`);
+            logPermissionCheck(userId, permissionName, false, { reason: 'User not found' });
             return false;
         }
 
-        return userPermissions.permissions.includes(permissionName);
+        const hasPermission = userPermissions.permissions.includes(permissionName);
+        
+        // 記錄權限檢查結果
+        logPermissionCheck(userId, permissionName, hasPermission, {
+            userRoles: userPermissions.roles,
+            userPermissions: userPermissions.permissions
+        });
+        
+        logger.debug(`Permission check result for user ${userId}: ${hasPermission ? 'GRANTED' : 'DENIED'}`);
+        
+        return hasPermission;
     }
 
     /**

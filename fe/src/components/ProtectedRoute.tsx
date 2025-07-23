@@ -12,8 +12,7 @@
 
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Navigate, useLocation } from 'react-router-dom'; // 引入 React Router 的導航組件和路徑 Hook
-import { useSelector } from 'react-redux'; // 引入 Redux 的選擇器 Hook
-import { selectIsAuthenticated, selectIsLoading } from '../stores/authSlice'; // 引入認證狀態選擇器
+import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
 
 /**
  * 受保護路由組件的屬性介面
@@ -54,9 +53,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, // 需要保護的子組件
   fallback // 自定義載入畫面組件
 }) => {
-  // 從 Redux store 獲取認證狀態
-  const isAuthenticated = useSelector(selectIsAuthenticated); // 使用者是否已認證
-  const isLoading = useSelector(selectIsLoading); // 認證狀態是否正在載入
+  // 從認證 Hook 獲取狀態
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation(); // 獲取當前路徑資訊
 
   // 如果正在載入認證狀態，顯示載入畫面

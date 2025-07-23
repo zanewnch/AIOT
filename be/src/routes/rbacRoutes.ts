@@ -17,14 +17,14 @@
  */
 
 import { Router } from 'express'; // 引入 Express 路由器模組
-import { UserController } from '../controller/rbac/UserController.js'; // 引入使用者控制器
-import { RoleController } from '../controller/rbac/RoleController.js'; // 引入角色控制器
-import { PermissionController } from '../controller/rbac/PermissionController.js'; // 引入權限控制器
-import { UserToRoleController } from '../controller/rbac/UserToRoleController.js'; // 引入使用者角色關聯控制器
-import { RoleToPermissionController } from '../controller/rbac/RoleToPermissionController.js'; // 引入角色權限關聯控制器
-import { AuthMiddleware } from '../middleware/AuthMiddleware.js'; // 引入認證中間件
-import { PermissionMiddleware } from '../middleware/permissionMiddleware.js'; // 引入權限驗證中間件
-import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js'; // 引入錯誤處理中間件
+import { UserController } from '../controllers/rbac/UserController.js'; // 引入使用者控制器
+import { RoleController } from '../controllers/rbac/RoleController.js'; // 引入角色控制器
+import { PermissionController } from '../controllers/rbac/PermissionController.js'; // 引入權限控制器
+import { UserToRoleController } from '../controllers/rbac/UserToRoleController.js'; // 引入使用者角色關聯控制器
+import { RoleToPermissionController } from '../controllers/rbac/RoleToPermissionController.js'; // 引入角色權限關聯控制器
+import { AuthMiddleware } from '../middlewares/AuthMiddleware.js'; // 引入認證中間件
+import { PermissionMiddleware } from '../middlewares/permissionMiddleware.js'; // 引入權限驗證中間件
+import { ErrorHandleMiddleware } from '../middlewares/errorHandleMiddleware.js'; // 引入錯誤處理中間件
 
 /**
  * 創建 Express 路由器實例

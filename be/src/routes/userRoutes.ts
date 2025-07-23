@@ -17,7 +17,7 @@
 import { Router } from 'express'; // 引入 Express 路由器模組
 import { userPreferenceRoutes } from './userPreferenceRoutes.js'; // 引入使用者偏好設定路由
 import { userActivityRoutes } from './userActivityRoutes.js'; // 引入使用者活動追蹤路由
-import { ActivityTrackingMiddleware } from '../middleware/ActivityTrackingMiddleware.js'; // 引入活動追蹤中間件
+import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js'; // 引入活動追蹤中間件
 
 /**
  * 創建 Express 路由器實例

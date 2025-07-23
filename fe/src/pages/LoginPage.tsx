@@ -12,8 +12,7 @@
 import React, { useEffect } from 'react'; // 引入 React 核心庫和 useEffect Hook
 import { useNavigate } from 'react-router-dom'; // 引入 React Router 的導航 Hook
 import { LoginForm } from '../components/LoginForm'; // 引入登入表單組件
-import { useSelector } from 'react-redux'; // 引入 Redux 的選擇器 Hook
-import { selectIsAuthenticated, selectIsLoading } from '../stores/authSlice'; // 引入認證狀態選擇器
+import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
 
 /**
  * 登入頁面組件
@@ -47,10 +46,8 @@ import { selectIsAuthenticated, selectIsLoading } from '../stores/authSlice'; //
  * ```
  */
 export const LoginPage: React.FC = () => {
-  // 從 Redux store 中選擇認證狀態
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  // 從 Redux store 中選擇載入狀態
-  const isLoading = useSelector(selectIsLoading);
+  // 從認證 Hook 中取得狀態
+  const { isAuthenticated, isLoading } = useAuth();
   // 取得 React Router 的導航函數
   const navigate = useNavigate();
 

@@ -15,7 +15,7 @@
  */
 
 import express from 'express'; // Express 框架，用於建立 HTTP 伺服器應用程式
-import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js'; // 錯誤處理中間件
+import { ErrorHandleMiddleware } from './middlewares/errorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置

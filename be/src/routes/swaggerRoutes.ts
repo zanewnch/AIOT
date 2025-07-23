@@ -16,9 +16,9 @@
 
 import { Router } from 'express'; // 引入 Express 路由器模組
 import swaggerUi from 'swagger-ui-express'; // 引入 Swagger UI Express 中間件
-import { SwaggerController } from '../controller/SwaggerController.js'; // 引入 Swagger 控制器
+import { SwaggerController } from '../controllers/SwaggerController.js'; // 引入 Swagger 控制器
 import { specs } from '../configs/swaggerConfig.js'; // 引入 Swagger 配置規格
-import { ErrorHandleMiddleware } from '../middleware/errorHandleMiddleware.js'; // 引入錯誤處理中間件
+import { ErrorHandleMiddleware } from '../middlewares/errorHandleMiddleware.js'; // 引入錯誤處理中間件
 
 /**
  * 創建 Express 路由器實例

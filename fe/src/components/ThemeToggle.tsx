@@ -11,8 +11,7 @@
  */
 
 import React from 'react'; // 引入 React 庫，用於建立組件
-import { useSelector, useDispatch } from 'react-redux'; // 引入 Redux 的 Hook
-import { selectTheme, toggleTheme } from '../stores/themeSlice'; // 引入主題相關的選擇器和 action
+import { useThemeStore } from '../stores'; // 引入主題 Zustand store
 import '../styles/ThemeToggle.scss'; // 引入主題切換組件的 SCSS 樣式
 
 /**
@@ -31,18 +30,16 @@ import '../styles/ThemeToggle.scss'; // 引入主題切換組件的 SCSS 樣式
  * ```
  */
 export function ThemeToggle() {
-  // 從 Redux store 獲取當前主題狀態
-  const theme = useSelector(selectTheme);
-  // 獲取 Redux dispatch 函數
-  const dispatch = useDispatch();
+  // 從 Zustand store 獲取當前主題狀態和切換方法
+  const { theme, toggleTheme } = useThemeStore();
 
   /**
    * 處理主題切換
    * 
-   * 觸發主題切換 action，在淺色和深色主題之間切換
+   * 觸發主題切換，在淺色和深色主題之間切換
    */
   const handleToggle = () => {
-    dispatch(toggleTheme()); // 觸發主題切換 action
+    toggleTheme(); // 觸發主題切換
   };
 
   return (

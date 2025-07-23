@@ -10,7 +10,7 @@
  * - 涵蓋使用者 CRUD 操作的所有場景
  */
 import { Request, Response } from 'express';
-import { UserController } from '../src/controller/rbac/UserController.js';
+import { UserController } from '../src/controllers/rbac/UserController.js';
 import { UserModel } from '../src/models/rbac/UserModel.js';
 
 // 模擬 UserModel

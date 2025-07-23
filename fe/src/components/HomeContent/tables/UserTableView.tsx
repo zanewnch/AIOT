@@ -11,156 +11,176 @@
  * @since 2024-01-01
  */
 
-import React, { useEffect } from 'react'; // 引入 React 和 useEffect 鉤子
-import { useDispatch, useSelector } from 'react-redux'; // 引入 Redux 狀態管理鉤子
-import { RootState, AppDispatch } from '../../../stores'; // 引入 Redux 根狀態和 Dispatch 類型
-import { 
-  loadUserData, // 載入用戶資料的 action
-  updateUserData, // 更新用戶資料的 action
-  openEditModal, // 開啟編輯模態框的 action
-  closeEditModal, // 關閉編輯模態框的 action
-  updateEditingItem // 更新編輯中項目的 action
-} from '../../../stores/tableSlice'; // 引入表格相關的 Redux slice
-import { addNotificationWithAutoRemove } from '../../../stores/notificationSlice'; // 引入通知相關的 Redux slice
-import styles from '../../../styles/TableViewer.module.scss'; // 引入表格樣式
+import React from 'react';
+import { useUserData, useUpdateUserData } from '../../../hooks/useTableQuery';
+import { useTableUIStore } from '../../../stores/tableStore';
+import { useNotificationStore } from '../../../stores/notificationStore';
+import LoadingSpinner from '../../common/LoadingSpinner';
+import styles from '../../../styles/TableViewer.module.scss';
 
 /**
  * 用戶表格視圖組件
  * 
  * 此組件負責顯示用戶數據的表格視圖，提供用戶的查看和編輯功能。
- * 包含動態表格渲染、編輯模態框、數據更新等功能。
- * 
- * @returns {JSX.Element} 用戶表格視圖的 JSX 元素
- * 
- * @example
- * ```tsx
- * import { UserTableView } from './UserTableView';
- * 
- * function App() {
- *   return <UserTableView />;
- * }
- * ```
+ * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  */
 export const UserTableView: React.FC = () => {
-  // 初始化 Redux dispatch 鉤子，用於分派 actions
-  const dispatch = useDispatch<AppDispatch>();
+  // React Query hooks for data
+  const { data: userData, isLoading, error, refetch } = useUserData();
+  const updateUserMutation = useUpdateUserData();
   
-  // 使用 useSelector 從 Redux store 中獲取表格相關的狀態數據
+  // Zustand stores for UI state
   const { 
-    userData, // 用戶資料陣列
-    loading, // 載入狀態物件
-    error, // 錯誤狀態物件
-    editModal // 編輯模態框狀態物件
-  } = useSelector((state: RootState) => state.table);
+    editModal, 
+    sorting,
+    openEditModal, 
+    closeEditModal, 
+    updateEditingItem,
+    toggleSortOrder 
+  } = useTableUIStore();
+  
+  // Notification store
+  const { addSuccess, addError } = useNotificationStore();
 
   /**
-   * 組件生命週期 - 載入用戶資料
-   * 
-   * 當組件首次掛載時，自動載入用戶資料
-   */
-  useEffect(() => {
-    dispatch(loadUserData()); // 分派載入用戶資料的 action
-  }, [dispatch]); // 依賴項為 dispatch，確保穩定性
-
-  /**
-   * 處理編輯操作
-   * 
-   * 開啟編輯模態框，並設置當前編輯的項目
-   * 
-   * @param {any} item - 要編輯的用戶項目
+   * 處理用戶編輯操作
    */
   const handleEdit = (item: any) => {
-    dispatch(openEditModal({ tableType: 'user', item })); // 分派開啟編輯模態框的 action
+    openEditModal('user', item);
   };
 
   /**
-   * 處理保存操作
-   * 
-   * 驗證編輯資料並更新用戶資料，處理成功/失敗的通知
-   * 
-   * @returns {Promise<void>} 非同步操作的 Promise
+   * 處理用戶保存操作
    */
   const handleSave = async () => {
-    // 檢查是否有編輯中的項目
     if (!editModal.editingItem) return;
 
     try {
-      // 分派更新用戶資料的 action，並等待操作完成
-      await dispatch(updateUserData({
-        id: editModal.editingItem.id, // 用戶 ID
-        data: {
-          username: editModal.editingItem.username, // 更新後的用戶名
-          email: editModal.editingItem.email // 更新後的電子郵件
-        }
-      })).unwrap(); // 解包 Promise 以處理錯誤
-
-      // 顯示成功通知
-      dispatch(addNotificationWithAutoRemove({ type: 'success', message: '用戶已更新' }));
-      // 關閉編輯模態框
-      dispatch(closeEditModal());
+      await updateUserMutation.mutateAsync({
+        id: editModal.editingItem.id,
+        data: editModal.editingItem
+      });
+      
+      addSuccess('用戶更新成功');
+      closeEditModal();
+      refetch();
     } catch (error) {
-      // 處理錯誤情況，顯示錯誤通知
-      dispatch(addNotificationWithAutoRemove({ 
-        type: 'error', 
-        message: error instanceof Error ? error.message : '更新用戶時發生錯誤' 
-      }));
+      addError('用戶更新失敗: ' + (error as Error).message);
     }
   };
 
-  // 載入狀態檢查 - 如果用戶資料正在載入中，顯示載入提示
-  if (loading.user) {
-    return <div className={styles.loading}>Loading user data...</div>;
+  /**
+   * 處理輸入值變更
+   */
+  const handleInputChange = (field: string, value: any) => {
+    if (!editModal.editingItem) return;
+    
+    const updatedItem = {
+      ...editModal.editingItem,
+      [field]: value
+    };
+    updateEditingItem(updatedItem);
+  };
+
+  /**
+   * 處理排序
+   */
+  const handleSort = (field: string) => {
+    toggleSortOrder(field as any);
+  };
+
+  /**
+   * 排序數據
+   */
+  const sortedData = React.useMemo(() => {
+    if (!userData) return [];
+    
+    const sorted = [...userData];
+    sorted.sort((a, b) => {
+      const aValue = a[sorting.field];
+      const bValue = b[sorting.field];
+      
+      if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
+      return 0;
+    });
+    
+    return sorted;
+  }, [userData, sorting]);
+
+  // 載入狀態檢查
+  if (isLoading) {
+    return <LoadingSpinner message="載入用戶數據中..." />;
   }
 
-  // 錯誤狀態檢查 - 如果載入用戶資料時發生錯誤，顯示錯誤訊息
-  if (error.user) {
-    return <div className={styles.error}>Error: {error.user}</div>;
+  // 錯誤狀態檢查
+  if (error) {
+    return (
+      <div className={styles.error}>
+        <span>載入用戶數據時發生錯誤: {(error as Error).message}</span>
+        <button onClick={() => refetch()} className={styles.retryButton}>
+          重試
+        </button>
+      </div>
+    );
   }
 
-  // 空資料檢查 - 如果沒有用戶資料，顯示無資料提示
-  if (userData.length === 0) {
-    return <div className={styles.noData}>No user data available</div>;
+  // 空資料檢查
+  if (!userData || userData.length === 0) {
+    return (
+      <div className={styles.noData}>
+        <span>目前沒有用戶數據</span>
+        <button onClick={() => refetch()} className={styles.refreshButton}>
+          重新載入
+        </button>
+      </div>
+    );
   }
 
-  // 動態獲取表格欄位 - 從第一筆資料中取得所有欄位名稱
+  // 動態獲取表格欄位
   const columns = Object.keys(userData[0]);
 
-  // 渲染用戶表格視圖的主要內容
   return (
-    <div>
-      {/* 用戶資料表格 */}
+    <div className={styles.tableContainer}>
+      {/* 用戶數據表格 */}
       <table 
         className={styles.table} 
-        style={{ '--row-count': userData.length } as React.CSSProperties} // 設置 CSS 自定義屬性，用於樣式計算
+        style={{ '--row-count': sortedData.length } as React.CSSProperties}
       >
         <thead>
           <tr>
-            {/* 動態渲染表格標題列 */}
             {columns.map((column) => (
-              <th key={column}>{column}</th> // 每個欄位的標題
+              <th 
+                key={column} 
+                className={`${styles.sortable} ${sorting.field === column ? styles.sorted : ''}`}
+                onClick={() => handleSort(column)}
+              >
+                <div className={styles.headerContent}>
+                  <span>{column}</span>
+                  {sorting.field === column && (
+                    <span className={styles.sortIcon}>
+                      {sorting.order === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </div>
+              </th>
             ))}
-            <th>操作 (Actions)</th> {/* 操作欄位的標題 */}
+            <th className={styles.actions}>操作</th>
           </tr>
         </thead>
         <tbody>
-          {/* 動態渲染用戶資料行 */}
-          {userData.map((item, index) => (
-            <tr key={item.id || index}> {/* 使用 ID 或索引作為唯一鍵值 */}
-              {/* 動態渲染每個欄位的資料 */}
+          {sortedData.map((item: any, index: number) => (
+            <tr key={item.id || index} className={styles.tableRow}>
               {columns.map((column) => (
-                <td key={column}>
-                  {/* 處理不同類型的資料顯示 */}
-                  {typeof item[column] === 'object' && item[column] !== null
-                    ? JSON.stringify(item[column]) // 物件類型轉換為 JSON 字串
-                    : String(item[column] || '') // 其他類型轉換為字串，空值顯示為空字串
-                  }
+                <td key={column} className={styles.tableCell}>
+                  {/* 隱藏密碼欄位 */}
+                  {column.toLowerCase().includes('password') ? '••••••••' : item[column]}
                 </td>
               ))}
-              <td>
-                {/* 編輯按鈕 */}
-                <button
+              <td className={styles.tableCell}>
+                <button 
+                  onClick={() => handleEdit(item)}
                   className={styles.editButton}
-                  onClick={() => handleEdit(item)} // 點擊時觸發編輯操作
                 >
                   編輯
                 </button>
@@ -170,83 +190,49 @@ export const UserTableView: React.FC = () => {
         </tbody>
       </table>
 
-      {/* 用戶編輯模態框 - 條件式渲染 */}
+      {/* 編輯模態框 */}
       {editModal.isOpen && editModal.tableType === 'user' && editModal.editingItem && (
-        <div className={styles.modalOverlay}> {/* 模態框遮罩層 */}
-          <div className={styles.modal}> {/* 模態框主體 */}
-            {/* 模態框標題列 */}
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
-              <h3>編輯用戶</h3> {/* 模態框標題 */}
-              <button
+              <h3>編輯用戶</h3>
+              <button 
+                onClick={closeEditModal}
                 className={styles.closeButton}
-                onClick={() => dispatch(closeEditModal())} // 點擊關閉按鈕時關閉模態框
               >
                 ×
               </button>
             </div>
-            {/* 模態框內容區域 */}
+            
             <div className={styles.modalBody}>
-              {/* 用戶 ID 欄位 - 唯讀 */}
-              <div className={styles.formGroup}>
-                <label>ID:</label>
-                <input
-                  type="text"
-                  value={editModal.editingItem.id || ''} // 顯示用戶 ID
-                  disabled // 禁用編輯，因為 ID 不應被修改
-                  className={styles.disabledInput}
-                />
-              </div>
-              {/* 用戶名欄位 - 可編輯 */}
-              <div className={styles.formGroup}>
-                <label>用戶名 (Username):</label>
-                <input
-                  type="text"
-                  value={editModal.editingItem.username || ''} // 顯示當前用戶名
-                  onChange={(e) => dispatch(updateEditingItem({
-                    ...editModal.editingItem, // 保留其他欄位的值
-                    username: e.target.value // 更新用戶名
-                  }))}
-                  className={styles.input}
-                />
-              </div>
-              {/* 電子郵件欄位 - 可編輯 */}
-              <div className={styles.formGroup}>
-                <label>電子郵件 (Email):</label>
-                <input
-                  type="email"
-                  value={editModal.editingItem.email || ''} // 顯示當前電子郵件
-                  onChange={(e) => dispatch(updateEditingItem({
-                    ...editModal.editingItem, // 保留其他欄位的值
-                    email: e.target.value // 更新電子郵件
-                  }))}
-                  className={styles.input}
-                />
-              </div>
-              {/* 密碼哈希欄位 - 唯讀 */}
-              <div className={styles.formGroup}>
-                <label>密碼哈希 (Password Hash):</label>
-                <input
-                  type="text"
-                  value={editModal.editingItem.passwordHash || ''} // 顯示密碼哈希
-                  disabled // 禁用編輯，因為密碼哈希不應直接修改
-                  className={styles.disabledInput}
-                />
-                <small>密碼哈希不可直接編輯</small> {/* 說明文字 */}
-              </div>
+              {columns.map((field) => (
+                <div key={field} className={styles.inputGroup}>
+                  <label htmlFor={field}>{field}:</label>
+                  <input
+                    id={field}
+                    type={field.toLowerCase().includes('password') ? 'password' : 'text'}
+                    value={editModal.editingItem[field] || ''}
+                    onChange={(e) => handleInputChange(field, e.target.value)}
+                    className={styles.input}
+                    placeholder={field.toLowerCase().includes('password') ? '請輸入新密碼（留空保持不變）' : ''}
+                  />
+                </div>
+              ))}
             </div>
-            {/* 模態框底部按鈕區域 */}
+            
             <div className={styles.modalFooter}>
-              <button
+              <button 
+                onClick={closeEditModal}
                 className={styles.cancelButton}
-                onClick={() => dispatch(closeEditModal())} // 點擊取消按鈕時關閉模態框
               >
                 取消
               </button>
-              <button
+              <button 
+                onClick={handleSave}
                 className={styles.saveButton}
-                onClick={handleSave} // 點擊保存按鈕時執行保存操作
+                disabled={updateUserMutation.isPending}
               >
-                保存
+                {updateUserMutation.isPending ? '保存中...' : '保存'}
               </button>
             </div>
           </div>
