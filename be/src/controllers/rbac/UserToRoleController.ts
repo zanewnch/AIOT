@@ -19,9 +19,11 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { UserModel } from '../../models/rbac/UserModel.js'; // 引入使用者資料模型
-import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型
+import { UserToRoleService } from '../../services/UserToRoleService.js'; // 引入使用者角色服務層
 import { IUserToRoleController } from '../../types/controllers/IUserToRoleController.js'; // 引入使用者角色控制器介面
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+
+const logger = createLogger('UserToRoleController');
 
 /**
  * 使用者角色關聯控制器類別
@@ -33,11 +35,13 @@ import { IUserToRoleController } from '../../types/controllers/IUserToRoleContro
  * @description 處理所有與使用者角色關聯相關的 HTTP 請求和業務邏輯
  */
 export class UserToRoleController implements IUserToRoleController {
+    private userToRoleService: UserToRoleService;
+
     /**
      * 初始化使用者角色關聯控制器實例
      */
-    constructor() {
-        // Controller only contains business logic
+    constructor(userToRoleService: UserToRoleService = new UserToRoleService()) {
+        this.userToRoleService = userToRoleService;
     }
 
 
@@ -74,15 +78,27 @@ export class UserToRoleController implements IUserToRoleController {
     public async getUserRoles(req: Request, res: Response): Promise<void> {
         try {
             const { userId } = req.params;
-            const user = await UserModel.findByPk(userId, { include: [RoleModel] });
-            if (!user) {
-                res.status(404).json({ message: 'User not found' });
+            const id = parseInt(userId, 10);
+            
+            logger.info(`Fetching roles for user ID: ${userId}`);
+            logRequest(req, `User roles retrieval request for ID: ${userId}`, 'info');
+            
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
                 return;
             }
-            res.json(user.roles);
+
+            const roles = await this.userToRoleService.getUserRoles(id);
+            
+            logger.info(`Successfully retrieved ${roles.length} roles for user ID: ${userId}`);
+            res.json(roles);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to fetch user roles', error: (error as Error).message });
+            logger.error('Error fetching user roles:', error);
+            if (error instanceof Error && error.message === 'User not found') {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to fetch user roles', error: (error as Error).message });
+            }
         }
     }
 
@@ -118,18 +134,45 @@ export class UserToRoleController implements IUserToRoleController {
     public async assignRolesToUser(req: Request, res: Response): Promise<void> {
         try {
             const { userId } = req.params;
-            const { roleIds } = req.body; // expect array of role IDs
-            const user = await UserModel.findByPk(userId);
-            if (!user) {
-                res.status(404).json({ message: 'User not found' });
+            const { roleIds } = req.body;
+            const id = parseInt(userId, 10);
+            
+            logger.info(`Assigning roles to user ID: ${userId}`);
+            logRequest(req, `Role assignment request for user ID: ${userId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
                 return;
             }
-            const roles = await RoleModel.findAll({ where: { id: roleIds } });
-            await user.$add('roles', roles);
-            res.json({ message: 'Roles assigned to user' });
+
+            if (!roleIds || !Array.isArray(roleIds) || roleIds.length === 0) {
+                res.status(400).json({ message: 'Role IDs are required and must be an array' });
+                return;
+            }
+
+            // 驗證每個 role ID
+            const validRoleIds = roleIds.filter(roleId => {
+                const parsedId = parseInt(roleId, 10);
+                return !isNaN(parsedId) && parsedId > 0;
+            }).map(roleId => parseInt(roleId, 10));
+
+            if (validRoleIds.length === 0) {
+                res.status(400).json({ message: 'No valid role IDs provided' });
+                return;
+            }
+
+            await this.userToRoleService.assignRolesToUser(id, validRoleIds);
+            
+            logger.info(`Successfully assigned roles to user ID: ${userId}`);
+            res.json({ message: 'Roles assigned to user successfully' });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to assign roles', error: (error as Error).message });
+            logger.error('Error assigning roles to user:', error);
+            if (error instanceof Error && (error.message.includes('not found') || error.message.includes('Invalid'))) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to assign roles', error: (error as Error).message });
+            }
         }
     }
 
@@ -160,16 +203,38 @@ export class UserToRoleController implements IUserToRoleController {
     public async removeRoleFromUser(req: Request, res: Response): Promise<void> {
         try {
             const { userId, roleId } = req.params;
-            const user = await UserModel.findByPk(userId);
-            if (!user) {
-                res.status(404).json({ message: 'User not found' });
+            const userIdNum = parseInt(userId, 10);
+            const roleIdNum = parseInt(roleId, 10);
+            
+            logger.info(`Removing role ID: ${roleId} from user ID: ${userId}`);
+            logRequest(req, `Role removal request for user ID: ${userId}, role ID: ${roleId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(userIdNum) || userIdNum <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
                 return;
             }
-            await user.$remove('roles', Number(roleId));
-            res.json({ message: 'Role removed from user' });
+            if (isNaN(roleIdNum) || roleIdNum <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
+                return;
+            }
+
+            const removed = await this.userToRoleService.removeRoleFromUser(userIdNum, roleIdNum);
+            
+            if (removed) {
+                logger.info(`Successfully removed role ID: ${roleId} from user ID: ${userId}`);
+                res.json({ message: 'Role removed from user successfully' });
+            } else {
+                logger.warn(`Role ${roleId} was not assigned to user ${userId}`);
+                res.status(404).json({ message: 'Role assignment not found' });
+            }
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to remove role', error: (error as Error).message });
+            logger.error('Error removing role from user:', error);
+            if (error instanceof Error && error.message.includes('not found')) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to remove role', error: (error as Error).message });
+            }
         }
     }
 
@@ -181,6 +246,7 @@ export class UserToRoleController implements IUserToRoleController {
      * @returns Promise<void>
      */
     public async createUserRole(req: Request, res: Response): Promise<void> {
+        // 使用相同的邏輯分配角色
         await this.assignRolesToUser(req, res);
     }
 
@@ -194,16 +260,28 @@ export class UserToRoleController implements IUserToRoleController {
     public async getUserRoleById(req: Request, res: Response): Promise<void> {
         try {
             const { userRoleId } = req.params;
-            // 這裡假設 userRoleId 是 userId
-            const user = await UserModel.findByPk(userRoleId, { include: [RoleModel] });
-            if (!user) {
-                res.status(404).json({ message: 'User role not found' });
+            const id = parseInt(userRoleId, 10);
+            
+            logger.info(`Fetching user role details for ID: ${userRoleId}`);
+            logRequest(req, `User role retrieval request for ID: ${userRoleId}`, 'info');
+            
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
                 return;
             }
-            res.json(user);
+
+            // 獲取使用者的所有角色（這裡假設 userRoleId 是 userId）
+            const roles = await this.userToRoleService.getUserRoles(id);
+            
+            logger.info(`Successfully retrieved ${roles.length} roles for user ID: ${userRoleId}`);
+            res.json({ userId: id, roles });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to fetch user role', error: (error as Error).message });
+            logger.error('Error fetching user role by ID:', error);
+            if (error instanceof Error && error.message === 'User not found') {
+                res.status(404).json({ message: 'User role not found' });
+            } else {
+                res.status(500).json({ message: 'Failed to fetch user role', error: (error as Error).message });
+            }
         }
     }
 
@@ -215,6 +293,7 @@ export class UserToRoleController implements IUserToRoleController {
      * @returns Promise<void>
      */
     public async updateUserRole(req: Request, res: Response): Promise<void> {
+        // 使用相同的邏輯分配角色
         await this.assignRolesToUser(req, res);
     }
 
@@ -229,16 +308,38 @@ export class UserToRoleController implements IUserToRoleController {
         try {
             const { userRoleId } = req.params;
             const { roleId } = req.body;
-            const user = await UserModel.findByPk(userRoleId);
-            if (!user) {
-                res.status(404).json({ message: 'User not found' });
+            const userIdNum = parseInt(userRoleId, 10);
+            const roleIdNum = parseInt(roleId, 10);
+            
+            logger.info(`Deleting role ID: ${roleId} from user ID: ${userRoleId}`);
+            logRequest(req, `User role deletion request for user ID: ${userRoleId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(userIdNum) || userIdNum <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
                 return;
             }
-            await user.$remove('roles', Number(roleId));
-            res.json({ message: 'User role deleted' });
+            if (!roleId || isNaN(roleIdNum) || roleIdNum <= 0) {
+                res.status(400).json({ message: 'Valid role ID is required' });
+                return;
+            }
+
+            const removed = await this.userToRoleService.removeRoleFromUser(userIdNum, roleIdNum);
+            
+            if (removed) {
+                logger.info(`Successfully deleted role ID: ${roleId} from user ID: ${userRoleId}`);
+                res.json({ message: 'User role deleted successfully' });
+            } else {
+                logger.warn(`Role ${roleId} was not assigned to user ${userRoleId}`);
+                res.status(404).json({ message: 'User role assignment not found' });
+            }
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to delete user role', error: (error as Error).message });
+            logger.error('Error deleting user role:', error);
+            if (error instanceof Error && error.message.includes('not found')) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to delete user role', error: (error as Error).message });
+            }
         }
     }
 }

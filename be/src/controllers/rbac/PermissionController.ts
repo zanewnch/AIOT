@@ -24,9 +24,8 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { PermissionModel } from '../../models/rbac/PermissionModel.js'; // 引入權限資料模型
+import { PermissionService } from '../../services/PermissionService.js'; // 引入權限服務層
 import { IPermissionController } from '../../types/controllers/IPermissionController.js'; // 引入權限控制器介面
-import { getRedisClient } from '../../configs/redisConfig.js'; // 引入 Redis 客戶端配置
 import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 引入日誌記錄器
 
 // 創建控制器專用的日誌記錄器
@@ -43,38 +42,19 @@ const logger = createLogger('PermissionController');
  * 
  * @class PermissionController
  * @implements {IPermissionController}
- * @description 處理所有與權限管理相關的 HTTP 請求和業務邏輯
+ * @description 處理所有與權限管理相關的 HTTP 請求，委派業務邏輯給服務層
  */
 export class PermissionController implements IPermissionController {
-    private static readonly CACHE_PREFIX = 'permission:';
-    private static readonly ALL_PERMISSIONS_KEY = 'permissions:all';
-    private static readonly CACHE_TTL = 3600; // 1小時
+    private permissionService: PermissionService;
 
     /**
      * 初始化權限控制器實例
+     * @param permissionService 權限服務層實例
      */
-    constructor() {
-        // Controller only contains business logic
+    constructor(permissionService: PermissionService = new PermissionService()) {
+        this.permissionService = permissionService;
     }
 
-    /**
-     * 獲取 Redis 客戶端
-     */
-    private getRedisClient() {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            console.warn('Redis not available, falling back to database queries');
-            return null;
-        }
-    }
-
-    /**
-     * 獲取權限的 Redis Key
-     */
-    private getPermissionKey(permissionId: string | number): string {
-        return `${PermissionController.CACHE_PREFIX}${permissionId}`;
-    }
 
 
     /**
@@ -109,55 +89,12 @@ export class PermissionController implements IPermissionController {
     public async getPermissions(req: Request, res: Response): Promise<void> {
         try {
             logRequest(req, 'Fetching all permissions', 'info');
-            logger.debug('Getting all permissions with cache support');
+            logger.debug('Getting all permissions from service');
             
-            // 先嘗試從 Redis 獲取
-            let redis;
-            try {
-                redis = this.getRedisClient();
-            } catch (error) {
-                logger.warn('Redis client not available, falling back to database only');
-                redis = null;
-            }
-            let permissions;
-
-            if (redis) {
-                logger.debug('Checking Redis cache for all permissions');
-                const cachedData = await redis.get(PermissionController.ALL_PERMISSIONS_KEY);
-                if (cachedData) {
-                    logger.info('Permissions loaded from Redis cache');
-                    permissions = JSON.parse(cachedData);
-                    res.json(permissions);
-                    return;
-                }
-                logger.debug('No cached permissions found, querying database');
-            }
-
-            // Redis 快取不存在，從資料庫獲取
-            logger.debug('Fetching permissions from database');
-            permissions = await PermissionModel.findAll();
-            const permissionsData = permissions.map(p => p.toJSON());
+            const permissions = await this.permissionService.getAllPermissions();
             
-            logger.info(`Retrieved ${permissionsData.length} permissions from database`);
-
-            // 更新 Redis 快取
-            if (redis) {
-                logger.debug('Caching permissions in Redis');
-                await redis.setEx(
-                    PermissionController.ALL_PERMISSIONS_KEY,
-                    PermissionController.CACHE_TTL,
-                    JSON.stringify(permissionsData)
-                );
-
-                // 同時快取每個單獨的權限
-                for (const permission of permissionsData) {
-                    const key = this.getPermissionKey(permission.id);
-                    await redis.setEx(key, PermissionController.CACHE_TTL, JSON.stringify(permission));
-                }
-                logger.debug('Permissions cached successfully');
-            }
-
-            res.json(permissionsData);
+            logger.info(`Retrieved ${permissions.length} permissions from service`);
+            res.json(permissions);
         } catch (error) {
             logger.error('Error fetching permissions:', error);
             res.status(500).json({ message: 'Failed to fetch permissions', error: (error as Error).message });
@@ -195,37 +132,27 @@ export class PermissionController implements IPermissionController {
     public async getPermissionById(req: Request, res: Response): Promise<void> {
         try {
             const { permissionId } = req.params;
+            const id = parseInt(permissionId, 10);
             
-            // 先嘗試從 Redis 獲取
-            const redis = this.getRedisClient();
-            if (redis) {
-                const key = this.getPermissionKey(permissionId);
-                const cachedData = await redis.get(key);
-                if (cachedData) {
-                    const permission = JSON.parse(cachedData);
-                    res.json(permission);
-                    return;
-                }
+            logger.info(`Retrieving permission by ID: ${permissionId}`);
+            logRequest(req, `Permission retrieval request for ID: ${permissionId}`, 'info');
+            
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid permission ID' });
+                return;
             }
 
-            // Redis 快取不存在，從資料庫獲取
-            const permission = await PermissionModel.findByPk(permissionId);
+            const permission = await this.permissionService.getPermissionById(id);
             if (!permission) {
+                logger.warn(`Permission not found for ID: ${permissionId}`);
                 res.status(404).json({ message: 'Permission not found' });
                 return;
             }
 
-            const permissionData = permission.toJSON();
-
-            // 更新 Redis 快取
-            if (redis) {
-                const key = this.getPermissionKey(permissionId);
-                await redis.setEx(key, PermissionController.CACHE_TTL, JSON.stringify(permissionData));
-            }
-
-            res.json(permissionData);
+            logger.info(`Permission ID: ${permissionId} retrieved successfully`);
+            res.json(permission);
         } catch (error) {
-            console.error(error);
+            logger.error('Error fetching permission by ID:', error);
             res.status(500).json({ message: 'Failed to fetch permission', error: (error as Error).message });
         }
     }
@@ -266,24 +193,27 @@ export class PermissionController implements IPermissionController {
     public async createPermission(req: Request, res: Response): Promise<void> {
         try {
             const { name, description } = req.body;
-            const permission = await PermissionModel.create({ name, description });
-            const permissionData = permission.toJSON();
-
-            // 更新 Redis 快取
-            const redis = this.getRedisClient();
-            if (redis) {
-                // 快取新創建的權限
-                const key = this.getPermissionKey(permissionData.id);
-                await redis.setEx(key, PermissionController.CACHE_TTL, JSON.stringify(permissionData));
-                
-                // 清除所有權限列表快取，強制下次重新載入
-                await redis.del(PermissionController.ALL_PERMISSIONS_KEY);
+            
+            logger.info(`Creating new permission: ${name}`);
+            logRequest(req, `Permission creation request for: ${name}`, 'info');
+            
+            // 驗證輸入
+            if (!name || name.trim().length === 0) {
+                res.status(400).json({ message: 'Permission name is required' });
+                return;
             }
 
-            res.status(201).json(permissionData);
+            const permission = await this.permissionService.createPermission({ name, description });
+
+            logger.info(`Permission created successfully: ${name} (ID: ${permission.id})`);
+            res.status(201).json(permission);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to create permission', error: (error as Error).message });
+            logger.error('Error creating permission:', error);
+            if (error instanceof Error && error.message.includes('already exists')) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to create permission', error: (error as Error).message });
+            }
         }
     }
 
@@ -314,29 +244,38 @@ export class PermissionController implements IPermissionController {
         try {
             const { permissionId } = req.params;
             const { name, description } = req.body;
-            const permission = await PermissionModel.findByPk(permissionId);
-            if (!permission) {
+            const id = parseInt(permissionId, 10);
+            
+            logger.info(`Updating permission ID: ${permissionId}`);
+            logRequest(req, `Permission update request for ID: ${permissionId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid permission ID' });
+                return;
+            }
+
+            if (!name && !description) {
+                res.status(400).json({ message: 'At least one field (name or description) must be provided for update' });
+                return;
+            }
+
+            const updatedPermission = await this.permissionService.updatePermission(id, { name, description });
+            if (!updatedPermission) {
+                logger.warn(`Permission update failed - permission not found for ID: ${permissionId}`);
                 res.status(404).json({ message: 'Permission not found' });
                 return;
             }
-            await permission.update({ name, description });
-            const updatedPermissionData = permission.toJSON();
 
-            // 更新 Redis 快取
-            const redis = this.getRedisClient();
-            if (redis) {
-                // 更新單個權限快取
-                const key = this.getPermissionKey(permissionId);
-                await redis.setEx(key, PermissionController.CACHE_TTL, JSON.stringify(updatedPermissionData));
-                
-                // 清除所有權限列表快取，強制下次重新載入
-                await redis.del(PermissionController.ALL_PERMISSIONS_KEY);
-            }
-
-            res.json(updatedPermissionData);
+            logger.info(`Permission updated successfully: ID ${permissionId}`);
+            res.json(updatedPermission);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to update permission', error: (error as Error).message });
+            logger.error('Error updating permission:', error);
+            if (error instanceof Error && error.message.includes('already exists')) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to update permission', error: (error as Error).message });
+            }
         }
     }
 
@@ -360,27 +299,28 @@ export class PermissionController implements IPermissionController {
     public async deletePermission(req: Request, res: Response): Promise<void> {
         try {
             const { permissionId } = req.params;
-            const permission = await PermissionModel.findByPk(permissionId);
-            if (!permission) {
+            const id = parseInt(permissionId, 10);
+            
+            logger.info(`Deleting permission ID: ${permissionId}`);
+            logRequest(req, `Permission deletion request for ID: ${permissionId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid permission ID' });
+                return;
+            }
+
+            const deleted = await this.permissionService.deletePermission(id);
+            if (!deleted) {
+                logger.warn(`Permission deletion failed - permission not found for ID: ${permissionId}`);
                 res.status(404).json({ message: 'Permission not found' });
                 return;
             }
-            await permission.destroy();
 
-            // 清除 Redis 快取
-            const redis = this.getRedisClient();
-            if (redis) {
-                // 清除單個權限快取
-                const key = this.getPermissionKey(permissionId);
-                await redis.del(key);
-                
-                // 清除所有權限列表快取
-                await redis.del(PermissionController.ALL_PERMISSIONS_KEY);
-            }
-
+            logger.info(`Permission deleted successfully: ID ${permissionId}`);
             res.status(204).send();
         } catch (error) {
-            console.error(error);
+            logger.error('Error deleting permission:', error);
             res.status(500).json({ message: 'Failed to delete permission', error: (error as Error).message });
         }
     }

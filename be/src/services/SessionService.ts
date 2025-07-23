@@ -39,6 +39,10 @@
 import { getRedisClient } from '../configs/redisConfig.js';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
+// 匯入日誌記錄器
+import { createLogger } from '../configs/loggerConfig.js';
+
+const logger = createLogger('SessionService');
 
 /**
  * 使用者會話資料介面
@@ -100,6 +104,7 @@ export class SessionService {
       return getRedisClient();
     } catch (error) {
       // 拋出更具體的錯誤訊息
+      logger.error('Redis connection is not available');
       throw new Error('Redis connection is not available. Please ensure Redis is connected.');
     }
   }
@@ -197,8 +202,10 @@ export class SessionService {
       
       // 執行所有 Redis 操作
       await pipeline.exec();
+      logger.debug(`Session created for user ${userId} with TTL ${ttl} seconds`);
     } catch (error) {
       // 拋出具體的錯誤訊息
+      logger.error('Failed to set user session:', error);
       throw new Error(`Failed to set user session: ${error}`);
     }
   }
@@ -225,9 +232,10 @@ export class SessionService {
       sessionData.lastActiveTime = Date.now();
       await redis.set(sessionKey, JSON.stringify(sessionData), { KEEPTTL: true });
       
+      logger.debug(`Session retrieved and updated for token`);
       return sessionData;
     } catch (error) {
-      console.error('Failed to get user session:', error);
+      logger.error('Failed to get user session:', error);
       return null;
     }
   }
@@ -250,10 +258,13 @@ export class SessionService {
         pipeline.sRem(userSessionsKey, token);
         
         await pipeline.exec();
+        logger.debug(`Session deleted for user ${userId}`);
       } else {
         await redis.del(sessionKey);
+        logger.debug('Session deleted');
       }
     } catch (error) {
+      logger.error('Failed to delete user session:', error);
       throw new Error(`Failed to delete user session: ${error}`);
     }
   }
@@ -269,9 +280,14 @@ export class SessionService {
 
     try {
       const result = await redis.expire(sessionKey, ttl);
+      if (result === 1) {
+        logger.debug(`Session extended with TTL ${ttl} seconds`);
+      } else {
+        logger.warn('Failed to extend session - session may not exist');
+      }
       return result === 1;
     } catch (error) {
-      console.error('Failed to extend session:', error);
+      logger.error('Failed to extend session:', error);
       return false;
     }
   }
@@ -304,7 +320,9 @@ export class SessionService {
       pipeline.del(userSessionsKey);
       
       await pipeline.exec();
+      logger.info(`Cleared ${tokens.length} sessions for user ${userId}`);
     } catch (error) {
+      logger.error('Failed to clear all user sessions:', error);
       throw new Error(`Failed to clear all user sessions: ${error}`);
     }
   }
@@ -319,9 +337,10 @@ export class SessionService {
 
     try {
       const count = await redis.sCard(userSessionsKey);
+      logger.debug(`User ${userId} has ${count} active sessions`);
       return count;
     } catch (error) {
-      console.error('Failed to get user active session count:', error);
+      logger.error('Failed to get user active session count:', error);
       return 0;
     }
   }
@@ -336,9 +355,10 @@ export class SessionService {
 
     try {
       const exists = await redis.exists(sessionKey);
+      logger.debug(`Session existence check: ${exists === 1 ? 'exists' : 'not found'}`);
       return exists === 1;
     } catch (error) {
-      console.error('Failed to check session existence:', error);
+      logger.error('Failed to check session existence:', error);
       return false;
     }
   }
@@ -353,9 +373,10 @@ export class SessionService {
 
     try {
       const ttl = await redis.ttl(sessionKey);
+      logger.debug(`Session TTL: ${ttl} seconds`);
       return ttl;
     } catch (error) {
-      console.error('Failed to get session TTL:', error);
+      logger.error('Failed to get session TTL:', error);
       return -1;
     }
   }

@@ -25,8 +25,11 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型，用於資料庫操作
+import { RoleService } from '../../services/RoleService.js'; // 引入角色服務層
 import { IRoleController } from '../../types/controllers/IRoleController.js'; // 引入角色控制器介面定義
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+
+const logger = createLogger('RoleController');
 
 /**
  * 角色管理控制器類別
@@ -54,6 +57,8 @@ import { IRoleController } from '../../types/controllers/IRoleController.js'; //
  * ```
  */
 export class RoleController implements IRoleController {
+    private roleService: RoleService;
+
     /**
      * 建構函式
      * 
@@ -63,8 +68,8 @@ export class RoleController implements IRoleController {
      * @constructor
      * @description 建立新的角色控制器實例，準備處理角色相關的業務邏輯
      */
-    constructor() {
-        // 控制器僅包含業務邏輯，路由配置已移至專門的路由文件中
+    constructor(roleService: RoleService = new RoleService()) {
+        this.roleService = roleService;
     }
 
 
@@ -117,20 +122,16 @@ export class RoleController implements IRoleController {
      */
     public async getRoles(req: Request, res: Response): Promise<void> {
         try {
-            // 從資料庫中查詢所有角色記錄，包括所有欄位和時間戳資訊
-            const roles = await RoleModel.findAll();
+            logRequest(req, 'Fetching all roles', 'info');
+            logger.debug('Getting all roles from service');
             
-            // 直接回傳角色列表，不需要額外的包裝或轉換
+            const roles = await this.roleService.getAllRoles();
+            
+            logger.info(`Retrieved ${roles.length} roles from service`);
             res.json(roles);
         } catch (error) {
-            // 記錄錯誤詳細資訊到控制台，便於除錯和監控
-            console.error('獲取角色列表時發生錯誤:', error);
-            
-            // 回傳 500 伺服器內部錯誤，提供適當的錯誤訊息但不暴露內部細節
-            res.status(500).json({ 
-                message: 'Failed to fetch roles', 
-                error: (error as Error).message 
-            });
+            logger.error('Error fetching roles:', error);
+            res.status(500).json({ message: 'Failed to fetch roles', error: (error as Error).message });
         }
     }
 
@@ -181,29 +182,29 @@ export class RoleController implements IRoleController {
      */
     public async getRoleById(req: Request, res: Response): Promise<void> {
         try {
-            // 從 URL 參數中提取角色 ID
             const { roleId } = req.params;
+            const id = parseInt(roleId, 10);
             
-            // 使用主鍵查找指定的角色記錄
-            const role = await RoleModel.findByPk(roleId);
+            logger.info(`Retrieving role by ID: ${roleId}`);
+            logRequest(req, `Role retrieval request for ID: ${roleId}`, 'info');
             
-            // 檢查角色是否存在，如果不存在則回傳 404 錯誤
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
+                return;
+            }
+
+            const role = await this.roleService.getRoleById(id);
             if (!role) {
+                logger.warn(`Role not found for ID: ${roleId}`);
                 res.status(404).json({ message: 'Role not found' });
                 return;
             }
-            
-            // 回傳找到的角色詳細資訊
+
+            logger.info(`Role ID: ${roleId} retrieved successfully`);
             res.json(role);
         } catch (error) {
-            // 記錄錯誤詳細資訊到控制台
-            console.error('獲取角色詳細資訊時發生錯誤:', error);
-            
-            // 回傳 500 伺服器內部錯誤
-            res.status(500).json({ 
-                message: 'Failed to fetch role', 
-                error: (error as Error).message 
-            });
+            logger.error('Error fetching role by ID:', error);
+            res.status(500).json({ message: 'Failed to fetch role', error: (error as Error).message });
         }
     }
 
@@ -258,26 +259,28 @@ export class RoleController implements IRoleController {
      */
     public async createRole(req: Request, res: Response): Promise<void> {
         try {
-            // 從請求主體中提取角色名稱和顯示名稱
             const { name, displayName } = req.body;
             
-            // 在資料庫中建立新的角色記錄
-            // Sequelize 會自動處理時間戳和主鍵的設定
-            const role = await RoleModel.create({ name, displayName });
+            logger.info(`Creating new role: ${name}`);
+            logRequest(req, `Role creation request for: ${name}`, 'info');
             
-            // 回傳 201 建立成功狀態碼和新建立的角色資訊
+            // 驗證輸入
+            if (!name || name.trim().length === 0) {
+                res.status(400).json({ message: 'Role name is required' });
+                return;
+            }
+
+            const role = await this.roleService.createRole({ name, displayName });
+
+            logger.info(`Role created successfully: ${name} (ID: ${role.id})`);
             res.status(201).json(role);
         } catch (error) {
-            // 記錄錯誤詳細資訊到控制台
-            console.error('建立角色時發生錯誤:', error);
-            
-            // 回傳 500 伺服器內部錯誤
-            // 注意：這裡可能需要根據不同的錯誤類型回傳不同的狀態碼
-            // 例如角色名稱重複時回傳 409 衝突狀態碼
-            res.status(500).json({ 
-                message: 'Failed to create role', 
-                error: (error as Error).message 
-            });
+            logger.error('Error creating role:', error);
+            if (error instanceof Error && error.message.includes('already exists')) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to create role', error: (error as Error).message });
+            }
         }
     }
 
@@ -335,35 +338,40 @@ export class RoleController implements IRoleController {
      */
     public async updateRole(req: Request, res: Response): Promise<void> {
         try {
-            // 從 URL 參數中提取角色 ID
             const { roleId } = req.params;
-            // 從請求主體中提取要更新的資料
             const { name, displayName } = req.body;
+            const id = parseInt(roleId, 10);
             
-            // 查找指定的角色記錄
-            const role = await RoleModel.findByPk(roleId);
+            logger.info(`Updating role ID: ${roleId}`);
+            logRequest(req, `Role update request for ID: ${roleId}`, 'info');
             
-            // 檢查角色是否存在
-            if (!role) {
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
+                return;
+            }
+
+            if (!name && !displayName) {
+                res.status(400).json({ message: 'At least one field (name or displayName) must be provided for update' });
+                return;
+            }
+
+            const updatedRole = await this.roleService.updateRole(id, { name, displayName });
+            if (!updatedRole) {
+                logger.warn(`Role update failed - role not found for ID: ${roleId}`);
                 res.status(404).json({ message: 'Role not found' });
                 return;
             }
-            
-            // 更新角色資訊，Sequelize 會自動更新 updatedAt 時間戳
-            await role.update({ name, displayName });
-            
-            // 回傳更新後的角色資訊
-            res.json(role);
+
+            logger.info(`Role updated successfully: ID ${roleId}`);
+            res.json(updatedRole);
         } catch (error) {
-            // 記錄錯誤詳細資訊到控制台
-            console.error('更新角色時發生錯誤:', error);
-            
-            // 回傳 500 伺服器內部錯誤
-            // 注意：這裡可能需要根據不同的錯誤類型回傳不同的狀態碼
-            res.status(500).json({ 
-                message: 'Failed to update role', 
-                error: (error as Error).message 
-            });
+            logger.error('Error updating role:', error);
+            if (error instanceof Error && error.message.includes('already exists')) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to update role', error: (error as Error).message });
+            }
         }
     }
 
@@ -417,36 +425,30 @@ export class RoleController implements IRoleController {
      */
     public async deleteRole(req: Request, res: Response): Promise<void> {
         try {
-            // 從 URL 參數中提取角色 ID
             const { roleId } = req.params;
+            const id = parseInt(roleId, 10);
             
-            // 查找指定的角色記錄
-            const role = await RoleModel.findByPk(roleId);
+            logger.info(`Deleting role ID: ${roleId}`);
+            logRequest(req, `Role deletion request for ID: ${roleId}`, 'info');
             
-            // 檢查角色是否存在
-            if (!role) {
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
+                return;
+            }
+
+            const deleted = await this.roleService.deleteRole(id);
+            if (!deleted) {
+                logger.warn(`Role deletion failed - role not found for ID: ${roleId}`);
                 res.status(404).json({ message: 'Role not found' });
                 return;
             }
-            
-            // 執行角色刪除操作
-            // 注意：這裡可能需要添加依賴性檢查，確保沒有使用者使用此角色
-            // 也需要處理級聯刪除（角色-權限關聯等）
-            await role.destroy();
-            
-            // 回傳 204 No Content 狀態碼，表示成功刪除且無回傳內容
+
+            logger.info(`Role deleted successfully: ID ${roleId}`);
             res.status(204).send();
         } catch (error) {
-            // 記錄錯誤詳細資訊到控制台
-            console.error('刪除角色時發生錯誤:', error);
-            
-            // 回傳 500 伺服器內部錯誤
-            // 注意：這裡可能需要根據不同的錯誤類型回傳不同的狀態碼
-            // 例如外鍵約束錯誤時回傳 409 衝突狀態碼
-            res.status(500).json({ 
-                message: 'Failed to delete role', 
-                error: (error as Error).message 
-            });
+            logger.error('Error deleting role:', error);
+            res.status(500).json({ message: 'Failed to delete role', error: (error as Error).message });
         }
     }
 }

@@ -14,6 +14,10 @@
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { RTKDataModel } from '../models/RTKDataModel.js'; // 匯入 RTK 資料模型
+import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('RTKController');
 
 /**
  * RTK 定位資料控制器
@@ -76,19 +80,18 @@ export class RTKController {
    * ]
    * ```
    */
-  public async getRTKData(_req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // 記錄開始取得 RTK 資料的資訊
-      console.log('🔍 RTKController: Starting getRTKData...');
+      logger.info('Starting RTK data retrieval process');
+      logRequest(req, 'RTK data retrieval request', 'info');
       
       // 從資料庫中取得所有 RTK 資料，按建立時間降序排列
       const rtkData = await RTKDataModel.findAll({
         order: [['createdAt', 'DESC']], // 按建立時間降序排列以取得最新資料
       });
 
-      // 記錄從資料庫取得的原始資料
-      console.log('📊 RTKController: Raw data from database:', rtkData);
-      console.log('📊 RTKController: Number of records found:', rtkData.length);
+      logger.debug(`Retrieved ${rtkData.length} RTK records from database`);
+      logger.debug('Raw RTK data structure validation completed');
 
       // 轉換資料格式以符合前端期望的結構
       const formattedData = rtkData.map((item) => ({
@@ -99,13 +102,13 @@ export class RTKController {
         timestamp: item.createdAt?.toISOString().replace('T', ' ').substring(0, 19) || '', // 格式: YYYY-MM-DD HH:mm:ss
       }));
 
-      // 記錄格式化後的資料
-      console.log('✅ RTKController: Formatted data:', formattedData);
-      console.log('✅ RTKController: Sending response with', formattedData.length, 'records');
+      logger.info(`RTK data retrieval completed successfully - returning ${formattedData.length} records`);
+      logger.debug('RTK data formatting and validation completed');
 
       // 回傳格式化後的 RTK 資料給客戶端
       res.status(200).json(formattedData);
     } catch (error) {
+      logger.error('Error retrieving RTK data:', error);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(error);
     }
@@ -162,12 +165,13 @@ export class RTKController {
       // 從請求主體中解構取得更新資料
       const { latitude, longitude, altitude, timestamp } = req.body;
 
-      // 記錄開始更新 RTK 資料的資訊
-      console.log(`🔄 RTKController: Updating RTK data with ID: ${id}`);
-      console.log('📝 RTKController: Update data:', { latitude, longitude, altitude, timestamp });
+      logger.info(`Starting RTK data update process for ID: ${id}`);
+      logRequest(req, `RTK data update request for ID: ${id}`, 'info');
+      logger.debug(`Update data received - Latitude: ${latitude}, Longitude: ${longitude}, Altitude: ${altitude}, Timestamp: ${timestamp}`);
 
       // 驗證必要欄位是否存在
       if (!latitude || !longitude) {
+        logger.warn(`RTK data update validation failed for ID: ${id} - missing required latitude or longitude`);
         // 回傳 400 錯誤，表示請求資料不完整
         res.status(400).json({
           success: false,
@@ -179,6 +183,7 @@ export class RTKController {
       // 檢查指定 ID 的記錄是否存在於資料庫中
       const existingRecord = await RTKDataModel.findByPk(id);
       if (!existingRecord) {
+        logger.warn(`RTK data update failed - record not found for ID: ${id}`);
         // 回傳 404 錯誤，表示資料不存在
         res.status(404).json({
           success: false,
@@ -193,8 +198,8 @@ export class RTKController {
         longitude: parseFloat(longitude) // 將經度轉換為浮點數
       });
 
-      // 記錄更新成功的資訊
-      console.log('✅ RTKController: RTK data updated successfully:', updatedRecord.toJSON());
+      logger.info(`RTK data update completed successfully for ID: ${id}`);
+      logger.debug(`Updated RTK record - Latitude: ${updatedRecord.latitude}, Longitude: ${updatedRecord.longitude}`);
 
       // 準備回傳的格式化資料
       const formattedData = {
@@ -212,8 +217,7 @@ export class RTKController {
         data: formattedData
       });
     } catch (error) {
-      // 記錄更新失敗的錯誤資訊
-      console.error('❌ RTKController: Error updating RTK data:', error);
+      logger.error('Error updating RTK data:', error);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(error);
     }

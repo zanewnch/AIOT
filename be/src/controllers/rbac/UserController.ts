@@ -25,9 +25,12 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { UserModel } from '../../models/rbac/UserModel.js'; // 引入使用者資料模型
-import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型
+import { UserService } from '../../services/UserService.js'; // 引入使用者服務層
 import { IUserController } from '../../types/controllers/IUserController.js'; // 引入使用者控制器介面定義
+import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('UserController');
 
 /**
  * 使用者管理控制器類別
@@ -49,11 +52,13 @@ import { IUserController } from '../../types/controllers/IUserController.js'; //
  * ```
  */
 export class UserController implements IUserController {
+    private userService: UserService;
+
     /**
      * 初始化使用者控制器實例
      */
-    constructor() {
-        // Controller only contains business logic
+    constructor(userService: UserService = new UserService()) {
+        this.userService = userService;
     }
 
 
@@ -89,10 +94,15 @@ export class UserController implements IUserController {
      */
     public async getUsers(req: Request, res: Response): Promise<void> {
         try {
-            const users = await UserModel.findAll();
+            logRequest(req, 'Fetching all users', 'info');
+            logger.debug('Getting all users from service');
+            
+            const users = await this.userService.getAllUsers();
+            
+            logger.info(`Retrieved ${users.length} users from service`);
             res.json(users);
         } catch (error) {
-            console.error(error);
+            logger.error('Error fetching users:', error);
             res.status(500).json({ message: 'Failed to fetch users', error: (error as Error).message });
         }
     }
@@ -129,14 +139,27 @@ export class UserController implements IUserController {
     public async getUserById(req: Request, res: Response): Promise<void> {
         try {
             const { userId } = req.params;
-            const user = await UserModel.findByPk(userId);
+            const id = parseInt(userId, 10);
+            
+            logger.info(`Retrieving user by ID: ${userId}`);
+            logRequest(req, `User retrieval request for ID: ${userId}`, 'info');
+            
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
+                return;
+            }
+
+            const user = await this.userService.getUserById(id);
             if (!user) {
+                logger.warn(`User not found for ID: ${userId}`);
                 res.status(404).json({ message: 'User not found' });
                 return;
             }
+
+            logger.info(`User ID: ${userId} retrieved successfully`);
             res.json(user);
         } catch (error) {
-            console.error(error);
+            logger.error('Error fetching user by ID:', error);
             res.status(500).json({ message: 'Failed to fetch user', error: (error as Error).message });
         }
     }
@@ -178,12 +201,36 @@ export class UserController implements IUserController {
      */
     public async createUser(req: Request, res: Response): Promise<void> {
         try {
-            const { username, passwordHash, email } = req.body;
-            const user = await UserModel.create({ username, passwordHash, email });
+            const { username, email, password } = req.body;
+            
+            logger.info(`Creating new user: ${username}`);
+            logRequest(req, `User creation request for: ${username}`, 'info');
+            
+            // 驗證輸入
+            if (!username || username.trim().length === 0) {
+                res.status(400).json({ message: 'Username is required' });
+                return;
+            }
+            if (!email || email.trim().length === 0) {
+                res.status(400).json({ message: 'Email is required' });
+                return;
+            }
+            if (!password || password.length < 6) {
+                res.status(400).json({ message: 'Password must be at least 6 characters long' });
+                return;
+            }
+
+            const user = await this.userService.createUser({ username, email, password });
+
+            logger.info(`User created successfully: ${username} (ID: ${user.id})`);
             res.status(201).json(user);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to create user', error: (error as Error).message });
+            logger.error('Error creating user:', error);
+            if (error instanceof Error && (error.message.includes('already exists') || error.message.includes('characters long'))) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to create user', error: (error as Error).message });
+            }
         }
     }
 
@@ -214,17 +261,44 @@ export class UserController implements IUserController {
     public async updateUser(req: Request, res: Response): Promise<void> {
         try {
             const { userId } = req.params;
-            const { username, passwordHash, email } = req.body;
-            const user = await UserModel.findByPk(userId);
-            if (!user) {
+            const { username, email, password } = req.body;
+            const id = parseInt(userId, 10);
+            
+            logger.info(`Updating user ID: ${userId}`);
+            logRequest(req, `User update request for ID: ${userId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
+                return;
+            }
+
+            if (!username && !email && !password) {
+                res.status(400).json({ message: 'At least one field (username, email, or password) must be provided for update' });
+                return;
+            }
+
+            if (password && password.length < 6) {
+                res.status(400).json({ message: 'Password must be at least 6 characters long' });
+                return;
+            }
+
+            const updatedUser = await this.userService.updateUser(id, { username, email, password });
+            if (!updatedUser) {
+                logger.warn(`User update failed - user not found for ID: ${userId}`);
                 res.status(404).json({ message: 'User not found' });
                 return;
             }
-            await user.update({ username, passwordHash, email });
-            res.json(user);
+
+            logger.info(`User updated successfully: ID ${userId}`);
+            res.json(updatedUser);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to update user', error: (error as Error).message });
+            logger.error('Error updating user:', error);
+            if (error instanceof Error && (error.message.includes('already exists') || error.message.includes('characters long'))) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to update user', error: (error as Error).message });
+            }
         }
     }
 
@@ -248,15 +322,28 @@ export class UserController implements IUserController {
     public async deleteUser(req: Request, res: Response): Promise<void> {
         try {
             const { userId } = req.params;
-            const user = await UserModel.findByPk(userId);
-            if (!user) {
+            const id = parseInt(userId, 10);
+            
+            logger.info(`Deleting user ID: ${userId}`);
+            logRequest(req, `User deletion request for ID: ${userId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid user ID' });
+                return;
+            }
+
+            const deleted = await this.userService.deleteUser(id);
+            if (!deleted) {
+                logger.warn(`User deletion failed - user not found for ID: ${userId}`);
                 res.status(404).json({ message: 'User not found' });
                 return;
             }
-            await user.destroy();
+
+            logger.info(`User deleted successfully: ID ${userId}`);
             res.status(204).send();
         } catch (error) {
-            console.error(error);
+            logger.error('Error deleting user:', error);
             res.status(500).json({ message: 'Failed to delete user', error: (error as Error).message });
         }
     }

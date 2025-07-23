@@ -36,24 +36,51 @@
 
 // 匯入 bcrypt 加密庫，用於密碼雜湊處理
 import bcrypt from 'bcrypt';
-// 匯入權限模型，用於權限資料管理
+// 匯入資料存取層，用於資料庫操作
+import { PermissionRepository, IPermissionRepository } from '../repo/PermissionRepo.js';
+import { RoleRepository, IRoleRepository } from '../repo/RoleRepo.js';
+import { RolePermissionRepository, IRolePermissionRepository } from '../repo/RolePermissionRepo.js';
+import { UserRepository, IUserRepository } from '../repo/UserRepo.js';
+import { UserRoleRepository, IUserRoleRepository } from '../repo/UserRoleRepo.js';
+// 匯入模型類型，用於類型定義
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
-// 匯入角色模型，用於角色資料管理
 import { RoleModel } from '../models/rbac/RoleModel.js';
-// 匯入角色權限關聯模型，用於管理角色與權限的多對多關係
-import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
-// 匯入使用者模型，用於使用者資料管理
 import { UserModel } from '../models/rbac/UserModel.js';
-// 匯入使用者角色關聯模型，用於管理使用者與角色的多對多關係
-import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 // 匯入進度追蹤相關類型，用於支援進度回調和任務階段管理
 import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
+// 匯入日誌記錄器
+import { createLogger } from '../configs/loggerConfig.js';
+
+const logger = createLogger('RbacInitService');
 
 /**
  * RBAC 初始化服務類別
  * 提供完整的 RBAC 系統初始化功能
  */
 export class RbacInitService {
+  private permissionRepository: IPermissionRepository;
+  private roleRepository: IRoleRepository;
+  private rolePermissionRepository: IRolePermissionRepository;
+  private userRepository: IUserRepository;
+  private userRoleRepository: IUserRoleRepository;
+
+  /**
+   * 建構函式
+   * 初始化所有必要的資料存取層
+   */
+  constructor(
+    permissionRepository: IPermissionRepository = new PermissionRepository(),
+    roleRepository: IRoleRepository = new RoleRepository(),
+    rolePermissionRepository: IRolePermissionRepository = new RolePermissionRepository(),
+    userRepository: IUserRepository = new UserRepository(),
+    userRoleRepository: IUserRoleRepository = new UserRoleRepository()
+  ) {
+    this.permissionRepository = permissionRepository;
+    this.roleRepository = roleRepository;
+    this.rolePermissionRepository = rolePermissionRepository;
+    this.userRepository = userRepository;
+    this.userRoleRepository = userRoleRepository;
+  }
   /**
    * 建立 RBAC 示範資料
    * 執行完整的 RBAC 初始化流程，包含角色、權限、使用者及其關聯關係
@@ -83,6 +110,8 @@ export class RbacInitService {
    * 若資料已存在，則不會重複建立
    */
   async seedRbacDemo() {
+    logger.info('Starting RBAC demo data seeding process');
+    
     const result = {
       users: 0,
       roles: 0,
@@ -98,6 +127,7 @@ export class RbacInitService {
     await this.seedRolePermissions(roleMap, permMap, result);
     await this.seedUserRoles(userMap, roleMap, result);
 
+    logger.info(`RBAC demo data seeding completed: ${result.users} users, ${result.roles} roles, ${result.permissions} permissions`);
     return result;
   }
 
@@ -134,14 +164,14 @@ export class RbacInitService {
       
       // 4. 創建管理員用戶
       const passwordHash = await bcrypt.hash(password, 10);
-      const [user, userCreated] = await UserModel.findOrCreate({
-        where: { username },
-        defaults: {
+      const [user, userCreated] = await this.userRepository.findOrCreate(
+        { username },
+        {
           username,
           email,
           passwordHash,
-        },
-      });
+        }
+      );
 
       if (!userCreated) {
         return {
@@ -151,17 +181,14 @@ export class RbacInitService {
       }
 
       // 5. 指派 admin 角色給用戶
-      await UserRoleModel.findOrCreate({
-        where: { userId: user.id, roleId: adminRole.id },
-        defaults: { userId: user.id, roleId: adminRole.id },
-      });
+      await this.userRoleRepository.findOrCreate(user.id, adminRole.id);
 
       return {
         success: true,
         message: `Admin user '${username}' created successfully with full permissions`,
       };
     } catch (error) {
-      console.error('Error creating admin user:', error);
+      logger.error('Error creating admin user:', error);
       return {
         success: false,
         message: `Failed to create admin user: ${error}`,
@@ -211,10 +238,10 @@ export class RbacInitService {
     const permissions: PermissionModel[] = [];
     
     for (const permData of permissionsData) {
-      const [permission] = await PermissionModel.findOrCreate({
-        where: { name: permData.name },
-        defaults: permData,
-      });
+      const [permission] = await this.permissionRepository.findOrCreate(
+        { name: permData.name },
+        permData
+      );
       permissions.push(permission);
     }
     
@@ -225,13 +252,13 @@ export class RbacInitService {
    * 創建管理員角色
    */
   private async createAdminRole(): Promise<RoleModel> {
-    const [adminRole] = await RoleModel.findOrCreate({
-      where: { name: 'admin' },
-      defaults: {
+    const [adminRole] = await this.roleRepository.findOrCreate(
+      { name: 'admin' },
+      {
         name: 'admin',
         displayName: 'System Administrator',
-      },
-    });
+      }
+    );
     
     return adminRole;
   }
@@ -244,10 +271,7 @@ export class RbacInitService {
     permissions: PermissionModel[]
   ): Promise<void> {
     for (const permission of permissions) {
-      await RolePermissionModel.findOrCreate({
-        where: { roleId: role.id, permissionId: permission.id },
-        defaults: { roleId: role.id, permissionId: permission.id },
-      });
+      await this.rolePermissionRepository.findOrCreate(role.id, permission.id);
     }
   }
 
@@ -283,7 +307,7 @@ export class RbacInitService {
     const roleMap: Record<string, RoleModel> = {};
     
     for (const data of rolesData) {
-      const [role, created] = await RoleModel.findOrCreate({ where: { name: data.name }, defaults: data });
+      const [role, created] = await this.roleRepository.findOrCreate({ name: data.name }, data);
       if (created) result.roles += 1;
       roleMap[data.name] = role;
     }
@@ -309,7 +333,7 @@ export class RbacInitService {
     const permMap: Record<string, PermissionModel> = {};
     
     for (const data of permsData) {
-      const [perm, created] = await PermissionModel.findOrCreate({ where: { name: data.name }, defaults: data });
+      const [perm, created] = await this.permissionRepository.findOrCreate({ name: data.name }, data);
       if (created) result.permissions += 1;
       permMap[data.name] = perm;
     }
@@ -330,7 +354,7 @@ export class RbacInitService {
     const TARGET_COUNT = 5000;
     const BATCH_SIZE = 1000; // 分批處理避免記憶體問題
     
-    console.log(`正在生成 ${TARGET_COUNT} 筆使用者測試資料...`);
+    logger.info(`Generating ${TARGET_COUNT} user test data records`);
     
     // 預設密碼 hash (對應明文 "password123")
     const defaultPasswordHash = await bcrypt.hash('password123', 10);
@@ -353,16 +377,11 @@ export class RbacInitService {
         });
       }
       
-      console.log(`正在處理第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 (${batchStart + 1}-${batchEnd})...`);
+      const batchNumber = Math.floor(batchStart / BATCH_SIZE) + 1;
+      logger.info(`Processing user batch ${batchNumber} (records ${batchStart + 1}-${batchEnd})`);
       
       // 批量創建使用者
-      const createdUsers = await UserModel.bulkCreate(
-        usersData,
-        { 
-          ignoreDuplicates: true, // 忽略重複項目
-          returning: true, // 返回創建的記錄
-        }
-      );
+      const createdUsers = await this.userRepository.bulkCreate(usersData);
       
       // 將創建的使用者加入 userMap
       for (let i = 0; i < createdUsers.length; i++) {
@@ -371,11 +390,11 @@ export class RbacInitService {
       }
       
       totalCreated += createdUsers.length;
-      console.log(`批次完成，已創建 ${createdUsers.length} 筆使用者資料`);
+      logger.debug(`Batch ${batchNumber} completed, created ${createdUsers.length} user records`);
     }
     
     result.users = totalCreated;
-    console.log(`成功創建總計 ${totalCreated} 筆使用者資料`);
+    logger.info(`Successfully created ${totalCreated} user records in total`);
     
     // 為了保持原有邏輯的相容性，確保 alice 和 bob 存在
     const legacyUsers = [
@@ -385,10 +404,10 @@ export class RbacInitService {
     
     for (const data of legacyUsers) {
       if (!userMap[data.username]) {
-        const [user, created] = await UserModel.findOrCreate({ 
-          where: { username: data.username }, 
-          defaults: data 
-        });
+        const [user, created] = await this.userRepository.findOrCreate(
+          { username: data.username }, 
+          data
+        );
         if (created) result.users += 1;
         userMap[data.username] = user;
       }
@@ -430,10 +449,7 @@ export class RbacInitService {
     for (const pair of rolePermMatrix) {
       const roleId = roleMap[pair.role].id;
       const permId = permMap[pair.perm].id;
-      const [, created] = await RolePermissionModel.findOrCreate({
-        where: { roleId, permissionId: permId },
-        defaults: { roleId, permissionId: permId },
-      });
+      const [, created] = await this.rolePermissionRepository.findOrCreate(roleId, permId);
       if (created) result.rolePermissions += 1;
     }
   }
@@ -466,10 +482,7 @@ export class RbacInitService {
     for (const pair of userRoleMatrix) {
       const userId = userMap[pair.user].id;
       const roleId = roleMap[pair.role].id;
-      const [, created] = await UserRoleModel.findOrCreate({
-        where: { userId, roleId },
-        defaults: { userId, roleId },
-      });
+      const [, created] = await this.userRoleRepository.findOrCreate(userId, roleId);
       if (created) result.userRoles += 1;
     }
   }
@@ -594,7 +607,7 @@ export class RbacInitService {
     const TARGET_COUNT = 5000;
     const BATCH_SIZE = 1000; // 分批處理避免記憶體問題
     
-    console.log(`正在生成 ${TARGET_COUNT} 筆使用者測試資料...`);
+    logger.info(`Generating ${TARGET_COUNT} user test data records with progress tracking`);
     
     // 預設密碼 hash (對應明文 "password123")
     const defaultPasswordHash = await bcrypt.hash('password123', 10);
@@ -617,7 +630,8 @@ export class RbacInitService {
         });
       }
       
-      console.log(`正在處理第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 (${batchStart + 1}-${batchEnd})...`);
+      const batchNumber = Math.floor(batchStart / BATCH_SIZE) + 1;
+      logger.info(`Processing user batch ${batchNumber} with progress callback (records ${batchStart + 1}-${batchEnd})`);
       
       // 通知進度
       if (progressCallback) {
@@ -629,20 +643,14 @@ export class RbacInitService {
           percentage: 0, // 會被 ProgressService 重新計算
           current,
           total: 10000,
-          message: `正在插入第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次使用者資料 (${batchStart + 1}-${batchEnd})`,
+          message: `正在插入第 ${batchNumber} 批次使用者資料 (${batchStart + 1}-${batchEnd})`,
           startTime: new Date(),
           lastUpdated: new Date()
         });
       }
       
       // 批量創建使用者
-      const createdUsers = await UserModel.bulkCreate(
-        usersData,
-        { 
-          ignoreDuplicates: true, // 忽略重複項目
-          returning: true, // 返回創建的記錄
-        }
-      );
+      const createdUsers = await this.userRepository.bulkCreate(usersData);
       
       // 將創建的使用者加入 userMap
       for (let i = 0; i < createdUsers.length; i++) {
@@ -651,11 +659,11 @@ export class RbacInitService {
       }
       
       totalCreated += createdUsers.length;
-      console.log(`批次完成，已創建 ${createdUsers.length} 筆使用者資料`);
+      logger.debug(`Batch ${batchNumber} completed, created ${createdUsers.length} user records`);
     }
     
     result.users = totalCreated;
-    console.log(`成功創建總計 ${totalCreated} 筆使用者資料`);
+    logger.info(`Successfully created ${totalCreated} user records with progress tracking`);
     
     // 為了保持原有邏輯的相容性，確保 alice 和 bob 存在
     const legacyUsers = [
@@ -665,10 +673,10 @@ export class RbacInitService {
     
     for (const data of legacyUsers) {
       if (!userMap[data.username]) {
-        const [user, created] = await UserModel.findOrCreate({ 
-          where: { username: data.username }, 
-          defaults: data 
-        });
+        const [user, created] = await this.userRepository.findOrCreate(
+          { username: data.username }, 
+          data
+        );
         if (created) result.users += 1;
         userMap[data.username] = user;
       }

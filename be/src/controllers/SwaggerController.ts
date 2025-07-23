@@ -10,6 +10,10 @@
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { specs } from '../configs/swaggerConfig.js'; // 匯入 Swagger 配置和規格定義
+import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('SwaggerController');
 
 /**
  * Swagger API 文檔控制器
@@ -73,13 +77,19 @@ export class SwaggerController {
    * }
    * ```
    */
-  public getSwaggerSpec = (_req: Request, res: Response, next: NextFunction): void => {
+  public getSwaggerSpec = (req: Request, res: Response, next: NextFunction): void => {
     try {
+      logger.info('Serving OpenAPI specification document');
+      logRequest(req, 'Swagger specification request', 'info');
+      
       // 設定回應標頭為 JSON 格式
       res.setHeader('Content-Type', 'application/json');
+      
+      logger.debug('OpenAPI specification document prepared and sent successfully');
       // 回傳 OpenAPI 規格文件給客戶端
       res.send(specs);
     } catch (error) {
+      logger.error('Error serving OpenAPI specification:', error);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(error);
     }

@@ -20,6 +20,10 @@
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 的請求、回應和中間件類型定義
 import { UserActivityModel } from '../models/UserActivityModel.js'; // 引入使用者活動資料模型，用於資料庫操作
+import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('UserActivityController');
 
 /**
  * 使用者活動追蹤控制器類別
@@ -84,8 +88,12 @@ export class UserActivityController {
       // 從請求物件中取得已認證的使用者 ID（透過認證中間件設定）
       const userId = (req as any).user?.id;
       
+      logger.info(`Retrieving user activity data for user ID: ${userId}`);
+      logRequest(req, `User activity data request for user: ${userId}`, 'info');
+      
       // 驗證使用者是否已認證，未認證則回傳 401 未授權錯誤
       if (!userId) {
+        logger.warn('User activity request without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -100,6 +108,7 @@ export class UserActivityController {
 
       // 如果沒有活動記錄，建立預設值，這通常發生在使用者第一次登入時
       if (!activity) {
+        logger.debug(`Creating new activity record for user ID: ${userId}`);
         activity = await UserActivityModel.create({
           userId, // 使用者 ID
           lastLoginAt: new Date(), // 最後登入時間設為現在
@@ -111,6 +120,9 @@ export class UserActivityController {
           deviceInfo: req.get('user-agent') || '', // 從請求標頭取得設備資訊
           ipAddress: req.ip || '' // 從請求中取得 IP 地址
         });
+        logger.info(`New activity record created for user ID: ${userId}`);
+      } else {
+        logger.debug(`Existing activity record found for user ID: ${userId}`);
       }
 
       // 更新最後活動時間為現在，表示使用者正在活動
@@ -128,14 +140,15 @@ export class UserActivityController {
         maxAge: 24 * 60 * 60 * 1000 // Cookie 有效期為 24 小時
       });
 
+      logger.info(`User activity data retrieved successfully for user ID: ${userId}`);
+      
       // 回傳成功結果，包含完整的活動資料
       res.json({
         success: true,
         data: activity
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台，便於除錯
-      console.error('取得使用者活動資料時發生錯誤:', error);
+      logger.error('Error retrieving user activity data:', error);
       
       // 回傳 500 伺服器內部錯誤，不暴露敏感的錯誤細節
       res.status(500).json({ 
@@ -186,8 +199,12 @@ export class UserActivityController {
       // 從請求主體中取得頁面路徑和停留時間
       const { page, duration } = req.body;
 
+      logger.info(`Recording page visit for user ID: ${userId}, page: ${page}`);
+      logRequest(req, `Page visit recording request - Page: ${page}`, 'info');
+
       // 驗證使用者是否已認證
       if (!userId) {
+        logger.warn('Page visit recording attempted without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -197,6 +214,7 @@ export class UserActivityController {
 
       // 驗證頁面路徑是否提供，這是必填欄位
       if (!page) {
+        logger.warn(`Page visit recording failed - missing page parameter for user ID: ${userId}`);
         res.status(400).json({ 
           success: false, 
           message: '頁面路徑為必填欄位' 
@@ -242,6 +260,8 @@ export class UserActivityController {
         });
       }
 
+      logger.info(`Page visit recorded successfully for user ID: ${userId}, page: ${page}, visit count: ${activity.pageVisitCounts[page]}`);
+      
       // 回傳成功結果，包含頁面造訪統計資訊
       res.json({
         success: true,
@@ -253,8 +273,7 @@ export class UserActivityController {
         message: '頁面造訪已記錄'
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台
-      console.error('記錄頁面造訪時發生錯誤:', error);
+      logger.error('Error recording page visit:', error);
       
       // 回傳 500 伺服器內部錯誤
       res.status(500).json({ 
@@ -300,8 +319,12 @@ export class UserActivityController {
       // 從請求主體中取得會話持續時間和設備資訊
       const { sessionDuration, deviceInfo } = req.body;
 
+      logger.info(`Updating session info for user ID: ${userId}`);
+      logRequest(req, `Session info update request for user: ${userId}`, 'info');
+
       // 驗證使用者是否已認證
       if (!userId) {
+        logger.warn('Session info update attempted without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -316,6 +339,7 @@ export class UserActivityController {
 
       // 檢查活動記錄是否存在
       if (!activity) {
+        logger.warn(`Session info update failed - activity record not found for user ID: ${userId}`);
         res.status(404).json({ 
           success: false, 
           message: '使用者活動記錄不存在' 
@@ -341,6 +365,8 @@ export class UserActivityController {
       // 執行資料庫更新操作
       await activity.update(updateData);
 
+      logger.info(`Session info updated successfully for user ID: ${userId}`);
+      
       // 回傳成功結果，包含更新後的活動資料
       res.json({
         success: true,
@@ -348,8 +374,7 @@ export class UserActivityController {
         message: '會話資訊已更新'
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台
-      console.error('更新會話資訊時發生錯誤:', error);
+      logger.error('Error updating session info:', error);
       
       // 回傳 500 伺服器內部錯誤
       res.status(500).json({ 
@@ -404,8 +429,12 @@ export class UserActivityController {
       // 從請求物件中取得已認證的使用者 ID
       const userId = (req as any).user?.id;
       
+      logger.info(`Retrieving activity statistics for user ID: ${userId}`);
+      logRequest(req, `Activity stats request for user: ${userId}`, 'info');
+      
       // 驗證使用者是否已認證
       if (!userId) {
+        logger.warn('Activity stats request without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -420,6 +449,7 @@ export class UserActivityController {
 
       // 如果沒有活動記錄，回傳預設的空統計資料
       if (!activity) {
+        logger.info(`No activity record found for user ID: ${userId}, returning default stats`);
         res.json({
           success: true,
           data: {
@@ -462,14 +492,15 @@ export class UserActivityController {
         lastActiveAt: activity.lastActiveAt // 最後活動時間
       };
 
+      logger.info(`Activity statistics retrieved successfully for user ID: ${userId} - Login count: ${stats.loginCount}, Total page visits: ${stats.totalPageVisits}`);
+      
       // 回傳成功結果，包含完整的統計資料
       res.json({
         success: true,
         data: stats
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台
-      console.error('取得活動統計資料時發生錯誤:', error);
+      logger.error('Error retrieving activity statistics:', error);
       
       // 回傳 500 伺服器內部錯誤
       res.status(500).json({ 

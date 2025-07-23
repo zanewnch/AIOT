@@ -36,6 +36,10 @@
 
 // 匯入使用者資料存取層，用於查詢使用者權限相關資料
 import { UserRepository } from '../repo/UserRepo.js';
+// 匯入權限資料存取層，用於權限管理操作
+import { PermissionRepository, IPermissionRepository } from '../repo/PermissionRepo.js';
+// 匯入權限模型類型
+import { PermissionModel } from '../models/rbac/PermissionModel.js';
 // 匯入 Redis 客戶端配置，用於快取管理
 import { getRedisClient } from '../configs/redisConfig.js';
 // 匯入 Redis 客戶端類型定義
@@ -66,20 +70,55 @@ export interface CacheOptions {
 }
 
 /**
+ * 權限資料傳輸物件
+ */
+export interface PermissionDTO {
+    id: number;
+    name: string;
+    description?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+/**
+ * 建立權限請求物件
+ */
+export interface CreatePermissionRequest {
+    name: string;
+    description?: string;
+}
+
+/**
+ * 更新權限請求物件
+ */
+export interface UpdatePermissionRequest {
+    name?: string;
+    description?: string;
+}
+
+/**
  * 權限服務類別
  */
 export class PermissionService {
     private userRepository: UserRepository;
+    private permissionRepository: IPermissionRepository;
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
+    private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
+    private static readonly ALL_PERMISSIONS_KEY = 'permissions:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     /**
      * 建構函式
      * @param userRepository 使用者資料存取層
+     * @param permissionRepository 權限資料存取層
      */
-    constructor(userRepository: UserRepository = new UserRepository()) {
+    constructor(
+        userRepository: UserRepository = new UserRepository(),
+        permissionRepository: IPermissionRepository = new PermissionRepository()
+    ) {
         this.userRepository = userRepository;
+        this.permissionRepository = permissionRepository;
     }
 
     /**
@@ -97,7 +136,7 @@ export class PermissionService {
             return getRedisClient();
         } catch (error) {
             // 記錄警告訊息，提示將回退到資料庫查詢
-            console.warn('Redis not available, falling back to database queries');
+            logger.warn('Redis not available, falling back to database queries');
             // 拋出錯誤以讓上層處理
             throw new Error('Redis connection is not available');
         }
@@ -158,7 +197,7 @@ export class PermissionService {
             return null;
         } catch (error) {
             // 記錄警告並回傳 null，讓上層回退到資料庫查詢
-            console.warn('Failed to get cached permissions:', error);
+            logger.warn('Failed to get cached permissions:', error);
             return null;
         }
     }
@@ -184,7 +223,7 @@ export class PermissionService {
                 JSON.stringify(permissions)
             );
         } catch (error) {
-            console.warn('Failed to cache permissions:', error);
+            logger.warn('Failed to cache permissions:', error);
         }
     }
 
@@ -423,7 +462,7 @@ export class PermissionService {
             await redis.del(permissionsCacheKey);
             await redis.del(rolesCacheKey);
         } catch (error) {
-            console.warn('Failed to clear permissions cache:', error);
+            logger.warn('Failed to clear permissions cache:', error);
         }
     }
 
@@ -463,12 +502,346 @@ export class PermissionService {
      */
     public async permissionExists(permissionName: string): Promise<boolean> {
         try {
-            // 可以添加權限檢查邏輯，例如查詢 permissions 表
-            // 目前簡化實作，假設所有權限都存在
-            return true;
+            return await this.permissionRepository.exists(permissionName);
         } catch (error) {
-            console.error('Failed to check permission existence:', error);
+            logger.error('Failed to check permission existence:', error);
             return false;
+        }
+    }
+
+    // ==================== 權限管理方法 ====================
+
+    /**
+     * 產生權限快取鍵值
+     * @param permissionId 權限 ID
+     */
+    private getPermissionCacheKey(permissionId: number): string {
+        return `${PermissionService.PERMISSION_CACHE_PREFIX}${permissionId}`;
+    }
+
+    /**
+     * 將模型轉換為 DTO
+     * @param model 權限模型
+     */
+    private modelToDTO(model: PermissionModel): PermissionDTO {
+        return {
+            id: model.id,
+            name: model.name,
+            description: model.description,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt
+        };
+    }
+
+    /**
+     * 從快取取得所有權限
+     */
+    private async getCachedAllPermissions(): Promise<PermissionDTO[] | null> {
+        try {
+            const redis = this.getRedisClient();
+            logger.debug('Checking Redis cache for all permissions');
+            const cachedData = await redis.get(PermissionService.ALL_PERMISSIONS_KEY);
+            if (cachedData) {
+                logger.info('Permissions loaded from Redis cache');
+                return JSON.parse(cachedData);
+            }
+        } catch (error) {
+            logger.warn('Failed to get cached permissions:', error);
+        }
+        return null;
+    }
+
+    /**
+     * 快取所有權限
+     * @param permissions 權限列表
+     */
+    private async cacheAllPermissions(permissions: PermissionDTO[]): Promise<void> {
+        try {
+            const redis = this.getRedisClient();
+            logger.debug('Caching all permissions in Redis');
+            await redis.setEx(
+                PermissionService.ALL_PERMISSIONS_KEY,
+                PermissionService.DEFAULT_CACHE_TTL,
+                JSON.stringify(permissions)
+            );
+
+            // 同時快取每個單獨的權限
+            for (const permission of permissions) {
+                const key = this.getPermissionCacheKey(permission.id);
+                await redis.setEx(key, PermissionService.DEFAULT_CACHE_TTL, JSON.stringify(permission));
+            }
+            logger.debug('Permissions cached successfully');
+        } catch (error) {
+            logger.warn('Failed to cache permissions:', error);
+        }
+    }
+
+    /**
+     * 從快取取得單一權限
+     * @param permissionId 權限 ID
+     */
+    private async getCachedPermission(permissionId: number): Promise<PermissionDTO | null> {
+        try {
+            const redis = this.getRedisClient();
+            logger.debug(`Checking Redis cache for permission ID: ${permissionId}`);
+            const key = this.getPermissionCacheKey(permissionId);
+            const cachedData = await redis.get(key);
+            if (cachedData) {
+                logger.info(`Permission ID: ${permissionId} loaded from Redis cache`);
+                return JSON.parse(cachedData);
+            }
+        } catch (error) {
+            logger.warn(`Failed to get cached permission ${permissionId}:`, error);
+        }
+        return null;
+    }
+
+    /**
+     * 快取單一權限
+     * @param permission 權限資料
+     */
+    private async cachePermission(permission: PermissionDTO): Promise<void> {
+        try {
+            const redis = this.getRedisClient();
+            logger.debug(`Caching permission ID: ${permission.id} in Redis`);
+            const key = this.getPermissionCacheKey(permission.id);
+            await redis.setEx(key, PermissionService.DEFAULT_CACHE_TTL, JSON.stringify(permission));
+        } catch (error) {
+            logger.warn(`Failed to cache permission ${permission.id}:`, error);
+        }
+    }
+
+    /**
+     * 清除權限管理快取
+     * @param permissionId 權限 ID（可選）
+     */
+    private async clearPermissionManagementCache(permissionId?: number): Promise<void> {
+        try {
+            const redis = this.getRedisClient();
+            if (permissionId) {
+                // 清除單個權限快取
+                logger.debug(`Clearing Redis cache for permission ID: ${permissionId}`);
+                const key = this.getPermissionCacheKey(permissionId);
+                await redis.del(key);
+            }
+            
+            // 總是清除所有權限列表快取
+            await redis.del(PermissionService.ALL_PERMISSIONS_KEY);
+            logger.debug('Permission management caches cleared successfully');
+        } catch (error) {
+            logger.warn('Failed to clear permission management cache:', error);
+        }
+    }
+
+    /**
+     * 取得所有權限列表
+     */
+    public async getAllPermissions(): Promise<PermissionDTO[]> {
+        try {
+            logger.debug('Getting all permissions with cache support');
+
+            // 先嘗試從快取取得
+            const cachedPermissions = await this.getCachedAllPermissions();
+            if (cachedPermissions) {
+                return cachedPermissions;
+            }
+
+            // 快取不存在，從資料庫取得
+            logger.debug('Fetching permissions from database');
+            const permissions = await this.permissionRepository.findAll();
+            const permissionsDTO = permissions.map(p => this.modelToDTO(p));
+
+            logger.info(`Retrieved ${permissionsDTO.length} permissions from database`);
+
+            // 更新快取
+            await this.cacheAllPermissions(permissionsDTO);
+
+            return permissionsDTO;
+        } catch (error) {
+            logger.error('Error fetching all permissions:', error);
+            throw new Error('Failed to fetch permissions');
+        }
+    }
+
+    /**
+     * 根據 ID 取得權限
+     * @param permissionId 權限 ID
+     */
+    public async getPermissionById(permissionId: number): Promise<PermissionDTO | null> {
+        try {
+            logger.info(`Retrieving permission by ID: ${permissionId}`);
+
+            // 驗證輸入
+            if (!permissionId || permissionId <= 0) {
+                logger.warn(`Invalid permission ID: ${permissionId}`);
+                return null;
+            }
+
+            // 先嘗試從快取取得
+            const cachedPermission = await this.getCachedPermission(permissionId);
+            if (cachedPermission) {
+                return cachedPermission;
+            }
+
+            // 快取不存在，從資料庫取得
+            logger.debug(`Fetching permission ID: ${permissionId} from database`);
+            const permission = await this.permissionRepository.findById(permissionId);
+            if (!permission) {
+                logger.warn(`Permission not found for ID: ${permissionId}`);
+                return null;
+            }
+
+            const permissionDTO = this.modelToDTO(permission);
+
+            // 更新快取
+            await this.cachePermission(permissionDTO);
+
+            logger.info(`Permission ID: ${permissionId} retrieved successfully`);
+            return permissionDTO;
+        } catch (error) {
+            logger.error(`Error fetching permission by ID ${permissionId}:`, error);
+            throw new Error('Failed to fetch permission');
+        }
+    }
+
+    /**
+     * 建立新權限
+     * @param permissionData 權限資料
+     */
+    public async createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO> {
+        try {
+            logger.info(`Creating new permission: ${permissionData.name}`);
+
+            // 驗證輸入
+            if (!permissionData.name || permissionData.name.trim().length === 0) {
+                throw new Error('Permission name is required');
+            }
+
+            // 檢查權限是否已存在
+            const exists = await this.permissionRepository.exists(permissionData.name.trim());
+            if (exists) {
+                throw new Error(`Permission with name '${permissionData.name}' already exists`);
+            }
+
+            // 建立權限
+            const permission = await this.permissionRepository.create({
+                name: permissionData.name.trim(),
+                description: permissionData.description?.trim()
+            });
+
+            const permissionDTO = this.modelToDTO(permission);
+
+            // 更新快取
+            await this.cachePermission(permissionDTO);
+            // 清除所有權限列表快取，強制下次重新載入
+            await this.clearPermissionManagementCache();
+
+            logger.info(`Permission created successfully: ${permissionData.name} (ID: ${permissionDTO.id})`);
+            return permissionDTO;
+        } catch (error) {
+            logger.error('Error creating permission:', error);
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Failed to create permission');
+        }
+    }
+
+    /**
+     * 更新權限
+     * @param permissionId 權限 ID
+     * @param updateData 更新資料
+     */
+    public async updatePermission(permissionId: number, updateData: UpdatePermissionRequest): Promise<PermissionDTO | null> {
+        try {
+            logger.info(`Updating permission ID: ${permissionId}`);
+
+            // 驗證輸入
+            if (!permissionId || permissionId <= 0) {
+                throw new Error('Invalid permission ID');
+            }
+
+            if (!updateData.name && !updateData.description) {
+                throw new Error('At least one field (name or description) must be provided for update');
+            }
+
+            // 準備更新資料
+            const updatePayload: any = {};
+            if (updateData.name !== undefined) {
+                updatePayload.name = updateData.name.trim();
+                
+                // 檢查新名稱是否已被其他權限使用
+                if (updatePayload.name) {
+                    const existingPermission = await this.permissionRepository.findByName(updatePayload.name);
+                    if (existingPermission && existingPermission.id !== permissionId) {
+                        throw new Error(`Permission with name '${updatePayload.name}' already exists`);
+                    }
+                }
+            }
+            if (updateData.description !== undefined) {
+                updatePayload.description = updateData.description?.trim();
+            }
+
+            // 更新權限
+            const updatedPermission = await this.permissionRepository.update(permissionId, updatePayload);
+            if (!updatedPermission) {
+                logger.warn(`Permission update failed - permission not found for ID: ${permissionId}`);
+                return null;
+            }
+
+            const permissionDTO = this.modelToDTO(updatedPermission);
+
+            // 更新快取
+            await this.cachePermission(permissionDTO);
+            // 清除所有權限列表快取
+            await this.clearPermissionManagementCache();
+
+            logger.info(`Permission updated successfully: ID ${permissionId}`);
+            return permissionDTO;
+        } catch (error) {
+            logger.error(`Error updating permission ${permissionId}:`, error);
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Failed to update permission');
+        }
+    }
+
+    /**
+     * 刪除權限
+     * @param permissionId 權限 ID
+     */
+    public async deletePermission(permissionId: number): Promise<boolean> {
+        try {
+            logger.info(`Deleting permission ID: ${permissionId}`);
+
+            // 驗證輸入
+            if (!permissionId || permissionId <= 0) {
+                throw new Error('Invalid permission ID');
+            }
+
+            // 檢查權限是否存在
+            const existingPermission = await this.permissionRepository.findById(permissionId);
+            if (!existingPermission) {
+                logger.warn(`Permission deletion failed - permission not found for ID: ${permissionId}`);
+                return false;
+            }
+
+            // 刪除權限
+            const deleted = await this.permissionRepository.delete(permissionId);
+            if (deleted) {
+                // 清除快取
+                await this.clearPermissionManagementCache(permissionId);
+                logger.info(`Permission deleted successfully: ID ${permissionId}`);
+            }
+
+            return deleted;
+        } catch (error) {
+            logger.error(`Error deleting permission ${permissionId}:`, error);
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Failed to delete permission');
         }
     }
 }

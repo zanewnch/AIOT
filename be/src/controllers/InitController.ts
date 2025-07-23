@@ -14,6 +14,10 @@ import { RTKInitService } from '../services/RTKInitService.js'; // 匯入 RTK �
 import { progressService } from '../services/ProgressService.js'; // 匯入進度追蹤服務
 import { TaskStage, TaskStatus } from '../types/ProgressTypes.js'; // 匯入任務狀態和階段定義
 import { backgroundTaskHandler } from '../utils/backgroundTask.js'; // 匯入背景任務處理器
+import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('InitController');
 
 /**
  * 系統初始化控制器
@@ -91,13 +95,19 @@ export class InitController {
    * }
    * ```
    */
-  public seedRbacDemo = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public seedRbacDemo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      logger.info('Starting RBAC demo data initialization');
+      logRequest(req, 'RBAC demo data initialization request', 'info');
+      
       // 呼叫 RBAC 初始化服務來建立演示資料
       const result = await this.rbacInitService.seedRbacDemo();
+      
+      logger.info(`RBAC demo data initialization completed successfully: ${result.message}`);
       // 回傳成功結果給客戶端
       res.json({ ok: true, ...result });
     } catch (err) {
+      logger.error('Failed to initialize RBAC demo data:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(err);
     }
@@ -130,13 +140,19 @@ export class InitController {
    * }
    * ```
    */
-  public seedRTKDemo = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public seedRTKDemo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      logger.info('Starting RTK demo data initialization');
+      logRequest(req, 'RTK demo data initialization request', 'info');
+      
       // 呼叫 RTK 初始化服務來建立演示資料
       const result = await this.rtkInitService.seedRTKDemo();
+      
+      logger.info(`RTK demo data initialization completed successfully: ${result.message}`);
       // 回傳成功結果給客戶端
       res.json({ ok: true, ...result });
     } catch (err) {
+      logger.error('Failed to initialize RTK demo data:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(err);
     }
@@ -170,13 +186,19 @@ export class InitController {
    * }
    * ```
    */
-  public createAdminUser = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public createAdminUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      logger.info('Starting admin user creation process');
+      logRequest(req, 'Admin user creation request', 'info');
+      
       // 呼叫 RBAC 初始化服務來建立管理員使用者
       const result = await this.rbacInitService.createAdminUser();
+      
+      logger.info(`Admin user creation completed: ${result.message}`);
       // 回傳成功結果給客戶端
       res.json({ ok: true, ...result });
     } catch (err) {
+      logger.error('Failed to create admin user:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(err);
     }
@@ -237,7 +259,7 @@ export class InitController {
   private executeStressTestDataCreation = async (taskId: string): Promise<void> => {
     try {
       // 記錄任務開始資訊
-      console.log(`開始執行壓力測試資料創建任務: ${taskId}`);
+      logger.info(`Starting stress test data creation background task: ${taskId}`);
 
       // 更新任務狀態為執行中
       progressService.updateProgress(taskId, {
@@ -250,6 +272,7 @@ export class InitController {
       const progressCallback = progressService.createProgressCallback(taskId);
 
       // 階段 1: RTK 資料生成
+      logger.debug(`Task ${taskId}: Starting RTK data generation phase`);
       progressService.updateProgress(taskId, {
         stage: TaskStage.GENERATING_RTK, // 設定為 RTK 資料生成階段
         message: '正在生成 RTK 資料...' // 更新狀態訊息
@@ -257,8 +280,10 @@ export class InitController {
 
       // 執行 RTK 資料生成並追蹤進度
       const rtkResult = await this.rtkInitService.seedRTKDemoWithProgress(progressCallback);
+      logger.debug(`Task ${taskId}: RTK data generation completed with ${rtkResult.count} records`);
 
       // 階段 2: RBAC 資料生成
+      logger.debug(`Task ${taskId}: Starting RBAC data generation phase`);
       progressService.updateProgress(taskId, {
         stage: TaskStage.GENERATING_USERS, // 設定為使用者資料生成階段
         current: 5000, // RTK 資料生成完成，更新目前進度
@@ -267,6 +292,7 @@ export class InitController {
 
       // 執行 RBAC 資料生成並追蹤進度
       const rbacResult = await this.rbacInitService.seedRbacDemoWithProgress(progressCallback);
+      logger.debug(`Task ${taskId}: RBAC data generation completed - Users: ${rbacResult.users}, Roles: ${rbacResult.roles}, Permissions: ${rbacResult.permissions}`);
 
       // 整理任務完成結果
       const finalResult = {
@@ -282,13 +308,13 @@ export class InitController {
 
       // 標示任務完成並記錄結果
       progressService.completeTask(taskId, finalResult, '壓力測試資料創建完成');
-      console.log(`壓力測試資料創建任務完成: ${taskId}`);
+      logger.info(`Stress test data creation task completed successfully: ${taskId}, Total RTK records: ${finalResult.summary.totalRTKRecords}, Total users: ${finalResult.summary.totalUsers}`);
 
     } catch (error) {
       // 記錄任務失敗錯誤訊息
-      console.error(`壓力測試資料創建任務失敗: ${taskId}`, error);
+      logger.error(`Stress test data creation task failed: ${taskId}`, error);
       // 標示任務失敗並記錄錯誤訊息
-      progressService.failTask(taskId, error instanceof Error ? error.message : '未知錯誤');
+      progressService.failTask(taskId, error instanceof Error ? error.message : 'Unknown error occurred');
     }
   }
 }

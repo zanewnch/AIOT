@@ -21,6 +21,10 @@
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 的請求、回應和中間件類型定義
 import { UserPreferenceModel } from '../models/UserPreferenceModel.js'; // 引入使用者偏好設定資料模型
+import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+
+// 創建控制器專用的日誌記錄器
+const logger = createLogger('UserPreferenceController');
 
 /**
  * 使用者偏好設定控制器類別
@@ -87,8 +91,12 @@ export class UserPreferenceController {
       // 從請求物件中取得已認證的使用者 ID（透過認證中間件設定）
       const userId = (req as any).user?.id;
       
+      logger.info(`Retrieving user preferences for user ID: ${userId}`);
+      logRequest(req, `User preferences request for user: ${userId}`, 'info');
+      
       // 驗證使用者是否已認證，未認證則回傳 401 未授權錯誤
       if (!userId) {
+        logger.warn('User preferences request without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -103,6 +111,7 @@ export class UserPreferenceController {
 
       // 如果沒有偏好設定，建立預設值，這通常發生在使用者第一次使用系統時
       if (!preferences) {
+        logger.debug(`Creating default preferences for user ID: ${userId}`);
         preferences = await UserPreferenceModel.create({
           userId, // 使用者 ID
           theme: 'light', // 預設主題為亮色模式
@@ -111,6 +120,9 @@ export class UserPreferenceController {
           autoSave: true, // 預設開啟自動儲存
           notifications: true // 預設開啟通知功能
         });
+        logger.info(`Default preferences created for user ID: ${userId}`);
+      } else {
+        logger.debug(`Existing preferences found for user ID: ${userId}`);
       }
 
       // 設定偏好設定 Cookie，供前端快速存取
@@ -127,14 +139,15 @@ export class UserPreferenceController {
         maxAge: 30 * 24 * 60 * 60 * 1000 // Cookie 有效期為 30 天
       });
 
+      logger.info(`User preferences retrieved successfully for user ID: ${userId}`);
+      
       // 回傳成功結果，包含完整的偏好設定資料
       res.json({
         success: true,
         data: preferences
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台，便於除錯
-      console.error('取得使用者偏好設定時發生錯誤:', error);
+      logger.error('Error retrieving user preferences:', error);
       
       // 回傳 500 伺服器內部錯誤，不暴露敏感的錯誤細節
       res.status(500).json({ 
@@ -181,8 +194,13 @@ export class UserPreferenceController {
       // 從請求主體中解構取得要更新的偏好設定欄位
       const { theme, language, timezone, autoSave, notifications } = req.body;
 
+      logger.info(`Updating user preferences for user ID: ${userId}`);
+      logRequest(req, `User preferences update request for user: ${userId}`, 'info');
+      logger.debug(`Update data: theme=${theme}, language=${language}, timezone=${timezone}, autoSave=${autoSave}, notifications=${notifications}`);
+
       // 驗證使用者是否已認證
       if (!userId) {
+        logger.warn('User preferences update attempted without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -192,6 +210,7 @@ export class UserPreferenceController {
 
       // 驗證主題設定的有效性，只允許三種模式
       if (theme && !['light', 'dark', 'auto'].includes(theme)) {
+        logger.warn(`Invalid theme setting provided: ${theme} for user ID: ${userId}`);
         res.status(400).json({ 
           success: false, 
           message: '無效的主題設定' 
@@ -238,6 +257,8 @@ export class UserPreferenceController {
         maxAge: 30 * 24 * 60 * 60 * 1000 // Cookie 有效期為 30 天
       });
 
+      logger.info(`User preferences updated successfully for user ID: ${userId}`);
+      
       // 回傳成功結果，包含更新後的偏好設定資料
       res.json({
         success: true,
@@ -245,8 +266,7 @@ export class UserPreferenceController {
         message: '偏好設定已更新'
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台
-      console.error('更新使用者偏好設定時發生錯誤:', error);
+      logger.error('Error updating user preferences:', error);
       
       // 回傳 500 伺服器內部錯誤
       res.status(500).json({ 
@@ -293,8 +313,12 @@ export class UserPreferenceController {
       // 從請求主體中解構取得新的偏好設定資料
       const { theme, language, timezone, autoSave, notifications } = req.body;
 
+      logger.info(`Creating new user preferences for user ID: ${userId}`);
+      logRequest(req, `User preferences creation request for user: ${userId}`, 'info');
+
       // 驗證使用者是否已認證
       if (!userId) {
+        logger.warn('User preferences creation attempted without valid authentication');
         res.status(401).json({ 
           success: false, 
           message: '未授權的存取' 
@@ -309,6 +333,7 @@ export class UserPreferenceController {
 
       // 如果已存在偏好設定，回傳 409 衝突狀態碼
       if (existingPreferences) {
+        logger.warn(`Preferences creation failed - preferences already exist for user ID: ${userId}`);
         res.status(409).json({ 
           success: false, 
           message: '使用者偏好設定已存在' 
@@ -340,6 +365,8 @@ export class UserPreferenceController {
         maxAge: 30 * 24 * 60 * 60 * 1000 // Cookie 有效期為 30 天
       });
 
+      logger.info(`User preferences created successfully for user ID: ${userId}`);
+      
       // 回傳 201 建立成功狀態碼，包含新建立的偏好設定資料
       res.status(201).json({
         success: true,
@@ -347,8 +374,7 @@ export class UserPreferenceController {
         message: '偏好設定已建立'
       });
     } catch (error) {
-      // 記錄錯誤詳細資訊到控制台
-      console.error('建立使用者偏好設定時發生錯誤:', error);
+      logger.error('Error creating user preferences:', error);
       
       // 回傳 500 伺服器內部錯誤
       res.status(500).json({ 

@@ -142,6 +142,26 @@ export interface IUserRepository {
      * ```
      */
     create(userData: { username: string; passwordHash: string; email?: string }): Promise<UserModel>;
+
+    /**
+     * 批量建立使用者記錄
+     * 
+     * @param {Array} usersData 使用者資料陣列
+     * @returns {Promise<UserModel[]>} 建立成功的使用者模型陣列
+     */
+    bulkCreate(usersData: { username: string; passwordHash: string; email?: string }[]): Promise<UserModel[]>;
+
+    /**
+     * 查詢或建立使用者
+     * 
+     * @param whereCondition 查詢條件
+     * @param defaults 預設建立值
+     * @returns [使用者實例, 是否為新建立]
+     */
+    findOrCreate(
+        whereCondition: { username: string },
+        defaults: { username: string; passwordHash: string; email?: string }
+    ): Promise<[UserModel, boolean]>;
 }
 
 /**
@@ -326,5 +346,28 @@ export class UserRepository implements IUserRepository {
         // 使用 Sequelize 的 create 方法建立新的使用者記錄
         // 若使用者名稱重複，會自動拋出 SequelizeUniqueConstraintError
         return await UserModel.create(userData);
+    }
+
+    /**
+     * 批量建立使用者記錄
+     */
+    async bulkCreate(usersData: { username: string; passwordHash: string; email?: string }[]): Promise<UserModel[]> {
+        return await UserModel.bulkCreate(usersData, {
+            ignoreDuplicates: true,
+            returning: true
+        });
+    }
+
+    /**
+     * 查詢或建立使用者
+     */
+    async findOrCreate(
+        whereCondition: { username: string },
+        defaults: { username: string; passwordHash: string; email?: string }
+    ): Promise<[UserModel, boolean]> {
+        return await UserModel.findOrCreate({
+            where: whereCondition,
+            defaults
+        });
     }
 }

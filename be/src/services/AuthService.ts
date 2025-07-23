@@ -40,6 +40,11 @@ import { UserRepository, IUserRepository } from '../repo/UserRepo.js';
 import { UserModel } from '../models/rbac/UserModel.js';
 // 匯入會話服務，用於管理使用者登入會話狀態
 import { SessionService } from './SessionService.js';
+// 匯入日誌記錄器
+import { createLogger } from '../configs/loggerConfig.js';
+
+// 創建服務專用的日誌記錄器
+const logger = createLogger('AuthService');
 
 /**
  * 登入結果介面
@@ -130,23 +135,31 @@ export class AuthService implements IAuthService {
      */
     async login(username: string, password: string, userAgent?: string, ipAddress?: string): Promise<LoginResult> {
         try {
+            logger.info(`Login attempt for username: ${username} from IP: ${ipAddress}`);
+            
             // 查找用戶
             const user = await this.userRepository.findByUsername(username);
             if (!user) {
+                logger.warn(`Login failed: User not found for username: ${username}`);
                 return {
                     success: false,
                     message: 'Invalid credentials'
                 };
             }
 
+            logger.debug(`User found: ${user.username} (ID: ${user.id})`);
+
             // 驗證密碼
             const match = await bcrypt.compare(password, user.passwordHash);
             if (!match) {
+                logger.warn(`Login failed: Invalid password for user: ${username}`);
                 return {
                     success: false,
                     message: 'Invalid credentials'
                 };
             }
+
+            logger.debug(`Password verification successful for user: ${username}`);
 
             // 生成 JWT
             const payload = { 
@@ -158,13 +171,15 @@ export class AuthService implements IAuthService {
                 process.env.JWT_SECRET || 'zanewnch',
                 { expiresIn: '1h' }
             );
+            
+            logger.debug(`JWT token generated for user: ${username}`);
 
             // 清除該使用者的所有現有會話（實現單一裝置限制）
             // 這個做法是為了讓使用者只能在一個裝置上登入，避免多重登入(同時多個裝置登入同一個帳號的情況)
             try {
                 await SessionService.clearAllUserSessions(user.id);
             } catch (clearError) {
-                console.error('Failed to clear existing sessions:', clearError);
+                logger.error('Failed to clear existing sessions during login:', clearError);
             }
 
             // 將會話資料存儲到 Redis
@@ -175,11 +190,13 @@ export class AuthService implements IAuthService {
                     ipAddress
                 });
             } catch (sessionError) {
-                console.error('Failed to store session in Redis:', sessionError);
+                logger.error('Failed to store session in Redis, continuing with login:', sessionError);
                 // 即使 Redis 失敗，仍然返回成功的登入結果
                 // 這確保當 Redis 不可用時系統仍能運作
             }
 
+            logger.info(`Login successful for user: ${username} (ID: ${user.id})`);
+            
             return {
                 success: true,
                 token,
@@ -187,7 +204,7 @@ export class AuthService implements IAuthService {
                 user
             };
         } catch (error) {
-            console.error('Login error:', error);
+            logger.error('Login error occurred:', error);
             return {
                 success: false,
                 message: 'Login failed'
@@ -205,10 +222,12 @@ export class AuthService implements IAuthService {
      */
     async logout(token: string, userId?: number): Promise<boolean> {
         try {
+            logger.info(`Logout initiated for user ID: ${userId}`);
             await SessionService.deleteUserSession(token, userId);
+            logger.info(`Logout successful for user ID: ${userId}`);
             return true;
         } catch (error) {
-            console.error('Logout error:', error);
+            logger.error('Logout error occurred:', error);
             return false;
         }
     }
@@ -222,17 +241,28 @@ export class AuthService implements IAuthService {
      */
     async validateSession(token: string): Promise<UserModel | null> {
         try {
+            logger.debug('Session validation started');
+            
             // 首先檢查 Redis 會話
             const sessionData = await SessionService.getUserSession(token);
             if (!sessionData) {
+                logger.warn('Session validation failed: Session not found in Redis');
                 return null;
             }
 
+            logger.debug(`Session found for user ID: ${sessionData.userId}`);
+
             // 從資料庫取得最新的使用者資料
             const user = await this.userRepository.findById(sessionData.userId);
+            if (!user) {
+                logger.warn(`Session validation failed: User not found in database for ID: ${sessionData.userId}`);
+                return null;
+            }
+            
+            logger.debug(`Session validation successful for user: ${user.username}`);
             return user;
         } catch (error) {
-            console.error('Session validation error:', error);
+            logger.error('Session validation error occurred:', error);
             return null;
         }
     }

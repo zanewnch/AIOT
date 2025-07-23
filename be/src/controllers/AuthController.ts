@@ -121,7 +121,7 @@ export class AuthController {
 
       // 參數驗證 - 確保必要欄位存在
       if (!username || !password) {
-        logger.warn(`Login request missing credentials from IP: ${req.ip}`);
+        logger.warn(`Login request missing required credentials from IP: ${req.ip}`);
         // 回傳 400 錯誤，表示請求參數不完整
         res.status(400).json({ message: 'Username and password are required' });
         return;
@@ -132,14 +132,14 @@ export class AuthController {
       // 取得客戶端 IP 位址，優先使用代理伺服器傳遞的真實 IP
       const ipAddress = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
 
-      logger.info(`Login attempt for user '${username}' from IP: ${ipAddress}`);
+      logger.info(`Starting login authentication for user: ${username}, IP: ${ipAddress}`);
       
       // 調用 service 層進行登入驗證（包含 Redis 會話管理）
       const result = await this.authService.login(username, password, userAgent, ipAddress);
 
       // 檢查登入結果
       if (!result.success) {
-        logger.warn(`Login failed for user '${username}': ${result.message}`);
+        logger.warn(`Authentication failed for user: ${username}, reason: ${result.message}, IP: ${ipAddress}`);
         logAuthEvent('login', username, false, { reason: result.message, ip: ipAddress });
         // 回傳 401 錯誤，表示認證失敗
         res.status(401).json({ message: result.message });
@@ -167,7 +167,7 @@ export class AuthController {
         });
       }
 
-      logger.info(`Login successful for user '${username}' (ID: ${result.user?.id})`);
+      logger.info(`Login authentication successful for user: ${username}, userID: ${result.user?.id}, rememberMe: ${rememberMe || false}`);
       logAuthEvent('login', username, true, { 
         userId: result.user?.id, 
         rememberMe: rememberMe || false,
@@ -232,13 +232,15 @@ export class AuthController {
       const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');
       
       const username = req.user?.username || 'unknown';
-      logger.info(`Logout request from user: ${username}`);
+      logger.info(`Processing logout request for user: ${username}, IP: ${req.ip}`);
       
       // 如果存在 token，則從 Redis 清除會話
       if (token) {
-        logger.debug('Clearing session from Redis');
+        logger.debug('Clearing user session from Redis cache');
         // 從 Redis 清除會話資料，確保 token 無法再被使用
         await this.authService.logout(token);
+      } else {
+        logger.warn(`Logout attempted without valid token for user: ${username}`);
       }
 
       // 清除 JWT cookie，使用與設定時相同的選項
@@ -259,7 +261,7 @@ export class AuthController {
       res.clearCookie('user_preferences'); // 清除使用者偏好設定
       res.clearCookie('feature_flags'); // 清除功能開關狀態
 
-      logger.info(`Logout successful for user: ${username}`);
+      logger.info(`Logout completed successfully for user: ${username}, IP: ${req.ip}`);
       logAuthEvent('logout', username, true, { ip: req.ip });
       
       // 回傳登出成功的回應

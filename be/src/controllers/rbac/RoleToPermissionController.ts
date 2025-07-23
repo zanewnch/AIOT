@@ -25,9 +25,11 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { RoleModel } from '../../models/rbac/RoleModel.js'; // 引入角色資料模型
-import { PermissionModel } from '../../models/rbac/PermissionModel.js'; // 引入權限資料模型
+import { RoleToPermissionService } from '../../services/RoleToPermissionService.js'; // 引入角色權限服務層
 import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js'; // 引入角色權限控制器介面
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+
+const logger = createLogger('RoleToPermissionController');
 
 /**
  * 角色權限關聯控制器類別
@@ -49,11 +51,13 @@ import { IRoleToPermissionController } from '../../types/controllers/IRoleToPerm
  * ```
  */
 export class RoleToPermissionController implements IRoleToPermissionController {
+    private roleToPermissionService: RoleToPermissionService;
+
     /**
      * 初始化角色權限關聯控制器實例
      */
-    constructor() {
-        // Controller only contains business logic
+    constructor(roleToPermissionService: RoleToPermissionService = new RoleToPermissionService()) {
+        this.roleToPermissionService = roleToPermissionService;
     }
 
 
@@ -90,15 +94,27 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     public async getRolePermissions(req: Request, res: Response): Promise<void> {
         try {
             const { roleId } = req.params;
-            const role = await RoleModel.findByPk(roleId, { include: [PermissionModel] });
-            if (!role) {
-                res.status(404).json({ message: 'Role not found' });
+            const id = parseInt(roleId, 10);
+            
+            logger.info(`Fetching permissions for role ID: ${roleId}`);
+            logRequest(req, `Role permissions retrieval request for ID: ${roleId}`, 'info');
+            
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
                 return;
             }
-            res.json(role.permissions);
+
+            const permissions = await this.roleToPermissionService.getRolePermissions(id);
+            
+            logger.info(`Successfully retrieved ${permissions.length} permissions for role ID: ${roleId}`);
+            res.json(permissions);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to fetch role permissions', error: (error as Error).message });
+            logger.error('Error fetching role permissions:', error);
+            if (error instanceof Error && error.message === 'Role not found') {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to fetch role permissions', error: (error as Error).message });
+            }
         }
     }
 
@@ -134,18 +150,45 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     public async assignPermissionsToRole(req: Request, res: Response): Promise<void> {
         try {
             const { roleId } = req.params;
-            const { permissionIds } = req.body; // expect array of permission IDs
-            const role = await RoleModel.findByPk(roleId);
-            if (!role) {
-                res.status(404).json({ message: 'Role not found' });
+            const { permissionIds } = req.body;
+            const id = parseInt(roleId, 10);
+            
+            logger.info(`Assigning permissions to role ID: ${roleId}`);
+            logRequest(req, `Permission assignment request for role ID: ${roleId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
                 return;
             }
-            const permissions = await PermissionModel.findAll({ where: { id: permissionIds } });
-            await role.$add('permissions', permissions);
-            res.json({ message: 'Permissions assigned to role' });
+
+            if (!permissionIds || !Array.isArray(permissionIds) || permissionIds.length === 0) {
+                res.status(400).json({ message: 'Permission IDs are required and must be an array' });
+                return;
+            }
+
+            // 驗證每個 permission ID
+            const validPermissionIds = permissionIds.filter(permissionId => {
+                const parsedId = parseInt(permissionId, 10);
+                return !isNaN(parsedId) && parsedId > 0;
+            }).map(permissionId => parseInt(permissionId, 10));
+
+            if (validPermissionIds.length === 0) {
+                res.status(400).json({ message: 'No valid permission IDs provided' });
+                return;
+            }
+
+            await this.roleToPermissionService.assignPermissionsToRole(id, validPermissionIds);
+            
+            logger.info(`Successfully assigned permissions to role ID: ${roleId}`);
+            res.json({ message: 'Permissions assigned to role successfully' });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to assign permissions', error: (error as Error).message });
+            logger.error('Error assigning permissions to role:', error);
+            if (error instanceof Error && (error.message.includes('not found') || error.message.includes('Invalid'))) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to assign permissions', error: (error as Error).message });
+            }
         }
     }
 
@@ -176,16 +219,38 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     public async removePermissionFromRole(req: Request, res: Response): Promise<void> {
         try {
             const { roleId, permissionId } = req.params;
-            const role = await RoleModel.findByPk(roleId);
-            if (!role) {
-                res.status(404).json({ message: 'Role not found' });
+            const roleIdNum = parseInt(roleId, 10);
+            const permissionIdNum = parseInt(permissionId, 10);
+            
+            logger.info(`Removing permission ID: ${permissionId} from role ID: ${roleId}`);
+            logRequest(req, `Permission removal request for role ID: ${roleId}, permission ID: ${permissionId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(roleIdNum) || roleIdNum <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
                 return;
             }
-            await role.$remove('permissions', Number(permissionId));
-            res.json({ message: 'Permission removed from role' });
+            if (isNaN(permissionIdNum) || permissionIdNum <= 0) {
+                res.status(400).json({ message: 'Invalid permission ID' });
+                return;
+            }
+
+            const removed = await this.roleToPermissionService.removePermissionFromRole(roleIdNum, permissionIdNum);
+            
+            if (removed) {
+                logger.info(`Successfully removed permission ID: ${permissionId} from role ID: ${roleId}`);
+                res.json({ message: 'Permission removed from role successfully' });
+            } else {
+                logger.warn(`Permission ${permissionId} was not assigned to role ${roleId}`);
+                res.status(404).json({ message: 'Permission assignment not found' });
+            }
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to remove permission', error: (error as Error).message });
+            logger.error('Error removing permission from role:', error);
+            if (error instanceof Error && error.message.includes('not found')) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to remove permission', error: (error as Error).message });
+            }
         }
     }
 
@@ -197,6 +262,7 @@ export class RoleToPermissionController implements IRoleToPermissionController {
      * @returns Promise<void>
      */
     public async createRolePermission(req: Request, res: Response): Promise<void> {
+        // 使用相同的邏輯分配權限
         await this.assignPermissionsToRole(req, res);
     }
 
@@ -210,16 +276,28 @@ export class RoleToPermissionController implements IRoleToPermissionController {
     public async getRolePermissionById(req: Request, res: Response): Promise<void> {
         try {
             const { rolePermissionId } = req.params;
-            // 這裡假設 rolePermissionId 是 roleId
-            const role = await RoleModel.findByPk(rolePermissionId, { include: [PermissionModel] });
-            if (!role) {
-                res.status(404).json({ message: 'Role permission not found' });
+            const id = parseInt(rolePermissionId, 10);
+            
+            logger.info(`Fetching role permission details for ID: ${rolePermissionId}`);
+            logRequest(req, `Role permission retrieval request for ID: ${rolePermissionId}`, 'info');
+            
+            if (isNaN(id) || id <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
                 return;
             }
-            res.json(role);
+
+            // 獲取角色的所有權限（這裡假設 rolePermissionId 是 roleId）
+            const permissions = await this.roleToPermissionService.getRolePermissions(id);
+            
+            logger.info(`Successfully retrieved ${permissions.length} permissions for role ID: ${rolePermissionId}`);
+            res.json({ roleId: id, permissions });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to fetch role permission', error: (error as Error).message });
+            logger.error('Error fetching role permission by ID:', error);
+            if (error instanceof Error && error.message === 'Role not found') {
+                res.status(404).json({ message: 'Role permission not found' });
+            } else {
+                res.status(500).json({ message: 'Failed to fetch role permission', error: (error as Error).message });
+            }
         }
     }
 
@@ -231,6 +309,7 @@ export class RoleToPermissionController implements IRoleToPermissionController {
      * @returns Promise<void>
      */
     public async updateRolePermission(req: Request, res: Response): Promise<void> {
+        // 使用相同的邏輯分配權限
         await this.assignPermissionsToRole(req, res);
     }
 
@@ -245,16 +324,38 @@ export class RoleToPermissionController implements IRoleToPermissionController {
         try {
             const { rolePermissionId } = req.params;
             const { permissionId } = req.body;
-            const role = await RoleModel.findByPk(rolePermissionId);
-            if (!role) {
-                res.status(404).json({ message: 'Role not found' });
+            const roleIdNum = parseInt(rolePermissionId, 10);
+            const permissionIdNum = parseInt(permissionId, 10);
+            
+            logger.info(`Deleting permission ID: ${permissionId} from role ID: ${rolePermissionId}`);
+            logRequest(req, `Role permission deletion request for role ID: ${rolePermissionId}`, 'info');
+            
+            // 驗證輸入
+            if (isNaN(roleIdNum) || roleIdNum <= 0) {
+                res.status(400).json({ message: 'Invalid role ID' });
                 return;
             }
-            await role.$remove('permissions', Number(permissionId));
-            res.json({ message: 'Role permission deleted' });
+            if (!permissionId || isNaN(permissionIdNum) || permissionIdNum <= 0) {
+                res.status(400).json({ message: 'Valid permission ID is required' });
+                return;
+            }
+
+            const removed = await this.roleToPermissionService.removePermissionFromRole(roleIdNum, permissionIdNum);
+            
+            if (removed) {
+                logger.info(`Successfully deleted permission ID: ${permissionId} from role ID: ${rolePermissionId}`);
+                res.json({ message: 'Role permission deleted successfully' });
+            } else {
+                logger.warn(`Permission ${permissionId} was not assigned to role ${rolePermissionId}`);
+                res.status(404).json({ message: 'Role permission assignment not found' });
+            }
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Failed to delete role permission', error: (error as Error).message });
+            logger.error('Error deleting role permission:', error);
+            if (error instanceof Error && error.message.includes('not found')) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Failed to delete role permission', error: (error as Error).message });
+            }
         }
     }
 }

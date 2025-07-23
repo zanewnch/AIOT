@@ -8,6 +8,26 @@
  * @version 2.0.0
  */
 
+/* 
+useQuery 和 useMutation 是 React Query 中兩個核心 hook，它們的差別主要在於用途和行為：
+useQuery - 用於數據獲取（讀取）
+特點：
+
+自動執行查詢
+具有緩存機制
+會自動重新獲取數據
+適合 GET 請求
+
+
+useMutation - 用於數據變更（寫入）
+特點：
+
+手動觸發執行
+不會緩存結果
+不會自動重新執行
+適合 POST、PUT、DELETE 請求
+*/
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActivityStore } from '../stores/activityStore';
 import type { UserActivity, ActivityStats } from '../types/activity';

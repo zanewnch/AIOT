@@ -25,6 +25,9 @@ import {
   DEFAULT_STAGE_WEIGHTS,
   ProgressCallback 
 } from '../types/ProgressTypes.js';
+import { createLogger } from '../configs/loggerConfig.js';
+
+const logger = createLogger('ProgressService');
 
 /**
  * SSE 連線管理介面
@@ -61,6 +64,7 @@ export class ProgressService {
     
     // 定期清理過期的任務和連線（每 5 分鐘執行一次）
     setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    logger.info('ProgressService initialized with periodic cleanup every 5 minutes');
   }
 
   /**
@@ -87,6 +91,8 @@ export class ProgressService {
     this.tasks.set(taskId, progressInfo);
     this.broadcastProgress(taskId, progressInfo);
     
+    logger.info(`Task created: ${taskId} with total work of ${total}`);
+    
     return progressInfo;
   }
 
@@ -101,7 +107,7 @@ export class ProgressService {
   ): void {
     const task = this.tasks.get(taskId);
     if (!task) {
-      console.warn(`Task ${taskId} not found for progress update`);
+      logger.warn(`Task ${taskId} not found for progress update`);
       return;
     }
 
@@ -128,6 +134,8 @@ export class ProgressService {
 
     this.tasks.set(taskId, updatedTask);
     this.broadcastProgress(taskId, updatedTask);
+    
+    logger.debug(`Task progress updated: ${taskId} - ${updatedTask.percentage}% complete`);
   }
 
   /**
@@ -150,6 +158,9 @@ export class ProgressService {
       task.percentage = 100;
       this.tasks.set(taskId, task);
       this.broadcastProgress(taskId, task);
+      logger.info(`Task completed successfully: ${taskId}`);
+    } else {
+      logger.warn(`Attempted to complete non-existent task: ${taskId}`);
     }
 
     // 延遲關閉 SSE 連線，確保客戶端收到完成事件
@@ -176,6 +187,7 @@ export class ProgressService {
       
       this.tasks.set(taskId, failedTask);
       this.broadcastProgress(taskId, failedTask);
+      logger.error(`Task failed: ${taskId} - ${error}`);
     }
 
     // 延遲關閉 SSE 連線
@@ -311,7 +323,7 @@ export class ProgressService {
         try {
           this.sendSSEEvent(connection.response, eventType, progress);
         } catch (error) {
-          console.error('Error sending SSE event:', error);
+          logger.error('Error sending SSE event:', error);
           connection.isActive = false;
         }
       }
@@ -350,7 +362,7 @@ export class ProgressService {
           try {
             connection.response.end();
           } catch (error) {
-            console.error('Error closing SSE connection:', error);
+            logger.error('Error closing SSE connection:', error);
           }
         }
       });
@@ -388,7 +400,7 @@ export class ProgressService {
       if (isExpired && isFinished) {
         this.tasks.delete(taskId);
         this.closeSSEConnections(taskId);
-        console.log(`Cleaned up expired task: ${taskId}`);
+        logger.info(`Cleaned up expired task: ${taskId}`);
       }
     }
   }

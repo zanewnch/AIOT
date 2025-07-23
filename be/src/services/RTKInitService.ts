@@ -31,6 +31,10 @@
 import { RTKInitRepository } from '../repo/RTKInitRepo.js';
 // 匯入進度追蹤相關類型，用於支援進度回調和任務階段管理
 import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
+// 匯入日誌記錄器
+import { createLogger } from '../configs/loggerConfig.js';
+
+const logger = createLogger('RTKInitService');
 
 /**
  * RTK 初始化服務類別
@@ -72,11 +76,15 @@ export class RTKInitService {
    * 若資料庫中已有 RTK 資料，則不會重複建立，並回傳現有資料筆數
    */
   async seedRTKDemo(): Promise<{ message: string; count: number }> {
+    logger.info('Starting RTK demo data seeding process');
+    
     // 檢查資料庫中是否已有 RTK 資料
     const existingCount = await this.rtkInitRepository.count();
+    logger.debug(`Found ${existingCount} existing RTK records in database`);
 
     // 如果已有資料，則回傳現有資料筆數
     if (existingCount > 0) {
+      logger.info(`RTK demo data already exists with ${existingCount} records`);
       return {
         message: 'RTK demo data already exists',
         count: existingCount
@@ -88,7 +96,7 @@ export class RTKInitService {
     const BATCH_SIZE = 1000; // 分批處理避免記憶體問題
     let totalCreated = 0;
 
-    console.log(`正在生成 ${TARGET_COUNT} 筆 RTK 測試資料...`);
+    logger.info(`Generating ${TARGET_COUNT} RTK test data records for stress testing`);
 
     // 分批處理 RTK 資料創建
     for (let batchStart = 0; batchStart < TARGET_COUNT; batchStart += BATCH_SIZE) {
@@ -106,16 +114,17 @@ export class RTKInitService {
         batchData.push({ latitude, longitude });
       }
 
-      console.log(`正在處理第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 (${batchStart + 1}-${batchEnd})...`);
+      const batchNumber = Math.floor(batchStart / BATCH_SIZE) + 1;
+      logger.info(`Processing batch ${batchNumber} (records ${batchStart + 1}-${batchEnd})`);
 
       // 批量插入當前批次
       const createdRecords = await this.rtkInitRepository.bulkCreate(batchData);
       totalCreated += createdRecords.length;
 
-      console.log(`批次完成，已插入 ${createdRecords.length} 筆 RTK 資料`);
+      logger.debug(`Batch ${batchNumber} completed, inserted ${createdRecords.length} RTK records`);
     }
 
-    console.log(`成功插入總計 ${totalCreated} 筆 RTK 資料`);
+    logger.info(`Successfully inserted ${totalCreated} RTK records in total`);
 
     // 回傳創建成功的訊息和資料筆數
     return {
@@ -185,7 +194,7 @@ export class RTKInitService {
     const BATCH_SIZE = 1000; // 分批處理避免記憶體問題
     let totalCreated = 0;
     
-    console.log(`正在生成 ${TARGET_COUNT} 筆 RTK 測試資料...`);
+    logger.info(`Generating ${TARGET_COUNT} RTK test data records with progress tracking`);
     
     // 分批處理 RTK 資料創建
     for (let batchStart = 0; batchStart < TARGET_COUNT; batchStart += BATCH_SIZE) {
@@ -203,7 +212,8 @@ export class RTKInitService {
         batchData.push({ latitude, longitude });
       }
       
-      console.log(`正在處理第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 (${batchStart + 1}-${batchEnd})...`);
+      const batchNumber = Math.floor(batchStart / BATCH_SIZE) + 1;
+      logger.info(`Processing batch ${batchNumber} with progress callback (records ${batchStart + 1}-${batchEnd})`);
       
       // 通知進度
       if (progressCallback) {
@@ -214,7 +224,7 @@ export class RTKInitService {
           percentage: 0, // 會被 ProgressService 重新計算
           current: batchStart,
           total: TARGET_COUNT,
-          message: `正在插入第 ${Math.floor(batchStart / BATCH_SIZE) + 1} 批次 RTK 資料 (${batchStart + 1}-${batchEnd})`,
+          message: `正在插入第 ${batchNumber} 批次 RTK 資料 (${batchStart + 1}-${batchEnd})`,
           startTime: new Date(),
           lastUpdated: new Date()
         });
@@ -224,10 +234,10 @@ export class RTKInitService {
       const createdRecords = await this.rtkInitRepository.bulkCreate(batchData);
       totalCreated += createdRecords.length;
       
-      console.log(`批次完成，已插入 ${createdRecords.length} 筆 RTK 資料`);
+      logger.debug(`Batch ${batchNumber} completed, inserted ${createdRecords.length} RTK records`);
     }
     
-    console.log(`成功插入總計 ${totalCreated} 筆 RTK 資料`);
+    logger.info(`Successfully inserted ${totalCreated} RTK records with progress tracking`);
 
     // 通知完成
     if (progressCallback) {
