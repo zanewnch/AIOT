@@ -1,0 +1,401 @@
+@use './themes.scss' as *;
+
+// InitPage main container
+.initPage {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  min-height: calc(100vh - 64px);
+  position: relative;
+  @include theme-transition;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="30" r="1" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="70" r="1" fill="%23ffffff" opacity="0.12"/><circle cx="90" cy="80" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="10" cy="90" r="1" fill="%23ffffff" opacity="0.09"/></svg>') repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Header section
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  @include theme-transition;
+
+  h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    @include theme-transition;
+    
+    background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    
+    @supports not (-webkit-background-clip: text) {
+      background: none;
+      color: #8B5CF6;
+    }
+    
+    [data-theme="dark"] & {
+      background: linear-gradient(135deg, #A855F7 0%, #60A5FA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.9;
+    @include theme-transition;
+    
+    background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    
+    @supports not (-webkit-background-clip: text) {
+      background: none;
+      color: #8B5CF6;
+    }
+    
+    [data-theme="dark"] & {
+      background: linear-gradient(135deg, #A855F7 0%, #60A5FA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+}
+
+// Grid layout for initialization sections
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+}
+
+// Individual section container
+.section {
+  @include card-base;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      0 8px 16px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.25);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Button styles
+.button {
+  @include button-base;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  color: white;
+  border-radius: 0.8rem;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
+    
+    &:hover {
+      transform: none;
+      box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+  }
+  
+  [data-theme="dark"] & {
+    background: linear-gradient(135deg, #A855F7 0%, #60A5FA 100%);
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #60A5FA 0%, #A855F7 100%);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    }
+  }
+}
+
+// Message styles with different states
+.message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border: 1px solid;
+  @include theme-transition;
+
+  &.success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border-color: #bbf7d0;
+
+    [data-theme="dark"] & {
+      background-color: #064e3b;
+      color: #6ee7b7;
+      border-color: #047857;
+    }
+  }
+
+  &.warning {
+    background-color: #fffbeb;
+    color: #a16207;
+    border-color: #fde68a;
+
+    [data-theme="dark"] & {
+      background-color: #78350f;
+      color: #fde047;
+      border-color: #a16207;
+    }
+  }
+
+  &.error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+
+    [data-theme="dark"] & {
+      background-color: #7f1d1d;
+      color: #fca5a5;
+      border-color: #dc2626;
+    }
+  }
+}
+
+// Navigation link styles
+.linkContainer {
+  width: 100%;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+    
+    .linkArrow {
+      transform: translateX(4px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+  }
+  
+  [data-theme="dark"] & {
+    background: linear-gradient(135deg, #A855F7 0%, #60A5FA 100%);
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+    
+    &:hover {
+      background: linear-gradient(135deg, #60A5FA 0%, #A855F7 100%);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    }
+  }
+}
+
+.linkIcon {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+
+.linkText {
+  flex: 1;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  @supports not (-webkit-background-clip: text) {
+    background: none;
+    color: white;
+  }
+}
+
+.linkArrow {
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .initPage {
+    padding: 1rem;
+  }
+  
+  .header {
+    h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .section {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .initPage {
+    padding: 0.75rem;
+  }
+  
+  .header {
+    margin-bottom: 2rem;
+    
+    h1 {
+      font-size: 1.75rem;
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+  
+  .section {
+    padding: 0.75rem;
+  }
+  
+  .button {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}

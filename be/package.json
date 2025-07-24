@@ -41,6 +41,7 @@
     "mysql2": "^3.14.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pug": "^3.0.3",
     "redis": "^5.6.0",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",

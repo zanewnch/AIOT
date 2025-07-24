@@ -84,7 +84,7 @@ export const setupExpressMiddleware = (app: express.Application): void => {
         // 根據環境設定允許的來源網域
         origin: process.env.NODE_ENV === 'production'
             ? process.env.FRONTEND_URL  // 生產環境使用環境變數中的前端 URL
-            : 'http://localhost:3010',  // 開發環境使用本地前端 URL
+            : ['http://localhost:3000', 'http://aiot-frontend:3000'],  // 開發環境支援多個來源
         // 允許發送認證資訊（如 cookies）
         credentials: true,
         // 允許的 HTTP 方法

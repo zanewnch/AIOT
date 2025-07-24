@@ -14,7 +14,7 @@ services: # 定義所有要運行的服務（容器）
     logging: *default-logging # 使用預設的日誌配置
     build:
       # the context property is specifies the folder I want to use, like the command COPY and ADD in dockerfile are based on this context folder
-      context: ../../AIOT/fe
+      context: ../../fe
       dockerfile: ./Dockerfile.fe # 指定 Dockerfile 路徑
     container_name: AIOT-fe # 指定容器名稱
     ports:
@@ -38,7 +38,7 @@ services: # 定義所有要運行的服務（容器）
     networks:
       - aiot-compose-network # 指定使用的網路
     volumes:
-      - ../../AIOT:/app # 將本地 AIOT 整個資料夾掛載到容器 /app
+      - ../../:/app # 將本地 AIOT 整個資料夾掛載到容器 /app
       - /app/fe/node_modules # 保持 node_modules 不被本地覆蓋
     restart: unless-stopped # 當容器異常停止時自動重啟
 
@@ -46,7 +46,7 @@ services: # 定義所有要運行的服務（容器）
   aiot-backend:
     logging: *default-logging # 使用預設的日誌配置
     build:
-      context: ../../AIOT/be # 指定 Dockerfile 構建上下文目錄
+      context: ../../be # 指定 Dockerfile 構建上下文目錄
       dockerfile: ./Dockerfile.be # 指定 Dockerfile 路徑
 
     container_name: AIOT-be # 指定容器名稱
@@ -76,7 +76,7 @@ services: # 定義所有要運行的服務（容器）
     networks:
       - aiot-compose-network
     volumes:
-      - ../../AIOT:/app # 將本地 AIOT 整個資料夾掛載到容器 /app
+      - ../../:/app # 將本地 AIOT 整個資料夾掛載到容器 /app
       - /app/be/node_modules # 保持 node_modules 不被本地覆蓋
     restart: unless-stopped # 當容器異常停止時自動重啟
 
@@ -84,7 +84,7 @@ services: # 定義所有要運行的服務（容器）
   aiot-llm:
     logging: *default-logging
     build:
-      context: ../../AIOT/llm
+      context: ../../llm
       dockerfile: ./Dockerfile.llm
     container_name: AIOT-llm
     ports:
@@ -95,7 +95,7 @@ services: # 定義所有要運行的服務（容器）
       - DATABASE_URL=sqlite:///db.sqlite3
       - OLLAMA_URL=http://host.docker.internal:11434 # 連接到主機上的 Ollama
     volumes:
-      - ../../AIOT/llm:/app
+      - ../../llm:/app
     networks:
       - aiot-compose-network
     # 手動控制服務啟動

@@ -16,12 +16,12 @@ RUN git config --global user.name "zanewnch" && \
     git config --global user.email "zanewnch@gmail.com"
 
 # 複製 .env 檔案（如果存在）
-COPY src/.env* ./src/
+COPY .env* ./
 
 # 複製程式碼
 COPY . .
 
 EXPOSE 8000
 
-# 執行階段：只啟動應用
-# CMD ["npm", "start"]
+# 執行階段：使用 npm start 啟動開發環境 (with nodemon)
+CMD ["npm", "start"]
