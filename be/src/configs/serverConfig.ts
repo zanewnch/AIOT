@@ -57,8 +57,8 @@ export const getServerConfig = (): ServerConfig => {
         publicPath: path.join(__dirname, '../../public'),
         // 設定文檔檔案的路徑
         docsPath: path.join(__dirname, '../../docs'),
-        // 設定視圖引擎為 Jade
-        viewEngine: 'jade'
+        // 設定視圖引擎為 Pug
+        viewEngine: 'pug'
     };
 };
 

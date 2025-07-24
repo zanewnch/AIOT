@@ -27,6 +27,7 @@ import { rtkRoutes } from './routes/rtkRoutes.js'; // RTK 相關路由
 import { swaggerRoutes } from './routes/swaggerRoutes.js'; // Swagger API 文件路由
 import { rbacRoutes } from './routes/rbacRoutes.js'; // RBAC 角色權限管理路由
 import { userRoutes } from './routes/userRoutes.js'; // 使用者相關路由
+import homeRoutes from './routes/homeRoutes.js'; // 首頁路由
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 
 /**
@@ -209,6 +210,9 @@ export class App {
    * @returns {Promise<void>} 路由設定完成的 Promise
    */
   private async setRoutes(): Promise<void> {
+    // 設置首頁路由（必須放在最前面，避免被其他路由覆蓋）
+    this.app.use('/', homeRoutes); // 首頁路由
+    
     // 設置基礎路由（根路徑）
     this.app.use('/', initRoutes); // 系統初始化和健康檢查路由
     this.app.use('/', authRoutes); // 身份驗證相關路由
