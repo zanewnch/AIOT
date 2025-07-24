@@ -15,6 +15,9 @@ RUN npm install -g @anthropic-ai/claude-code @google/gemini-cli
 RUN git config --global user.name "zanewnch" && \
     git config --global user.email "zanewnch@gmail.com"
 
+# 複製 .env 檔案（如果存在）
+COPY src/.env* ./src/
+
 # 複製程式碼
 COPY . .
 
