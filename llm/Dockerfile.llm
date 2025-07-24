@@ -13,6 +13,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
+    pkg-config \
+    default-libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
@@ -27,13 +29,14 @@ COPY . /app/
 # Expose Django port
 EXPOSE 8020
 
-# Create startup script
+# Create startup script in /usr/local/bin to avoid volume override
 RUN echo '#!/bin/bash\n\
+cd /app\n\
 # Run Django migrations\n\
 python manage.py migrate\n\
 \n\
 # Start Django development server\n\
-python manage.py runserver 0.0.0.0:8020' > /app/start.sh && chmod +x /app/start.sh
+python manage.py runserver 0.0.0.0:8020' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 # Start the application
-CMD ["/app/start.sh"]
+CMD ["/usr/local/bin/start.sh"]
