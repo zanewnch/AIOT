@@ -46,3 +46,9 @@
 2025-07-24 14:55:13.678 [AIOT-BE] WARN: Login failed: User not found for username: admin
 2025-07-24 14:55:13.678 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
 2025-07-24 14:55:13.678 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
+2025-07-24 15:25:10.862 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-24 15:25:10.863 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-24 15:25:10.863 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-24 15:25:10.872 [AIOT-BE] WARN: Login failed: User not found for username: admin
+2025-07-24 15:25:10.873 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
+2025-07-24 15:25:10.873 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
