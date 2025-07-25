@@ -1,10 +1,10 @@
 /**
  * @fileoverview 應用程式側邊欄導航組件
- * 
+ *
  * 此檔案提供了一個響應式側邊欄導航組件，包含品牌標題和主要導航連結。
  * 組件使用 React Router 實現路由導航，並根據當前路徑高亮顯示活動連結。
  * 支援自定義樣式和完整的 TypeScript 類型定義。
- * 
+ *
  * @author AI Assistant
  * @version 1.0.0
  * @since 2025-07-18
@@ -16,7 +16,7 @@ import styles from '../styles/Sidebar.module.scss'; // 引入側邊欄的 SCSS �
 
 /**
  * 側邊欄組件的屬性介面
- * 
+ *
  * 定義側邊欄組件可接受的所有屬性及其類型約束
  */
 interface SidebarProps {
@@ -26,18 +26,18 @@ interface SidebarProps {
 
 /**
  * 應用程式側邊欄導航組件
- * 
+ *
  * 提供一個固定位置的側邊欄，包含品牌標題和主要導航連結。
  * 根據當前路徑自動高亮顯示活動連結，提供良好的用戶體驗。
- * 
+ *
  * @param props - 側邊欄組件的屬性
  * @returns 渲染後的側邊欄 JSX 元素
- * 
+ *
  * @example
  * ```tsx
  * // 基本使用
  * <Sidebar />
- * 
+ *
  * // 帶自定義樣式
  * <Sidebar className="custom-sidebar" />
  * ```
@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         <h3>導航</h3>
         <nav className={styles.sidebarNav}>
           {/* 首頁導航連結 */}
-          <Link 
+          <Link
             to="/" // 路由路徑
             className={`${styles.sidebarLink} ${location.pathname === '/' ? styles.active : ''}`} // 動態應用活動狀態樣式
           >
@@ -66,16 +66,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             首頁
           </Link>
           {/* 表格檢視器導航連結 */}
-          <Link 
-            to="/tableviewer" // 路由路徑
+          <Link
+            to="/content/tableviewer" // 路由路徑
             className={`${styles.sidebarLink} ${location.pathname === '/tableviewer' ? styles.active : ''}`} // 動態應用活動狀態樣式
           >
             <span className={styles.sidebarIcon}>📊</span>
             Table Viewer
           </Link>
           {/* API 文檔導航連結 */}
-          <Link 
-            to="/api-docs" // 路由路徑
+          <Link
+            to="/content/api-docs" // 路由路徑
             className={`${styles.sidebarLink} ${location.pathname === '/api-docs' ? styles.active : ''}`} // 動態應用活動狀態樣式
           >
             <span className={styles.sidebarIcon}>📚</span>
@@ -85,4 +85,4 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       </div>
     </aside>
   );
-}; 
+};

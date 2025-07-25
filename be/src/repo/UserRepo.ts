@@ -162,6 +162,50 @@ export interface IUserRepository {
         whereCondition: { username: string },
         defaults: { username: string; passwordHash: string; email?: string }
     ): Promise<[UserModel, boolean]>;
+
+    /**
+     * 查詢所有使用者
+     * 
+     * 此方法用於取得系統中所有使用者的列表，適用於管理員查看使用者清單的場景。
+     * 
+     * @returns {Promise<UserModel[]>} 所有使用者模型的陣列
+     * @throws {Error} 當資料庫連線失敗或查詢錯誤時拋出異常
+     */
+    findAll(): Promise<UserModel[]>;
+
+    /**
+     * 根據電子郵件查詢使用者
+     * 
+     * 此方法透過電子郵件地址查詢使用者記錄，適用於電子郵件登入或唯一性檢查的場景。
+     * 
+     * @param {string} email 電子郵件地址
+     * @returns {Promise<UserModel | null>} 使用者模型或 null（若找不到）
+     * @throws {Error} 當資料庫連線失敗或查詢錯誤時拋出異常
+     */
+    findByEmail(email: string): Promise<UserModel | null>;
+
+    /**
+     * 更新使用者資料
+     * 
+     * 此方法用於更新指定使用者的資料，支援部分欄位更新。
+     * 
+     * @param {number} id 使用者 ID
+     * @param {Partial<{username: string; email: string; passwordHash: string}>} updateData 更新資料
+     * @returns {Promise<UserModel | null>} 更新後的使用者模型或 null（若找不到）
+     * @throws {Error} 當資料庫連線失敗或更新錯誤時拋出異常
+     */
+    update(id: number, updateData: Partial<{username: string; email: string; passwordHash: string}>): Promise<UserModel | null>;
+
+    /**
+     * 刪除使用者
+     * 
+     * 此方法用於從系統中刪除指定的使用者記錄。
+     * 
+     * @param {number} id 使用者 ID
+     * @returns {Promise<boolean>} 是否成功刪除
+     * @throws {Error} 當資料庫連線失敗或刪除錯誤時拋出異常
+     */
+    delete(id: number): Promise<boolean>;
 }
 
 /**
@@ -369,5 +413,74 @@ export class UserRepository implements IUserRepository {
             where: whereCondition,
             defaults
         });
+    }
+
+    /**
+     * 查詢所有使用者
+     * 
+     * 此方法透過 Sequelize 的 findAll 方法取得資料庫中所有使用者記錄。
+     * 適用於管理員查看使用者清單或系統統計等場景。
+     * 
+     * @returns {Promise<UserModel[]>} 所有使用者模型的陣列
+     * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
+     */
+    async findAll(): Promise<UserModel[]> {
+        return await UserModel.findAll();
+    }
+
+    /**
+     * 根據電子郵件查詢使用者
+     * 
+     * 此方法使用 Sequelize 的 findOne 方法透過電子郵件查詢使用者記錄。
+     * 主要用於電子郵件登入驗證流程和檢查電子郵件是否已存在。
+     * 
+     * @param {string} email 要查詢的電子郵件地址
+     * @returns {Promise<UserModel | null>} 找到的使用者模型，若不存在則回傳 null
+     * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
+     */
+    async findByEmail(email: string): Promise<UserModel | null> {
+        return await UserModel.findOne({ where: { email } });
+    }
+
+    /**
+     * 更新使用者資料
+     * 
+     * 此方法使用 Sequelize 的 update 方法更新指定使用者的資料。
+     * 支援部分欄位更新，只會更新提供的欄位。
+     * 
+     * @param {number} id 使用者 ID
+     * @param {Partial<{username: string; email: string; passwordHash: string}>} updateData 更新資料
+     * @returns {Promise<UserModel | null>} 更新後的使用者模型或 null（若找不到）
+     * @throws {Error} 當資料庫連線失敗或更新操作發生錯誤時拋出異常
+     */
+    async update(id: number, updateData: Partial<{username: string; email: string; passwordHash: string}>): Promise<UserModel | null> {
+        const [affectedCount] = await UserModel.update(updateData, {
+            where: { id },
+            returning: false
+        });
+        
+        if (affectedCount === 0) {
+            return null;
+        }
+        
+        // 回傳更新後的使用者資料
+        return await UserModel.findByPk(id);
+    }
+
+    /**
+     * 刪除使用者
+     * 
+     * 此方法使用 Sequelize 的 destroy 方法刪除指定的使用者記錄。
+     * 
+     * @param {number} id 使用者 ID
+     * @returns {Promise<boolean>} 是否成功刪除
+     * @throws {Error} 當資料庫連線失敗或刪除操作發生錯誤時拋出異常
+     */
+    async delete(id: number): Promise<boolean> {
+        const affectedCount = await UserModel.destroy({
+            where: { id }
+        });
+        
+        return affectedCount > 0;
     }
 }

@@ -1,34 +1,34 @@
 /**
  * @fileoverview 權限服務層
- * 
+ *
  * 提供基於 RBAC 的權限檢查功能，整合 Redis 快取以提升效能。
  * 此服務負責處理使用者權限驗證、角色檢查和權限資料快取管理。
- * 
+ *
  * 功能特點：
  * - 使用者權限檢查（單一、任一、全部）
  * - 使用者角色檢查
  * - Redis 快取機制，減少資料庫查詢
  * - 自動快取失效和更新
  * - 批量權限查詢
- * 
+ *
  * 快取策略：
  * - 使用者權限快取：user_permissions:{userId}
  * - 使用者角色快取：user_roles:{userId}
  * - 預設快取時間：1 小時
  * - 支援強制重新整理快取
- * 
+ *
  * 使用場景：
  * - API 路由權限驗證
  * - 前端頁面權限控制
  * - 業務邏輯權限檢查
  * - 批量使用者權限查詢
- * 
+ *
  * 效能考量：
  * - 優先使用 Redis 快取
  * - 資料庫查詢僅在快取失效時執行
  * - 支援批量操作減少網路開銷
  * - 自動處理 Redis 連線異常
- * 
+ *
  * @author AIOT 開發團隊
  * @version 1.0.0
  * @since 2025-07-18
@@ -124,10 +124,10 @@ export class PermissionService {
     /**
      * 取得 Redis 客戶端
      * 嘗試建立 Redis 連線，若失敗則拋出錯誤
-     * 
+     *
      * @returns Redis 客戶端實例
      * @throws Error 當 Redis 連線不可用時拋出錯誤
-     * 
+     *
      * @private
      */
     private getRedisClient(): RedisClientType {
@@ -145,10 +145,10 @@ export class PermissionService {
     /**
      * 生成使用者權限快取鍵值
      * 建立特定使用者的權限快取鍵值，格式為 "user_permissions:{userId}"
-     * 
+     *
      * @param userId 使用者 ID
      * @returns 權限快取鍵值
-     * 
+     *
      * @private
      */
     private getPermissionsCacheKey(userId: number): string {
@@ -159,10 +159,10 @@ export class PermissionService {
     /**
      * 生成使用者角色快取鍵值
      * 建立特定使用者的角色快取鍵值，格式為 "user_roles:{userId}"
-     * 
+     *
      * @param userId 使用者 ID
      * @returns 角色快取鍵值
-     * 
+     *
      * @private
      */
     private getRolesCacheKey(userId: number): string {
@@ -173,10 +173,10 @@ export class PermissionService {
     /**
      * 從快取取得使用者權限資料
      * 嘗試從 Redis 快取中取得使用者的權限資料
-     * 
+     *
      * @param userId 使用者 ID
      * @returns 使用者權限資料或 null（當快取不存在或發生錯誤時）
-     * 
+     *
      * @private
      */
     private async getCachedUserPermissions(userId: number): Promise<UserPermissions | null> {
@@ -209,21 +209,21 @@ export class PermissionService {
      * @param ttl 快取時間（秒）
      */
     private async setCachedUserPermissions(
-        userId: number, 
-        permissions: UserPermissions, 
-        ttl: number = PermissionService.DEFAULT_CACHE_TTL
-    ): Promise<void> {
-        try {
-            const redis = this.getRedisClient();
-            const cacheKey = this.getPermissionsCacheKey(userId);
-            
-            await redis.setEx(
-                cacheKey, 
-                ttl, 
-                JSON.stringify(permissions)
+        userId: number, // 要快取權限的使用者 ID
+        permissions: UserPermissions, // 要儲存的使用者權限資料物件
+        ttl: number = PermissionService.DEFAULT_CACHE_TTL // 快取存活時間，預設為 3600 秒（1小時）
+    ): Promise<void> { // 回傳空的 Promise，表示異步操作完成
+        try { // 嘗試執行快取儲存操作
+            const redis = this.getRedisClient(); // 取得 Redis 客戶端連線實例
+            const cacheKey = this.getPermissionsCacheKey(userId); // 生成該使用者的權限快取鍵值
+
+            await redis.setEx( // 使用 Redis SETEX 命令設定有過期時間的鍵值
+                cacheKey, // 快取鍵值，格式為 "user_permissions:{userId}"
+                ttl, // 快取過期時間（秒）
+                JSON.stringify(permissions) // 將權限物件序列化為 JSON 字串儲存
             );
-        } catch (error) {
-            logger.warn('Failed to cache permissions:', error);
+        } catch (error) { // 捕獲任何快取操作錯誤
+            logger.warn('Failed to cache permissions:', error); // 記錄警告訊息但不拋出錯誤，避免影響主要業務流程
         }
     }
 
@@ -232,52 +232,52 @@ export class PermissionService {
      * @param userId 使用者 ID
      * @returns 使用者權限資料或 null
      */
-    private async fetchUserPermissionsFromDB(userId: number): Promise<UserPermissions | null> {
-        try {
-            logger.debug(`Querying database for user ${userId} with roles and permissions`);
-            const user = await this.userRepository.findByIdWithRolesAndPermissions(userId);
-            
-            if (!user) {
-                logger.warn(`User ${userId} not found in database`);
-                return null;
+    private async fetchUserPermissionsFromDB(userId: number): Promise<UserPermissions | null> { // 從資料庫取得使用者權限資料的私有方法
+        try { // 嘗試執行資料庫查詢操作
+            logger.debug(`Querying database for user ${userId} with roles and permissions`); // 記錄除錯訊息，說明正在查詢特定使用者的角色和權限
+            const user = await this.userRepository.findByIdWithRolesAndPermissions(userId); // 透過使用者資料存取層查詢使用者及其關聯的角色和權限資料
+
+            if (!user) { // 如果查詢結果為空，表示使用者不存在
+                logger.warn(`User ${userId} not found in database`); // 記錄警告訊息
+                return null; // 回傳 null 表示查詢失敗
             }
 
             // 提取所有權限（來自角色）
-            const permissions = new Set<string>();
-            const roles = new Set<string>();
+            const permissions = new Set<string>(); // 建立一個 Set 集合來儲存權限名稱，自動去除重複項
+            const roles = new Set<string>(); // 建立一個 Set 集合來儲存角色名稱，自動去除重複項
 
-            if (user.roles) {
-                logger.debug(`User ${userId} has ${user.roles.length} roles`);
-                for (const role of user.roles) {
-                    roles.add(role.name);
-                    logger.debug(`Processing role '${role.name}' for user ${userId}`);
-                    
-                    if (role.permissions) {
-                        logger.debug(`Role '${role.name}' has ${role.permissions.length} permissions`);
-                        for (const permission of role.permissions) {
-                            permissions.add(permission.name);
+            if (user.roles) { // 檢查使用者是否有指派角色
+                logger.debug(`User ${userId} has ${user.roles.length} roles`); // 記錄使用者擁有的角色數量
+                for (const role of user.roles) { // 遍歷使用者的每個角色
+                    roles.add(role.name); // 將角色名稱加入角色集合中
+                    logger.debug(`Processing role '${role.name}' for user ${userId}`); // 記錄正在處理的角色名稱
+
+                    if (role.permissions) { // 檢查該角色是否有關聯的權限
+                        logger.debug(`Role '${role.name}' has ${role.permissions.length} permissions`); // 記錄該角色擁有的權限數量
+                        for (const permission of role.permissions) { // 遍歷角色的每個權限
+                            permissions.add(permission.name); // 將權限名稱加入權限集合中
                         }
                     }
                 }
-            } else {
-                logger.warn(`User ${userId} has no roles assigned`);
+            } else { // 如果使用者沒有角色
+                logger.warn(`User ${userId} has no roles assigned`); // 記錄警告訊息
             }
 
-            const result = {
-                userId: user.id,
-                username: user.username,
-                permissions: Array.from(permissions),
-                roles: Array.from(roles),
-                lastUpdated: Date.now()
+            const result = { // 建立結果物件，包含使用者權限的完整資訊
+                userId: user.id, // 使用者 ID
+                username: user.username, // 使用者名稱
+                permissions: Array.from(permissions), // 將權限 Set 轉換為陣列
+                roles: Array.from(roles), // 將角色 Set 轉換為陣列
+                lastUpdated: Date.now() // 記錄資料最後更新時間戳
             };
 
-            logger.info(`User ${userId} (${user.username}) permissions loaded: ${result.permissions.join(', ')}`);
-            logger.info(`User ${userId} (${user.username}) roles: ${result.roles.join(', ')}`);
+            logger.info(`User ${userId} (${user.username}) permissions loaded: ${result.permissions.join(', ')}`); // 記錄使用者載入的權限列表
+            logger.info(`User ${userId} (${user.username}) roles: ${result.roles.join(', ')}`); // 記錄使用者載入的角色列表
 
-            return result;
-        } catch (error) {
-            logger.error('Failed to fetch user permissions from database:', error);
-            return null;
+            return result; // 回傳完整的使用者權限資料
+        } catch (error) { // 捕獲任何資料庫查詢錯誤
+            logger.error('Failed to fetch user permissions from database:', error); // 記錄錯誤訊息
+            return null; // 回傳 null 表示查詢失敗
         }
     }
 
@@ -287,36 +287,36 @@ export class PermissionService {
      * @param options 快取選項
      * @returns 使用者權限資料或 null
      */
-    public async getUserPermissions(
-        userId: number, 
-        options: CacheOptions = {}
-    ): Promise<UserPermissions | null> {
-        const { ttl = PermissionService.DEFAULT_CACHE_TTL, forceRefresh = false } = options;
+    public async getUserPermissions( // 公開方法：取得使用者權限資料（支援快取機制）
+        userId: number, // 要查詢權限的使用者 ID
+        options: CacheOptions = {} // 快取選項物件，預設為空物件
+    ): Promise<UserPermissions | null> { // 回傳 Promise，包含使用者權限資料或 null
+        const { ttl = PermissionService.DEFAULT_CACHE_TTL, forceRefresh = false } = options; // 解構快取選項，設定預設值
 
-        logger.debug(`Getting permissions for user ${userId} (forceRefresh: ${forceRefresh})`);
+        logger.debug(`Getting permissions for user ${userId} (forceRefresh: ${forceRefresh})`); // 記錄除錯訊息，顯示查詢參數
 
         // 如果不強制重新整理，先嘗試從快取取得
-        if (!forceRefresh) {
-            const cachedPermissions = await this.getCachedUserPermissions(userId);
-            if (cachedPermissions) {
-                logger.debug(`Found cached permissions for user ${userId}`);
-                return cachedPermissions;
+        if (!forceRefresh) { // 檢查是否需要強制從資料庫重新載入
+            const cachedPermissions = await this.getCachedUserPermissions(userId); // 嘗試從 Redis 快取中取得使用者權限
+            if (cachedPermissions) { // 如果快取中存在資料
+                logger.debug(`Found cached permissions for user ${userId}`); // 記錄找到快取資料的訊息
+                return cachedPermissions; // 直接回傳快取資料，提升效能
             }
         }
 
         // 從資料庫取得權限資料
-        logger.debug(`Fetching permissions from database for user ${userId}`);
-        const permissions = await this.fetchUserPermissionsFromDB(userId);
-        
-        if (permissions) {
-            logger.info(`Retrieved permissions for user ${userId}: ${permissions.permissions.length} permissions, ${permissions.roles.length} roles`);
+        logger.debug(`Fetching permissions from database for user ${userId}`); // 記錄從資料庫查詢的訊息
+        const permissions = await this.fetchUserPermissionsFromDB(userId); // 調用私有方法從資料庫查詢權限資料
+
+        if (permissions) { // 如果成功取得權限資料
+            logger.info(`Retrieved permissions for user ${userId}: ${permissions.permissions.length} permissions, ${permissions.roles.length} roles`); // 記錄取得的權限和角色數量
             // 將資料存入快取
-            await this.setCachedUserPermissions(userId, permissions, ttl);
-        } else {
-            logger.warn(`No permissions found for user ${userId}`);
+            await this.setCachedUserPermissions(userId, permissions, ttl); // 將查詢結果儲存到 Redis 快取中，避免重複查詢
+        } else { // 如果沒有找到權限資料
+            logger.warn(`No permissions found for user ${userId}`); // 記錄警告訊息
         }
 
-        return permissions;
+        return permissions; // 回傳權限資料（可能為 null）
     }
 
     /**
@@ -326,32 +326,32 @@ export class PermissionService {
      * @param options 快取選項
      * @returns 是否具有權限
      */
-    public async userHasPermission(
-        userId: number, 
-        permissionName: string, 
-        options: CacheOptions = {}
-    ): Promise<boolean> {
-        logger.debug(`Checking permission '${permissionName}' for user ${userId}`);
-        
-        const userPermissions = await this.getUserPermissions(userId, options);
-        
-        if (!userPermissions) {
-            logger.warn(`User ${userId} not found or has no permissions`);
-            logPermissionCheck(userId, permissionName, false, { reason: 'User not found' });
-            return false;
+    public async userHasPermission( // 公開方法：檢查使用者是否具有特定權限
+        userId: number, // 要檢查的使用者 ID
+        permissionName: string, // 要檢查的權限名稱
+        options: CacheOptions = {} // 快取選項，預設為空物件
+    ): Promise<boolean> { // 回傳 Promise<boolean>，true 表示有權限，false 表示無權限
+        logger.debug(`Checking permission '${permissionName}' for user ${userId}`); // 記錄除錯訊息，顯示正在檢查的權限和使用者
+
+        const userPermissions = await this.getUserPermissions(userId, options); // 取得使用者的完整權限資料（包含快取機制）
+
+        if (!userPermissions) { // 如果無法取得使用者權限資料（使用者不存在或無權限）
+            logger.warn(`User ${userId} not found or has no permissions`); // 記錄警告訊息
+            logPermissionCheck(userId, permissionName, false, { reason: 'User not found' }); // 記錄權限檢查失敗的審計日誌
+            return false; // 回傳 false 表示無權限
         }
 
-        const hasPermission = userPermissions.permissions.includes(permissionName);
-        
+        const hasPermission = userPermissions.permissions.includes(permissionName); // 檢查使用者權限陣列中是否包含指定的權限名稱
+
         // 記錄權限檢查結果
-        logPermissionCheck(userId, permissionName, hasPermission, {
-            userRoles: userPermissions.roles,
-            userPermissions: userPermissions.permissions
+        logPermissionCheck(userId, permissionName, hasPermission, { // 記錄權限檢查的審計日誌
+            userRoles: userPermissions.roles, // 包含使用者的角色資訊
+            userPermissions: userPermissions.permissions // 包含使用者的所有權限
         });
-        
-        logger.debug(`Permission check result for user ${userId}: ${hasPermission ? 'GRANTED' : 'DENIED'}`);
-        
-        return hasPermission;
+
+        logger.debug(`Permission check result for user ${userId}: ${hasPermission ? 'GRANTED' : 'DENIED'}`); // 記錄權限檢查的最終結果
+
+        return hasPermission; // 回傳權限檢查結果
     }
 
     /**
@@ -361,20 +361,20 @@ export class PermissionService {
      * @param options 快取選項
      * @returns 是否具有任一權限
      */
-    public async userHasAnyPermission(
-        userId: number, 
-        permissions: string[], 
-        options: CacheOptions = {}
-    ): Promise<boolean> {
-        const userPermissions = await this.getUserPermissions(userId, options);
-        
-        if (!userPermissions) {
-            return false;
+    public async userHasAnyPermission( // 公開方法：檢查使用者是否具有任一指定權限（OR 邏輯）
+        userId: number, // 要檢查的使用者 ID
+        permissions: string[], // 要檢查的權限名稱陣列
+        options: CacheOptions = {} // 快取選項，預設為空物件
+    ): Promise<boolean> { // 回傳 Promise<boolean>，true 表示至少有一個權限，false 表示沒有任何權限
+        const userPermissions = await this.getUserPermissions(userId, options); // 取得使用者的完整權限資料
+
+        if (!userPermissions) { // 如果無法取得使用者權限資料
+            return false; // 回傳 false 表示無權限
         }
 
-        return permissions.some(permission => 
-            userPermissions.permissions.includes(permission)
-        );
+        return permissions.some(permission => // 使用 Array.some() 方法檢查是否至少有一個權限符合條件
+            userPermissions.permissions.includes(permission) // 檢查使用者權限陣列中是否包含當前檢查的權限
+        ); // 只要有任何一個權限存在就回傳 true
     }
 
     /**
@@ -384,20 +384,20 @@ export class PermissionService {
      * @param options 快取選項
      * @returns 是否具有所有權限
      */
-    public async userHasAllPermissions(
-        userId: number, 
-        permissions: string[], 
-        options: CacheOptions = {}
-    ): Promise<boolean> {
-        const userPermissions = await this.getUserPermissions(userId, options);
-        
-        if (!userPermissions) {
-            return false;
+    public async userHasAllPermissions( // 公開方法：檢查使用者是否具有所有指定權限（AND 邏輯）
+        userId: number, // 要檢查的使用者 ID
+        permissions: string[], // 要檢查的權限名稱陣列
+        options: CacheOptions = {} // 快取選項，預設為空物件
+    ): Promise<boolean> { // 回傳 Promise<boolean>，true 表示具有所有權限，false 表示缺少至少一個權限
+        const userPermissions = await this.getUserPermissions(userId, options); // 取得使用者的完整權限資料
+
+        if (!userPermissions) { // 如果無法取得使用者權限資料
+            return false; // 回傳 false 表示無權限
         }
 
-        return permissions.every(permission => 
-            userPermissions.permissions.includes(permission)
-        );
+        return permissions.every(permission => // 使用 Array.every() 方法檢查是否所有權限都符合條件
+            userPermissions.permissions.includes(permission) // 檢查使用者權限陣列中是否包含當前檢查的權限
+        ); // 只有當所有權限都存在時才回傳 true
     }
 
     /**
@@ -408,12 +408,12 @@ export class PermissionService {
      * @returns 是否具有角色
      */
     public async userHasRole(
-        userId: number, 
-        roleName: string, 
+        userId: number,
+        roleName: string,
         options: CacheOptions = {}
     ): Promise<boolean> {
         const userPermissions = await this.getUserPermissions(userId, options);
-        
+
         if (!userPermissions) {
             return false;
         }
@@ -428,7 +428,7 @@ export class PermissionService {
      * @returns 權限名稱陣列
      */
     public async getUserPermissionsList(
-        userId: number, 
+        userId: number,
         options: CacheOptions = {}
     ): Promise<string[]> {
         const userPermissions = await this.getUserPermissions(userId, options);
@@ -442,7 +442,7 @@ export class PermissionService {
      * @returns 角色名稱陣列
      */
     public async getUserRolesList(
-        userId: number, 
+        userId: number,
         options: CacheOptions = {}
     ): Promise<string[]> {
         const userPermissions = await this.getUserPermissions(userId, options);
@@ -472,7 +472,7 @@ export class PermissionService {
      * @param ttl 快取時間（秒）
      */
     public async refreshUserPermissionsCache(
-        userId: number, 
+        userId: number,
         ttl: number = PermissionService.DEFAULT_CACHE_TTL
     ): Promise<UserPermissions | null> {
         return this.getUserPermissions(userId, { ttl, forceRefresh: true });
@@ -485,10 +485,10 @@ export class PermissionService {
      * @returns 使用者權限資料陣列
      */
     public async getBatchUserPermissions(
-        userIds: number[], 
+        userIds: number[],
         options: CacheOptions = {}
     ): Promise<(UserPermissions | null)[]> {
-        const promises = userIds.map(userId => 
+        const promises = userIds.map(userId =>
             this.getUserPermissions(userId, options)
         );
 
@@ -624,7 +624,7 @@ export class PermissionService {
                 const key = this.getPermissionCacheKey(permissionId);
                 await redis.del(key);
             }
-            
+
             // 總是清除所有權限列表快取
             await redis.del(PermissionService.ALL_PERMISSIONS_KEY);
             logger.debug('Permission management caches cleared successfully');
@@ -708,42 +708,42 @@ export class PermissionService {
      * 建立新權限
      * @param permissionData 權限資料
      */
-    public async createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO> {
-        try {
-            logger.info(`Creating new permission: ${permissionData.name}`);
+    public async createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO> { // 公開方法：創建新的權限
+        try { // 嘗試執行權限創建操作
+            logger.info(`Creating new permission: ${permissionData.name}`); // 記錄創建權限的資訊日誌
 
             // 驗證輸入
-            if (!permissionData.name || permissionData.name.trim().length === 0) {
-                throw new Error('Permission name is required');
+            if (!permissionData.name || permissionData.name.trim().length === 0) { // 檢查權限名稱是否為空或只包含空白字符
+                throw new Error('Permission name is required'); // 拋出錯誤，要求提供權限名稱
             }
 
             // 檢查權限是否已存在
-            const exists = await this.permissionRepository.exists(permissionData.name.trim());
-            if (exists) {
-                throw new Error(`Permission with name '${permissionData.name}' already exists`);
+            const exists = await this.permissionRepository.exists(permissionData.name.trim()); // 查詢資料庫確認權限名稱是否已存在
+            if (exists) { // 如果權限已存在
+                throw new Error(`Permission with name '${permissionData.name}' already exists`); // 拋出錯誤，防止重複創建
             }
 
             // 建立權限
-            const permission = await this.permissionRepository.create({
-                name: permissionData.name.trim(),
-                description: permissionData.description?.trim()
+            const permission = await this.permissionRepository.create({ // 調用資料存取層創建新權限
+                name: permissionData.name.trim(), // 去除首尾空白的權限名稱
+                description: permissionData.description?.trim() // 可選的權限描述，去除首尾空白
             });
 
-            const permissionDTO = this.modelToDTO(permission);
+            const permissionDTO = this.modelToDTO(permission); // 將資料庫模型轉換為資料傳輸物件
 
             // 更新快取
-            await this.cachePermission(permissionDTO);
+            await this.cachePermission(permissionDTO); // 將新創建的權限儲存到 Redis 快取中
             // 清除所有權限列表快取，強制下次重新載入
-            await this.clearPermissionManagementCache();
+            await this.clearPermissionManagementCache(); // 清除權限列表快取，確保下次查詢時能取得最新資料
 
-            logger.info(`Permission created successfully: ${permissionData.name} (ID: ${permissionDTO.id})`);
-            return permissionDTO;
-        } catch (error) {
-            logger.error('Error creating permission:', error);
-            if (error instanceof Error) {
-                throw error;
+            logger.info(`Permission created successfully: ${permissionData.name} (ID: ${permissionDTO.id})`); // 記錄成功創建權限的日誌
+            return permissionDTO; // 回傳創建成功的權限資料
+        } catch (error) { // 捕獲任何創建過程中的錯誤
+            logger.error('Error creating permission:', error); // 記錄錯誤日誌
+            if (error instanceof Error) { // 如果是已知的 Error 類型
+                throw error; // 直接重新拋出錯誤
             }
-            throw new Error('Failed to create permission');
+            throw new Error('Failed to create permission'); // 拋出通用的創建失敗錯誤
         }
     }
 
@@ -769,7 +769,7 @@ export class PermissionService {
             const updatePayload: any = {};
             if (updateData.name !== undefined) {
                 updatePayload.name = updateData.name.trim();
-                
+
                 // 檢查新名稱是否已被其他權限使用
                 if (updatePayload.name) {
                     const existingPermission = await this.permissionRepository.findByName(updatePayload.name);

@@ -1,10 +1,10 @@
 /**
  * @fileoverview 使用者登入表單組件
- * 
+ *
  * 此檔案提供了一個完整的使用者登入表單組件，包含表單驗證、錯誤處理和載入狀態管理。
  * 組件整合了 Redux 狀態管理，支援使用者認證流程和即時表單驗證。
  * 包含完整的 TypeScript 類型定義和無障礙功能支援。
- * 
+ *
  * @author AI Assistant
  * @version 1.0.0
  * @since 2025-07-18
@@ -17,13 +17,13 @@ import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 S
 
 /**
  * 使用者登入表單組件
- * 
+ *
  * 提供一個完整的使用者登入介面，包含表單驗證和錯誤處理。
  * 與 Redux 認證系統整合，處理登入邏輯和狀態管理。
  * 支援即時表單驗證、載入狀態顯示和使用者友好的錯誤提示。
- * 
+ *
  * @returns 渲染後的登入表單 JSX 元素
- * 
+ *
  * @example
  * ```tsx
  * <LoginForm />
@@ -42,9 +42,9 @@ export const LoginForm: React.FC = () => {
 
   /**
    * 處理輸入欄位變化
-   * 
+   *
    * 當使用者在輸入欄位中輸入時更新表單資料，同時清除相關的錯誤訊息
-   * 
+   *
    * @param e - 輸入變化事件
    */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,20 +68,20 @@ export const LoginForm: React.FC = () => {
 
   /**
    * 驗證表單資料
-   * 
+   *
    * 檢查表單欄位是否填寫完整，並設置相應的錯誤訊息
-   * 
+   *
    * @returns 表單是否有效
    */
   const validateForm = (): boolean => {
     const errors: Partial<LoginRequest> = {};
 
-    // 驗證使用者名稱
+    // 驗證使用者名稱是否為空string
     if (!formData.username.trim()) {
       errors.username = 'Username is required';
     }
 
-    // 驗證密碼
+    // 驗證密碼是否為空string
     if (!formData.password.trim()) {
       errors.password = 'Password is required';
     }
@@ -92,14 +92,14 @@ export const LoginForm: React.FC = () => {
 
   /**
    * 處理表單提交
-   * 
+   *
    * 驗證表單資料並觸發登入流程
-   * 
+   *
    * @param e - 表單提交事件
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // 阻止表單預設提交行為
-    
+
     // 驗證表單，如果無效則停止執行
     if (!validateForm()) {
       return;
@@ -118,7 +118,7 @@ export const LoginForm: React.FC = () => {
     <div className={styles.loginContainer}>
       <div className={styles.loginCard}>
         <h2 className={styles.title}>Login</h2>
-        
+
         {error && (
           <div className={styles.errorMessage}>
             {error}

@@ -1,56 +1,141 @@
 /**
  * @fileoverview 首頁主要內容組件
- * 
+ *
  * 此組件提供了應用程式的主要功能入口點，包括：
+ * - 系統初始化功能
  * - API 文檔連結
- * - 其他主要功能導航
- * 
+ * - 用戶管理功能
+ * - 系統監控功能
+ *
  * @author AI-IOT Development Team
- * @version 1.0.0
+ * @version 2.0.0
  */
 
-import { Link } from 'react-router-dom'; // React Router 路由連結組件
-
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from '../../styles/HomeContent.module.scss';
 
 /**
  * 首頁主要內容組件
- * 
- * 提供應用程式的主要導航和功能入口點
- * 
- * @returns {JSX.Element} 首頁內容組件
+ *
+ * 提供現代化的應用程式主頁，包含功能導航卡片和系統統計
+ *
+ * @returns {JSX.Element} 美化後的首頁內容組件
  */
-export const HomeContent = () => {
-
+export const HomeContent: React.FC = () => {
     return (
-        <div className="p-6 space-y-6">
-            <div className="text-center">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">歡迎使用 AI-IOT 系統</h1>
-                <p className="text-lg text-gray-600 mb-8">選擇下方功能進行系統管理和配置</p>
-            </div>
+        <div className={styles.homeContainer}>
+            <div className={styles.contentWrapper}>
+                {/* 頁面標題區域 */}
+                <header className={styles.header}>
+                    <h1 className={styles.title}>AI-IOT 管理系統</h1>
+                    <p className={styles.subtitle}>
+                        智能物聯網一站式管理平台 · 高效 · 安全 · 可靠
+                    </p>
+                </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">系統初始化</h2>
-                    <p className="text-gray-600 mb-4">初始化系統組件、創建管理員用戶等</p>
-                    <Link
-                        to="/init"
-                        className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                    >
-                        前往初始化頁面
-                    </Link>
+                {/* 功能卡片網格 */}
+                <div className={styles.featuresGrid}>
+                    {/* 系統初始化卡片 */}
+                    <div className={styles.featureCard}>
+                        <div className={styles.cardHeader}>
+                            <span className={styles.cardIcon}>🚀</span>
+                            <h2 className={styles.cardTitle}>系統初始化</h2>
+                        </div>
+                        <p className={styles.cardDescription}>
+                            快速初始化系統組件、創建管理員用戶、配置基礎權限和角色設定
+                        </p>
+                        <div className={styles.cardAction}>
+                            <Link
+                                to="/init"
+                                className={`${styles.actionButton} ${styles.primary}`}
+                            >
+                                開始初始化
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* API 文檔卡片 */}
+                    <div className={styles.featureCard}>
+                        <div className={styles.cardHeader}>
+                            <span className={styles.cardIcon}>📚</span>
+                            <h2 className={styles.cardTitle}>API 文檔</h2>
+                        </div>
+                        <p className={styles.cardDescription}>
+                            查看完整的 REST API 文檔、使用說明和範例代碼，支援開發者快速上手
+                        </p>
+                        <div className={styles.cardAction}>
+                            <Link
+                                to="/api-docs"
+                                className={`${styles.actionButton} ${styles.secondary}`}
+                            >
+                                查看文檔
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* 用戶管理卡片 */}
+                    <div className={styles.featureCard}>
+                        <div className={styles.cardHeader}>
+                            <span className={styles.cardIcon}>👥</span>
+                            <h2 className={styles.cardTitle}>用戶管理</h2>
+                        </div>
+                        <p className={styles.cardDescription}>
+                            管理系統用戶、分配角色權限、查看用戶活動記錄和安全設定
+                        </p>
+                        <div className={styles.cardAction}>
+                            <Link
+                                to="/users"
+                                className={`${styles.actionButton} ${styles.accent}`}
+                            >
+                                管理用戶
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* 系統監控卡片 */}
+                    <div className={styles.featureCard}>
+                        <div className={styles.cardHeader}>
+                            <span className={styles.cardIcon}>📊</span>
+                            <h2 className={styles.cardTitle}>系統監控</h2>
+                        </div>
+                        <p className={styles.cardDescription}>
+                            實時監控系統狀態、查看性能指標、日誌分析和告警設定
+                        </p>
+                        <div className={styles.cardAction}>
+                            <Link
+                                to="/monitoring"
+                                className={`${styles.actionButton} ${styles.danger}`}
+                            >
+                                查看監控
+                            </Link>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">API 文檔</h2>
-                    <p className="text-gray-600 mb-4">查看完整的 API 文檔和使用說明</p>
-                    <Link
-                        to="/api-docs"
-                        className="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
-                    >
-                        📚 查看 API 文檔
-                    </Link>
-                </div>
+                {/* 系統統計區域 */}
+                <section className={styles.statsSection}>
+                    <h3 className={styles.statsTitle}>系統概覽</h3>
+                    <div className={styles.statsGrid}>
+                        <div className={styles.statItem}>
+                            <div className={styles.statNumber}>24/7</div>
+                            <div className={styles.statLabel}>服務運行</div>
+                        </div>
+                        <div className={styles.statItem}>
+                            <div className={styles.statNumber}>99.9%</div>
+                            <div className={styles.statLabel}>系統可用性</div>
+                        </div>
+                        <div className={styles.statItem}>
+                            <div className={styles.statNumber}>API</div>
+                            <div className={styles.statLabel}>RESTful 接口</div>
+                        </div>
+                        <div className={styles.statItem}>
+                            <div className={styles.statNumber}>RBAC</div>
+                            <div className={styles.statLabel}>權限控制</div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     );
-}
+};

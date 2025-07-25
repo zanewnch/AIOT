@@ -154,6 +154,14 @@ export interface IUserRoleRepository {
    * @returns 是否擁有任一角色
    */
   userHasAnyRole(userId: number, roleNames: string[]): Promise<boolean>;
+
+  /**
+   * 查詢特定使用者和角色的關聯
+   * @param userId 使用者 ID
+   * @param roleId 角色 ID
+   * @returns 使用者角色關聯實例或 null
+   */
+  findByUserAndRole(userId: number, roleId: number): Promise<UserRoleModel | null>;
 }
 
 /**
@@ -578,6 +586,33 @@ export class UserRoleRepository implements IUserRoleRepository {
       return hasAnyRole;
     } catch (error) {
       logger.error(`Error checking if user ${userId} has any role from [${roleNames.join(', ')}]:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 查詢特定使用者和角色的關聯
+   * @param userId 使用者 ID
+   * @param roleId 角色 ID
+   * @returns 使用者角色關聯實例或 null
+   */
+  async findByUserAndRole(userId: number, roleId: number): Promise<UserRoleModel | null> {
+    try {
+      logger.debug(`Finding user-role association: userId=${userId}, roleId=${roleId}`);
+      
+      const association = await UserRoleModel.findOne({
+        where: { userId, roleId }
+      });
+      
+      if (association) {
+        logger.debug(`Found user-role association: userId=${userId}, roleId=${roleId}`);
+      } else {
+        logger.debug(`No user-role association found: userId=${userId}, roleId=${roleId}`);
+      }
+      
+      return association;
+    } catch (error) {
+      logger.error(`Error finding user-role association (userId=${userId}, roleId=${roleId}):`, error);
       throw error;
     }
   }

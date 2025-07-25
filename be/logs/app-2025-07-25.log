@@ -1,0 +1,217 @@
+2025-07-25 01:49:34.700 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 01:49:34.702 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 02:37:49.885 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 02:37:49.889 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 02:38:07.617 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 02:38:07.619 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 02:40:20.584 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 02:40:20.587 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 02:40:36.092 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 02:40:36.093 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-25 02:40:36.093 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-25 02:40:36.154 [AIOT-BE] WARN: Login failed: Invalid password for user: admin
+2025-07-25 02:40:36.155 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
+2025-07-25 02:40:36.155 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
+2025-07-25 02:40:48.839 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 02:40:48.839 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-25 02:40:48.839 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-25 02:40:48.889 [AIOT-BE] WARN: Login failed: Invalid password for user: admin
+2025-07-25 02:40:48.889 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
+2025-07-25 02:40:48.889 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
+2025-07-25 02:45:36.788 [AIOT-BE] INFO: Starting admin user creation process
+2025-07-25 02:45:36.789 [AIOT-BE] INFO: Admin user creation request {"method":"POST","url":"/api/init/admin-user","ip":"::ffff:172.19.0.1","userAgent":"curl/8.5.0"}
+2025-07-25 02:45:36.808 [AIOT-BE] INFO: Permission created: user:create (ID: 2)
+2025-07-25 02:45:36.815 [AIOT-BE] INFO: Permission created: user:read (ID: 3)
+2025-07-25 02:45:36.821 [AIOT-BE] INFO: Permission created: user:update (ID: 4)
+2025-07-25 02:45:36.827 [AIOT-BE] INFO: Permission created: user:delete (ID: 5)
+2025-07-25 02:45:36.833 [AIOT-BE] INFO: Permission created: role:create (ID: 6)
+2025-07-25 02:45:36.840 [AIOT-BE] INFO: Permission created: role:read (ID: 7)
+2025-07-25 02:45:36.848 [AIOT-BE] INFO: Permission created: role:update (ID: 8)
+2025-07-25 02:45:36.854 [AIOT-BE] INFO: Permission created: role:delete (ID: 9)
+2025-07-25 02:45:36.862 [AIOT-BE] INFO: Permission created: permission:create (ID: 10)
+2025-07-25 02:45:36.867 [AIOT-BE] INFO: Permission created: permission:read (ID: 11)
+2025-07-25 02:45:36.873 [AIOT-BE] INFO: Permission created: permission:update (ID: 12)
+2025-07-25 02:45:36.879 [AIOT-BE] INFO: Permission created: permission:delete (ID: 13)
+2025-07-25 02:45:36.885 [AIOT-BE] INFO: Permission created: data:view (ID: 14)
+2025-07-25 02:45:36.891 [AIOT-BE] INFO: Permission created: data:edit (ID: 15)
+2025-07-25 02:45:36.896 [AIOT-BE] INFO: Permission created: data:delete (ID: 16)
+2025-07-25 02:45:36.900 [AIOT-BE] INFO: Permission created: rtk:read (ID: 17)
+2025-07-25 02:45:36.905 [AIOT-BE] INFO: Permission created: rtk:create (ID: 18)
+2025-07-25 02:45:36.910 [AIOT-BE] INFO: Permission created: rtk:update (ID: 19)
+2025-07-25 02:45:36.914 [AIOT-BE] INFO: Permission created: rtk:delete (ID: 20)
+2025-07-25 02:45:36.920 [AIOT-BE] INFO: Permission created: system:admin (ID: 21)
+2025-07-25 02:45:36.929 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=2
+2025-07-25 02:45:36.935 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=3
+2025-07-25 02:45:36.940 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=4
+2025-07-25 02:45:36.944 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=5
+2025-07-25 02:45:36.952 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=6
+2025-07-25 02:45:36.956 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=7
+2025-07-25 02:45:36.961 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=8
+2025-07-25 02:45:36.966 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=9
+2025-07-25 02:45:36.972 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=10
+2025-07-25 02:45:36.978 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=11
+2025-07-25 02:45:36.982 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=12
+2025-07-25 02:45:36.990 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=13
+2025-07-25 02:45:36.995 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=14
+2025-07-25 02:45:37.000 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=15
+2025-07-25 02:45:37.007 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=16
+2025-07-25 02:45:37.011 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=17
+2025-07-25 02:45:37.016 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=18
+2025-07-25 02:45:37.022 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=19
+2025-07-25 02:45:37.026 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=20
+2025-07-25 02:45:37.030 [AIOT-BE] INFO: Role-permission association created: roleId=1, permissionId=21
+2025-07-25 02:45:37.079 [AIOT-BE] INFO: Admin user creation completed: Admin user 'admin' already exists
+2025-07-25 02:45:55.564 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 02:45:55.564 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-25 02:45:55.565 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-25 02:45:55.615 [AIOT-BE] WARN: Login failed: Invalid password for user: admin
+2025-07-25 02:45:55.615 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
+2025-07-25 02:45:55.615 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
+2025-07-25 02:45:58.631 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 02:45:58.632 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-25 02:45:58.632 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-25 02:45:58.679 [AIOT-BE] WARN: Login failed: Invalid password for user: admin
+2025-07-25 02:45:58.680 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
+2025-07-25 02:45:58.680 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
+2025-07-25 02:45:59.698 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 02:45:59.698 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-25 02:45:59.698 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-25 02:45:59.744 [AIOT-BE] WARN: Login failed: Invalid password for user: admin
+2025-07-25 02:45:59.745 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::ffff:172.19.0.1
+2025-07-25 02:45:59.745 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::ffff:172.19.0.1"}
+2025-07-25 02:49:00.205 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 02:49:00.205 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-25 02:49:00.205 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-25 02:49:00.266 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-25 02:49:00.267 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-07-25 02:49:00.267 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-25 03:49:37.649 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:49:37.652 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:51:07.134 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:51:07.136 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:51:30.460 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:51:30.463 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:51:53.170 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:51:53.172 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:52:08.083 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:52:08.085 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:52:19.435 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:52:19.437 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:52:27.884 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:52:27.886 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 03:52:45.759 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 03:52:45.761 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:05:09.496 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:05:09.499 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:05:21.829 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:05:21.832 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:05:42.081 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:05:42.083 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:06:01.852 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:06:01.855 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:06:16.243 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:06:16.246 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:06:31.120 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:06:31.122 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:06:42.321 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:06:42.323 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:08:06.193 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:08:06.196 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:08:37.786 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:08:37.789 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:08:48.263 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:08:48.266 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:09:02.848 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:09:02.850 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:18:58.302 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:18:58.306 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:22:39.753 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:22:39.756 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:23:54.136 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:23:54.139 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:26:30.816 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:26:30.818 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:29:49.906 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:29:49.909 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:44:33.146 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:44:33.148 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:49:46.330 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:49:46.333 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:50:31.905 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:50:31.908 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:52:07.407 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:52:07.410 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:53:41.264 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:53:41.266 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:54:56.942 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:54:56.944 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 04:57:17.870 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 04:57:17.873 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:03:21.107 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:03:21.109 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:03:55.121 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:03:55.123 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:04:32.449 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:04:32.451 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:05:16.392 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:05:16.395 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:05:48.143 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:05:48.145 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:06:29.049 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:06:29.051 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:06:59.907 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:06:59.909 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:07:24.814 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:07:24.817 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:09:34.845 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:09:34.848 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:10:12.463 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:10:12.465 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:11:01.035 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:11:01.038 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:11:43.375 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:11:43.378 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:12:12.458 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:12:12.460 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:12:53.264 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:12:53.267 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:13:24.304 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:13:24.306 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:13:49.299 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:13:49.302 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:22:33.224 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:22:33.227 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:22:52.637 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:22:52.640 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:23:25.966 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:23:25.968 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:23:30.557 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:23:30.559 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:23:33.021 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:23:33.023 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:23:35.572 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:23:35.575 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:23:37.737 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:23:37.739 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:23:47.597 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:23:47.600 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:24:04.372 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:24:04.374 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:24:19.519 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:24:19.522 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:24:57.357 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:24:57.360 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:25:21.307 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:25:21.310 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:27:40.300 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:27:40.303 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:28:10.229 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:28:10.231 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:29:44.842 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:29:44.845 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:30:16.562 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:30:16.565 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:30:35.424 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:30:35.427 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-25 05:31:25.436 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-25 05:31:25.438 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes

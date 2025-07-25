@@ -138,6 +138,14 @@ export interface IRolePermissionRepository {
    * @returns 角色數量
    */
   countRolesByPermissionId(permissionId: number): Promise<number>;
+
+  /**
+   * 查詢特定角色和權限的關聯
+   * @param roleId 角色 ID
+   * @param permissionId 權限 ID
+   * @returns 角色權限關聯實例或 null
+   */
+  findByRoleAndPermission(roleId: number, permissionId: number): Promise<RolePermissionModel | null>;
 }
 
 /**
@@ -498,6 +506,33 @@ export class RolePermissionRepository implements IRolePermissionRepository {
       return count;
     } catch (error) {
       logger.error(`Error counting roles for permission ${permissionId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 查詢特定角色和權限的關聯
+   * @param roleId 角色 ID
+   * @param permissionId 權限 ID
+   * @returns 角色權限關聯實例或 null
+   */
+  async findByRoleAndPermission(roleId: number, permissionId: number): Promise<RolePermissionModel | null> {
+    try {
+      logger.debug(`Finding role-permission association: roleId=${roleId}, permissionId=${permissionId}`);
+      
+      const association = await RolePermissionModel.findOne({
+        where: { roleId, permissionId }
+      });
+      
+      if (association) {
+        logger.debug(`Found role-permission association: roleId=${roleId}, permissionId=${permissionId}`);
+      } else {
+        logger.debug(`No role-permission association found: roleId=${roleId}, permissionId=${permissionId}`);
+      }
+      
+      return association;
+    } catch (error) {
+      logger.error(`Error finding role-permission association (roleId=${roleId}, permissionId=${permissionId}):`, error);
       throw error;
     }
   }
