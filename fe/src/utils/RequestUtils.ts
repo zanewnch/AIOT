@@ -1,13 +1,13 @@
 /**
  * @fileoverview HTTP 請求工具類別模組，提供統一的 API 請求處理
- * 
+ *
  * 此模組封裝了 axios 的功能，提供了：
  * - 統一的 HTTP 請求方法 (GET, POST, PUT, DELETE, PATCH)
  * - 自動的認證 token 管理
  * - 統一的錯誤處理機制
  * - 請求和響應攔截器
  * - 預設的 axios 實例配置
- * 
+ *
  * @author AIOT Team
  * @version 1.0.0
  */
@@ -16,9 +16,9 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'; // 引入 axio
 
 /**
  * HTTP 請求工具類別
- * 
+ *
  * 提供統一的 API 請求介面，包含自動認證處理、錯誤管理和響應攔截
- * 
+ *
  * @class RequestUtils
  * @example
  * ```typescript
@@ -36,16 +36,16 @@ export class RequestUtils {
 
   /**
    * 建構函式，初始化 axios 實例和攔截器
-   * 
+   *
    * @param {string} baseURL - API 的基礎 URL，預設為 'http://localhost:8010/'
    * @param {number} timeout - 請求超時時間（毫秒），預設為 10000ms
-   * 
+   *
    * @example
    * ```typescript
    * const requestUtils = new RequestUtils('https://api.example.com', 5000);
    * ```
    */
-  constructor(baseURL: string = 'http://localhost:8010/', timeout: number = 10000) {
+  constructor(baseURL: string = 'http://localhost:8000/', timeout: number = 10000) {
     // 建立 axios 實例並設定基本配置
     this.apiClient = axios.create({
       baseURL, // 設定 API 基礎 URL
@@ -61,10 +61,10 @@ export class RequestUtils {
 
   /**
    * 設定請求和響應攔截器
-   * 
+   *
    * 請求攔截器：自動添加認證 token
    * 響應攔截器：處理認證錯誤和數據提取
-   * 
+   *
    * @private
    * @returns {void}
    */
@@ -109,12 +109,12 @@ export class RequestUtils {
 
   /**
    * 發送 GET 請求
-   * 
+   *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<T>} 返回 Promise，包含響應數據
-   * 
+   *
    * @example
    * ```typescript
    * const users = await requestUtils.get<User[]>('/users');
@@ -128,13 +128,13 @@ export class RequestUtils {
 
   /**
    * 發送 POST 請求
-   * 
+   *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {any} [data] - 請求主體數據
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<T>} 返回 Promise，包含響應數據
-   * 
+   *
    * @example
    * ```typescript
    * const newUser = await requestUtils.post<User>('/users', { name: 'John', email: 'john@example.com' });
@@ -147,13 +147,13 @@ export class RequestUtils {
 
   /**
    * 發送 PUT 請求
-   * 
+   *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {any} [data] - 請求主體數據
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<T>} 返回 Promise，包含響應數據
-   * 
+   *
    * @example
    * ```typescript
    * const updatedUser = await requestUtils.put<User>('/users/123', { name: 'Jane' });
@@ -166,12 +166,12 @@ export class RequestUtils {
 
   /**
    * 發送 DELETE 請求
-   * 
+   *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<T>} 返回 Promise，包含響應數據
-   * 
+   *
    * @example
    * ```typescript
    * await requestUtils.delete('/users/123');
@@ -184,13 +184,13 @@ export class RequestUtils {
 
   /**
    * 發送 PATCH 請求
-   * 
+   *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {any} [data] - 請求主體數據
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<T>} 返回 Promise，包含響應數據
-   * 
+   *
    * @example
    * ```typescript
    * const updatedUser = await requestUtils.patch<User>('/users/123', { email: 'newemail@example.com' });
@@ -203,12 +203,12 @@ export class RequestUtils {
 
   /**
    * 設置認證 token
-   * 
+   *
    * 將認證 token 儲存到 localStorage 中，後續的請求會自動攜帶此 token
-   * 
+   *
    * @param {string} token - 認證 token
    * @returns {void}
-   * 
+   *
    * @example
    * ```typescript
    * requestUtils.setAuthToken('your-jwt-token');
@@ -221,11 +221,11 @@ export class RequestUtils {
 
   /**
    * 清除認證 token
-   * 
+   *
    * 從 localStorage 中移除認證 token，用於用戶登出
-   * 
+   *
    * @returns {void}
-   * 
+   *
    * @example
    * ```typescript
    * requestUtils.clearAuthToken();
@@ -238,12 +238,12 @@ export class RequestUtils {
 
   /**
    * 設置 API 基礎 URL
-   * 
+   *
    * 動態修改 axios 實例的基礎 URL
-   * 
+   *
    * @param {string} baseURL - 新的基礎 URL
    * @returns {void}
-   * 
+   *
    * @example
    * ```typescript
    * requestUtils.setBaseURL('https://api.newdomain.com');
@@ -257,18 +257,18 @@ export class RequestUtils {
 
 /**
  * 預設的 RequestUtils 實例
- * 
+ *
  * 使用環境變數 VITE_API_BASE_URL 或預設值 'http://localhost:8010' 作為基礎 URL
  * 可以直接使用此實例進行 API 請求，無需重新建立 RequestUtils 實例
- * 
+ *
  * @example
  * ```typescript
  * import { apiClient } from './RequestUtils';
- * 
+ *
  * const users = await apiClient.get<User[]>('/users');
  * ```
  */
 export const apiClient = new RequestUtils(
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8010' // 從環境變數獲取 API 基礎 URL，或使用預設值
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000' // 從環境變數獲取 API 基礎 URL，或使用預設值
 );
 

@@ -19,6 +19,8 @@ export interface LoginRequest {
   username: string;
   /** 使用者密碼 */
   password: string;
+  /** 記住我選項 */
+  rememberMe?: boolean;
 }
 
 /**

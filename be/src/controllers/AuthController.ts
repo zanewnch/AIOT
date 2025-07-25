@@ -2,11 +2,11 @@
  * @fileoverview 認證控制器
  * 負責處理使用者身份驗證相關的 HTTP 端點
  * 提供基於 JWT 的登入、登出功能，使用 httpOnly cookie 提升安全性
- * 
+ *
  * @author AIOT Team
  * @version 1.0.0
  * @since 2024-01-01
- * 
+ *
  * @description 安全性特色：
  * - 使用 httpOnly cookie 儲存 JWT token
  * - 支援「記住我」功能
@@ -17,18 +17,19 @@
 import { Router, Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { AuthService, IAuthService } from '../services/AuthService.js'; // 匯入認證服務和介面定義
 import { createLogger, logAuthEvent, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果類別
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('AuthController');
 
 /**
  * 認證控制器
- * 
+ *
  * @class AuthController
  * @description 處理使用者身份驗證相關的 API 請求
  * 提供基於 JWT 的使用者身份驗證，包括登入時的 JWT 發放和登出時的 cookie 清除
  * 使用 httpOnly cookie 來安全地儲存 JWT token，提升安全性
- * 
+ *
  * @example
  * ```typescript
  * // 使用方式（在路由中）
@@ -38,10 +39,10 @@ const logger = createLogger('AuthController');
  * ```
  */
 export class AuthController {
-  
+
   /**
    * 認證服務實例
-   * 
+   *
    * @private
    * @type {IAuthService}
    * @description 負責處理使用者認證相關的業務邏輯
@@ -50,7 +51,7 @@ export class AuthController {
 
   /**
    * 初始化認證控制器實例
-   * 
+   *
    * @constructor
    * @param {IAuthService} authService - 驗證服務實例，預設使用 AuthService
    * @description 設置驗證服務、路由器和相關路由配置
@@ -65,39 +66,39 @@ export class AuthController {
 
   /**
    * 處理使用者登入請求
-   * 
+   *
    * @method login
    * @param {Request} req - Express 請求物件，包含 username、password 和 rememberMe
    * @param {Response} res - Express 回應物件
    * @param {NextFunction} next - Express next 函數，用於錯誤處理
    * @returns {Promise<void>} 無回傳值的 Promise
-   * 
+   *
    * @throws {400} 當使用者名稱或密碼缺失時
    * @throws {401} 當認證失敗時
    * @throws {500} 當內部伺服器錯誤發生時
-   * 
+   *
    * @description 驗證使用者憑證並發放 JWT token
    * 成功登入後會設置 httpOnly cookie 來安全地儲存 JWT
    * 支援「記住我」功能，可延長 cookie 過期時間
    * 包含會話管理和 Redis 快取機制
-   * 
+   *
    * @security
    * - 使用 httpOnly cookie 防止 XSS 攻擊
    * - 設置 SameSite 和 Secure 屬性防止 CSRF 攻擊
    * - 記錄使用者代理和 IP 位址供安全審計
-   * 
+   *
    * @example
    * ```bash
    * POST /api/auth/login
    * Content-Type: application/json
-   * 
+   *
    * {
    *   "username": "admin",
    *   "password": "password123",
    *   "rememberMe": true
    * }
    * ```
-   * 
+   *
    * @example 成功回應
    * ```json
    * {
@@ -115,25 +116,26 @@ export class AuthController {
     try {
       // 記錄登入請求
       logRequest(req, `Login attempt for user: ${req.body.username}`, 'info');
-      
+
       // 從請求主體中解構取得登入資料
-      const { username, password, rememberMe } = req.body;
+      const { username, password, rememberMe }: { username: string, password: string, rememberMe?: boolean } = req.body;
 
       // 參數驗證 - 確保必要欄位存在
       if (!username || !password) {
         logger.warn(`Login request missing required credentials from IP: ${req.ip}`);
         // 回傳 400 錯誤，表示請求參數不完整
-        res.status(400).json({ message: 'Username and password are required' });
+        const response = ControllerResult.badRequest('Username and password are required');
+        res.status(response.status).json(response.toJSON());
         return;
       }
 
       // 取得使用者代理字串用於安全審計
       const userAgent = req.get('user-agent');
       // 取得客戶端 IP 位址，優先使用代理伺服器傳遞的真實 IP
-      const ipAddress = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+      const ipAddress = req.ip || req.socket.remoteAddress;
 
       logger.info(`Starting login authentication for user: ${username}, IP: ${ipAddress}`);
-      
+
       // 調用 service 層進行登入驗證（包含 Redis 會話管理）
       const result = await this.authService.login(username, password, userAgent, ipAddress);
 
@@ -142,7 +144,8 @@ export class AuthController {
         logger.warn(`Authentication failed for user: ${username}, reason: ${result.message}, IP: ${ipAddress}`);
         logAuthEvent('login', username, false, { reason: result.message, ip: ipAddress });
         // 回傳 401 錯誤，表示認證失敗
-        res.status(401).json({ message: result.message });
+        const response = ControllerResult.unauthorized(result.message);
+        res.status(response.status).json(response.toJSON());
         return;
       }
 
@@ -168,23 +171,23 @@ export class AuthController {
       }
 
       logger.info(`Login authentication successful for user: ${username}, userID: ${result.user?.id}, rememberMe: ${rememberMe || false}`);
-      logAuthEvent('login', username, true, { 
-        userId: result.user?.id, 
+      logAuthEvent('login', username, true, {
+        userId: result.user?.id,
         rememberMe: rememberMe || false,
         ip: ipAddress,
-        userAgent 
+        userAgent
       });
-      
+
       // 回傳登入成功的回應
-      res.json({
+      const response = ControllerResult.success(result.message, {
         token: result.token, // JWT token（也存在 httpOnly cookie 中）
-        message: result.message, // 登入成功訊息
         rememberMe: rememberMe || false, // 記住我狀態
         user: {
           id: result.user?.id, // 使用者 ID
           username: result.user?.username // 使用者名稱
         }
       });
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Login error:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
@@ -194,29 +197,29 @@ export class AuthController {
 
   /**
    * 處理使用者登出請求
-   * 
+   *
    * @method logout
    * @param {Request} req - Express 請求物件
    * @param {Response} res - Express 回應物件
    * @param {NextFunction} next - Express next 函數，用於錯誤處理
    * @returns {Promise<void>} 無回傳值的 Promise
-   * 
+   *
    * @throws {500} 當內部伺服器錯誤發生時
-   * 
+   *
    * @description 清除儲存在 cookie 中的 JWT token，完成使用者登出流程
    * 此操作會移除 httpOnly cookie，確保 token 無法再被使用
    * 同時清除 Redis 中的會話資料，確保完全登出
-   * 
+   *
    * @security
    * - 清除所有相關的 cookie 避免殘留
    * - 從 Redis 移除會話資料防止重複使用
    * - 支援從 cookie 或 Authorization header 取得 token
-   * 
+   *
    * @example
    * ```bash
    * POST /api/auth/logout
    * ```
-   * 
+   *
    * @example 成功回應
    * ```json
    * {
@@ -227,13 +230,13 @@ export class AuthController {
   public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       logRequest(req, 'Logout request', 'info');
-      
+
       // 取得 JWT token，優先從 cookie 取得，其次從 Authorization header 取得
       const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');
-      
+
       const username = req.user?.username || 'unknown';
       logger.info(`Processing logout request for user: ${username}, IP: ${req.ip}`);
-      
+
       // 如果存在 token，則從 Redis 清除會話
       if (token) {
         logger.debug('Clearing user session from Redis cache');
@@ -263,9 +266,10 @@ export class AuthController {
 
       logger.info(`Logout completed successfully for user: ${username}, IP: ${req.ip}`);
       logAuthEvent('logout', username, true, { ip: req.ip });
-      
+
       // 回傳登出成功的回應
-      res.json({ message: 'Logout successful' });
+      const response = ControllerResult.success('Logout successful');
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Logout error:', err);
       // 將例外處理委派給 Express 錯誤處理中間件

@@ -42,23 +42,60 @@ import { UserModel } from '../models/rbac/UserModel.js';
 import { SessionService } from './SessionService.js';
 // 匯入日誌記錄器
 import { createLogger } from '../configs/loggerConfig.js';
+// 匯入服務結果類別
+import { ServiceResult } from '../utils/ServiceResult.js';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('AuthService');
 
 /**
- * 登入結果介面
- * 定義登入操作的回應結構
+ * 登入結果類別
+ * 定義登入操作的回應結構，繼承服務結果類別
  */
-export interface LoginResult {
-    /** 登入是否成功 */
-    success: boolean;
-    /** JWT Token（登入成功時提供） */
+export class LoginResult extends ServiceResult<{
     token?: string;
-    /** 操作結果訊息 */
-    message: string;
-    /** 使用者資訊（登入成功時提供） */
     user?: UserModel;
+}> {
+    /** JWT Token（登入成功時提供） */
+    public token?: string;
+    /** 使用者資訊（登入成功時提供） */
+    public user?: UserModel;
+
+    /**
+     * 建構函式
+     * 
+     * @param success 登入是否成功
+     * @param message 操作結果訊息
+     * @param token JWT Token（可選）
+     * @param user 使用者資訊（可選）
+     */
+    constructor(success: boolean, message: string, token?: string, user?: UserModel) {
+        super(success, message, { token, user });
+        this.token = token;
+        this.user = user;
+    }
+
+    /**
+     * 創建登入成功結果
+     * 
+     * @param message 成功訊息
+     * @param token JWT Token
+     * @param user 使用者資訊
+     * @returns LoginResult 實例
+     */
+    static loginSuccess(message: string, token: string, user: UserModel): LoginResult {
+        return new LoginResult(true, message, token, user);
+    }
+
+    /**
+     * 創建登入失敗結果
+     * 
+     * @param message 失敗訊息
+     * @returns LoginResult 實例
+     */
+    static loginFailure(message: string): LoginResult {
+        return new LoginResult(false, message);
+    }
 }
 
 /**
@@ -141,10 +178,7 @@ export class AuthService implements IAuthService {
             const user = await this.userRepository.findByUsername(username); // 透過使用者名稱從資料庫查詢使用者資料
             if (!user) { // 如果找不到使用者
                 logger.warn(`Login failed: User not found for username: ${username}`); // 記錄警告訊息
-                return { // 回傳登入失敗結果
-                    success: false, // 設定成功狀態為 false
-                    message: 'Invalid credentials' // 回傳通用錯誤訊息，避免洩露使用者是否存在的資訊
-                };
+                return LoginResult.loginFailure('Invalid credentials'); // 回傳登入失敗結果，避免洩露使用者是否存在的資訊
             }
 
             logger.debug(`User found: ${user.username} (ID: ${user.id})`); // 記錄找到使用者的除錯訊息
@@ -153,10 +187,7 @@ export class AuthService implements IAuthService {
             const match = await bcrypt.compare(password, user.passwordHash); // 使用 bcrypt 比對明文密碼與資料庫中的雜湊密碼
             if (!match) { // 如果密碼不匹配
                 logger.warn(`Login failed: Invalid password for user: ${username}`); // 記錄密碼驗證失敗的警告
-                return { // 回傳登入失敗結果
-                    success: false, // 設定成功狀態為 false
-                    message: 'Invalid credentials' // 回傳與使用者不存在相同的錯誤訊息，避免資訊洩露
-                };
+                return LoginResult.loginFailure('Invalid credentials'); // 回傳與使用者不存在相同的錯誤訊息，避免資訊洩露
             }
 
             logger.debug(`Password verification successful for user: ${username}`); // 記錄密碼驗證成功的除錯訊息
@@ -197,18 +228,10 @@ export class AuthService implements IAuthService {
 
             logger.info(`Login successful for user: ${username} (ID: ${user.id})`); // 記錄登入成功的資訊日誌
             
-            return { // 回傳登入成功結果
-                success: true, // 設定成功狀態為 true
-                token, // 回傳生成的 JWT Token
-                message: 'Login successful', // 成功訊息
-                user // 回傳使用者資料
-            };
+            return LoginResult.loginSuccess('Login successful', token, user); // 回傳登入成功結果
         } catch (error) { // 捕獲整個登入流程中的任何未預期錯誤
             logger.error('Login error occurred:', error); // 記錄錯誤日誌
-            return { // 回傳通用的登入失敗結果
-                success: false, // 設定成功狀態為 false
-                message: 'Login failed' // 通用錯誤訊息
-            };
+            return LoginResult.loginFailure('Login failed'); // 回傳通用的登入失敗結果
         }
     }
 

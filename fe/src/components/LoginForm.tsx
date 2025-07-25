@@ -10,10 +10,10 @@
  * @since 2025-07-18
  */
 
-import React, { useState } from 'react'; // 引入 React 庫和 useState Hook
-import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
-import { LoginRequest } from '../types/auth'; // 引入登入請求的類型定義
-import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 SCSS 模組樣式
+import React, { useState } from "react"; // 引入 React 庫和 useState Hook
+import { useAuth } from "../hooks/useAuthQuery"; // 引入認證 Hook
+import { LoginRequest } from "../types/auth"; // 引入登入請求的類型定義
+import styles from "../styles/LoginForm.module.scss"; // 引入登入表單的 SCSS 模組樣式
 
 /**
  * 使用者登入表單組件
@@ -34,8 +34,9 @@ export const LoginForm: React.FC = () => {
   const { login, isLoading, error } = useAuth();
   // 表單資料狀態
   const [formData, setFormData] = useState<LoginRequest>({
-    username: '', // 使用者名稱
-    password: '', // 密碼
+    username: "", // 使用者名稱
+    password: "", // 密碼
+    rememberMe: false, // 記住我選項
   });
   // 表單驗證錯誤狀態
   const [formErrors, setFormErrors] = useState<Partial<LoginRequest>>({});
@@ -48,16 +49,16 @@ export const LoginForm: React.FC = () => {
    * @param e - 輸入變化事件
    */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target; // 解構取得欄位名稱和值
+    const { name, value, type, checked } = e.target; // 解構取得欄位名稱、值、類型和選中狀態
     // 更新表單資料
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
 
     // 清除該欄位的驗證錯誤
     if (formErrors[name as keyof LoginRequest]) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
         [name]: undefined,
       }));
@@ -78,12 +79,12 @@ export const LoginForm: React.FC = () => {
 
     // 驗證使用者名稱是否為空string
     if (!formData.username.trim()) {
-      errors.username = 'Username is required';
+      errors.username = "Username is required";
     }
 
     // 驗證密碼是否為空string
     if (!formData.password.trim()) {
-      errors.password = 'Password is required';
+      errors.password = "Password is required";
     }
 
     setFormErrors(errors); // 設置驗證錯誤
@@ -110,7 +111,7 @@ export const LoginForm: React.FC = () => {
       await login(formData);
     } catch (error) {
       // 錯誤已經在 React Query 中處理，這裡僅記錄日誌
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     }
   };
 
@@ -119,14 +120,11 @@ export const LoginForm: React.FC = () => {
       <div className={styles.loginCard}>
         <h2 className={styles.title}>Login</h2>
 
-        {error && (
-          <div className={styles.errorMessage}>
-            {error}
-          </div>
-        )}
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.loginForm}>
           <div className={styles.inputGroup}>
+            {/* htmlFor 是 React 中用來替代 HTML 的 for 屬性的屬性名稱。它的用途是將 <label> 元素與表單中的輸入欄位（如 <input>）關聯起來，這樣當使用者點擊 <label> 時，對應的輸入欄位會自動獲得焦點（focus）。*/}
             <label htmlFor="username" className={styles.label}>
               Username
             </label>
@@ -136,7 +134,9 @@ export const LoginForm: React.FC = () => {
               type="text"
               value={formData.username}
               onChange={handleInputChange}
-              className={`${styles.input} ${formErrors.username ? styles.inputError : ''}`}
+              className={`${styles.input} ${
+                formErrors.username ? styles.inputError : ""
+              }`}
               disabled={isLoading}
               placeholder="Enter your username"
             />
@@ -155,7 +155,9 @@ export const LoginForm: React.FC = () => {
               type="password"
               value={formData.password}
               onChange={handleInputChange}
-              className={`${styles.input} ${formErrors.password ? styles.inputError : ''}`}
+              className={`${styles.input} ${
+                formErrors.password ? styles.inputError : ""
+              }`}
               disabled={isLoading}
               placeholder="Enter your password"
             />
@@ -164,12 +166,29 @@ export const LoginForm: React.FC = () => {
             )}
           </div>
 
+          <div className={styles.checkboxGroup}>
+            <label htmlFor="rememberMe" className={styles.checkboxLabel}>
+              <input
+                id="rememberMe"
+                name="rememberMe"
+                type="checkbox"
+                checked={formData.rememberMe}
+                onChange={handleInputChange}
+                className={styles.checkbox}
+                disabled={isLoading}
+              />
+              <span className={styles.checkboxText}>Remember Me</span>
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={isLoading}
-            className={`${styles.submitButton} ${isLoading ? styles.loading : ''}`}
+            className={`${styles.submitButton} ${
+              isLoading ? styles.loading : ""
+            }`}
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 

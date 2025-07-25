@@ -15,6 +15,7 @@
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { RTKDataModel } from '../models/RTKDataModel.js'; // 匯入 RTK 資料模型
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../types/ControllerResult.js'; // 匯入控制器結果介面
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('RTKController');
@@ -106,7 +107,12 @@ export class RTKController {
       logger.debug('RTK data formatting and validation completed');
 
       // 回傳格式化後的 RTK 資料給客戶端
-      res.status(200).json(formattedData);
+      const response: ControllerResult = {
+        status: 200,
+        message: 'RTK data retrieved successfully',
+        data: formattedData
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error retrieving RTK data:', error);
       // 將例外處理委派給 Express 錯誤處理中間件
@@ -173,10 +179,11 @@ export class RTKController {
       if (!latitude || !longitude) {
         logger.warn(`RTK data update validation failed for ID: ${id} - missing required latitude or longitude`);
         // 回傳 400 錯誤，表示請求資料不完整
-        res.status(400).json({
-          success: false,
+        const response: ControllerResult = {
+          status: 400,
           message: 'Latitude and longitude are required'
-        });
+        };
+        res.status(400).json(response);
         return;
       }
 
@@ -185,10 +192,11 @@ export class RTKController {
       if (!existingRecord) {
         logger.warn(`RTK data update failed - record not found for ID: ${id}`);
         // 回傳 404 錯誤，表示資料不存在
-        res.status(404).json({
-          success: false,
+        const response: ControllerResult = {
+          status: 404,
           message: 'RTK data not found'
-        });
+        };
+        res.status(404).json(response);
         return;
       }
 
@@ -211,11 +219,12 @@ export class RTKController {
       };
 
       // 回傳更新成功的回應
-      res.status(200).json({
-        success: true,
+      const response: ControllerResult = {
+        status: 200,
         message: 'RTK data updated successfully',
         data: formattedData
-      });
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error updating RTK data:', error);
       // 將例外處理委派給 Express 錯誤處理中間件

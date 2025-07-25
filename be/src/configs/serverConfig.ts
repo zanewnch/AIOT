@@ -49,8 +49,8 @@ export const getServerConfig = (): ServerConfig => {
 
     // 返回伺服器配置物件
     return {
-        // 從環境變數獲取埠號，預設為 8010，並進行格式化處理
-        port: normalizePort(process.env.PORT || '8010'),
+        // 從環境變數獲取埠號，預設為 8000，並進行格式化處理
+        port: normalizePort(process.env.PORT || '8000'),
         // 設定視圖模板檔案的路徑
         viewsPath: path.join(__dirname, '../../views'),
         // 設定靜態檔案服務的路徑

@@ -15,6 +15,7 @@ import { progressService } from '../services/ProgressService.js'; // 匯入進�
 import { TaskStage, TaskStatus } from '../types/ProgressTypes.js'; // 匯入任務狀態和階段定義
 import { backgroundTaskHandler } from '../utils/backgroundTask.js'; // 匯入背景任務處理器
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果類別
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('InitController');
@@ -105,7 +106,8 @@ export class InitController {
       
       logger.info(`RBAC demo data initialization completed successfully: ${result.message}`);
       // 回傳成功結果給客戶端
-      res.json({ ok: true, ...result });
+      const response = ControllerResult.success('RBAC demo data initialized successfully', result);
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Failed to initialize RBAC demo data:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
@@ -150,7 +152,8 @@ export class InitController {
       
       logger.info(`RTK demo data initialization completed successfully: ${result.message}`);
       // 回傳成功結果給客戶端
-      res.json({ ok: true, ...result });
+      const response = ControllerResult.success('RTK demo data initialized successfully', result);
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Failed to initialize RTK demo data:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
@@ -196,7 +199,8 @@ export class InitController {
       
       logger.info(`Admin user creation completed: ${result.message}`);
       // 回傳成功結果給客戶端
-      res.json({ ok: true, ...result });
+      const response = ControllerResult.success('Admin user created successfully', result);
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Failed to create admin user:', err);
       // 將例外處理委派給 Express 錯誤處理中間件

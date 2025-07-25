@@ -1,16 +1,16 @@
 /**
  * @fileoverview SSE 相關的 React Query Hooks
- * 
+ *
  * 這個檔案包含所有 SSE (Server-Sent Events) 相關的邏輯，使用 React Query 來處理：
  * - SSE 連接管理
  * - 進度追蹤狀態
  * - 錯誤處理
  * - 自動重連
- * 
+ *
  * 與 SSEService 分離：
  * - SSEService: 負責底層 SSE 連接邏輯
  * - useSSEQuery: 負責 React 狀態管理和 Query 快取
- * 
+ *
  * @author AIOT Development Team
  */
 
@@ -48,7 +48,7 @@ export interface ProgressTrackingState {
 
 /**
  * SSE 連接管理 Hook
- * 
+ *
  * 使用 React Query 來管理 SSE 連接狀態
  */
 export const useSSEConnection = (taskId: string | null) => {
@@ -67,9 +67,9 @@ export const useSSEConnection = (taskId: string | null) => {
         };
       }
 
-      const isConnected = eventSourceRef.current !== null && 
+      const isConnected = eventSourceRef.current !== null &&
                          eventSourceRef.current.readyState === EventSource.OPEN;
-      
+
       return {
         isConnected,
         taskId,
@@ -85,7 +85,7 @@ export const useSSEConnection = (taskId: string | null) => {
 
 /**
  * 進度追蹤 Query Hook
- * 
+ *
  * 使用 React Query 來管理進度追蹤狀態
  */
 export const useProgressQuery = (taskId: string | null) => {
@@ -109,7 +109,7 @@ export const useProgressQuery = (taskId: string | null) => {
 
 /**
  * SSE 連接 Mutation Hook
- * 
+ *
  * 處理 SSE 連接的建立和斷開
  */
 export const useSSEConnectionMutation = () => {
@@ -126,7 +126,8 @@ export const useSSEConnectionMutation = () => {
       }
 
       // 建立新連接
-      const url = `http://localhost:8010/api/progress/${taskId}/stream`;
+      const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      const url = `${baseURL}/api/progress/${taskId}/stream`;
       const eventSource = new EventSource(url);
       eventSourceRef.current = eventSource;
       callbacksRef.current.set(taskId, callback);
@@ -154,7 +155,7 @@ export const useSSEConnectionMutation = () => {
             try {
               const progressEvent: ProgressEvent = JSON.parse((event as MessageEvent).data);
               callback(progressEvent);
-              
+
               // 更新 React Query 快取
               queryClient.setQueryData(
                 SSE_QUERY_KEYS.PROGRESS(taskId),
@@ -199,13 +200,13 @@ export const useSSEConnectionMutation = () => {
         eventSourceRef.current = null;
       }
       callbacksRef.current.delete(taskId);
-      
+
       return { taskId, disconnectedAt: Date.now() };
     },
     onSuccess: (_, taskId) => {
       // 更新連接狀態
       queryClient.invalidateQueries({ queryKey: SSE_QUERY_KEYS.CONNECTION_STATUS(taskId) });
-      
+
       // 更新進度狀態為停止追蹤
       queryClient.setQueryData(
         SSE_QUERY_KEYS.PROGRESS(taskId),
@@ -230,7 +231,7 @@ export const useSSEConnectionMutation = () => {
 
 /**
  * 主要 SSE Hook
- * 
+ *
  * 使用 React Query 來管理所有 SSE 相關狀態，包括：
  * - 連接管理
  * - 進度追蹤
@@ -240,7 +241,7 @@ export const useSSEConnectionMutation = () => {
 export const useSSE = (taskId: string | null = null) => {
   const queryClient = useQueryClient();
   const eventSourceRef = useRef<EventSource | null>(null);
-  
+
   // 查詢和變更
   const connectionQuery = useSSEConnection(taskId);
   const progressQuery = useProgressQuery(taskId);
@@ -261,7 +262,7 @@ export const useSSE = (taskId: string | null = null) => {
     const defaultCallback = (event: ProgressEvent) => {
       console.log('Progress event received:', event);
     };
-    
+
     await connectionMutation.connect({
       taskId: newTaskId,
       callback: callback || defaultCallback,
@@ -283,16 +284,16 @@ export const useSSE = (taskId: string | null = null) => {
     isTracking: progressQuery.data?.isTracking || false,
     progress: progressQuery.data?.progress || null,
     error: progressQuery.data?.error || connectionMutation.connectionError?.message || null,
-    
+
     // 載入狀態
     isLoading: connectionQuery.isLoading || progressQuery.isLoading,
     isConnecting: connectionMutation.isConnecting,
     isDisconnecting: connectionMutation.isDisconnecting,
-    
+
     // 方法
     startTracking,
     stopTracking,
-    
+
     // 工具方法
     refetchConnection: () => connectionQuery.refetch(),
     refetchProgress: () => progressQuery.refetch(),
@@ -310,7 +311,7 @@ export const useSSE = (taskId: string | null = null) => {
         queryClient.removeQueries({ queryKey: SSE_QUERY_KEYS.PROGRESS(activeTaskId) });
       }
     },
-    
+
     // 原始的 query/mutation 對象 (用於更高級的操作)
     queries: {
       connection: connectionQuery,
@@ -328,7 +329,7 @@ export const useSSE = (taskId: string | null = null) => {
  */
 export const useProgressTracking = () => {
   const sse = useSSE();
-  
+
   return {
     isTracking: sse.isTracking,
     progress: sse.progress,

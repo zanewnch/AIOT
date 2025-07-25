@@ -33,6 +33,8 @@ import { RTKInitRepository } from '../repo/RTKInitRepo.js';
 import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
 // 匯入日誌記錄器
 import { createLogger } from '../configs/loggerConfig.js';
+// 匯入服務結果類別
+import { ServiceResult } from '../utils/ServiceResult.js';
 
 const logger = createLogger('RTKInitService');
 
@@ -75,7 +77,7 @@ export class RTKInitService {
    * 
    * 若資料庫中已有 RTK 資料，則不會重複建立，並回傳現有資料筆數
    */
-  async seedRTKDemo(): Promise<{ message: string; count: number }> { // 異步方法：建立 RTK 示範資料
+  async seedRTKDemo(): Promise<ServiceResult<{ count: number }>> { // 異步方法：建立 RTK 示範資料
     logger.info('Starting RTK demo data seeding process'); // 記錄 RTK 資料建立流程開始的資訊日誌
     
     // 檢查資料庫中是否已有 RTK 資料
@@ -85,10 +87,7 @@ export class RTKInitService {
     // 如果已有資料，則回傳現有資料筆數
     if (existingCount > 0) { // 如果資料庫中已經有 RTK 資料
       logger.info(`RTK demo data already exists with ${existingCount} records`); // 記錄資料已存在的資訊日誌
-      return { // 回傳已存在資料的結果
-        message: 'RTK demo data already exists', // 資料已存在的訊息
-        count: existingCount // 現有資料的筆數
-      };
+      return ServiceResult.success('RTK demo data already exists', { count: existingCount });
     }
 
     // 生成 5000 筆隨機定位資料供壓力測試
@@ -127,10 +126,7 @@ export class RTKInitService {
     logger.info(`Successfully inserted ${totalCreated} RTK records in total`); // 記錄總共成功插入的 RTK 記錄數量
 
     // 回傳創建成功的訊息和資料筆數
-    return { // 回傳操作結果物件
-      message: 'RTK demo data created successfully for stress testing', // 成功創建資料的訊息
-      count: totalCreated // 實際創建的資料筆數
-    };
+    return ServiceResult.success('RTK demo data created successfully for stress testing', { count: totalCreated });
   }
 
   /**
@@ -162,7 +158,7 @@ export class RTKInitService {
    * @param progressCallback 進度回調函數
    * @returns Promise<{message: string, count: number}> 包含操作結果訊息和資料筆數
    */
-  async seedRTKDemoWithProgress(progressCallback?: ProgressCallback): Promise<{ message: string; count: number }> { // 異步方法：支援進度回調的 RTK 示範資料建立
+  async seedRTKDemoWithProgress(progressCallback?: ProgressCallback): Promise<ServiceResult<{ count: number }>> { // 異步方法：支援進度回調的 RTK 示範資料建立
     // 檢查資料庫中是否已有 RTK 資料
     const existingCount = await this.rtkInitRepository.count(); // 調用資料存取層計算現有 RTK 記錄數量
     
@@ -183,10 +179,7 @@ export class RTKInitService {
         });
       }
       
-      return { // 回傳已存在資料的結果
-        message: 'RTK demo data already exists', // 資料已存在的訊息
-        count: existingCount // 現有資料的筆數
-      };
+      return ServiceResult.success('RTK demo data already exists', { count: existingCount });
     }
 
     // 生成 5000 筆隨機定位資料供壓力測試
@@ -255,9 +248,6 @@ export class RTKInitService {
     }
 
     // 回傳創建成功的訊息和資料筆數
-    return { // 回傳操作結果物件
-      message: 'RTK demo data created successfully for stress testing', // 成功創建資料的訊息
-      count: totalCreated // 實際創建的資料筆數
-    };
+    return ServiceResult.success('RTK demo data created successfully for stress testing', { count: totalCreated });
   }
 }

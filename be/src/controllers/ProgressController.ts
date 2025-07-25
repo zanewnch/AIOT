@@ -11,6 +11,7 @@
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { progressService } from '../services/ProgressService.js'; // 匯入進度服務處理邏輯
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果類別
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('ProgressController');
@@ -85,7 +86,8 @@ export class ProgressController {
       if (!taskId) {
         logger.warn('Progress request missing required task ID parameter');
         // 回傳 400 錯誤，表示請求參數不完整
-        res.status(400).json({ error: 'Task ID is required' });
+        const response = ControllerResult.badRequest('Task ID is required');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
@@ -96,13 +98,15 @@ export class ProgressController {
       if (!progress) {
         logger.warn(`Progress request for non-existent task: ${taskId}`);
         // 回傳 404 錯誤，表示任務不存在
-        res.status(404).json({ error: 'Task not found' });
+        const response = ControllerResult.notFound('Task not found');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
       logger.debug(`Successfully retrieved progress for task: ${taskId}, Status: ${progress.status}, Percentage: ${progress.percentage}%`);
       // 回傳進度資訊給客戶端
-      res.json(progress);
+      const response = ControllerResult.success('Progress retrieved successfully', progress);
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Error retrieving task progress:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
@@ -151,7 +155,8 @@ export class ProgressController {
       if (!taskId) {
         logger.warn('SSE progress stream request missing required task ID parameter');
         // 回傳 400 錯誤，表示請求參數不完整
-        res.status(400).json({ error: 'Task ID is required' });
+        const response = ControllerResult.badRequest('Task ID is required');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
@@ -160,7 +165,8 @@ export class ProgressController {
       if (!progress) {
         logger.warn(`SSE progress stream request for non-existent task: ${taskId}`);
         // 回傳 404 錯誤，表示任務不存在
-        res.status(404).json({ error: 'Task not found' });
+        const response = ControllerResult.notFound('Task not found');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
@@ -169,7 +175,8 @@ export class ProgressController {
       if (!success) {
         logger.error(`Failed to establish SSE connection for task: ${taskId}`);
         // 回傳 500 錯誤，表示 SSE 連線建立失敗
-        res.status(500).json({ error: 'Failed to create SSE connection' });
+        const response = ControllerResult.internalError('Failed to create SSE connection');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       

@@ -31,6 +31,7 @@ useMutation - 用於數據變更（寫入）
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActivityStore } from '../stores/activityStore';
 import type { UserActivity, ActivityStats } from '../types/activity';
+import { apiClient } from '../utils/RequestUtils';
 
 /**
  * React Query 查詢鍵常量
@@ -41,35 +42,12 @@ export const QUERY_KEYS = {
   ACTIVITY_STATS: ['activityStats'] as const,
 } as const;
 
-/**
- * API 基礎 URL
- */
-const API_BASE_URL = '/api/user';
-
-/**
- * 獲取認證 token
- */
-const getAuthToken = (): string => {
-  return localStorage.getItem('authToken') || '';
-};
 
 /**
  * API 函數：獲取用戶活動資料
  */
 const fetchUserActivity = async (): Promise<UserActivity> => {
-  const response = await fetch(`${API_BASE_URL}/activity`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${getAuthToken()}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch user activity');
-  }
-
-  const result = await response.json();
+  const result = await apiClient.get('/api/user/activity');
   return result.data;
 };
 
@@ -77,19 +55,7 @@ const fetchUserActivity = async (): Promise<UserActivity> => {
  * API 函數：獲取活動統計資料
  */
 const fetchActivityStats = async (): Promise<ActivityStats> => {
-  const response = await fetch(`${API_BASE_URL}/activity/stats`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${getAuthToken()}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch activity stats');
-  }
-
-  const result = await response.json();
+  const result = await apiClient.get('/api/user/activity/stats');
   return result.data;
 };
 
@@ -98,14 +64,7 @@ const fetchActivityStats = async (): Promise<ActivityStats> => {
  */
 const recordPageVisitAPI = async (page: string, duration?: number): Promise<void> => {
   try {
-    await fetch(`${API_BASE_URL}/activity/page-visit`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ page, duration })
-    });
+    await apiClient.post('/api/user/activity/page-visit', { page, duration });
   } catch (error) {
     console.error('Failed to record page visit:', error);
     throw error;
@@ -117,14 +76,7 @@ const recordPageVisitAPI = async (page: string, duration?: number): Promise<void
  */
 const updateSessionInfoAPI = async (sessionDuration?: number, deviceInfo?: string): Promise<void> => {
   try {
-    await fetch(`${API_BASE_URL}/activity/session`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ sessionDuration, deviceInfo })
-    });
+    await apiClient.post('/api/user/activity/session', { sessionDuration, deviceInfo });
   } catch (error) {
     console.error('Failed to update session info:', error);
     throw error;
@@ -219,13 +171,13 @@ export const useRecordPageVisit = () => {
       // 樂觀更新：立即更新本地狀態
       updateLocalPageVisit(page);
     },
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       // 成功後使相關查詢無效，觸發重新獲取
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USER_ACTIVITY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ACTIVITY_STATS });
       setError(null);
     },
-    onError: (error, variables, context) => {
+    onError: (error) => {
       // 錯誤處理
       const errorMessage = error instanceof Error ? error.message : '記錄頁面訪問失敗';
       setError(errorMessage);
@@ -288,7 +240,6 @@ export const useActivityTracking = () => {
   const {
     activity,
     stats,
-    sessionInfo,
     autoTrackingEnabled,
     error,
     setCurrentPage,
@@ -348,7 +299,6 @@ export const useActivityTracking = () => {
     // 數據
     activity: activity || userActivityQuery.data,
     stats: stats || activityStatsQuery.data,
-    sessionInfo,
     autoTrackingEnabled,
     error,
     

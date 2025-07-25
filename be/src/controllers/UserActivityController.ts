@@ -21,6 +21,7 @@
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 的請求、回應和中間件類型定義
 import { UserActivityModel } from '../models/UserActivityModel.js'; // 引入使用者活動資料模型，用於資料庫操作
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../types/ControllerResult.js'; // 匯入控制器結果介面
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('UserActivityController');
@@ -94,10 +95,11 @@ export class UserActivityController {
       // 驗證使用者是否已認證，未認證則回傳 401 未授權錯誤
       if (!userId) {
         logger.warn('User activity request without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
@@ -143,18 +145,21 @@ export class UserActivityController {
       logger.info(`User activity data retrieved successfully for user ID: ${userId}`);
       
       // 回傳成功結果，包含完整的活動資料
-      res.json({
-        success: true,
+      const response: ControllerResult = {
+        status: 200,
+        message: 'User activity data retrieved successfully',
         data: activity
-      });
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error retrieving user activity data:', error);
       
       // 回傳 500 伺服器內部錯誤，不暴露敏感的錯誤細節
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 
@@ -205,20 +210,22 @@ export class UserActivityController {
       // 驗證使用者是否已認證
       if (!userId) {
         logger.warn('Page visit recording attempted without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
       // 驗證頁面路徑是否提供，這是必填欄位
       if (!page) {
         logger.warn(`Page visit recording failed - missing page parameter for user ID: ${userId}`);
-        res.status(400).json({ 
-          success: false, 
-          message: '頁面路徑為必填欄位' 
-        });
+        const response: ControllerResult = {
+          status: 400,
+          message: '頁面路徑為必填欄位'
+        };
+        res.status(400).json(response);
         return;
       }
 
@@ -263,23 +270,25 @@ export class UserActivityController {
       logger.info(`Page visit recorded successfully for user ID: ${userId}, page: ${page}, visit count: ${activity.pageVisitCounts[page]}`);
       
       // 回傳成功結果，包含頁面造訪統計資訊
-      res.json({
-        success: true,
+      const response: ControllerResult = {
+        status: 200,
+        message: '頁面造訪已記錄',
         data: {
           page, // 當前造訪的頁面
           visitCount: activity.pageVisitCounts[page], // 該頁面的造訪次數
           mostVisitedPage: activity.mostVisitedPage // 最常造訪的頁面
-        },
-        message: '頁面造訪已記錄'
-      });
+        }
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error recording page visit:', error);
       
       // 回傳 500 伺服器內部錯誤
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 
@@ -325,10 +334,11 @@ export class UserActivityController {
       // 驗證使用者是否已認證
       if (!userId) {
         logger.warn('Session info update attempted without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
@@ -340,10 +350,11 @@ export class UserActivityController {
       // 檢查活動記錄是否存在
       if (!activity) {
         logger.warn(`Session info update failed - activity record not found for user ID: ${userId}`);
-        res.status(404).json({ 
-          success: false, 
-          message: '使用者活動記錄不存在' 
-        });
+        const response: ControllerResult = {
+          status: 404,
+          message: '使用者活動記錄不存在'
+        };
+        res.status(404).json(response);
         return;
       }
 
@@ -368,19 +379,21 @@ export class UserActivityController {
       logger.info(`Session info updated successfully for user ID: ${userId}`);
       
       // 回傳成功結果，包含更新後的活動資料
-      res.json({
-        success: true,
-        data: activity,
-        message: '會話資訊已更新'
-      });
+      const response: ControllerResult = {
+        status: 200,
+        message: '會話資訊已更新',
+        data: activity
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error updating session info:', error);
       
       // 回傳 500 伺服器內部錯誤
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 
@@ -435,10 +448,11 @@ export class UserActivityController {
       // 驗證使用者是否已認證
       if (!userId) {
         logger.warn('Activity stats request without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
@@ -450,8 +464,9 @@ export class UserActivityController {
       // 如果沒有活動記錄，回傳預設的空統計資料
       if (!activity) {
         logger.info(`No activity record found for user ID: ${userId}, returning default stats`);
-        res.json({
-          success: true,
+        const response: ControllerResult = {
+          status: 200,
+          message: 'Activity statistics retrieved successfully',
           data: {
             loginCount: 0, // 登入次數為 0
             totalPageVisits: 0, // 總頁面造訪次數為 0
@@ -460,7 +475,8 @@ export class UserActivityController {
             mostVisitedPage: null, // 最常造訪頁面為空
             topPages: [] // 熱門頁面清單為空
           }
-        });
+        };
+        res.status(200).json(response);
         return;
       }
 
@@ -495,18 +511,21 @@ export class UserActivityController {
       logger.info(`Activity statistics retrieved successfully for user ID: ${userId} - Login count: ${stats.loginCount}, Total page visits: ${stats.totalPageVisits}`);
       
       // 回傳成功結果，包含完整的統計資料
-      res.json({
-        success: true,
+      const response: ControllerResult = {
+        status: 200,
+        message: 'Activity statistics retrieved successfully',
         data: stats
-      });
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error retrieving activity statistics:', error);
       
       // 回傳 500 伺服器內部錯誤
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 }

@@ -11,6 +11,7 @@
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { specs } from '../configs/swaggerConfig.js'; // 匯入 Swagger 配置和規格定義
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../types/ControllerResult.js'; // 匯入控制器結果介面
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('SwaggerController');
@@ -86,8 +87,9 @@ export class SwaggerController {
       res.setHeader('Content-Type', 'application/json');
       
       logger.debug('OpenAPI specification document prepared and sent successfully');
-      // 回傳 OpenAPI 規格文件給客戶端
-      res.send(specs);
+      // 回傳 OpenAPI 規格文件給客戶端（直接返回規格，不使用 ControllerResult 包裝）
+      // 這是因為 Swagger UI 和其他工具期望直接獲得 OpenAPI 規格文件
+      res.status(200).send(specs);
     } catch (error) {
       logger.error('Error serving OpenAPI specification:', error);
       // 將例外處理委派給 Express 錯誤處理中間件

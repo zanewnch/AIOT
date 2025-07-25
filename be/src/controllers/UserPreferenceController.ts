@@ -22,6 +22,7 @@
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 的請求、回應和中間件類型定義
 import { UserPreferenceModel } from '../models/UserPreferenceModel.js'; // 引入使用者偏好設定資料模型
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../types/ControllerResult.js'; // 匯入控制器結果介面
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('UserPreferenceController');
@@ -97,10 +98,11 @@ export class UserPreferenceController {
       // 驗證使用者是否已認證，未認證則回傳 401 未授權錯誤
       if (!userId) {
         logger.warn('User preferences request without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
@@ -142,18 +144,21 @@ export class UserPreferenceController {
       logger.info(`User preferences retrieved successfully for user ID: ${userId}`);
       
       // 回傳成功結果，包含完整的偏好設定資料
-      res.json({
-        success: true,
+      const response: ControllerResult = {
+        status: 200,
+        message: 'User preferences retrieved successfully',
         data: preferences
-      });
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error retrieving user preferences:', error);
       
       // 回傳 500 伺服器內部錯誤，不暴露敏感的錯誤細節
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 
@@ -201,20 +206,22 @@ export class UserPreferenceController {
       // 驗證使用者是否已認證
       if (!userId) {
         logger.warn('User preferences update attempted without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
       // 驗證主題設定的有效性，只允許三種模式
       if (theme && !['light', 'dark', 'auto'].includes(theme)) {
         logger.warn(`Invalid theme setting provided: ${theme} for user ID: ${userId}`);
-        res.status(400).json({ 
-          success: false, 
-          message: '無效的主題設定' 
-        });
+        const response: ControllerResult = {
+          status: 400,
+          message: '無效的主題設定'
+        };
+        res.status(400).json(response);
         return;
       }
 
@@ -260,19 +267,21 @@ export class UserPreferenceController {
       logger.info(`User preferences updated successfully for user ID: ${userId}`);
       
       // 回傳成功結果，包含更新後的偏好設定資料
-      res.json({
-        success: true,
-        data: preferences,
-        message: '偏好設定已更新'
-      });
+      const response: ControllerResult = {
+        status: 200,
+        message: '偏好設定已更新',
+        data: preferences
+      };
+      res.status(200).json(response);
     } catch (error) {
       logger.error('Error updating user preferences:', error);
       
       // 回傳 500 伺服器內部錯誤
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 
@@ -319,10 +328,11 @@ export class UserPreferenceController {
       // 驗證使用者是否已認證
       if (!userId) {
         logger.warn('User preferences creation attempted without valid authentication');
-        res.status(401).json({ 
-          success: false, 
-          message: '未授權的存取' 
-        });
+        const response: ControllerResult = {
+          status: 401,
+          message: '未授權的存取'
+        };
+        res.status(401).json(response);
         return;
       }
 
@@ -334,10 +344,11 @@ export class UserPreferenceController {
       // 如果已存在偏好設定，回傳 409 衝突狀態碼
       if (existingPreferences) {
         logger.warn(`Preferences creation failed - preferences already exist for user ID: ${userId}`);
-        res.status(409).json({ 
-          success: false, 
-          message: '使用者偏好設定已存在' 
-        });
+        const response: ControllerResult = {
+          status: 409,
+          message: '使用者偏好設定已存在'
+        };
+        res.status(409).json(response);
         return;
       }
 
@@ -368,19 +379,21 @@ export class UserPreferenceController {
       logger.info(`User preferences created successfully for user ID: ${userId}`);
       
       // 回傳 201 建立成功狀態碼，包含新建立的偏好設定資料
-      res.status(201).json({
-        success: true,
-        data: preferences,
-        message: '偏好設定已建立'
-      });
+      const response: ControllerResult = {
+        status: 201,
+        message: '偏好設定已建立',
+        data: preferences
+      };
+      res.status(201).json(response);
     } catch (error) {
       logger.error('Error creating user preferences:', error);
       
       // 回傳 500 伺服器內部錯誤
-      res.status(500).json({ 
-        success: false, 
-        message: '伺服器內部錯誤' 
-      });
+      const response: ControllerResult = {
+        status: 500,
+        message: '伺服器內部錯誤'
+      };
+      res.status(500).json(response);
     }
   }
 }

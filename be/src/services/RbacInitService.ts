@@ -50,6 +50,8 @@ import { UserModel } from '../models/rbac/UserModel.js';
 import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
 // 匯入日誌記錄器
 import { createLogger } from '../configs/loggerConfig.js';
+// 匯入服務結果類別
+import { ServiceResult } from '../utils/ServiceResult.js';
 
 const logger = createLogger('RbacInitService');
 
@@ -174,25 +176,16 @@ export class RbacInitService {
       );
 
       if (!userCreated) { // 如果使用者已存在（非新創建）
-        return { // 回傳成功結果，但表示使用者已存在
-          success: true, // 設定成功狀態為 true
-          message: `Admin user '${username}' already exists`, // 回傳使用者已存在的訊息
-        };
+        return ServiceResult.success(`Admin user '${username}' already exists`); // 回傳成功結果，但表示使用者已存在
       }
 
       // 5. 指派 admin 角色給用戶
       await this.userRoleRepository.findOrCreate(user.id, adminRole.id); // 創建使用者與管理員角色的關聯關係
 
-      return { // 回傳創建成功的結果
-        success: true, // 設定成功狀態為 true
-        message: `Admin user '${username}' created successfully with full permissions`, // 回傳創建成功的訊息
-      };
+      return ServiceResult.success(`Admin user '${username}' created successfully with full permissions`); // 回傳創建成功的結果
     } catch (error) { // 捕獲創建過程中的任何錯誤
       logger.error('Error creating admin user:', error); // 記錄錯誤日誌
-      return { // 回傳失敗結果
-        success: false, // 設定成功狀態為 false
-        message: `Failed to create admin user: ${error}`, // 回傳包含錯誤訊息的失敗訊息
-      };
+      return ServiceResult.failure(`Failed to create admin user: ${error}`); // 回傳失敗結果
     }
   }
 

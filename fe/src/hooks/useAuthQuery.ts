@@ -16,6 +16,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { User, LoginRequest, AuthError, LoginResponse } from '../types/auth';
+import { apiClient } from '../utils/RequestUtils';
 
 /**
  * React Query 查詢鍵
@@ -25,41 +26,22 @@ export const AUTH_QUERY_KEYS = {
   USER: ['auth', 'user'] as const,
 } as const;
 
-/**
- * API 基礎 URL
- */
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8010';
 
 /**
  * API 函數：使用者登入
  */
 const loginAPI = async (credentials: LoginRequest): Promise<LoginResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Login failed');
-    }
-
-    const data: LoginResponse = await response.json();
+    const data: LoginResponse = await apiClient.post('/api/auth/login', credentials);
     
     // 將 JWT token 存儲在 localStorage 中供後續請求使用
-    localStorage.setItem('authToken', data.token);
+    apiClient.setAuthToken(data.token);
     
     return data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw { message: error.message, status: 401 } as AuthError;
-    }
-    throw { message: 'An unexpected error occurred', status: 500 } as AuthError;
+  } catch (error: any) {
+    const message = error.response?.data?.message || error.message || 'Login failed';
+    const status = error.response?.status || 401;
+    throw { message, status } as AuthError;
   }
 };
 
@@ -68,14 +50,11 @@ const loginAPI = async (credentials: LoginRequest): Promise<LoginResponse> => {
  */
 const logoutAPI = async (): Promise<void> => {
   try {
-    await fetch(`${API_BASE_URL}/api/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
+    await apiClient.post('/api/auth/logout');
   } catch (error) {
     console.error('Logout error:', error);
   } finally {
-    localStorage.removeItem('authToken');
+    apiClient.clearAuthToken();
   }
 };
 

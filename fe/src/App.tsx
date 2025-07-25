@@ -12,15 +12,18 @@
  */
 
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // 引入 React Router 相關組件進行路由管理
-import { Homepage } from "./pages/Homepage"; // 引入首頁組件
-import { TableViewer } from "./components/HomeContent/TableViewer"; // 引入資料表檢視器組件
-import { HomeContent } from "./components/HomeContent/HomeContent"; // 引入首頁內容組件
-import { InitPage } from "./pages/InitPage"; // 引入系統初始化頁面組件
-import SwaggerDocPage from "./pages/SwaggerDocPage"; // 引入 API 文檔頁面組件
-import LoginPage from "./pages/LoginPage"; // 引入登入頁面組件
+import { Suspense, lazy } from "react"; // 引入 React 懶加載相關組件
 import { useAuth } from "./hooks/useAuthQuery"; // 引入認證 Hook
 import { NotificationContainer } from "./components/Notification/NotificationContainer"; // 引入通知容器組件
 import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路由組件
+
+// 使用動態導入來實現代碼分割和懶加載
+const Homepage = lazy(() => import("./pages/Homepage").then(module => ({ default: module.Homepage })));
+const TableViewer = lazy(() => import("./components/HomeContent/TableViewer").then(module => ({ default: module.TableViewer })));
+const HomeContent = lazy(() => import("./components/HomeContent/HomeContent").then(module => ({ default: module.HomeContent })));
+const InitPage = lazy(() => import("./pages/InitPage").then(module => ({ default: module.InitPage })));
+const SwaggerDocPage = lazy(() => import("./pages/SwaggerDocPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 /**
  * 主要的應用程式組件
@@ -54,33 +57,40 @@ function App() {
    */
   return (
     <BrowserRouter>
-      {" "}
       {/* 啟用瀏覽器路由，支援 HTML5 history API */}
-      <Routes>
-        {" "}
-        {/* 定義路由規則容器 */}
-        {/* 公開路由 - 無需認證即可訪問 */}
-        <Route path="/login" element={<LoginPage />} /> {/* 登入頁面路由 */}
-        <Route path="/" element={<InitPage />} /> {/* 系統初始化頁面 */}
-        {/* 受保護的路由 - 需要認證才能訪問 */}
-        <Route
-          path="/content"
-          element={
-            <ProtectedRoute>
-              {" "}
-              {/* 包裝受保護路由組件，檢查認證狀態 */}
-              <Homepage /> {/* 首頁布局組件 */}
-            </ProtectedRoute>
-          }
-        >
-          {/* 嵌套路由 - 在 Homepage 組件內部渲染 */}
-          <Route index element={<HomeContent />} /> {/* 首頁預設內容 */}
-          <Route path="tableviewer" element={<TableViewer />} />{" "}
-          {/* 資料表檢視器頁面 */}
-          <Route path="api-docs" element={<SwaggerDocPage />} />{" "}
-          {/* API 文檔頁面 */}
-        </Route>
-      </Routes>
+      <Suspense fallback={<div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        fontSize: '18px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white'
+      }}>載入中...</div>}>
+        <Routes>
+          {/* 定義路由規則容器 */}
+          {/* 公開路由 - 無需認證即可訪問 */}
+          <Route path="/login" element={<LoginPage />} /> {/* 登入頁面路由 */}
+          <Route path="/" element={<InitPage />} /> {/* 系統初始化頁面 */}
+          {/* 受保護的路由 - 需要認證才能訪問 */}
+          <Route
+            path="/content"
+            element={
+              <ProtectedRoute>
+                {/* 包裝受保護路由組件，檢查認證狀態 */}
+                <Homepage /> {/* 首頁布局組件 */}
+              </ProtectedRoute>
+            }
+          >
+            {/* 嵌套路由 - 在 Homepage 組件內部渲染 */}
+            <Route index element={<HomeContent />} /> {/* 首頁預設內容 */}
+            <Route path="tableviewer" element={<TableViewer />} /> 
+            {/* 資料表檢視器頁面 */}
+            <Route path="api-docs" element={<SwaggerDocPage />} /> 
+            {/* API 文檔頁面 */}
+          </Route>
+        </Routes>
+      </Suspense>
       <NotificationContainer /> {/* 全域通知容器，顯示系統通知訊息 */}
     </BrowserRouter>
   );

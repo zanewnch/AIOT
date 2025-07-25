@@ -49,7 +49,7 @@ be/
 ### Prerequisites
 - **Node.js** (v18+ recommended)
 - **MySQL** (localhost:3306)
-- **MongoDB** (localhost:27017) 
+- **MongoDB** (localhost:27017)
 - **RabbitMQ** (localhost:5672)
 - npm or yarn
 
@@ -69,7 +69,7 @@ cp .env.example .env
 3. Start development server:
 ```bash
 npm run dev
-# Server runs on http://localhost:8010
+# Server runs on http://localhost:8000
 ```
 
 ### Environment Variables
@@ -249,7 +249,7 @@ docker run -p 8010:8010 aiot-backend
 ### Health Checks
 The server includes connection monitoring for:
 - MySQL database connectivity
-- MongoDB connectivity  
+- MongoDB connectivity
 - RabbitMQ connection status
 - JWT authentication functionality
 

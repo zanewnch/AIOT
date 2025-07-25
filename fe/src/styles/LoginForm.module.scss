@@ -86,6 +86,42 @@
   margin-top: 4px;
 }
 
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #cbd5e0;
+  font-size: 14px;
+  user-select: none;
+  
+  &:hover .checkboxText {
+    color: #e2e8f0;
+  }
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  accent-color: #667eea;
+  cursor: pointer;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.checkboxText {
+  transition: color 0.2s ease;
+}
+
 .errorMessage {
   background-color: #2d1b1e;
   color: #fc8181;
