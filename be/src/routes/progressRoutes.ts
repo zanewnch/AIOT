@@ -60,7 +60,7 @@ class ProgressRoutes {
    * @returns {Object} 500 - 伺服器錯誤
    */
   private setupGetProgressRoute(): void {
-    this.router.get('/:taskId', 
+    this.router.get('/api/progress/:taskId', 
       this.authMiddleware.authenticate,
       this.progressController.getProgress
     );
@@ -83,7 +83,7 @@ class ProgressRoutes {
    * @returns {Object} 500 - 伺服器錯誤
    */
   private setupGetProgressStreamRoute(): void {
-    this.router.get('/:taskId/stream', 
+    this.router.get('/api/progress/:taskId/stream', 
       this.authMiddleware.authenticate,
       this.progressController.getProgressStream
     );

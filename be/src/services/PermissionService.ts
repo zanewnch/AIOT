@@ -37,7 +37,8 @@
 // 匯入使用者資料存取層，用於查詢使用者權限相關資料
 import { UserRepository } from '../repo/UserRepo.js';
 // 匯入權限資料存取層，用於權限管理操作
-import { PermissionRepository, IPermissionRepository } from '../repo/PermissionRepo.js';
+import { PermissionRepository } from '../repo/PermissionRepo.js';
+import { IPermissionRepository } from '../types/repositories/IPermissionRepository.js';
 // 匯入權限模型類型
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 // 匯入 Redis 客戶端配置，用於快取管理

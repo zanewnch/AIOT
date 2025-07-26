@@ -19,6 +19,8 @@ import {
     PrimaryKey,   // 主鍵裝飾器
     AutoIncrement, // 自動遞增裝飾器
     AllowNull,    // 允許空值設定裝飾器
+    CreatedAt,    // 建立時間裝飾器
+    UpdatedAt,    // 更新時間裝飾器
 } from 'sequelize-typescript';
 
 // 引入 Sequelize 型別定義，用於定義可選屬性
@@ -51,6 +53,18 @@ export type RTKDataAttributes = {
      * @type {number} WGS84 座標系統的經度值，範圍 -180 到 180 度
      */
     longitude: number;
+    
+    /** 
+     * 建立時間
+     * @type {Date} RTK 資料記錄的建立時間戳記，用於資料分區和時間查詢
+     */
+    createdAt: Date;
+    
+    /** 
+     * 更新時間
+     * @type {Date} RTK 資料記錄的最後更新時間戳記
+     */
+    updatedAt: Date;
 };
 
 /**
@@ -63,7 +77,7 @@ export type RTKDataAttributes = {
  * @extends {Optional<RTKDataAttributes, 'id'>}
  * @since 1.0.0
  */
-export type RTKDataCreationAttributes = Optional<RTKDataAttributes, 'id'>;
+export type RTKDataCreationAttributes = Optional<RTKDataAttributes, 'id' | 'createdAt' | 'updatedAt'>;
 
 /**
  * RTK 資料模型類別
@@ -141,4 +155,31 @@ export class RTKDataModel extends Model<RTKDataAttributes, RTKDataCreationAttrib
     @AllowNull(false)         // 設定為必填欄位
     @Column(DataType.FLOAT)   // 定義為 FLOAT 型態，提供足夠精度
     declare longitude: number;
+
+    /**
+     * 建立時間
+     * 
+     * RTK 資料記錄的建立時間戳記，由 Sequelize 自動管理。
+     * 此欄位用於時間查詢和資料分區（partitioning）。
+     * 
+     * @type {Date}
+     * @memberof RTKDataModel
+     * @since 1.0.0
+     */
+    @CreatedAt
+    @Column(DataType.DATE)
+    declare createdAt: Date;
+
+    /**
+     * 更新時間
+     * 
+     * RTK 資料記錄的最後更新時間戳記，由 Sequelize 自動管理。
+     * 
+     * @type {Date}
+     * @memberof RTKDataModel
+     * @since 1.0.0
+     */
+    @UpdatedAt
+    @Column(DataType.DATE)
+    declare updatedAt: Date;
 }

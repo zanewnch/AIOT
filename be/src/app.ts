@@ -20,14 +20,7 @@ import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
-import { authRoutes } from './routes/authRoutes.js'; // 身份驗證相關路由
-import { initRoutes } from './routes/initRoutes.js'; // 初始化相關路由
-import { progressRoutes } from './routes/progressRoutes.js'; // 進度追蹤相關路由
-import { rtkRoutes } from './routes/rtkRoutes.js'; // RTK 相關路由
-import { swaggerRoutes } from './routes/swaggerRoutes.js'; // Swagger API 文件路由
-import { rbacRoutes } from './routes/rbacRoutes.js'; // RBAC 角色權限管理路由
-import { userRoutes } from './routes/userRoutes.js'; // 使用者相關路由
-import homeRoutes from './routes/homeRoutes.js'; // 首頁路由
+import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 
 /**
@@ -191,18 +184,19 @@ export class App {
   /**
    * 設定應用程式路由
    * 
-   * 註冊所有的 API 路由到 Express 應用程式中。此方法會依序註冊：
+   * 使用統一的路由管理系統註冊所有 API 路由到 Express 應用程式中。
+   * 路由註冊邏輯已集中管理在 routes/index.ts 中，包括：
    * 
    * **基礎路由：**
-   * - 初始化路由：系統健康檢查、基本資訊等
-   * - 身份驗證路由：登入、註冊、JWT 驗證等
-   * - RTK 路由：Redux Toolkit 相關 API
-   * - Swagger 路由：API 文件和測試介面
+   * - 首頁路由、初始化路由、身份驗證路由等
+   * - RTK 路由、Swagger API 文件路由等
    * 
    * **功能路由：**
-   * - RBAC 路由：角色權限管理 API
-   * - 進度追蹤路由：任務和進度管理 API
-   * - 使用者路由：使用者偏好設定、功能開關、活動追蹤等
+   * - RBAC 角色權限管理 API
+   * - 進度追蹤路由、使用者管理路由等
+   * 
+   * **開發工具路由：**
+   * - 僅在開發環境中註冊的開發工具路由
    * 
    * @private
    * @async
@@ -210,25 +204,8 @@ export class App {
    * @returns {Promise<void>} 路由設定完成的 Promise
    */
   private async setRoutes(): Promise<void> {
-    // 設置首頁路由（必須放在最前面，避免被其他路由覆蓋）
-    this.app.use('/', homeRoutes); // 首頁路由
-    
-    // 設置基礎路由（根路徑）
-    this.app.use('/', initRoutes); // 系統初始化和健康檢查路由
-    this.app.use('/', authRoutes); // 身份驗證相關路由
-    this.app.use('/', rtkRoutes); // Redux Toolkit 相關路由
-    this.app.use('/', swaggerRoutes); // Swagger API 文件路由
-
-    // 設置功能模組路由（帶有路徑前綴）
-    this.app.use('/api/rbac', rbacRoutes); // RBAC 角色權限管理路由
-
-    // 設置進度追蹤路由
-    this.app.use('/api/progress', progressRoutes); // 任務進度追蹤路由
-
-    // 設置使用者相關路由（偏好設定、功能開關、活動追蹤）
-    this.app.use('/', userRoutes); // 使用者管理和設定路由
-
-    console.log('✅ All controllers initialized and routes configured'); // 輸出路由設定完成訊息
+    // 使用統一的路由管理系統註冊所有路由
+    registerAllRoutes(this.app);
   }
 
   /**

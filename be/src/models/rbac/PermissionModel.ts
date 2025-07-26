@@ -21,6 +21,8 @@ import {
   AllowNull,  // 允許空值設定裝飾器
   Unique,     // 唯一性約束裝飾器
   BelongsToMany, // 多對多關聯裝飾器
+  CreatedAt,  // 建立時間裝飾器
+  UpdatedAt,  // 更新時間裝飾器
 } from 'sequelize-typescript';
 
 // 導入相關的模型類別
@@ -42,6 +44,10 @@ export type PermissionAttributes = {
   name: string;
   /** 權限描述 - 可選的人類可讀描述，說明權限的用途 */
   description?: string;
+  /** 建立時間 - 權限建立的時間戳記 */
+  createdAt: Date;
+  /** 更新時間 - 權限最後更新的時間戳記 */
+  updatedAt: Date;
 };
 
 /**
@@ -51,7 +57,7 @@ export type PermissionAttributes = {
  * 
  * @interface PermissionCreationAttributes
  */
-export type PermissionCreationAttributes = Optional<PermissionAttributes, 'id'>;
+export type PermissionCreationAttributes = Optional<PermissionAttributes, 'id' | 'createdAt' | 'updatedAt'>;
 
 /**
  * 權限模型類別
@@ -117,6 +123,30 @@ export class PermissionModel extends Model<PermissionAttributes, PermissionCreat
    */
   @Column(DataType.STRING(255))  // 字串類型，最大長度 255
   declare description?: string;
+
+  /**
+   * 建立時間
+   * 
+   * 權限建立的時間戳記，由 Sequelize 自動管理。
+   * 
+   * @type {Date}
+   * @memberof PermissionModel
+   */
+  @CreatedAt
+  @Column(DataType.DATE)
+  declare createdAt: Date;
+
+  /**
+   * 更新時間
+   * 
+   * 權限最後更新的時間戳記，由 Sequelize 自動管理。
+   * 
+   * @type {Date}
+   * @memberof PermissionModel
+   */
+  @UpdatedAt
+  @Column(DataType.DATE)
+  declare updatedAt: Date;
 
   /**
    * 關聯的角色列表

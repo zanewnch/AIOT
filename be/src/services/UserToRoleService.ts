@@ -44,7 +44,8 @@ import { UserRoleRepository, IUserRoleRepository } from '../repo/UserRoleRepo.js
 // 匯入使用者資料存取層，用於使用者驗證
 import { UserRepository, IUserRepository } from '../repo/UserRepo.js';
 // 匯入角色資料存取層，用於角色驗證
-import { RoleRepository, IRoleRepository } from '../repo/RoleRepo.js';
+import { RoleRepository } from '../repo/RoleRepo.js';
+import { IRoleRepository } from '../types/repositories/IRoleRepository.js';
 // 匯入模型類型
 import { UserModel } from '../models/rbac/UserModel.js';
 import { RoleModel } from '../models/rbac/RoleModel.js';
