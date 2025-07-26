@@ -37,13 +37,14 @@ export const INIT_QUERY_KEYS = {
  * API 函數：初始化 RBAC 示例資料
  */
 const initRbacDemoAPI = async (): Promise<InitResponse> => {
-  const result = await apiClient.postWithResult<InitResponse>('/api/init/rbac-demo');
+  const response = await apiClient.post('/api/init/rbac-demo');
+  const result = RequestResult.fromResponse<InitResponse>(response);
   
   if (result.isSuccess() && result.data) {
-    result.logSuccess('RBAC 示例資料初始化');
+    console.log('RBAC 示例資料初始化成功');
     return result.data;
   } else {
-    result.logError('RBAC 示例資料初始化失敗');
+    console.error('RBAC 示例資料初始化失敗:', result.message);
     throw {
       message: result.message || 'Failed to initialize RBAC demo',
       status: result.status,
@@ -56,13 +57,14 @@ const initRbacDemoAPI = async (): Promise<InitResponse> => {
  * API 函數：初始化 RTK 示例資料
  */
 const initRtkDemoAPI = async (): Promise<InitResponse> => {
-  const result = await apiClient.postWithResult<InitResponse>('/api/init/rtk-demo');
+  const response = await apiClient.post('/api/init/rtk-demo');
+  const result = RequestResult.fromResponse<InitResponse>(response);
   
   if (result.isSuccess() && result.data) {
-    result.logSuccess('RTK 示例資料初始化');
+    console.log('RTK 示例資料初始化成功');
     return result.data;
   } else {
-    result.logError('RTK 示例資料初始化失敗');
+    console.error('RTK 示例資料初始化失敗:', result.message);
     throw {
       message: result.message || 'Failed to initialize RTK demo',
       status: result.status,
@@ -75,13 +77,14 @@ const initRtkDemoAPI = async (): Promise<InitResponse> => {
  * API 函數：創建管理員帳號
  */
 const createAdminUserAPI = async (): Promise<InitResponse> => {
-  const result = await apiClient.postWithResult<InitResponse>('/api/init/admin-user');
+  const response = await apiClient.post('/api/init/admin-user');
+  const result = RequestResult.fromResponse<InitResponse>(response);
   
   if (result.isSuccess() && result.data) {
-    result.logSuccess('管理員帳號創建');
+    console.log('管理員帳號創建成功');
     return result.data;
   } else {
-    result.logError('管理員帳號創建失敗');
+    console.error('管理員帳號創建失敗:', result.message);
     throw {
       message: result.message || 'Failed to create admin user',
       status: result.status,
@@ -94,13 +97,14 @@ const createAdminUserAPI = async (): Promise<InitResponse> => {
  * API 函數：創建壓力測試資料
  */
 const createStressTestDataAPI = async (): Promise<StressTestResponse> => {
-  const result = await apiClient.postWithResult<StressTestResponse>('/api/init/stress-test-data');
+  const response = await apiClient.post('/api/init/stress-test-data');
+  const result = RequestResult.fromResponse<StressTestResponse>(response);
   
   if (result.isSuccess() && result.data) {
-    result.logSuccess('壓力測試資料創建');
+    console.log('壓力測試資料創建成功');
     return result.data;
   } else {
-    result.logError('壓力測試資料創建失敗');
+    console.error('壓力測試資料創建失敗:', result.message);
     throw {
       message: result.message || 'Failed to create stress test data',
       status: result.status,

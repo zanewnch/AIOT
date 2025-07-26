@@ -32,6 +32,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActivityStore } from '../stores/activityStore';
 import type { UserActivity, ActivityStats } from '../types/activity';
 import { apiClient } from '../utils/RequestUtils';
+import { RequestResult } from '../utils/RequestResult';
 
 /**
  * React Query 查詢鍵常量
@@ -47,16 +48,28 @@ export const QUERY_KEYS = {
  * API 函數：獲取用戶活動資料
  */
 const fetchUserActivity = async (): Promise<UserActivity> => {
-  const result = await apiClient.get('/api/user/activity');
-  return result.data;
+  const response = await apiClient.get('/api/user/activity');
+  const result = RequestResult.fromResponse<UserActivity>(response);
+  
+  if (result.isError()) {
+    throw new Error(result.message);
+  }
+  
+  return result.unwrap();
 };
 
 /**
  * API 函數：獲取活動統計資料
  */
 const fetchActivityStats = async (): Promise<ActivityStats> => {
-  const result = await apiClient.get('/api/user/activity/stats');
-  return result.data;
+  const response = await apiClient.get('/api/user/activity/stats');
+  const result = RequestResult.fromResponse<ActivityStats>(response);
+  
+  if (result.isError()) {
+    throw new Error(result.message);
+  }
+  
+  return result.unwrap();
 };
 
 /**
@@ -64,7 +77,12 @@ const fetchActivityStats = async (): Promise<ActivityStats> => {
  */
 const recordPageVisitAPI = async (page: string, duration?: number): Promise<void> => {
   try {
-    await apiClient.post('/api/user/activity/page-visit', { page, duration });
+    const response = await apiClient.post('/api/user/activity/page-visit', { page, duration });
+    const result = RequestResult.fromResponse(response);
+    
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
   } catch (error) {
     console.error('Failed to record page visit:', error);
     throw error;
@@ -76,7 +94,12 @@ const recordPageVisitAPI = async (page: string, duration?: number): Promise<void
  */
 const updateSessionInfoAPI = async (sessionDuration?: number, deviceInfo?: string): Promise<void> => {
   try {
-    await apiClient.post('/api/user/activity/session', { sessionDuration, deviceInfo });
+    const response = await apiClient.post('/api/user/activity/session', { sessionDuration, deviceInfo });
+    const result = RequestResult.fromResponse(response);
+    
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
   } catch (error) {
     console.error('Failed to update session info:', error);
     throw error;

@@ -64,9 +64,73 @@ export class RequestResult<T = any> {
    * @param data 響應資料（可選）
    * @param error 原始錯誤物件（可選，用於除錯）
    */
-  constructor(status: number, message: string, data?: T) {
+  constructor(status: number, message: string, data?: T, error?: Error) {
     this.status = status;
     this.message = message;
     this.data = data;
+    this.error = error;
+  }
+
+  /**
+   * 從 API 響應創建 RequestResult
+   */
+  static fromResponse<T = any>(response: ApiResponseFormat<T>): RequestResult<T> {
+    return new RequestResult(response.status, response.message, response.data);
+  }
+
+  /**
+   * 從 axios 錯誤創建 RequestResult
+   */
+  static fromAxiosError(error: any): RequestResult {
+    const status = error.response?.status || 500;
+    const message = error.response?.data?.message || error.message || '請求失敗';
+    
+    let responseData = error.response?.data?.data;
+    
+    return new RequestResult(status, message, responseData, error);
+  }
+
+  /**
+   * 從一般錯誤創建 RequestResult
+   */
+  static fromError(error: Error, defaultMessage: string = '發生未知錯誤'): RequestResult {
+    return new RequestResult(500, error.message || defaultMessage, undefined, error);
+  }
+
+  /**
+   * 檢查是否為成功結果
+   */
+  isSuccess(): boolean {
+    return this.status >= 200 && this.status < 300;
+  }
+
+  /**
+   * 檢查是否為錯誤結果
+   */
+  isError(): boolean {
+    return this.status >= 400;
+  }
+
+  /**
+   * 獲取資料，如果沒有資料則拋出錯誤
+   */
+  unwrap(): T {
+    if (this.isError()) {
+      throw new Error(`請求失敗 (${this.status}): ${this.message}`);
+    }
+    if (this.data === undefined) {
+      throw new Error('請求響應沒有資料');
+    }
+    return this.data;
+  }
+
+  /**
+   * 獲取資料，如果沒有資料則返回預設值
+   */
+  unwrapOr(defaultValue: T): T {
+    if (this.isError() || this.data === undefined) {
+      return defaultValue;
+    }
+    return this.data;
   }
 }

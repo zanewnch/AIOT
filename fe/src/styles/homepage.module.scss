@@ -18,29 +18,26 @@
 
 // Main content layout
 .mainContent {
-  display: grid;
-  grid-template-columns: minmax(120px, 140px) 1fr; // 只有 sidebar 和 content 兩欄
-  gap: 0; // 移除間距讓內容完全貼齊
-  padding: 0; // 移除所有 padding
-  
-  // 確保內容不會溢出
-  min-height: calc(100vh - 64px); // 設定最小高度填滿可用空間
-  width: 100vw; // 使用視窗寬度確保填滿整個寬度
+  margin-left: 240px; // 為固定sidebar留出空間
+  padding: 0;
+  min-height: calc(100vh - 64px);
+  width: calc(100vw - 240px); // 扣除sidebar寬度
 }
 
 
 
 // Content area styles
 .contentArea {
-  padding: 0; // 移除 padding 讓內容完全填滿
-  max-width: none; // 移除固定寬度限制
-  min-width: 0; // 允許收縮
-  overflow-wrap: break-word; // 改善長單詞換行
+  padding: 24px; // 添加內邊距讓內容有呼吸空間
+  max-width: none;
+  min-width: 0;
+  overflow-wrap: break-word;
   word-wrap: break-word;
-  height: calc(100vh - 64px); // 填滿可用空間，扣除 navbar 高度
+  height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
-  width: 100%; // 確保填滿父容器寬度
+  width: 100%;
+  overflow-y: auto; // 允許內容滾動
 }
 
 .breadcrumb {
@@ -124,7 +121,7 @@
   color: var(--accent-color);
   text-decoration: none;
   @include theme-transition;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -227,13 +224,6 @@
 
 // Responsive design
 @media (max-width: 1200px) {
-  .mainContent {
-    grid-template-columns: minmax(110px, 130px) 1fr; // 保持兩欄布局
-    gap: 0; // 保持無間距
-    padding: 0; // 移除所有 padding
-    width: 100vw; // 確保填滿視窗寬度
-  }
-  
   .contentHeader {
     h1 {
       font-size: 28px;
@@ -242,24 +232,22 @@
 }
 
 @media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%); // 隱藏sidebar
+    transition: transform 0.3s ease;
+  }
+
   .mainContent {
-    grid-template-columns: 1fr;
-    gap: 0; // 保持無間距
-    padding: 0; // 小屏幕也移除 padding 讓內容完全填滿
-    width: 100vw; // 確保填滿視窗寬度
-    
-    // 隱藏側邊欄 (在小螢幕上)
-    > :first-child {
-      display: none;
-    }
+    margin-left: 0; // 移除左邊距
+    width: 100vw; // 使用全寬
   }
-  
+
   .contentArea {
-    max-width: none; // 在單欄模式下不限制內容寬度
+    max-width: none;
     margin: 0;
-    width: 100%; // 確保填滿父容器寬度
+    width: 100%;
   }
-  
+
   .contentHeader {
     flex-direction: column;
     align-items: flex-start;
@@ -272,15 +260,20 @@
 }
 
 @media (max-width: 768px) {
-  .mainContent {
-    padding: 0; // 移除 padding 讓內容完全填滿
-    width: 100vw; // 確保填滿視窗寬度
+  .sidebar {
+    width: 200px; // 小螢幕下稍微縮小sidebar
   }
 
-  .contentArea {
-    padding: 0; // 保持無 padding 讓內容完全填滿
-    height: calc(100vh - 56px); // 調整小螢幕的 navbar 高度
-    
+  .mainContent {
+    padding: 0;
+    width: 100vw;
+    margin-left: 0; // 小螢幕下移除左邊距
+  }
+
+    .contentArea {
+    padding: 16px; // 小螢幕下減少padding
+    height: calc(100vh - 56px);
+
     .contentHeader {
       margin-bottom: 24px;
 
@@ -289,15 +282,15 @@
       }
     }
   }
-  
+
   .contentIntro {
     font-size: 16px;
   }
-  
+
   .codeBlock {
     padding: 12px;
     margin: 12px 0;
-    
+
     code {
       font-size: 13px;
     }
@@ -306,23 +299,24 @@
 
 @media (max-width: 480px) {
   .mainContent {
-    padding: 0; // 極小屏幕也移除 padding
-    width: 100vw; // 確保填滿視窗寬度
+    padding: 0;
+    width: 100vw;
+    margin-left: 0;
   }
 
   .contentArea {
-    padding: 0; // 確保在極小螢幕也無 padding
-    height: calc(100vh - 56px); // 確保在極小螢幕也有正確高度
+    padding: 12px; // 極小螢幕下進一步減少padding
+    height: calc(100vh - 56px);
   }
-  
+
   .contentHeader {
     h1 {
       font-size: 20px;
     }
   }
-  
+
   .copyPageBtn {
     padding: 6px 10px;
     font-size: 13px;
   }
-} 
+}

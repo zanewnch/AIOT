@@ -2,15 +2,19 @@
 
 // Sidebar styles
 .sidebar {
+  position: fixed;
+  left: 0;
+  top: 64px; // navbar的高度
+  width: 240px;
   padding: 0;
-  border-right: none; // 移除右側邊框讓內容完全貼齊
+  border-right: 1px solid var(--border-color);
   @include theme-transition;
   overflow-y: auto;
-  min-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
   background-color: var(--bg-secondary);
+  z-index: 50;
 }
 
 .sidebarHeader {
@@ -87,4 +91,18 @@
   flex-shrink: 0;
   width: 20px;
   text-align: center;
-} 
+}
+
+// 響應式設計
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+}

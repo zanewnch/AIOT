@@ -17,6 +17,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { User, LoginRequest, AuthError, LoginResponse } from '../types/auth';
 import { apiClient } from '../utils/RequestUtils';
+import { RequestResult } from '../utils/RequestResult';
 
 /**
  * React Query 查詢鍵
@@ -28,10 +29,11 @@ export const AUTH_QUERY_KEYS = {
 
 
 /**
- * API 函數：使用者登入（使用 ApiResult 統一錯誤處理）
+ * API 函數：使用者登入
  */
 const loginAPI = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const result = await apiClient.postWithResult<LoginResponse>('/api/auth/login', credentials);
+  const response = await apiClient.post('/api/auth/login', credentials);
+  const result = RequestResult.fromResponse<LoginResponse>(response);
   
   if (result.isSuccess() && result.data) {
     // 將 JWT token 存儲在 localStorage 中供後續請求使用
@@ -42,23 +44,21 @@ const loginAPI = async (credentials: LoginRequest): Promise<LoginResponse> => {
     const message = result.message || '登入失敗';
     const status = result.status || 401;
     
-    // 記錄詳細的錯誤信息以便調試
-    result.logError('登入錯誤');
-    
     throw { message, status } as AuthError;
   }
 };
 
 
 /**
- * API 函數：使用者登出（使用 ApiResult）
+ * API 函數：使用者登出
  */
 const logoutAPI = async (): Promise<void> => {
-  const result = await apiClient.postWithResult<void>('/api/auth/logout');
+  const response = await apiClient.post('/api/auth/logout');
+  const result = RequestResult.fromResponse(response);
   
   if (result.isError()) {
     // 記錄錯誤但不拋出異常，因為登出時即使後端失敗也要清除本地 token
-    result.logError('登出錯誤');
+    console.error('登出錯誤:', result.message);
   }
   
   // 無論後端請求是否成功，都清除本地 token

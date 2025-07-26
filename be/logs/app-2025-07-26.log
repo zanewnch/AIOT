@@ -79,3 +79,9 @@
 2025-07-26 05:45:59.465 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
 2025-07-26 05:46:07.077 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
 2025-07-26 05:46:07.079 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-26 08:56:54.164 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-26 08:56:54.170 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.19.0.1
+2025-07-26 08:56:54.170 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.19.0.1
+2025-07-26 08:56:54.282 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-26 08:56:54.284 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: true
+2025-07-26 08:56:54.286 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":true,"ip":"::ffff:172.19.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}

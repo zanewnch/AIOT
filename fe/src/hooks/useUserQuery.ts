@@ -12,6 +12,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
+import { RequestResult } from '../utils/RequestResult';
 
 /**
  * 用戶類型定義
@@ -37,7 +38,14 @@ export const useUsersQuery = () => {
   return useQuery({
     queryKey: USER_QUERY_KEYS.USERS,
     queryFn: async (): Promise<User[]> => {
-      return await apiClient.get('/api/users');
+      const response = await apiClient.get('/api/users');
+      const result = RequestResult.fromResponse<User[]>(response);
+      
+      if (result.isError()) {
+        throw new Error(result.message);
+      }
+      
+      return result.unwrap();
     },
     staleTime: 5 * 60 * 1000, // 5分鐘
     gcTime: 10 * 60 * 1000, // 10分鐘
@@ -51,7 +59,14 @@ export const useUserQuery = (id: number) => {
   return useQuery({
     queryKey: USER_QUERY_KEYS.USER(id),
     queryFn: async (): Promise<User> => {
-      return await apiClient.get(`/api/users/${id}`);
+      const response = await apiClient.get(`/api/users/${id}`);
+      const result = RequestResult.fromResponse<User>(response);
+      
+      if (result.isError()) {
+        throw new Error(result.message);
+      }
+      
+      return result.unwrap();
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
@@ -66,7 +81,14 @@ export const useCreateUserMutation = () => {
 
   return useMutation({
     mutationFn: async (userData: Omit<User, 'id'>): Promise<User> => {
-      return await apiClient.post('/api/users', userData);
+      const response = await apiClient.post('/api/users', userData);
+      const result = RequestResult.fromResponse<User>(response);
+      
+      if (result.isError()) {
+        throw new Error(result.message);
+      }
+      
+      return result.unwrap();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USERS });
@@ -82,7 +104,14 @@ export const useUpdateUserMutation = () => {
 
   return useMutation({
     mutationFn: async (user: User): Promise<User> => {
-      return await apiClient.put(`/api/users/${user.id}`, user);
+      const response = await apiClient.put(`/api/users/${user.id}`, user);
+      const result = RequestResult.fromResponse<User>(response);
+      
+      if (result.isError()) {
+        throw new Error(result.message);
+      }
+      
+      return result.unwrap();
     },
     onSuccess: (updatedUser) => {
       queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USERS });
@@ -99,7 +128,12 @@ export const useDeleteUserMutation = () => {
 
   return useMutation({
     mutationFn: async (userId: number): Promise<void> => {
-      await apiClient.delete(`/api/users/${userId}`);
+      const response = await apiClient.delete(`/api/users/${userId}`);
+      const result = RequestResult.fromResponse(response);
+      
+      if (result.isError()) {
+        throw new Error(result.message);
+      }
     },
     onSuccess: (_, userId) => {
       queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USERS });

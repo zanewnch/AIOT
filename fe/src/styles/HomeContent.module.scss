@@ -32,7 +32,8 @@ $transition-fast: all 0.15s ease-in-out;
 
 .homeContainer {
   min-height: 100vh;
-  background: $bg-gradient;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   padding: 2rem;
 
   @media (max-width: 768px) {
@@ -49,29 +50,28 @@ $transition-fast: all 0.15s ease-in-out;
 .header {
   text-align: center;
   margin-bottom: 3rem;
-  
-  .title {
+
+    .title {
     font-size: 3.5rem;
     font-weight: 800;
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
+
     @media (max-width: 768px) {
       font-size: 2.5rem;
     }
-    
+
     @media (max-width: 480px) {
       font-size: 2rem;
     }
   }
-  
-  .subtitle {
+
+    .subtitle {
     font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
     font-weight: 300;
     line-height: 1.6;
-    
+
     @media (max-width: 768px) {
       font-size: 1.1rem;
     }
@@ -83,7 +83,7 @@ $transition-fast: all 0.15s ease-in-out;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
-  
+
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -91,15 +91,15 @@ $transition-fast: all 0.15s ease-in-out;
 }
 
 .featureCard {
-  background: $bg-primary;
+  background: var(--bg-secondary);
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: $shadow-lg;
   transition: $transition-base;
-  border: 1px solid $border-color;
+  border: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -111,46 +111,46 @@ $transition-fast: all 0.15s ease-in-out;
     transform: scaleX(0);
     transition: transform 0.3s ease;
   }
-  
+
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    
+
     &::before {
       transform: scaleX(1);
     }
-    
+
     .cardIcon {
       transform: scale(1.1) rotate(5deg);
     }
   }
-  
+
   .cardHeader {
     display: flex;
     align-items: center;
     margin-bottom: 1.5rem;
-    
+
     .cardIcon {
       font-size: 2.5rem;
       margin-right: 1rem;
       transition: $transition-base;
     }
-    
+
     .cardTitle {
       font-size: 1.5rem;
       font-weight: 700;
-      color: $text-primary;
+      color: var(--text-primary);
       margin: 0;
     }
   }
-  
+
   .cardDescription {
-    color: $text-secondary;
+    color: var(--text-secondary);
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 2rem;
   }
-  
+
   .cardAction {
     margin-top: auto;
   }
@@ -169,68 +169,68 @@ $transition-fast: all 0.15s ease-in-out;
   border: none;
   cursor: pointer;
   min-width: 140px;
-  
+
   &:focus {
     outline: none;
     ring: 2px;
     ring-offset: 2px;
   }
-  
+
   &.primary {
     background-color: $primary-color;
     color: white;
-    
+
     &:hover {
       background-color: $primary-hover;
       transform: translateY(-2px);
       box-shadow: $shadow-md;
     }
-    
+
     &:focus {
       ring-color: $primary-color;
     }
   }
-  
+
   &.secondary {
     background-color: $secondary-color;
     color: white;
-    
+
     &:hover {
       background-color: $secondary-hover;
       transform: translateY(-2px);
       box-shadow: $shadow-md;
     }
-    
+
     &:focus {
       ring-color: $secondary-color;
     }
   }
-  
+
   &.accent {
     background-color: $accent-color;
     color: white;
-    
+
     &:hover {
       background-color: $accent-hover;
       transform: translateY(-2px);
       box-shadow: $shadow-md;
     }
-    
+
     &:focus {
       ring-color: $accent-color;
     }
   }
-  
+
   &.danger {
     background-color: $danger-color;
     color: white;
-    
+
     &:hover {
       background-color: $danger-hover;
       transform: translateY(-2px);
       box-shadow: $shadow-md;
     }
-    
+
     &:focus {
       ring-color: $danger-color;
     }
@@ -244,32 +244,32 @@ $transition-fast: all 0.15s ease-in-out;
   border-radius: 1rem;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  
+
   .statsTitle {
     text-align: center;
-    color: white;
+    color: var(--text-primary);
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 2rem;
   }
-  
+
   .statsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
   }
-  
-  .statItem {
+
+    .statItem {
     text-align: center;
-    color: white;
-    
+    color: var(--text-secondary);
+
     .statNumber {
       font-size: 2.5rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
-      color: #fbbf24;
+      color: var(--accent-color);
     }
-    
+
     .statLabel {
       font-size: 1rem;
       opacity: 0.9;
@@ -303,33 +303,18 @@ $transition-fast: all 0.15s ease-in-out;
   .featuresGrid {
     gap: 1rem;
   }
-  
+
   .featureCard {
     padding: 1.5rem;
   }
-  
+
   .statsSection {
     padding: 1.5rem;
     margin-top: 2rem;
   }
 }
 
-// 深色模式支持（未來使用）
-@media (prefers-color-scheme: dark) {
-  .featureCard {
-    background: #1f2937;
-    border-color: #374151;
-    color: #f9fafb;
-    
-    .cardTitle {
-      color: #f9fafb;
-    }
-    
-    .cardDescription {
-      color: #d1d5db;
-    }
-  }
-}
+// 主題支持通過CSS變數實現，在themes.scss中定義
 
 // 減少動畫偏好支持
 @media (prefers-reduced-motion: reduce) {

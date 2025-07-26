@@ -11,6 +11,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
+import { RequestResult } from '../utils/RequestResult';
 import { createLogger, logRequest, logError } from '../configs/loggerConfig';
 import type { 
   RTKData, 
@@ -49,10 +50,15 @@ const getRolesAPI = async (): Promise<Role[]> => {
     logger.debug('Fetching roles from API');
     logRequest('/api/rbac/roles', 'GET', 'Fetching roles');
     
-    const response = await apiClient.get<Role[]>('/api/rbac/roles');
+    const response = await apiClient.get('/api/rbac/roles');
+    const result = RequestResult.fromResponse<Role[]>(response);
     
-    logger.info(`Successfully fetched ${response.length} roles`);
-    return response;
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
+    
+    logger.info(`Successfully fetched ${result.data?.length || 0} roles`);
+    return result.unwrap();
   } catch (error: any) {
     console.error('Failed to fetch roles:', error);
     logError(error, 'getRolesAPI', { endpoint: '/api/rbac/roles' });
@@ -73,10 +79,15 @@ const getPermissionsAPI = async (): Promise<Permission[]> => {
     logger.debug('Fetching permissions from API');
     logRequest('/api/rbac/permissions', 'GET', 'Fetching permissions');
     
-    const response = await apiClient.get<Permission[]>('/api/rbac/permissions');
+    const response = await apiClient.get('/api/rbac/permissions');
+    const result = RequestResult.fromResponse<Permission[]>(response);
     
-    logger.info(`Successfully fetched ${response.length} permissions`);
-    return response;
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
+    
+    logger.info(`Successfully fetched ${result.data?.length || 0} permissions`);
+    return result.unwrap();
   } catch (error: any) {
     console.error('Failed to fetch permissions:', error);
     logError(error, 'getPermissionsAPI', { endpoint: '/api/rbac/permissions' });
@@ -97,10 +108,15 @@ const getUsersAPI = async (): Promise<User[]> => {
     logger.debug('Fetching users from API');
     logRequest('/api/rbac/users', 'GET', 'Fetching users');
     
-    const response = await apiClient.get<User[]>('/api/rbac/users');
+    const response = await apiClient.get('/api/rbac/users');
+    const result = RequestResult.fromResponse<User[]>(response);
     
-    logger.info(`Successfully fetched ${response.length} users`);
-    return response;
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
+    
+    logger.info(`Successfully fetched ${result.data?.length || 0} users`);
+    return result.unwrap();
   } catch (error: any) {
     console.error('Failed to fetch users:', error);
     logError(error, 'getUsersAPI', { endpoint: '/api/rbac/users' });
@@ -121,10 +137,15 @@ const getRTKDataAPI = async (): Promise<RTKData[]> => {
     logger.debug('Fetching RTK data from API');
     logRequest('/api/rtk/data', 'GET', 'Fetching RTK data');
     
-    const response = await apiClient.get<RTKData[]>('/api/rtk/data');
+    const response = await apiClient.get('/api/rtk/data');
+    const result = RequestResult.fromResponse<RTKData[]>(response);
     
-    logger.info(`Successfully fetched ${response.length} RTK data entries`);
-    return response;
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
+    
+    logger.info(`Successfully fetched ${result.data?.length || 0} RTK data entries`);
+    return result.unwrap();
   } catch (error: any) {
     console.error('Failed to fetch RTK data:', error);
     logError(error, 'getRTKDataAPI', { endpoint: '/api/rtk/data' });
@@ -194,9 +215,14 @@ const updateRTKDataAPI = async (id: number, data: RTKDataUpdateRequest): Promise
     logRequest(`/api/rtk/data/${id}`, 'PUT', `Updating RTK data with ID: ${id}`);
     
     const response = await apiClient.put(`/api/rtk/data/${id}`, data);
+    const result = RequestResult.fromResponse<UpdateResponse>(response);
+    
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
     
     logger.info(`Successfully updated RTK data with ID: ${id}`);
-    return response;
+    return result.unwrap();
   } catch (error: any) {
     console.error(`Failed to update RTK data with ID: ${id}:`, error);
     logError(error, 'updateRTKDataAPI', { id, data, endpoint: `/api/rtk/data/${id}` });
