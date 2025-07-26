@@ -28,34 +28,41 @@ export const AUTH_QUERY_KEYS = {
 
 
 /**
- * API 函數：使用者登入
+ * API 函數：使用者登入（使用 ApiResult 統一錯誤處理）
  */
 const loginAPI = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  try {
-    const data: LoginResponse = await apiClient.post('/api/auth/login', credentials);
-    
+  const result = await apiClient.postWithResult<LoginResponse>('/api/auth/login', credentials);
+  
+  if (result.isSuccess() && result.data) {
     // 將 JWT token 存儲在 localStorage 中供後續請求使用
-    apiClient.setAuthToken(data.token);
+    apiClient.setAuthToken(result.data.token);
+    return result.data;
+  } else {
+    // 提供更詳細的錯誤信息
+    const message = result.message || '登入失敗';
+    const status = result.status || 401;
     
-    return data;
-  } catch (error: any) {
-    const message = error.response?.data?.message || error.message || 'Login failed';
-    const status = error.response?.status || 401;
+    // 記錄詳細的錯誤信息以便調試
+    result.logError('登入錯誤');
+    
     throw { message, status } as AuthError;
   }
 };
 
+
 /**
- * API 函數：使用者登出
+ * API 函數：使用者登出（使用 ApiResult）
  */
 const logoutAPI = async (): Promise<void> => {
-  try {
-    await apiClient.post('/api/auth/logout');
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    apiClient.clearAuthToken();
+  const result = await apiClient.postWithResult<void>('/api/auth/logout');
+  
+  if (result.isError()) {
+    // 記錄錯誤但不拋出異常，因為登出時即使後端失敗也要清除本地 token
+    result.logError('登出錯誤');
   }
+  
+  // 無論後端請求是否成功，都清除本地 token
+  apiClient.clearAuthToken();
 };
 
 /**
@@ -80,16 +87,36 @@ const isAuthenticated = (): boolean => {
  */
 const getCurrentUser = (): User | null => {
   const token = localStorage.getItem('authToken');
-  if (!token) return null;
+  if (!token) {
+    console.warn('No auth token found in localStorage');
+    return null;
+  }
 
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    // 檢查 token 格式是否正確 (JWT 應該有三個部分)
+    const tokenParts = token.split('.');
+    if (tokenParts.length !== 3) {
+      console.error('Invalid JWT token format');
+      localStorage.removeItem('authToken'); // 清除無效的 token
+      return null;
+    }
+
+    const payload = JSON.parse(atob(tokenParts[1]));
+    
+    // 檢查 payload 是否包含必要的欄位
+    if (!payload.sub) {
+      console.error('Invalid JWT payload: missing sub field');
+      localStorage.removeItem('authToken'); // 清除無效的 token
+      return null;
+    }
+
     return {
       id: payload.sub,
       username: payload.username || `user_${payload.sub}`,
     };
   } catch (error) {
     console.error('Failed to parse token:', error);
+    localStorage.removeItem('authToken'); // 清除無效的 token
     return null;
   }
 };
@@ -142,7 +169,15 @@ export const useLoginMutation = () => {
       if (currentUser) {
         return { user: currentUser, isAuthenticated: true };
       } else {
-        throw new Error('Failed to get user information');
+        // 提供更詳細的錯誤訊息
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          throw new Error('登入失敗：未能獲取驗證令牌');
+        } else {
+          // 清除無效的 token 並重新登入
+          localStorage.removeItem('authToken');
+          throw new Error('登入失敗：驗證令牌無效或已損壞，請重新登入');
+        }
       }
     },
     onSuccess: () => {

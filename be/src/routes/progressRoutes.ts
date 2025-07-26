@@ -1,14 +1,14 @@
 /**
  * @fileoverview 進度追蹤路由配置
- * 
+ *
  * 此文件定義了進度追蹤相關的路由端點，包括：
  * - 任務進度查詢
  * - 即時進度串流 (Server-Sent Events)
  * - 進度狀態監控
- * 
+ *
  * 這些路由提供完整的任務進度追蹤功能，支援即時更新和
  * 長時間運行任務的進度監控。所有端點都需要 JWT 認證。
- * 
+ *
  * @module Routes/ProgressRoutes
  * @version 1.0.0
  * @author AIOT Team
@@ -17,11 +17,11 @@
 import { Router } from 'express';
 import { ProgressController } from '../controllers/ProgressController.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
-import { ErrorHandleMiddleware } from '../middlewares/errorHandleMiddleware.js';
+import { ErrorHandleMiddleware } from '../middlewares/ErrorHandleMiddleware.js';
 
 /**
  * 進度追蹤路由類別
- * 
+ *
  * 負責配置和管理所有進度追蹤相關的路由端點
  */
 class ProgressRoutes {
@@ -46,10 +46,10 @@ class ProgressRoutes {
 
   /**
    * 設定取得任務進度路由
-   * 
+   *
    * 此端點用於查詢指定任務的當前執行進度，包括完成百分比、
    * 狀態訊息、執行步驟等詳細資訊。需要 JWT 認證才能訪問。
-   * 
+   *
    * @route GET /api/progress/:taskId
    * @param {string} taskId - 任務唯一識別碼 (UUID 格式)
    * @group Progress - 進度追蹤相關端點
@@ -60,7 +60,7 @@ class ProgressRoutes {
    * @returns {Object} 500 - 伺服器錯誤
    */
   private setupGetProgressRoute(): void {
-    this.router.get('/api/progress/:taskId', 
+    this.router.get('/api/progress/:taskId',
       this.authMiddleware.authenticate,
       this.progressController.getProgress
     );
@@ -68,11 +68,11 @@ class ProgressRoutes {
 
   /**
    * 設定取得即時進度串流路由
-   * 
+   *
    * 此端點使用 Server-Sent Events (SSE) 提供即時進度更新。
    * 客戶端可以持續監聽任務的進度變化，支援 'progress' 和 'completed' 事件。
    * 適用於長時間運行的任務，提供即時的進度反饋。
-   * 
+   *
    * @route GET /api/progress/:taskId/stream
    * @param {string} taskId - 任務唯一識別碼 (UUID 格式)
    * @group Progress - 進度追蹤相關端點
@@ -83,7 +83,7 @@ class ProgressRoutes {
    * @returns {Object} 500 - 伺服器錯誤
    */
   private setupGetProgressStreamRoute(): void {
-    this.router.get('/api/progress/:taskId/stream', 
+    this.router.get('/api/progress/:taskId/stream',
       this.authMiddleware.authenticate,
       this.progressController.getProgressStream
     );
@@ -91,7 +91,7 @@ class ProgressRoutes {
 
   /**
    * 取得路由器實例
-   * 
+   *
    * @returns {Router} Express 路由器實例
    */
   public getRouter(): Router {

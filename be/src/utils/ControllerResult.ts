@@ -2,13 +2,9 @@
  * @fileoverview 控制器結果類別
  *
  * 為所有控制器方法提供統一的 HTTP 回應結構，確保 API 回應的一致性。
- * 提供靜態工廠方法來快速創建常見的回應類型。
- * 靜態工廠方法（Static Factory Method）是一種設計模式，指在類中定義靜態方法來創建和返回該類的實例，而非直接使用構造函數。
- * 這種方法通常用於：
- * 1. 提供更有意義的名稱：方法名稱可以清楚表達創建意圖，如 from() 或 valueOf()，比構造函數更直觀。
- * 2. 控制實例創建：可以返回單例、緩存實例，或根據參數返回不同子類實例。
- * 3. 靈活性：允許返回類型為接口或抽象類，隱藏實現細節。
- * 4. 簡化創建過程：可以封裝複雜的初始化邏輯。
+ * 使用直接建構函式創建，讓開發者清楚知道使用的 HTTP 狀態碼。
+ *
+ * 簡單說：ControllerResult 處理預期情況，ErrorHandleMiddleware 處理意外情況。
  *
  * @author AIOT Development Team
  * @version 1.0.0
@@ -23,6 +19,30 @@
  * 包含 HTTP 狀態碼、訊息和資料，用於標準化 API 回應格式
  *
  * @template T - 資料的類型，預設為 any
+ *
+ * @example
+ * ```typescript
+ * // 成功回應 (200)
+ * return new ControllerResult(200, '資料獲取成功', userData);
+ *
+ * // 創建成功 (201)
+ * return new ControllerResult(201, '用戶創建成功', newUser);
+ *
+ * // 客戶端錯誤 (400)
+ * return new ControllerResult(400, '請求參數無效');
+ *
+ * // 未授權 (401)
+ * return new ControllerResult(401, '請先登入');
+ *
+ * // 禁止存取 (403)
+ * return new ControllerResult(403, '權限不足');
+ *
+ * // 找不到資源 (404)
+ * return new ControllerResult(404, '用戶不存在');
+ *
+ * // 伺服器錯誤 (500)
+ * return new ControllerResult(500, '內部伺服器錯誤');
+ * ```
  */
 export class ControllerResult<T = any> {
     /** HTTP 狀態碼 */

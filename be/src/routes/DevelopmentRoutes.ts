@@ -278,6 +278,64 @@ router.get('/dev/rtk-data', async (req: Request, res: Response) => {
     }
 });
 
+// ========== 錯誤處理測試路由（用於測試增強的錯誤處理機制） ==========
+
+// 測試一般 JavaScript 錯誤
+router.get('/dev/test-error/general', (_req: Request, _res: Response) => {
+    throw new Error('這是一個測試用的一般錯誤，用於驗證增強的錯誤處理機制');
+});
+
+// 測試資料庫錯誤
+router.get('/dev/test-error/database', async (_req: Request, _res: Response) => {
+    // 故意查詢不存在的表來觸發資料庫錯誤
+    await UserModel.sequelize?.query('SELECT * FROM non_existent_table');
+});
+
+// 測試類型錯誤
+router.get('/dev/test-error/type', (_req: Request, _res: Response) => {
+    const obj: any = null;
+    obj.someProperty.nestedProperty = 'test'; // 這會拋出 TypeError
+});
+
+// 測試自定義錯誤物件
+router.get('/dev/test-error/custom', (_req: Request, _res: Response) => {
+    const customError = new Error('自定義錯誤測試');
+    (customError as any).code = 'CUSTOM_ERROR_CODE';
+    (customError as any).details = {
+        userId: 123,
+        action: 'test_action',
+        timestamp: new Date().toISOString()
+    };
+    throw customError;
+});
+
+// 測試異步錯誤
+router.get('/dev/test-error/async', async (_req: Request, _res: Response) => {
+    await new Promise((_, reject) => {
+        setTimeout(() => {
+            reject(new Error('異步操作失敗 - 模擬網路超時或其他異步錯誤'));
+        }, 100);
+    });
+});
+
+// 測試 HTTP 錯誤（使用 http-errors）
+router.get('/dev/test-error/http/:status', (req: Request, _res: Response, next) => {
+    const status = parseInt(req.params.status) || 500;
+    const createError = require('http-errors');
+    
+    const statusMessages: { [key: number]: string } = {
+        400: '錯誤的請求參數',
+        401: '未授權存取',
+        403: '禁止存取此資源',
+        404: '找不到請求的資源',
+        500: '內部伺服器錯誤',
+        503: '服務暫時無法使用'
+    };
+    
+    const message = statusMessages[status] || `HTTP ${status} 錯誤`;
+    next(createError(status, message));
+});
+
 // 根路徑重導向到總覽
 router.get('/dev', (_req: Request, res: Response) => {
     res.json({
@@ -292,7 +350,15 @@ router.get('/dev', (_req: Request, res: Response) => {
             role_permissions: '/dev/role-permissions',
             rtk_data: '/dev/rtk-data?limit=100&offset=0'
         },
-        note: '此 API 僅限開發環境使用'
+        error_testing: {
+            general_error: '/dev/test-error/general',
+            database_error: '/dev/test-error/database',
+            type_error: '/dev/test-error/type',
+            custom_error: '/dev/test-error/custom',
+            async_error: '/dev/test-error/async',
+            http_errors: '/dev/test-error/http/:status (例如: /dev/test-error/http/404)'
+        },
+        note: '此 API 僅限開發環境使用。錯誤測試路由會故意拋出錯誤來驗證錯誤處理機制。'
     });
 });
 

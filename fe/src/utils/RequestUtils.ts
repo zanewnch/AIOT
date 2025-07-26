@@ -13,6 +13,7 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'; // 引入 axios 核心模組和相關類型定義
+import { RequestResult, ApiResponseFormat } from './RequestResult'; // 引入統一的請求結果處理類
 
 /**
  * HTTP 請求工具類別
@@ -252,6 +253,114 @@ export class RequestUtils {
   setBaseURL(baseURL: string): void {
     // 更新 axios 實例的預設基礎 URL
     this.apiClient.defaults.baseURL = baseURL;
+  }
+
+  // ========== 新增：使用 RequestResult 的統一響應處理方法 ==========
+
+  /**
+   * 發送 GET 請求並返回 RequestResult
+   *
+   * @template T - 響應數據的類型
+   * @param {string} url - 請求的 URL 路徑
+   * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
+   * @returns {Promise<RequestResult<T>>} 返回包含 RequestResult 的 Promise
+   *
+   * @example
+   * ```typescript
+   * const result = await requestUtils.getWithResult<User[]>('/users');
+   * if (result.isSuccess()) {
+   *   console.log('用戶列表:', result.data);
+   * } else {
+   *   console.error('請求失敗:', result.message);
+   * }
+   * ```
+   */
+  async getWithResult<T = any>(url: string, config?: AxiosRequestConfig): Promise<RequestResult<T>> {
+    try {
+      const response = await this.apiClient.get<ApiResponseFormat<T>>(url, config);
+      return RequestResult.fromResponse(response.data);
+    } catch (error) {
+      return RequestResult.fromAxiosError(error);
+    }
+  }
+
+  /**
+   * 發送 POST 請求並返回 RequestResult
+   *
+   * @template T - 響應數據的類型
+   * @param {string} url - 請求的 URL 路徑
+   * @param {any} [data] - 請求主體數據
+   * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
+   * @returns {Promise<RequestResult<T>>} 返回包含 RequestResult 的 Promise
+   *
+   * @example
+   * ```typescript
+   * const result = await requestUtils.postWithResult<User>('/users', userData);
+   * if (result.isSuccess()) {
+   *   console.log('創建成功:', result.data);
+   * }
+   * ```
+   */
+  async postWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<RequestResult<T>> {
+    try {
+      const response = await this.apiClient.post<ApiResponseFormat<T>>(url, data, config);
+      return RequestResult.fromResponse(response.data);
+    } catch (error) {
+      return RequestResult.fromAxiosError(error);
+    }
+  }
+
+  /**
+   * 發送 PUT 請求並返回 RequestResult
+   *
+   * @template T - 響應數據的類型
+   * @param {string} url - 請求的 URL 路徑
+   * @param {any} [data] - 請求主體數據
+   * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
+   * @returns {Promise<RequestResult<T>>} 返回包含 RequestResult 的 Promise
+   */
+  async putWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<RequestResult<T>> {
+    try {
+      const response = await this.apiClient.put<ApiResponseFormat<T>>(url, data, config);
+      return RequestResult.fromResponse(response.data);
+    } catch (error) {
+      return RequestResult.fromAxiosError(error);
+    }
+  }
+
+  /**
+   * 發送 DELETE 請求並返回 RequestResult
+   *
+   * @template T - 響應數據的類型
+   * @param {string} url - 請求的 URL 路徑
+   * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
+   * @returns {Promise<RequestResult<T>>} 返回包含 RequestResult 的 Promise
+   */
+  async deleteWithResult<T = any>(url: string, config?: AxiosRequestConfig): Promise<RequestResult<T>> {
+    try {
+      const response = await this.apiClient.delete<ApiResponseFormat<T>>(url, config);
+      return RequestResult.fromResponse(response.data);
+    } catch (error) {
+      return RequestResult.fromAxiosError(error);
+    }
+  }
+
+  /**
+   * 發送 PATCH 請求並返回 RequestResult
+   *
+   * @template T - 響應數據的類型
+   * @param {string} url - 請求的 URL 路徑
+   * @param {any} [data] - 請求主體數據
+   * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
+   * @returns {Promise<RequestResult<T>>} 返回包含 RequestResult 的 Promise
+   */
+  async patchWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<RequestResult<T>> {
+    try {
+      const response = await this.apiClient.patch<ApiResponseFormat<T>>(url, data, config);
+      return RequestResult.fromResponse(response.data);
+    } catch (error) {
+      return RequestResult.fromAxiosError(error);
+    }
   }
 }
 

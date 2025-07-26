@@ -106,8 +106,7 @@ export class InitController {
       
       logger.info(`RBAC demo data initialization completed successfully: ${result.message}`);
       // 回傳成功結果給客戶端
-      const response = ControllerResult.success('RBAC demo data initialized successfully', result);
-      res.status(response.status).json(response.toJSON());
+      res.status(200).json(ControllerResult.success('RBAC demo data initialized successfully', result));
     } catch (err) {
       logger.error('Failed to initialize RBAC demo data:', err);
       // 將例外處理委派給 Express 錯誤處理中間件

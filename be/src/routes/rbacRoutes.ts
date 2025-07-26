@@ -1,16 +1,16 @@
 /**
  * @fileoverview RBAC (Role-Based Access Control) 路由配置
- * 
+ *
  * 此文件定義了完整的 RBAC 系統路由端點，包括：
  * - 使用者管理 (CRUD 操作)
  * - 角色管理 (CRUD 操作)
  * - 權限管理 (CRUD 操作)
  * - 使用者角色關聯管理
  * - 角色權限關聯管理
- * 
+ *
  * 所有端點都需要 JWT 認證，並實施細粒度的權限控制。
  * 支援多重權限驗證，確保操作的安全性。
- * 
+ *
  * @module Routes/RbacRoutes
  * @version 1.0.0
  * @author AIOT Team
@@ -23,12 +23,12 @@ import { PermissionController } from '../controllers/rbac/PermissionController.j
 import { UserToRoleController } from '../controllers/rbac/UserToRoleController.js';
 import { RoleToPermissionController } from '../controllers/rbac/RoleToPermissionController.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
-import { PermissionMiddleware } from '../middlewares/permissionMiddleware.js';
-import { ErrorHandleMiddleware } from '../middlewares/errorHandleMiddleware.js';
+import { PermissionMiddleware } from '../middlewares/PermissionMiddleware.js';
+import { ErrorHandleMiddleware } from '../middlewares/ErrorHandleMiddleware.js';
 
 /**
  * RBAC 路由類別
- * 
+ *
  * 負責配置和管理所有 RBAC 相關的路由端點
  */
 class RbacRoutes {
@@ -68,7 +68,7 @@ class RbacRoutes {
    * 設定使用者管理路由
    */
   private setupUserRoutes(): void {
-    this.router.get('/api/rbac/users', 
+    this.router.get('/api/rbac/users',
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('user.read'),
       this.userController.getUsers
@@ -241,7 +241,7 @@ class RbacRoutes {
 
   /**
    * 取得路由器實例
-   * 
+   *
    * @returns {Router} Express 路由器實例
    */
   public getRouter(): Router {
