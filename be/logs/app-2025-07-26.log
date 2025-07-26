@@ -1,0 +1,6 @@
+2025-07-26 01:06:09.175 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-26 01:06:09.178 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-26 01:24:34.517 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-26 01:24:34.519 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-26 01:25:24.125 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-26 01:25:24.128 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes

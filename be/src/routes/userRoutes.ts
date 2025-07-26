@@ -14,57 +14,85 @@
  * @author AIOT Team
  */
 
-import { Router } from 'express'; // 引入 Express 路由器模組
-import { userPreferenceRoutes } from './userPreferenceRoutes.js'; // 引入使用者偏好設定路由
-import { userActivityRoutes } from './userActivityRoutes.js'; // 引入使用者活動追蹤路由
-import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js'; // 引入活動追蹤中間件
+import { Router } from 'express';
+import { userPreferenceRoutes } from './userPreferenceRoutes.js';
+import { userActivityRoutes } from './userActivityRoutes.js';
+import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js';
 
 /**
- * 創建 Express 路由器實例
- * 作為使用者相關功能的主要路由聚合器
+ * 使用者路由類別
+ * 
+ * 負責配置和管理所有使用者相關的路由端點，作為路由聚合器
  */
-const router = Router();
+class UserRoutes {
+  private router: Router;
 
+  constructor() {
+    this.router = Router();
+    this.initializeRoutes();
+  }
+
+  /**
+   * 初始化所有使用者路由
+   */
+  private initializeRoutes(): void {
+    this.setupGlobalMiddleware();
+    this.setupUserPreferenceRoutes();
+    this.setupUserActivityRoutes();
+  }
+
+  /**
+   * 設定全域中間件
+   * 
+   * 為所有使用者相關的路由自動應用活動追蹤中間件，
+   * 確保所有使用者操作都會被記錄用於分析和審計。
+   */
+  private setupGlobalMiddleware(): void {
+    this.router.use(ActivityTrackingMiddleware.trackActivity);
+  }
+
+  /**
+   * 設定使用者偏好設定路由
+   * 
+   * 將使用者偏好設定相關的路由整合到 /api/user 路徑下。
+   * 包含以下端點：
+   * - GET /api/user/preferences - 取得使用者偏好設定
+   * - PUT /api/user/preferences - 更新使用者偏好設定
+   * - POST /api/user/preferences - 建立使用者偏好設定
+   * 
+   * @see userPreferenceRoutes
+   */
+  private setupUserPreferenceRoutes(): void {
+    this.router.use('/api/user', userPreferenceRoutes);
+  }
+
+  /**
+   * 設定使用者活動追蹤路由
+   * 
+   * 將使用者活動追蹤相關的路由整合到 /api/user 路徑下。
+   * 包含以下端點：
+   * - GET /api/user/activity - 取得使用者活動資料
+   * - POST /api/user/activity/page-visit - 記錄頁面造訪
+   * - POST /api/user/activity/session - 更新會話資訊
+   * - GET /api/user/activity/stats - 取得活動統計資料
+   * 
+   * @see userActivityRoutes
+   */
+  private setupUserActivityRoutes(): void {
+    this.router.use('/api/user', userActivityRoutes);
+  }
+
+  /**
+   * 取得路由器實例
+   * 
+   * @returns {Router} Express 路由器實例
+   */
+  public getRouter(): Router {
+    return this.router;
+  }
+}
 
 /**
- * 應用全域活動追蹤中間件
- * 
- * 為所有使用者相關的路由自動應用活動追蹤中間件，
- * 確保所有使用者操作都會被記錄用於分析和審計。
+ * 匯出使用者路由實例
  */
-router.use(ActivityTrackingMiddleware.trackActivity);
-
-/**
- * 整合使用者偏好設定路由
- * 
- * 將使用者偏好設定相關的路由整合到 /api/user 路徑下。
- * 包含以下端點：
- * - GET /api/user/preferences - 取得使用者偏好設定
- * - PUT /api/user/preferences - 更新使用者偏好設定
- * - POST /api/user/preferences - 建立使用者偏好設定
- * 
- * @see userPreferenceRoutes
- */
-router.use('/api/user', userPreferenceRoutes); // 掛載使用者偏好設定路由
-
-/**
- * 整合使用者活動追蹤路由
- * 
- * 將使用者活動追蹤相關的路由整合到 /api/user 路徑下。
- * 包含以下端點：
- * - GET /api/user/activity - 取得使用者活動資料
- * - POST /api/user/activity/page-visit - 記錄頁面造訪
- * - POST /api/user/activity/session - 更新會話資訊
- * - GET /api/user/activity/stats - 取得活動統計資料
- * 
- * @see userActivityRoutes
- */
-router.use('/api/user', userActivityRoutes); // 掛載使用者活動追蹤路由
-
-/**
- * 匯出使用者路由模組
- * 
- * 將配置好的路由器匯出，供主應用程式使用。
- * 此路由器聚合了所有使用者相關的子路由，包括偏好設定和活動追蹤。
- */
-export { router as userRoutes };
+export const userRoutes = new UserRoutes().getRouter();
