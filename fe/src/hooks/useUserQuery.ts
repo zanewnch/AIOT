@@ -1,177 +1,181 @@
 /**
- * @fileoverview 用戶查詢 Hook - 使用 React Query
+ * @fileoverview 用戶數據相關的 React Query Hooks
  * 
- * 用戶數據的異步查詢和變更操作：
- * - 用戶列表查詢
- * - CRUD 操作
- * - 緩存管理
+ * 處理用戶數據的 API 請求和快取管理：
+ * - 用戶數據查詢和更新
+ * - 用戶角色關聯查詢
+ * - 快取管理和錯誤處理
  * 
  * @author AIOT Development Team
- * @version 3.0.0
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
+import { createLogger, logRequest, logError } from '../configs/loggerConfig';
+import type { 
+  User, 
+  Role,
+  UpdateResponse, 
+  TableError,
+  UserUpdateRequest
+} from '../types/table';
+
+// 創建服務專用的日誌記錄器
+const logger = createLogger('UserQuery');
 
 /**
- * 用戶類型定義
- */
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-/**
- * 查詢鍵
+ * React Query 查詢鍵
  */
 export const USER_QUERY_KEYS = {
-  USERS: ['users'] as const,
-  USER: (id: number) => ['users', id] as const,
+  ALL: ['user'] as const,
+  LIST: ['user', 'list'] as const,
+  ROLES: (userId: number) => ['user', userId, 'roles'] as const,
 } as const;
 
 /**
- * 用戶列表查詢
+ * API 函數：獲取使用者列表
  */
-export const useUsersQuery = () => {
+export const getUsersAPI = async (): Promise<User[]> => {
+  try {
+    logger.debug('Fetching users from API');
+    logRequest('/api/rbac/users', 'GET', 'Fetching users');
+    
+    const response = await apiClient.get('/api/rbac/users');
+    const result = RequestResult.fromResponse<User[]>(response);
+    
+    if (result.isError()) {
+      throw new Error(result.message);
+    }
+    
+    logger.info(`Successfully fetched ${result.data?.length || 0} users`);
+    return result.unwrap();
+  } catch (error: any) {
+    console.error('Failed to fetch users:', error);
+    logError(error, 'getUsersAPI', { endpoint: '/api/rbac/users' });
+    
+    throw {
+      message: error.response?.data?.message || 'Failed to fetch users',
+      status: error.response?.status,
+      details: error.response?.data,
+    } as TableError;
+  }
+};
+
+/**
+ * API 函數：獲取使用者角色關聯
+ */
+export const getUserToRoleAPI = async (userId: number): Promise<Role[]> => {
+  try {
+    logger.debug(`Fetching roles for user ${userId}`);
+    logRequest(`/api/rbac/users/${userId}/roles`, 'GET', `Fetching roles for user ${userId}`);
+    
+    const response = await apiClient.get<Role[]>(`/api/rbac/users/${userId}/roles`);
+    
+    logger.info(`Successfully fetched ${response.length} roles for user ${userId}`);
+    return response;
+  } catch (error: any) {
+    console.error(`Failed to fetch roles for user ${userId}:`, error);
+    logError(error, 'getUserToRoleAPI', { userId, endpoint: `/api/rbac/users/${userId}/roles` });
+    
+    throw {
+      message: error.response?.data?.message || `Failed to fetch roles for user ${userId}`,
+      status: error.response?.status,
+      details: error.response?.data,
+    } as TableError;
+  }
+};
+
+/**
+ * API 函數：更新使用者資料
+ */
+export const updateUserAPI = async (id: number, data: UserUpdateRequest): Promise<UpdateResponse> => {
+  try {
+    logger.debug(`Updating user with ID: ${id}`, { username: data.username, email: data.email });
+    logRequest(`/api/rbac/users/${id}`, 'PUT', `Updating user with ID: ${id}`);
+    
+    const response = await apiClient.put(`/api/rbac/users/${id}`, data);
+    
+    logger.info(`Successfully updated user with ID: ${id}`);
+    return { success: true, data: response };
+  } catch (error: any) {
+    logError(error, 'updateUserAPI', { id, username: data.username, email: data.email, endpoint: `/api/rbac/users/${id}` });
+    
+    const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+    return { success: false, message: errorMsg };
+  }
+};
+
+/**
+ * 用戶數據查詢 Hook
+ */
+export const useUserData = () => {
   return useQuery({
-    queryKey: USER_QUERY_KEYS.USERS,
-    queryFn: async (): Promise<User[]> => {
-      const response = await apiClient.get('/api/users');
-      const result = RequestResult.fromResponse<User[]>(response);
-      
-      if (result.isError()) {
-        throw new Error(result.message);
-      }
-      
-      return result.unwrap();
-    },
+    queryKey: USER_QUERY_KEYS.LIST,
+    queryFn: getUsersAPI,
     staleTime: 5 * 60 * 1000, // 5分鐘
-    gcTime: 10 * 60 * 1000, // 10分鐘
+    gcTime: 15 * 60 * 1000, // 15分鐘
+    retry: 2,
   });
 };
 
 /**
- * 單個用戶查詢
+ * 用戶角色關聯查詢 Hook
  */
-export const useUserQuery = (id: number) => {
+export const useUserRoles = (userId: number, enabled: boolean = true) => {
   return useQuery({
-    queryKey: USER_QUERY_KEYS.USER(id),
-    queryFn: async (): Promise<User> => {
-      const response = await apiClient.get(`/api/users/${id}`);
-      const result = RequestResult.fromResponse<User>(response);
-      
-      if (result.isError()) {
-        throw new Error(result.message);
-      }
-      
-      return result.unwrap();
-    },
-    enabled: !!id,
+    queryKey: USER_QUERY_KEYS.ROLES(userId),
+    queryFn: () => getUserToRoleAPI(userId),
+    enabled: enabled && userId > 0,
     staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    retry: 2,
   });
 };
 
 /**
- * 創建用戶
+ * 用戶數據更新 Mutation
  */
-export const useCreateUserMutation = () => {
+export const useUpdateUserData = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (userData: Omit<User, 'id'>): Promise<User> => {
-      const response = await apiClient.post('/api/users', userData);
-      const result = RequestResult.fromResponse<User>(response);
-      
-      if (result.isError()) {
-        throw new Error(result.message);
+    mutationFn: async ({ id, data }: { id: number; data: UserUpdateRequest }) => {
+      const response = await updateUserAPI(id, data);
+      if (!response.success) {
+        throw new Error(response.message || 'Update failed');
       }
-      
-      return result.unwrap();
+      return { id, data };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USERS });
+      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.LIST });
     },
+    retry: 1,
   });
 };
 
 /**
- * 更新用戶
+ * 用戶相關操作的綜合 Hook
  */
-export const useUpdateUserMutation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (user: User): Promise<User> => {
-      const response = await apiClient.put(`/api/users/${user.id}`, user);
-      const result = RequestResult.fromResponse<User>(response);
-      
-      if (result.isError()) {
-        throw new Error(result.message);
-      }
-      
-      return result.unwrap();
-    },
-    onSuccess: (updatedUser) => {
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USERS });
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USER(updatedUser.id) });
-    },
-  });
-};
-
-/**
- * 刪除用戶
- */
-export const useDeleteUserMutation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (userId: number): Promise<void> => {
-      const response = await apiClient.delete(`/api/users/${userId}`);
-      const result = RequestResult.fromResponse(response);
-      
-      if (result.isError()) {
-        throw new Error(result.message);
-      }
-    },
-    onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.USERS });
-      queryClient.removeQueries({ queryKey: USER_QUERY_KEYS.USER(userId) });
-    },
-  });
-};
-
-/**
- * 綜合用戶管理 Hook
- */
-export const useUsers = () => {
-  const usersQuery = useUsersQuery();
-  const createMutation = useCreateUserMutation();
-  const updateMutation = useUpdateUserMutation();
-  const deleteMutation = useDeleteUserMutation();
+export const useUserQuery = () => {
+  const query = useUserData();
+  const updateMutation = useUpdateUserData();
 
   return {
-    // Data
-    users: usersQuery.data || [],
-    loading: usersQuery.isLoading,
-    error: usersQuery.error,
+    // 數據
+    data: query.data || [],
     
-    // Query state
-    isRefetching: usersQuery.isRefetching,
-    refetch: usersQuery.refetch,
+    // 狀態
+    isLoading: query.isLoading || updateMutation.isPending,
+    isError: query.isError,
+    error: query.error,
     
-    // Mutations
-    createUser: createMutation.mutateAsync,
-    updateUser: updateMutation.mutateAsync,
-    deleteUser: deleteMutation.mutateAsync,
+    // 方法
+    refetch: query.refetch,
+    update: updateMutation.mutateAsync,
     
-    // Mutation states
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
-    
-    // Any mutation is pending
-    isMutating: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
+    // 原始查詢對象
+    query,
+    mutation: updateMutation,
   };
 };

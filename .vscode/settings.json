@@ -1,5 +1,12 @@
 {
   "git.ignoreLimitWarning": true,
-  "cSpell.words": ["adminpassword", "AIOT", "appuser", "mysqldb", "rabbitmq"],
+  "cSpell.words": [
+    "adminpassword",
+    "AIOT",
+    "appuser",
+    "IRTK",
+    "mysqldb",
+    "rabbitmq"
+  ],
   "dotnet.preferCSharpExtension": true
 }

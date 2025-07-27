@@ -13,6 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { useThemeStore } from '../stores'; // 引入主題 Zustand store
 import '../styles/ThemeToggle.scss'; // 引入主題切換組件的 SCSS 樣式
+import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 主題切換組件
@@ -29,6 +30,10 @@ import '../styles/ThemeToggle.scss'; // 引入主題切換組件的 SCSS 樣式
  * <ThemeToggle />
  * ```
  */
+
+// 創建 ThemeToggle 專用的 logger 實例
+const logger = createLogger('ThemeToggle');
+
 export function ThemeToggle() {
   // 從 Zustand store 獲取當前主題狀態和切換方法
   const { theme, toggleTheme } = useThemeStore();
@@ -39,6 +44,21 @@ export function ThemeToggle() {
    * 觸發主題切換，在淺色和深色主題之間切換
    */
   const handleToggle = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    
+    // 記錄主題切換操作
+    logger.info(`Theme switched`, {
+      from: theme,
+      to: newTheme,
+      timestamp: new Date().toISOString()
+    });
+
+    // 記錄用戶操作
+    logUserAction('theme_toggle', {
+      from: theme,
+      to: newTheme
+    });
+
     toggleTheme(); // 觸發主題切換
   };
 

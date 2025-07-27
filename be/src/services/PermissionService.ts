@@ -47,60 +47,28 @@ import { getRedisClient } from '../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
 import { createLogger, logPermissionCheck } from '../configs/loggerConfig.js';
+// 匯入權限服務介面和相關類型
+import type {
+    IPermissionService,
+    UserPermissions,
+    CacheOptions,
+    PermissionDTO,
+    CreatePermissionRequest,
+    UpdatePermissionRequest
+} from '../types/services/IPermissionService.js';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('PermissionService');
 
-/**
- * 使用者權限資料結構
- */
-export interface UserPermissions {
-    userId: number;
-    username: string;
-    permissions: string[];
-    roles: string[];
-    lastUpdated: number;
-}
-
-/**
- * 快取選項
- */
-export interface CacheOptions {
-    ttl?: number; // 快取存活時間（秒），預設 3600 秒（1 小時）
-    forceRefresh?: boolean; // 是否強制重新整理快取
-}
-
-/**
- * 權限資料傳輸物件
- */
-export interface PermissionDTO {
-    id: number;
-    name: string;
-    description?: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-/**
- * 建立權限請求物件
- */
-export interface CreatePermissionRequest {
-    name: string;
-    description?: string;
-}
-
-/**
- * 更新權限請求物件
- */
-export interface UpdatePermissionRequest {
-    name?: string;
-    description?: string;
-}
+// 類型定義已移至 IPermissionService.ts 檔案
 
 /**
  * 權限服務類別
+ *
+ * @class PermissionService
+ * @implements {IPermissionService}
  */
-export class PermissionService {
+export class PermissionService implements IPermissionService {
     private userRepository: UserRepository;
     private permissionRepository: IPermissionRepository;
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
@@ -114,12 +82,9 @@ export class PermissionService {
      * @param userRepository 使用者資料存取層
      * @param permissionRepository 權限資料存取層
      */
-    constructor(
-        userRepository: UserRepository = new UserRepository(),
-        permissionRepository: IPermissionRepository = new PermissionRepository()
-    ) {
-        this.userRepository = userRepository;
-        this.permissionRepository = permissionRepository;
+    constructor() {
+        this.userRepository = new UserRepository();
+        this.permissionRepository = new PermissionRepository();
     }
 
     /**
@@ -474,9 +439,9 @@ export class PermissionService {
      */
     public async refreshUserPermissionsCache(
         userId: number,
-        ttl: number = PermissionService.DEFAULT_CACHE_TTL
+        options: CacheOptions = { ttl: PermissionService.DEFAULT_CACHE_TTL, forceRefresh: true }
     ): Promise<UserPermissions | null> {
-        return this.getUserPermissions(userId, { ttl, forceRefresh: true });
+        return this.getUserPermissions(userId, { ...options, forceRefresh: true });
     }
 
     /**

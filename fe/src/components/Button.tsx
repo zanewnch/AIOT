@@ -11,6 +11,7 @@
 
 import React from 'react'; // 引入 React 庫，用於建立組件
 import '../styles/Button.module.scss'; // 引入按鈕組件的 SCSS 樣式檔案
+import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 按鈕組件的屬性介面
@@ -35,6 +36,9 @@ interface ButtonProps {
   /** 額外的 CSS 類名 */
   className?: string;
 }
+
+// 創建 Button 專用的 logger 實例
+const logger = createLogger('Button');
 
 /**
  * 通用按鈕組件
@@ -82,11 +86,41 @@ export const Button: React.FC<ButtonProps> = ({
     className
   ].filter(Boolean).join(' '); // 過濾掉空值，避免多餘的空格
 
+  /**
+   * 處理按鈕點擊事件
+   * 
+   * 記錄按鈕點擊操作並執行原有的點擊處理函數
+   */
+  const handleClick = () => {
+    // 記錄按鈕點擊操作
+    logger.info(`Button clicked`, {
+      variant,
+      size,
+      disabled,
+      loading,
+      type,
+      className
+    });
+    
+    // 記錄用戶操作
+    logUserAction('button_click', {
+      variant,
+      size,
+      type,
+      content: typeof children === 'string' ? children : 'JSX_Content'
+    });
+    
+    // 執行原有的點擊處理函數
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <button
       type={type} // 設置按鈕的 HTML 類型
       className={buttonClass} // 應用組合後的 CSS 類名
-      onClick={onClick} // 綁定點擊事件處理函數
+      onClick={handleClick} // 綁定增強的點擊事件處理函數
       disabled={disabled || loading} // 禁用狀態或載入狀態時禁用按鈕
       aria-disabled={disabled || loading} // 無障礙屬性，告知螢幕閱讀器按鈕是否禁用
     >

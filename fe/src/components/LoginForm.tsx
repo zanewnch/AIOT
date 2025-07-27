@@ -14,6 +14,7 @@ import React, { useState } from "react"; // 引入 React 庫和 useState Hook
 import { useAuth } from "../hooks/useAuthQuery"; // 引入認證 Hook
 import { LoginRequest } from "../types/auth"; // 引入登入請求的類型定義
 import styles from "../styles/LoginForm.module.scss"; // 引入登入表單的 SCSS 模組樣式
+import { createLogger, logUserAction, logError } from "../configs/loggerConfig"; // 引入日誌配置
 
 /**
  * 使用者登入表單組件
@@ -29,6 +30,10 @@ import styles from "../styles/LoginForm.module.scss"; // 引入登入表單的 S
  * <LoginForm />
  * ```
  */
+
+// 創建 LoginForm 專用的 logger 實例
+const logger = createLogger('LoginForm');
+
 export const LoginForm: React.FC = () => {
   // 從認證 Hook 獲取狀態和方法
   const { login, isLoading, error } = useAuth();
@@ -50,10 +55,19 @@ export const LoginForm: React.FC = () => {
    */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target; // 解構取得欄位名稱、值、類型和選中狀態
+    const newValue = type === 'checkbox' ? checked : value;
+    
+    // 記錄輸入欄位變化
+    logger.debug(`Form field changed: ${name}`, {
+      fieldName: name,
+      fieldType: type,
+      hasValue: type === 'checkbox' ? checked : !!value
+    });
+    
     // 更新表單資料
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: newValue,
     }));
 
     // 清除該欄位的驗證錯誤
@@ -87,8 +101,19 @@ export const LoginForm: React.FC = () => {
       errors.password = "Password is required";
     }
 
+    const isValid = Object.keys(errors).length === 0;
+    
+    // 記錄表單驗證結果
+    logger.info(`Form validation completed`, {
+      isValid,
+      errorCount: Object.keys(errors).length,
+      hasUsername: !!formData.username.trim(),
+      hasPassword: !!formData.password.trim(),
+      rememberMe: formData.rememberMe
+    });
+
     setFormErrors(errors); // 設置驗證錯誤
-    return Object.keys(errors).length === 0; // 返回是否有錯誤
+    return isValid; // 返回是否有錯誤
   };
 
   /**
@@ -101,17 +126,37 @@ export const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // 阻止表單預設提交行為
 
+    // 記錄登入嘗試
+    logger.info('Login attempt started', {
+      username: formData.username,
+      rememberMe: formData.rememberMe,
+      timestamp: new Date().toISOString()
+    });
+
+    // 記錄用戶操作
+    logUserAction('login_attempt', {
+      username: formData.username,
+      rememberMe: formData.rememberMe
+    });
+
     // 驗證表單，如果無效則停止執行
     if (!validateForm()) {
+      logger.warn('Login attempt failed: form validation failed');
       return;
     }
 
     try {
       // 觸發登入並等待結果
       await login(formData);
+      logger.info('Login successful', { username: formData.username });
+      logUserAction('login_success', { username: formData.username });
     } catch (error) {
-      // 錯誤已經在 React Query 中處理，這裡僅記錄日誌
-      console.error("Login failed:", error);
+      // 記錄登入失敗
+      logError(error as Error, 'LoginForm.handleSubmit', {
+        username: formData.username,
+        rememberMe: formData.rememberMe
+      });
+      logger.error("Login failed", { error: error instanceof Error ? error.message : String(error) });
     }
   };
 

@@ -16,6 +16,7 @@
 
 import React, { useEffect } from 'react';
 import { useActivityTracking } from '../hooks/useActivityQuery';
+import { useActivityStore } from '../stores/activityStore';
 
 /**
  * 活動統計儀表板組件
@@ -45,7 +46,6 @@ export const ActivityDashboard: React.FC = () => {
   const {
     activity,              // 用戶活動數據
     stats,                 // 活動統計數據
-    sessionInfo,           // 會話信息
     autoTrackingEnabled,   // 自動追蹤開關
     error,                 // 錯誤信息
     loading,               // 載入狀態
@@ -57,6 +57,9 @@ export const ActivityDashboard: React.FC = () => {
     syncData,              // 同步數據
     clearError,            // 清除錯誤
   } = useActivityTracking();
+
+  // 從 activityStore 獲取會話信息
+  const { currentPage, sessionStartTime, pageStartTime } = useActivityStore();
 
   // 組件掛載時開始會話時間更新
   useEffect(() => {
@@ -125,7 +128,7 @@ export const ActivityDashboard: React.FC = () => {
         <div className="header-actions">
           {/* 自動追蹤開關按鈕 */}
           <button 
-            onClick={toggleAutoTracking}
+            onClick={() => toggleAutoTracking()}
             className={`toggle-button ${autoTrackingEnabled ? 'active' : ''}`}
             disabled={loading}
           >
@@ -148,18 +151,18 @@ export const ActivityDashboard: React.FC = () => {
         <div className="session-grid">
           <div className="session-item">
             <span className="session-label">當前頁面：</span>
-            <span className="session-value">{sessionInfo.currentPage}</span>
+            <span className="session-value">{currentPage}</span>
           </div>
           <div className="session-item">
             <span className="session-label">會話時長：</span>
             <span className="session-value">
-              {Math.round(sessionInfo.sessionDuration / 1000 / 60)}分鐘
+              {Math.round((Date.now() - sessionStartTime) / 1000 / 60)}分鐘
             </span>
           </div>
           <div className="session-item">
             <span className="session-label">當前頁面停留：</span>
             <span className="session-value">
-              {Math.round(sessionInfo.currentPageDuration / 1000)}秒
+              {Math.round((Date.now() - pageStartTime) / 1000)}秒
             </span>
           </div>
         </div>

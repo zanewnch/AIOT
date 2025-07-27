@@ -9,7 +9,7 @@
  * @since 2025-07-26
  */
 
-import type { RTKDataModel } from '../../models/RTKDataModel.js';
+import type { RTKModel } from '../../models/RTKModel.js';
 
 /**
  * RTK 初始化資料存取介面
@@ -51,7 +51,7 @@ export interface IRTKInitRepository {
      * @param {Array<{latitude: number, longitude: number}>} data 包含緯度和經度的座標資料陣列
      * @param data[].latitude 緯度座標（-90 到 90 之間的浮點數）
      * @param data[].longitude 經度座標（-180 到 180 之間的浮點數）
-     * @returns {Promise<RTKDataModel[]>} 成功建立的 RTK 資料模型陣列
+     * @returns {Promise<RTKModel[]>} 成功建立的 RTK 資料模型陣列
      * @throws {Error} 當資料格式錯誤、座標值超出範圍或資料庫操作失敗時拋出異常
      * 
      * @example
@@ -65,5 +65,5 @@ export interface IRTKInitRepository {
      * console.log(`成功建立 ${results.length} 筆 RTK 資料`);
      * ```
      */
-    bulkCreate(data: { latitude: number; longitude: number }[]): Promise<RTKDataModel[]>;
+    bulkCreate(data: { latitude: number; longitude: number }[]): Promise<RTKModel[]>;
 }

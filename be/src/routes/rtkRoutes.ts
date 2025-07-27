@@ -61,7 +61,7 @@ class RtkRoutes {
   private setupGetRTKDataRoute(): void {
     this.router.get('/api/rtk/data',
       this.authMiddleware.authenticate,
-      this.rtkController.getRTKData
+      this.rtkController.getAllRTKData
     );
   }
 

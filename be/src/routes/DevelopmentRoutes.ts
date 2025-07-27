@@ -21,7 +21,7 @@ import { RoleModel } from '../models/rbac/RoleModel.js';
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
-import { RTKDataModel } from '../models/RTKDataModel.js';
+import { RTKModel } from '../models/RTKModel.js';
 
 const router = Router();
 
@@ -35,7 +35,7 @@ router.get('/dev/overview', async (_req: Request, res: Response) => {
             PermissionModel.count(),
             UserRoleModel.count(),
             RolePermissionModel.count(),
-            RTKDataModel.count()
+            RTKModel.count()
         ]);
 
         const overview = {
@@ -236,7 +236,7 @@ router.get('/dev/rtk-data', async (req: Request, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 100;
         const offset = parseInt(req.query.offset as string) || 0;
 
-        const { count, rows: rtkData } = await RTKDataModel.findAndCountAll({
+        const { count, rows: rtkData } = await RTKModel.findAndCountAll({
             order: [['createdAt', 'DESC']],
             limit,
             offset

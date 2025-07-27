@@ -12,11 +12,14 @@
  */
 
 import React from 'react';
-import { useRoleData, useUpdateRoleData } from '../../../hooks/useTableQuery';
+import { useRoleData, useUpdateRoleData } from '../../../hooks/useRoleQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
+import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
+
+const logger = createLogger('RoleTableView');
 
 /**
  * 角色表格視圖組件
@@ -46,6 +49,7 @@ export const RoleTableView: React.FC = () => {
    * 處理角色編輯操作
    */
   const handleEdit = (item: any) => {
+    logger.info('開始編輯角色', { roleId: item?.id, roleName: item?.name, operation: 'edit' });
     openEditModal('role', item);
   };
 
@@ -55,16 +59,23 @@ export const RoleTableView: React.FC = () => {
   const handleSave = async () => {
     if (!editModal.editingItem) return;
 
+    const roleId = editModal.editingItem.id;
+    const roleName = editModal.editingItem.name;
+    
+    logger.info('開始保存角色', { roleId, roleName, operation: 'save' });
+
     try {
       await updateRoleMutation.mutateAsync({
         id: editModal.editingItem.id,
         data: editModal.editingItem
       });
       
+      logger.info('角色保存成功', { roleId, roleName, operation: 'save_success' });
       addSuccess('角色更新成功');
       closeEditModal();
       refetch();
     } catch (error) {
+      logger.error('角色保存失敗', { roleId, roleName, error: (error as Error).message, operation: 'save_error' });
       addError('角色更新失敗: ' + (error as Error).message);
     }
   };
@@ -86,6 +97,7 @@ export const RoleTableView: React.FC = () => {
    * 處理排序
    */
   const handleSort = (field: string) => {
+    logger.debug('角色表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
     toggleSortOrder(field as any);
   };
 
@@ -118,7 +130,10 @@ export const RoleTableView: React.FC = () => {
     return (
       <div className={styles.error}>
         <span>載入角色數據時發生錯誤: {(error as Error).message}</span>
-        <button onClick={() => refetch()} className={styles.retryButton}>
+        <button onClick={() => {
+          logger.info('重新載入角色數據', { operation: 'retry' });
+          refetch();
+        }} className={styles.retryButton}>
           重試
         </button>
       </div>
@@ -130,7 +145,10 @@ export const RoleTableView: React.FC = () => {
     return (
       <div className={styles.noData}>
         <span>目前沒有角色數據</span>
-        <button onClick={() => refetch()} className={styles.refreshButton}>
+        <button onClick={() => {
+          logger.info('刷新角色數據', { operation: 'refresh' });
+          refetch();
+        }} className={styles.refreshButton}>
           重新載入
         </button>
       </div>

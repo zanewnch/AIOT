@@ -8,11 +8,12 @@
  * @since 2025-07-26
  */
 
-export { IRoleRepository } from './IRoleRepository.js';
-export { IPermissionRepository } from './IPermissionRepository.js';
-export { IProgressRepository } from './IProgressRepository.js';
-export { ISessionRepository } from './ISessionRepository.js';
-export { IUserRepository } from './IUserRepository.js';
-export { IUserRoleRepository } from './IUserRoleRepository.js';
-export { IRTKInitRepository } from './IRTKInitRepository.js';
-export { IRolePermissionRepository } from './IRolePermissionRepository.js';
+export type { IRoleRepository } from './IRoleRepository.js';
+export type { IPermissionRepository } from './IPermissionRepository.js';
+export type { IProgressRepository } from './IProgressRepository.js';
+export type { ISessionRepository } from './ISessionRepository.js';
+export type { IUserRepository } from './IUserRepository.js';
+export type { IUserRoleRepository } from './IUserRoleRepository.js';
+export type { IRTKInitRepository } from './IRTKInitRepository.js';
+export type { IRolePermissionRepository } from './IRolePermissionRepository.js';
+export type { IRTKRepository } from './IRTKRepository.js';

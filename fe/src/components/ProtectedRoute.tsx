@@ -13,6 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Navigate, useLocation } from 'react-router-dom'; // 引入 React Router 的導航組件和路徑 Hook
 import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
+import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 受保護路由組件的屬性介面
@@ -49,6 +50,10 @@ interface ProtectedRouteProps {
  * </ProtectedRoute>
  * ```
  */
+
+// 創建 ProtectedRoute 專用的 logger 實例
+const logger = createLogger('ProtectedRoute');
+
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, // 需要保護的子組件
   fallback // 自定義載入畫面組件
@@ -57,8 +62,19 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation(); // 獲取當前路徑資訊
 
+  // 記錄路由保護檢查
+  React.useEffect(() => {
+    logger.info('Route protection check', {
+      path: location.pathname,
+      search: location.search,
+      isAuthenticated,
+      isLoading
+    });
+  }, [location.pathname, location.search, isAuthenticated, isLoading]);
+
   // 如果正在載入認證狀態，顯示載入畫面
   if (isLoading) {
+    logger.debug('Showing authentication loading state', { path: location.pathname });
     return (
       <>
         {fallback || ( // 使用自定義載入畫面或默認載入畫面
@@ -95,9 +111,23 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // 如果未認證，重定向到登入頁面並保存當前路徑
   if (!isAuthenticated) {
+    const redirectPath = `/login?redirectTo=${encodeURIComponent(location.pathname + location.search)}`;
+    
+    logger.warn('Access denied - redirecting to login', {
+      attemptedPath: location.pathname,
+      search: location.search,
+      redirectPath
+    });
+
+    logUserAction('access_denied', {
+      attemptedPath: location.pathname,
+      search: location.search,
+      reason: 'not_authenticated'
+    });
+
     return (
       <Navigate 
-        to={`/login?redirectTo=${encodeURIComponent(location.pathname + location.search)}`} // 重定向到登入頁面並保存當前路徑
+        to={redirectPath} // 重定向到登入頁面並保存當前路徑
         state={{ from: location }} // 在導航狀態中保存來源路徑
         replace // 替換當前歷史記錄，而不是推入新記錄
       />
@@ -105,6 +135,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // 如果已認證，渲染子組件
+  logger.info('Access granted - rendering protected content', {
+    path: location.pathname,
+    search: location.search
+  });
+
+  logUserAction('access_granted', {
+    path: location.pathname,
+    search: location.search
+  });
+
   return <>{children}</>;
 };
 

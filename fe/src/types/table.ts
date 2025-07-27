@@ -51,6 +51,8 @@ export interface Permission {
   createdAt: string;
   /** 更新時間 */
   updatedAt: string;
+  /** 索引簽名，允許字串索引 */
+  [key: string]: any;
 }
 
 /**

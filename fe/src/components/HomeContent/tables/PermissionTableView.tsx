@@ -1,35 +1,38 @@
 /**
  * @fileoverview 權限表格視圖組件
- * 
+ *
  * 此組件提供權限管理的表格視圖功能，包括：
  * - 權限數據的顯示和載入
  * - 權限編輯模態框
  * - 權限數據的更新操作
  * - 錯誤處理和通知提示
- * 
+ *
  * @author AIOT 開發團隊
  * @since 2024-01-01
  */
 
 import React, { useEffect } from 'react';
-import { usePermissionData, useUpdatePermissionData } from '../../../hooks/useTableQuery';
+import { usePermissionData, useUpdatePermissionData } from '../../../hooks/usePermissionQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
+import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
+
+const logger = createLogger('PermissionTableView');
 
 /**
  * 權限表格視圖組件
- * 
+ *
  * 此組件負責顯示權限數據的表格視圖，提供權限的查看和編輯功能。
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
- * 
+ *
  * @returns {JSX.Element} 權限表格視圖的 JSX 元素
- * 
+ *
  * @example
  * ```tsx
  * import { PermissionTableView } from './PermissionTableView';
- * 
+ *
  * function App() {
  *   return <PermissionTableView />;
  * }
@@ -39,27 +42,28 @@ export const PermissionTableView: React.FC = () => {
   // React Query hooks for data
   const { data: permissionData, isLoading, error, refetch } = usePermissionData();
   const updatePermissionMutation = useUpdatePermissionData();
-  
+
   // Zustand stores for UI state
-  const { 
-    editModal, 
+  const {
+    editModal,
     sorting,
-    openEditModal, 
-    closeEditModal, 
+    openEditModal,
+    closeEditModal,
     updateEditingItem,
     setSorting,
-    toggleSortOrder 
+    toggleSortOrder
   } = useTableUIStore();
-  
+
   // Notification store
   const { addSuccess, addError } = useNotificationStore();
 
   /**
    * 處理權限編輯操作
-   * 
+   *
    * @param item - 要編輯的權限項目
    */
   const handleEdit = (item: any) => {
+    logger.info('開始編輯權限', { permissionId: item?.id, permissionName: item?.name });
     openEditModal('permission', item);
   };
 
@@ -69,29 +73,36 @@ export const PermissionTableView: React.FC = () => {
   const handleSave = async () => {
     if (!editModal.editingItem) return;
 
+    logger.info('開始保存權限', { permissionId: editModal.editingItem.id });
+    
     try {
       await updatePermissionMutation.mutateAsync({
         id: editModal.editingItem.id,
         data: editModal.editingItem
       });
-      
+
+      logger.info('權限更新成功', { permissionId: editModal.editingItem.id });
       addSuccess('權限更新成功');
       closeEditModal();
       refetch();
     } catch (error) {
+      logger.error('權限更新失敗', { 
+        permissionId: editModal.editingItem.id, 
+        error: (error as Error).message 
+      });
       addError('權限更新失敗: ' + (error as Error).message);
     }
   };
 
   /**
    * 處理輸入值變更
-   * 
+   *
    * @param field - 欄位名稱
    * @param value - 新值
    */
   const handleInputChange = (field: string, value: any) => {
     if (!editModal.editingItem) return;
-    
+
     const updatedItem = {
       ...editModal.editingItem,
       [field]: value
@@ -101,10 +112,11 @@ export const PermissionTableView: React.FC = () => {
 
   /**
    * 處理排序
-   * 
+   *
    * @param field - 排序欄位
    */
   const handleSort = (field: string) => {
+    logger.debug('權限表格排序', { field, currentOrder: sorting.order });
     toggleSortOrder(field as any);
   };
 
@@ -113,17 +125,17 @@ export const PermissionTableView: React.FC = () => {
    */
   const sortedData = React.useMemo(() => {
     if (!permissionData) return [];
-    
+
     const sorted = [...permissionData];
     sorted.sort((a, b) => {
       const aValue = a[sorting.field];
       const bValue = b[sorting.field];
-      
+
       if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
       if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
       return 0;
     });
-    
+
     return sorted;
   }, [permissionData, sorting]);
 
@@ -162,15 +174,15 @@ export const PermissionTableView: React.FC = () => {
   return (
     <div className={styles.tableContainer}>
       {/* 權限數據表格 */}
-      <table 
-        className={styles.table} 
+      <table
+        className={styles.table}
         style={{ '--row-count': sortedData.length } as React.CSSProperties}
       >
         <thead>
           <tr>
             {columns.map((column) => (
-              <th 
-                key={column} 
+              <th
+                key={column}
                 className={`${styles.sortable} ${sorting.field === column ? styles.sorted : ''}`}
                 onClick={() => handleSort(column)}
               >
@@ -196,7 +208,7 @@ export const PermissionTableView: React.FC = () => {
                 </td>
               ))}
               <td className={styles.tableCell}>
-                <button 
+                <button
                   onClick={() => handleEdit(item)}
                   className={styles.editButton}
                 >
@@ -214,14 +226,14 @@ export const PermissionTableView: React.FC = () => {
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
               <h3>編輯權限</h3>
-              <button 
+              <button
                 onClick={closeEditModal}
                 className={styles.closeButton}
               >
                 ×
               </button>
             </div>
-            
+
             <div className={styles.modalBody}>
               {columns.map((field) => (
                 <div key={field} className={styles.inputGroup}>
@@ -236,15 +248,15 @@ export const PermissionTableView: React.FC = () => {
                 </div>
               ))}
             </div>
-            
+
             <div className={styles.modalFooter}>
-              <button 
+              <button
                 onClick={closeEditModal}
                 className={styles.cancelButton}
               >
                 取消
               </button>
-              <button 
+              <button
                 onClick={handleSave}
                 className={styles.saveButton}
                 disabled={updatePermissionMutation.isPending}

@@ -29,7 +29,7 @@
  */
 
 // 引入 RTK 資料模型，用於資料庫操作
-import { RTKDataModel } from '../models/RTKDataModel.js';
+import { RTKModel } from '../models/RTKModel.js';
 // 引入 RTK 初始化資料存取介面
 import type { IRTKInitRepository } from '../types/repositories/IRTKInitRepository.js';
 
@@ -73,7 +73,7 @@ export class RTKInitRepository implements IRTKInitRepository {
      */
     async count(): Promise<number> {
         // 使用 Sequelize 的 count() 方法進行高效的資料庫層級計數
-        return await RTKDataModel.count();
+        return await RTKModel.count();
     }
 
     /**
@@ -88,7 +88,7 @@ export class RTKInitRepository implements IRTKInitRepository {
      * - 支援事務操作，確保資料一致性
      * 
      * @param {Array<{latitude: number, longitude: number}>} data 座標資料陣列，每個元素包含 latitude 和 longitude
-     * @returns {Promise<RTKDataModel[]>} 成功建立的 RTK 資料模型陣列
+     * @returns {Promise<RTKModel[]>} 成功建立的 RTK 資料模型陣列
      * @throws {Error} 當資料格式錯誤、座標值超出範圍或資料庫操作失敗時拋出異常
      * 
      * @example
@@ -114,9 +114,9 @@ export class RTKInitRepository implements IRTKInitRepository {
      * }
      * ```
      */
-    async bulkCreate(data: { latitude: number; longitude: number }[]): Promise<RTKDataModel[]> {
+    async bulkCreate(data: { latitude: number; longitude: number }[]): Promise<RTKModel[]> {
         // 使用 Sequelize 的 bulkCreate() 方法進行高效的批次插入操作
         // 此方法會自動處理事務，確保資料一致性
-        return await RTKDataModel.bulkCreate(data);
+        return await RTKModel.bulkCreate(data);
     }
 }

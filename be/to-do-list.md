@@ -27,3 +27,6 @@ date: 2025-06-26
 - [ ] jwt reddis
 - [ ] permission logic 實作
 micro service
+
+# date 2025-7-26
+- [ ] 修改controller 對 service 的DI

@@ -17,7 +17,7 @@ import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 // 匯入角色權限關聯模型用於角色和權限的多對多關係
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
 // 匯入 RTK 資料模型用於即時動態資料
-import { RTKDataModel } from '../models/RTKDataModel.js';
+import { RTKModel } from '../models/RTKModel.js';
 
 /**
  * 資料庫配置介面
@@ -76,6 +76,6 @@ export const createSequelizeInstance = (): Sequelize => {
     // 展開資料庫配置物件的所有屬性
     ...config,
     // 註冊所有需要的模型到 Sequelize 實例中
-    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, RTKDataModel],
+    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, RTKModel],
   });
 };

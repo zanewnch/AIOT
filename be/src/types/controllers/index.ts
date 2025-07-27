@@ -30,3 +30,6 @@ export type { IRoleToPermissionController } from './IRoleToPermissionController'
 
 // 導出 RBAC 主控制器介面類型，用於整合所有角色權限相關的子控制器業務邏輯
 export type { IRBACController } from './IRBACController';
+
+// 導出進度追蹤控制器介面類型，用於處理進度查詢和即時進度串流的 HTTP 端點
+export type { IProgressController } from './IProgressController';

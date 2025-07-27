@@ -20,6 +20,7 @@
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
 import { UserToRoleService } from '../../services/UserToRoleService.js'; // 引入使用者角色服務層
+import { IUserToRoleService } from '../../types/services/IUserToRoleService.js'; // 引入使用者角色服務介面
 import { IUserToRoleController } from '../../types/controllers/IUserToRoleController.js'; // 引入使用者角色控制器介面
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 
@@ -35,13 +36,13 @@ const logger = createLogger('UserToRoleController');
  * @description 處理所有與使用者角色關聯相關的 HTTP 請求和業務邏輯
  */
 export class UserToRoleController implements IUserToRoleController {
-    private userToRoleService: UserToRoleService;
+    private userToRoleService: IUserToRoleService;
 
     /**
      * 初始化使用者角色關聯控制器實例
      */
-    constructor(userToRoleService: UserToRoleService = new UserToRoleService()) {
-        this.userToRoleService = userToRoleService;
+    constructor() {
+        this.userToRoleService = new UserToRoleService();
     }
 
 

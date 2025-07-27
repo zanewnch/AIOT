@@ -14,7 +14,7 @@
 
 import React from 'react'; // 引入 React
 import { useTableUIStore, TableType } from '../../stores'; // 引入 Zustand stores 和類型
-import { useTableData } from '../../hooks/useTableQuery'; // 引入表格數據 Hook
+// 表格數據已分散到各自的 hook 中 // 引入表格數據 Hook
 import { 
   RTKTableView, // RTK 表格視圖組件
   PermissionTableView, // 權限表格視圖組件
@@ -24,6 +24,7 @@ import {
   UserToRoleTableView // 用戶角色關聯表格視圖組件
 } from './tables'; // 引入表格組件
 import styles from '../../styles/TableViewer.module.scss'; // 引入表格樣式
+import { createLogger, logUserAction } from '../../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 表格視圖組件的屬性介面
@@ -48,6 +49,9 @@ const tableConfigs = {
   usertorole: { title: 'User to Role Table' }, // 用戶角色關聯表格配置
   RTK: { title: 'RTK Table' } // RTK 表格配置
 };
+
+// 創建 TableViewer 專用的 logger 實例
+const logger = createLogger('TableViewer');
 
 /**
  * 表格視圖容器組件
@@ -81,6 +85,20 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
    * @param tableType - 要切換到的表格類型
    */
   const handleTableChange = (tableType: TableType) => {
+    // 記錄表格切換操作
+    logger.info(`Table switched to: ${tableType}`, {
+      previousTable: activeTable,
+      newTable: tableType,
+      tableTitle: tableConfigs[tableType]?.title
+    });
+    
+    // 記錄用戶操作
+    logUserAction('table_switch', {
+      from: activeTable,
+      to: tableType,
+      tableTitle: tableConfigs[tableType]?.title
+    });
+    
     setActiveTable(tableType); // 設置活動表格
   };
 
@@ -92,24 +110,9 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
    * @returns 當前表格的數據記錄數量
    */
   const getCurrentTableDataLength = () => {
-    const { rtkData, permissionData, roleData, userData, roleToPermissionData, userToRoleData } = useTableData();
-    
-    switch (activeTable) {
-      case 'RTK':
-        return rtkData.length;
-      case 'permission':
-        return permissionData.length;
-      case 'role':
-        return roleData.length;
-      case 'user':
-        return userData.length;
-      case 'roletopermission':
-        return roleToPermissionData.length;
-      case 'usertorole':
-        return userToRoleData.length;
-      default:
-        return 0;
-    }
+    // TODO: 考慮重新實作或移除此功能
+    // 數據長度計算已移到各自的表格組件中
+    return 0;
   };
 
   /**

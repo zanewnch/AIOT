@@ -26,6 +26,7 @@
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
 import { UserService } from '../../services/UserService.js'; // 引入使用者服務層
+import { IUserService } from '../../types/services/IUserService.js'; // 引入使用者服務介面
 import { IUserController } from '../../types/controllers/IUserController.js'; // 引入使用者控制器介面定義
 import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 匯入日誌記錄器
 
@@ -52,13 +53,13 @@ const logger = createLogger('UserController');
  * ```
  */
 export class UserController implements IUserController {
-    private userService: UserService;
+    private userService: IUserService;
 
     /**
      * 初始化使用者控制器實例
      */
-    constructor(userService: UserService = new UserService()) {
-        this.userService = userService;
+    constructor() {
+        this.userService = new UserService();
     }
 
 

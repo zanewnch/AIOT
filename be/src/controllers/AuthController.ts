@@ -15,7 +15,8 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
-import { AuthService, IAuthService } from '../services/AuthService.js'; // 匯入認證服務和介面定義
+import { AuthService } from '../services/AuthService.js'; // 匯入認證服務
+import { IAuthService } from '../types/services/IAuthService.js'; // 匯入認證服務介面
 import { createLogger, logAuthEvent, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
 import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果類別
 
@@ -57,9 +58,9 @@ export class AuthController {
    * @description 設置驗證服務、路由器和相關路由配置
    * 支援依賴注入以方便單元測試和模擬
    */
-  constructor(authService: IAuthService = new AuthService()) {
+  constructor() {
     // 設定認證服務實例
-    this.authService = authService;
+    this.authService = new AuthService();
     // 控制器現在只負責業務邏輯，路由設定已移至 authRoutes.ts
   }
 

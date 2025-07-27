@@ -11,10 +11,13 @@
  */
 
 import React from 'react';
-import { useUserToRoleData } from '../../../hooks/useTableQuery';
+import { useUserRoles } from '../../../hooks/useUserQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
+import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
+
+const logger = createLogger('UserToRoleTableView');
 
 /**
  * 用戶角色關聯表格視圖組件
@@ -33,6 +36,7 @@ export const UserToRoleTableView: React.FC = () => {
    * 處理排序
    */
   const handleSort = (field: string) => {
+    logger.debug('用戶角色關聯表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
     toggleSortOrder(field as any);
   };
 
@@ -65,7 +69,10 @@ export const UserToRoleTableView: React.FC = () => {
     return (
       <div className={styles.error}>
         <span>載入用戶角色關聯數據時發生錯誤: {(error as Error).message}</span>
-        <button onClick={() => refetch()} className={styles.retryButton}>
+        <button onClick={() => {
+          logger.info('重新載入用戶角色關聯數據', { operation: 'retry' });
+          refetch();
+        }} className={styles.retryButton}>
           重試
         </button>
       </div>
@@ -77,7 +84,10 @@ export const UserToRoleTableView: React.FC = () => {
     return (
       <div className={styles.noData}>
         <span>目前沒有用戶角色關聯數據</span>
-        <button onClick={() => refetch()} className={styles.refreshButton}>
+        <button onClick={() => {
+          logger.info('刷新用戶角色關聯數據', { operation: 'refresh' });
+          refetch();
+        }} className={styles.refreshButton}>
           重新載入
         </button>
       </div>

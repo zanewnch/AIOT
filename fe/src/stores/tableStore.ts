@@ -24,7 +24,7 @@ export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'u
  * 排序相關類型
  */
 export type SortOrder = 'asc' | 'desc';
-export type SortField = 'id' | 'longitude' | 'latitude' | 'altitude' | 'timestamp';
+export type SortField = string; // 改為通用字串類型以支援所有表格欄位
 
 /**
  * 表格 UI Store
@@ -68,7 +68,7 @@ export const useTableUIStore = create<TableUIStore>()(
       // Initial State
       activeTable: 'RTK',
       sorting: {
-        field: 'timestamp',
+        field: 'id',
         order: 'desc',
       },
       editModal: {

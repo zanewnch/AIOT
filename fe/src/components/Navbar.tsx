@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom'; // 引入 React Router 的 Link 組件
 import { ThemeToggle } from './ThemeToggle'; // 引入主題切換組件
 import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
 import styles from '../styles/Navbar.module.scss'; // 引入導航欄的 SCSS 模組樣式
+import { createLogger, logUserAction, logError } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 導航欄組件的屬性介面
@@ -44,6 +45,10 @@ interface NavbarProps {
  * <Navbar brandName="My App" />
  * ```
  */
+
+// 創建 Navbar 專用的 logger 實例
+const logger = createLogger('Navbar');
+
 export const Navbar: React.FC<NavbarProps> = ({ 
   brandName = "IOT" // 品牌名稱，默認為 "IOT"
 }) => {
@@ -56,22 +61,48 @@ export const Navbar: React.FC<NavbarProps> = ({
    * 觸發登出並處理可能的錯誤
    */
   const handleLogout = async () => {
+    // 記錄登出嘗試
+    logger.info('Logout attempt started', {
+      username: user?.username,
+      timestamp: new Date().toISOString()
+    });
+
+    // 記錄用戶操作
+    logUserAction('logout_attempt', {
+      username: user?.username
+    });
+
     try {
       // 觸發登出並等待完成
       await logout();
+      
+      logger.info('Logout successful', { username: user?.username });
+      logUserAction('logout_success', { username: user?.username });
+      
       // 登出成功後刷新整個頁面
       window.location.reload();
     } catch (error) {
-      // 登出失敗時記錄錯誤
-      console.error('Logout failed:', error);
+      // 記錄登出失敗
+      logError(error as Error, 'Navbar.handleLogout', {
+        username: user?.username
+      });
+      logger.error('Logout failed', { error: error instanceof Error ? error.message : String(error) });
     }
+  };
+
+  /**
+   * 處理品牌連結點擊
+   */
+  const handleBrandClick = () => {
+    logger.info('Brand link clicked', { brandName });
+    logUserAction('navigation', { target: 'home', source: 'navbar_brand' });
   };
 
   return (
     <header className={styles.header}>
       <nav className={styles.navbar}>
         {/* 品牌標識區域 - 點擊可回到首頁 */}
-        <Link to="/" className={styles.navBrand}>
+        <Link to="/" className={styles.navBrand} onClick={handleBrandClick}>
           <h2>{brandName}</h2>
         </Link>
         

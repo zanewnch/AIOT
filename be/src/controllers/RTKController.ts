@@ -2,233 +2,300 @@
  * @fileoverview RTK 定位資料控制器
  * 負責處理 RTK（Real-Time Kinematic）定位資料的 HTTP 端點
  * 提供即時動態定位資料的 CRUD 操作功能
- * 
+ *
  * @author AIOT Team
  * @version 1.0.0
  * @since 2024-01-01
- * 
+ *
  * @description API 端點說明：
  * - GET /api/rtk/data - 取得所有 RTK 定位資料
+ * - GET /api/rtk/data/:id - 取得指定 RTK 定位資料
+ * - POST /api/rtk/data - 創建新的 RTK 定位資料
  * - PUT /api/rtk/data/:id - 更新指定 RTK 定位資料
+ * - DELETE /api/rtk/data/:id - 刪除指定 RTK 定位資料
  */
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
-import { RTKDataModel } from '../models/RTKDataModel.js'; // 匯入 RTK 資料模型
+import { RTKService } from '../services/RTKService.js'; // 匯入 RTK 服務層
+import type { IRTKService } from '../types/services/IRTKService.js'; // 匯入 RTK 服務介面
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
-import { ControllerResult } from '../types/ControllerResult.js'; // 匯入控制器結果介面
+import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果介面
+import type { RTKCreationAttributes } from '../models/RTKModel.js'; // 匯入 RTK 類型
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('RTKController');
 
 /**
- * RTK 定位資料控制器
- * 
+ * RTK 控制器類別
+ *
+ * 處理所有與 RTK 定位資料相關的 HTTP 請求
+ * 使用 Service 層進行業務邏輯處理
+ *
  * @class RTKController
- * @description 處理 RTK（Real-Time Kinematic）定位資料的 API 請求
- * 提供即時動態定位資料的查詢、更新功能
- * 
- * @example
- * ```typescript
- * // 使用方式（在路由中）
- * const rtkController = new RTKController();
- * router.get('/rtk/data', rtkController.getRTKData);
- * router.put('/rtk/data/:id', rtkController.updateRTKData);
- * ```
  */
 export class RTKController {
-  /**
-   * 初始化控制器實例
-   * 
-   * @constructor
-   * @description 初始化 RTK 定位資料控制器
-   * 控制器現在只負責業務邏輯，路由設定已移至 rtkRoutes.ts
-   */
-  constructor() {
-    // Controller 現在只負責業務邏輯，路由已移至 rtkRoutes.ts
-    // 此控制器專注於處理 RTK 定位資料相關的 HTTP 請求和回應
-  }
+    private rtkService: IRTKService;
 
-
-  /**
-   * 取得所有 RTK 定位資料
-   * 
-   * @method getRTKData
-   * @param {Request} _req - Express 請求物件（未使用）
-   * @param {Response} res - Express 回應物件
-   * @param {NextFunction} next - Express next 函數，用於錯誤處理
-   * @returns {Promise<void>} 無回傳值的 Promise
-   * 
-   * @throws {500} 當資料庫查詢發生錯誤時
-   * 
-   * @description 從資料庫中取得所有 RTK 定位資料並格式化回傳
-   * 資料會按建立時間降序排列，並轉換為前端期望的格式
-   * 
-   * @example
-   * ```bash
-   * GET /api/rtk/data
-   * ```
-   * 
-   * @example 回應格式
-   * ```json
-   * [
-   *   {
-   *     "id": 1,
-   *     "latitude": 25.0330,
-   *     "longitude": 121.5654,
-   *     "altitude": 45.0,
-   *     "timestamp": "2024-01-01 12:00:00"
-   *   }
-   * ]
-   * ```
-   */
-  public async getRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      logger.info('Starting RTK data retrieval process');
-      logRequest(req, 'RTK data retrieval request', 'info');
-      
-      // 從資料庫中取得所有 RTK 資料，按建立時間降序排列
-      const rtkData = await RTKDataModel.findAll({
-        order: [['createdAt', 'DESC']], // 按建立時間降序排列以取得最新資料
-      });
-
-      logger.debug(`Retrieved ${rtkData.length} RTK records from database`);
-      logger.debug('Raw RTK data structure validation completed');
-
-      // 轉換資料格式以符合前端期望的結構
-      const formattedData = rtkData.map((item) => ({
-        id: item.id, // 資料識別碼
-        latitude: item.latitude, // 緯度座標
-        longitude: item.longitude, // 經度座標
-        altitude: 45.0, // 預設海拔高度（可後續從其他來源獲取）
-        timestamp: item.createdAt?.toISOString().replace('T', ' ').substring(0, 19) || '', // 格式: YYYY-MM-DD HH:mm:ss
-      }));
-
-      logger.info(`RTK data retrieval completed successfully - returning ${formattedData.length} records`);
-      logger.debug('RTK data formatting and validation completed');
-
-      // 回傳格式化後的 RTK 資料給客戶端
-      const response: ControllerResult = {
-        status: 200,
-        message: 'RTK data retrieved successfully',
-        data: formattedData
-      };
-      res.status(200).json(response);
-    } catch (error) {
-      logger.error('Error retrieving RTK data:', error);
-      // 將例外處理委派給 Express 錯誤處理中間件
-      next(error);
+    /**
+     * 建構子
+     *
+     * @param {IRTKService} rtkService - RTK 服務實例
+     */
+    constructor() {
+        this.rtkService = new RTKService();
     }
-  }
 
-  /**
-   * 更新指定 RTK 定位資料
-   * 
-   * @method updateRTKData
-   * @param {Request} req - Express 請求物件，包含 id 參數和更新資料
-   * @param {Response} res - Express 回應物件
-   * @param {NextFunction} next - Express next 函數，用於錯誤處理
-   * @returns {Promise<void>} 無回傳值的 Promise
-   * 
-   * @throws {400} 當必要欄位缺失時
-   * @throws {404} 當指定的 RTK 資料不存在時
-   * @throws {500} 當資料庫更新發生錯誤時
-   * 
-   * @description 更新指定 ID 的 RTK 定位資料
-   * 需要提供緯度和經度，海拔高度和時間戳記為可選欄位
-   * 
-   * @example
-   * ```bash
-   * PUT /api/rtk/data/123
-   * Content-Type: application/json
-   * 
-   * {
-   *   "latitude": 25.0330,
-   *   "longitude": 121.5654,
-   *   "altitude": 45.0,
-   *   "timestamp": "2024-01-01 12:00:00"
-   * }
-   * ```
-   * 
-   * @example 成功回應
-   * ```json
-   * {
-   *   "success": true,
-   *   "message": "RTK data updated successfully",
-   *   "data": {
-   *     "id": 123,
-   *     "latitude": 25.0330,
-   *     "longitude": 121.5654,
-   *     "altitude": 45.0,
-   *     "timestamp": "2024-01-01 12:00:00"
-   *   }
-   * }
-   * ```
-   */
-  public async updateRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      // 從 URL 參數中取得資料 ID
-      const { id } = req.params;
-      // 從請求主體中解構取得更新資料
-      const { latitude, longitude, altitude, timestamp } = req.body;
+    /**
+     * 取得所有 RTK 定位資料
+     *
+     * @route GET /api/rtk/data
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     *
+     * @example
+     * ```json
+     * // 成功回應 (200)
+     * {
+     *   "status": 200,
+     *   "message": "RTK 資料獲取成功",
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "latitude": 25.033964,
+     *       "longitude": 121.564468,
+     *       "createdAt": "2024-01-01T00:00:00.000Z",
+     *       "updatedAt": "2024-01-01T00:00:00.000Z"
+     *     }
+     *   ]
+     * }
+     * ```
+     */
+    async getAllRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            // 記錄請求
+            logRequest(req.originalUrl, req.method, 'Getting all RTK data');
+            logger.info('RTK data retrieval request received');
 
-      logger.info(`Starting RTK data update process for ID: ${id}`);
-      logRequest(req, `RTK data update request for ID: ${id}`, 'info');
-      logger.debug(`Update data received - Latitude: ${latitude}, Longitude: ${longitude}, Altitude: ${altitude}, Timestamp: ${timestamp}`);
+            // 呼叫服務層取得資料
+            const rtkData = await this.rtkService.getAllRTKData();
 
-      // 驗證必要欄位是否存在
-      if (!latitude || !longitude) {
-        logger.warn(`RTK data update validation failed for ID: ${id} - missing required latitude or longitude`);
-        // 回傳 400 錯誤，表示請求資料不完整
-        const response: ControllerResult = {
-          status: 400,
-          message: 'Latitude and longitude are required'
-        };
-        res.status(400).json(response);
-        return;
-      }
+            // 建立成功回應
+            const result = ControllerResult.success('RTK 資料獲取成功', rtkData);
 
-      // 檢查指定 ID 的記錄是否存在於資料庫中
-      const existingRecord = await RTKDataModel.findByPk(id);
-      if (!existingRecord) {
-        logger.warn(`RTK data update failed - record not found for ID: ${id}`);
-        // 回傳 404 錯誤，表示資料不存在
-        const response: ControllerResult = {
-          status: 404,
-          message: 'RTK data not found'
-        };
-        res.status(404).json(response);
-        return;
-      }
+            // 回傳結果
+            res.status(result.status).json(result);
 
-      // 更新資料庫記錄
-      const updatedRecord = await existingRecord.update({
-        latitude: parseFloat(latitude), // 將緯度轉換為浮點數
-        longitude: parseFloat(longitude) // 將經度轉換為浮點數
-      });
+            logger.info('RTK data retrieval completed successfully', {
+                count: rtkData.length
+            });
 
-      logger.info(`RTK data update completed successfully for ID: ${id}`);
-      logger.debug(`Updated RTK record - Latitude: ${updatedRecord.latitude}, Longitude: ${updatedRecord.longitude}`);
-
-      // 準備回傳的格式化資料
-      const formattedData = {
-        id: updatedRecord.id, // 資料識別碼
-        latitude: updatedRecord.latitude, // 更新後的緯度
-        longitude: updatedRecord.longitude, // 更新後的經度
-        altitude: parseFloat(altitude) || 45.0, // 海拔高度（如果沒有提供則使用預設值）
-        timestamp: timestamp || updatedRecord.updatedAt?.toISOString().replace('T', ' ').substring(0, 19) || '' // 時間戳記
-      };
-
-      // 回傳更新成功的回應
-      const response: ControllerResult = {
-        status: 200,
-        message: 'RTK data updated successfully',
-        data: formattedData
-      };
-      res.status(200).json(response);
-    } catch (error) {
-      logger.error('Error updating RTK data:', error);
-      // 將例外處理委派給 Express 錯誤處理中間件
-      next(error);
+        } catch (error) {
+            logger.error('Error in getAllRTKData', { error });
+            next(error);
+        }
     }
-  }
+
+    /**
+     * 根據 ID 取得 RTK 定位資料
+     *
+     * @route GET /api/rtk/data/:id
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async getRTKDataById(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const id = parseInt(req.params.id);
+
+            // 記錄請求
+            logRequest(req.originalUrl, req.method, `Getting RTK data by ID: ${id}`);
+            logger.info('RTK data by ID request received', { id });
+
+            // 呼叫服務層取得資料
+            const rtkData = await this.rtkService.getRTKDataById(id);
+
+            // 建立成功回應
+            const result = ControllerResult.success('RTK 資料獲取成功', rtkData);
+
+            // 回傳結果
+            res.status(result.status).json(result);
+
+            logger.info('RTK data by ID retrieval completed successfully', { id });
+
+        } catch (error) {
+            logger.error('Error in getRTKDataById', {
+                id: req.params.id,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 創建新的 RTK 定位資料
+     *
+     * @route POST /api/rtk/data
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async createRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const rtkData: RTKCreationAttributes = req.body;
+
+            // 記錄請求
+            logRequest(req.originalUrl, req.method, 'Creating new RTK data');
+            logger.info('RTK data creation request received', { rtkData });
+
+            // 呼叫服務層創建資料
+            const createdData = await this.rtkService.createRTKData(rtkData);
+
+            // 建立創建成功回應
+            const result = ControllerResult.created('RTK 資料創建成功', createdData);
+
+            // 回傳結果
+            res.status(result.status).json(result);
+
+            logger.info('RTK data creation completed successfully', {
+                id: createdData.id
+            });
+
+        } catch (error) {
+            logger.error('Error in createRTKData', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 更新 RTK 定位資料
+     *
+     * @route PUT /api/rtk/data/:id
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async updateRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const id = parseInt(req.params.id);
+            const updateData: Partial<RTKCreationAttributes> = req.body;
+
+            // 記錄請求
+            logRequest(req.originalUrl, req.method, `Updating RTK data with ID: ${id}`);
+            logger.info('RTK data update request received', { id, updateData });
+
+            // 呼叫服務層更新資料
+            const updatedData = await this.rtkService.updateRTKData(id, updateData);
+
+            // 建立成功回應
+            const result = ControllerResult.success('RTK 資料更新成功', updatedData);
+
+            // 回傳結果
+            res.status(result.status).json(result);
+
+            logger.info('RTK data update completed successfully', { id });
+
+        } catch (error) {
+            logger.error('Error in updateRTKData', {
+                id: req.params.id,
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 刪除 RTK 定位資料
+     *
+     * @route DELETE /api/rtk/data/:id
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async deleteRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const id = parseInt(req.params.id);
+
+            // 記錄請求
+            logRequest(req.originalUrl, req.method, `Deleting RTK data with ID: ${id}`);
+            logger.info('RTK data deletion request received', { id });
+
+            // 呼叫服務層刪除資料
+            await this.rtkService.deleteRTKData(id);
+
+            // 建立成功回應
+            const result = ControllerResult.success('RTK 資料刪除成功');
+
+            // 回傳結果
+            res.status(result.status).json(result);
+
+            logger.info('RTK data deletion completed successfully', { id });
+
+        } catch (error) {
+            logger.error('Error in deleteRTKData', {
+                id: req.params.id,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 取得最新的 RTK 定位資料
+     *
+     * @route GET /api/rtk/data/latest
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async getLatestRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const limit = parseInt(req.query.limit as string) || 10;
+
+            // 記錄請求
+            logRequest(req.originalUrl, req.method, `Getting latest RTK data with limit: ${limit}`);
+            logger.info('Latest RTK data request received', { limit });
+
+            // 呼叫服務層取得最新資料
+            const latestData = await this.rtkService.getLatestRTKData(limit);
+
+            // 建立成功回應
+            const result = ControllerResult.success('最新 RTK 資料獲取成功', latestData);
+
+            // 回傳結果
+            res.status(result.status).json(result);
+
+            logger.info('Latest RTK data retrieval completed successfully', {
+                count: latestData.length,
+                limit
+            });
+
+        } catch (error) {
+            logger.error('Error in getLatestRTKData', {
+                limit: req.query.limit,
+                error
+            });
+            next(error);
+        }
+    }
 }
+
+// 創建控制器實例並匯出方法
+const rtkController = new RTKController();
+
+export const getAllRTKData = rtkController.getAllRTKData.bind(rtkController);
+export const getRTKDataById = rtkController.getRTKDataById.bind(rtkController);
+export const createRTKData = rtkController.createRTKData.bind(rtkController);
+export const updateRTKData = rtkController.updateRTKData.bind(rtkController);
+export const deleteRTKData = rtkController.deleteRTKData.bind(rtkController);
+export const getLatestRTKData = rtkController.getLatestRTKData.bind(rtkController);

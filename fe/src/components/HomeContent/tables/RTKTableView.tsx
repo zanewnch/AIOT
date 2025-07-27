@@ -11,12 +11,15 @@
  */
 
 import React from 'react';
-import { useRTKData, useUpdateRTKData } from '../../../hooks/useTableQuery';
+import { useRTKData, useUpdateRTKData } from '../../../hooks/useRTKQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import { RTKData } from '../../../types/IRTKData';
 import LoadingSpinner from '../../common/LoadingSpinner';
+import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
+
+const logger = createLogger('RTKTableView');
 
 /**
  * RTK 數據表格檢視組件
@@ -54,6 +57,7 @@ export const RTKTableView: React.FC = () => {
    * @param item - 要編輯的 RTK 數據項目
    */
   const handleEdit = (item: RTKData) => {
+    logger.info('開始編輯 RTK 數據', { id: item.id, latitude: item.latitude, longitude: item.longitude });
     openEditModal('RTK', item);
   };
 
@@ -72,6 +76,8 @@ export const RTKTableView: React.FC = () => {
       return;
     }
 
+    logger.info('開始保存 RTK 數據', { id: item.id });
+    
     try {
       // 數據格式化處理
       const formattedData = {
@@ -87,10 +93,12 @@ export const RTKTableView: React.FC = () => {
         data: formattedData
       });
       
+      logger.info('RTK 數據更新成功', { id: item.id });
       addSuccess('RTK 數據更新成功');
       closeEditModal();
       refetch();
     } catch (error) {
+      logger.error('RTK 數據更新失敗', { id: item.id, error: (error as Error).message });
       addError('RTK 數據更新失敗: ' + (error as Error).message);
     }
   };
@@ -117,6 +125,7 @@ export const RTKTableView: React.FC = () => {
    * @param field - 排序欄位
    */
   const handleSort = (field: string) => {
+    logger.debug('RTK 表格排序', { field, currentOrder: sorting.order });
     toggleSortOrder(field as any);
   };
 

@@ -10,6 +10,8 @@
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
 import { progressService } from '../services/ProgressService.js'; // 匯入進度服務處理邏輯
+import { IProgressController } from '../types/controllers/IProgressController.js'; // 匯入進度控制器介面
+import { IProgressService } from '../types/services/IProgressService.js'; // 匯入進度服務介面
 import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
 import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果類別
 
@@ -30,7 +32,16 @@ const logger = createLogger('ProgressController');
  * router.get('/progress/:taskId/stream', progressController.getProgressStream);
  * ```
  */
-export class ProgressController {
+export class ProgressController implements IProgressController {
+  /**
+   * 進度服務實例
+   * 
+   * @private
+   * @type {IProgressService}
+   * @description 負責處理進度追蹤的業務邏輯
+   */
+  private progressService: IProgressService;
+
   /**
    * 建構函式
    * 
@@ -39,8 +50,8 @@ export class ProgressController {
    * 控制器現在只負責業務邏輯，路由設定已移至 progressRoutes.ts
    */
   constructor() {
-    // Controller 現在只負責業務邏輯，路由已移至 progressRoutes.ts
-    // 此控制器專注於處理進度相關的 HTTP 請求和回應
+    // 設定進度服務實例
+    this.progressService = progressService;
   }
 
   /**
@@ -86,24 +97,27 @@ export class ProgressController {
       if (!taskId) {
         logger.warn('Progress request missing required task ID parameter');
         // 回傳 400 錯誤，表示請求參數不完整
-        res.status(400).json(ControllerResult.badRequest('Task ID is required'));
+        const response = ControllerResult.badRequest('Task ID is required');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
       // 呼叫進度服務來取得任務進度資訊
-      const progress = progressService.getProgress(taskId);
+      const progress = this.progressService.getProgress(taskId);
       
       // 檢查任務是否存在
       if (!progress) {
         logger.warn(`Progress request for non-existent task: ${taskId}`);
         // 回傳 404 錯誤，表示任務不存在
-        res.status(404).json(ControllerResult.notFound('Task not found'));
+        const response = ControllerResult.notFound('Task not found');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
       logger.debug(`Successfully retrieved progress for task: ${taskId}, Status: ${progress.status}, Percentage: ${progress.percentage}%`);
       // 回傳進度資訊給客戶端
-      res.status(200).json(ControllerResult.success('Progress retrieved successfully', progress));
+      const response = ControllerResult.success('Progress retrieved successfully', progress);
+      res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Error retrieving task progress:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
@@ -152,25 +166,28 @@ export class ProgressController {
       if (!taskId) {
         logger.warn('SSE progress stream request missing required task ID parameter');
         // 回傳 400 錯誤，表示請求參數不完整
-        res.status(400).json(ControllerResult.badRequest('Task ID is required'));
+        const response = ControllerResult.badRequest('Task ID is required');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
       // 檢查任務是否存在於進度服務中
-      const progress = progressService.getProgress(taskId);
+      const progress = this.progressService.getProgress(taskId);
       if (!progress) {
         logger.warn(`SSE progress stream request for non-existent task: ${taskId}`);
         // 回傳 404 錯誤，表示任務不存在
-        res.status(404).json(ControllerResult.notFound('Task not found'));
+        const response = ControllerResult.notFound('Task not found');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
       // 建立 Server-Sent Events 連線
-      const success = progressService.createSSEConnection(taskId, res);
+      const success = this.progressService.createSSEConnection(taskId, res);
       if (!success) {
         logger.error(`Failed to establish SSE connection for task: ${taskId}`);
         // 回傳 500 錯誤，表示 SSE 連線建立失敗
-        res.status(500).json(ControllerResult.internalError('Failed to create SSE connection'));
+        const response = ControllerResult.internalError('Failed to create SSE connection');
+        res.status(response.status).json(response.toJSON());
         return;
       }
       
