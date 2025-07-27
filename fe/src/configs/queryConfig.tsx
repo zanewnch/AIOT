@@ -1,5 +1,5 @@
 /**
- * @fileoverview React Query Provider 設置
+ * @fileoverview React Query 配置
  * 
  * 配置 React Query 的全局設置，包括查詢客戶端配置、
  * 錯誤處理、重試策略和開發工具。
@@ -70,7 +70,7 @@ interface QueryProviderProps {
  * 
  * @example
  * ```tsx
- * import { QueryProvider } from './providers/QueryProvider';
+ * import { QueryProvider } from './configs/queryConfig';
  * 
  * function App() {
  *   return (

@@ -10,7 +10,7 @@
 
 import React, { useState } from 'react';
 import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
-import { QueryProvider } from '../providers/QueryProvider';
+import { QueryProvider } from '../configs/queryConfig';
 import { useActivityStore } from '../stores/activityStore';
 import { useActivityTracking } from '../hooks/useActivityQuery';
 

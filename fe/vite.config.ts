@@ -44,6 +44,22 @@ export default defineConfig({
           // 工具庫
           'utils': ['lodash', 'loglevel', 'tslib'],
         },
+        // 設置文件名和 hash 策略，啟用長期緩存
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          const fileName = assetInfo.names?.[0] || 'asset';
+          if (/\.(css)$/.test(fileName)) {
+            return 'assets/css/[name]-[hash][extname]';
+          }
+          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(fileName)) {
+            return 'assets/images/[name]-[hash][extname]';
+          }
+          if (/\.(woff2?|eot|ttf|otf)$/i.test(fileName)) {
+            return 'assets/fonts/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
       },
     },
   },

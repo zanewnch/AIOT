@@ -10,7 +10,7 @@
 
 import React from 'react';
 import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
-import { QueryProvider } from '../providers/QueryProvider';
+import { QueryProvider } from '../configs/queryConfig';
 import { useActivityTracking } from '../hooks/useActivityQuery';
 
 /**
@@ -195,7 +195,7 @@ export const ActivityUsageGuide: React.FC = () => {
         <h2>1. 基本設置</h2>
         <p>使用 QueryProvider 包裝你的應用：</p>
         <pre className="code-block">
-{`import { QueryProvider } from './providers/QueryProvider';
+{`import { QueryProvider } from './configs/queryConfig';
 import { ActivityDashboard } from './components/ActivityDashboard';
 
 function App() {

@@ -30,7 +30,7 @@ import { useActivityStore } from '../stores/activityStore';
  * @example
  * ```tsx
  * import { ActivityDashboard } from './ActivityDashboard';
- * import { QueryProvider } from '../providers/QueryProvider';
+ * import { QueryProvider } from '../configs/queryConfig';
  * 
  * function App() {
  *   return (

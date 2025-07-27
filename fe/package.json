@@ -18,6 +18,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.83.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.4",
     "@types/react": "^18.3.23",
