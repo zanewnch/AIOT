@@ -53,19 +53,22 @@ import { RoleModel } from '../models/rbac/RoleModel.js';
 import { UserModel } from '../models/rbac/UserModel.js';
 // 匯入進度追蹤相關類型，用於支援進度回調和任務階段管理
 import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
+// 匯入 RBAC 初始化服務介面
+import { IRbacInitService } from '../types/services/IRbacInitService.js';
+
+// 導出介面供其他模組使用
+export type { IRbacInitService };
 
 // 匯入日誌記錄器
 import { createLogger } from '../configs/loggerConfig.js';
-// 匯入服務結果類別
-import { ServiceResult } from '../utils/ServiceResult.js';
 
 const logger = createLogger('RbacInitService');
 
 /**
  * RBAC 初始化服務類別
- * 提供完整的 RBAC 系統初始化功能
+ * 實作 IRbacInitService 介面，提供完整的 RBAC 系統初始化功能
  */
-export class RbacInitService {
+export class RbacInitService implements IRbacInitService {
   private permissionRepository: IPermissionRepository;
   private roleRepository: IRoleRepository;
   private rolePermissionRepository: IRolePermissionRepository;
@@ -176,16 +179,16 @@ export class RbacInitService {
       );
 
       if (!userCreated) { // 如果使用者已存在（非新創建）
-        return ServiceResult.success(`Admin user '${username}' already exists`); // 回傳成功結果，但表示使用者已存在
+        return { success: true, message: `Admin user '${username}' already exists` }; // 回傳成功結果，但表示使用者已存在
       }
 
       // 5. 指派 admin 角色給用戶
       await this.userRoleRepository.findOrCreate(user.id, adminRole.id); // 創建使用者與管理員角色的關聯關係
 
-      return ServiceResult.success(`Admin user '${username}' created successfully with full permissions`); // 回傳創建成功的結果
+      return { success: true, message: `Admin user '${username}' created successfully with full permissions` }; // 回傳創建成功的結果
     } catch (error) { // 捕獲創建過程中的任何錯誤
       logger.error('Error creating admin user:', error); // 記錄錯誤日誌
-      return ServiceResult.failure(`Failed to create admin user: ${error}`); // 回傳失敗結果
+      return { success: false, message: `Failed to create admin user: ${error}` }; // 回傳失敗結果
     }
   }
 
@@ -677,4 +680,5 @@ export class RbacInitService {
 
     return userMap; // 回傳使用者對照表
   }
+
 }

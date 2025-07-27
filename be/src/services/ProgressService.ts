@@ -2,13 +2,13 @@
  * ProgressService - 進度追蹤服務
  * ===============================
  * 負責管理長時間執行任務的進度追蹤，包含狀態儲存、事件發送和 SSE 連線管理。
- * 
+ *
  * 主要功能：
  * - 建立和管理任務進度狀態
  * - 提供 SSE (Server-Sent Events) 即時推送
  * - 計算加權進度和預估完成時間
  * - 管理多個並發任務
- * 
+ *
  * 使用情境：
  * - 大量資料初始化進度追蹤
  * - 檔案上傳/下載進度顯示
@@ -16,19 +16,17 @@
  */
 
 import { Response } from 'express';
-import { 
-  ProgressInfo, 
-  ProgressEvent, 
-  TaskStatus, 
-  TaskStage, 
-  StageWeights, 
+import {
+  ProgressInfo,
+  ProgressEvent,
+  TaskStatus,
+  TaskStage,
+  StageWeights,
   DEFAULT_STAGE_WEIGHTS,
-  ProgressCallback 
+  ProgressCallback
 } from '../types/ProgressTypes.js';
 import { IProgressService } from '../types/services/IProgressService.js';
 
-// 導出介面供其他模組使用
-export type { IProgressService };
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('ProgressService');
@@ -52,10 +50,10 @@ interface SSEConnection {
 export class ProgressService implements IProgressService {
   /** 任務進度儲存 (Memory-based，適合單伺服器環境) */
   private tasks: Map<string, ProgressInfo> = new Map();
-  
+
   /** SSE 連線管理 */
   private sseConnections: Map<string, SSEConnection[]> = new Map();
-  
+
   /** 階段權重配置 */
   private stageWeights: StageWeights;
 
@@ -65,7 +63,7 @@ export class ProgressService implements IProgressService {
    */
   constructor(customWeights?: Partial<StageWeights>) { // 建構函式，接受可選的自訂階段權重配置
     this.stageWeights = { ...DEFAULT_STAGE_WEIGHTS, ...customWeights }; // 合併預設權重和自訂權重，自訂值會覆蓋預設值
-    
+
     // 定期清理過期的任務和連線（每 5 分鐘執行一次）
     setInterval(() => this.cleanup(), 5 * 60 * 1000); // 設定定時器，每 300,000 毫秒（5分鐘）執行一次清理作業
     logger.info('ProgressService initialized with periodic cleanup every 5 minutes'); // 記錄服務初始化完成的資訊日誌
@@ -94,9 +92,9 @@ export class ProgressService implements IProgressService {
 
     this.tasks.set(taskId, progressInfo); // 將進度資訊儲存到記憶體中的 Map 集合
     this.broadcastProgress(taskId, progressInfo); // 廣播進度更新給所有 SSE 連線的客戶端
-    
+
     logger.info(`Task created: ${taskId} with total work of ${total}`); // 記錄任務建立成功的資訊日誌
-    
+
     return progressInfo; // 回傳初始化完成的進度資訊物件
   }
 
@@ -138,7 +136,7 @@ export class ProgressService implements IProgressService {
 
     this.tasks.set(taskId, updatedTask); // 將更新後的任務資訊存回 Map 集合
     this.broadcastProgress(taskId, updatedTask); // 廣播進度更新給所有訂閱的 SSE 客戶端
-    
+
     logger.debug(`Task progress updated: ${taskId} - ${updatedTask.percentage}% complete`); // 記錄除錯日誌，顯示更新後的進度百分比
   }
 
@@ -188,7 +186,7 @@ export class ProgressService implements IProgressService {
         message: `任務失敗: ${error}`, // 設定使用者友好的失敗訊息
         lastUpdated: new Date() // 更新最後修改時間為當前時間
       };
-      
+
       this.tasks.set(taskId, failedTask); // 將失敗的任務資訊存回集合中
       this.broadcastProgress(taskId, failedTask); // 廣播任務失敗狀態給所有 SSE 客戶端
       logger.error(`Task failed: ${taskId} - ${error}`); // 記錄任務失敗的錯誤日誌
@@ -281,7 +279,7 @@ export class ProgressService implements IProgressService {
     // 計算當前階段之前的所有階段權重總和
     const stages = Object.values(TaskStage); // 取得所有任務階段的陣列
     const currentStageIndex = stages.indexOf(currentStage); // 找到當前階段在陣列中的索引位置
-    
+
     let completedStagesWeight = 0; // 已完成階段的權重總和，初始為 0
     for (let i = 0; i < currentStageIndex; i++) { // 遍歷當前階段之前的所有階段
       completedStagesWeight += this.stageWeights[stages[i]] || 0; // 累加已完成階段的權重值，若無權重設定則使用 0
@@ -293,7 +291,7 @@ export class ProgressService implements IProgressService {
 
     // 總進度 = 已完成階段權重 + 當前階段進度
     const overallProgress = (completedStagesWeight + currentStageProgress) * 100; // 計算總進度並轉換為百分比
-    
+
     return Math.min(Math.max(overallProgress, 0), 100); // 確保進度百分比在 0-100 之間
   }
 
@@ -306,7 +304,7 @@ export class ProgressService implements IProgressService {
     const elapsed = Date.now() - task.startTime.getTime(); // 計算任務已執行的時間（毫秒）
     const remainingPercentage = 100 - task.percentage; // 計算剩餘的進度百分比
     const estimatedRemaining = (elapsed / task.percentage) * remainingPercentage; // 根據已執行時間和進度比例估算剩餘時間
-    
+
     return new Date(Date.now() + estimatedRemaining); // 回傳當前時間加上預估剩餘時間的完成時間
   }
 
@@ -396,11 +394,11 @@ export class ProgressService implements IProgressService {
    */
   private cleanup(): void { // 私有方法：清理過期的任務和連線
     const oneHourAgo = Date.now() - 60 * 60 * 1000; // 計算一小時前的時間戳（當前時間 - 3,600,000 毫秒）
-    
+
     for (const [taskId, task] of this.tasks.entries()) { // 遍歷所有儲存的任務
       const isExpired = task.lastUpdated.getTime() < oneHourAgo; // 檢查任務最後更新時間是否超過一小時
       const isFinished = task.status === TaskStatus.COMPLETED || task.status === TaskStatus.FAILED; // 檢查任務是否已完成或失敗
-      
+
       if (isExpired && isFinished) { // 如果任務既過期又已結束
         this.tasks.delete(taskId); // 從任務集合中刪除該任務
         this.closeSSEConnections(taskId); // 關閉該任務的所有 SSE 連線
