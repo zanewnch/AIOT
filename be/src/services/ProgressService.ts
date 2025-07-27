@@ -25,6 +25,10 @@ import {
   DEFAULT_STAGE_WEIGHTS,
   ProgressCallback 
 } from '../types/ProgressTypes.js';
+import { IProgressService } from '../types/services/IProgressService.js';
+
+// 導出介面供其他模組使用
+export type { IProgressService };
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('ProgressService');
@@ -43,9 +47,9 @@ interface SSEConnection {
 
 /**
  * 進度追蹤服務類別
- * 提供完整的任務進度管理和即時推送功能
+ * 實作 IProgressService 介面，提供完整的任務進度管理和即時推送功能
  */
-export class ProgressService {
+export class ProgressService implements IProgressService {
   /** 任務進度儲存 (Memory-based，適合單伺服器環境) */
   private tasks: Map<string, ProgressInfo> = new Map();
   
