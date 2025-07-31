@@ -11,7 +11,7 @@
  */
 
 import React, { useState } from "react"; // 引入 React 庫和 useState Hook
-import { useAuth } from "../hooks/useAuthQuery"; // 引入認證 Hook
+import { useAuth, useLogin } from "../hooks/useAuthQuery"; // 引入認證 Hook
 import { LoginRequest } from "../types/auth"; // 引入登入請求的類型定義
 import styles from "../styles/LoginForm.module.scss"; // 引入登入表單的 SCSS 模組樣式
 import { createLogger, logUserAction, logError } from "../configs/loggerConfig"; // 引入日誌配置
@@ -36,7 +36,8 @@ const logger = createLogger('LoginForm');
 
 export const LoginForm: React.FC = () => {
   // 從認證 Hook 獲取狀態和方法
-  const { login, isLoading, error } = useAuth();
+  const { isLoading } = useAuth();
+  const loginMutation = useLogin();
   // 表單資料狀態
   const [formData, setFormData] = useState<LoginRequest>({
     username: "", // 使用者名稱
@@ -147,7 +148,7 @@ export const LoginForm: React.FC = () => {
 
     try {
       // 觸發登入並等待結果
-      await login(formData);
+      await loginMutation.mutateAsync(formData);
       logger.info('Login successful', { username: formData.username });
       logUserAction('login_success', { username: formData.username });
     } catch (error) {
@@ -165,7 +166,7 @@ export const LoginForm: React.FC = () => {
       <div className={styles.loginCard}>
         <h2 className={styles.title}>Login</h2>
 
-        {error && <div className={styles.errorMessage}>{error}</div>}
+        {loginMutation.error && <div className={styles.errorMessage}>{loginMutation.error.message}</div>}
 
         <form onSubmit={handleSubmit} className={styles.loginForm}>
           <div className={styles.inputGroup}>
@@ -182,7 +183,7 @@ export const LoginForm: React.FC = () => {
               className={`${styles.input} ${
                 formErrors.username ? styles.inputError : ""
               }`}
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               placeholder="Enter your username"
             />
             {formErrors.username && (
@@ -203,7 +204,7 @@ export const LoginForm: React.FC = () => {
               className={`${styles.input} ${
                 formErrors.password ? styles.inputError : ""
               }`}
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               placeholder="Enter your password"
             />
             {formErrors.password && (
@@ -220,7 +221,7 @@ export const LoginForm: React.FC = () => {
                 checked={formData.rememberMe}
                 onChange={handleInputChange}
                 className={styles.checkbox}
-                disabled={isLoading}
+                disabled={loginMutation.isPending}
               />
               <span className={styles.checkboxText}>Remember Me</span>
             </label>
@@ -228,7 +229,7 @@ export const LoginForm: React.FC = () => {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={loginMutation.isPending}
             className={`${styles.submitButton} ${
               isLoading ? styles.loading : ""
             }`}

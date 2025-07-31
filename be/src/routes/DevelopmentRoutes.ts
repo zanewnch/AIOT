@@ -21,7 +21,7 @@ import { RoleModel } from '../models/rbac/RoleModel.js';
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
-import { RTKModel } from '../models/RTKModel.js';
+import { DronePositionModel } from '../models/DronePositionModel.js';
 
 const router = Router();
 
@@ -29,13 +29,13 @@ const router = Router();
 router.get('/dev/overview', async (_req: Request, res: Response) => {
     try {
         // 獲取各表的資料統計
-        const [userCount, roleCount, permissionCount, userRoleCount, rolePermissionCount, rtkDataCount] = await Promise.all([
+        const [userCount, roleCount, permissionCount, userRoleCount, rolePermissionCount, dronePositionCount] = await Promise.all([
             UserModel.count(),
             RoleModel.count(),
             PermissionModel.count(),
             UserRoleModel.count(),
             RolePermissionModel.count(),
-            RTKModel.count()
+            DronePositionModel.count()
         ]);
 
         const overview = {
@@ -46,9 +46,9 @@ router.get('/dev/overview', async (_req: Request, res: Response) => {
                 permissions: permissionCount,
                 user_roles: userRoleCount,
                 role_permissions: rolePermissionCount,
-                rtk_data: rtkDataCount
+                drone_positions: dronePositionCount
             },
-            total_records: userCount + roleCount + permissionCount + userRoleCount + rolePermissionCount + rtkDataCount
+            total_records: userCount + roleCount + permissionCount + userRoleCount + rolePermissionCount + dronePositionCount
         };
 
         res.json({
@@ -230,13 +230,13 @@ router.get('/dev/role-permissions', async (_req: Request, res: Response) => {
     }
 });
 
-// 路由：查看 RTK 資料
-router.get('/dev/rtk-data', async (req: Request, res: Response) => {
+// 路由：查看無人機位置資料
+router.get('/dev/drone-positions', async (req: Request, res: Response) => {
     try {
         const limit = parseInt(req.query.limit as string) || 100;
         const offset = parseInt(req.query.offset as string) || 0;
 
-        const { count, rows: rtkData } = await RTKModel.findAndCountAll({
+        const { count, rows: dronePositionData } = await DronePositionModel.findAndCountAll({
             order: [['createdAt', 'DESC']],
             limit,
             offset
@@ -258,7 +258,7 @@ router.get('/dev/rtk-data', async (req: Request, res: Response) => {
                     has_next: (offset + limit) < count,
                     has_prev: offset > 0
                 },
-                records: rtkData.map(data => ({
+                records: dronePositionData.map(data => ({
                     id: data.id,
                     latitude: data.latitude,
                     longitude: data.longitude,
@@ -348,7 +348,7 @@ router.get('/dev', (_req: Request, res: Response) => {
             permissions: '/dev/permissions',
             user_roles: '/dev/user-roles',
             role_permissions: '/dev/role-permissions',
-            rtk_data: '/dev/rtk-data?limit=100&offset=0'
+            drone_positions: '/dev/drone-positions?limit=100&offset=0'
         },
         error_testing: {
             general_error: '/dev/test-error/general',

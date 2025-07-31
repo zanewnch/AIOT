@@ -51,6 +51,7 @@ export class RequestUtils {
     this.apiClient = axios.create({
       baseURL, // 設定 API 基礎 URL
       timeout, // 設定請求超時時間
+      withCredentials: true, // 自動包含 cookies 在請求中
       headers: {
         'Content-Type': 'application/json', // 設定預設的內容類型為 JSON
       },
@@ -70,16 +71,11 @@ export class RequestUtils {
    * @returns {void}
    */
   private setupInterceptors(): void {
-    // 設定請求攔截器，用於在每個請求中自動添加認證 token
+    // 設定請求攔截器 - 使用 httpOnly cookie，不需要手動添加 token
     this.apiClient.interceptors.request.use(
       (config) => {
-        // 從 localStorage 中獲取認證 token
-        const token = localStorage.getItem('authToken');
-        if (token) {
-          // 如果 token 存在，則將其添加到請求標頭中
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        // 返回修改後的配置
+        // cookies 會自動包含在請求中（withCredentials: true）
+        // 不需要從 localStorage 獲取 token 或手動設置 Authorization header
         return config;
       },
       (error) => {
@@ -97,9 +93,10 @@ export class RequestUtils {
       (error) => {
         // 檢查是否為 401 未授權錯誤
         if (error.response?.status === 401) {
-          // 清除本地儲存的認證 token
-          localStorage.removeItem('authToken');
-          // 重定向到登入頁面
+          // 不需要清除 localStorage - 使用 httpOnly cookie
+          // localStorage.removeItem('authToken');
+          
+          // 重定向到登入頁面（cookie 會由後端自動處理）
           window.location.href = '/login';
         }
         // 拋出 Promise 拒絕，讓調用者處理錯誤
@@ -253,6 +250,37 @@ export class RequestUtils {
   setBaseURL(baseURL: string): void {
     // 更新 axios 實例的預設基礎 URL
     this.apiClient.defaults.baseURL = baseURL;
+  }
+
+  /**
+   * 設置認證 token 到請求標頭
+   *
+   * @param {string} token - JWT token 或其他認證 token
+   * @returns {void}
+   *
+   * @example
+   * ```typescript
+   * requestUtils.setAuthToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
+   * ```
+   */
+  setAuthToken(token: string): void {
+    // 設置 Authorization header
+    this.apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
+
+  /**
+   * 清除認證 token
+   *
+   * @returns {void}
+   *
+   * @example
+   * ```typescript
+   * requestUtils.clearAuthToken();
+   * ```
+   */
+  clearAuthToken(): void {
+    // 清除 Authorization header
+    delete this.apiClient.defaults.headers.common['Authorization'];
   }
 
   // ========== 新增：使用 RequestResult 的統一響應處理方法 ==========

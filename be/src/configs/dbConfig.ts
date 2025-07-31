@@ -16,8 +16,13 @@ import { PermissionModel } from '../models/rbac/PermissionModel.js';
 import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 // 匯入角色權限關聯模型用於角色和權限的多對多關係
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
-// 匯入 RTK 資料模型用於即時動態資料
-import { RTKModel } from '../models/RTKModel.js';
+// 匯入無人機位置模型用於位置資料管理
+import { DronePositionModel } from '../models/DronePositionModel.js';
+import { DroneStatusModel } from '../models/DroneStatusModel.js';
+import { DroneCommandModel } from '../models/DroneCommandModel.js';
+import { DroneCommandsArchiveModel } from '../models/DroneCommandsArchiveModel.js';
+import { DronePositionsArchiveModel } from '../models/DronePositionsArchiveModel.js';
+import { DroneStatusArchiveModel } from '../models/DroneStatusArchiveModel.js';
 
 /**
  * 資料庫配置介面
@@ -46,8 +51,8 @@ export interface DatabaseConfig {
  * @returns {DatabaseConfig} 完整的資料庫配置物件
  */
 export const getDatabaseConfig = (): DatabaseConfig => ({
-  // 從環境變數獲取資料庫主機位址，預設為 localhost
-  host: process.env.DB_HOST || 'localhost',
+  // 從環境變數獲取資料庫主機位址，Docker 環境下使用容器名稱
+  host: process.env.DB_HOST || 'aiot-mysqldb',
   // 從環境變數獲取資料庫名稱，預設為 main_db
   database: process.env.DB_NAME || 'main_db',
   // 從環境變數獲取資料庫使用者名稱，預設為 admin
@@ -76,6 +81,6 @@ export const createSequelizeInstance = (): Sequelize => {
     // 展開資料庫配置物件的所有屬性
     ...config,
     // 註冊所有需要的模型到 Sequelize 實例中
-    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, RTKModel],
+    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneCommandModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel],
   });
 };

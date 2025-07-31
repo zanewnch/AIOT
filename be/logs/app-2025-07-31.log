@@ -1,0 +1,71 @@
+2025-07-31 15:35:29.498 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:35:37.654 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:35:42.333 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:35:59.603 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:35:59.605 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:42:44.496 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:42:44.499 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:42:50.293 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:42:50.295 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:42:58.261 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:42:58.263 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:43:07.778 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:43:07.780 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:43:36.721 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:43:36.724 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:44:02.220 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:44:02.222 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:44:15.466 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:44:15.468 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:46:51.175 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:46:51.178 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:48:55.195 [AIOT-BE] INFO: Login attempt for user: undefined {"method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/7.74.0"}
+2025-07-31 15:48:55.195 [AIOT-BE] WARN: Login request missing required credentials from IP: ::1
+2025-07-31 15:49:12.375 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/7.74.0"}
+2025-07-31 15:49:12.375 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::1
+2025-07-31 15:49:12.376 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::1
+2025-07-31 15:49:12.439 [AIOT-BE] WARN: Login failed: Invalid password for user: admin
+2025-07-31 15:49:12.440 [AIOT-BE] WARN: Authentication failed for user: admin, reason: Invalid credentials, IP: ::1
+2025-07-31 15:49:12.440 [AIOT-BE] WARN: Auth event: login for admin - FAILED {"event":"login","username":"admin","success":false,"reason":"Invalid credentials","ip":"::1"}
+2025-07-31 15:49:41.461 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/7.74.0"}
+2025-07-31 15:49:41.461 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::1
+2025-07-31 15:49:41.463 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::1
+2025-07-31 15:49:41.521 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-31 15:49:41.522 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-07-31 15:49:41.523 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::1","userAgent":"curl/7.74.0"}
+2025-07-31 15:50:09.191 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-07-31 15:50:09.194 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-07-31 15:50:19.257 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-07-31 15:50:19.258 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-07-31 15:50:19.258 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-07-31 15:50:19.315 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-07-31 15:50:19.316 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-31 15:50:19.317 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-07-31 15:50:19.318 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-07-31 15:50:40.990 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-31 15:50:40.990 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-07-31 15:50:40.991 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-07-31 15:50:41.062 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-07-31 15:50:41.064 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-31 15:50:41.064 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: true
+2025-07-31 15:50:41.065 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":true,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-31 15:50:50.045 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-31 15:50:50.046 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-07-31 15:50:50.046 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-07-31 15:50:50.101 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-07-31 15:50:50.102 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-31 15:50:50.102 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: true
+2025-07-31 15:50:50.102 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":true,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-07-31 16:00:53.537 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-07-31 16:00:53.538 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-07-31 16:00:53.538 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-07-31 16:00:53.594 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-07-31 16:00:53.595 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-07-31 16:00:53.595 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-07-31 16:00:53.596 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-07-31 16:01:49.928 [AIOT-BE] INFO: Logout request {"method":"POST","url":"/api/auth/logout","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-07-31 16:01:49.928 [AIOT-BE] INFO: Processing logout request for user: admin, IP: ::ffff:172.18.0.1
+2025-07-31 16:01:49.928 [AIOT-BE] INFO: Logout initiated for user ID: undefined
+2025-07-31 16:01:49.931 [AIOT-BE] INFO: Logout successful for user ID: undefined
+2025-07-31 16:01:49.932 [AIOT-BE] INFO: Logout completed successfully for user: admin, IP: ::ffff:172.18.0.1
+2025-07-31 16:01:49.932 [AIOT-BE] INFO: Auth event: logout for admin - SUCCESS {"event":"logout","username":"admin","success":true,"ip":"::ffff:172.18.0.1"}

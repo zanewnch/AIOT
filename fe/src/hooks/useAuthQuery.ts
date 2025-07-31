@@ -41,11 +41,16 @@ export const useLogin = () => {
       return result.unwrap();
     },
     onSuccess: (data) => {
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // 不再使用 localStorage - httpOnly cookie 已由後端自動設置
+      // localStorage.setItem('authToken', data.token);
+      // localStorage.setItem('user', JSON.stringify(data.user));
       
-      apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+      // 不需要手動設置 Authorization header - cookie 會自動傳送
+      // if (apiClient && typeof apiClient.setAuthToken === 'function') {
+      //   apiClient.setAuthToken(data.token);
+      // }
       
+      // 更新 React Query 快取狀態
       queryClient.setQueryData(AUTH_QUERY_KEYS.USER_SESSION, data);
       queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, true);
       
@@ -54,9 +59,14 @@ export const useLogin = () => {
     onError: (error) => {
       console.error('登入失敗:', error);
       
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      delete apiClient.defaults.headers.common['Authorization'];
+      // 不需要清除 localStorage - 沒有存儲在那裡
+      // localStorage.removeItem('authToken');
+      // localStorage.removeItem('user');
+      
+      // 不需要清除 Authorization header - 使用 cookie 驗證
+      // if (apiClient && typeof apiClient.clearAuthToken === 'function') {
+      //   apiClient.clearAuthToken();
+      // }
       
       queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, false);
       queryClient.setQueryData(AUTH_QUERY_KEYS.USER_SESSION, null);
@@ -83,9 +93,12 @@ export const useLogout = () => {
       return result.unwrap();
     },
     onSuccess: () => {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      delete apiClient.defaults.headers.common['Authorization'];
+      // 不需要清除 localStorage - 沒有存儲在那裡
+      // localStorage.removeItem('authToken');
+      // localStorage.removeItem('user');
+      
+      // 不需要清除 Authorization header - httpOnly cookie 由後端自動清除
+      // delete apiClient.defaults.headers.common['Authorization'];
       
       queryClient.clear();
       queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, false);
@@ -94,9 +107,13 @@ export const useLogout = () => {
     onError: (error) => {
       console.error('登出失敗:', error);
       
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      delete apiClient.defaults.headers.common['Authorization'];
+      // 即使登出請求失敗，也要清理前端狀態
+      // 不需要清除 localStorage - 沒有存儲在那裡
+      // localStorage.removeItem('authToken');
+      // localStorage.removeItem('user');
+      
+      // 不需要清除 Authorization header - 使用 cookie 驗證
+      // delete apiClient.defaults.headers.common['Authorization'];
       
       queryClient.clear();
       queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, false);
@@ -108,34 +125,43 @@ export const useLogout = () => {
 
 /**
  * 檢查認證狀態的 Hook
+ * 使用 httpOnly cookie 時，我們依賴 React Query 快取而不是 localStorage
  */
 export const useAuthStatus = () => {
-  const token = localStorage.getItem('authToken');
-  const user = localStorage.getItem('user');
+  const queryClient = useQueryClient();
+  const authStatus = queryClient.getQueryData(AUTH_QUERY_KEYS.AUTH_STATUS);
+  const userSession = queryClient.getQueryData(AUTH_QUERY_KEYS.USER_SESSION);
   
   return {
-    isAuthenticated: !!token && !!user,
-    token,
-    user: user ? JSON.parse(user) : null,
+    isAuthenticated: !!authStatus,
+    token: userSession?.token || null, // 來自 API 回應，不是 localStorage
+    user: userSession?.user || null,
   };
 };
 
 /**
  * 初始化認證的 Hook
+ * 使用 httpOnly cookie 時，我們需要向後端發送請求來驗證認證狀態
  */
 export const useInitializeAuth = () => {
   const queryClient = useQueryClient();
   
-  const initializeAuth = () => {
-    const token = localStorage.getItem('authToken');
-    const userStr = localStorage.getItem('user');
-    
-    if (token && userStr) {
-      const user = JSON.parse(userStr);
-      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      queryClient.setQueryData(AUTH_QUERY_KEYS.USER_SESSION, { token, user });
-      queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, true);
-      return true;
+  const initializeAuth = async () => {
+    try {
+      // 嘗試使用 cookie 向後端發送驗證請求
+      const response = await apiClient.get('/api/auth/me'); // 假設有這個端點
+      const result = RequestResult.fromResponse(response);
+      
+      if (result.isSuccess()) {
+        const userData = result.unwrap();
+        queryClient.setQueryData(AUTH_QUERY_KEYS.USER_SESSION, userData);
+        queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, true);
+        return true;
+      }
+    } catch (error) {
+      // 如果驗證失敗，清除認證狀態
+      queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, false);
+      queryClient.setQueryData(AUTH_QUERY_KEYS.USER_SESSION, null);
     }
     
     return false;
@@ -151,9 +177,12 @@ export const useClearAuth = () => {
   const queryClient = useQueryClient();
   
   const clearAuth = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    delete apiClient.defaults.headers.common['Authorization'];
+    // 不需要清除 localStorage - 沒有存儲在那裡
+    // localStorage.removeItem('authToken');
+    // localStorage.removeItem('user');
+    
+    // 不需要清除 Authorization header - 使用 cookie 驗證
+    // delete apiClient.defaults.headers.common['Authorization'];
     
     queryClient.clear();
     queryClient.setQueryData(AUTH_QUERY_KEYS.AUTH_STATUS, false);
@@ -165,13 +194,14 @@ export const useClearAuth = () => {
 
 /**
  * 獲取認證狀態的綜合 Hook
- * 提供 isAuthenticated 和 isLoading 狀態
+ * 提供 isAuthenticated、isLoading 和 isInitialized 狀態
  */
 export const useAuth = () => {
-  const { data: isAuthenticated, isLoading } = useAuthStatus();
+  const authStatus = useAuthStatus();
   
   return {
-    isAuthenticated: Boolean(isAuthenticated),
-    isLoading,
+    isAuthenticated: authStatus.isAuthenticated,
+    isLoading: false,
+    isInitialized: true,
   };
 };

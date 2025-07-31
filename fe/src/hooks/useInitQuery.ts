@@ -327,13 +327,3 @@ export const useInit = () => {
   };
 };
 
-/**
- * 導出 API 函數供其他模組使用
- */
-export const initAPI = {
-  initRbacDemo: initRbacDemoAPI,
-  initRtkDemo: initRtkDemoAPI,
-  createAdminUser: createAdminUserAPI,
-  createStressTestData: createStressTestDataAPI,
-  initAllDemo: initAllDemoAPI,
-};

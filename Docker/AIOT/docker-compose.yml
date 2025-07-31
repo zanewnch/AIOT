@@ -54,8 +54,16 @@ services: # 定義所有要運行的服務（容器）
     environment:
       - NODE_ENV=development # 設定環境變數為開發環境
       - DATABASE_URL=mysql://admin:admin@aiot-mysqldb:3306/main_db # MySQL 資料庫連線字串
+      - DB_HOST=aiot-mysqldb # MySQL 主機名稱
+      - DB_NAME=main_db # MySQL 資料庫名稱
+      - DB_USER=admin # MySQL 使用者名稱
+      - DB_PASSWORD=admin # MySQL 密碼
+      - DB_PORT=3306 # MySQL 端口
       - MONGODB_URL=mongodb://admin:admin@aiot-mongodb:27017/main_db?authSource=admin # MongoDB 連線字串
       - REDIS_URL=redis://aiot-redis:6379/0
+      - REDIS_HOST=aiot-redis # Redis 主機名稱
+      - REDIS_PORT=6379 # Redis 端口
+      - REDIS_DB=0 # Redis 資料庫編號
       - RABBITMQ_URL=amqp://admin:admin@aiot-rabbitmq:5672/
       - OLLAMA_URL=http://host.docker.internal:11434  # 指向 Windows 原生 Ollama
     

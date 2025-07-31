@@ -43,7 +43,7 @@ function App() {
    * @description 使用 React Query 和自定義 Hook 來管理認證狀態
    * 自動處理認證狀態的初始化、載入和錯誤狀態
    */
-  const { isInitialized } = useAuth();
+  useAuth();
 
   /**
    * 返回應用程式的 JSX 結構
@@ -56,7 +56,7 @@ function App() {
    * - NotificationContainer: 全域通知系統
    */
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true }}>
       {/* 啟用瀏覽器路由，支援 HTML5 history API */}
       <Suspense fallback={<div style={{ 
         display: 'flex', 
