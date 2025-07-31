@@ -373,7 +373,7 @@ export class RoleRepository implements IRoleRepository {
     try {
       logger.debug(`Finding roles by names: [${names.join(', ')}]`);
       
-      const roles = await RoleModel.findAll({
+      const roles: RoleModel[] = await RoleModel.findAll({
         where: {
           name: names
         },

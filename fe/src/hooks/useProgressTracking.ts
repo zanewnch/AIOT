@@ -18,20 +18,8 @@
 import { useSSE } from './useSSEQuery';
 // 導入類型定義
 import { ProgressInfo } from '../types/sse';
+import { ProgressState } from '../types/progress';
 
-/**
- * 進度追蹤狀態介面
- * 定義了進度追蹤過程中的完整狀態結構
- * @deprecated 請使用 useSSEQuery 中的 ProgressTrackingState
- */
-export interface ProgressState {
-  /** 是否正在追蹤進度 */
-  isTracking: boolean;
-  /** 當前進度資訊，null 表示尚未開始或已完成 */
-  progress: ProgressInfo | null;
-  /** 錯誤訊息，null 表示無錯誤 */
-  error: string | null;
-}
 
 /**
  * 進度追蹤自定義 Hook

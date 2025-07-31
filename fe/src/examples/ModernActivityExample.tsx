@@ -356,7 +356,7 @@ const UsageGuideContent: React.FC = () => {
             <div className="step-number">2</div>
             <div className="step-content">
               <h5>創建 Store</h5>
-              <code>const useStore = create((set) => ({...}))</code>
+              <code>{`const useStore = create((set) => ({...}))`}</code>
             </div>
           </div>
           <div className="step">

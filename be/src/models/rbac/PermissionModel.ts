@@ -5,6 +5,27 @@
  * 權限代表系統中的一個特定操作或功能，例如 'user.create', 'article.publish', 'device.delete'。
  * 權限可以被指派給角色，角色再指派給使用者，形成完整的存取控制體系。
  * 
+ * @example
+ * ```typescript
+ * // 範例資料格式
+ * const samplePermissionData = {
+ *   id: 1,
+ *   name: 'user.create',
+ *   description: 'Create users',
+ *   createdAt: new Date('2025-07-14T17:59:33.000Z'),
+ *   updatedAt: new Date('2025-07-14T17:59:33.000Z')
+ * };
+ * 
+ * const samplePermissions = [
+ *   { name: 'user.read', description: 'Read users and create Users' },
+ *   { name: 'role.create', description: 'Create roles' },
+ *   { name: 'permission.delete', description: 'Delete permissions' },
+ *   { name: 'rtk.read', description: 'Read RTK data' },
+ *   { name: 'data.view', description: 'View data' },
+ *   { name: 'system.admin', description: 'System administration' }
+ * ];
+ * ```
+ * 
  * @author AIOT System
  * @version 1.0.0
  * @since 2024

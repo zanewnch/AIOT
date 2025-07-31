@@ -33,55 +33,13 @@ class AuthRoutes {
     this.router = Router();
     this.authController = new AuthController();
     this.authMiddleware = new AuthMiddleware();
-    this.initializeRoutes();
-  }
-
-  /**
-   * 初始化所有認證路由
-   */
-  private initializeRoutes(): void {
-    this.setupLoginRoute();
-    this.setupLogoutRoute();
-  }
-
-  /**
-   * 設定使用者登入路由
-   * 
-   * 此端點用於使用者身份驗證，驗證使用者名稱和密碼後
-   * 生成 JWT 認證令牌。同時記錄登入活動用於安全審計。
-   * 
-   * @route POST /api/auth/login
-   * @group Auth - 認證相關端點
-   * @param {Object} body - 登入資訊
-   * @param {string} body.username - 使用者名稱
-   * @param {string} body.password - 密碼
-   * @returns {Object} 200 - 登入成功，返回 JWT 令牌
-   * @returns {Object} 400 - 請求參數錯誤
-   * @returns {Object} 401 - 帳號或密碼錯誤
-   * @returns {Object} 500 - 伺服器錯誤
-   */
-  private setupLoginRoute(): void {
+    
+    // 直接在 constructor 中設定所有路由
     this.router.post('/api/auth/login', 
       ActivityTrackingMiddleware.trackLogin,
       this.authController.login
     );
-  }
-
-  /**
-   * 設定使用者登出路由
-   * 
-   * 此端點用於使用者登出，撤銷 JWT 認證令牌並清除會話。
-   * 需要有效的 JWT 認證令牌才能執行登出操作。
-   * 同時記錄登出活動用於安全審計。
-   * 
-   * @route POST /api/auth/logout
-   * @group Auth - 認證相關端點
-   * @security JWT - 需要有效的 JWT 認證令牌
-   * @returns {Object} 200 - 登出成功
-   * @returns {Object} 401 - 未授權 (無效的 JWT 令牌)
-   * @returns {Object} 500 - 伺服器錯誤
-   */
-  private setupLogoutRoute(): void {
+    
     this.router.post('/api/auth/logout',
       this.authMiddleware.authenticate,
       ActivityTrackingMiddleware.trackLogout,

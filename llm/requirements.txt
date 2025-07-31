@@ -15,7 +15,9 @@ langchain-community>=0.0.10
 langchain-huggingface>=0.0.3
 chromadb>=0.4.18
 sentence-transformers>=2.6.0
+Pillow>=10.0.0
 Sphinx==7.2.6
 sphinx-rtd-theme==2.0.0
 sphinxcontrib-napoleon==0.7
 django-browser-reload==1.12.1
+beautifulsoup4==4.12.2

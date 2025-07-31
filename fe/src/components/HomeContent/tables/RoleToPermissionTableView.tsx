@@ -27,7 +27,7 @@ const logger = createLogger('RoleToPermissionTableView');
  */
 export const RoleToPermissionTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: roleToPermissionData, isLoading, error, refetch } = useRoleToPermissionData();
+  const { data: roleToPermissionData, isLoading, error, refetch } = useRolePermissions();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

@@ -17,6 +17,48 @@
  */
 
 /**
+ * 分頁參數類型定義
+ * 
+ * @interface PaginationParams
+ */
+export interface PaginationParams {
+    /** 頁碼，從 1 開始 */
+    page: number;
+    /** 每頁資料筆數 */
+    limit: number;
+    /** 排序欄位（可選） */
+    sortBy?: string;
+    /** 排序方向（可選） */
+    sortOrder?: 'ASC' | 'DESC';
+}
+
+/**
+ * 分頁資料回應類型定義
+ * 
+ * @template T - 回應資料的類型
+ * @interface PaginatedResponse
+ */
+export interface PaginatedResponse<T> {
+    /** 資料陣列 */
+    data: T[];
+    /** 分頁資訊 */
+    pagination: {
+        /** 當前頁碼 */
+        currentPage: number;
+        /** 每頁資料筆數 */
+        limit: number;
+        /** 總資料筆數 */
+        totalItems: number;
+        /** 總頁數 */
+        totalPages: number;
+        /** 是否有下一頁 */
+        hasNext: boolean;
+        /** 是否有上一頁 */
+        hasPrev: boolean;
+    };
+}
+
+/**
  * 統一的 API 回應類型定義
  * 
  * 此泛型類型定義了所有 API 端點的統一回應格式，確保前後端間的資料交換一致性。

@@ -63,3 +63,23 @@ export interface ProgressEvent {
  * @param {ProgressEvent} event - 進度事件
  */
 export type ProgressCallback = (event: ProgressEvent) => void;
+
+/**
+ * SSE 連接狀態
+ */
+export interface SSEConnectionState {
+  isConnected: boolean;
+  taskId: string | null;
+  connectionState: number;
+  lastConnectedAt: number | null;
+}
+
+/**
+ * 進度追蹤狀態
+ */
+export interface ProgressTrackingState {
+  progress: ProgressInfo | null;
+  isTracking: boolean;
+  error: string | null;
+  lastUpdated: number | null;
+}

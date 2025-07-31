@@ -23,5 +23,5 @@ COPY . .
 
 EXPOSE 3010
 
-# 執行階段：只啟動應用
-# CMD ["npm", "start"]
+# 執行階段：啟動開發服務器
+CMD ["npm", "run", "dev"]

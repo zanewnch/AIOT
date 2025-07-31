@@ -30,63 +30,6 @@ export const RTK_QUERY_KEYS = {
   DATA: ['rtk', 'data'] as const,
 } as const;
 
-/**
- * API 函數：獲取 RTK 定位資料
- */
-export const getRTKDataAPI = async (): Promise<RTKData[]> => {
-  try {
-    logger.debug('Fetching RTK data from API');
-    logRequest('/api/rtk/data', 'GET', 'Fetching RTK data');
-    
-    const response = await apiClient.get('/api/rtk/data');
-    const result = RequestResult.fromResponse<RTKData[]>(response);
-    
-    if (result.isError()) {
-      throw new Error(result.message);
-    }
-    
-    logger.info(`Successfully fetched ${result.data?.length || 0} RTK data entries`);
-    return result.unwrap();
-  } catch (error: any) {
-    console.error('Failed to fetch RTK data:', error);
-    logError(error, 'getRTKDataAPI', { endpoint: '/api/rtk/data' });
-    
-    throw {
-      message: error.response?.data?.message || 'Failed to fetch RTK data',
-      status: error.response?.status,
-      details: error.response?.data,
-    } as TableError;
-  }
-};
-
-/**
- * API 函數：更新 RTK 資料
- */
-export const updateRTKDataAPI = async (id: number, data: RTKDataUpdateRequest): Promise<UpdateResponse> => {
-  try {
-    logger.debug(`Updating RTK data with ID: ${id}`, data);
-    logRequest(`/api/rtk/data/${id}`, 'PUT', `Updating RTK data with ID: ${id}`);
-    
-    const response = await apiClient.put(`/api/rtk/data/${id}`, data);
-    const result = RequestResult.fromResponse<UpdateResponse>(response);
-    
-    if (result.isError()) {
-      throw new Error(result.message);
-    }
-    
-    logger.info(`Successfully updated RTK data with ID: ${id}`);
-    return result.unwrap();
-  } catch (error: any) {
-    console.error(`Failed to update RTK data with ID: ${id}:`, error);
-    logError(error, 'updateRTKDataAPI', { id, data, endpoint: `/api/rtk/data/${id}` });
-    
-    const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-    return {
-      success: false,
-      message: errorMsg
-    };
-  }
-};
 
 /**
  * RTK 數據查詢 Hook
@@ -94,7 +37,31 @@ export const updateRTKDataAPI = async (id: number, data: RTKDataUpdateRequest): 
 export const useRTKData = () => {
   return useQuery({
     queryKey: RTK_QUERY_KEYS.DATA,
-    queryFn: getRTKDataAPI,
+    queryFn: async (): Promise<RTKData[]> => {
+      try {
+        logger.debug('Fetching RTK data from API');
+        logRequest('/api/rtk/data', 'GET', 'Fetching RTK data');
+        
+        const response = await apiClient.get('/api/rtk/data');
+        const result = RequestResult.fromResponse<RTKData[]>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        logger.info(`Successfully fetched ${result.data?.length || 0} RTK data entries`);
+        return result.unwrap();
+      } catch (error: any) {
+        console.error('Failed to fetch RTK data:', error);
+        logError(error, 'getRTKDataAPI', { endpoint: '/api/rtk/data' });
+        
+        throw {
+          message: error.response?.data?.message || 'Failed to fetch RTK data',
+          status: error.response?.status,
+          details: error.response?.data,
+        } as TableError;
+      }
+    },
     staleTime: 2 * 60 * 1000, // 2分鐘
     gcTime: 5 * 60 * 1000, // 5分鐘
     retry: 2,
@@ -110,11 +77,26 @@ export const useUpdateRTKData = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: RTKDataUpdateRequest }) => {
-      const response = await updateRTKDataAPI(id, data);
-      if (!response.success) {
-        throw new Error(response.message || 'Update failed');
+      try {
+        logger.debug(`Updating RTK data with ID: ${id}`, data);
+        logRequest(`/api/rtk/data/${id}`, 'PUT', `Updating RTK data with ID: ${id}`);
+        
+        const response = await apiClient.put(`/api/rtk/data/${id}`, data);
+        const result = RequestResult.fromResponse<UpdateResponse>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        logger.info(`Successfully updated RTK data with ID: ${id}`);
+        return { id, data };
+      } catch (error: any) {
+        console.error(`Failed to update RTK data with ID: ${id}:`, error);
+        logError(error, 'updateRTKDataAPI', { id, data, endpoint: `/api/rtk/data/${id}` });
+        
+        const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+        throw new Error(errorMsg);
       }
-      return { id, data };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: RTK_QUERY_KEYS.DATA });

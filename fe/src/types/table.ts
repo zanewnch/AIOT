@@ -132,7 +132,7 @@ export interface RTKData {
 /**
  * 表格類型定義
  */
-export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK';
+export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK' | 'DronePosition' | 'DroneStatus' | 'DroneCommand' | 'DronePositionsArchive' | 'DroneStatusArchive' | 'DroneCommandsArchive' | 'ArchiveTask' | 'UserActivity' | 'UserPreference';
 
 /**
  * 更新操作回應介面

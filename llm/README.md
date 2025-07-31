@@ -106,7 +106,7 @@ python manage.py migrate <app_name> zero
 python manage.py test
 
 # 運行特定 app 的測試
-python manage.py test ollama_service
+python manage.py test transformers_service
 
 # 檢查程式碼品質（如果有 flake8）
 flake8 .
@@ -150,7 +150,7 @@ llm/
 │   ├── api_urls.py      # API 路由（查看所有端點）
 │   └── views.py         # API 首頁視圖
 │
-├── ollama_service/       # LLM 服務
+├── transformers_service/       # LLM 服務
 │   ├── controllers.py   # API 控制器
 │   ├── services.py      # 業務邏輯
 │   ├── repositories.py  # 資料存取

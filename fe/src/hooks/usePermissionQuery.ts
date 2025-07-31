@@ -30,54 +30,6 @@ export const PERMISSION_QUERY_KEYS = {
   LIST: ['permission', 'list'] as const,
 } as const;
 
-/**
- * API 函數：獲取權限列表
- */
-export const getPermissionsAPI = async (): Promise<Permission[]> => {
-  try {
-    logger.debug('Fetching permissions from API');
-    logRequest('/api/rbac/permissions', 'GET', 'Fetching permissions');
-    
-    const response = await apiClient.get('/api/rbac/permissions');
-    const result = RequestResult.fromResponse<Permission[]>(response);
-    
-    if (result.isError()) {
-      throw new Error(result.message);
-    }
-    
-    logger.info(`Successfully fetched ${result.data?.length || 0} permissions`);
-    return result.unwrap();
-  } catch (error: any) {
-    console.error('Failed to fetch permissions:', error);
-    logError(error, 'getPermissionsAPI', { endpoint: '/api/rbac/permissions' });
-    
-    throw {
-      message: error.response?.data?.message || 'Failed to fetch permissions',
-      status: error.response?.status,
-      details: error.response?.data,
-    } as TableError;
-  }
-};
-
-/**
- * API 函數：更新權限資料
- */
-export const updatePermissionAPI = async (id: number, data: PermissionUpdateRequest): Promise<UpdateResponse> => {
-  try {
-    logger.debug(`Updating permission with ID: ${id}`, data);
-    logRequest(`/api/rbac/permissions/${id}`, 'PUT', `Updating permission with ID: ${id}`);
-    
-    const response = await apiClient.put(`/api/rbac/permissions/${id}`, data);
-    
-    logger.info(`Successfully updated permission with ID: ${id}`);
-    return { success: true, data: response };
-  } catch (error: any) {
-    logError(error, 'updatePermissionAPI', { id, data, endpoint: `/api/rbac/permissions/${id}` });
-    
-    const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-    return { success: false, message: errorMsg };
-  }
-};
 
 /**
  * 權限數據查詢 Hook
@@ -85,7 +37,31 @@ export const updatePermissionAPI = async (id: number, data: PermissionUpdateRequ
 export const usePermissionData = () => {
   return useQuery({
     queryKey: PERMISSION_QUERY_KEYS.LIST,
-    queryFn: getPermissionsAPI,
+    queryFn: async (): Promise<Permission[]> => {
+      try {
+        logger.debug('Fetching permissions from API');
+        logRequest('/api/rbac/permissions', 'GET', 'Fetching permissions');
+        
+        const response = await apiClient.get('/api/rbac/permissions');
+        const result = RequestResult.fromResponse<Permission[]>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        logger.info(`Successfully fetched ${result.data?.length || 0} permissions`);
+        return result.unwrap();
+      } catch (error: any) {
+        console.error('Failed to fetch permissions:', error);
+        logError(error, 'getPermissionsAPI', { endpoint: '/api/rbac/permissions' });
+        
+        throw {
+          message: error.response?.data?.message || 'Failed to fetch permissions',
+          status: error.response?.status,
+          details: error.response?.data,
+        } as TableError;
+      }
+    },
     staleTime: 10 * 60 * 1000, // 10分鐘
     gcTime: 30 * 60 * 1000, // 30分鐘
     retry: 2,
@@ -100,11 +76,20 @@ export const useUpdatePermissionData = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: PermissionUpdateRequest }) => {
-      const response = await updatePermissionAPI(id, data);
-      if (!response.success) {
-        throw new Error(response.message || 'Update failed');
+      try {
+        logger.debug(`Updating permission with ID: ${id}`, data);
+        logRequest(`/api/rbac/permissions/${id}`, 'PUT', `Updating permission with ID: ${id}`);
+        
+        const response = await apiClient.put(`/api/rbac/permissions/${id}`, data);
+        
+        logger.info(`Successfully updated permission with ID: ${id}`);
+        return { id, data };
+      } catch (error: any) {
+        logError(error, 'updatePermissionAPI', { id, data, endpoint: `/api/rbac/permissions/${id}` });
+        
+        const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+        throw new Error(errorMsg);
       }
-      return { id, data };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PERMISSION_QUERY_KEYS.LIST });

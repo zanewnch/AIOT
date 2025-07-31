@@ -35,8 +35,8 @@ EXPOSE 8020
 # Create startup script in /usr/local/bin to avoid volume override
 RUN echo '#!/bin/bash\n\
 cd /app\n\
-# Run Django migrations\n\
-python manage.py migrate\n\
+# Run Django migrations first (before models are loaded)\n\
+DJANGO_SKIP_MODEL_LOADING=1 python manage.py migrate\n\
 \n\
 # Start Django development server\n\
 python manage.py runserver 0.0.0.0:8020' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh

@@ -44,67 +44,6 @@ export const QUERY_KEYS = {
 } as const;
 
 
-/**
- * API 函數：獲取用戶活動資料
- */
-const fetchUserActivity = async (): Promise<UserActivity> => {
-  const response = await apiClient.get('/api/user/activity');
-  const result = RequestResult.fromResponse<UserActivity>(response);
-  
-  if (result.isError()) {
-    throw new Error(result.message);
-  }
-  
-  return result.unwrap();
-};
-
-/**
- * API 函數：獲取活動統計資料
- */
-const fetchActivityStats = async (): Promise<ActivityStats> => {
-  const response = await apiClient.get('/api/user/activity/stats');
-  const result = RequestResult.fromResponse<ActivityStats>(response);
-  
-  if (result.isError()) {
-    throw new Error(result.message);
-  }
-  
-  return result.unwrap();
-};
-
-/**
- * API 函數：記錄頁面訪問
- */
-const recordPageVisitAPI = async (page: string, duration?: number): Promise<void> => {
-  try {
-    const response = await apiClient.post('/api/user/activity/page-visit', { page, duration });
-    const result = RequestResult.fromResponse(response);
-    
-    if (result.isError()) {
-      throw new Error(result.message);
-    }
-  } catch (error) {
-    console.error('Failed to record page visit:', error);
-    throw error;
-  }
-};
-
-/**
- * API 函數：更新會話信息
- */
-const updateSessionInfoAPI = async (sessionDuration?: number, deviceInfo?: string): Promise<void> => {
-  try {
-    const response = await apiClient.post('/api/user/activity/session', { sessionDuration, deviceInfo });
-    const result = RequestResult.fromResponse(response);
-    
-    if (result.isError()) {
-      throw new Error(result.message);
-    }
-  } catch (error) {
-    console.error('Failed to update session info:', error);
-    throw error;
-  }
-};
 
 /**
  * 獲取用戶活動數據的 Hook
@@ -122,7 +61,14 @@ export const useUserActivity = () => {
     queryKey: QUERY_KEYS.USER_ACTIVITY,
     queryFn: async (): Promise<UserActivity> => {
       try {
-        const data = await fetchUserActivity();
+        const response = await apiClient.get('/api/user/activity');
+        const result = RequestResult.fromResponse<UserActivity>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        const data = result.unwrap();
         setActivity(data);
         setError(null);
         return data;
@@ -155,7 +101,14 @@ export const useActivityStats = () => {
     queryKey: QUERY_KEYS.ACTIVITY_STATS,
     queryFn: async (): Promise<ActivityStats> => {
       try {
-        const data = await fetchActivityStats();
+        const response = await apiClient.get('/api/user/activity/stats');
+        const result = RequestResult.fromResponse<ActivityStats>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        const data = result.unwrap();
         setStats(data);
         setError(null);
         return data;
@@ -187,8 +140,18 @@ export const useRecordPageVisit = () => {
   const setError = useActivityStore((state) => state.setError);
 
   return useMutation({
-    mutationFn: async ({ page, duration }: { page: string; duration?: number }) => {
-      return await recordPageVisitAPI(page, duration);
+    mutationFn: async ({ page, duration }: { page: string; duration?: number }): Promise<void> => {
+      try {
+        const response = await apiClient.post('/api/user/activity/page-visit', { page, duration });
+        const result = RequestResult.fromResponse(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.error('Failed to record page visit:', error);
+        throw error;
+      }
     },
     onMutate: async ({ page }) => {
       // 樂觀更新：立即更新本地狀態
@@ -231,8 +194,18 @@ export const useUpdateSessionInfo = () => {
     }: { 
       sessionDuration?: number; 
       deviceInfo?: string; 
-    }) => {
-      return await updateSessionInfoAPI(sessionDuration, deviceInfo);
+    }): Promise<void> => {
+      try {
+        const response = await apiClient.post('/api/user/activity/session', { sessionDuration, deviceInfo });
+        const result = RequestResult.fromResponse(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.error('Failed to update session info:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       // 成功後使用戶活動查詢無效

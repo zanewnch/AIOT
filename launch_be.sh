@@ -2,8 +2,8 @@
 
 # 檢查 AIOT-be container 是否正在運行
 if docker ps --format "table {{.Names}}" | grep -q "AIOT-be"; then
-    echo "AIOT-be container is running, entering container..."
-    docker exec -it AIOT-be /bin/bash
+    echo "AIOT-be container is running, showing Express server logs..."
+    docker logs -f AIOT-be
 else
     echo "AIOT-be container is not running, starting development server..."
     cd be

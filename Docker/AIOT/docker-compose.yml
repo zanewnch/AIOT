@@ -38,7 +38,7 @@ services: # 定義所有要運行的服務（容器）
     networks:
       - aiot-compose-network # 指定使用的網路
     volumes:
-      - ../../:/app # 將本地 AIOT 整個資料夾掛載到容器 /app
+      - ../../fe:/app/fe # 將本地 fe 資料夾掛載到容器 /app/fe
     restart: unless-stopped # 當容器異常停止時自動重啟
 
   # 後端服務 - Express.js API
@@ -75,7 +75,7 @@ services: # 定義所有要運行的服務（容器）
     networks:
       - aiot-compose-network
     volumes:
-      - ../../:/app # 將本地 AIOT 整個資料夾掛載到容器 /app
+      - ../../be:/app/be # 將本地 be 資料夾掛載到容器 /app/be
     restart: unless-stopped # 當容器異常停止時自動重啟
 
   # LLM 服務 - Django

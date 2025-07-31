@@ -16,7 +16,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useCallback, useEffect } from 'react';
-import { ProgressEvent, ProgressInfo } from '../types/sse';
+import { ProgressEvent, ProgressInfo, SSEConnectionState, ProgressTrackingState } from '../types/sse';
 
 /**
  * React Query 查詢鍵
@@ -26,25 +26,6 @@ export const SSE_QUERY_KEYS = {
   CONNECTION_STATUS: (taskId: string) => ['sse', 'connection', taskId] as const,
 } as const;
 
-/**
- * SSE 連接狀態
- */
-export interface SSEConnectionState {
-  isConnected: boolean;
-  taskId: string | null;
-  connectionState: number;
-  lastConnectedAt: number | null;
-}
-
-/**
- * 進度追蹤狀態
- */
-export interface ProgressTrackingState {
-  progress: ProgressInfo | null;
-  isTracking: boolean;
-  error: string | null;
-  lastUpdated: number | null;
-}
 
 /**
  * SSE 連接管理 Hook
