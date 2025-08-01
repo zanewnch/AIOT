@@ -11,7 +11,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
-import { createLogger, logRequest, logError } from '../configs/loggerConfig';
+import { createLogger } from '../configs/loggerConfig';
 import type { 
   RTKData, 
   UpdateResponse, 
@@ -40,7 +40,6 @@ export const useRTKData = () => {
     queryFn: async (): Promise<RTKData[]> => {
       try {
         logger.debug('Fetching RTK data from API');
-        logRequest('/api/rtk/data', 'GET', 'Fetching RTK data');
         
         const response = await apiClient.get('/api/rtk/data');
         const result = RequestResult.fromResponse<RTKData[]>(response);
@@ -53,7 +52,6 @@ export const useRTKData = () => {
         return result.unwrap();
       } catch (error: any) {
         console.error('Failed to fetch RTK data:', error);
-        logError(error, 'getRTKDataAPI', { endpoint: '/api/rtk/data' });
         
         throw {
           message: error.response?.data?.message || 'Failed to fetch RTK data',
@@ -79,7 +77,6 @@ export const useUpdateRTKData = () => {
     mutationFn: async ({ id, data }: { id: number; data: RTKDataUpdateRequest }) => {
       try {
         logger.debug(`Updating RTK data with ID: ${id}`, data);
-        logRequest(`/api/rtk/data/${id}`, 'PUT', `Updating RTK data with ID: ${id}`);
         
         const response = await apiClient.put(`/api/rtk/data/${id}`, data);
         const result = RequestResult.fromResponse<UpdateResponse>(response);
@@ -92,7 +89,6 @@ export const useUpdateRTKData = () => {
         return { id, data };
       } catch (error: any) {
         console.error(`Failed to update RTK data with ID: ${id}:`, error);
-        logError(error, 'updateRTKDataAPI', { id, data, endpoint: `/api/rtk/data/${id}` });
         
         const errorMsg = error.response?.data?.message || error.message || 'Update failed';
         throw new Error(errorMsg);

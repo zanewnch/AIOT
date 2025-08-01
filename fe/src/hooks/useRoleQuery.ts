@@ -12,7 +12,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
-import { createLogger, logRequest, logError } from '../configs/loggerConfig';
+import { createLogger } from '../configs/loggerConfig';
 import type { 
   Role, 
   Permission,
@@ -43,7 +43,6 @@ export const useRoleData = () => {
     queryFn: async (): Promise<Role[]> => {
       try {
         logger.debug('Fetching roles from API');
-        logRequest('/api/rbac/roles', 'GET', 'Fetching roles');
         
         const response = await apiClient.get('/api/rbac/roles');
         const result = RequestResult.fromResponse<Role[]>(response);
@@ -56,7 +55,6 @@ export const useRoleData = () => {
         return result.unwrap();
       } catch (error: any) {
         console.error('Failed to fetch roles:', error);
-        logError(error, 'getRolesAPI', { endpoint: '/api/rbac/roles' });
         
         throw {
           message: error.response?.data?.message || 'Failed to fetch roles',
@@ -80,7 +78,6 @@ export const useRolePermissions = (roleId: number, enabled: boolean = true) => {
     queryFn: async (): Promise<Permission[]> => {
       try {
         logger.debug(`Fetching permissions for role ${roleId}`);
-        logRequest(`/api/rbac/roles/${roleId}/permissions`, 'GET', `Fetching permissions for role ${roleId}`);
         
         const response = await apiClient.get<Permission[]>(`/api/rbac/roles/${roleId}/permissions`);
         
@@ -88,7 +85,6 @@ export const useRolePermissions = (roleId: number, enabled: boolean = true) => {
         return response;
       } catch (error: any) {
         console.error(`Failed to fetch permissions for role ${roleId}:`, error);
-        logError(error, 'getRoleToPermissionAPI', { roleId, endpoint: `/api/rbac/roles/${roleId}/permissions` });
         
         throw {
           message: error.response?.data?.message || `Failed to fetch permissions for role ${roleId}`,
@@ -114,14 +110,12 @@ export const useUpdateRoleData = () => {
     mutationFn: async ({ id, data }: { id: number; data: RoleUpdateRequest }) => {
       try {
         logger.debug(`Updating role with ID: ${id}`, data);
-        logRequest(`/api/rbac/roles/${id}`, 'PUT', `Updating role with ID: ${id}`);
         
         const response = await apiClient.put(`/api/rbac/roles/${id}`, data);
         
         logger.info(`Successfully updated role with ID: ${id}`);
         return { id, data };
       } catch (error: any) {
-        logError(error, 'updateRoleAPI', { id, data, endpoint: `/api/rbac/roles/${id}` });
         
         const errorMsg = error.response?.data?.message || error.message || 'Update failed';
         throw new Error(errorMsg);

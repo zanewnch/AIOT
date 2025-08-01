@@ -33,7 +33,7 @@ import {
   UserPreferenceTableView // 使用者偏好設定表格視圖組件
 } from './tables'; // 引入表格組件
 import styles from '../../styles/TableViewer.module.scss'; // 引入表格樣式
-import { createLogger, logUserAction } from '../../configs/loggerConfig'; // 引入日誌配置
+import { createLogger } from '../../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 表格視圖組件的屬性介面
@@ -110,12 +110,6 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
       tableTitle: viewItems.find(viewItem => viewItem.viewName === tableType)?.title
     });
 
-    // 記錄用戶操作
-    logUserAction('table_switch', {
-      from: activeTable,
-      to: tableType,
-      tableTitle: viewItems.find(viewItem => viewItem.viewName === tableType)?.title
-    });
 
     setActiveTable(tableType); // 設置活動表格
   };

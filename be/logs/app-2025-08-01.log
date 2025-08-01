@@ -1,0 +1,23 @@
+2025-08-01 03:12:43.913 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-01 03:12:43.916 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-01 03:24:57.827 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-01 03:24:57.830 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-01 03:25:24.406 [AIOT-BE] INFO: Login attempt for user: test {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-01 03:25:24.407 [AIOT-BE] INFO: Starting login authentication for user: test, IP: ::ffff:172.18.0.1
+2025-08-01 03:25:24.408 [AIOT-BE] INFO: Login attempt for username: test from IP: ::ffff:172.18.0.1
+2025-08-01 03:25:24.425 [AIOT-BE] WARN: Login failed: User not found for username: test
+2025-08-01 03:25:24.426 [AIOT-BE] WARN: Authentication failed for user: test, reason: Invalid credentials, IP: ::ffff:172.18.0.1
+2025-08-01 03:25:24.426 [AIOT-BE] WARN: Auth event: login for test - FAILED {"event":"login","username":"test","success":false,"reason":"Invalid credentials","ip":"::ffff:172.18.0.1"}
+2025-08-01 03:30:26.831 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-01 03:30:26.832 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-01 03:30:26.832 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-01 03:30:26.900 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-01 03:30:26.901 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: true
+2025-08-01 03:30:26.902 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":true,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-01 03:30:39.851 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-01 03:30:39.851 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-01 03:30:39.852 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-01 03:30:39.908 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-01 03:30:39.909 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-01 03:30:39.910 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-01 03:30:39.910 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}

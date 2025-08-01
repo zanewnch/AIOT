@@ -11,7 +11,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
-import { createLogger, logRequest, logError } from '../configs/loggerConfig';
+import { createLogger } from '../configs/loggerConfig';
 import type { 
   Permission, 
   UpdateResponse, 
@@ -40,7 +40,6 @@ export const usePermissionData = () => {
     queryFn: async (): Promise<Permission[]> => {
       try {
         logger.debug('Fetching permissions from API');
-        logRequest('/api/rbac/permissions', 'GET', 'Fetching permissions');
         
         const response = await apiClient.get('/api/rbac/permissions');
         const result = RequestResult.fromResponse<Permission[]>(response);
@@ -53,7 +52,6 @@ export const usePermissionData = () => {
         return result.unwrap();
       } catch (error: any) {
         console.error('Failed to fetch permissions:', error);
-        logError(error, 'getPermissionsAPI', { endpoint: '/api/rbac/permissions' });
         
         throw {
           message: error.response?.data?.message || 'Failed to fetch permissions',
@@ -78,14 +76,12 @@ export const useUpdatePermissionData = () => {
     mutationFn: async ({ id, data }: { id: number; data: PermissionUpdateRequest }) => {
       try {
         logger.debug(`Updating permission with ID: ${id}`, data);
-        logRequest(`/api/rbac/permissions/${id}`, 'PUT', `Updating permission with ID: ${id}`);
         
         const response = await apiClient.put(`/api/rbac/permissions/${id}`, data);
         
         logger.info(`Successfully updated permission with ID: ${id}`);
         return { id, data };
       } catch (error: any) {
-        logError(error, 'updatePermissionAPI', { id, data, endpoint: `/api/rbac/permissions/${id}` });
         
         const errorMsg = error.response?.data?.message || error.message || 'Update failed';
         throw new Error(errorMsg);

@@ -13,7 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Navigate, useLocation } from 'react-router-dom'; // 引入 React Router 的導航組件和路徑 Hook
 import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
-import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
+import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 受保護路由組件的屬性介面
@@ -119,11 +119,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       redirectPath
     });
 
-    logUserAction('access_denied', {
-      attemptedPath: location.pathname,
-      search: location.search,
-      reason: 'not_authenticated'
-    });
 
     return (
       <Navigate 
@@ -140,10 +135,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     search: location.search
   });
 
-  logUserAction('access_granted', {
-    path: location.pathname,
-    search: location.search
-  });
 
   return <>{children}</>;
 };
