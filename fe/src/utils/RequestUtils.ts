@@ -252,36 +252,6 @@ export class RequestUtils {
     this.apiClient.defaults.baseURL = baseURL;
   }
 
-  /**
-   * 設置認證 token 到請求標頭
-   *
-   * @param {string} token - JWT token 或其他認證 token
-   * @returns {void}
-   *
-   * @example
-   * ```typescript
-   * requestUtils.setAuthToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
-   * ```
-   */
-  setAuthToken(token: string): void {
-    // 設置 Authorization header
-    this.apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  }
-
-  /**
-   * 清除認證 token
-   *
-   * @returns {void}
-   *
-   * @example
-   * ```typescript
-   * requestUtils.clearAuthToken();
-   * ```
-   */
-  clearAuthToken(): void {
-    // 清除 Authorization header
-    delete this.apiClient.defaults.headers.common['Authorization'];
-  }
 
   // ========== 新增：使用 RequestResult 的統一響應處理方法 ==========
 

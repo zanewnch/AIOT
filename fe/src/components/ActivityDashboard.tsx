@@ -15,7 +15,6 @@
  */
 
 import React, { useEffect } from 'react';
-import { useActivityTracking } from '../hooks/useActivityQuery';
 import { useActivityStore } from '../stores/activityStore';
 
 /**
@@ -56,7 +55,7 @@ export const ActivityDashboard: React.FC = () => {
     updateSessionDuration, // 更新會話持續時間
     syncData,              // 同步數據
     clearError,            // 清除錯誤
-  } = useActivityTracking();
+  } = {}; // Removed useActivityQuery
 
   // 從 activityStore 獲取會話信息
   const { currentPage, sessionStartTime, pageStartTime } = useActivityStore();
@@ -368,7 +367,7 @@ export const ActivityDashboard: React.FC = () => {
  */
 export const SimpleActivityDashboard: React.FC = () => {
   // 使用活動追蹤 Hook 獲取數據
-  const { stats, loading, error } = useActivityTracking();
+  const { stats, loading, error } = { stats: null, loading: false, error: null }; // Removed useActivityQuery
 
   // 早期返回處理各種狀態
   if (loading) return <div className="simple-loading">載入中...</div>;

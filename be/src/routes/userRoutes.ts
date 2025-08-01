@@ -17,7 +17,6 @@
 import { Router } from 'express';
 import { userPreferenceRoutes } from './userPreferenceRoutes.js';
 import { userActivityRoutes } from './userActivityRoutes.js';
-import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js';
 
 /**
  * 使用者路由類別
@@ -31,7 +30,6 @@ class UserRoutes {
     this.router = Router();
     
     // 直接在 constructor 中設定所有路由
-    this.router.use(ActivityTrackingMiddleware.trackActivity);
     this.router.use('/api/user', userPreferenceRoutes);
     this.router.use('/api/user', userActivityRoutes);
   }

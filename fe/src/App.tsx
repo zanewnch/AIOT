@@ -13,7 +13,7 @@
 
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // 引入 React Router 相關組件進行路由管理
 import { Suspense, lazy } from "react"; // 引入 React 懶加載相關組件
-import { useAuth } from "./hooks/useAuthQuery"; // 引入認證 Hook
+import { useAuth } from "./stores"; // 引入認證 Hook
 import { NotificationContainer } from "./components/Notification/NotificationContainer"; // 引入通知容器組件
 import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路由組件
 

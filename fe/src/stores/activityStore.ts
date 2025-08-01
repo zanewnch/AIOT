@@ -161,5 +161,5 @@ export const useActivityStore = create<ActivityStore>()(
   )
 );
 
-// 注意：React Query hooks 現在都在 ../hooks/useActivityQuery.ts 中
+// 注意：React Query hooks have been removed
 // 這個檔案只負責純粹的 Zustand 狀態管理

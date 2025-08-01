@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import { useDronePositions, useUpdateDronePosition } from '../../../hooks/useDronePositionQuery';
+import { useDronePositionsQuery } from '../../../hooks/useDronePositionQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import { DronePosition } from '../../../types/dronePosition';
@@ -35,8 +35,9 @@ const logger = createLogger('DronePositionTableView');
  */
 export const DronePositionTableView: React.FC = () => {
   // React Query hooks for data management
-  const { data: dronePositionData, isLoading, error, refetch } = useDronePositions();
-  const updateDronePositionMutation = useUpdateDronePosition();
+  const dronePositionsQuery = useDronePositionsQuery();
+  const { data: dronePositionData, isLoading, error, refetch } = dronePositionsQuery.all;
+  const updateDronePositionMutation = dronePositionsQuery.update;
 
   // Zustand stores for UI state
   const {

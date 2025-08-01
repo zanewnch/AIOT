@@ -12,7 +12,7 @@
  */
 
 import React from 'react';
-import { useDroneCommands } from '../../../hooks/useDroneCommandQuery';
+import { useDroneCommandQuery } from '../../../hooks/useDroneCommandQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
@@ -28,7 +28,8 @@ const logger = createLogger('DroneCommandTableView');
  */
 export const DroneCommandTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: droneCommandData, isLoading, error, refetch } = useDroneCommands();
+  const droneCommandQuery = useDroneCommandQuery();
+  const { data: droneCommandData, isLoading, error, refetch } = droneCommandQuery.useAllDroneCommands();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

@@ -17,7 +17,6 @@
 import { Router } from 'express';
 import { DroneCommandController } from '../controllers/DroneCommandController.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
-import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js';
 
 /**
  * 無人機指令路由類別

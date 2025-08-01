@@ -12,7 +12,6 @@ import React, { useState } from 'react';
 import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
 import { QueryProvider } from '../configs/queryConfig';
 import { useActivityStore } from '../stores/activityStore';
-import { useActivityTracking } from '../hooks/useActivityQuery';
 
 /**
  * 現代化活動追蹤示例的內容組件
@@ -29,13 +28,14 @@ const ModernActivityContent: React.FC = () => {
   } = useActivityStore();
 
   // 使用綜合 Hook
+  // const activityQuery = useActivityQuery(); // Removed
   const {
     stats,
     loading,
     error,
     trackPageVisit,
     syncData,
-  } = useActivityTracking();
+  } = activityQuery.tracking();
 
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab);

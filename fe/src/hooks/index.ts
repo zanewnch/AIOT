@@ -6,24 +6,21 @@
  * @author AIOT Development Team
  */
 
-// 表格查詢相關 hooks
-export * from './useRTKQuery';
-export * from './useRoleQuery';
-export * from './useUserQuery';
-export * from './usePermissionQuery';
-export * from './useArchiveTaskQuery';
-export * from './useDroneCommandQuery';
-export * from './useDronePositionQuery';
-export * from './useDronePositionsArchiveQuery';
-export * from './useDroneStatusArchiveQuery';
-export * from './useDroneStatusQuery';
-export * from './useProgressQuery';
-export * from './useRbacQuery';
-export * from './useUserPreferenceQuery';
+// 主要查詢 hooks - 統一的 useXxxQuery 格式
+export { useAuthQuery } from './useAuthQuery';
+export { useUserQuery } from './useUserQuery';
+export { useRbacQuery } from './useRbacQuery';
+export { useDroneCommandQuery } from './useDroneCommandQuery';
+export { useDroneStatusQuery } from './useDroneStatusQuery';
+export { useDronePositionsQuery } from './useDronePositionQuery';
+export { usePermissionQuery } from './usePermissionQuery';
+export { useRoleQuery } from './useRoleQuery';
+export { useRTKQuery } from './useRTKQuery';
+export { useSSEQuery } from './useSSEQuery';
+export { useInitQuery } from './useInitQuery';
 
-// 其他業務邏輯 hooks
-export * from './useAuthQuery';
-export * from './useActivityQuery';
-export * from './useInitQuery';
-export * from './useProgressTracking';
-export * from './useSSEQuery';
+// 其他專用 hooks
+export * from './useArchiveTaskQuery';
+export { useDronePositionsArchiveQuery } from './useDronePositionsArchiveQuery';
+export { useDroneStatusArchiveQuery } from './useDroneStatusArchiveQuery';
+export * from './useUserPreferenceQuery';

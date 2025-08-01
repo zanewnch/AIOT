@@ -17,7 +17,6 @@
 import { Router } from 'express';
 import { AuthController } from '../controllers/AuthController.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
-import { ActivityTrackingMiddleware } from '../middlewares/ActivityTrackingMiddleware.js';
 
 /**
  * 認證路由類別
@@ -36,13 +35,11 @@ class AuthRoutes {
     
     // 直接在 constructor 中設定所有路由
     this.router.post('/api/auth/login', 
-      ActivityTrackingMiddleware.trackLogin,
       this.authController.login
     );
     
     this.router.post('/api/auth/logout',
       this.authMiddleware.authenticate,
-      ActivityTrackingMiddleware.trackLogout,
       this.authController.logout
     );
   }

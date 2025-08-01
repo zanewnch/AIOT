@@ -12,7 +12,7 @@
 
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Navigate, useLocation } from 'react-router-dom'; // 引入 React Router 的導航組件和路徑 Hook
-import { useAuth } from '../hooks/useAuthQuery'; // 引入認證 Hook
+import { useAuth } from '../stores'; // 引入認證 Hook
 import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**

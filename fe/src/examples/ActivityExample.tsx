@@ -11,7 +11,6 @@
 import React from 'react';
 import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
 import { QueryProvider } from '../configs/queryConfig';
-import { useActivityTracking } from '../hooks/useActivityQuery';
 
 /**
  * 活動追蹤示例的主要內容組件
@@ -19,6 +18,7 @@ import { useActivityTracking } from '../hooks/useActivityQuery';
  * 展示如何使用 Zustand + React Query 進行狀態管理
  */
 const ActivityExampleContent: React.FC = () => {
+  // const activityQuery = useActivityQuery(); // Removed
   const {
     autoTrackingEnabled,
     toggleAutoTracking,
@@ -27,7 +27,7 @@ const ActivityExampleContent: React.FC = () => {
     loading,
     error,
     sessionInfo,
-  } = useActivityTracking();
+  } = { autoTrackingEnabled: false, toggleAutoTracking: () => {}, trackPageVisit: () => {}, syncData: () => {}, loading: false, error: null, sessionInfo: null }; // Removed activityQuery
 
   const handlePageNavigation = (page: string) => {
     trackPageVisit(page);
