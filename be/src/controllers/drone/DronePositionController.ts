@@ -16,11 +16,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express'; // 匯入 Express 的核心型別定義
-import { DronePositionService } from '../services/DronePositionService.js'; // 匯入無人機位置服務層
-import type { IDronePositionService } from '../types/services/IDronePositionService.js'; // 匯入無人機位置服務介面
-import { createLogger, logRequest } from '../configs/loggerConfig.js'; // 匯入日誌記錄器
-import { ControllerResult } from '../utils/ControllerResult.js'; // 匯入控制器結果介面
-import type { DronePositionCreationAttributes } from '../models/DronePositionModel.js'; // 匯入無人機位置類型
+import { DronePositionService } from '../../services/drone/DronePositionService.js'; // 匯入無人機位置服務層
+import type { IDronePositionService } from '../../types/services/IDronePositionService.js'; // 匯入無人機位置服務介面
+import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 匯入日誌記錄器
+import { ControllerResult } from '../../utils/ControllerResult.js'; // 匯入控制器結果介面
+import type { DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js'; // 匯入無人機位置類型
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DronePositionController');

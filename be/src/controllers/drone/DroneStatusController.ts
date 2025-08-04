@@ -22,11 +22,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneStatusService } from '../services/DroneStatusService.js';
-import type { IDroneStatusService } from '../types/services/IDroneStatusService.js';
-import { createLogger, logRequest } from '../configs/loggerConfig.js';
-import { ControllerResult } from '../utils/ControllerResult.js';
-import type { DroneStatusCreationAttributes, DroneStatus } from '../models/DroneStatusModel.js';
+import { DroneStatusService } from '../../services/drone/DroneStatusService.js';
+import type { IDroneStatusService } from '../../types/services/IDroneStatusService.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
+import type { DroneStatusCreationAttributes, DroneStatus } from '../../models/drone/DroneStatusModel.js';
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DroneStatusController');

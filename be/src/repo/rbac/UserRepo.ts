@@ -33,15 +33,15 @@
  */
 
 // 引入使用者模型，用於基本的使用者資料操作
-import { UserModel } from '../models/rbac/UserModel.js';
+import { UserModel } from '../../models/rbac/UserModel.js';
 // 引入角色模型，用於使用者角色關聯查詢
-import { RoleModel } from '../models/rbac/RoleModel.js';
+import { RoleModel } from '../../models/rbac/RoleModel.js';
 // 引入權限模型，用於角色權限關聯查詢
-import { PermissionModel } from '../models/rbac/PermissionModel.js';
+import { PermissionModel } from '../../models/rbac/PermissionModel.js';
 // 引入使用者資料存取介面
-import type { IUserRepository } from '../types/repositories/IUserRepository.js';
+import type { IUserRepository } from '../../types/repositories/IUserRepository.js';
 // 引入日誌記錄器
-import { createLogger } from '../configs/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('UserRepository');
 

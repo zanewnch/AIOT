@@ -35,7 +35,7 @@ import bcrypt from 'bcrypt';
 // 匯入 jsonwebtoken 庫，用於 JWT 憑證生成和驗證
 import jwt from 'jsonwebtoken';
 // 匯入使用者資料存取層，提供使用者資料的查詢功能
-import { UserRepository } from '../repo/UserRepo.js';
+import { UserRepository } from '../repo/rbac/UserRepo.js';
 import { IUserRepository } from '../types/repositories/IUserRepository.js';
 // 匯入使用者模型，定義使用者資料結構
 import { UserModel } from '../models/rbac/UserModel.js';

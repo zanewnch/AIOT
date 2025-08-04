@@ -24,12 +24,12 @@ import {
   UserRoleModel, 
   UserRoleAttributes, 
   UserRoleCreationAttributes 
-} from '../models/rbac/UserToRoleModel.js';
-import { UserModel } from '../models/rbac/UserModel.js';
-import { RoleModel } from '../models/rbac/RoleModel.js';
-import { createLogger } from '../configs/loggerConfig.js';
+} from '../../models/rbac/UserToRoleModel.js';
+import { UserModel } from '../../models/rbac/UserModel.js';
+import { RoleModel } from '../../models/rbac/RoleModel.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
-import type { IUserRoleRepository } from '../types/repositories/IUserRoleRepository.js';
+import type { IUserRoleRepository } from '../../types/repositories/IUserRoleRepository.js';
 
 const logger = createLogger('UserRoleRepository');
 

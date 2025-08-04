@@ -40,13 +40,13 @@
  */
 
 // 匯入使用者角色資料存取層，用於使用者角色關聯管理操作
-import { UserRoleRepository } from '../repo/UserRoleRepo.js';
+import { UserRoleRepository } from '../../repo/rbac/UserRoleRepo.js';
 import type { IUserRoleRepository } from '../../types/repositories/IUserRoleRepository.js';
 // 匯入使用者資料存取層，用於使用者驗證
-import { UserRepository } from '../repo/UserRepo.js';
+import { UserRepository } from '../../repo/rbac/UserRepo.js';
 import type { IUserRepository } from '../../types/repositories/IUserRepository.js';
 // 匯入角色資料存取層，用於角色驗證
-import { RoleRepository } from '../repo/RoleRepo.js';
+import { RoleRepository } from '../../repo/rbac/RoleRepo.js';
 import type { IRoleRepository } from '../../types/repositories/IRoleRepository.js';
 // 匯入模型類型
 import { UserModel } from '../../models/rbac/UserModel.js';

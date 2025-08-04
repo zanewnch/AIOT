@@ -11,8 +11,8 @@
 
 import type { IDroneCommandsArchiveService } from '../../types/services/IDroneCommandsArchiveService.js';
 import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
-import { DroneCommandsArchiveRepository } from '../repo/DroneCommandsArchiveRepo.js';
-import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
+import { DroneCommandsArchiveRepository } from '../../repo/drone/DroneCommandsArchiveRepo.js';
+import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
 // 創建 Service 專用的日誌記錄器

@@ -32,12 +32,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneCommandService } from '../services/DroneCommandService.js';
-import type { IDroneCommandService } from '../types/services/IDroneCommandService.js';
-import type { PaginationParams } from '../types/ApiResponseType.js';
-import { createLogger, logRequest } from '../configs/loggerConfig.js';
-import { ControllerResult } from '../utils/ControllerResult.js';
-import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../models/DroneCommandModel.js';
+import { DroneCommandService } from '../../services/drone/DroneCommandService.js';
+import type { IDroneCommandService } from '../../types/services/IDroneCommandService.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
+import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DroneCommandController');
@@ -145,7 +144,7 @@ export class DroneCommandController {
                     id: result.command.id
                 });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Command creation failed', { error: result.error });
             }
@@ -589,7 +588,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Takeoff command sent successfully', { droneId, commandId: result.command.id });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Takeoff command failed', { droneId, error: result.error });
             }
@@ -625,7 +624,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Land command sent successfully', { droneId, commandId: result.command.id });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Land command failed', { droneId, error: result.error });
             }
@@ -661,7 +660,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Move command sent successfully', { droneId, commandId: result.command.id });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Move command failed', { droneId, error: result.error });
             }
@@ -697,7 +696,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Hover command sent successfully', { droneId, commandId: result.command.id });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Hover command failed', { droneId, error: result.error });
             }
@@ -733,7 +732,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Return command sent successfully', { droneId, commandId: result.command.id });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Return command failed', { droneId, error: result.error });
             }
@@ -769,7 +768,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Command execution started successfully', { commandId });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Command execution failed', { commandId, error: result.error });
             }
@@ -805,7 +804,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Command completed successfully', { commandId });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Command completion failed', { commandId, error: result.error });
             }
@@ -842,7 +841,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Command marked as failed successfully', { commandId });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Command fail marking failed', { commandId, error: result.error });
             }
@@ -880,7 +879,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Command cancelled successfully', { commandId });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Command cancellation failed', { commandId, error: result.error });
             }
@@ -1023,7 +1022,7 @@ export class DroneCommandController {
                 res.status(response.status).json(response);
                 logger.info('Command retried successfully', { originalCommandId: commandId, newCommandId: result.command.id });
             } else {
-                const response = ControllerResult.badRequest(result.message, null, result.error);
+                const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
                 logger.warn('Command retry failed', { commandId, error: result.error });
             }

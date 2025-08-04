@@ -1,18 +1,18 @@
 /**
  * @fileoverview 無人機指令歷史歸檔 Repository 實現
- * 
+ *
  * 實現無人機指令歷史歸檔資料存取層的具體邏輯，使用 Sequelize ORM 進行資料庫操作。
  * 遵循 Repository Pattern，提供清晰的資料存取介面。
- * 
+ *
  * @author AIOT Team
  * @version 1.0.0
  * @since 2024-01-01
  */
 
-import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes, type DroneCommandsArchiveCreationAttributes } from '../models/DroneCommandsArchiveModel.js';
-import type { IDroneCommandsArchiveRepository } from '../types/repositories/IDroneCommandsArchiveRepository.js';
-import type { PaginationParams, PaginatedResponse } from '../types/ApiResponseType.js';
-import { createLogger } from '../configs/loggerConfig.js';
+import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes, type DroneCommandsArchiveCreationAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
+import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
+import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
 
 // 創建 Repository 專用的日誌記錄器
@@ -20,16 +20,16 @@ const logger = createLogger('DroneCommandsArchiveRepository');
 
 /**
  * 無人機指令歷史歸檔 Repository 實現類別
- * 
+ *
  * 實現 IDroneCommandsArchiveRepository 介面，提供指令歷史歸檔資料的具體存取方法
- * 
+ *
  * @class DroneCommandsArchiveRepository
  * @implements {IDroneCommandsArchiveRepository}
  */
 export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepository {
     /**
      * 取得所有指令歷史歸檔資料
-     * 
+     *
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
      */
@@ -40,7 +40,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
                 order: [['created_at', 'DESC']],
                 limit
             });
-            
+
             logger.info(`Successfully fetched ${archives.length} commands archive records`);
             return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
         } catch (error) {
@@ -51,7 +51,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 根據 ID 取得指定指令歷史歸檔資料
-     * 
+     *
      * @param {number} id - 歸檔資料 ID
      * @returns {Promise<DroneCommandsArchiveAttributes | null>} 指令歷史歸檔資料或 null
      */
@@ -59,7 +59,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
         try {
             logger.info('Fetching drone command archive by ID', { id });
             const archive = await DroneCommandsArchiveModel.findByPk(id);
-            
+
             if (archive) {
                 logger.info('Successfully fetched command archive by ID', { id });
                 return archive.toJSON() as DroneCommandsArchiveAttributes;
@@ -75,7 +75,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 創建新的指令歷史歸檔資料
-     * 
+     *
      * @param {DroneCommandsArchiveCreationAttributes} data - 要創建的歸檔資料
      * @returns {Promise<DroneCommandsArchiveAttributes>} 創建後的歸檔資料
      */
@@ -83,7 +83,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
         try {
             logger.info('Creating new drone command archive', { droneId: data.drone_id, commandType: data.command_type });
             const archive = await DroneCommandsArchiveModel.create(data);
-            
+
             logger.info('Successfully created command archive', { id: archive.id });
             return archive.toJSON() as DroneCommandsArchiveAttributes;
         } catch (error) {
@@ -94,7 +94,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 更新指定指令歷史歸檔資料
-     * 
+     *
      * @param {number} id - 歸檔資料 ID
      * @param {Partial<DroneCommandsArchiveAttributes>} data - 要更新的資料
      * @returns {Promise<DroneCommandsArchiveAttributes | null>} 更新後的歸檔資料或 null
@@ -127,7 +127,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 刪除指定指令歷史歸檔資料
-     * 
+     *
      * @param {number} id - 歸檔資料 ID
      * @returns {Promise<boolean>} 是否成功刪除
      */
@@ -144,7 +144,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
             } else {
                 logger.warn('Command archive not found for deletion', { id });
             }
-            
+
             return success;
         } catch (error) {
             logger.error('Error deleting drone command archive', { id, error });
@@ -154,7 +154,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 根據無人機 ID 取得指令歷史歸檔資料
-     * 
+     *
      * @param {number} droneId - 無人機 ID
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
@@ -167,7 +167,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
                 order: [['created_at', 'DESC']],
                 limit
             });
-            
+
             logger.info(`Successfully fetched ${archives.length} commands archive records for drone`, { droneId });
             return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
         } catch (error) {
@@ -178,7 +178,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 根據時間範圍取得指令歷史歸檔資料
-     * 
+     *
      * @param {Date} startTime - 開始時間
      * @param {Date} endTime - 結束時間
      * @param {number} limit - 限制筆數，預設為 100
@@ -196,7 +196,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
                 order: [['created_at', 'DESC']],
                 limit
             });
-            
+
             logger.info(`Successfully fetched ${archives.length} commands archive records for time range`);
             return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
         } catch (error) {
@@ -207,7 +207,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 根據指令類型取得指令歷史歸檔資料
-     * 
+     *
      * @param {string} commandType - 指令類型
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
@@ -220,7 +220,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
                 order: [['created_at', 'DESC']],
                 limit
             });
-            
+
             logger.info(`Successfully fetched ${archives.length} commands archive records for command type`, { commandType });
             return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
         } catch (error) {
@@ -231,7 +231,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
 
     /**
      * 根據指令狀態取得指令歷史歸檔資料
-     * 
+     *
      * @param {string} status - 指令狀態
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
@@ -244,7 +244,7 @@ export class DroneCommandsArchiveRepository implements IDroneCommandsArchiveRepo
                 order: [['created_at', 'DESC']],
                 limit
             });
-            
+
             logger.info(`Successfully fetched ${archives.length} commands archive records for status`, { status });
             return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
         } catch (error) {

@@ -40,13 +40,13 @@
  */
 
 // 匯入角色權限資料存取層，用於角色權限關聯管理操作
-import { RolePermissionRepository } from '../repo/RolePermissionRepo.js';
+import { RolePermissionRepository } from '../../repo/rbac/RolePermissionRepo.js';
 import type { IRolePermissionRepository } from '../../types/repositories/IRolePermissionRepository.js';
 // 匯入角色資料存取層，用於角色驗證
-import { RoleRepository } from '../repo/RoleRepo.js';
+import { RoleRepository } from '../../repo/rbac/RoleRepo.js';
 import type { IRoleRepository } from '../../types/repositories/IRoleRepository.js';
 // 匯入權限資料存取層，用於權限驗證
-import { PermissionRepository } from '../repo/PermissionRepo.js';
+import { PermissionRepository } from '../../repo/rbac/PermissionRepo.js';
 import type { IPermissionRepository } from '../../types/repositories/IPermissionRepository.js';
 // 匯入模型類型
 import { RoleModel } from '../../models/rbac/RoleModel.js';

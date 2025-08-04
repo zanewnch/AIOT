@@ -37,15 +37,15 @@
 // 匯入 bcrypt 加密庫，用於密碼雜湊處理
 import bcrypt from 'bcrypt';
 // 匯入資料存取層，用於資料庫操作
-import { PermissionRepository } from '../repo/PermissionRepo.js';
+import { PermissionRepository } from '../repo/rbac/PermissionRepo.js';
 import { IPermissionRepository } from '../types/repositories/IPermissionRepository.js';
-import { RoleRepository } from '../repo/RoleRepo.js';
+import { RoleRepository } from '../repo/rbac/RoleRepo.js';
 import { IRoleRepository } from '../types/repositories/IRoleRepository.js';
-import { RolePermissionRepository } from '../repo/RolePermissionRepo.js';
+import { RolePermissionRepository } from '../repo/rbac/RolePermissionRepo.js';
 import { IRolePermissionRepository } from '../types/repositories/IRolePermissionRepository.js';
-import { UserRepository } from '../repo/UserRepo.js';
+import { UserRepository } from '../repo/rbac/UserRepo.js';
 import { IUserRepository } from '../types/repositories/IUserRepository.js';
-import { UserRoleRepository } from '../repo/UserRoleRepo.js';
+import { UserRoleRepository } from '../repo/rbac/UserRoleRepo.js';
 import { IUserRoleRepository } from '../types/repositories/IUserRoleRepository.js';
 // 匯入模型類型，用於類型定義
 import { PermissionModel } from '../models/rbac/PermissionModel.js';

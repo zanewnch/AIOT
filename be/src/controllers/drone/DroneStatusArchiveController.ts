@@ -28,11 +28,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneStatusArchiveService } from '../services/DroneStatusArchiveService.js';
-import type { IDroneStatusArchiveService } from '../types/services/IDroneStatusArchiveService.js';
-import { createLogger, logRequest } from '../configs/loggerConfig.js';
-import { ControllerResult } from '../utils/ControllerResult.js';
-import type { DroneStatusArchiveCreationAttributes, DroneStatus } from '../models/DroneStatusArchiveModel.js';
+import { DroneStatusArchiveService } from '../../services/drone/DroneStatusArchiveService.js';
+import type { IDroneStatusArchiveService } from '../../types/services/IDroneStatusArchiveService.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
+import type { DroneStatusArchiveCreationAttributes, DroneStatus } from '../../models/DroneStatusArchiveModel.js';
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DroneStatusArchiveController');

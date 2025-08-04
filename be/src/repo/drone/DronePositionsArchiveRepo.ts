@@ -9,10 +9,10 @@
  * @since 2024-01-01
  */
 
-import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes, type DronePositionsArchiveCreationAttributes } from '../models/DronePositionsArchiveModel.js';
-import type { IDronePositionsArchiveRepository } from '../types/repositories/IDronePositionsArchiveRepository.js';
-import type { PaginationParams, PaginatedResponse } from '../types/ApiResponseType.js';
-import { createLogger } from '../configs/loggerConfig.js';
+import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes, type DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
+import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
+import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
 
 // 創建 Repository 專用的日誌記錄器

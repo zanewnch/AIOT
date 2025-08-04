@@ -24,7 +24,7 @@ import { DroneCommandsArchiveService } from '../../services/drone/DroneCommandsA
 import type { IDroneCommandsArchiveService } from '../../types/services/IDroneCommandsArchiveService.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
-import type { DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
+import type { DroneCommandsArchiveCreationAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DroneCommandsArchiveController');

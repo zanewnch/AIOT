@@ -9,9 +9,9 @@
  * @since 2024-01-01
  */
 
-import { DroneStatusArchiveRepository } from '../repo/DroneStatusArchiveRepo.js';
+import { DroneStatusArchiveRepository } from '../../repo/drone/DroneStatusArchiveRepo.js';
 import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
-import type { DroneStatus } from '../../models/DroneStatusModel.js';
+import type { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
 import type { IDroneStatusArchiveService } from '../../types/services/IDroneStatusArchiveService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -504,7 +504,7 @@ export class DroneStatusArchiveService implements IDroneStatusArchiveService {
      * @returns {Promise<{[key: string]: number}>} 狀態變更統計資料
      * @throws {Error} 當時間範圍無效或統計失敗時
      */
-    async getStatusChangeStatistics(startDate?: Date, endDate?: Date): Promise<{[key: string]: number}> {
+    async getStatusChangeStatistics(startDate?: Date, endDate?: Date): Promise<{ [key: string]: number }> {
         try {
             // 驗證時間範圍
             if (startDate && endDate && startDate >= endDate) {
@@ -533,7 +533,7 @@ export class DroneStatusArchiveService implements IDroneStatusArchiveService {
      * @returns {Promise<{date: string, changes: number}[]>} 狀態變更趨勢資料
      * @throws {Error} 當參數無效或分析失敗時
      */
-    async getStatusChangeTrend(droneId: number, days: number = 30): Promise<{date: string, changes: number}[]> {
+    async getStatusChangeTrend(droneId: number, days: number = 30): Promise<{ date: string, changes: number }[]> {
         try {
             // 驗證參數
             if (!droneId || droneId <= 0) {

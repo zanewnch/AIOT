@@ -3,11 +3,8 @@
  * 
  * 此文件定義了使用者相關的主要路由配置，包括：
  * - 使用者偏好設定路由整合
- * - 使用者活動追蹤路由整合
- * - 全域活動追蹤中間件配置
  * 
  * 作為使用者相關功能的路由聚合器，統一管理所有使用者相關的端點。
- * 自動為所有子路由應用活動追蹤中間件。
  * 
  * @module Routes/UserRoutes
  * @version 1.0.0
@@ -16,7 +13,6 @@
 
 import { Router } from 'express';
 import { userPreferenceRoutes } from './userPreferenceRoutes.js';
-import { userActivityRoutes } from './userActivityRoutes.js';
 
 /**
  * 使用者路由類別
@@ -44,8 +40,6 @@ class UserRoutes {
     // 使用者偏好設定路由
     this.router.use(this.ROUTES.USER_BASE, userPreferenceRoutes);
     
-    // 使用者活動追蹤路由
-    this.router.use(this.ROUTES.USER_BASE, userActivityRoutes);
   };
 
   /**

@@ -17,10 +17,10 @@ import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 // 匯入角色權限關聯模型用於角色和權限的多對多關係
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
 // 匯入無人機位置模型用於位置資料管理
-import { DronePositionModel } from '../models/DronePositionModel.js';
-import { DroneStatusModel } from '../models/DroneStatusModel.js';
+import { DronePositionModel } from '../models/drone/DronePositionModel.js';
+import { DroneStatusModel } from '../models/drone/DroneStatusModel.js';
 import { DroneCommandModel } from '../models/DroneCommandModel.js';
-import { DroneCommandsArchiveModel } from '../models/DroneCommandsArchiveModel.js';
+import { DroneCommandsArchiveModel } from '../models/drone/DroneCommandsArchiveModel.js';
 import { DronePositionsArchiveModel } from '../models/DronePositionsArchiveModel.js';
 import { DroneStatusArchiveModel } from '../models/DroneStatusArchiveModel.js';
 
@@ -75,7 +75,7 @@ export const getDatabaseConfig = (): DatabaseConfig => ({
 export const createSequelizeInstance = (): Sequelize => {
   // 獲取資料庫配置
   const config = getDatabaseConfig();
-  
+
   // 建立新的 Sequelize 實例並配置
   return new Sequelize({
     // 展開資料庫配置物件的所有屬性

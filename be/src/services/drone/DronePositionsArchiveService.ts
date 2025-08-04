@@ -17,7 +17,7 @@ import type {
     ArchiveBatchStatistics
 } from '../../types/services/IDronePositionsArchiveService.js';
 import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
-import { DronePositionsArchiveRepository } from '../repo/DronePositionsArchiveRepo.js';
+import { DronePositionsArchiveRepository } from '../../repo/drone/DronePositionsArchiveRepo.js';
 import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 

@@ -34,7 +34,7 @@
  */
 
 // 匯入角色資料存取層，用於角色管理操作
-import { RoleRepository } from '../repo/RoleRepo.js';
+import { RoleRepository } from '../../repo/rbac/RoleRepo.js';
 import { IRoleRepository } from '../../types/repositories/IRoleRepository.js';
 // 匯入角色模型類型
 import { RoleModel } from '../../models/rbac/RoleModel.js';

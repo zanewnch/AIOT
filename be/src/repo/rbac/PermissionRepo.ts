@@ -25,10 +25,10 @@ import {
   PermissionModel, 
   PermissionAttributes, 
   PermissionCreationAttributes 
-} from '../models/rbac/PermissionModel.js';
-import { RoleModel } from '../models/rbac/RoleModel.js';
-import { createLogger } from '../configs/loggerConfig.js';
-import { IPermissionRepository } from '../types/repositories/IPermissionRepository.js';
+} from '../../models/rbac/PermissionModel.js';
+import { RoleModel } from '../../models/rbac/RoleModel.js';
+import { createLogger } from '../../configs/loggerConfig.js';
+import { IPermissionRepository } from '../../types/repositories/IPermissionRepository.js';
 import type { Transaction } from 'sequelize';
 
 const logger = createLogger('PermissionRepository');

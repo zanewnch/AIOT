@@ -9,8 +9,8 @@
  * @since 2024-01-01
  */
 
-import { DroneStatusRepository } from '../repo/DroneStatusRepo.js';
-import type { DroneStatusAttributes, DroneStatusCreationAttributes, DroneStatus } from '../../models/DroneStatusModel.js';
+import { DroneStatusRepository } from '../../repo/drone/DroneStatusRepo.js';
+import type { DroneStatusAttributes, DroneStatusCreationAttributes, DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import type { IDroneStatusService } from '../../types/services/IDroneStatusService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -355,11 +355,11 @@ export class DroneStatusService implements IDroneStatusService {
      *
      * @returns {Promise<{[key in DroneStatus]: number}>} 各狀態的無人機數量統計
      */
-    async getDroneStatusStatistics(): Promise<{[key in DroneStatus]: number}> {
+    async getDroneStatusStatistics(): Promise<{ [key in DroneStatus]: number }> {
         try {
             logger.info('Getting drone status statistics');
 
-            const statistics: {[key in DroneStatus]: number} = {
+            const statistics: { [key in DroneStatus]: number } = {
                 [DroneStatus.ACTIVE]: 0,
                 [DroneStatus.INACTIVE]: 0,
                 [DroneStatus.MAINTENANCE]: 0,

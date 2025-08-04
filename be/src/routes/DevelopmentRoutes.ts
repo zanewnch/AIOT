@@ -1,12 +1,12 @@
 /**
  * @fileoverview 開發階段資料查看路由
- * 
+ *
  * 此路由專為開發階段設計，提供快速查看資料表內容的功能。
  * 包含 RBAC 系統的五個核心表和 RTK 定位資料表的查看功能。
  * 直接返回 JSON 資料，適合使用 Postman 等工具進行測試。
- * 
+ *
  * ⚠️  注意：此路由僅用於開發環境，生產環境中應該移除或限制存取
- * 
+ *
  * @module Routes/DevelopmentRoutes
  * @author AIOT 開發團隊
  * @version 1.0.0
@@ -22,11 +22,11 @@ import { RoleModel } from '../models/rbac/RoleModel.js';
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
-import { DronePositionModel } from '../models/DronePositionModel.js';
+import { DronePositionModel } from '../models/drone/DronePositionModel.js';
 
 /**
  * 開發路由類別
- * 
+ *
  * 負責配置和管理所有開發階段資料查看相關的路由端點
  */
 class DevelopmentRoutes {
@@ -37,7 +37,7 @@ class DevelopmentRoutes {
     // 根路徑和總覽
     DEV_ROOT: '/dev',
     DEV_OVERVIEW: '/dev/overview',
-    
+
     // 資料查看路由
     DEV_USERS: '/dev/users',
     DEV_ROLES: '/dev/roles',
@@ -45,7 +45,7 @@ class DevelopmentRoutes {
     DEV_USER_ROLES: '/dev/user-roles',
     DEV_ROLE_PERMISSIONS: '/dev/role-permissions',
     DEV_DRONE_POSITIONS: '/dev/drone-positions',
-    
+
     // 錯誤測試路由
     ERROR_GENERAL: '/dev/test-error/general',
     ERROR_DATABASE: '/dev/test-error/database',
@@ -57,7 +57,7 @@ class DevelopmentRoutes {
 
   constructor() {
     this.router = Router();
-    
+
     this.setupDataViewRoutes();
     this.setupErrorTestRoutes();
     this.setupRootRoute();
@@ -404,7 +404,7 @@ class DevelopmentRoutes {
   private testHttpError = (req: Request, _res: Response, next: any) => {
     const status = parseInt(req.params.status) || 500;
     const createError = require('http-errors');
-    
+
     const statusMessages: { [key: number]: string } = {
       400: '錯誤的請求參數',
       401: '未授權存取',
@@ -413,7 +413,7 @@ class DevelopmentRoutes {
       500: '內部伺服器錯誤',
       503: '服務暫時無法使用'
     };
-    
+
     const message = statusMessages[status] || `HTTP ${status} 錯誤`;
     next(createError(status, message));
   };
@@ -445,7 +445,7 @@ class DevelopmentRoutes {
 
   /**
    * 取得路由器實例
-   * 
+   *
    * @returns {Router} Express 路由器實例
    */
   public getRouter(): Router {

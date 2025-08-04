@@ -40,7 +40,7 @@
  */
 
 // 匯入使用者資料存取層，用於使用者管理操作
-import { UserRepository, IUserRepository } from '../repo/UserRepo.js';
+import { UserRepository, IUserRepository } from '../../repo/rbac/UserRepo.js';
 // 匯入使用者模型類型
 import { UserModel } from '../../models/rbac/UserModel.js';
 // 匯入 bcrypt 用於密碼加密

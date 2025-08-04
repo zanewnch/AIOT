@@ -21,7 +21,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
-import { UserRepository } from '../repo/UserRepo.js'; // 引入使用者資料存取層
+import { UserRepository } from '../repo/rbac/UserRepo.js'; // 引入使用者資料存取層
 import { PermissionService } from '../services/rbac/PermissionService.js'; // 引入權限服務層
 import { createLogger } from '../configs/loggerConfig.js'; // 引入日誌記錄器
 // Express 類型擴展已透過 tsconfig.json 自動載入

@@ -27,11 +27,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DronePositionsArchiveService } from '../services/DronePositionsArchiveService.js';
-import type { IDronePositionsArchiveService } from '../types/services/IDronePositionsArchiveService.js';
-import { createLogger, logRequest } from '../configs/loggerConfig.js';
-import { ControllerResult } from '../utils/ControllerResult.js';
-import type { DronePositionsArchiveCreationAttributes } from '../models/DronePositionsArchiveModel.js';
+import { DronePositionsArchiveService } from '../../services/drone/DronePositionsArchiveService.js';
+import type { IDronePositionsArchiveService } from '../../types/services/IDronePositionsArchiveService.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
+import type { DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DronePositionsArchiveController');

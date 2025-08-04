@@ -9,8 +9,8 @@
  * @since 2024-01-01
  */
 
-import { DronePositionRepository } from '../repo/DronePositionRepo.js';
-import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
+import { DronePositionRepository } from '../../repo/drone/DronePositionRepo.js';
+import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import type { IDronePositionService } from '../../types/services/IDronePositionService.js';
 import { createLogger } from '../../configs/loggerConfig.js';

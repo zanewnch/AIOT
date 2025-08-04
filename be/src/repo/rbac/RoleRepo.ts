@@ -26,11 +26,11 @@ import {
   RoleModel, 
   RoleAttributes, 
   RoleCreationAttributes 
-} from '../models/rbac/RoleModel.js';
-import { PermissionModel } from '../models/rbac/PermissionModel.js';
-import { UserModel } from '../models/rbac/UserModel.js';
-import { createLogger } from '../configs/loggerConfig.js';
-import { IRoleRepository } from '../types/repositories/IRoleRepository.js';
+} from '../../models/rbac/RoleModel.js';
+import { PermissionModel } from '../../models/rbac/PermissionModel.js';
+import { UserModel } from '../../models/rbac/UserModel.js';
+import { createLogger } from '../../configs/loggerConfig.js';
+import { IRoleRepository } from '../../types/repositories/IRoleRepository.js';
 import type { Transaction } from 'sequelize';
 
 const logger = createLogger('RoleRepository');
