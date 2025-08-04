@@ -9,7 +9,6 @@
 // 主要查詢 hooks - 統一的 useXxxQuery 格式
 export { useAuthQuery } from './useAuthQuery';
 export { useUserQuery } from './useUserQuery';
-export { useRbacQuery } from './useRbacQuery';
 export { useDroneCommandQuery } from './useDroneCommandQuery';
 export { useDroneStatusQuery } from './useDroneStatusQuery';
 export { useDronePositionsQuery } from './useDronePositionQuery';

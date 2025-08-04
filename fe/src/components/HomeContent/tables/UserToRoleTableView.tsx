@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import { RbacQuery } from '../../../hooks/useRbacQuery';
+import { UserQuery } from '../../../hooks/useUserQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
@@ -27,8 +27,8 @@ const logger = createLogger('UserToRoleTableView');
  */
 export const UserToRoleTableView: React.FC = () => {
   // React Query hooks for data
-  const rbacQuery = new RbacQuery();
-  const { data: userToRoleData, isLoading, error, refetch } = rbacQuery.useUserRoles();
+  const userQuery = new UserQuery();
+  const { data: userToRoleData, isLoading, error, refetch } = userQuery.useUserRoles();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();
@@ -49,8 +49,9 @@ export const UserToRoleTableView: React.FC = () => {
     
     const sorted = [...userToRoleData];
     sorted.sort((a, b) => {
-      const aValue = a[sorting.field];
-      const bValue = b[sorting.field];
+      const field = sorting.field as keyof typeof a;
+      const aValue = a[field];
+      const bValue = b[field];
       
       if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
       if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;

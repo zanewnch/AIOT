@@ -28,21 +28,42 @@ class AuthRoutes {
   private authController: AuthController;
   private authMiddleware: AuthMiddleware;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    LOGIN: '/api/auth/login',
+    LOGOUT: '/api/auth/logout',
+    ME: '/api/auth/me'
+  } as const;
+
   constructor() {
     this.router = Router();
     this.authController = new AuthController();
     this.authMiddleware = new AuthMiddleware();
     
-    // 直接在 constructor 中設定所有路由
-    this.router.post('/api/auth/login', 
-      this.authController.login
+    this.setupAuthRoutes();
+  }
+
+  /**
+   * 設定認證路由
+   */
+  private setupAuthRoutes = (): void => {
+    // POST /api/auth/login - 使用者登入
+    this.router.post(this.ROUTES.LOGIN, 
+      (req, res) => this.authController.login(req, res)
     );
     
-    this.router.post('/api/auth/logout',
+    // POST /api/auth/logout - 使用者登出
+    this.router.post(this.ROUTES.LOGOUT,
       this.authMiddleware.authenticate,
-      this.authController.logout
+      (req, res) => this.authController.logout(req, res)
     );
-  }
+
+    // GET /api/auth/me - 獲取當前使用者資訊 (用於認證檢查)
+    this.router.get(this.ROUTES.ME,
+      this.authMiddleware.authenticate,
+      (req, res) => this.authController.me(req, res)
+    );
+  };
 
   /**
    * 取得路由器實例

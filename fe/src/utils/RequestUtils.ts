@@ -93,11 +93,14 @@ export class RequestUtils {
       (error) => {
         // 檢查是否為 401 未授權錯誤
         if (error.response?.status === 401) {
-          // 不需要清除 localStorage - 使用 httpOnly cookie
-          // localStorage.removeItem('authToken');
+          // 只有在非認證初始化請求時才重定向到登入頁面
+          // 避免在 /api/auth/me 初始化檢查時重定向
+          const isAuthCheck = error.config?.url?.includes('/api/auth/me');
           
-          // 重定向到登入頁面（cookie 會由後端自動處理）
-          window.location.href = '/login';
+          if (!isAuthCheck) {
+            // 重定向到登入頁面（cookie 會由後端自動處理）
+            window.location.href = '/login';
+          }
         }
         // 拋出 Promise 拒絕，讓調用者處理錯誤
         return Promise.reject(error);

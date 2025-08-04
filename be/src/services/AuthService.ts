@@ -120,7 +120,7 @@ export class AuthService implements IAuthService {
             const token = jwt.sign( // 生成 JWT Token
                 payload, // JWT 載荷資料
                 process.env.JWT_SECRET || 'zanewnch', // 使用環境變數中的密鑰或預設值
-                { expiresIn: '1h' } // 設定 Token 過期時間為 1 小時
+                { expiresIn: '30d' } // 設定 Token 過期時間為 30 天（1個月）
             );
 
             logger.debug(`JWT token generated for user: ${username}`); // 記錄 JWT Token 生成成功的除錯訊息
@@ -136,7 +136,7 @@ export class AuthService implements IAuthService {
             // 將會話資料存儲到 Redis
             try { // 嘗試儲存新的會話資料
                 await SessionService.setUserSession(user.id, user.username, token, { // 調用會話服務儲存會話
-                    ttl: 3600, // 1 小時，設定會話過期時間（秒）
+                    ttl: 30 * 24 * 60 * 60, // 30 天，設定會話過期時間（秒）
                     userAgent, // 儲存使用者代理字串
                     ipAddress // 儲存客戶端 IP 位址
                 });

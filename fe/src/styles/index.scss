@@ -26,6 +26,16 @@ body {
   min-height: 100vh;
 }
 
+// 旋轉動畫 keyframe
+@keyframes spin {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
+}
+
 // 全域滾動條樣式
 ::-webkit-scrollbar {
   width: 8px;

@@ -6,60 +6,9 @@
     "auditLog": "/app/be/logs/.573d2be1dead44e489288f3abb2dcbe48ef01df1-audit.json",
     "files": [
         {
-            "date": 1753360139729,
-            "name": "/app/be/logs/error-2025-07-24.log",
-            "hash": "7f101eb9f8671d4537ba1ff2a5831c80e663177e7dec9f9ad13bfcc8a2192728"
-        },
-        {
-            "date": 1753408174691,
-            "name": "/app/be/logs/error-2025-07-25.log",
-            "hash": "1e7705c314202a5748c133712baacc70e84f0804bd9c58a0639c6c8a9d9fdc89"
-        },
-        {
-            "date": 1753491969164,
-            "name": "/app/be/logs/error-2025-07-26.log",
-            "hash": "b9dfd7cb1ed7f1d137ce5d845d1548395a7b45fdc5a0bc98f1d70900ee841388"
-        },
-        {
-            "date": 1753586247061,
-            "name": "/app/be/logs/error-2025-07-27.log",
-            "hash": "5d7280ed5a5dbf250c156cc4af53f629a6f6a5d50a4ea33bf58611417235dc5b"
-        },
-        {
-<<<<<<< HEAD
-            "date": 1753971616963,
-            "name": "/app/be/logs/error-2025-07-31.log",
-            "hash": "37fe7609a68bf621708f83d92c172ade2df8341d4884c4def7e03db9e2b8f02d"
-        },
-        {
-            "date": 1754222779366,
-            "name": "/app/be/logs/error-2025-08-03.log",
-            "hash": "6e17ad90ad2c1e53ce40015e2e7a12c6678c0372b07b3ce28ccba394ceb1d08f"
-        },
-        {
-            "date": 1754281551391,
+            "date": 1754297111929,
             "name": "/app/be/logs/error-2025-08-04.log",
-            "hash": "6e201735db38f1b4b7a25ca7f534c25090370d3ffdc9e70473607a650b575191"
-=======
-            "date": 1753681848740,
-            "name": "/app/be/logs/error-2025-07-28.log",
-            "hash": "118e268883fc4e080ab9914ca71f255c7ee75324e1e65f487a6f9960d0ae0b5d"
-        },
-        {
-            "date": 1753798008597,
-            "name": "/app/be/logs/error-2025-07-29.log",
-            "hash": "55241f20907f2bf835156adaf681ac2e2f7c781fb74fd6de5f9a4b4bdb81283e"
-        },
-        {
-            "date": 1753976129490,
-            "name": "/app/be/logs/error-2025-07-31.log",
-            "hash": "050752dea745cf6be3df49540df753c5c2356666506886869e26a5709acac1d2"
-        },
-        {
-            "date": 1754017963903,
-            "name": "/app/be/logs/error-2025-08-01.log",
-            "hash": "1b7d8c6e1a0aa3fa1b72d61c05806996d749487c76c4bd916197307220497eb3"
->>>>>>> ccd434e1255203f60a7bba2760eedd68bbe21ba2
+            "hash": "d351d3e0778d37c948508f179e34895b27c1c6972f21d3e3e8e2d5254bde8614"
         }
     ],
     "hashType": "sha256"

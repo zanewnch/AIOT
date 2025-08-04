@@ -29,32 +29,50 @@ class UserActivityRoutes {
   private userActivityController: UserActivityController;
   private authMiddleware: AuthMiddleware;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    ACTIVITY: '/activity',
+    PAGE_VISIT: '/activity/page-visit',
+    SESSION: '/activity/session',
+    STATS: '/activity/stats'
+  } as const;
+
   constructor() {
     this.router = Router();
     this.userActivityController = new UserActivityController();
     this.authMiddleware = new AuthMiddleware();
     
-    // 直接在 constructor 中設定所有路由
-    this.router.get('/activity', 
-      this.authMiddleware.authenticate,
-      this.userActivityController.getUserActivity.bind(this.userActivityController)
-    );
-
-    this.router.post('/activity/page-visit', 
-      this.authMiddleware.authenticate,
-      this.userActivityController.recordPageVisit.bind(this.userActivityController)
-    );
-
-    this.router.post('/activity/session', 
-      this.authMiddleware.authenticate,
-      this.userActivityController.updateSessionInfo.bind(this.userActivityController)
-    );
-
-    this.router.get('/activity/stats', 
-      this.authMiddleware.authenticate,
-      this.userActivityController.getActivityStats.bind(this.userActivityController)
-    );
+    this.setupActivityRoutes();
   }
+
+  /**
+   * 設定活動追蹤路由
+   */
+  private setupActivityRoutes = (): void => {
+    // GET /activity - 取得使用者活動資料
+    this.router.get(this.ROUTES.ACTIVITY,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userActivityController.getUserActivity(req, res)
+    );
+
+    // POST /activity/page-visit - 記錄頁面造訪
+    this.router.post(this.ROUTES.PAGE_VISIT,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userActivityController.recordPageVisit(req, res)
+    );
+
+    // POST /activity/session - 更新會話資訊
+    this.router.post(this.ROUTES.SESSION,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userActivityController.updateSessionInfo(req, res)
+    );
+
+    // GET /activity/stats - 取得活動統計資料
+    this.router.get(this.ROUTES.STATS,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userActivityController.getActivityStats(req, res)
+    );
+  };
 
   /**
    * 取得路由器實例

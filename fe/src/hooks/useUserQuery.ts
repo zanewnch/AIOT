@@ -8,8 +8,21 @@
  * @version 1.0.0
  */
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserProfile, UserSession } from '../types/user';
+import { apiClient } from '../utils/RequestUtils';
+import { RequestResult } from '../utils/RequestResult';
+import { createLogger } from '../configs/loggerConfig';
+import type { 
+  User, 
+  UpdateResponse, 
+  TableError,
+  UserUpdateRequest,
+  UserRole
+} from '../types/table';
+
+// 創建服務專用的日誌記錄器
+const logger = createLogger('UserQuery');
 
 
 // 重新匯出 RBAC 用戶管理相關的 hooks
@@ -26,6 +39,10 @@ export class UserQuery {
   public USER_QUERY_KEYS = {
     USER_PROFILE: ['userProfile'] as const,
     USER_SESSION: ['userSession'] as const,
+    ALL: ['user'] as const,
+    LIST: ['user', 'list'] as const,
+    RBAC_USERS: ['user', 'rbac'] as const,
+    USER_ROLES: ['user', 'roles'] as const,
   } as const;
   
   constructor() {}
@@ -132,6 +149,105 @@ export class UserQuery {
         sessionQuery.refetch();
       },
     };
+  }
+
+  /**
+   * RBAC 用戶數據查詢 Hook
+   */
+  useRbacUsers() {
+    return useQuery({
+      queryKey: this.USER_QUERY_KEYS.RBAC_USERS,
+      queryFn: async (): Promise<User[]> => {
+        try {
+          logger.debug('Fetching RBAC users from API');
+          
+          const response = await apiClient.get('/api/rbac/users');
+          const result = RequestResult.fromResponse<User[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully fetched ${result.data?.length || 0} RBAC users`);
+          return result.unwrap();
+        } catch (error: any) {
+          console.error('Failed to fetch RBAC users:', error);
+          
+          throw {
+            message: error.response?.data?.message || 'Failed to fetch users',
+            status: error.response?.status,
+            details: error.response?.data,
+          } as TableError;
+        }
+      },
+      staleTime: 5 * 60 * 1000, // 5分鐘
+      gcTime: 15 * 60 * 1000, // 15分鐘
+      retry: 2,
+    });
+  }
+
+  /**
+   * 用戶角色關聯查詢 Hook
+   */
+  useUserRoles() {
+    return useQuery({
+      queryKey: this.USER_QUERY_KEYS.USER_ROLES,
+      queryFn: async (): Promise<UserRole[]> => {
+        try {
+          logger.debug('Fetching user roles from API');
+          
+          const response = await apiClient.get('/api/rbac/user-roles');
+          const result = RequestResult.fromResponse<UserRole[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully fetched ${result.data?.length || 0} user roles`);
+          return result.unwrap();
+        } catch (error: any) {
+          console.error('Failed to fetch user roles:', error);
+          
+          throw {
+            message: error.response?.data?.message || 'Failed to fetch user roles',
+            status: error.response?.status,
+            details: error.response?.data,
+          } as TableError;
+        }
+      },
+      staleTime: 2 * 60 * 1000, // 2分鐘
+      gcTime: 10 * 60 * 1000, // 10分鐘
+      retry: 2,
+    });
+  }
+
+  /**
+   * RBAC 用戶數據更新 Mutation
+   */
+  useUpdateUser() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+      mutationFn: async ({ id, data }: { id: number; data: UserUpdateRequest }) => {
+        try {
+          logger.debug(`Updating user with ID: ${id}`, data);
+          
+          const response = await apiClient.put(`/api/rbac/users/${id}`, data);
+          
+          logger.info(`Successfully updated user with ID: ${id}`);
+          return { id, data };
+        } catch (error: any) {
+          
+          const errorMsg = error.response?.data?.message || error.message || 'Update failed';
+          throw new Error(errorMsg);
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: this.USER_QUERY_KEYS.RBAC_USERS });
+        queryClient.invalidateQueries({ queryKey: this.USER_QUERY_KEYS.USER_ROLES });
+      },
+      retry: 1,
+    });
   }
 }
 

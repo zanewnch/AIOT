@@ -17,34 +17,41 @@ import { Router } from 'express';
 class InitRoutes {
   private router: Router;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    HEALTH: '/api/health'
+  } as const;
+
   constructor() {
     this.router = Router();
-    this.initializeRoutes();
+    this.setupHealthRoutes();
   }
 
   /**
-   * 初始化所有初始化路由
+   * 設定健康檢查路由
    */
-  private initializeRoutes(): void {
-    // 健康檢查路由
-    this.router.get('/api/health', (req, res) => {
+  private setupHealthRoutes = (): void => {
+    // GET /api/health - 系統健康檢查
+    this.router.get(this.ROUTES.HEALTH, (req, res) => {
       res.status(200).json({
         status: 'ok',
         timestamp: new Date().toISOString(),
         message: 'Server is running'
       });
     });
-  }
+  };
 
   /**
-   * 獲取配置好的路由器實例
-   * @returns Express Router 實例
+   * 取得路由器實例
+   * 
+   * @returns {Router} Express 路由器實例
    */
   public getRouter(): Router {
     return this.router;
   }
 }
 
-// 創建並匯出路由實例
-const initRoutesInstance = new InitRoutes();
-export const initRoutes = initRoutesInstance.getRouter();
+/**
+ * 匯出系統初始化路由實例
+ */
+export const initRoutes = new InitRoutes().getRouter();

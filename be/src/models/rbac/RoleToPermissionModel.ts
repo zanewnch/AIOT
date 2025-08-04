@@ -18,6 +18,7 @@ import {
   DataType,   // 資料類型定義
   ForeignKey, // 外鍵裝飾器
   PrimaryKey, // 主鍵裝飾器
+  BelongsTo,  // 一對多關聯裝飾器
 } from 'sequelize-typescript';
 
 // 導入相關的模型類別
@@ -107,4 +108,26 @@ export class RolePermissionModel extends Model<RolePermissionAttributes, RolePer
   @ForeignKey(() => PermissionModel)  // 外鍵關聯到 PermissionModel
   @Column(DataType.BIGINT)            // 大整數類型
   declare permissionId: number;
+
+  /**
+   * 關聯的角色實例
+   * 
+   * 通過 BelongsTo 關聯獲取此權限分配所屬的角色。
+   * 
+   * @type {RoleModel | undefined}
+   * @memberof RolePermissionModel
+   */
+  @BelongsTo(() => RoleModel)
+  declare role?: RoleModel;
+
+  /**
+   * 關聯的權限實例
+   * 
+   * 通過 BelongsTo 關聯獲取此角色分配的權限。
+   * 
+   * @type {PermissionModel | undefined}
+   * @memberof RolePermissionModel
+   */
+  @BelongsTo(() => PermissionModel)
+  declare permission?: PermissionModel;
 }

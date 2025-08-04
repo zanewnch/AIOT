@@ -151,7 +151,7 @@ export class AuthController {
       }
 
       // 根據「記住我」選項設定不同的過期時間
-      const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000; // 30天 or 1小時
+      const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000; // 30天 or 30天（預設改為1個月）
 
       // 設置 httpOnly cookie 來儲存 JWT，提升安全性
       res.cookie('jwt', result.token, {
@@ -273,6 +273,73 @@ export class AuthController {
       res.status(response.status).json(response.toJSON());
     } catch (err) {
       logger.error('Logout error:', err);
+      // 將例外處理委派給 Express 錯誤處理中間件
+      next(err);
+    }
+  }
+
+  /**
+   * 處理獲取當前使用者資訊請求
+   *
+   * @method me
+   * @param {Request} req - Express 請求物件，包含已驗證的使用者資訊
+   * @param {Response} res - Express 回應物件
+   * @param {NextFunction} next - Express next 函數，用於錯誤處理
+   * @returns {Promise<void>} 無回傳值的 Promise
+   *
+   * @throws {401} 當使用者未經驗證時
+   * @throws {500} 當內部伺服器錯誤發生時
+   *
+   * @description 回傳當前已驗證使用者的基本資訊
+   * 此端點需要通過 AuthMiddleware 驗證，因此 req.user 必定存在
+   * 主要用於前端初始化時檢查使用者登入狀態
+   *
+   * @example
+   * ```bash
+   * GET /api/auth/me
+   * Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   * ```
+   *
+   * @example 成功回應
+   * ```json
+   * {
+   *   "message": "User information retrieved successfully",
+   *   "user": {
+   *     "id": 1,
+   *     "username": "admin"
+   *   },
+   *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+   * }
+   * ```
+   */
+  public me = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      logRequest(req, `Get current user info for: ${req.user?.username}`, 'info');
+
+      // 檢查使用者是否已經通過認證中間件驗證
+      if (!req.user) {
+        logger.warn(`Unauthenticated request to /me endpoint from IP: ${req.ip}`);
+        const response = ControllerResult.unauthorized('User not authenticated');
+        res.status(response.status).json(response.toJSON());
+        return;
+      }
+
+      // 取得 JWT token 供前端使用（如果需要）
+      const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');
+
+      logger.info(`Successfully retrieved user info for: ${req.user.username}, userID: ${req.user.id}`);
+
+      // 回傳使用者資訊
+      const response = ControllerResult.success('User information retrieved successfully', {
+        user: {
+          id: req.user.id, // 使用者 ID
+          username: req.user.username // 使用者名稱
+        },
+        token: token // 可選：回傳 token（前端可能需要）
+      });
+      res.status(response.status).json(response.toJSON());
+    } catch (err) {
+      logger.error('Get current user info error:', err);
       // 將例外處理委派給 Express 錯誤處理中間件
       next(err);
     }

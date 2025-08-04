@@ -22,7 +22,7 @@
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
 import jwt from 'jsonwebtoken'; // 引入 JWT 令牌處理庫
-import { UserRepository } from '../repo/UserRepo.js'; // 引入使用者資料存取層
+import { UserRepository } from '../repo/rbac/UserRepo.js'; // 引入使用者資料存取層
 import { SessionService } from '../services/SessionService.js'; // 引入會話服務層
 // Express 類型擴展已透過 tsconfig.json 自動載入
 

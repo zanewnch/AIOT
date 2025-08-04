@@ -25,10 +25,11 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { RoleToPermissionService } from '../../services/RoleToPermissionService.js'; // 引入角色權限服務層
+import { RoleToPermissionService } from '../../services/rbac/RoleToPermissionService.js'; // 引入角色權限服務層
 import { IRoleToPermissionService } from '../../types/services/IRoleToPermissionService.js'; // 引入角色權限服務介面
 import { IRoleToPermissionController } from '../../types/controllers/IRoleToPermissionController.js'; // 引入角色權限控制器介面
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js'; // 引入標準化響應格式
 
 const logger = createLogger('RoleToPermissionController');
 
@@ -63,20 +64,22 @@ export class RoleToPermissionController implements IRoleToPermissionController {
 
 
     /**
-     * 獲取指定角色的所有權限
+     * 獲取角色權限關聯數據
      *
-     * 根據角色ID查詢該角色被分配的所有權限列表，包含權限的完整訊息。
+     * 如果提供 roleId 參數，則查詢該角色被分配的所有權限列表；
+     * 如果沒有提供 roleId 參數，則返回所有角色權限關聯數據。
      *
-     * @param req - Express請求物件，包含roleId參數
+     * @param req - Express請求物件，可能包含roleId參數
      * @param res - Express回應物件
      * @returns Promise<void>
      *
      * @example
      * ```bash
-     * GET /api/rbac/roles/1/permissions
+     * GET /api/rbac/roles/1/permissions  # 獲取特定角色的權限
+     * GET /api/rbac/role-permissions     # 獲取所有角色權限關聯
      * ```
      *
-     * 回應格式:
+     * 特定角色權限回應格式:
      * ```json
      * [
      *   {
@@ -89,32 +92,72 @@ export class RoleToPermissionController implements IRoleToPermissionController {
      * ]
      * ```
      *
-     * @throws {404} 角色不存在
+     * 所有關聯回應格式:
+     * ```json
+     * [
+     *   {
+     *     "roleId": 1,
+     *     "permissionId": 1,
+     *     "assignedAt": "2024-01-01T00:00:00.000Z",
+     *     "role": {
+     *       "id": 1,
+     *       "name": "admin",
+     *       "displayName": "系統管理員"
+     *     },
+     *     "permission": {
+     *       "id": 1,
+     *       "name": "read_users",
+     *       "description": "允許讀取使用者資料"
+     *     }
+     *   }
+     * ]
+     * ```
+     *
+     * @throws {404} 角色不存在（僅當查詢特定角色時）
      * @throws {500} 伺服器错誤 - 無法獲取角色權限
      */
     public async getRolePermissions(req: Request, res: Response): Promise<void> {
         try {
             const { roleId } = req.params;
+
+            // 如果沒有提供 roleId 參數（從 /api/rbac/role-permissions 路由進入），返回所有關聯數據
+            if (!roleId) {
+                logger.info('Fetching all role-permission associations');
+                logRequest(req, 'All role permissions retrieval request', 'info');
+
+                const allRolePermissions = await this.roleToPermissionService.getAllRolePermissions();
+
+                logger.info(`Successfully retrieved ${allRolePermissions.length} role-permission associations`);
+                const result = ControllerResult.success('所有角色權限關聯獲取成功', allRolePermissions);
+                res.status(result.status).json(result.toJSON());
+                return;
+            }
+
+            // 如果提供了 roleId 參數，查詢特定角色的權限
             const id = parseInt(roleId, 10);
 
             logger.info(`Fetching permissions for role ID: ${roleId}`);
             logRequest(req, `Role permissions retrieval request for ID: ${roleId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const result = ControllerResult.badRequest('無效的角色 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             const permissions = await this.roleToPermissionService.getRolePermissions(id);
 
             logger.info(`Successfully retrieved ${permissions.length} permissions for role ID: ${roleId}`);
-            res.json(permissions);
+            const result = ControllerResult.success('角色權限獲取成功', permissions);
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error fetching role permissions:', error);
             if (error instanceof Error && error.message === 'Role not found') {
-                res.status(404).json({ message: error.message });
+                const result = ControllerResult.notFound(error.message);
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to fetch role permissions', error: (error as Error).message });
+                const result = ControllerResult.internalError('角色權限獲取失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }
@@ -159,12 +202,14 @@ export class RoleToPermissionController implements IRoleToPermissionController {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const result = ControllerResult.badRequest('無效的角色  ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             if (!permissionIds || !Array.isArray(permissionIds) || permissionIds.length === 0) {
-                res.status(400).json({ message: 'Permission IDs are required and must be an array' });
+                const result = ControllerResult.badRequest('權限 ID 為必填項且必須為陣列');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
@@ -175,20 +220,24 @@ export class RoleToPermissionController implements IRoleToPermissionController {
             }).map(permissionId => parseInt(permissionId, 10));
 
             if (validPermissionIds.length === 0) {
-                res.status(400).json({ message: 'No valid permission IDs provided' });
+                const result = ControllerResult.badRequest('未提供有效的權限 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             await this.roleToPermissionService.assignPermissionsToRole(id, validPermissionIds);
 
             logger.info(`Successfully assigned permissions to role ID: ${roleId}`);
-            res.json({ message: 'Permissions assigned to role successfully' });
+            const result = ControllerResult.success('權限分配至角色成功');
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error assigning permissions to role:', error);
             if (error instanceof Error && (error.message.includes('not found') || error.message.includes('Invalid'))) {
-                res.status(404).json({ message: error.message });
+                const result = ControllerResult.notFound(error.message);
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to assign permissions', error: (error as Error).message });
+                const result = ControllerResult.internalError('權限分配失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }
@@ -228,11 +277,13 @@ export class RoleToPermissionController implements IRoleToPermissionController {
 
             // 驗證輸入
             if (isNaN(roleIdNum) || roleIdNum <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const result = ControllerResult.badRequest('無效的角色 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
             if (isNaN(permissionIdNum) || permissionIdNum <= 0) {
-                res.status(400).json({ message: 'Invalid permission ID' });
+                const result = ControllerResult.badRequest('無效的權限 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
@@ -240,17 +291,21 @@ export class RoleToPermissionController implements IRoleToPermissionController {
 
             if (removed) {
                 logger.info(`Successfully removed permission ID: ${permissionId} from role ID: ${roleId}`);
-                res.json({ message: 'Permission removed from role successfully' });
+                const result = ControllerResult.success('權限從角色中移除成功');
+                res.status(result.status).json(result.toJSON());
             } else {
                 logger.warn(`Permission ${permissionId} was not assigned to role ${roleId}`);
-                res.status(404).json({ message: 'Permission assignment not found' });
+                const result = ControllerResult.notFound('權限分配關係不存在');
+                res.status(result.status).json(result.toJSON());
             }
         } catch (error) {
             logger.error('Error removing permission from role:', error);
             if (error instanceof Error && error.message.includes('not found')) {
-                res.status(404).json({ message: error.message });
+                const result = ControllerResult.notFound(error.message);
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to remove permission', error: (error as Error).message });
+                const result = ControllerResult.internalError('權限移除失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }
@@ -283,7 +338,8 @@ export class RoleToPermissionController implements IRoleToPermissionController {
             logRequest(req, `Role permission retrieval request for ID: ${rolePermissionId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const result = ControllerResult.badRequest('無效的角色 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
@@ -291,13 +347,16 @@ export class RoleToPermissionController implements IRoleToPermissionController {
             const permissions = await this.roleToPermissionService.getRolePermissions(id);
 
             logger.info(`Successfully retrieved ${permissions.length} permissions for role ID: ${rolePermissionId}`);
-            res.json({ roleId: id, permissions });
+            const result = ControllerResult.success('角色權限關係獲取成功', { roleId: id, permissions });
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error fetching role permission by ID:', error);
             if (error instanceof Error && error.message === 'Role not found') {
-                res.status(404).json({ message: 'Role permission not found' });
+                const result = ControllerResult.notFound('角色權限關係不存在');
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to fetch role permission', error: (error as Error).message });
+                const result = ControllerResult.internalError('角色權限關係獲取失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }
@@ -333,11 +392,13 @@ export class RoleToPermissionController implements IRoleToPermissionController {
 
             // 驗證輸入
             if (isNaN(roleIdNum) || roleIdNum <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const result = ControllerResult.badRequest('無效的角色 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
             if (!permissionId || isNaN(permissionIdNum) || permissionIdNum <= 0) {
-                res.status(400).json({ message: 'Valid permission ID is required' });
+                const result = ControllerResult.badRequest('需要有效的權限 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
@@ -345,17 +406,21 @@ export class RoleToPermissionController implements IRoleToPermissionController {
 
             if (removed) {
                 logger.info(`Successfully deleted permission ID: ${permissionId} from role ID: ${rolePermissionId}`);
-                res.json({ message: 'Role permission deleted successfully' });
+                const result = ControllerResult.success('角色權限關係刪除成功');
+                res.status(result.status).json(result.toJSON());
             } else {
                 logger.warn(`Permission ${permissionId} was not assigned to role ${rolePermissionId}`);
-                res.status(404).json({ message: 'Role permission assignment not found' });
+                const result = ControllerResult.notFound('角色權限分配關係不存在');
+                res.status(result.status).json(result.toJSON());
             }
         } catch (error) {
             logger.error('Error deleting role permission:', error);
             if (error instanceof Error && error.message.includes('not found')) {
-                res.status(404).json({ message: error.message });
+                const result = ControllerResult.notFound(error.message);
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to delete role permission', error: (error as Error).message });
+                const result = ControllerResult.internalError('角色權限關係刪除失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }

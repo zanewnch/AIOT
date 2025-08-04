@@ -29,22 +29,36 @@ class ProgressRoutes {
   private progressController: ProgressController;
   private authMiddleware: AuthMiddleware;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    PROGRESS: '/api/progress/:taskId',
+    PROGRESS_STREAM: '/api/progress/:taskId/stream'
+  } as const;
+
   constructor() {
     this.router = Router();
     this.progressController = new ProgressController();
     this.authMiddleware = new AuthMiddleware();
     
-    // 直接在 constructor 中設定所有路由
-    this.router.get('/api/progress/:taskId',
+    this.setupProgressRoutes();
+  }
+
+  /**
+   * 設定進度追蹤路由
+   */
+  private setupProgressRoutes = (): void => {
+    // GET /api/progress/:taskId - 獲取任務進度
+    this.router.get(this.ROUTES.PROGRESS,
       this.authMiddleware.authenticate,
-      this.progressController.getProgress
+      (req, res) => this.progressController.getProgress(req, res)
     );
 
-    this.router.get('/api/progress/:taskId/stream',
+    // GET /api/progress/:taskId/stream - 獲取進度串流 (Server-Sent Events)
+    this.router.get(this.ROUTES.PROGRESS_STREAM,
       this.authMiddleware.authenticate,
-      this.progressController.getProgressStream
+      (req, res) => this.progressController.getProgressStream(req, res)
     );
-  }
+  };
 
   /**
    * 取得路由器實例

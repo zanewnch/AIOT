@@ -29,60 +29,39 @@ class SwaggerRoutes {
   private router: Router;
   private swaggerController: SwaggerController;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    SWAGGER_SPEC: '/api/swagger.json',
+    SWAGGER_DOCS: '/api/docs'
+  } as const;
+
   constructor() {
     this.router = Router();
     this.swaggerController = new SwaggerController();
-    this.initializeRoutes();
-  }
-
-  /**
-   * 初始化所有 Swagger 路由
-   */
-  private initializeRoutes(): void {
+    
     this.setupSwaggerSpecRoute();
     this.setupSwaggerUIRoutes();
   }
 
   /**
    * 設定 Swagger 規格文件路由
-   *
-   * 此端點提供完整的 OpenAPI 3.0 規格文件，以 JSON 格式返回。
-   * 該文件包含所有 API 端點的詳細定義，包括請求/回應格式、
-   * 參數說明、認證方式等，供第三方工具（如 Postman、前端 Swagger UI）使用。
-   *
-   * @route GET /api/swagger.json
-   * @group Swagger - API 文檔相關端點
-   * @returns {Object} 200 - OpenAPI 規格文件 (JSON 格式)
-   * @returns {Object} 500 - 伺服器錯誤
    */
-  private setupSwaggerSpecRoute(): void {
-    this.router.get('/api/swagger.json',
-      this.swaggerController.getSwaggerSpec
+  private setupSwaggerSpecRoute = (): void => {
+    // GET /api/swagger.json - 取得 OpenAPI 規格文件
+    this.router.get(this.ROUTES.SWAGGER_SPEC,
+      (req, res) => this.swaggerController.getSwaggerSpec(req, res)
     );
-  }
+  };
 
   /**
    * 設定 Swagger UI 路由
-   *
-   * 此端點提供完整的 Swagger UI 介面，允許用戶瀏覽 API 文檔、
-   * 測試 API 端點、查看請求/回應範例等。提供直觀的網頁介面
-   * 供開發人員和使用者互動式地探索 API。
-   *
-   * 功能特色：
-   * - 交互式 API 測試
-   * - 請求/回應範例展示
-   * - 參數說明和驗證
-   * - 認證配置支援
-   * - 即時請求執行
-   *
-   * @route GET /api/docs
-   * @group Swagger - API 文檔相關端點
-   * @returns {text/html} 200 - Swagger UI 網頁介面
    */
-  private setupSwaggerUIRoutes(): void {
-    this.router.use('/api/docs', swaggerUi.serve);
+  private setupSwaggerUIRoutes = (): void => {
+    // 設定 Swagger UI 中間件
+    this.router.use(this.ROUTES.SWAGGER_DOCS, swaggerUi.serve);
 
-    this.router.get('/api/docs', swaggerUi.setup(specs, {
+    // GET /api/docs - Swagger UI 網頁介面
+    this.router.get(this.ROUTES.SWAGGER_DOCS, swaggerUi.setup(specs, {
       explorer: true,
       swaggerOptions: {
         docExpansion: 'none',
@@ -92,7 +71,7 @@ class SwaggerRoutes {
       customCss: '.swagger-ui .topbar { display: none }',
       customSiteTitle: 'AIOT API Documentation'
     }));
-  }
+  };
 
   /**
    * 取得路由器實例

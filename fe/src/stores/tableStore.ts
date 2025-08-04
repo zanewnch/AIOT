@@ -1,13 +1,13 @@
 /**
  * @fileoverview 表格 UI 狀態管理 - 使用 Zustand
- * 
+ *
  * 純 UI 狀態管理，不包含數據邏輯：
  * - 活動表格切換
  * - 排序狀態
  * - 編輯模態框狀態
- * 
+ *
  * 數據相關邏輯在 useTableQuery hooks 中處理
- * 
+ *
  * @author AIOT Development Team
  * @version 3.0.0 (UI 狀態與數據邏輯分離)
  */
@@ -46,12 +46,12 @@ interface TableUIStore {
   setActiveTable: (tableType: TableType) => void;
   setSorting: (field: SortField, order: SortOrder) => void;
   toggleSortOrder: (field: SortField) => void;
-  
+
   // Modal Actions
   openEditModal: (tableType: TableType, item: any) => void;
   closeEditModal: () => void;
   updateEditingItem: (item: any) => void;
-  
+
   // Computed
   isEditModalOpen: () => boolean;
   getEditingItem: () => any | null;
@@ -66,14 +66,14 @@ export const useTableUIStore = create<TableUIStore>()(
   devtools(
     (set, get) => ({
       // Initial State
-      activeTable: 'RTK',
+      activeTable: 'permission',
       sorting: {
         field: 'id',
         order: 'desc',
       },
       editModal: {
         isOpen: false,
-        tableType: 'RTK',
+        tableType: 'permission',
         editingItem: null,
       },
 
@@ -88,8 +88,8 @@ export const useTableUIStore = create<TableUIStore>()(
 
       toggleSortOrder: (field) => {
         const currentSorting = get().sorting;
-        const newOrder = currentSorting.field === field && currentSorting.order === 'asc' 
-          ? 'desc' 
+        const newOrder = currentSorting.field === field && currentSorting.order === 'asc'
+          ? 'desc'
           : 'asc';
         set({ sorting: { field, order: newOrder } }, false, 'toggleSortOrder');
       },
@@ -109,7 +109,7 @@ export const useTableUIStore = create<TableUIStore>()(
         set({
           editModal: {
             isOpen: false,
-            tableType: 'RTK',
+            tableType: 'permission',
             editingItem: null,
           }
         }, false, 'closeEditModal');
@@ -136,17 +136,17 @@ export const useTableUIStore = create<TableUIStore>()(
  */
 export const useTableUI = () => {
   const store = useTableUIStore();
-  
+
   return {
     // State
     activeTable: store.activeTable,
     sorting: store.sorting,
     editModal: store.editModal,
-    
+
     // Computed
     isEditModalOpen: store.isEditModalOpen(),
     editingItem: store.getEditingItem(),
-    
+
     // Actions
     switchTable: store.setActiveTable,
     setSorting: store.setSorting,

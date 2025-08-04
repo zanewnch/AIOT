@@ -6,14 +6,9 @@
     "auditLog": "/home/user/GitHub/AIOT/be/logs/.2747e5b5d948611148fd77bc2b6e4fcf25765bb0-audit.json",
     "files": [
         {
-            "date": 1753243905252,
-            "name": "/home/user/GitHub/AIOT/be/logs/error-2025-07-23.log",
-            "hash": "982e1d820ca4d0a703a9fea49d4a076ca9ac42ca599c79b9a4d80fd552a9e9c6"
-        },
-        {
-            "date": 1753320092773,
-            "name": "/home/user/GitHub/AIOT/be/logs/error-2025-07-24.log",
-            "hash": "efeb0809d435066b1fef8119cf9f3efdc710c06d3a393195e19e60cbe671a5cb"
+            "date": 1754296561121,
+            "name": "/home/user/GitHub/AIOT/be/logs/error-2025-08-04.log",
+            "hash": "9261ccbdfc1daf483bbe2a05a1ea109286a942d86f70f33256947ad8d0c17a80"
         }
     ],
     "hashType": "sha256"

@@ -24,7 +24,7 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { PermissionService } from '../../services/PermissionService.js'; // 引入權限服務層
+import { PermissionService } from '../../services/rbac/PermissionService.js'; // 引入權限服務層
 import type { IPermissionService } from '../../types/services/IPermissionService.js'; // 引入權限服務介面
 import { IPermissionController } from '../../types/controllers/IPermissionController.js'; // 引入權限控制器介面
 import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 引入日誌記錄器

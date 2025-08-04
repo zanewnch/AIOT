@@ -12,8 +12,8 @@
  */
 
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // 引入 React Router 相關組件進行路由管理
-import { Suspense, lazy } from "react"; // 引入 React 懶加載相關組件
-import { useAuth } from "./stores"; // 引入認證 Hook
+import { Suspense, lazy, useEffect } from "react"; // 引入 React 懶加載相關組件
+import { useAuth, useAuthActions } from "./stores"; // 引入認證 Hook
 import { NotificationContainer } from "./components/Notification/NotificationContainer"; // 引入通知容器組件
 import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路由組件
 
@@ -40,10 +40,16 @@ function App() {
   /**
    * 認證狀態管理
    *
-   * @description 使用 React Query 和自定義 Hook 來管理認證狀態
+   * @description 使用 Zustand 和自定義 Hook 來管理認證狀態
    * 自動處理認證狀態的初始化、載入和錯誤狀態
    */
-  useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  const { initializeAuth } = useAuthActions();
+
+  // 在應用程式啟動時初始化認證狀態
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   /**
    * 返回應用程式的 JSX 結構
@@ -55,6 +61,38 @@ function App() {
    * - 受保護路由：需要認證才能訪問
    * - NotificationContainer: 全域通知系統
    */
+
+  // 如果正在初始化認證狀態，顯示載入畫面
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        fontSize: '18px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <div style={{
+            width: '20px',
+            height: '20px',
+            border: '2px solid #ffffff',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          正在初始化應用程式...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       {/* 啟用瀏覽器路由，支援 HTML5 history API */}

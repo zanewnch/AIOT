@@ -127,4 +127,15 @@ export interface IUserToRoleService {
      * @throws Error 當角色不存在或撤銷失敗時拋出錯誤
      */
     removeAllUsersFromRole(roleId: number): Promise<number>;
+
+    /**
+     * 取得所有使用者角色關聯數據
+     * 
+     * 回傳包含使用者信息和角色信息的完整關聯對象列表，
+     * 用於前端顯示所有使用者角色關聯關係。
+     * 
+     * @returns 使用者角色關聯 DTO 陣列的 Promise
+     * @throws Error 當操作失敗時拋出錯誤
+     */
+    getAllUserRoles(): Promise<UserRoleDTO[]>;
 }

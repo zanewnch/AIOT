@@ -26,13 +26,27 @@ import { userActivityRoutes } from './userActivityRoutes.js';
 class UserRoutes {
   private router: Router;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    USER_BASE: '/api/user'
+  } as const;
+
   constructor() {
     this.router = Router();
     
-    // 直接在 constructor 中設定所有路由
-    this.router.use('/api/user', userPreferenceRoutes);
-    this.router.use('/api/user', userActivityRoutes);
+    this.setupUserRoutes();
   }
+
+  /**
+   * 設定使用者路由
+   */
+  private setupUserRoutes = (): void => {
+    // 使用者偏好設定路由
+    this.router.use(this.ROUTES.USER_BASE, userPreferenceRoutes);
+    
+    // 使用者活動追蹤路由
+    this.router.use(this.ROUTES.USER_BASE, userActivityRoutes);
+  };
 
   /**
    * 取得路由器實例

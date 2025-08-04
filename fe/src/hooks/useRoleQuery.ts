@@ -18,7 +18,8 @@ import type {
   Permission,
   UpdateResponse, 
   TableError,
-  RoleUpdateRequest
+  RoleUpdateRequest,
+  RolePermission
 } from '../types/table';
 
 // 創建服務專用的日誌記錄器
@@ -35,6 +36,7 @@ export class RoleQuery {
     readonly ALL: readonly ['role'];
     readonly LIST: readonly ['role', 'list'];
     readonly PERMISSIONS: (roleId: number) => readonly ['role', number, 'permissions'];
+    readonly ROLE_PERMISSIONS: readonly ['role', 'permissions'];
   };
 
   constructor() {
@@ -42,6 +44,7 @@ export class RoleQuery {
       ALL: ['role'] as const,
       LIST: ['role', 'list'] as const,
       PERMISSIONS: (roleId: number) => ['role', roleId, 'permissions'] as const,
+      ROLE_PERMISSIONS: ['role', 'permissions'] as const,
     } as const;
   }
 
@@ -112,6 +115,41 @@ export class RoleQuery {
   }
 
   /**
+   * 角色權限關聯查詢 Hook (所有關聯)
+   */
+  useRolePermissions() {
+    return useQuery({
+      queryKey: this.ROLE_QUERY_KEYS.ROLE_PERMISSIONS,
+      queryFn: async (): Promise<RolePermission[]> => {
+        try {
+          logger.debug('Fetching role permissions from API');
+          
+          const response = await apiClient.get('/api/rbac/role-permissions');
+          const result = RequestResult.fromResponse<RolePermission[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully fetched ${result.data?.length || 0} role permissions`);
+          return result.unwrap();
+        } catch (error: any) {
+          console.error('Failed to fetch role permissions:', error);
+          
+          throw {
+            message: error.response?.data?.message || 'Failed to fetch role permissions',
+            status: error.response?.status,
+            details: error.response?.data,
+          } as TableError;
+        }
+      },
+      staleTime: 5 * 60 * 1000, // 5分鐘
+      gcTime: 15 * 60 * 1000, // 15分鐘
+      retry: 2,
+    });
+  }
+
+  /**
    * 角色數據更新 Mutation
    */
   useUpdateRoleData() {
@@ -134,6 +172,7 @@ export class RoleQuery {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: this.ROLE_QUERY_KEYS.LIST });
+        queryClient.invalidateQueries({ queryKey: this.ROLE_QUERY_KEYS.ROLE_PERMISSIONS });
       },
       retry: 1,
     });

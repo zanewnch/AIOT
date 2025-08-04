@@ -127,4 +127,15 @@ export interface IRoleToPermissionService {
      * @throws Error 當權限不存在或撤銷失敗時拋出錯誤
      */
     removeAllRolesFromPermission(permissionId: number): Promise<number>;
+
+    /**
+     * 取得所有角色權限關聯數據
+     * 
+     * 回傳包含角色信息和權限信息的完整關聯對象列表，
+     * 用於前端顯示所有角色權限關聯關係。
+     * 
+     * @returns 角色權限關聯 DTO 陣列的 Promise
+     * @throws Error 當操作失敗時拋出錯誤
+     */
+    getAllRolePermissions(): Promise<RolePermissionDTO[]>;
 }

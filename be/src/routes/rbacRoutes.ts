@@ -41,6 +41,29 @@ class RbacRoutes {
   private authMiddleware: AuthMiddleware;
   private permissionMiddleware: PermissionMiddleware;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    // 使用者管理路由
+    USERS: '/api/rbac/users',
+    USER_BY_ID: '/api/rbac/users/:userId',
+    
+    // 角色管理路由
+    ROLES: '/api/rbac/roles',
+    ROLE_BY_ID: '/api/rbac/roles/:roleId',
+    
+    // 權限管理路由
+    PERMISSIONS: '/api/rbac/permissions',
+    PERMISSION_BY_ID: '/api/rbac/permissions/:permissionId',
+    
+    // 使用者角色關聯路由
+    USER_ROLES: '/api/rbac/user-roles',
+    USER_ROLE_BY_ID: '/api/rbac/user-roles/:userRoleId',
+    
+    // 角色權限關聯路由
+    ROLE_PERMISSIONS: '/api/rbac/role-permissions',
+    ROLE_PERMISSION_BY_ID: '/api/rbac/role-permissions/:rolePermissionId'
+  } as const;
+
   constructor() {
     this.router = Router();
     this.userController = new UserController();
@@ -51,161 +74,214 @@ class RbacRoutes {
     this.authMiddleware = new AuthMiddleware();
     this.permissionMiddleware = new PermissionMiddleware();
     
-    // 直接在 constructor 中設定所有路由
-    
-    // 使用者管理路由
-    this.router.get('/api/rbac/users',
+    this.setupUserRoutes();
+    this.setupRoleRoutes();
+    this.setupPermissionRoutes();
+    this.setupUserRoleRoutes();
+    this.setupRolePermissionRoutes();
+  }
+
+  /**
+   * 設定使用者管理路由
+   */
+  private setupUserRoutes = (): void => {
+    // GET /api/rbac/users - 獲取所有使用者
+    this.router.get(this.ROUTES.USERS,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('user.read'),
-      this.userController.getUsers
+      (req, res) => this.userController.getUsers(req, res)
     );
 
-    this.router.post('/api/rbac/users',
+    // POST /api/rbac/users - 建立新使用者
+    this.router.post(this.ROUTES.USERS,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('user.create'),
-      this.userController.createUser
+      (req, res) => this.userController.createUser(req, res)
     );
 
-    this.router.get('/api/rbac/users/:userId',
+    // GET /api/rbac/users/:userId - 根據 ID 獲取使用者
+    this.router.get(this.ROUTES.USER_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('user.read'),
-      this.userController.getUserById
+      (req, res) => this.userController.getUserById(req, res)
     );
 
-    this.router.put('/api/rbac/users/:userId',
+    // PUT /api/rbac/users/:userId - 更新使用者
+    this.router.put(this.ROUTES.USER_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('user.update'),
-      this.userController.updateUser
+      (req, res) => this.userController.updateUser(req, res)
     );
 
-    this.router.delete('/api/rbac/users/:userId',
+    // DELETE /api/rbac/users/:userId - 刪除使用者
+    this.router.delete(this.ROUTES.USER_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('user.delete'),
-      this.userController.deleteUser
+      (req, res) => this.userController.deleteUser(req, res)
     );
+  }
 
-    // 角色管理路由
-    this.router.get('/api/rbac/roles',
+  /**
+   * 設定角色管理路由
+   */
+  private setupRoleRoutes = (): void => {
+
+    // GET /api/rbac/roles - 獲取所有角色
+    this.router.get(this.ROUTES.ROLES,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('role.read'),
-      this.roleController.getRoles
+      (req, res) => this.roleController.getRoles(req, res)
     );
 
-    this.router.post('/api/rbac/roles',
+    // POST /api/rbac/roles - 建立新角色
+    this.router.post(this.ROUTES.ROLES,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('role.create'),
-      this.roleController.createRole
+      (req, res) => this.roleController.createRole(req, res)
     );
 
-    this.router.get('/api/rbac/roles/:roleId',
+    // GET /api/rbac/roles/:roleId - 根據 ID 獲取角色
+    this.router.get(this.ROUTES.ROLE_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('role.read'),
-      this.roleController.getRoleById
+      (req, res) => this.roleController.getRoleById(req, res)
     );
 
-    this.router.put('/api/rbac/roles/:roleId',
+    // PUT /api/rbac/roles/:roleId - 更新角色
+    this.router.put(this.ROUTES.ROLE_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('role.update'),
-      this.roleController.updateRole
+      (req, res) => this.roleController.updateRole(req, res)
     );
 
-    this.router.delete('/api/rbac/roles/:roleId',
+    // DELETE /api/rbac/roles/:roleId - 刪除角色
+    this.router.delete(this.ROUTES.ROLE_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('role.delete'),
-      this.roleController.deleteRole
+      (req, res) => this.roleController.deleteRole(req, res)
     );
+  }
 
-    // 權限管理路由
-    this.router.get('/api/rbac/permissions',
+  /**
+   * 設定權限管理路由
+   */
+  private setupPermissionRoutes = (): void => {
+
+    // GET /api/rbac/permissions - 獲取所有權限
+    this.router.get(this.ROUTES.PERMISSIONS,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.read'),
-      this.permissionController.getPermissions.bind(this.permissionController)
+      (req, res) => this.permissionController.getPermissions(req, res)
     );
 
-    this.router.post('/api/rbac/permissions',
+    // POST /api/rbac/permissions - 建立新權限
+    this.router.post(this.ROUTES.PERMISSIONS,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.create'),
-      this.permissionController.createPermission.bind(this.permissionController)
+      (req, res) => this.permissionController.createPermission(req, res)
     );
 
-    this.router.get('/api/rbac/permissions/:permissionId',
+    // GET /api/rbac/permissions/:permissionId - 根據 ID 獲取權限
+    this.router.get(this.ROUTES.PERMISSION_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.read'),
-      this.permissionController.getPermissionById.bind(this.permissionController)
+      (req, res) => this.permissionController.getPermissionById(req, res)
     );
 
-    this.router.put('/api/rbac/permissions/:permissionId',
+    // PUT /api/rbac/permissions/:permissionId - 更新權限
+    this.router.put(this.ROUTES.PERMISSION_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.update'),
-      this.permissionController.updatePermission.bind(this.permissionController)
+      (req, res) => this.permissionController.updatePermission(req, res)
     );
 
-    this.router.delete('/api/rbac/permissions/:permissionId',
+    // DELETE /api/rbac/permissions/:permissionId - 刪除權限
+    this.router.delete(this.ROUTES.PERMISSION_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.delete'),
-      this.permissionController.deletePermission.bind(this.permissionController)
+      (req, res) => this.permissionController.deletePermission(req, res)
     );
+  }
 
-    // 使用者角色關聯路由
-    this.router.get('/api/rbac/user-roles',
+  /**
+   * 設定使用者角色關聯路由
+   */
+  private setupUserRoleRoutes = (): void => {
+
+    // GET /api/rbac/user-roles - 獲取所有使用者角色關聯
+    this.router.get(this.ROUTES.USER_ROLES,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['user.read', 'role.read']),
-      this.userToRoleController.getUserRoles
+      (req, res) => this.userToRoleController.getUserRoles(req, res)
     );
 
-    this.router.post('/api/rbac/user-roles',
+    // POST /api/rbac/user-roles - 建立新使用者角色關聯
+    this.router.post(this.ROUTES.USER_ROLES,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['user.update', 'role.assign']),
-      this.userToRoleController.createUserRole
+      (req, res) => this.userToRoleController.createUserRole(req, res)
     );
 
-    this.router.get('/api/rbac/user-roles/:userRoleId',
+    // GET /api/rbac/user-roles/:userRoleId - 根據 ID 獲取使用者角色關聯
+    this.router.get(this.ROUTES.USER_ROLE_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['user.read', 'role.read']),
-      this.userToRoleController.getUserRoleById
+      (req, res) => this.userToRoleController.getUserRoleById(req, res)
     );
 
-    this.router.put('/api/rbac/user-roles/:userRoleId',
+    // PUT /api/rbac/user-roles/:userRoleId - 更新使用者角色關聯
+    this.router.put(this.ROUTES.USER_ROLE_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['user.update', 'role.assign']),
-      this.userToRoleController.updateUserRole
+      (req, res) => this.userToRoleController.updateUserRole(req, res)
     );
 
-    this.router.delete('/api/rbac/user-roles/:userRoleId',
+    // DELETE /api/rbac/user-roles/:userRoleId - 刪除使用者角色關聯
+    this.router.delete(this.ROUTES.USER_ROLE_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['user.update', 'role.revoke']),
-      this.userToRoleController.deleteUserRole
+      (req, res) => this.userToRoleController.deleteUserRole(req, res)
     );
+  }
 
-    // 角色權限關聯路由
-    this.router.get('/api/rbac/role-permissions',
+  /**
+   * 設定角色權限關聯路由
+   */
+  private setupRolePermissionRoutes = (): void => {
+
+    // GET /api/rbac/role-permissions - 獲取所有角色權限關聯
+    this.router.get(this.ROUTES.ROLE_PERMISSIONS,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['role.read', 'permission.read']),
-      this.roleToPermissionController.getRolePermissions
+      (req, res) => this.roleToPermissionController.getRolePermissions(req, res)
     );
 
-    this.router.post('/api/rbac/role-permissions',
+    // POST /api/rbac/role-permissions - 建立新角色權限關聯
+    this.router.post(this.ROUTES.ROLE_PERMISSIONS,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['role.update', 'permission.assign']),
-      this.roleToPermissionController.createRolePermission
+      (req, res) => this.roleToPermissionController.createRolePermission(req, res)
     );
 
-    this.router.get('/api/rbac/role-permissions/:rolePermissionId',
+    // GET /api/rbac/role-permissions/:rolePermissionId - 根據 ID 獲取角色權限關聯
+    this.router.get(this.ROUTES.ROLE_PERMISSION_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['role.read', 'permission.read']),
-      this.roleToPermissionController.getRolePermissionById
+      (req, res) => this.roleToPermissionController.getRolePermissionById(req, res)
     );
 
-    this.router.put('/api/rbac/role-permissions/:rolePermissionId',
+    // PUT /api/rbac/role-permissions/:rolePermissionId - 更新角色權限關聯
+    this.router.put(this.ROUTES.ROLE_PERMISSION_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['role.update', 'permission.assign']),
-      this.roleToPermissionController.updateRolePermission
+      (req, res) => this.roleToPermissionController.updateRolePermission(req, res)
     );
 
-    this.router.delete('/api/rbac/role-permissions/:rolePermissionId',
+    // DELETE /api/rbac/role-permissions/:rolePermissionId - 刪除角色權限關聯
+    this.router.delete(this.ROUTES.ROLE_PERMISSION_BY_ID,
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requireAllPermissions(['role.update', 'permission.revoke']),
-      this.roleToPermissionController.deleteRolePermission
+      (req, res) => this.roleToPermissionController.deleteRolePermission(req, res)
     );
   }
 

@@ -18,6 +18,7 @@ import {
   DataType,   // 資料類型定義
   ForeignKey, // 外鍵裝飾器
   PrimaryKey, // 主鍵裝飾器
+  BelongsTo,  // 一對多關聯裝飾器
 } from 'sequelize-typescript';
 
 // 導入相關的模型類別
@@ -106,4 +107,26 @@ export class UserRoleModel extends Model<UserRoleAttributes, UserRoleCreationAtt
   @ForeignKey(() => RoleModel)   // 外鍵關聯到 RoleModel
   @Column(DataType.BIGINT)       // 大整數類型
   declare roleId: number;
+
+  /**
+   * 關聯的使用者實例
+   * 
+   * 通過 BelongsTo 關聯獲取此角色分配所屬的使用者。
+   * 
+   * @type {UserModel | undefined}
+   * @memberof UserRoleModel
+   */
+  @BelongsTo(() => UserModel)
+  declare user?: UserModel;
+
+  /**
+   * 關聯的角色實例
+   * 
+   * 通過 BelongsTo 關聯獲取此使用者分配的角色。
+   * 
+   * @type {RoleModel | undefined}
+   * @memberof UserRoleModel
+   */
+  @BelongsTo(() => RoleModel)
+  declare role?: RoleModel;
 }

@@ -28,27 +28,41 @@ class UserPreferenceRoutes {
   private userPreferenceController: UserPreferenceController;
   private authMiddleware: AuthMiddleware;
 
+  // 路由端點常數 - 集中管理所有 API 路徑
+  private readonly ROUTES = {
+    PREFERENCES: '/preferences'
+  } as const;
+
   constructor() {
     this.router = Router();
     this.userPreferenceController = new UserPreferenceController();
     this.authMiddleware = new AuthMiddleware();
     
-    // 直接在 constructor 中設定所有路由
-    this.router.get('/preferences', 
-      this.authMiddleware.authenticate,
-      this.userPreferenceController.getUserPreferences.bind(this.userPreferenceController)
-    );
-
-    this.router.put('/preferences', 
-      this.authMiddleware.authenticate,
-      this.userPreferenceController.updateUserPreferences.bind(this.userPreferenceController)
-    );
-
-    this.router.post('/preferences', 
-      this.authMiddleware.authenticate,
-      this.userPreferenceController.createUserPreferences.bind(this.userPreferenceController)
-    );
+    this.setupPreferenceRoutes();
   }
+
+  /**
+   * 設定偏好設定路由
+   */
+  private setupPreferenceRoutes = (): void => {
+    // GET /preferences - 獲取使用者偏好設定
+    this.router.get(this.ROUTES.PREFERENCES,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userPreferenceController.getUserPreferences(req, res)
+    );
+
+    // PUT /preferences - 更新使用者偏好設定
+    this.router.put(this.ROUTES.PREFERENCES,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userPreferenceController.updateUserPreferences(req, res)
+    );
+
+    // POST /preferences - 創建使用者偏好設定
+    this.router.post(this.ROUTES.PREFERENCES,
+      this.authMiddleware.authenticate,
+      (req, res) => this.userPreferenceController.createUserPreferences(req, res)
+    );
+  };
 
   /**
    * 取得路由器實例

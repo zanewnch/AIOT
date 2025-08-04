@@ -25,9 +25,10 @@
  */
 
 import { Request, Response } from 'express'; // 引入 Express 的請求和回應類型定義
-import { RoleService } from '../../services/RoleService.js'; // 引入角色服務層
+import { RoleService } from '../../services/rbac/RoleService.js'; // 引入角色服務層
 import { IRoleService } from '../../types/services/IRoleService.js'; // 引入角色服務介面
 import { IRoleController } from '../../types/controllers/IRoleController.js'; // 引入角色控制器介面定義
+import { ControllerResult } from '../../utils/ControllerResult.js'; // 引入控制器結果類別
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('RoleController');
@@ -129,10 +130,12 @@ export class RoleController implements IRoleController {
             const roles = await this.roleService.getAllRoles();
 
             logger.info(`Retrieved ${roles.length} roles from service`);
-            res.json(roles);
+            const response = ControllerResult.success('Roles retrieved successfully', roles);
+            res.status(response.status).json(response.toJSON());
         } catch (error) {
             logger.error('Error fetching roles:', error);
-            res.status(500).json({ message: 'Failed to fetch roles', error: (error as Error).message });
+            const response = ControllerResult.internalError('Failed to fetch roles');
+            res.status(response.status).json(response.toJSON());
         }
     }
 
@@ -190,22 +193,26 @@ export class RoleController implements IRoleController {
             logRequest(req, `Role retrieval request for ID: ${roleId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const response = ControllerResult.badRequest('Invalid role ID');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             const role = await this.roleService.getRoleById(id);
             if (!role) {
                 logger.warn(`Role not found for ID: ${roleId}`);
-                res.status(404).json({ message: 'Role not found' });
+                const response = ControllerResult.notFound('Role not found');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             logger.info(`Role ID: ${roleId} retrieved successfully`);
-            res.json(role);
+            const response = ControllerResult.success('Role retrieved successfully', role);
+            res.status(response.status).json(response.toJSON());
         } catch (error) {
             logger.error('Error fetching role by ID:', error);
-            res.status(500).json({ message: 'Failed to fetch role', error: (error as Error).message });
+            const response = ControllerResult.internalError('Failed to fetch role');
+            res.status(response.status).json(response.toJSON());
         }
     }
 
@@ -267,20 +274,24 @@ export class RoleController implements IRoleController {
 
             // 驗證輸入
             if (!name || name.trim().length === 0) {
-                res.status(400).json({ message: 'Role name is required' });
+                const response = ControllerResult.badRequest('Role name is required');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             const role = await this.roleService.createRole({ name, displayName });
 
             logger.info(`Role created successfully: ${name} (ID: ${role.id})`);
-            res.status(201).json(role);
+            const response = ControllerResult.created('Role created successfully', role);
+            res.status(response.status).json(response.toJSON());
         } catch (error) {
             logger.error('Error creating role:', error);
             if (error instanceof Error && error.message.includes('already exists')) {
-                res.status(400).json({ message: error.message });
+                const response = ControllerResult.badRequest(error.message);
+                res.status(response.status).json(response.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to create role', error: (error as Error).message });
+                const response = ControllerResult.internalError('Failed to create role');
+                res.status(response.status).json(response.toJSON());
             }
         }
     }
@@ -348,30 +359,36 @@ export class RoleController implements IRoleController {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const response = ControllerResult.badRequest('Invalid role ID');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             if (!name && !displayName) {
-                res.status(400).json({ message: 'At least one field (name or displayName) must be provided for update' });
+                const response = ControllerResult.badRequest('At least one field (name or displayName) must be provided for update');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             const updatedRole = await this.roleService.updateRole(id, { name, displayName });
             if (!updatedRole) {
                 logger.warn(`Role update failed - role not found for ID: ${roleId}`);
-                res.status(404).json({ message: 'Role not found' });
+                const response = ControllerResult.notFound('Role not found');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             logger.info(`Role updated successfully: ID ${roleId}`);
-            res.json(updatedRole);
+            const response = ControllerResult.success('Role updated successfully', updatedRole);
+            res.status(response.status).json(response.toJSON());
         } catch (error) {
             logger.error('Error updating role:', error);
             if (error instanceof Error && error.message.includes('already exists')) {
-                res.status(400).json({ message: error.message });
+                const response = ControllerResult.badRequest(error.message);
+                res.status(response.status).json(response.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to update role', error: (error as Error).message });
+                const response = ControllerResult.internalError('Failed to update role');
+                res.status(response.status).json(response.toJSON());
             }
         }
     }
@@ -434,22 +451,26 @@ export class RoleController implements IRoleController {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid role ID' });
+                const response = ControllerResult.badRequest('Invalid role ID');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             const deleted = await this.roleService.deleteRole(id);
             if (!deleted) {
                 logger.warn(`Role deletion failed - role not found for ID: ${roleId}`);
-                res.status(404).json({ message: 'Role not found' });
+                const response = ControllerResult.notFound('Role not found');
+                res.status(response.status).json(response.toJSON());
                 return;
             }
 
             logger.info(`Role deleted successfully: ID ${roleId}`);
-            res.status(204).send();
+            const response = ControllerResult.success('Role deleted successfully');
+            res.status(response.status).json(response.toJSON());
         } catch (error) {
             logger.error('Error deleting role:', error);
-            res.status(500).json({ message: 'Failed to delete role', error: (error as Error).message });
+            const response = ControllerResult.internalError('Failed to delete role');
+            res.status(response.status).json(response.toJSON());
         }
     }
 }

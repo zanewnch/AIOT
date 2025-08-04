@@ -129,8 +129,9 @@ export const PermissionTableView: React.FC = () => {
 
     const sorted = [...permissionData];
     sorted.sort((a, b) => {
-      const aValue = a[sorting.field];
-      const bValue = b[sorting.field];
+      const field = sorting.field as keyof typeof a;
+      const aValue = a[field];
+      const bValue = b[field];
 
       if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
       if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
