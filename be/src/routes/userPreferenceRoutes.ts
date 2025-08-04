@@ -48,19 +48,19 @@ class UserPreferenceRoutes {
     // GET /preferences - 獲取使用者偏好設定
     this.router.get(this.ROUTES.PREFERENCES,
       this.authMiddleware.authenticate,
-      (req, res) => this.userPreferenceController.getUserPreferences(req, res)
+      (req, res, next) => this.userPreferenceController.getUserPreferences(req, res, next)
     );
 
     // PUT /preferences - 更新使用者偏好設定
     this.router.put(this.ROUTES.PREFERENCES,
       this.authMiddleware.authenticate,
-      (req, res) => this.userPreferenceController.updateUserPreferences(req, res)
+      (req, res, next) => this.userPreferenceController.updateUserPreferences(req, res, next)
     );
 
     // POST /preferences - 創建使用者偏好設定
     this.router.post(this.ROUTES.PREFERENCES,
       this.authMiddleware.authenticate,
-      (req, res) => this.userPreferenceController.createUserPreferences(req, res)
+      (req, res, next) => this.userPreferenceController.createUserPreferences(req, res, next)
     );
   };
 

@@ -40,7 +40,8 @@
  */
 
 // 匯入使用者資料存取層，用於使用者管理操作
-import { UserRepository, IUserRepository } from '../../repo/rbac/UserRepo.js';
+import { UserRepository } from '../../repo/rbac/UserRepo.js';
+import type { IUserRepository } from '../../types/repositories/IUserRepository.js';
 // 匯入使用者模型類型
 import { UserModel } from '../../models/rbac/UserModel.js';
 // 匯入 bcrypt 用於密碼加密
@@ -281,7 +282,7 @@ export class UserService { // 使用者服務類別，提供完整的使用者�
             // 快取不存在，從資料庫取得
             logger.debug('Fetching users from database'); // 記錄從資料庫查詢使用者的除錯日誌
             const users = await this.userRepository.findAll(); // 調用資料存取層取得所有使用者模型
-            const usersDTO = users.map(u => this.modelToDTO(u)); // 將所有使用者模型轉換為 DTO 物件
+            const usersDTO = users.map((u: UserModel) => this.modelToDTO(u)); // 將所有使用者模型轉換為 DTO 物件
 
             logger.info(`Retrieved ${usersDTO.length} users from database`); // 記錄從資料庫取得使用者數量的資訊日誌
 

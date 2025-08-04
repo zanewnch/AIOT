@@ -38,6 +38,9 @@ micro service
 # date 2025-7-28
 - [ ] 下一步 從new model 創建repo 開始做
 
-# data 2025-7-30
+# date 2025-7-30
 - [ ] 做websocket and rabbitmq and microserive
 - [ ] 做frontend 修改 like feature-design.md
+
+# date 2025-8-4
+- [ ] websocket, connection pool, message queue, micro service, frontend

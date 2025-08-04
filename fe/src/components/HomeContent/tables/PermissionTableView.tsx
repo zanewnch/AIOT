@@ -27,7 +27,7 @@ const logger = createLogger('PermissionTableView');
  * 此組件負責顯示權限數據的表格視圖，提供權限的查看和編輯功能。
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  *
- * @returns {JSX.Element} 權限表格視圖的 JSX 元素
+ * @returns 權限表格視圖的 JSX 元素
  *
  * @example
  * ```tsx
@@ -51,7 +51,6 @@ export const PermissionTableView: React.FC = () => {
     openEditModal,
     closeEditModal,
     updateEditingItem,
-    setSorting,
     toggleSortOrder
   } = useTableUIStore();
 

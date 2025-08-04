@@ -5868,3 +5868,2234 @@ ReferenceError: progressRoutes is not defined
   }
 }
 [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:45:18.719 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:45:40.352 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:46:05.169 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:46:35.667 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:46:58.544 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:04.901 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:12.262 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:18.551 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:27.089 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:32.464 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:45.091 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:48:01.209 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:51:01.347 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:51:41.280 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:15:39.255 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:15:48.919 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:18:19.600 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:18:41.012 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+(node:85804) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [Bus]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+2025-08-04 19:18:53.304 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:19:14.642 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:19:32.648 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:19:42.244 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:20:18.887 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:21:54.590 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:22:05.928 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:23:23.981 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:23:49.265 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:23:59.791 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:08.202 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:20.041 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:43.546 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:49.718 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:14.143 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:29.191 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:45.844 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:54.278 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:26:06.077 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:27:58.491 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:28:07.551 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:28:12.275 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:28:19.785 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:30:25.904 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:30:33.186 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:30:53.606 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:31:02.219 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:31:10.031 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m

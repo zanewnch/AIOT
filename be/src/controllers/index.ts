@@ -21,9 +21,7 @@
  * @since 2024-01-01
  */
 
-export { InitController } from './InitController.js'; // 匯出應用程式初始化控制器
 export { AuthController } from './AuthController.js'; // 匯出身份驗證和授權控制器
-export { RTKController } from './RTKController.js'; // 匯出 RTK Query 相關控制器
 export { SwaggerController } from './SwaggerController.js'; // 匯出 API 文檔控制器
 export { UserPreferenceController } from './UserPreferenceController.js'; // 匯出使用者偏好設定控制器
 export * from './rbac/index.js'; // 匯出所有 RBAC（角色權限管理）相關控制器

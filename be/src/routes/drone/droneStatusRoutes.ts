@@ -67,37 +67,37 @@ class DroneStatusRoutes {
     // GET /api/drone-status/data - 獲取所有無人機狀態資料
     this.router.get(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getAllDroneStatuses(req, res)
+      (req, res, next) => this.droneStatusController.getAllDroneStatuses(req, res, next)
     );
 
     // GET /api/drone-status/data/:id - 根據 ID 獲取無人機狀態資料
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getDroneStatusById(req, res)
+      (req, res, next) => this.droneStatusController.getDroneStatusById(req, res, next)
     );
 
     // GET /api/drone-status/data/serial/:serial - 根據序號獲取無人機狀態資料
     this.router.get(this.ROUTES.DATA_BY_SERIAL,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getDroneStatusBySerial(req, res)
+      (req, res, next) => this.droneStatusController.getDroneStatusBySerial(req, res, next)
     );
 
     // POST /api/drone-status/data - 創建無人機狀態資料
     this.router.post(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.createDroneStatus(req, res)
+      (req, res, next) => this.droneStatusController.createDroneStatus(req, res, next)
     );
 
     // PUT /api/drone-status/data/:id - 更新無人機狀態資料
     this.router.put(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.updateDroneStatus(req, res)
+      (req, res, next) => this.droneStatusController.updateDroneStatus(req, res, next)
     );
 
     // DELETE /api/drone-status/data/:id - 刪除無人機狀態資料
     this.router.delete(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.deleteDroneStatus(req, res)
+      (req, res, next) => this.droneStatusController.deleteDroneStatus(req, res, next)
     );
   };
 
@@ -108,25 +108,25 @@ class DroneStatusRoutes {
     // GET /api/drone-status/data/status/:status - 根據狀態獲取無人機
     this.router.get(this.ROUTES.BY_STATUS,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getDronesByStatus(req, res)
+      (req, res, next) => this.droneStatusController.getDronesByStatus(req, res, next)
     );
 
     // GET /api/drone-status/data/owner/:ownerId - 根據擁有者獲取無人機
     this.router.get(this.ROUTES.BY_OWNER,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getDronesByOwner(req, res)
+      (req, res, next) => this.droneStatusController.getDronesByOwner(req, res, next)
     );
 
     // GET /api/drone-status/data/manufacturer/:manufacturer - 根據製造商獲取無人機
     this.router.get(this.ROUTES.BY_MANUFACTURER,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getDronesByManufacturer(req, res)
+      (req, res, next) => this.droneStatusController.getDronesByManufacturer(req, res, next)
     );
 
     // PATCH /api/drone-status/data/:id/status - 僅更新無人機狀態
     this.router.patch(this.ROUTES.UPDATE_STATUS_ONLY,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.updateDroneStatusOnly(req, res)
+      (req, res, next) => this.droneStatusController.updateDroneStatusOnly(req, res, next)
     );
   };
 
@@ -137,7 +137,7 @@ class DroneStatusRoutes {
     // GET /api/drone-status/statistics - 獲取無人機狀態統計
     this.router.get(this.ROUTES.STATISTICS,
       this.authMiddleware.authenticate,
-      (req, res) => this.droneStatusController.getDroneStatusStatistics(req, res)
+      (req, res, next) => this.droneStatusController.getDroneStatusStatistics(req, res, next)
     );
   };
 

@@ -10,7 +10,8 @@
  */
 
 import { DroneStatusRepository } from '../../repo/drone/DroneStatusRepo.js';
-import type { DroneStatusAttributes, DroneStatusCreationAttributes, DroneStatus } from '../../models/drone/DroneStatusModel.js';
+import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/drone/DroneStatusModel.js';
+import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import type { IDroneStatusService } from '../../types/services/IDroneStatusService.js';
 import { createLogger } from '../../configs/loggerConfig.js';

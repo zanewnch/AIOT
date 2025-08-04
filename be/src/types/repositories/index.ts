@@ -10,10 +10,10 @@
 
 export type { IRoleRepository } from './IRoleRepository.js';
 export type { IPermissionRepository } from './IPermissionRepository.js';
-export type { IProgressRepository } from './IProgressRepository.js';
+// export type { IProgressRepository } from './IProgressRepository.js'; // 已移除 Progress 功能
 export type { ISessionRepository } from './ISessionRepository.js';
 export type { IUserRepository } from './IUserRepository.js';
 export type { IUserRoleRepository } from './IUserRoleRepository.js';
-export type { IRTKInitRepository } from './IRTKInitRepository.js';
+// export type { IRTKInitRepository } from './IRTKInitRepository.js'; // 已移除 RTK 功能
 export type { IRolePermissionRepository } from './IRolePermissionRepository.js';
-export type { IRTKRepository } from './IRTKRepository.js';
+// export type { IRTKRepository } from './IRTKRepository.js'; // 已移除 RTK 功能

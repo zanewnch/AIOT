@@ -49,7 +49,7 @@ class SwaggerRoutes {
   private setupSwaggerSpecRoute = (): void => {
     // GET /api/swagger.json - 取得 OpenAPI 規格文件
     this.router.get(this.ROUTES.SWAGGER_SPEC,
-      (req, res) => this.swaggerController.getSwaggerSpec(req, res)
+      (req, res, next) => this.swaggerController.getSwaggerSpec(req, res, next)
     );
   };
 

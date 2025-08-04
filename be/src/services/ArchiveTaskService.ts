@@ -14,20 +14,20 @@ import {
     ArchiveTaskModel,
     ArchiveJobType,
     ArchiveTaskStatus
-} from '../models/drone/ArchiveTaskModel';
+} from '../models/drone/ArchiveTaskModel.js';
 import {
     IArchiveTaskService,
     CreateArchiveTaskRequest,
     ArchiveTaskExecutionResult,
     ArchiveTaskStatistics,
     BatchArchiveResult
-} from '../types/services/IArchiveTaskService';
+} from '../types/services/IArchiveTaskService.js';
 import {
     IArchiveTaskRepository,
     ArchiveTaskQueryOptions
-} from '../types/repositories/IArchiveTaskRepository';
-import { ArchiveTaskRepository } from '../repo/ArchiveTaskRepo';
-import { createLogger } from '../utils/logger';
+} from '../types/repositories/IArchiveTaskRepository.js';
+import { ArchiveTaskRepository } from '../repo/ArchiveTaskRepo.js';
+import { createLogger } from '../configs/loggerConfig.js';
 
 /**
  * 歸檔任務 Service 實作類別
@@ -109,7 +109,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
 
             return task;
         } catch (error) {
-            this.logger.error('創建歸檔任務失敗', { request, error: error.message });
+            this.logger.error('創建歸檔任務失敗', { request, error: (error as Error).message });
             throw error;
         }
     }
@@ -149,10 +149,10 @@ export class ArchiveTaskService implements IArchiveTaskService {
                     result.successCount++;
                 } catch (error) {
                     result.failureCount++;
-                    result.errors.push(`任務 ${i + 1}: ${error.message}`);
+                    result.errors.push(`任務 ${i + 1}: ${(error as Error).message}`);
                     this.logger.error(`批次創建任務 ${i + 1} 失敗`, {
                         request: requests[i],
-                        error: error.message
+                        error: (error as Error).message
                     });
                 }
             }
@@ -165,8 +165,8 @@ export class ArchiveTaskService implements IArchiveTaskService {
 
             return result;
         } catch (error) {
-            this.logger.error('批次創建歸檔任務失敗', { error: error.message });
-            throw new Error(`Failed to create batch tasks: ${error.message}`);
+            this.logger.error('批次創建歸檔任務失敗', { error: (error as Error).message });
+            throw new Error(`Failed to create batch tasks: ${(error as Error).message}`);
         }
     }
 
@@ -181,7 +181,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.debug('根據 ID 獲取歸檔任務', { taskId: id });
             return await this.repository.findById(id);
         } catch (error) {
-            this.logger.error('獲取歸檔任務失敗', { taskId: id, error: error.message });
+            this.logger.error('獲取歸檔任務失敗', { taskId: id, error: (error as Error).message });
             throw error;
         }
     }
@@ -197,7 +197,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.debug('獲取所有歸檔任務', { options });
             return await this.repository.findAll(options);
         } catch (error) {
-            this.logger.error('獲取歸檔任務列表失敗', { options, error: error.message });
+            this.logger.error('獲取歸檔任務列表失敗', { options, error: (error as Error).message });
             throw error;
         }
     }
@@ -217,7 +217,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.error('根據狀態獲取歸檔任務失敗', {
                 status,
                 limit,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -236,7 +236,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
         } catch (error) {
             this.logger.error('根據批次 ID 獲取歸檔任務失敗', {
                 batchId,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -291,11 +291,11 @@ export class ArchiveTaskService implements IArchiveTaskService {
                 return result;
             } catch (executionError) {
                 // 標記任務為失敗
-                await this.failTask(id, executionError.message);
+                await this.failTask(id, (executionError as Error).message);
                 throw executionError;
             }
         } catch (error) {
-            this.logger.error('執行歸檔任務失敗', { taskId: id, error: error.message });
+            this.logger.error('執行歸檔任務失敗', { taskId: id, error: (error as Error).message });
             throw error;
         }
     }
@@ -318,7 +318,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
                     const result = await this.executeTask(id);
                     results.push(result);
                 } catch (error) {
-                    this.logger.error(`批次執行任務 ${id} 失敗`, { error: error.message });
+                    this.logger.error(`批次執行任務 ${id} 失敗`, { error: (error as Error).message });
                     // 繼續執行其他任務
                     results.push({
                         taskId: id,
@@ -326,7 +326,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
                         totalRecords: 0,
                         archivedRecords: 0,
                         executionTime: 0,
-                        errorMessage: error.message
+                        errorMessage: (error as Error).message
                     });
                 }
             }
@@ -338,8 +338,8 @@ export class ArchiveTaskService implements IArchiveTaskService {
 
             return results;
         } catch (error) {
-            this.logger.error('批次執行歸檔任務失敗', { error: error.message });
-            throw new Error(`Failed to execute batch tasks: ${error.message}`);
+            this.logger.error('批次執行歸檔任務失敗', { error: (error as Error).message });
+            throw new Error(`Failed to execute batch tasks: ${(error as Error).message}`);
         }
     }
 
@@ -376,7 +376,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.error('取消歸檔任務失敗', {
                 taskId: id,
                 reason,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -414,7 +414,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             // 執行任務
             return await this.executeTask(id);
         } catch (error) {
-            this.logger.error('重試歸檔任務失敗', { taskId: id, error: error.message });
+            this.logger.error('重試歸檔任務失敗', { taskId: id, error: (error as Error).message });
             throw error;
         }
     }
@@ -441,7 +441,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.error('更新任務進度失敗', {
                 taskId: id,
                 archivedCount,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -475,7 +475,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.error('標記任務為完成失敗', {
                 taskId: id,
                 finalCount,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -503,7 +503,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.error('標記任務為失敗失敗', {
                 taskId: id,
                 errorMessage,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -568,7 +568,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.debug('歸檔任務統計資訊獲取完成', { statistics });
             return statistics;
         } catch (error) {
-            this.logger.error('獲取歸檔任務統計資訊失敗', { error: error.message });
+            this.logger.error('獲取歸檔任務統計資訊失敗', { error: (error as Error).message });
             throw error;
         }
     }
@@ -597,7 +597,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             this.logger.error('清理舊歸檔任務記錄失敗', {
                 daysOld,
                 status,
-                error: error.message
+                error: (error as Error).message
             });
             throw error;
         }
@@ -685,7 +685,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
 
             return task.status === ArchiveTaskStatus.PENDING;
         } catch (error) {
-            this.logger.error('檢查任務執行權限失敗', { taskId: id, error: error.message });
+            this.logger.error('檢查任務執行權限失敗', { taskId: id, error: (error as Error).message });
             return false;
         }
     }
@@ -706,7 +706,7 @@ export class ArchiveTaskService implements IArchiveTaskService {
             return task.status === ArchiveTaskStatus.PENDING ||
                 task.status === ArchiveTaskStatus.RUNNING;
         } catch (error) {
-            this.logger.error('檢查任務取消權限失敗', { taskId: id, error: error.message });
+            this.logger.error('檢查任務取消權限失敗', { taskId: id, error: (error as Error).message });
             return false;
         }
     }

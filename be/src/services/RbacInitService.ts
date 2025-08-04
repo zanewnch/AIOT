@@ -51,8 +51,6 @@ import { IUserRoleRepository } from '../types/repositories/IUserRoleRepository.j
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 import { RoleModel } from '../models/rbac/RoleModel.js';
 import { UserModel } from '../models/rbac/UserModel.js';
-// 匯入進度追蹤相關類型，用於支援進度回調和任務階段管理
-import { ProgressCallback, TaskStage } from '../types/ProgressTypes.js';
 // 匯入 RBAC 初始化服務介面
 import { IRbacInitService } from '../types/services/IRbacInitService.js';
 
@@ -293,7 +291,7 @@ export class RbacInitService implements IRbacInitService {
    *
    * 若角色已存在，則不會重複建立，但會回傳現有的角色實例
    */
-  private async seedRoles(result: Record<string, number>) { // 私有異步方法：建立預設角色
+  private async seedRoles(result: Record<string, number>): Promise<Record<string, RoleModel>> { // 私有異步方法：建立預設角色
     const rolesData = [ // 定義預設角色資料陣列
       { name: 'admin', displayName: 'system admin' }, // 管理員角色，顯示名稱為「系統管理員」
       { name: 'editor', displayName: 'editor' }, // 編輯者角色，顯示名稱為「編輯者」
@@ -483,13 +481,11 @@ export class RbacInitService implements IRbacInitService {
   }
 
   /**
-   * 建立 RBAC 示範資料（支援進度回調）
-   * 與 seedRbacDemo 相同功能，但支援進度追蹤回調
-   *
-   * @param progressCallback 進度回調函數
+   * 建立 RBAC 示範資料
+   * 
    * @returns Promise<Record<string, number>> 包含各類型資料建立數量的統計結果
    */
-  async seedRbacDemoWithProgress(progressCallback?: ProgressCallback): Promise<Record<string, number>> { // 異步方法：建立 RBAC 示範資料（支援進度回調）
+  async seedRbacDemoWithProgress(): Promise<Record<string, number>> { // 異步方法：建立 RBAC 示範資料
     const result = { // 建立統計結果物件，記錄各類型資料的建立數量
       users: 0, // 使用者建立數量，初始為 0
       roles: 0, // 角色建立數量，初始為 0
@@ -498,87 +494,18 @@ export class RbacInitService implements IRbacInitService {
       rolePermissions: 0, // 角色權限關聯建立數量，初始為 0
     } as Record<string, number>; // 型別註解為字串鍵對應數字值的記錄物件
 
-    // 通知開始建立角色
-    if (progressCallback) { // 如果提供了進度回調函數
-      progressCallback({ // 調用進度回調函數，通知當前狀態
-        taskId: '', // 任務 ID（空字串）
-        status: 'running' as any, // 任務狀態為執行中
-        stage: TaskStage.CREATING_RELATIONSHIPS, // 任務階段為建立關聯關係
-        percentage: 0, // 進度百分比（會由 ProgressService 重新計算）
-        current: 5000, // 當前進度值，RTK 部分已完成
-        total: 10000, // 總工作量
-        message: '正在建立角色...', // 進度訊息
-        startTime: new Date(), // 開始時間為當前時間
-        lastUpdated: new Date() // 最後更新時間為當前時間
-      });
-    }
 
     const roleMap = await this.seedRoles(result); // 調用私有方法建立角色資料，並取得角色對照表
 
-    // 通知建立權限
-    if (progressCallback) { // 如果提供了進度回調函數
-      progressCallback({ // 調用進度回調函數，通知權限建立狀態
-        taskId: '', // 任務 ID（空字串）
-        status: 'running' as any, // 任務狀態為執行中
-        stage: TaskStage.CREATING_RELATIONSHIPS, // 任務階段為建立關聯關係
-        percentage: 0, // 進度百分比（會由 ProgressService 重新計算）
-        current: 5100, // 當前進度值，角色建立完成
-        total: 10000, // 總工作量
-        message: '正在建立權限...', // 進度訊息
-        startTime: new Date(), // 開始時間為當前時間
-        lastUpdated: new Date() // 最後更新時間為當前時間
-      });
-    }
 
     const permMap = await this.seedPermissions(result); // 調用私有方法建立權限資料，並取得權限對照表
 
-    // 通知建立使用者（這是最耗時的部分）
-    if (progressCallback) { // 如果提供了進度回調函數
-      progressCallback({ // 調用進度回調函數，通知使用者建立狀態
-        taskId: '', // 任務 ID（空字串）
-        status: 'running' as any, // 任務狀態為執行中
-        stage: TaskStage.INSERTING_USERS, // 任務階段為插入使用者
-        percentage: 0, // 進度百分比（會由 ProgressService 重新計算）
-        current: 5200, // 當前進度值，權限建立完成
-        total: 10000, // 總工作量
-        message: '正在建立使用者...', // 進度訊息
-        startTime: new Date(), // 開始時間為當前時間
-        lastUpdated: new Date() // 最後更新時間為當前時間
-      });
-    }
 
-    const userMap = await this.seedUsersWithProgress(result, progressCallback); // 調用支援進度回調的使用者建立方法
+    const userMap = await this.seedUsersWithProgress(result); // 調用使用者建立方法
 
-    // 通知建立關聯關係
-    if (progressCallback) { // 如果提供了進度回調函數
-      progressCallback({ // 調用進度回調函數，通知角色權限關聯建立狀態
-        taskId: '', // 任務 ID（空字串）
-        status: 'running' as any, // 任務狀態為執行中
-        stage: TaskStage.CREATING_RELATIONSHIPS, // 任務階段為建立關聯關係
-        percentage: 0, // 進度百分比（會由 ProgressService 重新計算）
-        current: 9500, // 當前進度值，使用者建立完成
-        total: 10000, // 總工作量
-        message: '正在建立角色權限關聯...', // 進度訊息
-        startTime: new Date(), // 開始時間為當前時間
-        lastUpdated: new Date() // 最後更新時間為當前時間
-      });
-    }
 
     await this.seedRolePermissions(roleMap, permMap, result); // 調用私有方法建立角色與權限的關聯關係
 
-    if (progressCallback) { // 如果提供了進度回調函數
-      progressCallback({ // 調用進度回調函數，通知使用者角色關聯建立狀態
-        taskId: '', // 任務 ID（空字串）
-        status: 'running' as any, // 任務狀態為執行中
-        stage: TaskStage.CREATING_RELATIONSHIPS, // 任務階段為建立關聯關係
-        percentage: 0, // 進度百分比（會由 ProgressService 重新計算）
-        current: 9800, // 當前進度值，角色權限關聯完成
-        total: 10000, // 總工作量
-        message: '正在建立使用者角色關聯...', // 進度訊息
-        startTime: new Date(), // 開始時間為當前時間
-        lastUpdated: new Date() // 最後更新時間為當前時間
-      });
-    }
 
     await this.seedUserRoles(userMap, roleMap, result); // 調用私有方法建立使用者與角色的關聯關係
 
@@ -595,9 +522,8 @@ export class RbacInitService implements IRbacInitService {
    *
    * @private
    */
-  private async seedUsersWithProgress( // 私有異步方法：建立示範使用者（支援進度回調）
-    result: Record<string, number>, // 統計結果物件，用於記錄建立的使用者數量
-    progressCallback?: ProgressCallback // 可選的進度回調函數，用於回報處理進度
+  private async seedUsersWithProgress( // 私有異步方法：建立示範使用者
+    result: Record<string, number> // 統計結果物件，用於記錄建立的使用者數量
   ): Promise<Record<string, UserModel>> { // 回傳使用者對照表的 Promise
     const TARGET_COUNT = 5000; // 目標使用者建立數量為 5000 筆
     const BATCH_SIZE = 1000; // 每批次處理 1000 筆資料，分批處理避免記憶體問題
@@ -628,21 +554,6 @@ export class RbacInitService implements IRbacInitService {
       const batchNumber = Math.floor(batchStart / BATCH_SIZE) + 1; // 計算當前批次編號（從 1 開始）
       logger.info(`Processing user batch ${batchNumber} with progress callback (records ${batchStart + 1}-${batchEnd})`); // 記錄當前批次處理進度的資訊日誌
 
-      // 通知進度
-      if (progressCallback) { // 如果提供了進度回調函數
-        const current = 5200 + batchStart; // 計算當前進度值：基礎進度 + 當前批次進度
-        progressCallback({ // 調用進度回調函數
-          taskId: '', // 任務 ID（空字串）
-          status: 'running' as any, // 任務狀態為執行中
-          stage: TaskStage.INSERTING_USERS, // 任務階段為插入使用者
-          percentage: 0, // 進度百分比（會被 ProgressService 重新計算）
-          current, // 當前進度值
-          total: 10000, // 總工作量
-          message: `正在插入第 ${batchNumber} 批次使用者資料 (${batchStart + 1}-${batchEnd})`, // 詳細的進度訊息
-          startTime: new Date(), // 開始時間為當前時間
-          lastUpdated: new Date() // 最後更新時間為當前時間
-        });
-      }
 
       // 批量創建使用者
       const createdUsers = await this.userRepository.bulkCreate(usersData); // 調用資料存取層的批量創建方法

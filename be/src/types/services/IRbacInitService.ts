@@ -15,7 +15,8 @@
  * @since 2025-07-26
  */
 
-import { ProgressCallback } from '../ProgressTypes.js';
+// import { ProgressCallback } from '../ProgressTypes.js'; // 已移除 Progress 功能
+type ProgressCallback = (progress: number, message: string) => void;
 
 /**
  * RBAC 初始化服務介面

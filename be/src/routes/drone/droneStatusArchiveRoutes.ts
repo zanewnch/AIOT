@@ -66,31 +66,31 @@ class DroneStatusArchiveRoutes {
     // GET /api/drone-status-archive/data - 獲取所有狀態歷史歸檔
     this.router.get(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getAllStatusArchives(req, res)
+      (req, res, next) => this.archiveController.getAllStatusArchives(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/:id - 根據 ID 獲取狀態歷史歸檔
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchiveById(req, res)
+      (req, res, next) => this.archiveController.getStatusArchiveById(req, res, next)
     );
 
     // POST /api/drone-status-archive/data - 創建狀態歷史歸檔
     this.router.post(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.createStatusArchive(req, res)
+      (req, res, next) => this.archiveController.createStatusArchive(req, res, next)
     );
 
     // PUT /api/drone-status-archive/data/:id - 更新狀態歷史歸檔
     this.router.put(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.updateStatusArchive(req, res)
+      (req, res, next) => this.archiveController.updateStatusArchive(req, res, next)
     );
 
     // DELETE /api/drone-status-archive/data/:id - 刪除狀態歷史歸檔
     this.router.delete(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.deleteStatusArchive(req, res)
+      (req, res, next) => this.archiveController.deleteStatusArchive(req, res, next)
     );
   };
 
@@ -101,49 +101,49 @@ class DroneStatusArchiveRoutes {
     // GET /api/drone-status-archive/data/drone/:droneId - 根據無人機 ID 獲取狀態歷史
     this.router.get(this.ROUTES.BY_DRONE_ID,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchivesByDroneId(req, res)
+      (req, res, next) => this.archiveController.getStatusArchivesByDroneId(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/status/:status - 根據狀態獲取歷史記錄
     this.router.get(this.ROUTES.BY_STATUS,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchivesByStatus(req, res)
+      (req, res, next) => this.archiveController.getStatusArchivesByStatus(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/created-by/:userId - 根據創建者獲取歷史記錄
     this.router.get(this.ROUTES.BY_CREATED_BY,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchivesByCreatedBy(req, res)
+      (req, res, next) => this.archiveController.getStatusArchivesByCreatedBy(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/date-range - 根據時間範圍獲取歷史記錄
     this.router.get(this.ROUTES.BY_DATE_RANGE,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchivesByDateRange(req, res)
+      (req, res, next) => this.archiveController.getStatusArchivesByDateRange(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/reason/:reason - 根據變更原因獲取歷史記錄
     this.router.get(this.ROUTES.BY_REASON,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchivesByReason(req, res)
+      (req, res, next) => this.archiveController.getStatusArchivesByReason(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/latest - 獲取最新狀態歷史記錄
     this.router.get(this.ROUTES.LATEST,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getLatestStatusArchives(req, res)
+      (req, res, next) => this.archiveController.getLatestStatusArchives(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/drone/:droneId/latest - 獲取特定無人機的最新狀態歷史
     this.router.get(this.ROUTES.LATEST_BY_DRONE,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getLatestStatusArchiveByDroneId(req, res)
+      (req, res, next) => this.archiveController.getLatestStatusArchiveByDroneId(req, res, next)
     );
 
     // GET /api/drone-status-archive/data/transition - 獲取狀態轉換歷史記錄
     this.router.get(this.ROUTES.BY_TRANSITION,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusArchivesByTransition(req, res)
+      (req, res, next) => this.archiveController.getStatusArchivesByTransition(req, res, next)
     );
   };
 
@@ -154,7 +154,7 @@ class DroneStatusArchiveRoutes {
     // GET /api/drone-status-archive/statistics - 獲取狀態變更統計資料
     this.router.get(this.ROUTES.STATISTICS,
       this.authMiddleware.authenticate,
-      (req, res) => this.archiveController.getStatusChangeStatistics(req, res)
+      (req, res, next) => this.archiveController.getStatusChangeStatistics(req, res, next)
     );
   };
 

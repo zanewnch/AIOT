@@ -14,11 +14,11 @@ import { Request, Response } from 'express';
 import { 
     IArchiveTaskService,
     CreateArchiveTaskRequest 
-} from '../types/services/IArchiveTaskService';
-import { ArchiveTaskService } from '../services/ArchiveTaskService';
-import { ArchiveJobType, ArchiveTaskStatus } from '../models/ArchiveTaskModel';
-import { createLogger } from '../utils/logger';
-import { ApiResponse } from '../types/ApiResponseType';
+} from '../../types/services/IArchiveTaskService.js';
+import { ArchiveTaskService } from '../../services/ArchiveTaskService.js';
+import { ArchiveJobType, ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
+import { createLogger } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
 
 /**
  * 歸檔任務 Controller 類別
@@ -137,14 +137,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('獲取歸檔任務列表失敗', { 
                 query: req.query,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `獲取歸檔任務列表失敗: ${error.message}`
+                message: `獲取歸檔任務列表失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -200,14 +200,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('獲取歸檔任務失敗', { 
                 taskId: req.params.id,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `獲取歸檔任務失敗: ${error.message}`
+                message: `獲取歸檔任務失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -267,14 +267,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('創建歸檔任務失敗', { 
                 body: req.body,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `創建歸檔任務失敗: ${error.message}`
+                message: `創建歸檔任務失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -334,14 +334,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('批次創建歸檔任務失敗', { 
                 count: req.body?.length,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `批次創建歸檔任務失敗: ${error.message}`
+                message: `批次創建歸檔任務失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -393,14 +393,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('執行歸檔任務失敗', { 
                 taskId: req.params.id,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `執行歸檔任務失敗: ${error.message}`
+                message: `執行歸檔任務失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -459,14 +459,14 @@ export class ArchiveTaskController {
             this.logger.error('取消歸檔任務失敗', { 
                 taskId: req.params.id,
                 reason: req.body?.reason,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `取消歸檔任務失敗: ${error.message}`
+                message: `取消歸檔任務失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -517,14 +517,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('重試歸檔任務失敗', { 
                 taskId: req.params.id,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `重試歸檔任務失敗: ${error.message}`
+                message: `重試歸檔任務失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -558,14 +558,14 @@ export class ArchiveTaskController {
             res.status(200).json(response);
         } catch (error) {
             this.logger.error('獲取歸檔任務統計資訊失敗', { 
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `獲取歸檔任務統計資訊失敗: ${error.message}`
+                message: `獲取歸檔任務統計資訊失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -632,14 +632,14 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('清理舊歸檔任務記錄失敗', { 
                 query: req.query,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             const response: ApiResponse<null> = {
                 success: false,
                 data: null,
-                message: `清理舊歸檔任務記錄失敗: ${error.message}`
+                message: `清理舊歸檔任務記錄失敗: ${(error as Error).message}`
             };
 
             res.status(500).json(response);
@@ -672,13 +672,13 @@ export class ArchiveTaskController {
         } catch (error) {
             this.logger.error('獲取歸檔任務資料失敗', { 
                 query: req.query,
-                error: error.message,
-                stack: error.stack 
+                error: (error as Error).message,
+                stack: (error as Error).stack 
             });
 
             res.status(500).json({
                 error: '獲取歸檔任務資料失敗',
-                message: error.message
+                message: (error as Error).message
             });
         }
     }

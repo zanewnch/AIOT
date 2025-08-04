@@ -5912,3 +5912,2278 @@ Redis Client Ready
   hostname: 'aiot-rabbitmq'
 }
 [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:45:18.747 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:45:40.335 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:46:05.140 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:46:35.727 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:46:58.578 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:04.891 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:12.248 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:18.537 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:27.073 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:32.499 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:47:45.037 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:48:01.182 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:51:01.361 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 18:51:41.287 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:15:39.254 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:15:48.901 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:18:19.605 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:18:41.013 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+(node:87081) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [Bus]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+2025-08-04 19:18:53.286 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:19:14.670 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:19:32.650 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:19:42.277 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:20:18.904 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:21:54.539 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:22:05.902 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:23:23.998 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:23:49.217 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:23:59.793 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:08.246 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:20.059 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:43.607 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:24:49.703 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:14.181 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:29.203 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:45.867 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:25:54.296 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:26:06.055 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:27:58.517 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:28:07.506 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:28:12.240 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:28:19.785 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:30:25.944 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:30:33.169 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+❌ Failed to create RabbitMQ channel: Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ App initialization failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+❌ Server startup failed Error: getaddrinfo EAI_AGAIN aiot-rabbitmq
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'aiot-rabbitmq'
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:30:53.604 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:31:02.249 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-04 19:31:10.043 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'users' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `users` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'user_roles' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `user_roles` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'role_permissions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `role_permissions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drones_status' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drones_status` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_commands_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_commands_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_positions_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_positions_archive` FROM `main_db`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'drone_status_archive' AND TABLE_SCHEMA = 'main_db'
+Executing (default): SHOW INDEX FROM `drone_status_archive` FROM `main_db`
+✅ Database synced
+Redis Client Connected
+Redis Client Ready
+✅ Redis connected
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m

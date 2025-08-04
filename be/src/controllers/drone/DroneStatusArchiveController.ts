@@ -32,7 +32,8 @@ import { DroneStatusArchiveService } from '../../services/drone/DroneStatusArchi
 import type { IDroneStatusArchiveService } from '../../types/services/IDroneStatusArchiveService.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
-import type { DroneStatusArchiveCreationAttributes, DroneStatus } from '../../models/drone/DroneStatusArchiveModel.js';
+import type { DroneStatusArchiveCreationAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
+import type { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('DroneStatusArchiveController');

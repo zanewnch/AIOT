@@ -9,7 +9,7 @@
  */
 
 export type { IAuthService, LoginResult } from './IAuthService.js';
-export type { IRTKService } from './IRTKService.js';
+// export type { IRTKService } from './IRTKService.js'; // 已移除 RTK 功能"
 export type { IPermissionService } from './IPermissionService.js';
 export type { IRoleService, RoleDTO, CreateRoleRequest, UpdateRoleRequest } from './IRoleService.js';
 export type { IRoleToPermissionService, RolePermissionDTO, PermissionDTO } from './IRoleToPermissionService.js';

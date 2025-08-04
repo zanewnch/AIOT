@@ -183,6 +183,7 @@ export class PermissionService implements IPermissionService {
             const redis = this.getRedisClient(); // 取得 Redis 客戶端連線實例
             const cacheKey = this.getPermissionsCacheKey(userId); // 生成該使用者的權限快取鍵值
 
+            // cspell:ignore SETEX
             await redis.setEx( // 使用 Redis SETEX 命令設定有過期時間的鍵值
                 cacheKey, // 快取鍵值，格式為 "user_permissions:{userId}"
                 ttl, // 快取過期時間（秒）
