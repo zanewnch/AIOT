@@ -1,0 +1,23 @@
+2025-08-04 04:25:51.428 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 04:25:51.438 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 04:36:27.106 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 04:36:27.110 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 04:36:49.922 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 04:36:49.924 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 04:36:49.924 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 04:36:50.015 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 04:36:50.016 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: true
+2025-08-04 04:36:50.017 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":true,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 04:36:54.020 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:36:55.140 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:36:57.329 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:37:27.807 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:37:28.924 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:37:31.126 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:38:58.523 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:38:59.633 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:39:01.819 [AIOT-BE] ERROR: Error in getAllRTKData {"error":{}}
+2025-08-04 04:40:40.828 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 04:40:40.831 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 04:41:25.673 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 04:41:25.677 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes

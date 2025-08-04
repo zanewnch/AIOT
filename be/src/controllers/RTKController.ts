@@ -75,7 +75,7 @@ export class RTKController {
     async getAllRTKData(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Getting all RTK data');
+            logRequest(req, 'Getting all RTK data');
             logger.info('RTK data retrieval request received');
 
             // 呼叫服務層取得資料
@@ -111,7 +111,7 @@ export class RTKController {
             const id = parseInt(req.params.id);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting RTK data by ID: ${id}`);
+            logRequest(req, `Getting RTK data by ID: ${id}`);
             logger.info('RTK data by ID request received', { id });
 
             // 呼叫服務層取得資料
@@ -148,7 +148,7 @@ export class RTKController {
             const rtkData: RTKCreationAttributes = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Creating new RTK data');
+            logRequest(req, 'Creating new RTK data');
             logger.info('RTK data creation request received', { rtkData });
 
             // 呼叫服務層創建資料
@@ -188,7 +188,7 @@ export class RTKController {
             const updateData: Partial<RTKCreationAttributes> = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Updating RTK data with ID: ${id}`);
+            logRequest(req, `Updating RTK data with ID: ${id}`);
             logger.info('RTK data update request received', { id, updateData });
 
             // 呼叫服務層更新資料
@@ -226,7 +226,7 @@ export class RTKController {
             const id = parseInt(req.params.id);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Deleting RTK data with ID: ${id}`);
+            logRequest(req, `Deleting RTK data with ID: ${id}`);
             logger.info('RTK data deletion request received', { id });
 
             // 呼叫服務層刪除資料
@@ -263,7 +263,7 @@ export class RTKController {
             const limit = parseInt(req.query.limit as string) || 10;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting latest RTK data with limit: ${limit}`);
+            logRequest(req, `Getting latest RTK data with limit: ${limit}`);
             logger.info('Latest RTK data request received', { limit });
 
             // 呼叫服務層取得最新資料

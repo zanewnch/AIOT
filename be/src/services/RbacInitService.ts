@@ -63,7 +63,6 @@ export type { IRbacInitService };
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('RbacInitService');
-
 /**
  * RBAC 初始化服務類別
  * 實作 IRbacInitService 介面，提供完整的 RBAC 系統初始化功能
