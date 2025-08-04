@@ -1461,3 +1461,188 @@ TypeError: next is not a function
 2025-08-04 11:54:18.769 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
 2025-08-04 11:54:19.869 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
 2025-08-04 11:54:22.052 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 11:54:51.537 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 19:54:58.589 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:54:58.593 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:54:58.594 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:54:58.609 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:54:58.786 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:55:10.088 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:55:10.099 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:55:10.109 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:55:10.129 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:55:10.241 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:55:17.142 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:55:17.174 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:55:17.157 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:55:17.168 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:55:17.385 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:55:32.145 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:55:32.146 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:55:32.146 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:55:32.214 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:55:32.216 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:55:32.216 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:55:32.217 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:55:36.863 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-04 11:55:36.864 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 11:55:36.864 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 11:55:36.864 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 11:55:36.868 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 11:55:36.869 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 11:55:36.870 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 11:56:07.330 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:56:07.331 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:56:07.331 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:56:07.393 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:56:07.394 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:56:07.394 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:56:07.394 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:56:11.289 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 11:56:11.289 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 11:56:11.290 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:56:11.291 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 11:56:11.291 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 11:56:12.641 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:56:12.641 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 11:56:12.642 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 11:56:12.642 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 11:56:12.644 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 11:56:12.644 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 11:56:12.645 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 11:56:13.734 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 11:56:14.839 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 11:56:17.022 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 11:56:22.574 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 19:56:59.356 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:56:59.358 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:56:59.380 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:56:59.392 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:56:59.538 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:57:15.401 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:57:15.416 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:57:15.422 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:57:15.427 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:57:15.575 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:57:39.135 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:57:39.137 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:57:39.137 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:57:39.205 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:57:39.206 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:57:39.208 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:57:39.208 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:57:41.165 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-04 11:57:41.165 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 11:57:41.166 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 11:57:41.167 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 11:57:41.172 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 11:57:41.173 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 11:57:41.174 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 11:58:10.163 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:58:10.164 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:58:10.164 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:58:10.229 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:58:10.230 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:58:10.230 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:58:10.232 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:58:14.145 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 11:58:14.146 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 11:58:14.146 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:58:14.148 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 11:58:14.148 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 12:04:59.824 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:04:59.825 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 12:04:59.834 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:04:59.834 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 12:05:00.614 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:05:00.615 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 12:05:00.615 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:05:00.617 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 12:05:00.617 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 12:05:10.015 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:05:10.016 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:05:10.016 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:05:10.016 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:05:10.019 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:05:10.020 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:05:10.021 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:07:13.577 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:07:13.577 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:07:13.577 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:07:13.577 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:07:13.579 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:07:13.580 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:07:13.581 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:09:45.758 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:09:45.759 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:09:45.759 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:09:45.759 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:09:45.763 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:09:45.766 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:09:45.766 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:09:48.205 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:09:48.205 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:09:48.206 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:09:48.206 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:09:48.209 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:09:48.210 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:09:48.211 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 20:10:50.864 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:10:50.875 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:10:50.887 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:10:50.900 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 12:10:51.071 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 20:10:57.015 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:10:57.026 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:10:57.031 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:10:57.050 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 12:10:57.231 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 20:11:03.274 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:03.317 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:03.311 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:03.352 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:03.312 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:03.351 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:03.353 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:03.392 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:11:03.565 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:11:03.598 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:11:14.823 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:11:14.825 [AIOT-BE] ERROR: 查找歸檔任務失敗 {"options":{"sortBy":"createdAt","sortOrder":"DESC","limit":1000},"error":"Model not initialized: Member \"findAll\" cannot be called. \"ArchiveTaskModel\" needs to be added to a Sequelize instance."}
+2025-08-04 12:11:14.826 [AIOT-BE] ERROR: 獲取歸檔任務列表失敗 {"options":{"sortBy":"createdAt","sortOrder":"DESC","limit":1000},"error":"查找歸檔任務失敗: Model not initialized: Member \"findAll\" cannot be called. \"ArchiveTaskModel\" needs to be added to a Sequelize instance."}
+2025-08-04 12:11:14.831 [AIOT-BE] ERROR: 獲取歸檔任務資料失敗 {"query":{},"error":"查找歸檔任務失敗: Model not initialized: Member \"findAll\" cannot be called. \"ArchiveTaskModel\" needs to be added to a Sequelize instance.","stack":"Error: 查找歸檔任務失敗: Model not initialized: Member \"findAll\" cannot be called. \"ArchiveTaskModel\" needs to be added to a Sequelize instance.\n    at ArchiveTaskRepository.findAll (/app/be/src/repo/ArchiveTaskRepo.ts:147:19)\n    at ArchiveTaskService.getAllTasks (/app/be/src/services/ArchiveTaskService.ts:198:42)\n    at ArchiveTaskController.getTasksData (/app/be/src/controllers/drone/ArchiveTaskController.ts:554:46)\n    at <anonymous> (/app/be/src/routes/drone/archiveTaskRoutes.ts:67:25)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/app/be/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at /app/be/node_modules/express/lib/router/index.js:284:15\n    at Function.process_params (/app/be/node_modules/express/lib/router/index.js:346:12)"}
+2025-08-04 20:11:29.954 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:29.988 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:29.977 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:30.019 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:29.997 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:30.034 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:29.992 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:30.031 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:11:30.207 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:11:30.241 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:34.367 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:34.398 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:34.353 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:34.389 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:34.362 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:34.395 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:11:34.409 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:11:34.448 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:11:34.532 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:11:34.582 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:12:20.789 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:12:20.821 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:12:38.746 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 12:12:38.748 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 12:12:38.748 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 12:12:38.819 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 12:12:38.821 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 12:12:38.822 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 12:12:38.822 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 12:12:43.653 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:12:43.657 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":0}
+2025-08-04 12:20:03.861 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:20:03.870 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:20:28.297 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:20:28.306 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}

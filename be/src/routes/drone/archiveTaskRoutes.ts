@@ -11,8 +11,8 @@
  */
 
 import { Router } from 'express';
-import { ArchiveTaskController } from '../controllers/ArchiveTaskController';
-import { createLogger } from '../utils/logger';
+import { ArchiveTaskController } from '../../controllers/drone/ArchiveTaskController.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('ArchiveTaskRoutes');
 

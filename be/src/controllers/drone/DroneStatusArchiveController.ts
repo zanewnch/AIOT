@@ -72,7 +72,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 100;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting all status archives with limit: ${limit}`);
+            logRequest(req, `Getting all status archives with limit: ${limit}`);
             logger.info('Status archives retrieval request received', { limit });
 
             // 呼叫服務層取得資料
@@ -109,7 +109,7 @@ export class DroneStatusArchiveController {
             const id = parseInt(req.params.id);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archive by ID: ${id}`);
+            logRequest(req, `Getting status archive by ID: ${id}`);
             logger.info('Status archive by ID request received', { id });
 
             // 呼叫服務層取得資料
@@ -146,7 +146,7 @@ export class DroneStatusArchiveController {
             const archiveData: DroneStatusArchiveCreationAttributes = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Creating new status archive');
+            logRequest(req, 'Creating new status archive');
             logger.info('Status archive creation request received', { archiveData });
 
             // 呼叫服務層創建資料
@@ -186,7 +186,7 @@ export class DroneStatusArchiveController {
             const updateData: Partial<DroneStatusArchiveCreationAttributes> = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Updating status archive with ID: ${id}`);
+            logRequest(req, `Updating status archive with ID: ${id}`);
             logger.info('Status archive update request received', { id, updateData });
 
             // 呼叫服務層更新資料
@@ -224,7 +224,7 @@ export class DroneStatusArchiveController {
             const id = parseInt(req.params.id);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Deleting status archive with ID: ${id}`);
+            logRequest(req, `Deleting status archive with ID: ${id}`);
             logger.info('Status archive deletion request received', { id });
 
             // 呼叫服務層刪除資料
@@ -262,7 +262,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 50;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archives for drone: ${droneId}`);
+            logRequest(req, `Getting status archives for drone: ${droneId}`);
             logger.info('Status archives by drone ID request received', { droneId, limit });
 
             // 呼叫服務層取得資料
@@ -305,7 +305,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 50;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archives by status: ${status}`);
+            logRequest(req, `Getting status archives by status: ${status}`);
             logger.info('Status archives by status request received', { status, limit });
 
             // 呼叫服務層取得資料
@@ -348,7 +348,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 50;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archives by creator: ${createdBy}`);
+            logRequest(req, `Getting status archives by creator: ${createdBy}`);
             logger.info('Status archives by creator request received', { createdBy, limit });
 
             // 呼叫服務層取得資料
@@ -392,7 +392,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 100;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archives by date range: ${startDate} to ${endDate}`);
+            logRequest(req, `Getting status archives by date range: ${startDate} to ${endDate}`);
             logger.info('Status archives by date range request received', { startDate, endDate, limit });
 
             // 呼叫服務層取得資料
@@ -437,7 +437,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 50;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archives by reason: ${reason}`);
+            logRequest(req, `Getting status archives by reason: ${reason}`);
             logger.info('Status archives by reason request received', { reason, limit });
 
             // 呼叫服務層取得資料
@@ -479,7 +479,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 20;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting latest status archives with limit: ${limit}`);
+            logRequest(req, `Getting latest status archives with limit: ${limit}`);
             logger.info('Latest status archives request received', { limit });
 
             // 呼叫服務層取得資料
@@ -519,7 +519,7 @@ export class DroneStatusArchiveController {
             const droneId = parseInt(req.params.droneId);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting latest status archive for drone: ${droneId}`);
+            logRequest(req, `Getting latest status archive for drone: ${droneId}`);
             logger.info('Latest status archive by drone ID request received', { droneId });
 
             // 呼叫服務層取得資料
@@ -558,7 +558,7 @@ export class DroneStatusArchiveController {
             const limit = parseInt(req.query.limit as string) || 50;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status archives by transition: ${fromStatus} -> ${toStatus}`);
+            logRequest(req, `Getting status archives by transition: ${fromStatus} -> ${toStatus}`);
             logger.info('Status archives by transition request received', { fromStatus, toStatus, limit });
 
             // 呼叫服務層取得資料
@@ -602,7 +602,7 @@ export class DroneStatusArchiveController {
             const { droneId, newStatus, previousStatus, reason, details, createdBy } = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Recording status change for drone: ${droneId}`);
+            logRequest(req, `Recording status change for drone: ${droneId}`);
             logger.info('Status change recording request received', {
                 droneId,
                 newStatus,
@@ -656,7 +656,7 @@ export class DroneStatusArchiveController {
             const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Getting status change statistics');
+            logRequest(req, 'Getting status change statistics');
             logger.info('Status change statistics request received', { startDate, endDate });
 
             // 呼叫服務層取得統計資料
@@ -699,7 +699,7 @@ export class DroneStatusArchiveController {
             const days = parseInt(req.query.days as string) || 30;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting status change trend for drone: ${droneId}`);
+            logRequest(req, `Getting status change trend for drone: ${droneId}`);
             logger.info('Status change trend request received', { droneId, days });
 
             // 呼叫服務層取得趨勢資料
@@ -742,7 +742,7 @@ export class DroneStatusArchiveController {
             const days = parseInt(req.query.days as string) || 7;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting activity summary for drone: ${droneId}`);
+            logRequest(req, `Getting activity summary for drone: ${droneId}`);
             logger.info('Drone activity summary request received', { droneId, days });
 
             // 呼叫服務層取得活動摘要

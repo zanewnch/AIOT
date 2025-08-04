@@ -67,7 +67,7 @@ export class DronePositionsArchiveController {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
 
-            logRequest(req.originalUrl, req.method, `Getting all position archives with limit: ${limit}`);
+            logRequest(req, `Getting all position archives with limit: ${limit}`);
             logger.info('Position archives retrieval request received', { limit });
 
             const archives = await this.archiveService.getAllPositionArchives(limit);
@@ -97,7 +97,7 @@ export class DronePositionsArchiveController {
         try {
             const id = parseInt(req.params.id);
 
-            logRequest(req.originalUrl, req.method, `Getting position archive by ID: ${id}`);
+            logRequest(req, `Getting position archive by ID: ${id}`);
             logger.info('Position archive by ID request received', { id });
 
             const archive = await this.archiveService.getPositionArchiveById(id);
@@ -127,7 +127,7 @@ export class DronePositionsArchiveController {
         try {
             const originalId = parseInt(req.params.originalId);
 
-            logRequest(req.originalUrl, req.method, `Getting position archive by original ID: ${originalId}`);
+            logRequest(req, `Getting position archive by original ID: ${originalId}`);
             logger.info('Position archive by original ID request received', { originalId });
 
             const archive = await this.archiveService.getPositionArchiveByOriginalId(originalId);
@@ -157,7 +157,7 @@ export class DronePositionsArchiveController {
         try {
             const archiveData: DronePositionsArchiveCreationAttributes = req.body;
 
-            logRequest(req.originalUrl, req.method, 'Creating new position archive');
+            logRequest(req, 'Creating new position archive');
             logger.info('Position archive creation request received', { archiveData });
 
             const createdData = await this.archiveService.createPositionArchive(archiveData);
@@ -189,7 +189,7 @@ export class DronePositionsArchiveController {
         try {
             const archiveDataArray: DronePositionsArchiveCreationAttributes[] = req.body;
 
-            logRequest(req.originalUrl, req.method, `Bulk creating ${archiveDataArray.length} position archives`);
+            logRequest(req, `Bulk creating ${archiveDataArray.length} position archives`);
             logger.info('Bulk position archive creation request received', { count: archiveDataArray.length });
 
             const createdData = await this.archiveService.bulkCreatePositionArchives(archiveDataArray);
@@ -222,7 +222,7 @@ export class DronePositionsArchiveController {
             const id = parseInt(req.params.id);
             const updateData: Partial<DronePositionsArchiveCreationAttributes> = req.body;
 
-            logRequest(req.originalUrl, req.method, `Updating position archive with ID: ${id}`);
+            logRequest(req, `Updating position archive with ID: ${id}`);
             logger.info('Position archive update request received', { id, updateData });
 
             const updatedData = await this.archiveService.updatePositionArchive(id, updateData);
@@ -253,7 +253,7 @@ export class DronePositionsArchiveController {
         try {
             const id = parseInt(req.params.id);
 
-            logRequest(req.originalUrl, req.method, `Deleting position archive with ID: ${id}`);
+            logRequest(req, `Deleting position archive with ID: ${id}`);
             logger.info('Position archive deletion request received', { id });
 
             await this.archiveService.deletePositionArchive(id);
@@ -284,7 +284,7 @@ export class DronePositionsArchiveController {
             const droneId = parseInt(req.params.droneId);
             const limit = parseInt(req.query.limit as string) || 100;
 
-            logRequest(req.originalUrl, req.method, `Getting position archives for drone: ${droneId}`);
+            logRequest(req, `Getting position archives for drone: ${droneId}`);
             logger.info('Position archives by drone ID request received', { droneId, limit });
 
             const archives = await this.archiveService.getPositionArchivesByDroneId(droneId, limit);
@@ -321,7 +321,7 @@ export class DronePositionsArchiveController {
             const endTime = new Date(req.query.endTime as string);
             const limit = parseInt(req.query.limit as string) || 500;
 
-            logRequest(req.originalUrl, req.method, `Getting position archives by time range: ${startTime} to ${endTime}`);
+            logRequest(req, `Getting position archives by time range: ${startTime} to ${endTime}`);
             logger.info('Position archives by time range request received', { startTime, endTime, limit });
 
             const archives = await this.archiveService.getPositionArchivesByTimeRange(startTime, endTime, limit);
@@ -358,7 +358,7 @@ export class DronePositionsArchiveController {
         try {
             const batchId = req.params.batchId;
 
-            logRequest(req.originalUrl, req.method, `Getting position archives by batch ID: ${batchId}`);
+            logRequest(req, `Getting position archives by batch ID: ${batchId}`);
             logger.info('Position archives by batch ID request received', { batchId });
 
             const archives = await this.archiveService.getPositionArchivesByBatchId(batchId);
@@ -395,7 +395,7 @@ export class DronePositionsArchiveController {
             const maxLng = parseFloat(req.query.maxLng as string);
             const limit = parseInt(req.query.limit as string) || 200;
 
-            logRequest(req.originalUrl, req.method, `Getting position archives by geo bounds`);
+            logRequest(req, `Getting position archives by geo bounds`);
             logger.info('Position archives by geo bounds request received', { minLat, maxLat, minLng, maxLng, limit });
 
             const archives = await this.archiveService.getPositionArchivesByGeoBounds(minLat, maxLat, minLng, maxLng, limit);
@@ -436,7 +436,7 @@ export class DronePositionsArchiveController {
             const endTime = new Date(req.query.endTime as string);
             const limit = parseInt(req.query.limit as string) || 1000;
 
-            logRequest(req.originalUrl, req.method, `Getting trajectory for drone: ${droneId}`);
+            logRequest(req, `Getting trajectory for drone: ${droneId}`);
             logger.info('Trajectory request received', { droneId, startTime, endTime, limit });
 
             const trajectory = await this.archiveService.getTrajectoryByDroneAndTime(droneId, startTime, endTime, limit);
@@ -473,7 +473,7 @@ export class DronePositionsArchiveController {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
 
-            logRequest(req.originalUrl, req.method, `Getting latest position archives with limit: ${limit}`);
+            logRequest(req, `Getting latest position archives with limit: ${limit}`);
             logger.info('Latest position archives request received', { limit });
 
             const archives = await this.archiveService.getLatestPositionArchives(limit);
@@ -506,7 +506,7 @@ export class DronePositionsArchiveController {
         try {
             const droneId = parseInt(req.params.droneId);
 
-            logRequest(req.originalUrl, req.method, `Getting latest position archive for drone: ${droneId}`);
+            logRequest(req, `Getting latest position archive for drone: ${droneId}`);
             logger.info('Latest position archive by drone ID request received', { droneId });
 
             const archive = await this.archiveService.getLatestPositionArchiveByDroneId(droneId);
@@ -534,7 +534,7 @@ export class DronePositionsArchiveController {
      */
     async getTotalArchiveCount(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req.originalUrl, req.method, 'Getting total archive count');
+            logRequest(req, 'Getting total archive count');
             logger.info('Total archive count request received');
 
             const count = await this.archiveService.getTotalArchiveCount();
@@ -563,7 +563,7 @@ export class DronePositionsArchiveController {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
 
-            logRequest(req.originalUrl, req.method, `Calculating trajectory statistics for drone: ${droneId}`);
+            logRequest(req, `Calculating trajectory statistics for drone: ${droneId}`);
             logger.info('Trajectory statistics request received', { droneId, startTime, endTime });
 
             const statistics = await this.archiveService.calculateTrajectoryStatistics(droneId, startTime, endTime);
@@ -597,7 +597,7 @@ export class DronePositionsArchiveController {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
 
-            logRequest(req.originalUrl, req.method, `Calculating battery usage statistics for drone: ${droneId}`);
+            logRequest(req, `Calculating battery usage statistics for drone: ${droneId}`);
             logger.info('Battery usage statistics request received', { droneId, startTime, endTime });
 
             const statistics = await this.archiveService.calculateBatteryUsageStatistics(droneId, startTime, endTime);
@@ -631,7 +631,7 @@ export class DronePositionsArchiveController {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
 
-            logRequest(req.originalUrl, req.method, `Calculating position distribution statistics for drone: ${droneId}`);
+            logRequest(req, `Calculating position distribution statistics for drone: ${droneId}`);
             logger.info('Position distribution statistics request received', { droneId, startTime, endTime });
 
             const statistics = await this.archiveService.calculatePositionDistributionStatistics(droneId, startTime, endTime);
@@ -663,7 +663,7 @@ export class DronePositionsArchiveController {
         try {
             const batchId = req.params.batchId;
 
-            logRequest(req.originalUrl, req.method, `Getting archive batch statistics for batch: ${batchId}`);
+            logRequest(req, `Getting archive batch statistics for batch: ${batchId}`);
             logger.info('Archive batch statistics request received', { batchId });
 
             const statistics = await this.archiveService.getArchiveBatchStatistics(batchId);
@@ -695,7 +695,7 @@ export class DronePositionsArchiveController {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
 
-            logRequest(req.originalUrl, req.method, `Analyzing flight patterns for drone: ${droneId}`);
+            logRequest(req, `Analyzing flight patterns for drone: ${droneId}`);
             logger.info('Flight patterns analysis request received', { droneId, startTime, endTime });
 
             const patterns = await this.archiveService.analyzeFlightPatterns(droneId, startTime, endTime);
@@ -729,7 +729,7 @@ export class DronePositionsArchiveController {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
 
-            logRequest(req.originalUrl, req.method, `Detecting anomalous positions for drone: ${droneId}`);
+            logRequest(req, `Detecting anomalous positions for drone: ${droneId}`);
             logger.info('Anomalous positions detection request received', { droneId, startTime, endTime });
 
             const anomalies = await this.archiveService.detectAnomalousPositions(droneId, startTime, endTime);
@@ -763,7 +763,7 @@ export class DronePositionsArchiveController {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
 
-            logRequest(req.originalUrl, req.method, `Generating trajectory summary report for drone: ${droneId}`);
+            logRequest(req, `Generating trajectory summary report for drone: ${droneId}`);
             logger.info('Trajectory summary report request received', { droneId, startTime, endTime });
 
             const report = await this.archiveService.generateTrajectorySummaryReport(droneId, startTime, endTime);
@@ -795,7 +795,7 @@ export class DronePositionsArchiveController {
         try {
             const beforeDate = new Date(req.params.beforeDate);
 
-            logRequest(req.originalUrl, req.method, `Deleting archives before date: ${beforeDate}`);
+            logRequest(req, `Deleting archives before date: ${beforeDate}`);
             logger.info('Delete archives before date request received', { beforeDate });
 
             const deletedCount = await this.archiveService.deleteArchivesBeforeDate(beforeDate);
@@ -825,7 +825,7 @@ export class DronePositionsArchiveController {
         try {
             const batchId = req.params.batchId;
 
-            logRequest(req.originalUrl, req.method, `Deleting archive batch: ${batchId}`);
+            logRequest(req, `Deleting archive batch: ${batchId}`);
             logger.info('Delete archive batch request received', { batchId });
 
             const deletedCount = await this.archiveService.deleteArchiveBatch(batchId);
