@@ -9,7 +9,7 @@
  * @since 2024-01-01
  */
 
-import { DroneCommandModel, type DroneCommandAttributes, type DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
+import { DroneCommandModel, type DroneCommandAttributes, type DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import { createLogger } from '../../configs/loggerConfig.js';

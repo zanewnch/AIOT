@@ -786,3 +786,115 @@ TypeError: next is not a function
 2025-08-04 18:21:50.936 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
 2025-08-04 10:22:10.397 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
 2025-08-04 10:22:10.401 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 10:25:17.778 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 10:25:17.779 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 10:25:17.780 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 10:25:17.852 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 10:25:17.854 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 10:25:17.856 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 10:25:17.856 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 10:25:21.884 [AIOT-BE] INFO: User 1 (admin) permissions loaded: admin_all, user.create, user.read, user.update, user.delete, role.create, role.read, role.update, role.delete, permission.create, permission.read, permission.update, permission.delete, data.view, data.edit, data.delete, rtk.read, rtk.create, rtk.update, rtk.delete, system.admin
+2025-08-04 10:25:21.885 [AIOT-BE] INFO: User 1 (admin) roles: admin
+2025-08-04 10:25:21.885 [AIOT-BE] INFO: Retrieved permissions for user 1: 21 permissions, 1 roles
+2025-08-04 10:25:21.886 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 10:25:21.886 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 10:25:21.887 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:25:21.891 [AIOT-BE] INFO: Retrieved 21 permissions from database
+2025-08-04 10:25:21.896 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 10:25:21.254 [AIOT-BE] INFO: Fetching all role-permission associations
+2025-08-04 10:25:21.255 [AIOT-BE] INFO: All role permissions retrieval request {"method":"GET","url":"/api/rbac/role-permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:25:21.255 [AIOT-BE] INFO: Getting all role-permission associations
+2025-08-04 10:25:21.258 [AIOT-BE] INFO: Retrieved 24 role-permission associations
+2025-08-04 10:25:21.259 [AIOT-BE] INFO: Successfully retrieved 24 role-permission associations
+2025-08-04 10:25:21.789 [AIOT-BE] INFO: Permission check: user.read for user 1 - GRANTED {"userId":1,"permission":"user.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 10:25:21.789 [AIOT-BE] INFO: Permission granted for user 1 - user.read
+2025-08-04 10:25:21.789 [AIOT-BE] INFO: Fetching all users {"method":"GET","url":"/api/rbac/users","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:25:21.792 [AIOT-BE] INFO: Retrieved 3 users from database
+2025-08-04 10:25:21.794 [AIOT-BE] INFO: Retrieved 3 users from service
+2025-08-04 10:25:22.248 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 10:25:22.249 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:25:22.249 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 10:25:22.251 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 10:25:22.252 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 10:25:22.697 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:25:22.697 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 10:25:22.698 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 10:25:22.698 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 10:25:22.700 [AIOT-BE] INFO: Successfully fetched 0 drone position records
+2025-08-04 10:25:22.700 [AIOT-BE] INFO: Retrieved 0 drone position records
+2025-08-04 10:25:22.701 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":0}
+2025-08-04 18:35:02.346 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:35:02.349 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 18:35:02.357 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:35:02.359 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 18:35:02.366 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:35:02.368 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 18:35:02.383 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:35:02.386 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 10:35:02.548 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 10:35:02.551 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 18:35:06.106 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:35:06.108 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 10:36:01.658 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:36:01.658 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 10:36:01.666 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:36:01.666 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 10:36:02.271 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 10:36:02.271 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 10:36:02.271 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:36:02.272 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 10:36:02.272 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 10:36:47.904 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:36:47.905 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 10:36:47.917 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:36:47.918 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 10:36:48.717 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 10:36:48.717 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 10:36:48.717 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 10:36:48.719 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 10:36:48.719 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 18:36:59.949 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:36:59.974 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:36:59.999 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:00.008 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:37:00.129 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:37:10.079 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:10.080 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:10.104 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:10.116 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:37:10.214 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:37:15.391 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:15.392 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:15.398 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:15.408 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:37:15.514 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:37:33.978 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:34.005 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:34.014 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:34.042 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:37:34.193 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:37:39.382 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:39.405 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:39.396 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:39.424 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:37:39.570 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:37:55.655 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:55.662 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:55.648 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:37:55.652 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:37:55.772 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:38:05.211 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:05.221 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:05.220 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:05.248 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:38:05.439 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:38:17.506 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:17.514 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:17.509 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:17.571 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:38:17.646 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 18:38:44.740 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:44.762 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:44.770 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 18:38:44.773 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 10:38:44.911 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}

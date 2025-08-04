@@ -3,7 +3,7 @@
  *
  * This file manages all application route registration logic, including:
  * - Base routes (home, auth, init, etc.)
- * - Feature module routes (RBAC, progress tracking, etc.)
+ * - Feature module routes (RBAC, user management, etc.)
  * - User-related routes
  * - Development tools routes (development environment only)
  * - API documentation routes
@@ -20,7 +20,6 @@ import type { Application } from 'express';
 // Import all route modules
 import { authRoutes } from './authRoutes.js';
 import { initRoutes } from './initRoutes.js';
-import { progressRoutes } from './progressRoutes.js';
 
 import { swaggerRoutes } from './swaggerRoutes.js';
 import { rbacRoutes } from './rbacRoutes.js';
@@ -92,13 +91,6 @@ const featureRoutes: RouteConfig[] = [
     name: 'rbac',
     description: 'RBAC role-based access control routes',
     handler: rbacRoutes,
-    basePath: '/',
-    requireAuth: true
-  },
-  {
-    name: 'progress',
-    description: 'Task progress tracking routes',
-    handler: progressRoutes,
     basePath: '/',
     requireAuth: true
   },

@@ -12,7 +12,6 @@
  * - AuthController: 身份驗證和授權控制器
  * - RTKController: RTK Query 相關控制器
  * - SwaggerController: API 文檔控制器
- * - ProgressController: 進度追蹤控制器
  * - UserPreferenceController: 使用者偏好設定控制器
  * - FeatureFlagController: 功能開關控制器
  * - RBAC 控制器群組: 角色權限管理控制器
@@ -26,6 +25,5 @@ export { InitController } from './InitController.js'; // 匯出應用程式初�
 export { AuthController } from './AuthController.js'; // 匯出身份驗證和授權控制器
 export { RTKController } from './RTKController.js'; // 匯出 RTK Query 相關控制器
 export { SwaggerController } from './SwaggerController.js'; // 匯出 API 文檔控制器
-export { ProgressController } from './ProgressController.js'; // 匯出進度追蹤控制器
 export { UserPreferenceController } from './UserPreferenceController.js'; // 匯出使用者偏好設定控制器
 export * from './rbac/index.js'; // 匯出所有 RBAC（角色權限管理）相關控制器

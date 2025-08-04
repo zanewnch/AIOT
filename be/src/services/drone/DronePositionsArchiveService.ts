@@ -18,7 +18,7 @@ import type {
 } from '../../types/services/IDronePositionsArchiveService.js';
 import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
 import { DronePositionsArchiveRepository } from '../../repo/drone/DronePositionsArchiveRepo.js';
-import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
+import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/drone/DronePositionsArchiveModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
 // 創建 Service 專用的日誌記錄器

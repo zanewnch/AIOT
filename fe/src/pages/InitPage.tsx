@@ -17,7 +17,6 @@
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { InitQuery } from "../hooks/useInitQuery";
-import { ProgressTracker } from "../components/ProgressTracker/ProgressTracker";
 import styles from "../styles/InitPage.module.scss";
 import { Link } from 'react-router-dom';
 

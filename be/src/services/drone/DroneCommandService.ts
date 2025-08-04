@@ -19,8 +19,8 @@ import type {
 } from '../../types/services/IDroneCommandService.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import { DroneCommandRepository } from '../../repo/drone/DroneCommandRepo.js';
-import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
-import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
+import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
+import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/drone/DroneCommandModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
 // 創建 Service 專用的日誌記錄器

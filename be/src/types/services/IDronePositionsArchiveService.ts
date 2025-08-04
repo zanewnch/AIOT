@@ -9,7 +9,7 @@
  * @since 2024-01-01
  */
 
-import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
+import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/drone/DronePositionsArchiveModel.js';
 
 /**
  * 軌跡統計資料介面

@@ -9,7 +9,7 @@
  * @since 2024-01-01
  */
 
-import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
+import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
 import type { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { PaginationParams, PaginatedResponse } from '../ApiResponseType.js';
 

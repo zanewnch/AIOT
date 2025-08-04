@@ -9,7 +9,7 @@
  * @since 2024-01-01
  */
 
-import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes, type DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
+import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes, type DronePositionsArchiveCreationAttributes } from '../../models/drone/DronePositionsArchiveModel.js';
 import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
 import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import { createLogger } from '../../configs/loggerConfig.js';

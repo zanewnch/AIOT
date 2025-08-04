@@ -11,8 +11,6 @@
 // 匯出 API 回應類型
 export * from './ApiResponseType.js';
 
-// 匯出進度追蹤類型
-export * from './ProgressTypes.js';
 
 // 匯出 RBAC 容器服務類型
 export * from './RBACContainerServicesType.js';

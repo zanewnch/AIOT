@@ -19,10 +19,10 @@ import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
 // 匯入無人機位置模型用於位置資料管理
 import { DronePositionModel } from '../models/drone/DronePositionModel.js';
 import { DroneStatusModel } from '../models/drone/DroneStatusModel.js';
-import { DroneCommandModel } from '../models/DroneCommandModel.js';
+import { DroneCommandModel } from '../models/drone/DroneCommandModel.js';
 import { DroneCommandsArchiveModel } from '../models/drone/DroneCommandsArchiveModel.js';
-import { DronePositionsArchiveModel } from '../models/DronePositionsArchiveModel.js';
-import { DroneStatusArchiveModel } from '../models/DroneStatusArchiveModel.js';
+import { DronePositionsArchiveModel } from '../models/drone/DronePositionsArchiveModel.js';
+import { DroneStatusArchiveModel } from '../models/drone/DroneStatusArchiveModel.js';
 
 /**
  * 資料庫配置介面

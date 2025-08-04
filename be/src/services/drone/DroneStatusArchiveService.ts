@@ -10,7 +10,7 @@
  */
 
 import { DroneStatusArchiveRepository } from '../../repo/drone/DroneStatusArchiveRepo.js';
-import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
+import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
 import type { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
 import type { IDroneStatusArchiveService } from '../../types/services/IDroneStatusArchiveService.js';
