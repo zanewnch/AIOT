@@ -72,7 +72,7 @@ export class DroneCommandController {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
 
-            logRequest(req.originalUrl, req.method, `Getting all commands with limit: ${limit}`);
+            logRequest(req, `Getting all commands with limit: ${limit}`);
             logger.info('Commands retrieval request received', { limit });
 
             const commands = await this.commandService.getAllCommands(limit);
@@ -102,7 +102,7 @@ export class DroneCommandController {
         try {
             const id = parseInt(req.params.id);
 
-            logRequest(req.originalUrl, req.method, `Getting command by ID: ${id}`);
+            logRequest(req, `Getting command by ID: ${id}`);
             logger.info('Command by ID request received', { id });
 
             const command = await this.commandService.getCommandById(id);
@@ -132,7 +132,7 @@ export class DroneCommandController {
         try {
             const commandData: DroneCommandCreationAttributes = req.body;
 
-            logRequest(req.originalUrl, req.method, 'Creating new command');
+            logRequest(req, 'Creating new command');
             logger.info('Command creation request received', { commandData });
 
             const result = await this.commandService.createCommand(commandData);
@@ -170,7 +170,7 @@ export class DroneCommandController {
         try {
             const commandsData: DroneCommandCreationAttributes[] = req.body;
 
-            logRequest(req.originalUrl, req.method, `Batch creating ${commandsData.length} commands`);
+            logRequest(req, `Batch creating ${commandsData.length} commands`);
             logger.info('Batch command creation request received', { count: commandsData.length });
 
             const result = await this.commandService.createBatchCommands(commandsData);
@@ -205,7 +205,7 @@ export class DroneCommandController {
             const id = parseInt(req.params.id);
             const updateData: Partial<DroneCommandCreationAttributes> = req.body;
 
-            logRequest(req.originalUrl, req.method, `Updating command with ID: ${id}`);
+            logRequest(req, `Updating command with ID: ${id}`);
             logger.info('Command update request received', { id, updateData });
 
             const updatedCommand = await this.commandService.updateCommand(id, updateData);
@@ -236,7 +236,7 @@ export class DroneCommandController {
         try {
             const id = parseInt(req.params.id);
 
-            logRequest(req.originalUrl, req.method, `Deleting command with ID: ${id}`);
+            logRequest(req, `Deleting command with ID: ${id}`);
             logger.info('Command deletion request received', { id });
 
             await this.commandService.deleteCommand(id);
@@ -267,7 +267,7 @@ export class DroneCommandController {
             const droneId = parseInt(req.params.droneId);
             const limit = parseInt(req.query.limit as string) || 50;
 
-            logRequest(req.originalUrl, req.method, `Getting commands for drone: ${droneId}`);
+            logRequest(req, `Getting commands for drone: ${droneId}`);
             logger.info('Commands by drone ID request received', { droneId, limit });
 
             const commands = await this.commandService.getCommandsByDroneId(droneId, limit);
@@ -303,7 +303,7 @@ export class DroneCommandController {
             const status = req.params.status as DroneCommandStatus;
             const limit = parseInt(req.query.limit as string) || 50;
 
-            logRequest(req.originalUrl, req.method, `Getting commands by status: ${status}`);
+            logRequest(req, `Getting commands by status: ${status}`);
             logger.info('Commands by status request received', { status, limit });
 
             const commands = await this.commandService.getCommandsByStatus(status, limit);
@@ -339,7 +339,7 @@ export class DroneCommandController {
             const commandType = req.params.type as DroneCommandType;
             const limit = parseInt(req.query.limit as string) || 50;
 
-            logRequest(req.originalUrl, req.method, `Getting commands by type: ${commandType}`);
+            logRequest(req, `Getting commands by type: ${commandType}`);
             logger.info('Commands by type request received', { commandType, limit });
 
             const commands = await this.commandService.getCommandsByType(commandType, limit);
@@ -375,7 +375,7 @@ export class DroneCommandController {
             const issuedBy = parseInt(req.params.userId);
             const limit = parseInt(req.query.limit as string) || 50;
 
-            logRequest(req.originalUrl, req.method, `Getting commands by issued by: ${issuedBy}`);
+            logRequest(req, `Getting commands by issued by: ${issuedBy}`);
             logger.info('Commands by issued by request received', { issuedBy, limit });
 
             const commands = await this.commandService.getCommandsByIssuedBy(issuedBy, limit);
@@ -412,7 +412,7 @@ export class DroneCommandController {
             const endDate = new Date(req.query.endDate as string);
             const limit = parseInt(req.query.limit as string) || 100;
 
-            logRequest(req.originalUrl, req.method, `Getting commands by date range: ${startDate} to ${endDate}`);
+            logRequest(req, `Getting commands by date range: ${startDate} to ${endDate}`);
             logger.info('Commands by date range request received', { startDate, endDate, limit });
 
             const commands = await this.commandService.getCommandsByDateRange(startDate, endDate, limit);
@@ -449,7 +449,7 @@ export class DroneCommandController {
         try {
             const droneId = parseInt(req.params.droneId);
 
-            logRequest(req.originalUrl, req.method, `Getting pending commands for drone: ${droneId}`);
+            logRequest(req, `Getting pending commands for drone: ${droneId}`);
             logger.info('Pending commands by drone ID request received', { droneId });
 
             const commands = await this.commandService.getPendingCommandsByDroneId(droneId);
@@ -482,7 +482,7 @@ export class DroneCommandController {
         try {
             const droneId = parseInt(req.params.droneId);
 
-            logRequest(req.originalUrl, req.method, `Getting executing command for drone: ${droneId}`);
+            logRequest(req, `Getting executing command for drone: ${droneId}`);
             logger.info('Executing command by drone ID request received', { droneId });
 
             const command = await this.commandService.getExecutingCommandByDroneId(droneId);
@@ -512,7 +512,7 @@ export class DroneCommandController {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
 
-            logRequest(req.originalUrl, req.method, `Getting latest commands with limit: ${limit}`);
+            logRequest(req, `Getting latest commands with limit: ${limit}`);
             logger.info('Latest commands request received', { limit });
 
             const commands = await this.commandService.getLatestCommands(limit);
@@ -545,7 +545,7 @@ export class DroneCommandController {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
 
-            logRequest(req.originalUrl, req.method, `Getting failed commands with limit: ${limit}`);
+            logRequest(req, `Getting failed commands with limit: ${limit}`);
             logger.info('Failed commands request received', { limit });
 
             const commands = await this.commandService.getFailedCommands(limit);
@@ -578,7 +578,7 @@ export class DroneCommandController {
         try {
             const { droneId, issuedBy, altitude, speed } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Sending takeoff command for drone: ${droneId}`);
+            logRequest(req, `Sending takeoff command for drone: ${droneId}`);
             logger.info('Takeoff command request received', { droneId, issuedBy, altitude, speed });
 
             const result = await this.commandService.sendTakeoffCommand(droneId, issuedBy, { altitude, speed });
@@ -614,7 +614,7 @@ export class DroneCommandController {
         try {
             const { droneId, issuedBy, speed } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Sending land command for drone: ${droneId}`);
+            logRequest(req, `Sending land command for drone: ${droneId}`);
             logger.info('Land command request received', { droneId, issuedBy, speed });
 
             const result = await this.commandService.sendLandCommand(droneId, issuedBy, { speed });
@@ -650,7 +650,7 @@ export class DroneCommandController {
         try {
             const { droneId, issuedBy, latitude, longitude, altitude, speed } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Sending move command for drone: ${droneId}`);
+            logRequest(req, `Sending move command for drone: ${droneId}`);
             logger.info('Move command request received', { droneId, issuedBy, latitude, longitude, altitude, speed });
 
             const result = await this.commandService.sendMoveCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
@@ -686,7 +686,7 @@ export class DroneCommandController {
         try {
             const { droneId, issuedBy, duration } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Sending hover command for drone: ${droneId}`);
+            logRequest(req, `Sending hover command for drone: ${droneId}`);
             logger.info('Hover command request received', { droneId, issuedBy, duration });
 
             const result = await this.commandService.sendHoverCommand(droneId, issuedBy, { duration });
@@ -722,7 +722,7 @@ export class DroneCommandController {
         try {
             const { droneId, issuedBy, speed } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Sending return command for drone: ${droneId}`);
+            logRequest(req, `Sending return command for drone: ${droneId}`);
             logger.info('Return command request received', { droneId, issuedBy, speed });
 
             const result = await this.commandService.sendReturnCommand(droneId, issuedBy, { speed });
@@ -758,7 +758,7 @@ export class DroneCommandController {
         try {
             const commandId = parseInt(req.params.id);
 
-            logRequest(req.originalUrl, req.method, `Executing command: ${commandId}`);
+            logRequest(req, `Executing command: ${commandId}`);
             logger.info('Execute command request received', { commandId });
 
             const result = await this.commandService.executeCommand(commandId);
@@ -794,7 +794,7 @@ export class DroneCommandController {
         try {
             const commandId = parseInt(req.params.id);
 
-            logRequest(req.originalUrl, req.method, `Completing command: ${commandId}`);
+            logRequest(req, `Completing command: ${commandId}`);
             logger.info('Complete command request received', { commandId });
 
             const result = await this.commandService.completeCommand(commandId);
@@ -831,7 +831,7 @@ export class DroneCommandController {
             const commandId = parseInt(req.params.id);
             const { errorMessage } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Marking command as failed: ${commandId}`);
+            logRequest(req, `Marking command as failed: ${commandId}`);
             logger.info('Fail command request received', { commandId, errorMessage });
 
             const result = await this.commandService.failCommand(commandId, errorMessage);
@@ -869,7 +869,7 @@ export class DroneCommandController {
             const commandId = parseInt(req.params.id);
             const { reason } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Cancelling command: ${commandId}`);
+            logRequest(req, `Cancelling command: ${commandId}`);
             logger.info('Cancel command request received', { commandId, reason });
 
             const result = await this.commandService.cancelCommand(commandId, reason);
@@ -907,7 +907,7 @@ export class DroneCommandController {
             const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
             const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
 
-            logRequest(req.originalUrl, req.method, 'Getting command statistics');
+            logRequest(req, 'Getting command statistics');
             logger.info('Command statistics request received', { startDate, endDate });
 
             const statistics = await this.commandService.getCommandStatistics(startDate, endDate);
@@ -943,7 +943,7 @@ export class DroneCommandController {
             const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
             const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
 
-            logRequest(req.originalUrl, req.method, 'Getting command type statistics');
+            logRequest(req, 'Getting command type statistics');
             logger.info('Command type statistics request received', { startDate, endDate });
 
             const typeStats = await this.commandService.getCommandTypeStatistics(startDate, endDate);
@@ -978,7 +978,7 @@ export class DroneCommandController {
         try {
             const droneId = parseInt(req.params.droneId);
 
-            logRequest(req.originalUrl, req.method, `Getting command summary for drone: ${droneId}`);
+            logRequest(req, `Getting command summary for drone: ${droneId}`);
             logger.info('Drone command summary request received', { droneId });
 
             const summary = await this.commandService.getDroneCommandSummary(droneId);
@@ -1012,7 +1012,7 @@ export class DroneCommandController {
             const commandId = parseInt(req.params.id);
             const { issuedBy } = req.body;
 
-            logRequest(req.originalUrl, req.method, `Retrying failed command: ${commandId}`);
+            logRequest(req, `Retrying failed command: ${commandId}`);
             logger.info('Retry failed command request received', { commandId, issuedBy });
 
             const result = await this.commandService.retryFailedCommand(commandId, issuedBy);

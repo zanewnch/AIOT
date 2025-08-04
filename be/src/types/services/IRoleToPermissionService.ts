@@ -21,7 +21,7 @@
 export interface RolePermissionDTO {
     roleId: number;
     permissionId: number;
-    assignedAt: Date;
+    assignedAt: string;
     role?: {
         id: number;
         name: string;

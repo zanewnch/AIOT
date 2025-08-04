@@ -49,19 +49,19 @@ class AuthRoutes {
   private setupAuthRoutes = (): void => {
     // POST /api/auth/login - 使用者登入
     this.router.post(this.ROUTES.LOGIN, 
-      (req, res) => this.authController.login(req, res)
+      (req, res, next) => this.authController.login(req, res, next)
     );
     
     // POST /api/auth/logout - 使用者登出
     this.router.post(this.ROUTES.LOGOUT,
       this.authMiddleware.authenticate,
-      (req, res) => this.authController.logout(req, res)
+      (req, res, next) => this.authController.logout(req, res, next)
     );
 
     // GET /api/auth/me - 獲取當前使用者資訊 (用於認證檢查)
     this.router.get(this.ROUTES.ME,
       this.authMiddleware.authenticate,
-      (req, res) => this.authController.me(req, res)
+      (req, res, next) => this.authController.me(req, res, next)
     );
   };
 

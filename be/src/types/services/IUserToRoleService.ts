@@ -21,7 +21,7 @@
 export interface UserRoleDTO {
     userId: number;
     roleId: number;
-    assignedAt: Date;
+    assignedAt: string;
     user?: {
         id: number;
         username: string;

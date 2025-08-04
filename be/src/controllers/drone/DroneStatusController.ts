@@ -63,7 +63,7 @@ export class DroneStatusController {
     async getAllDroneStatuses(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Getting all drone status data');
+            logRequest(req, 'Getting all drone status data');
             logger.info('Drone status data retrieval request received');
 
             // 呼叫服務層取得資料
@@ -99,7 +99,7 @@ export class DroneStatusController {
             const id = parseInt(req.params.id);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting drone status data by ID: ${id}`);
+            logRequest(req, `Getting drone status data by ID: ${id}`);
             logger.info('Drone status data by ID request received', { id });
 
             // 呼叫服務層取得資料
@@ -136,7 +136,7 @@ export class DroneStatusController {
             const droneSerial = req.params.serial;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting drone status data by serial: ${droneSerial}`);
+            logRequest(req, `Getting drone status data by serial: ${droneSerial}`);
             logger.info('Drone status data by serial request received', { droneSerial });
 
             // 呼叫服務層取得資料
@@ -173,7 +173,7 @@ export class DroneStatusController {
             const droneStatusData: DroneStatusCreationAttributes = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Creating new drone status data');
+            logRequest(req, 'Creating new drone status data');
             logger.info('Drone status data creation request received', { droneStatusData });
 
             // 呼叫服務層創建資料
@@ -213,7 +213,7 @@ export class DroneStatusController {
             const updateData: Partial<DroneStatusCreationAttributes> = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Updating drone status data with ID: ${id}`);
+            logRequest(req, `Updating drone status data with ID: ${id}`);
             logger.info('Drone status data update request received', { id, updateData });
 
             // 呼叫服務層更新資料
@@ -251,7 +251,7 @@ export class DroneStatusController {
             const id = parseInt(req.params.id);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Deleting drone status data with ID: ${id}`);
+            logRequest(req, `Deleting drone status data with ID: ${id}`);
             logger.info('Drone status data deletion request received', { id });
 
             // 呼叫服務層刪除資料
@@ -288,7 +288,7 @@ export class DroneStatusController {
             const status = req.params.status as DroneStatus;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting drones by status: ${status}`);
+            logRequest(req, `Getting drones by status: ${status}`);
             logger.info('Drones by status request received', { status });
 
             // 呼叫服務層取得資料
@@ -328,7 +328,7 @@ export class DroneStatusController {
             const ownerId = parseInt(req.params.ownerId);
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting drones by owner: ${ownerId}`);
+            logRequest(req, `Getting drones by owner: ${ownerId}`);
             logger.info('Drones by owner request received', { ownerId });
 
             // 呼叫服務層取得資料
@@ -368,7 +368,7 @@ export class DroneStatusController {
             const manufacturer = req.params.manufacturer;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Getting drones by manufacturer: ${manufacturer}`);
+            logRequest(req, `Getting drones by manufacturer: ${manufacturer}`);
             logger.info('Drones by manufacturer request received', { manufacturer });
 
             // 呼叫服務層取得資料
@@ -409,7 +409,7 @@ export class DroneStatusController {
             const { status } = req.body;
 
             // 記錄請求
-            logRequest(req.originalUrl, req.method, `Updating drone status for ID: ${id} to ${status}`);
+            logRequest(req, `Updating drone status for ID: ${id} to ${status}`);
             logger.info('Drone status update request received', { id, status });
 
             // 呼叫服務層更新狀態
@@ -445,7 +445,7 @@ export class DroneStatusController {
     async getDroneStatusStatistics(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             // 記錄請求
-            logRequest(req.originalUrl, req.method, 'Getting drone status statistics');
+            logRequest(req, 'Getting drone status statistics');
             logger.info('Drone status statistics request received');
 
             // 呼叫服務層取得統計資料

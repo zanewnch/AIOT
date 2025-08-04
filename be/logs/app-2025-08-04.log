@@ -1173,3 +1173,291 @@ TypeError: next is not a function
 2025-08-04 19:31:10.043 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
 2025-08-04 19:31:10.050 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
 2025-08-04 11:31:10.168 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:31:16.701 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:16.693 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:16.723 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:16.717 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:31:16.838 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:31:25.375 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:25.383 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:25.383 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:25.398 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:31:25.502 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:31:34.709 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:34.726 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:34.750 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:34.772 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:31:34.894 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:31:54.005 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:54.003 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:54.033 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:31:54.046 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:31:54.200 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:32:14.201 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:14.231 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:14.233 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:14.261 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:32:14.402 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:32:28.733 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:28.737 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:28.770 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:28.804 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:32:28.917 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:32:48.928 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:48.932 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:48.937 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:32:48.954 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:32:49.167 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:33:58.563 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:33:58.564 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:33:58.583 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:33:58.563 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:33:58.768 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:34:12.576 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:34:12.598 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:34:12.598 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:34:12.617 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:34:12.782 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:36:39.182 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:39.198 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:39.204 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:39.213 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:36:39.366 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:36:44.410 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:44.420 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:44.434 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:44.462 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:36:44.644 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:36:50.976 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:50.969 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:50.992 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:51.004 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:36:51.122 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:36:54.810 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:54.810 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:54.821 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:36:54.828 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:36:54.973 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:37:52.002 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:37:52.025 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:37:52.022 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:37:52.039 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:37:52.195 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:38:04.802 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:04.838 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:04.873 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:04.912 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:38:05.030 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:38:16.547 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:16.541 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:16.541 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:16.565 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:38:16.667 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:38:27.367 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:27.397 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:27.384 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:27.414 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:38:27.496 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:38:35.304 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:35.313 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:35.326 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:38:35.358 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:38:35.517 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:40:04.814 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:40:04.820 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:40:04.815 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:40:04.850 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:40:05.025 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:40:14.778 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:40:14.786 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:40:14.831 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:40:14.825 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:40:14.974 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:41:24.307 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:24.322 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:24.322 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:24.322 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:41:24.660 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:41:38.786 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:38.801 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:38.804 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:38.827 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:41:39.008 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:41:42.643 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:42.646 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:42.664 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:42.712 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:41:42.839 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:41:47.562 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:47.575 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:47.578 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:47.604 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:41:47.707 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:41:52.828 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:52.822 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:52.861 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:41:52.854 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:41:53.039 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:42:09.740 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:09.756 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:09.803 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:09.823 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:42:09.996 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:42:24.910 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:24.937 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:24.963 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:24.998 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:42:25.141 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:42:36.905 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:36.902 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:36.912 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:36.917 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:42:37.125 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:42:42.789 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:42.804 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:42.814 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:42:42.820 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:42:43.030 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:43:05.025 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:43:05.028 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:43:05.080 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:43:05.076 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:43:05.217 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:43:10.613 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:43:10.612 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:43:10.631 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:43:10.659 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:43:10.793 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:48:47.393 [AIOT-BE] ERROR: Error in getAllDroneStatuses {"error":{}}
+2025-08-04 11:48:49.583 [AIOT-BE] ERROR: Error in getAllDroneStatuses {"error":{}}
+2025-08-04 11:48:53.932 [AIOT-BE] ERROR: Error in getAllDroneStatuses {"error":{}}
+2025-08-04 11:49:08.144 [AIOT-BE] ERROR: Error in getAllDroneStatuses {"error":{}}
+2025-08-04 19:50:32.222 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:50:32.233 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:50:32.244 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:50:32.272 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:50:32.487 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:50:41.562 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:50:41.562 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:50:41.563 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:50:41.626 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:50:41.628 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:50:41.629 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:50:41.630 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:50:46.158 [AIOT-BE] ERROR: Error in getAllDroneStatuses {"error":{},"errorMessage":"req.get is not a function","errorStack":"TypeError: req.get is not a function\n    at logRequest (/app/be/src/configs/loggerConfig.ts:207:20)\n    at DroneStatusController.getAllDroneStatuses (/app/be/src/controllers/drone/DroneStatusController.ts:66:13)\n    at <anonymous> (/app/be/src/routes/drone/droneStatusRoutes.ts:70:54)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at authenticate (/app/be/src/middlewares/AuthMiddleware.ts:174:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","errorName":"TypeError"}
+2025-08-04 19:51:01.856 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:01.913 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:01.902 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:01.925 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:51:02.068 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:51:25.067 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:25.083 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:25.149 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:25.142 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:51:25.315 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:51:29.450 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-04 11:51:29.451 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 11:51:29.451 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 11:51:29.452 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 11:51:29.457 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 11:51:29.457 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 11:51:29.460 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 19:51:38.173 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:38.181 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:38.189 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:51:38.229 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:51:38.377 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:52:04.280 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:52:04.281 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:52:04.281 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:52:04.350 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:52:04.351 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:52:04.353 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:52:04.353 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:52:08.351 [AIOT-BE] INFO: User 1 (admin) permissions loaded: admin_all, user.create, user.read, user.update, user.delete, role.create, role.read, role.update, role.delete, permission.create, permission.read, permission.update, permission.delete, data.view, data.edit, data.delete, rtk.read, rtk.create, rtk.update, rtk.delete, system.admin
+2025-08-04 11:52:08.351 [AIOT-BE] INFO: User 1 (admin) roles: admin
+2025-08-04 11:52:08.352 [AIOT-BE] INFO: Retrieved permissions for user 1: 21 permissions, 1 roles
+2025-08-04 11:52:08.352 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 11:52:08.353 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 11:52:08.353 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:52:08.357 [AIOT-BE] INFO: Retrieved 21 permissions from database
+2025-08-04 11:52:08.362 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 11:52:09.171 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:52:09.171 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 11:52:09.171 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 11:52:09.171 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 11:52:09.174 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 11:52:09.175 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 11:52:09.176 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 11:52:09.635 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:52:09.635 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 11:52:09.636 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 11:52:09.636 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 11:52:09.638 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 11:52:09.639 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 11:52:09.639 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 11:52:10.052 [AIOT-BE] ERROR: Error in getAllCommands {"error":{}}
+2025-08-04 11:52:08.850 [AIOT-BE] ERROR: Error in getAllCommands {"error":{}}
+2025-08-04 11:52:11.036 [AIOT-BE] ERROR: Error in getAllCommands {"error":{}}
+2025-08-04 19:52:54.985 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:52:54.981 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:52:54.985 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:52:55.001 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:52:55.200 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:53:08.469 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:53:08.490 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:53:08.492 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:53:08.497 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:53:08.650 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 19:53:23.389 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:53:23.427 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:53:23.409 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 19:53:23.466 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 11:53:23.564 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 11:53:36.908 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:53:36.909 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:53:36.909 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:53:36.976 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:53:36.977 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:53:36.978 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:53:36.978 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 11:53:41.022 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-04 11:53:41.023 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 11:53:41.023 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 11:53:41.023 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 11:53:41.027 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 11:53:41.027 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 11:53:41.028 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 11:54:02.549 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:54:02.549 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 11:54:02.550 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 11:54:02.609 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 11:54:02.610 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 11:54:02.611 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 11:54:02.611 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 11:54:06.184 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 11:54:06.185 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 11:54:06.185 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:54:06.186 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 11:54:06.186 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 11:54:07.417 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:54:07.418 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 11:54:07.418 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 11:54:07.418 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 11:54:07.421 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 11:54:07.421 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 11:54:07.422 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 11:54:07.928 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 11:54:07.928 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 11:54:07.928 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 11:54:07.928 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 11:54:07.930 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 11:54:07.931 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 11:54:07.931 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 11:54:08.482 [AIOT-BE] ERROR: Error in getAllPositionArchives {"error":{}}
+2025-08-04 11:54:09.594 [AIOT-BE] ERROR: Error in getAllPositionArchives {"error":{}}
+2025-08-04 11:54:11.781 [AIOT-BE] ERROR: Error in getAllPositionArchives {"error":{}}
+2025-08-04 11:54:16.133 [AIOT-BE] ERROR: Error in getAllPositionArchives {"error":{}}
+2025-08-04 11:54:18.769 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 11:54:19.869 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
+2025-08-04 11:54:22.052 [AIOT-BE] ERROR: Error in getAllStatusArchives {"error":{}}
