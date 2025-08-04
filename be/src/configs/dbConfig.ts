@@ -24,6 +24,7 @@ import { DroneCommandsArchiveModel } from '../models/drone/DroneCommandsArchiveM
 import { DronePositionsArchiveModel } from '../models/drone/DronePositionsArchiveModel.js';
 import { DroneStatusArchiveModel } from '../models/drone/DroneStatusArchiveModel.js';
 import { ArchiveTaskModel } from '../models/drone/ArchiveTaskModel.js';
+import { UserPreferenceModel } from '../models/UserPreferenceModel.js';
 
 /**
  * 資料庫配置介面
@@ -82,6 +83,6 @@ export const createSequelizeInstance = (): Sequelize => {
     // 展開資料庫配置物件的所有屬性
     ...config,
     // 註冊所有需要的模型到 Sequelize 實例中
-    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneCommandModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel],
+    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneCommandModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel, UserPreferenceModel],
   });
 };

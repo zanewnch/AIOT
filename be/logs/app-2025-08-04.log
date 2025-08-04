@@ -1646,3 +1646,543 @@ TypeError: next is not a function
 2025-08-04 12:20:03.870 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
 2025-08-04 12:20:28.297 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
 2025-08-04 12:20:28.306 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:25:56.538 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 12:25:56.539 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 12:25:56.539 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 12:25:56.602 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 12:25:56.603 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 12:25:56.604 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 12:25:56.605 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 12:26:00.304 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:26:00.306 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 12:26:00.306 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:00.307 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 12:26:00.308 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 12:26:01.807 [AIOT-BE] INFO: Permission check: role.read for user 1 - GRANTED {"userId":1,"permission":"role.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:26:01.807 [AIOT-BE] INFO: Permission granted for user 1 - role.read
+2025-08-04 12:26:01.808 [AIOT-BE] INFO: Fetching all roles {"method":"GET","url":"/api/rbac/roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:01.813 [AIOT-BE] INFO: Retrieved 3 roles from database
+2025-08-04 12:26:01.815 [AIOT-BE] INFO: Retrieved 3 roles from service
+2025-08-04 12:26:02.265 [AIOT-BE] INFO: Fetching all role-permission associations
+2025-08-04 12:26:02.266 [AIOT-BE] INFO: All role permissions retrieval request {"method":"GET","url":"/api/rbac/role-permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:02.266 [AIOT-BE] INFO: Getting all role-permission associations
+2025-08-04 12:26:02.268 [AIOT-BE] INFO: Retrieved 24 role-permission associations
+2025-08-04 12:26:02.268 [AIOT-BE] INFO: Successfully retrieved 24 role-permission associations
+2025-08-04 12:26:02.482 [AIOT-BE] INFO: Permission check: user.read for user 1 - GRANTED {"userId":1,"permission":"user.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:26:02.483 [AIOT-BE] INFO: Permission granted for user 1 - user.read
+2025-08-04 12:26:02.483 [AIOT-BE] INFO: Fetching all users {"method":"GET","url":"/api/rbac/users","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:02.485 [AIOT-BE] INFO: Retrieved 3 users from database
+2025-08-04 12:26:02.487 [AIOT-BE] INFO: Retrieved 3 users from service
+2025-08-04 12:26:02.970 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 12:26:02.970 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:02.970 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 12:26:02.973 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 12:26:02.973 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 12:26:03.520 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:03.520 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:26:03.521 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:26:03.521 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:26:03.524 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:26:03.524 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:26:03.525 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:26:04.423 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:04.424 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:26:04.424 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:26:04.424 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:26:04.428 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:26:04.428 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:26:04.429 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:26:05.400 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:05.401 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:26:05.401 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:26:05.401 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:26:05.404 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:26:05.405 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:26:05.405 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:26:05.897 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:05.897 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 12:26:05.897 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 12:26:05.898 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 12:26:05.900 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 12:26:05.901 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 12:26:05.901 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:26:06.475 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:06.476 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:26:06.476 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:26:06.476 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:26:06.479 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:26:06.479 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:26:06.480 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:26:06.968 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:06.968 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:26:06.969 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:26:06.969 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:26:06.972 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:26:06.972 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:26:06.973 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:26:07.503 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:26:07.508 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:26:08.072 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:26:08.072 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:08.074 [AIOT-BE] ERROR: Model not initialized: Member "findOne" cannot be called. "UserPreferenceModel" needs to be added to a Sequelize instance. {"stack":"Error: Model not initialized: Member \"findOne\" cannot be called. \"UserPreferenceModel\" needs to be added to a Sequelize instance.\n    at Model.<computed> (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:126:23)\n    at Model.<computed> [as findOne] (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:138:28)\n    at UserPreferenceController.getUserPreferences (/app/be/src/controllers/UserPreferenceController.ts:107:51)\n    at <anonymous> (/app/be/src/routes/userPreferenceRoutes.ts:51:57)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at authenticate (/app/be/src/middlewares/AuthMiddleware.ts:174:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 12:26:09.174 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:26:09.174 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:09.175 [AIOT-BE] ERROR: Model not initialized: Member "findOne" cannot be called. "UserPreferenceModel" needs to be added to a Sequelize instance. {"stack":"Error: Model not initialized: Member \"findOne\" cannot be called. \"UserPreferenceModel\" needs to be added to a Sequelize instance.\n    at Model.<computed> (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:126:23)\n    at Model.<computed> [as findOne] (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:138:28)\n    at UserPreferenceController.getUserPreferences (/app/be/src/controllers/UserPreferenceController.ts:107:51)\n    at <anonymous> (/app/be/src/routes/userPreferenceRoutes.ts:51:57)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at authenticate (/app/be/src/middlewares/AuthMiddleware.ts:174:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 12:26:11.358 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:26:11.359 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:26:11.360 [AIOT-BE] ERROR: Model not initialized: Member "findOne" cannot be called. "UserPreferenceModel" needs to be added to a Sequelize instance. {"stack":"Error: Model not initialized: Member \"findOne\" cannot be called. \"UserPreferenceModel\" needs to be added to a Sequelize instance.\n    at Model.<computed> (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:126:23)\n    at Model.<computed> [as findOne] (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:138:28)\n    at UserPreferenceController.getUserPreferences (/app/be/src/controllers/UserPreferenceController.ts:107:51)\n    at <anonymous> (/app/be/src/routes/userPreferenceRoutes.ts:51:57)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at authenticate (/app/be/src/middlewares/AuthMiddleware.ts:174:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 12:26:30.223 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 12:26:30.224 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 12:26:30.224 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 12:26:30.281 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 12:26:30.283 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 12:26:30.283 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 12:26:30.283 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-04 12:26:34.544 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:26:34.544 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-04 12:26:34.546 [AIOT-BE] ERROR: Model not initialized: Member "findOne" cannot be called. "UserPreferenceModel" needs to be added to a Sequelize instance. {"stack":"Error: Model not initialized: Member \"findOne\" cannot be called. \"UserPreferenceModel\" needs to be added to a Sequelize instance.\n    at Model.<computed> (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:126:23)\n    at Model.<computed> [as findOne] (/app/be/node_modules/sequelize-typescript/dist/model/model/model.js:138:28)\n    at UserPreferenceController.getUserPreferences (/app/be/src/controllers/UserPreferenceController.ts:107:51)\n    at <anonymous> (/app/be/src/routes/userPreferenceRoutes.ts:51:57)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at authenticate (/app/be/src/middlewares/AuthMiddleware.ts:174:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 20:26:54.938 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:26:54.970 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:26:54.941 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:26:54.976 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:26:54.999 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:26:55.035 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:26:55.007 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:26:55.044 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:26:55.193 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:26:55.236 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:27:00.075 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:27:00.108 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:27:00.122 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:27:00.153 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:27:00.139 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:27:00.169 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 20:27:00.161 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/home/user/GitHub/AIOT/be/logs"}
+2025-08-04 20:27:00.191 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:27:00.253 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:27:00.294 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:27:06.100 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 12:27:06.140 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 12:27:15.175 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:27:15.176 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-04 12:27:15.191 [AIOT-BE] INFO: Default preferences created for user ID: 1
+2025-08-04 12:27:15.192 [AIOT-BE] INFO: User preferences retrieved successfully for user ID: 1
+2025-08-04 12:27:35.934 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 12:27:35.935 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 12:27:35.935 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 12:27:36.002 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 12:27:36.004 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 12:27:36.005 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 12:27:36.005 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 12:27:39.204 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:27:39.204 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 12:27:39.205 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:39.206 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 12:27:39.206 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 12:27:40.871 [AIOT-BE] INFO: Permission check: role.read for user 1 - GRANTED {"userId":1,"permission":"role.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:27:40.872 [AIOT-BE] INFO: Permission granted for user 1 - role.read
+2025-08-04 12:27:40.872 [AIOT-BE] INFO: Fetching all roles {"method":"GET","url":"/api/rbac/roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:40.873 [AIOT-BE] INFO: Roles loaded from Redis cache
+2025-08-04 12:27:40.873 [AIOT-BE] INFO: Retrieved 3 roles from service
+2025-08-04 12:27:41.424 [AIOT-BE] INFO: Fetching all role-permission associations
+2025-08-04 12:27:41.424 [AIOT-BE] INFO: All role permissions retrieval request {"method":"GET","url":"/api/rbac/role-permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:41.424 [AIOT-BE] INFO: Getting all role-permission associations
+2025-08-04 12:27:41.428 [AIOT-BE] INFO: Retrieved 24 role-permission associations
+2025-08-04 12:27:41.428 [AIOT-BE] INFO: Successfully retrieved 24 role-permission associations
+2025-08-04 12:27:41.813 [AIOT-BE] INFO: Permission check: user.read for user 1 - GRANTED {"userId":1,"permission":"user.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:27:41.814 [AIOT-BE] INFO: Permission granted for user 1 - user.read
+2025-08-04 12:27:41.814 [AIOT-BE] INFO: Fetching all users {"method":"GET","url":"/api/rbac/users","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:41.815 [AIOT-BE] INFO: Users loaded from Redis cache
+2025-08-04 12:27:41.815 [AIOT-BE] INFO: Retrieved 3 users from service
+2025-08-04 12:27:42.195 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 12:27:42.195 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:42.196 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 12:27:42.198 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 12:27:42.198 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 12:27:42.639 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:42.639 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:27:42.639 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:27:42.640 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:27:42.644 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:27:42.645 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:27:42.646 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:27:43.696 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:43.696 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:27:43.696 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:27:43.696 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:27:43.700 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:27:43.700 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:27:43.701 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:27:41.559 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:41.559 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:27:41.559 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:27:41.560 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:27:41.562 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:27:41.562 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:27:41.563 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:27:42.066 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:42.066 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 12:27:42.067 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 12:27:42.067 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 12:27:42.070 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 12:27:42.070 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 12:27:42.071 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:27:42.591 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:42.592 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:27:42.592 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:27:42.592 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:27:42.595 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:27:42.595 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:27:42.596 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:27:43.023 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:43.023 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:27:43.023 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:27:43.023 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:27:43.026 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:27:43.026 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:27:43.027 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:27:43.401 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:27:43.406 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:27:43.847 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:27:43.848 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:43.850 [AIOT-BE] INFO: User preferences retrieved successfully for user ID: 1
+2025-08-04 12:27:54.190 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:27:54.190 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:27:54.190 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:27:54.190 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:27:54.193 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:27:54.194 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:27:54.195 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:28:06.071 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:28:06.071 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:28:06.071 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:28:06.071 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:28:06.073 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:28:06.073 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:28:06.073 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:28:13.972 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:28:13.973 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:28:13.973 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:28:13.973 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:28:13.975 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:28:13.975 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:28:13.976 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:28:14.826 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:28:14.826 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:28:14.826 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:28:14.826 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:28:14.828 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:28:14.829 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:28:14.829 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:28:17.504 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:28:17.504 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:28:17.504 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:28:17.505 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:28:17.506 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:28:17.507 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:28:17.507 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:30:37.458 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 12:30:37.458 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:37.458 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 12:30:37.460 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 12:30:37.460 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 12:30:38.362 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:38.363 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:30:38.363 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:30:38.363 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:30:38.365 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:30:38.365 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:30:38.366 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:30:38.555 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:38.555 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:30:38.556 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:30:38.556 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:30:38.558 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:30:38.558 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:30:38.559 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:30:38.733 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:38.733 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:30:38.734 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:30:38.734 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:30:38.735 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:30:38.736 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:30:38.736 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:30:38.917 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:38.917 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 12:30:38.917 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 12:30:38.917 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 12:30:38.919 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 12:30:38.920 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 12:30:38.921 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:30:39.087 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:39.087 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:30:39.087 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:30:39.087 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:30:39.090 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:30:39.090 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:30:39.091 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:30:39.271 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:39.271 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:30:39.271 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:30:39.271 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:30:39.274 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:30:39.274 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:30:39.275 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:30:39.546 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:30:39.549 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:30:42.219 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:42.219 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 12:30:42.227 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:42.227 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 12:30:42.703 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:30:42.703 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 12:30:42.703 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:42.704 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 12:30:42.704 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 12:30:44.498 [AIOT-BE] INFO: Permission check: role.read for user 1 - GRANTED {"userId":1,"permission":"role.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:30:44.499 [AIOT-BE] INFO: Permission granted for user 1 - role.read
+2025-08-04 12:30:44.500 [AIOT-BE] INFO: Fetching all roles {"method":"GET","url":"/api/rbac/roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:44.500 [AIOT-BE] INFO: Roles loaded from Redis cache
+2025-08-04 12:30:44.500 [AIOT-BE] INFO: Retrieved 3 roles from service
+2025-08-04 12:30:44.749 [AIOT-BE] INFO: Fetching all role-permission associations
+2025-08-04 12:30:44.749 [AIOT-BE] INFO: All role permissions retrieval request {"method":"GET","url":"/api/rbac/role-permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:44.749 [AIOT-BE] INFO: Getting all role-permission associations
+2025-08-04 12:30:44.751 [AIOT-BE] INFO: Retrieved 24 role-permission associations
+2025-08-04 12:30:44.751 [AIOT-BE] INFO: Successfully retrieved 24 role-permission associations
+2025-08-04 12:30:44.964 [AIOT-BE] INFO: Permission check: user.read for user 1 - GRANTED {"userId":1,"permission":"user.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:30:44.965 [AIOT-BE] INFO: Permission granted for user 1 - user.read
+2025-08-04 12:30:44.965 [AIOT-BE] INFO: Fetching all users {"method":"GET","url":"/api/rbac/users","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:44.966 [AIOT-BE] INFO: Users loaded from Redis cache
+2025-08-04 12:30:44.966 [AIOT-BE] INFO: Retrieved 3 users from service
+2025-08-04 12:30:45.163 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 12:30:45.163 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:45.163 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 12:30:45.164 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 12:30:45.165 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 12:30:45.438 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:45.438 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:30:45.438 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:30:45.439 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:30:45.441 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:30:45.441 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:30:45.441 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:30:46.314 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:46.314 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:30:46.314 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:30:46.314 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:30:46.316 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:30:46.316 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:30:46.316 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:30:46.546 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:46.546 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:30:46.547 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:30:46.547 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:30:46.549 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:30:46.549 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:30:46.549 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:30:55.346 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:55.347 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:30:55.347 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:30:55.347 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:30:55.349 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:30:55.350 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:30:55.350 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:30:55.853 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:55.853 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 12:30:55.854 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 12:30:55.854 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 12:30:55.856 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 12:30:55.857 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 12:30:55.857 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:30:56.065 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:56.065 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:30:56.065 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:30:56.065 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:30:56.067 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:30:56.068 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:30:56.069 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:30:56.326 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:56.327 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:30:56.327 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:30:56.327 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:30:56.329 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:30:56.329 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:30:56.330 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:30:57.399 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:30:57.402 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:30:57.896 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:30:57.897 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:30:57.898 [AIOT-BE] INFO: User preferences retrieved successfully for user ID: 1
+2025-08-04 12:32:36.913 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:32:36.913 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:32:36.913 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:32:36.913 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:32:36.915 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:32:36.915 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:32:36.917 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:32:37.200 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:32:37.201 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:32:37.201 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:32:37.201 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:32:37.203 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:32:37.203 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:32:37.203 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:32:37.575 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:32:37.575 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:32:37.575 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:32:37.576 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:32:37.578 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:32:37.578 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:32:37.579 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:32:38.242 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:32:38.243 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:32:38.243 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:32:38.243 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:32:38.244 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:32:38.245 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:32:38.246 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:32:38.413 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:32:38.416 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:32:47.138 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 12:32:47.138 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:32:47.138 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 12:32:47.140 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 12:32:47.140 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 12:32:48.695 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:32:48.695 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:32:48.695 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:32:48.695 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:32:48.696 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:32:48.697 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:32:48.697 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:33:00.758 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:33:00.758 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:33:00.758 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:33:00.758 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:33:00.761 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:33:00.761 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:33:00.762 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:33:01.750 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:33:01.751 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 12:33:01.751 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 12:33:01.751 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 12:33:01.753 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 12:33:01.753 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 12:33:01.754 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:33:02.187 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:33:02.188 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:33:02.188 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:33:02.188 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:33:02.191 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:33:02.192 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:33:02.192 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:33:36.913 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:33:36.918 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:34:15.981 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:34:15.994 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:34:20.508 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:34:20.508 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:34:20.508 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:34:20.508 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:34:20.510 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:34:20.511 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:34:20.512 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:34:22.154 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:34:22.154 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:34:22.154 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:34:22.155 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:34:22.157 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:34:22.157 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:34:22.158 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:34:22.655 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:34:22.655 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:34:22.655 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:34:22.655 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:34:22.657 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:34:22.657 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:34:22.658 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:34:23.183 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:34:23.183 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:34:23.183 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:34:23.183 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:34:23.185 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:34:23.185 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:34:23.186 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:36:27.036 [AIOT-BE] INFO: Fetching all role-permission associations
+2025-08-04 12:36:27.037 [AIOT-BE] INFO: All role permissions retrieval request {"method":"GET","url":"/api/rbac/role-permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:27.037 [AIOT-BE] INFO: Getting all role-permission associations
+2025-08-04 12:36:27.040 [AIOT-BE] INFO: Retrieved 24 role-permission associations
+2025-08-04 12:36:27.040 [AIOT-BE] INFO: Successfully retrieved 24 role-permission associations
+2025-08-04 12:36:27.480 [AIOT-BE] INFO: Permission check: user.read for user 1 - GRANTED {"userId":1,"permission":"user.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 12:36:27.481 [AIOT-BE] INFO: Permission granted for user 1 - user.read
+2025-08-04 12:36:27.481 [AIOT-BE] INFO: Fetching all users {"method":"GET","url":"/api/rbac/users","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:27.482 [AIOT-BE] INFO: Users loaded from Redis cache
+2025-08-04 12:36:27.482 [AIOT-BE] INFO: Retrieved 3 users from service
+2025-08-04 12:36:27.873 [AIOT-BE] INFO: Fetching all user-role associations
+2025-08-04 12:36:27.874 [AIOT-BE] INFO: All user roles retrieval request {"method":"GET","url":"/api/rbac/user-roles","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:27.874 [AIOT-BE] INFO: Getting all user-role associations
+2025-08-04 12:36:27.875 [AIOT-BE] INFO: Retrieved 3 user-role associations
+2025-08-04 12:36:27.875 [AIOT-BE] INFO: Successfully retrieved 3 user-role associations
+2025-08-04 12:36:28.273 [AIOT-BE] INFO: Getting all drone position data {"method":"GET","url":"/api/drone-position/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:28.273 [AIOT-BE] INFO: Drone position data retrieval request received
+2025-08-04 12:36:28.273 [AIOT-BE] INFO: Getting all drone position data
+2025-08-04 12:36:28.273 [AIOT-BE] INFO: Fetching all drone position data
+2025-08-04 12:36:28.276 [AIOT-BE] INFO: Successfully fetched 10 drone position records
+2025-08-04 12:36:28.277 [AIOT-BE] INFO: Retrieved 10 drone position records
+2025-08-04 12:36:28.278 [AIOT-BE] INFO: Drone position data retrieval completed successfully {"count":10}
+2025-08-04 12:36:30.813 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:30.813 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-04 12:36:30.813 [AIOT-BE] INFO: Getting all drone status data
+2025-08-04 12:36:30.813 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-04 12:36:30.815 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-04 12:36:30.815 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-04 12:36:30.816 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-04 12:36:30.996 [AIOT-BE] INFO: Getting all commands with limit: 100 {"method":"GET","url":"/api/drone-commands/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:30.996 [AIOT-BE] INFO: Commands retrieval request received {"limit":100}
+2025-08-04 12:36:30.997 [AIOT-BE] INFO: Getting all commands {"limit":100}
+2025-08-04 12:36:30.997 [AIOT-BE] INFO: Fetching all drone commands {"limit":100}
+2025-08-04 12:36:30.999 [AIOT-BE] INFO: Successfully fetched 6 drone commands
+2025-08-04 12:36:31.000 [AIOT-BE] INFO: Successfully retrieved 6 commands
+2025-08-04 12:36:31.000 [AIOT-BE] INFO: Commands retrieval completed successfully {"count":6,"limit":100}
+2025-08-04 12:36:31.206 [AIOT-BE] INFO: Getting all position archives with limit: 100 {"method":"GET","url":"/api/drone-positions-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:31.206 [AIOT-BE] INFO: Position archives retrieval request received {"limit":100}
+2025-08-04 12:36:31.206 [AIOT-BE] INFO: Getting all position archives {"limit":100}
+2025-08-04 12:36:31.206 [AIOT-BE] INFO: Fetching all drone positions archive data {"limit":100}
+2025-08-04 12:36:31.209 [AIOT-BE] INFO: Successfully fetched 12 positions archive records
+2025-08-04 12:36:31.209 [AIOT-BE] INFO: Successfully retrieved 12 position archives
+2025-08-04 12:36:31.210 [AIOT-BE] INFO: Position archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:36:31.374 [AIOT-BE] INFO: Getting all status archives with limit: 100 {"method":"GET","url":"/api/drone-status-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:31.374 [AIOT-BE] INFO: Status archives retrieval request received {"limit":100}
+2025-08-04 12:36:31.374 [AIOT-BE] INFO: Getting all status archive data {"limit":100}
+2025-08-04 12:36:31.374 [AIOT-BE] INFO: Fetching all drone status archive data {"limit":100}
+2025-08-04 12:36:31.377 [AIOT-BE] INFO: Successfully fetched 12 archive records
+2025-08-04 12:36:31.378 [AIOT-BE] INFO: Retrieved 12 status archive records
+2025-08-04 12:36:31.379 [AIOT-BE] INFO: Status archives retrieval completed successfully {"count":12,"limit":100}
+2025-08-04 12:36:31.561 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:31.561 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 12:36:31.561 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:36:31.562 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 12:36:31.563 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 12:36:31.563 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 12:36:31.564 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 12:36:31.743 [AIOT-BE] INFO: 獲取歸檔任務資料請求 {"query":{}}
+2025-08-04 12:36:31.746 [AIOT-BE] INFO: 歸檔任務資料獲取成功 {"count":10}
+2025-08-04 12:36:31.933 [AIOT-BE] INFO: Retrieving user preferences for user ID: 1
+2025-08-04 12:36:31.933 [AIOT-BE] INFO: User preferences request for user: 1 {"method":"GET","url":"/preferences","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:36:31.935 [AIOT-BE] INFO: User preferences retrieved successfully for user ID: 1
+2025-08-04 12:57:57.494 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:57:57.495 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 12:57:57.507 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 12:57:57.507 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 13:15:16.605 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 13:15:16.606 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 13:15:16.617 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 13:15:16.617 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 13:17:34.811 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 13:17:34.812 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 13:17:34.821 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 13:17:34.821 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 13:19:05.032 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 13:19:05.033 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 13:19:05.041 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 13:19:05.041 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1

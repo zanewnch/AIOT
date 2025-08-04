@@ -23,6 +23,8 @@ const TableViewer = lazy(() => import("./components/HomeContent/TableViewer").th
 const HomeContent = lazy(() => import("./components/HomeContent/HomeContent").then(module => ({ default: module.HomeContent })));
 const InitPage = lazy(() => import("./pages/InitPage").then(module => ({ default: module.InitPage })));
 const SwaggerDocPage = lazy(() => import("./pages/SwaggerDocPage"));
+const MapPage = lazy(() => import("./pages/MapPage"));
+const FlyingPage = lazy(() => import("./pages/FlyingPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 /**
@@ -126,6 +128,10 @@ function App() {
             {/* 資料表檢視器頁面 */}
             <Route path="api-docs" element={<SwaggerDocPage />} /> 
             {/* API 文檔頁面 */}
+            <Route path="mappage" element={<MapPage />} /> 
+            {/* 地圖頁面 */}
+            <Route path="flyingpage" element={<FlyingPage />} /> 
+            {/* 飛行頁面 */}
           </Route>
         </Routes>
       </Suspense>

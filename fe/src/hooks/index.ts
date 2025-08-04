@@ -22,3 +22,7 @@ export * from './useArchiveTaskQuery';
 export { useDronePositionsArchiveQuery } from './useDronePositionsArchiveQuery';
 export { useDroneStatusArchiveQuery } from './useDroneStatusArchiveQuery';
 export * from './useUserPreferenceQuery';
+
+// 地圖邏輯 hooks
+export { useRealMapLogic } from './useRealMapLogic';
+export { useSimulateMapLogic } from './useSimulateMapLogic';

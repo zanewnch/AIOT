@@ -104,6 +104,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             <span className={styles.sidebarIcon}>📚</span>
             API 文檔
           </Link>
+          {/* 地圖頁面導航連結 */}
+          <Link
+            to="/content/mappage" // 路由路徑
+            className={`${styles.sidebarLink} ${location.pathname === '/mappage' ? styles.active : ''}`} // 動態應用活動狀態樣式
+            onClick={() => handleNavClick('/content/mappage', '地圖頁面')}
+          >
+            <span className={styles.sidebarIcon}>🗺️</span>
+            地圖頁面
+          </Link>
+          {/* 飛行頁面導航連結 */}
+          <Link
+            to="/content/flyingpage" // 路由路徑
+            className={`${styles.sidebarLink} ${location.pathname === '/flyingpage' ? styles.active : ''}`} // 動態應用活動狀態樣式
+            onClick={() => handleNavClick('/content/flyingpage', '飛行頁面')}
+          >
+            <span className={styles.sidebarIcon}>✈️</span>
+            飛行頁面
+          </Link>
         </nav>
       </div>
     </aside>

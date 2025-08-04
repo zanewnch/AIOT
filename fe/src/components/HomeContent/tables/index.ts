@@ -14,7 +14,6 @@
  * - 無人機位置歷史歸檔表格視圖組件
  * - 無人機狀態歷史歸檔表格視圖組件
  * - 無人機狀態表格視圖組件
- * - 使用者活動表格視圖組件
  * - 使用者偏好設定表格視圖組件
  * 
  * 此文件作為模組的入口點，簡化了其他組件的導入操作。
@@ -60,8 +59,6 @@ export { DronePositionTableView } from './DronePositionTableView';
 // 導出無人機狀態表格視圖組件 - 提供無人機狀態管理的表格視圖
 export { DroneStatusTableView } from './DroneStatusTableView';
 
-// 導出使用者活動表格視圖組件 - 提供使用者活動記錄的表格視圖
-export { UserActivityTableView } from './UserActivityTableView';
 
 // 導出使用者偏好設定表格視圖組件 - 提供使用者偏好設定的表格視圖
 export { UserPreferenceTableView } from './UserPreferenceTableView';

@@ -19,7 +19,7 @@ import { devtools } from 'zustand/middleware';
  * 表格類型定義
  * cspell:ignore roletopermission usertorole
  */
-export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK' | 'DronePosition' | 'DroneStatus' | 'DroneCommand' | 'DronePositionsArchive' | 'DroneStatusArchive' | 'DroneCommandsArchive' | 'ArchiveTask' | 'UserActivity' | 'UserPreference';
+export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK' | 'DronePosition' | 'DroneStatus' | 'DroneCommand' | 'DronePositionsArchive' | 'DroneStatusArchive' | 'DroneCommandsArchive' | 'ArchiveTask' | 'UserPreference';
 
 /**
  * 排序相關類型

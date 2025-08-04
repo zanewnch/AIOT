@@ -8,7 +8,6 @@
  */
 
 // Store exports
-export { useActivityStore } from './activityStore';
 export { useAuthStore, useAuth, useAuthActions } from './authStore';
 export { useNotificationStore } from './notificationStore';
 export { useTableUIStore, useTableUI } from './tableStore';
@@ -18,4 +17,3 @@ export { useThemeStore } from './themeStore';
 // Type exports
 export type { Theme } from './themeStore';
 export type { TableType, SortOrder, SortField } from './tableStore';
-export type { UserActivity } from './activityStore';

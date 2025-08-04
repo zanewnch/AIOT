@@ -29,7 +29,6 @@ import {
   DronePositionsArchiveTableView, // 無人機位置歷史歸檔表格視圖組件
   DroneStatusArchiveTableView, // 無人機狀態歷史歸檔表格視圖組件
   DroneStatusTableView, // 無人機狀態表格視圖組件
-  UserActivityTableView, // 使用者活動表格視圖組件
   UserPreferenceTableView, // 使用者偏好設定表格視圖組件
 } from "./tables"; // 引入表格組件
 import styles from "../../styles/TableViewer.module.scss"; // 引入表格樣式
@@ -59,7 +58,6 @@ const TABLE_TYPES = {
   DRONE_STATUS_ARCHIVE: "DroneStatusArchive",
   DRONE_COMMANDS_ARCHIVE: "DroneCommandsArchive",
   ARCHIVE_TASK: "ArchiveTask",
-  USER_ACTIVITY: "UserActivity",
   USER_PREFERENCE: "UserPreference",
 } as const;
 
@@ -94,7 +92,6 @@ const viewItems = [
     title: "Drone Commands Archive Table",
   }, // 無人機命令歸檔表格配置
   { viewName: TABLE_TYPES.ARCHIVE_TASK, title: "Archive Task Table" }, // 歸檔任務表格配置
-  { viewName: TABLE_TYPES.USER_ACTIVITY, title: "User Activity Table" }, // 用戶活動表格配置
   { viewName: TABLE_TYPES.USER_PREFERENCE, title: "User Preference Table" }, // 用戶偏好表格配置
 ];
 
@@ -160,7 +157,6 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
     if (currentIndex > 0) {
       const previousTable = viewItems[currentIndex - 1];
       handleTableChange(previousTable.viewName as TableType);
-      scrollToActiveTab(previousTable.viewName);
     }
   }, [activeTable]);
 
@@ -176,29 +172,9 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
     if (currentIndex < viewItems.length - 1) {
       const nextTable = viewItems[currentIndex + 1];
       handleTableChange(nextTable.viewName as TableType);
-      scrollToActiveTab(nextTable.viewName);
     }
   }, [activeTable]);
 
-  /**
-   * 將指定的標籤滾動到可見區域
-   *
-   * @param tableName - 要滾動到的表格名稱
-   */
-  const scrollToActiveTab = (tableName: string) => {
-    if (tabsScrollRef.current) {
-      const tabElement = tabsScrollRef.current.querySelector(
-        `[data-table="${tableName}"]`
-      ) as HTMLElement;
-      if (tabElement) {
-        tabElement.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-      }
-    }
-  };
 
   /**
    * 處理鍵盤事件
@@ -214,6 +190,46 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
         event.target instanceof HTMLSelectElement
       ) {
         return;
+      }
+
+      // 檢查是否在可滾動的表格內容區域或其他可滾動元素中
+      const target = event.target as HTMLElement;
+      if (target) {
+        // 檢查目標元素或其父元素是否有滾動功能
+        let currentElement = target;
+        while (currentElement && currentElement !== document.body) {
+          const computedStyle = window.getComputedStyle(currentElement);
+          const overflowX = computedStyle.overflowX;
+          
+          // 如果元素有水平滾動能力，且內容確實可以滾動
+          if ((overflowX === 'auto' || overflowX === 'scroll') && 
+              currentElement.scrollWidth > currentElement.clientWidth) {
+            // 檢查是否還能繼續滾動
+            if (event.key === "ArrowLeft" && currentElement.scrollLeft > 0) {
+              return; // 讓瀏覽器處理水平滾動
+            }
+            if (event.key === "ArrowRight" && 
+                currentElement.scrollLeft < currentElement.scrollWidth - currentElement.clientWidth) {
+              return; // 讓瀏覽器處理水平滾動
+            }
+          }
+          
+          // 如果當前元素是表格相關元素（table, tbody, td 等），優先處理表格內滾動
+          if (currentElement.tagName && 
+              ['TABLE', 'TBODY', 'THEAD', 'TR', 'TD', 'TH', 'DIV'].includes(currentElement.tagName) &&
+              (currentElement.className.includes('table') || 
+               currentElement.className.includes('cell') ||
+               currentElement.getAttribute('role') === 'table' ||
+               currentElement.getAttribute('role') === 'cell')) {
+            
+            // 檢查該元素是否有滾動條
+            if (currentElement.scrollWidth > currentElement.clientWidth) {
+              return; // 讓表格內容自己處理滾動
+            }
+          }
+          
+          currentElement = currentElement.parentElement as HTMLElement;
+        }
       }
 
       switch (event.key) {
@@ -284,8 +300,6 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
         return <DroneCommandsArchiveTableView />; // 渲染無人機命令歸檔表格視圖
       case TABLE_TYPES.ARCHIVE_TASK:
         return <ArchiveTaskTableView />; // 渲染歸檔任務表格視圖
-      case TABLE_TYPES.USER_ACTIVITY:
-        return <UserActivityTableView />; // 渲染用戶活動表格視圖
       case TABLE_TYPES.USER_PREFERENCE:
         return <UserPreferenceTableView />; // 渲染用戶偏好表格視圖
       default:
