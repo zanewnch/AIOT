@@ -16,5 +16,4 @@ export type { IRoleToPermissionService, RolePermissionDTO, PermissionDTO } from 
 export type { IUserService, UserDTO, CreateUserRequest, UpdateUserRequest } from './IUserService.js';
 export type { IUserToRoleService, UserRoleDTO } from './IUserToRoleService.js';
 export type { IRbacInitService } from './IRbacInitService.js';
-export type { IRTKInitService } from './IRTKInitService.js';
 export type { IProgressService } from './IProgressService.js';

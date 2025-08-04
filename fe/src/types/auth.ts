@@ -78,3 +78,37 @@ export interface AuthState {
   /** 錯誤訊息 */
   error: string | null;
 }
+
+/**
+ * 登出回應介面
+ * 
+ * @interface LogoutResponse
+ * @description 定義後端登出成功後回傳的資料格式
+ */
+export interface LogoutResponse {
+  /** 回應訊息 */
+  message: string;
+  /** 操作是否成功 */
+  success: boolean;
+}
+
+/**
+ * 擴展的登入回應介面
+ * 
+ * @interface ExtendedLoginResponse
+ * @description 定義後端登入成功後回傳的擴展資料格式
+ */
+export interface ExtendedLoginResponse {
+  /** JWT 認證令牌 */
+  token: string;
+  /** 使用者資訊 */
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    roles: string[];
+    permissions: string[];
+  };
+  /** 令牌過期時間（秒） */
+  expiresIn: number;
+}

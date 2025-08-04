@@ -16,325 +16,296 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useCallback, useEffect } from 'react';
-import { ProgressEvent, ProgressInfo } from '../types/sse';
+import { ProgressEvent, ProgressInfo, SSEConnectionState, ProgressTrackingState } from '../types/sse';
 
 /**
- * React Query 查詢鍵
+ * SSEQuery - SSE 查詢服務類
+ * 
+ * 使用 class 封裝所有與 SSE 相關的 React Query 操作
+ * 每個方法返回對應的 React Query hook
  */
-export const SSE_QUERY_KEYS = {
-  PROGRESS: (taskId: string) => ['sse', 'progress', taskId] as const,
-  CONNECTION_STATUS: (taskId: string) => ['sse', 'connection', taskId] as const,
-} as const;
+export class SSEQuery {
+  
+  public SSE_QUERY_KEYS = {
+    PROGRESS: (taskId: string) => ['sse', 'progress', taskId] as const,
+    CONNECTION_STATUS: (taskId: string) => ['sse', 'connection', taskId] as const,
+  } as const;
+  
+  constructor() {}
+  
+  /**
+   * SSE 連接管理 Hook
+   *
+   * 使用 React Query 來管理 SSE 連接狀態
+   */
+  useConnection(taskId: string | null) {
+    const eventSourceRef = useRef<EventSource | null>(null);
+    const callbacksRef = useRef<Map<string, (event: ProgressEvent) => void>>(new Map());
 
-/**
- * SSE 連接狀態
- */
-export interface SSEConnectionState {
-  isConnected: boolean;
-  taskId: string | null;
-  connectionState: number;
-  lastConnectedAt: number | null;
-}
+    return useQuery({
+      queryKey: this.SSE_QUERY_KEYS.CONNECTION_STATUS(taskId || ''),
+      queryFn: async (): Promise<SSEConnectionState> => {
+        if (!taskId) {
+          return {
+            isConnected: false,
+            taskId: null,
+            connectionState: EventSource.CLOSED,
+            lastConnectedAt: null,
+          };
+        }
 
-/**
- * 進度追蹤狀態
- */
-export interface ProgressTrackingState {
-  progress: ProgressInfo | null;
-  isTracking: boolean;
-  error: string | null;
-  lastUpdated: number | null;
-}
+        const isConnected = eventSourceRef.current !== null &&
+                           eventSourceRef.current.readyState === EventSource.OPEN;
 
-/**
- * SSE 連接管理 Hook
- *
- * 使用 React Query 來管理 SSE 連接狀態
- */
-export const useSSEConnection = (taskId: string | null) => {
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const callbacksRef = useRef<Map<string, (event: ProgressEvent) => void>>(new Map());
-
-  return useQuery({
-    queryKey: SSE_QUERY_KEYS.CONNECTION_STATUS(taskId || ''),
-    queryFn: async (): Promise<SSEConnectionState> => {
-      if (!taskId) {
         return {
-          isConnected: false,
-          taskId: null,
-          connectionState: EventSource.CLOSED,
-          lastConnectedAt: null,
+          isConnected,
+          taskId,
+          connectionState: eventSourceRef.current?.readyState || EventSource.CLOSED,
+          lastConnectedAt: isConnected ? Date.now() : null,
         };
-      }
+      },
+      enabled: !!taskId,
+      refetchInterval: 5000, // 每5秒檢查一次連接狀態
+      staleTime: 1000,
+    });
+  }
 
-      const isConnected = eventSourceRef.current !== null &&
-                         eventSourceRef.current.readyState === EventSource.OPEN;
+  /**
+   * SSE 連接 Mutation Hook
+   *
+   * 處理 SSE 連接的建立和斷開
+   */
+  useConnectionMutation() {
+    const queryClient = useQueryClient();
+    const eventSourceRef = useRef<EventSource | null>(null);
+    const callbacksRef = useRef<Map<string, (event: ProgressEvent) => void>>(new Map());
 
-      return {
-        isConnected,
-        taskId,
-        connectionState: eventSourceRef.current?.readyState || EventSource.CLOSED,
-        lastConnectedAt: isConnected ? Date.now() : null,
-      };
-    },
-    enabled: !!taskId,
-    refetchInterval: 5000, // 每5秒檢查一次連接狀態
-    staleTime: 1000,
-  });
-};
+    const connectMutation = useMutation({
+      mutationFn: async ({ taskId, callback }: { taskId: string; callback: (event: ProgressEvent) => void }) => {
+        // 關閉現有連接
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
 
-/**
- * 進度追蹤 Query Hook
- *
- * 使用 React Query 來管理進度追蹤狀態
- */
-export const useProgressQuery = (taskId: string | null) => {
-  const progressDataRef = useRef<ProgressTrackingState>({
-    progress: null,
-    isTracking: false,
-    error: null,
-    lastUpdated: null,
-  });
+        // 建立新連接
+        const baseURL = (typeof window !== 'undefined' && (window as any).VITE_API_BASE_URL) || 'http://localhost:8000';
+        const url = `${baseURL}/api/progress/${taskId}/stream`;
+        const eventSource = new EventSource(url);
+        eventSourceRef.current = eventSource;
+        callbacksRef.current.set(taskId, callback);
 
-  return useQuery({
-    queryKey: SSE_QUERY_KEYS.PROGRESS(taskId || ''),
-    queryFn: async (): Promise<ProgressTrackingState> => {
-      return progressDataRef.current;
-    },
-    enabled: !!taskId,
-    staleTime: 0, // 總是保持最新
-    refetchInterval: false, // 不自動刷新，由 SSE 事件驅動更新
-  });
-};
+        return new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('連接超時'));
+          }, 10000);
 
-/**
- * SSE 連接 Mutation Hook
- *
- * 處理 SSE 連接的建立和斷開
- */
-export const useSSEConnectionMutation = () => {
-  const queryClient = useQueryClient();
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const callbacksRef = useRef<Map<string, (event: ProgressEvent) => void>>(new Map());
+          eventSource.onopen = () => {
+            clearTimeout(timeout);
+            console.log(`SSE connection opened for task ${taskId}`);
+            resolve();
+          };
 
-  const connectMutation = useMutation({
-    mutationFn: async ({ taskId, callback }: { taskId: string; callback: (event: ProgressEvent) => void }) => {
-      // 關閉現有連接
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-      }
+          eventSource.onerror = (error) => {
+            clearTimeout(timeout);
+            console.error('SSE connection error:', error);
+            reject(error);
+          };
 
-      // 建立新連接
-      const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const url = `${baseURL}/api/progress/${taskId}/stream`;
-      const eventSource = new EventSource(url);
-      eventSourceRef.current = eventSource;
-      callbacksRef.current.set(taskId, callback);
+          // 監聽各種事件
+          ['progress', 'completed', 'error'].forEach(eventType => {
+            eventSource.addEventListener(eventType, (event) => {
+              try {
+                const progressEvent: ProgressEvent = JSON.parse((event as MessageEvent).data);
+                callback(progressEvent);
 
-      return new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('連接超時'));
-        }, 10000);
+                // 更新 React Query 快取
+                queryClient.setQueryData(
+                  this.SSE_QUERY_KEYS.PROGRESS(taskId),
+                  (prev: ProgressTrackingState | undefined): ProgressTrackingState => ({
+                    progress: progressEvent.data,
+                    isTracking: progressEvent.type !== 'completed' && progressEvent.type !== 'error',
+                    error: progressEvent.type === 'error' ? (progressEvent.data.error || 'Unknown error') : null,
+                    lastUpdated: Date.now(),
+                  })
+                );
 
-        eventSource.onopen = () => {
-          clearTimeout(timeout);
-          console.log(`SSE connection opened for task ${taskId}`);
-          resolve();
-        };
-
-        eventSource.onerror = (error) => {
-          clearTimeout(timeout);
-          console.error('SSE connection error:', error);
-          reject(error);
-        };
-
-        // 監聽各種事件
-        ['progress', 'completed', 'error'].forEach(eventType => {
-          eventSource.addEventListener(eventType, (event) => {
-            try {
-              const progressEvent: ProgressEvent = JSON.parse((event as MessageEvent).data);
-              callback(progressEvent);
-
-              // 更新 React Query 快取
-              queryClient.setQueryData(
-                SSE_QUERY_KEYS.PROGRESS(taskId),
-                (prev: ProgressTrackingState | undefined): ProgressTrackingState => ({
-                  progress: progressEvent.data,
-                  isTracking: progressEvent.type !== 'completed' && progressEvent.type !== 'error',
-                  error: progressEvent.type === 'error' ? (progressEvent.data.error || 'Unknown error') : null,
-                  lastUpdated: Date.now(),
-                })
-              );
-
-            } catch (parseError) {
-              console.error(`Failed to parse ${eventType} event:`, parseError);
-            }
+              } catch (parseError) {
+                console.error(`Failed to parse ${eventType} event:`, parseError);
+              }
+            });
           });
         });
-      });
-    },
-    onSuccess: (_, { taskId }) => {
-      // 更新連接狀態
-      queryClient.invalidateQueries({ queryKey: SSE_QUERY_KEYS.CONNECTION_STATUS(taskId) });
-    },
-    onError: (error, { taskId }) => {
-      console.error('SSE connection failed:', error);
-      // 更新錯誤狀態
-      queryClient.setQueryData(
-        SSE_QUERY_KEYS.PROGRESS(taskId),
-        (prev: ProgressTrackingState | undefined): ProgressTrackingState => ({
-          progress: prev?.progress || null,
-          isTracking: false,
-          error: error.message || 'Connection failed',
-          lastUpdated: Date.now(),
-        })
-      );
-    },
-  });
+      },
+      onSuccess: (_, { taskId }) => {
+        // 更新連接狀態
+        queryClient.invalidateQueries({ queryKey: this.SSE_QUERY_KEYS.CONNECTION_STATUS(taskId) });
+      },
+      onError: (error: any, { taskId }) => {
+        console.error('SSE connection failed:', error);
+        // 更新錯誤狀態
+        queryClient.setQueryData(
+          this.SSE_QUERY_KEYS.PROGRESS(taskId),
+          (prev: ProgressTrackingState | undefined): ProgressTrackingState => ({
+            progress: prev?.progress || null,
+            isTracking: false,
+            error: error.message || 'Connection failed',
+            lastUpdated: Date.now(),
+          })
+        );
+      },
+    });
 
-  const disconnectMutation = useMutation({
-    mutationFn: async (taskId: string) => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-      }
-      callbacksRef.current.delete(taskId);
+    const disconnectMutation = useMutation({
+      mutationFn: async (taskId: string) => {
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
+        callbacksRef.current.delete(taskId);
 
-      return { taskId, disconnectedAt: Date.now() };
-    },
-    onSuccess: (_, taskId) => {
-      // 更新連接狀態
-      queryClient.invalidateQueries({ queryKey: SSE_QUERY_KEYS.CONNECTION_STATUS(taskId) });
+        return { taskId, disconnectedAt: Date.now() };
+      },
+      onSuccess: (_, taskId) => {
+        // 更新連接狀態
+        queryClient.invalidateQueries({ queryKey: this.SSE_QUERY_KEYS.CONNECTION_STATUS(taskId) });
 
-      // 更新進度狀態為停止追蹤
-      queryClient.setQueryData(
-        SSE_QUERY_KEYS.PROGRESS(taskId),
-        (prev: ProgressTrackingState | undefined): ProgressTrackingState => ({
-          progress: prev?.progress || null,
+        // 更新進度狀態為停止追蹤
+        queryClient.setQueryData(
+          this.SSE_QUERY_KEYS.PROGRESS(taskId),
+          (prev: ProgressTrackingState | undefined): ProgressTrackingState => ({
+            progress: prev?.progress || null,
+            isTracking: false,
+            error: null,
+            lastUpdated: Date.now(),
+          })
+        );
+      },
+    });
+
+    return {
+      connect: connectMutation.mutateAsync,
+      disconnect: disconnectMutation.mutateAsync,
+      isConnecting: connectMutation.isPending,
+      isDisconnecting: disconnectMutation.isPending,
+      connectionError: connectMutation.error,
+    };
+  }
+
+  /**
+   * 進度查詢 Hook
+   */
+  useProgress(taskId: string | null) {
+    return useQuery({
+      queryKey: this.SSE_QUERY_KEYS.PROGRESS(taskId || ''),
+      queryFn: async (): Promise<ProgressTrackingState> => {
+        return {
+          progress: null,
           isTracking: false,
           error: null,
           lastUpdated: Date.now(),
-        })
-      );
-    },
-  });
-
-  return {
-    connect: connectMutation.mutateAsync,
-    disconnect: disconnectMutation.mutateAsync,
-    isConnecting: connectMutation.isPending,
-    isDisconnecting: disconnectMutation.isPending,
-    connectionError: connectMutation.error,
-  };
-};
-
-/**
- * 主要 SSE Hook
- *
- * 使用 React Query 來管理所有 SSE 相關狀態，包括：
- * - 連接管理
- * - 進度追蹤
- * - 錯誤處理
- * - 自動清理
- */
-export const useSSE = (taskId: string | null = null) => {
-  const queryClient = useQueryClient();
-  const eventSourceRef = useRef<EventSource | null>(null);
-
-  // 查詢和變更
-  const connectionQuery = useSSEConnection(taskId);
-  const progressQuery = useProgressQuery(taskId);
-  const connectionMutation = useSSEConnectionMutation();
-
-  // 自動清理效果
-  useEffect(() => {
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-      }
-    };
-  }, []);
-
-  // 便利方法
-  const startTracking = useCallback(async (newTaskId: string, callback?: (event: ProgressEvent) => void) => {
-    const defaultCallback = (event: ProgressEvent) => {
-      console.log('Progress event received:', event);
-    };
-
-    await connectionMutation.connect({
-      taskId: newTaskId,
-      callback: callback || defaultCallback,
+        };
+      },
+      enabled: !!taskId,
+      staleTime: 1000,
     });
-  }, [connectionMutation]);
+  }
 
-  const stopTracking = useCallback(async (targetTaskId?: string) => {
-    const activeTaskId = targetTaskId || taskId;
-    if (activeTaskId) {
-      await connectionMutation.disconnect(activeTaskId);
-    }
-  }, [connectionMutation, taskId]);
+  /**
+   * 主要 SSE Hook
+   *
+   * 使用 React Query 來管理所有 SSE 相關狀態，包括：
+   * - 連接管理
+   * - 進度追蹤
+   * - 錯誤處理
+   * - 自動清理
+   */
+  useSSE(taskId: string | null = null) {
+    const queryClient = useQueryClient();
+    const eventSourceRef = useRef<EventSource | null>(null);
 
-  return {
-    // 狀態 (由 React Query 管理)
-    connectionState: connectionQuery.data,
-    progressState: progressQuery.data,
-    isConnected: connectionQuery.data?.isConnected || false,
-    isTracking: progressQuery.data?.isTracking || false,
-    progress: progressQuery.data?.progress || null,
-    error: progressQuery.data?.error || connectionMutation.connectionError?.message || null,
+    // 查詢和變更
+    const connectionQuery = this.useConnection(taskId);
+    const progressQuery = this.useProgress(taskId);
+    const connectionMutation = this.useConnectionMutation();
 
-    // 載入狀態
-    isLoading: connectionQuery.isLoading || progressQuery.isLoading,
-    isConnecting: connectionMutation.isConnecting,
-    isDisconnecting: connectionMutation.isDisconnecting,
+    // 自動清理效果
+    useEffect(() => {
+      return () => {
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
+      };
+    }, []);
 
-    // 方法
-    startTracking,
-    stopTracking,
+    // 便利方法
+    const startTracking = useCallback(async (newTaskId: string, callback?: (event: ProgressEvent) => void) => {
+      const defaultCallback = (event: ProgressEvent) => {
+        console.log('Progress event received:', event);
+      };
 
-    // 工具方法
-    refetchConnection: () => connectionQuery.refetch(),
-    refetchProgress: () => progressQuery.refetch(),
-    invalidateSSE: (targetTaskId?: string) => {
+      await connectionMutation.connect({
+        taskId: newTaskId,
+        callback: callback || defaultCallback,
+      });
+    }, [connectionMutation]);
+
+    const stopTracking = useCallback(async (targetTaskId?: string) => {
       const activeTaskId = targetTaskId || taskId;
       if (activeTaskId) {
-        queryClient.invalidateQueries({ queryKey: SSE_QUERY_KEYS.CONNECTION_STATUS(activeTaskId) });
-        queryClient.invalidateQueries({ queryKey: SSE_QUERY_KEYS.PROGRESS(activeTaskId) });
+        await connectionMutation.disconnect(activeTaskId);
       }
-    },
-    clearSSECache: (targetTaskId?: string) => {
-      const activeTaskId = targetTaskId || taskId;
-      if (activeTaskId) {
-        queryClient.removeQueries({ queryKey: SSE_QUERY_KEYS.CONNECTION_STATUS(activeTaskId) });
-        queryClient.removeQueries({ queryKey: SSE_QUERY_KEYS.PROGRESS(activeTaskId) });
-      }
-    },
+    }, [connectionMutation, taskId]);
 
-    // 原始的 query/mutation 對象 (用於更高級的操作)
-    queries: {
-      connection: connectionQuery,
-      progress: progressQuery,
-    },
-    mutations: {
-      connection: connectionMutation,
-    },
-  };
-};
+    return {
+      // 狀態 (由 React Query 管理)
+      connectionState: connectionQuery.data,
+      progressState: progressQuery.data,
+      isConnected: connectionQuery.data?.isConnected || false,
+      isTracking: progressQuery.data?.isTracking || false,
+      progress: progressQuery.data?.progress || null,
+      error: progressQuery.data?.error || connectionMutation.connectionError?.message || null,
 
-/**
- * 舊的 useProgressTracking - 保持向後兼容
- * @deprecated 請直接使用 useSSE
- */
-export const useProgressTracking = () => {
-  const sse = useSSE();
+      // 載入狀態
+      isLoading: connectionQuery.isLoading || progressQuery.isLoading,
+      isConnecting: connectionMutation.isConnecting,
+      isDisconnecting: connectionMutation.isDisconnecting,
 
-  return {
-    isTracking: sse.isTracking,
-    progress: sse.progress,
-    error: sse.error,
-    startTracking: sse.startTracking,
-    stopTracking: sse.stopTracking,
-  };
-};
+      // 方法
+      startTracking,
+      stopTracking,
+
+      // 工具方法
+      refetchConnection: () => connectionQuery.refetch(),
+      refetchProgress: () => progressQuery.refetch(),
+      invalidateSSE: (targetTaskId?: string) => {
+        const activeTaskId = targetTaskId || taskId;
+        if (activeTaskId) {
+          queryClient.invalidateQueries({ queryKey: this.SSE_QUERY_KEYS.CONNECTION_STATUS(activeTaskId) });
+          queryClient.invalidateQueries({ queryKey: this.SSE_QUERY_KEYS.PROGRESS(activeTaskId) });
+        }
+      },
+      clearSSECache: (targetTaskId?: string) => {
+        const activeTaskId = targetTaskId || taskId;
+        if (activeTaskId) {
+          queryClient.removeQueries({ queryKey: this.SSE_QUERY_KEYS.CONNECTION_STATUS(activeTaskId) });
+          queryClient.removeQueries({ queryKey: this.SSE_QUERY_KEYS.PROGRESS(activeTaskId) });
+        }
+      },
+
+      // 原始的 query/mutation 對象 (用於更高級的操作)
+      queries: {
+        connection: connectionQuery,
+        progress: progressQuery,
+      },
+      mutations: {
+        connection: connectionMutation,
+      },
+    };
+  }
+
+}
+
+
+

@@ -61,8 +61,8 @@ class RedisConfig {
       this.client = createClient({
         // 設定 Socket 連接配置
         socket: {
-          // 從環境變數獲取主機位址，預設為 localhost
-          host: process.env.REDIS_HOST || 'localhost',
+          // 從環境變數獲取主機位址，Docker 環境下使用容器名稱
+          host: process.env.REDIS_HOST || 'aiot-redis',
           // 從環境變數獲取埠號並轉換為整數，預設為 6379
           port: parseInt(process.env.REDIS_PORT || '6379'),
         },

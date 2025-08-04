@@ -5,7 +5,8 @@ from typing import Optional
 
 @dataclass
 class ModelConfig:
-    model_name: str = "Qwen/Qwen2.5-7B-Instruct"
+    model_name: str = "google/gemma-3n-E2B-it"
+    task: str = "image-text-to-text"
     max_new_tokens: int = 512
     temperature: float = 0.7
     top_p: float = 0.8

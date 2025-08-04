@@ -24,11 +24,9 @@ export interface IRoleRepository {
   /**
    * 根據 ID 查詢角色
    * @param id 角色 ID
-   * @param includePermissions 是否包含關聯的權限資料
-   * @param includeUsers 是否包含關聯的使用者資料
    * @returns 角色實例或 null
    */
-  findById(id: number, includePermissions?: boolean, includeUsers?: boolean): Promise<RoleModel | null>;
+  findById(id: number): Promise<RoleModel | null>;
 
   /**
    * 根據角色名稱查詢角色

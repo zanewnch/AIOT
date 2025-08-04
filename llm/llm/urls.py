@@ -22,7 +22,7 @@ from .views import APIHomepageView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', APIHomepageView.as_view(), name='api-homepage'),
-    path('api/', include('ollama_service.urls')),
+    path('api/', include('transformers_service.urls')),
     path('api/', include('docs_service.urls')),
 ]
 

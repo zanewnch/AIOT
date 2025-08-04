@@ -21,7 +21,7 @@ import type { Application } from 'express';
 import { authRoutes } from './authRoutes.js';           
 import { initRoutes } from './initRoutes.js';           
 import { progressRoutes } from './progressRoutes.js';   
-import { rtkRoutes } from './rtkRoutes.js';             
+             
 import { swaggerRoutes } from './swaggerRoutes.js';     
 import { rbacRoutes } from './rbacRoutes.js';           
 import { userRoutes } from './userRoutes.js';           
@@ -64,13 +64,6 @@ const baseRoutes: RouteConfig[] = [
     handler: authRoutes,
     basePath: '/',
     requireAuth: false
-  },
-  {
-    name: 'rtk',
-    description: 'Redux Toolkit related routes',
-    handler: rtkRoutes,
-    basePath: '/',
-    requireAuth: true
   },
   {
     name: 'swagger',

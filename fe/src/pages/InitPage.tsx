@@ -16,8 +16,8 @@
 
 import { useState } from "react";
 import { Button } from "../components/Button";
-import { useInit } from "../hooks/useInitQuery";
-import { useProgressTracking } from "../hooks/useProgressTracking";
+import { useInitQuery } from "../hooks/useInitQuery";
+import { useSSEQuery } from "../hooks/useSSEQuery";
 import { ProgressTracker } from "../components/ProgressTracker/ProgressTracker";
 import styles from "../styles/InitPage.module.scss";
 import { Link } from 'react-router-dom';
@@ -58,12 +58,12 @@ export const InitPage = () => {
   const [messages, setMessages] = useState<{ [key: string]: string }>({});
 
   // 使用自定義 Hook 進行進度追蹤（用於 SSE 連接）
-  const { progress, isTracking, error, startTracking, stopTracking } =
-    useProgressTracking();
+  const sseQuery = useSSEQuery();
+  const { progress, isTracking, error: sseError, startTracking, stopTracking } = sseQuery.progressTracking();
 
   // 使用初始化相關的 Hook
-  const { initRbacDemo, initRtkDemo, createAdminUser, createStressTestData } =
-    useInit();
+  const initQuery = useInitQuery();
+  const { initRbacDemo, initRtkDemo, createAdminUser, createStressTestData } = initQuery.init();
 
   /**
    * 更新載入狀態的輔助函數
@@ -301,7 +301,7 @@ export const InitPage = () => {
       <ProgressTracker
         progress={progress}
         isTracking={isTracking}
-        error={error}
+        error={sseError}
         onCancel={stopTracking}
       />
     </div>

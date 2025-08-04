@@ -1,181 +1,138 @@
 /**
- * @fileoverview 用戶數據相關的 React Query Hooks
+ * @fileoverview React Query hooks 用於使用者數據管理
  * 
- * 處理用戶數據的 API 請求和快取管理：
- * - 用戶數據查詢和更新
- * - 用戶角色關聯查詢
- * - 快取管理和錯誤處理
+ * 使用 React Query 處理所有與使用者相關的數據獲取、緩存和同步。
+ * 這個檔案主要作為使用者相關功能的聚合器，整合偏好設定和活動追蹤功能。
  * 
  * @author AIOT Development Team
+ * @version 1.0.0
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
-import { createLogger, logRequest, logError } from '../configs/loggerConfig';
-import type { 
-  User, 
-  Role,
-  UpdateResponse, 
-  TableError,
-  UserUpdateRequest
-} from '../types/table';
+import { useQuery } from '@tanstack/react-query';
+import { UserProfile, UserSession } from '../types/user';
 
-// 創建服務專用的日誌記錄器
-const logger = createLogger('UserQuery');
+
+// 重新匯出 RBAC 用戶管理相關的 hooks
+// Note: These hooks are accessed through the RbacQuery class now
 
 /**
- * React Query 查詢鍵
+ * UserQuery - 使用者查詢服務類
+ * 
+ * 使用 class 封裝所有與使用者相關的 React Query 操作
+ * 每個方法返回對應的 React Query hook
  */
-export const USER_QUERY_KEYS = {
-  ALL: ['user'] as const,
-  LIST: ['user', 'list'] as const,
-  ROLES: (userId: number) => ['user', userId, 'roles'] as const,
-} as const;
-
-/**
- * API 函數：獲取使用者列表
- */
-export const getUsersAPI = async (): Promise<User[]> => {
-  try {
-    logger.debug('Fetching users from API');
-    logRequest('/api/rbac/users', 'GET', 'Fetching users');
-    
-    const response = await apiClient.get('/api/rbac/users');
-    const result = RequestResult.fromResponse<User[]>(response);
-    
-    if (result.isError()) {
-      throw new Error(result.message);
-    }
-    
-    logger.info(`Successfully fetched ${result.data?.length || 0} users`);
-    return result.unwrap();
-  } catch (error: any) {
-    console.error('Failed to fetch users:', error);
-    logError(error, 'getUsersAPI', { endpoint: '/api/rbac/users' });
-    
-    throw {
-      message: error.response?.data?.message || 'Failed to fetch users',
-      status: error.response?.status,
-      details: error.response?.data,
-    } as TableError;
+export class UserQuery {
+  
+  public USER_QUERY_KEYS = {
+    USER_PROFILE: ['userProfile'] as const,
+    USER_SESSION: ['userSession'] as const,
+  } as const;
+  
+  constructor() {}
+  
+  /**
+   * 獲取當前使用者資料的 Hook
+   */
+  useCurrentUser() {
+    return useQuery({
+      queryKey: this.USER_QUERY_KEYS.USER_PROFILE,
+      queryFn: (): UserProfile | null => {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          try {
+            return JSON.parse(userStr);
+          } catch (error) {
+            console.error('解析使用者資料失敗:', error);
+            return null;
+          }
+        }
+        return null;
+      },
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+      retry: false,
+    });
   }
-};
 
-/**
- * API 函數：獲取使用者角色關聯
- */
-export const getUserToRoleAPI = async (userId: number): Promise<Role[]> => {
-  try {
-    logger.debug(`Fetching roles for user ${userId}`);
-    logRequest(`/api/rbac/users/${userId}/roles`, 'GET', `Fetching roles for user ${userId}`);
-    
-    const response = await apiClient.get<Role[]>(`/api/rbac/users/${userId}/roles`);
-    
-    logger.info(`Successfully fetched ${response.length} roles for user ${userId}`);
-    return response;
-  } catch (error: any) {
-    console.error(`Failed to fetch roles for user ${userId}:`, error);
-    logError(error, 'getUserToRoleAPI', { userId, endpoint: `/api/rbac/users/${userId}/roles` });
-    
-    throw {
-      message: error.response?.data?.message || `Failed to fetch roles for user ${userId}`,
-      status: error.response?.status,
-      details: error.response?.data,
-    } as TableError;
+  /**
+   * 獲取當前使用者會話的 Hook
+   */
+  useCurrentUserSession() {
+    return useQuery({
+      queryKey: this.USER_QUERY_KEYS.USER_SESSION,
+      queryFn: (): UserSession | null => {
+        const token = localStorage.getItem('authToken');
+        const userStr = localStorage.getItem('user');
+        
+        if (token && userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            return {
+              user,
+              token,
+              expiresAt: '',
+            };
+          } catch (error) {
+            console.error('解析會話資料失敗:', error);
+            return null;
+          }
+        }
+        return null;
+      },
+      staleTime: 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: false,
+    });
   }
-};
 
-/**
- * API 函數：更新使用者資料
- */
-export const updateUserAPI = async (id: number, data: UserUpdateRequest): Promise<UpdateResponse> => {
-  try {
-    logger.debug(`Updating user with ID: ${id}`, { username: data.username, email: data.email });
-    logRequest(`/api/rbac/users/${id}`, 'PUT', `Updating user with ID: ${id}`);
+  /**
+   * 檢查使用者是否有特定權限的 Hook
+   */
+  useHasPermission(permission: string) {
+    const { data: user } = this.useCurrentUser();
     
-    const response = await apiClient.put(`/api/rbac/users/${id}`, data);
-    
-    logger.info(`Successfully updated user with ID: ${id}`);
-    return { success: true, data: response };
-  } catch (error: any) {
-    logError(error, 'updateUserAPI', { id, username: data.username, email: data.email, endpoint: `/api/rbac/users/${id}` });
-    
-    const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-    return { success: false, message: errorMsg };
+    return {
+      hasPermission: user?.permissions?.includes(permission) || false,
+      isLoading: !user,
+      user,
+    };
   }
-};
 
-/**
- * 用戶數據查詢 Hook
- */
-export const useUserData = () => {
-  return useQuery({
-    queryKey: USER_QUERY_KEYS.LIST,
-    queryFn: getUsersAPI,
-    staleTime: 5 * 60 * 1000, // 5分鐘
-    gcTime: 15 * 60 * 1000, // 15分鐘
-    retry: 2,
-  });
-};
-
-/**
- * 用戶角色關聯查詢 Hook
- */
-export const useUserRoles = (userId: number, enabled: boolean = true) => {
-  return useQuery({
-    queryKey: USER_QUERY_KEYS.ROLES(userId),
-    queryFn: () => getUserToRoleAPI(userId),
-    enabled: enabled && userId > 0,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
-    retry: 2,
-  });
-};
-
-/**
- * 用戶數據更新 Mutation
- */
-export const useUpdateUserData = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: UserUpdateRequest }) => {
-      const response = await updateUserAPI(id, data);
-      if (!response.success) {
-        throw new Error(response.message || 'Update failed');
-      }
-      return { id, data };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.LIST });
-    },
-    retry: 1,
-  });
-};
-
-/**
- * 用戶相關操作的綜合 Hook
- */
-export const useUserQuery = () => {
-  const query = useUserData();
-  const updateMutation = useUpdateUserData();
-
-  return {
-    // 數據
-    data: query.data || [],
+  /**
+   * 檢查使用者是否有特定角色的 Hook
+   */
+  useHasRole(role: string) {
+    const { data: user } = this.useCurrentUser();
     
-    // 狀態
-    isLoading: query.isLoading || updateMutation.isPending,
-    isError: query.isError,
-    error: query.error,
+    return {
+      hasRole: user?.roles?.includes(role) || false,
+      isLoading: !user,
+      user,
+    };
+  }
+
+  /**
+   * 綜合使用者資訊 Hook
+   */
+  useUserInfo() {
+    const userQuery = this.useCurrentUser();
+    const sessionQuery = this.useCurrentUserSession();
     
-    // 方法
-    refetch: query.refetch,
-    update: updateMutation.mutateAsync,
+    const isAuthenticated = !!userQuery.data && !!sessionQuery.data;
+    const isLoading = userQuery.isLoading || sessionQuery.isLoading;
     
-    // 原始查詢對象
-    query,
-    mutation: updateMutation,
-  };
-};
+    return {
+      user: userQuery.data,
+      session: sessionQuery.data,
+      isAuthenticated,
+      isLoading,
+      error: userQuery.error || sessionQuery.error,
+      refetch: () => {
+        userQuery.refetch();
+        sessionQuery.refetch();
+      },
+    };
+  }
+}
+
+

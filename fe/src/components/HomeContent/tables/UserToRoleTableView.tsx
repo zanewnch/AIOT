@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import { useUserRoles } from '../../../hooks/useUserQuery';
+import { useRbacQuery } from '../../../hooks/useRbacQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
@@ -27,7 +27,8 @@ const logger = createLogger('UserToRoleTableView');
  */
 export const UserToRoleTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: userToRoleData, isLoading, error, refetch } = useUserToRoleData();
+  const rbacQuery = useRbacQuery();
+  const { data: userToRoleData, isLoading, error, refetch } = rbacQuery.useUserRoles();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

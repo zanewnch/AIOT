@@ -27,37 +27,37 @@ class APIHomepageView(APIView):
             "description": "大型語言模型 API 服務，提供 LangChain 整合和 RAG 功能",
             "base_url": base_url,
             "endpoints": {
-                "ollama_service": {
+                "transformers_service": {
                     "description": "LLM 文字生成和對話服務",
-                    "base_path": "/api/ollama/",
+                    "base_path": "/api/transformers/",
                     "endpoints": [
                         {
                             "method": "POST",
-                            "path": "/api/ollama/generate/",
+                            "path": "/api/transformers/generate/",
                             "description": "生成文字回應",
                             "parameters": ["prompt", "use_rag (optional)"]
                         },
                         {
                             "method": "POST",
-                            "path": "/api/ollama/conversation/",
+                            "path": "/api/transformers/conversation/",
                             "description": "具記憶的對話生成",
                             "parameters": ["prompt", "use_rag (optional)"]
                         },
                         {
                             "method": "POST",
-                            "path": "/api/ollama/stream/",
+                            "path": "/api/transformers/stream/",
                             "description": "串流文字生成",
                             "parameters": ["prompt"]
                         },
                         {
                             "method": "POST",
-                            "path": "/api/ollama/documents/",
+                            "path": "/api/transformers/documents/",
                             "description": "上傳文件到 RAG 系統",
                             "parameters": ["documents (array)"]
                         },
                         {
                             "method": "GET",
-                            "path": "/api/ollama/health/",
+                            "path": "/api/transformers/health/",
                             "description": "LLM 服務健康檢查",
                             "parameters": []
                         }
@@ -110,31 +110,31 @@ class APIHomepageView(APIView):
                 "文檔首頁": f"{base_url}docs/raw/",
                 "API 文檔": f"{base_url}docs/raw/api.html",
                 "模組文檔": f"{base_url}docs/raw/modules.html",
-                "LLM 健康檢查": f"{base_url}ollama/health/",
+                "LLM 健康檢查": f"{base_url}transformers/health/",
                 "文檔服務健康檢查": f"{base_url}docs/health/",
                 "搜尋文檔": f"{base_url}docs/search/?q=範例"
             },
             "usage_examples": {
                 "basic_generation": {
                     "description": "基本文字生成",
-                    "curl": f"""curl -X POST {base_url}ollama/generate/ \\
+                    "curl": f"""curl -X POST {base_url}transformers/generate/ \\
      -H "Content-Type: application/json" \\
      -d '{{"prompt": "解釋什麼是人工智慧"}}'""",
                     "python": f"""import requests
 
-response = requests.post('{base_url}ollama/generate/', json={{
+response = requests.post('{base_url}transformers/generate/', json={{
     'prompt': '解釋什麼是人工智慧'
 }})
 print(response.json())"""
                 },
                 "rag_generation": {
                     "description": "使用 RAG 的文字生成",
-                    "curl": f"""curl -X POST {base_url}ollama/generate/ \\
+                    "curl": f"""curl -X POST {base_url}transformers/generate/ \\
      -H "Content-Type: application/json" \\
      -d '{{"prompt": "基於已上傳的文件，解釋相關概念", "use_rag": true}}'""",
                     "python": f"""import requests
 
-response = requests.post('{base_url}ollama/generate/', json={{
+response = requests.post('{base_url}transformers/generate/', json={{
     'prompt': '基於已上傳的文件，解釋相關概念',
     'use_rag': True
 }})
@@ -142,13 +142,13 @@ print(response.json())"""
                 },
                 "document_upload": {
                     "description": "上傳文件到 RAG 系統",
-                    "curl": f"""curl -X POST {base_url}ollama/documents/ \\
+                    "curl": f"""curl -X POST {base_url}transformers/documents/ \\
      -H "Content-Type: application/json" \\
      -d '{{"documents": ["文件內容1", "文件內容2"]}}'""",
                     "python": f"""import requests
 
 documents = ["文件內容1", "文件內容2"]
-response = requests.post('{base_url}ollama/documents/', json={{
+response = requests.post('{base_url}transformers/documents/', json={{
     'documents': documents
 }})
 print(response.json())"""
@@ -166,7 +166,7 @@ print(response.json())"""
             "contact": {
                 "project": "AIOT Team",
                 "documentation": f"{base_url}docs/raw/",
-                "health_check": f"{base_url}ollama/health/"
+                "health_check": f"{base_url}transformers/health/"
             }
         }
         

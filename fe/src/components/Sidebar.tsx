@@ -13,7 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { Link, useLocation } from 'react-router-dom'; // 引入 React Router 的 Link 組件和 useLocation Hook
 import styles from '../styles/Sidebar.module.scss'; // 引入側邊欄的 SCSS 模組樣式
-import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
+import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 側邊欄組件的屬性介面
@@ -64,12 +64,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       currentPath: location.pathname
     });
 
-    logUserAction('navigation', {
-      source: 'sidebar',
-      target: path,
-      label,
-      from: location.pathname
-    });
   };
 
   return (

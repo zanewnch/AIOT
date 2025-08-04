@@ -13,7 +13,7 @@
 import React from 'react'; // 引入 React 庫，用於建立組件
 import { useThemeStore } from '../stores'; // 引入主題 Zustand store
 import '../styles/ThemeToggle.scss'; // 引入主題切換組件的 SCSS 樣式
-import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
+import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 主題切換組件
@@ -53,11 +53,6 @@ export function ThemeToggle() {
       timestamp: new Date().toISOString()
     });
 
-    // 記錄用戶操作
-    logUserAction('theme_toggle', {
-      from: theme,
-      to: newTheme
-    });
 
     toggleTheme(); // 觸發主題切換
   };

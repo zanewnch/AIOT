@@ -11,7 +11,7 @@
 
 import React from 'react'; // 引入 React 庫，用於建立組件
 import '../styles/Button.module.scss'; // 引入按鈕組件的 SCSS 樣式檔案
-import { createLogger, logUserAction } from '../configs/loggerConfig'; // 引入日誌配置
+import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 
 /**
  * 按鈕組件的屬性介面
@@ -102,13 +102,6 @@ export const Button: React.FC<ButtonProps> = ({
       className
     });
     
-    // 記錄用戶操作
-    logUserAction('button_click', {
-      variant,
-      size,
-      type,
-      content: typeof children === 'string' ? children : 'JSX_Content'
-    });
     
     // 執行原有的點擊處理函數
     if (onClick) {

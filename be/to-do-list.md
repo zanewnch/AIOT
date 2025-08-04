@@ -30,3 +30,14 @@ micro service
 
 # date 2025-7-26
 - [ ] 修改controller 對 service 的DI
+
+
+# date 2025-7-27
+- [ ] be api design, frontend cache, micro service config(and general middleware), kubernetes, rabbitmq implement
+
+# date 2025-7-28
+- [ ] 下一步 從new model 創建repo 開始做
+
+# data 2025-7-30
+- [ ] 做websocket and rabbitmq and microserive
+- [ ] 做frontend 修改 like feature-design.md

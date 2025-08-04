@@ -44,37 +44,13 @@ export class RoleRepository implements IRoleRepository {
   /**
    * 根據 ID 查詢角色
    * @param id 角色 ID
-   * @param includePermissions 是否包含關聯的權限資料
-   * @param includeUsers 是否包含關聯的使用者資料
    * @returns 角色實例或 null
    */
-  async findById(
-    id: number, 
-    includePermissions: boolean = false, 
-    includeUsers: boolean = false
-  ): Promise<RoleModel | null> {
+  async findById(id: number): Promise<RoleModel | null> {
     try {
-      logger.debug(`Finding role by ID: ${id}, includePermissions: ${includePermissions}, includeUsers: ${includeUsers}`);
+      logger.debug(`Finding role by ID: ${id}`);
       
-      const includes = [];
-      if (includePermissions) {
-        includes.push({
-          model: PermissionModel,
-          as: 'permissions',
-          through: { attributes: [] } // 不包含中介表欄位
-        });
-      }
-      if (includeUsers) {
-        includes.push({
-          model: UserModel,
-          as: 'users',
-          through: { attributes: [] }
-        });
-      }
-
-      const role = await RoleModel.findByPk(id, {
-        include: includes.length > 0 ? includes : undefined
-      });
+      const role = await RoleModel.findByPk(id);
 
       if (!role) {
         logger.debug(`Role not found with ID: ${id}`);
@@ -373,7 +349,7 @@ export class RoleRepository implements IRoleRepository {
     try {
       logger.debug(`Finding roles by names: [${names.join(', ')}]`);
       
-      const roles = await RoleModel.findAll({
+      const roles: RoleModel[] = await RoleModel.findAll({
         where: {
           name: names
         },

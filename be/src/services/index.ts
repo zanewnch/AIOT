@@ -7,7 +7,6 @@
  * 包含的服務：
  * - AuthService: 認證服務，處理使用者登入、登出、權限驗證
  * - RbacInitService: 角色基礎存取控制初始化服務
- * - RTKInitService: Redux Toolkit 初始化服務
  * 
  * @author AIOT 開發團隊
  * @version 1.0.0
@@ -20,5 +19,3 @@ export { AuthService } from './AuthService.js';
 // 匯出角色基礎存取控制初始化服務，負責設定權限系統
 export { RbacInitService } from './RbacInitService.js';
 
-// 匯出 Redux Toolkit 初始化服務，處理狀態管理初始化
-export { RTKInitService } from './RTKInitService.js';

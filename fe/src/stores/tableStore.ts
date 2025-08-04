@@ -18,7 +18,7 @@ import { devtools } from 'zustand/middleware';
 /**
  * 表格類型定義
  */
-export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK';
+export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK' | 'DronePosition' | 'DroneStatus' | 'DroneCommand' | 'DronePositionsArchive' | 'DroneStatusArchive' | 'DroneCommandsArchive' | 'ArchiveTask' | 'UserActivity' | 'UserPreference';
 
 /**
  * 排序相關類型

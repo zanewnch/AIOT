@@ -10,9 +10,8 @@
 
 import React, { useState } from 'react';
 import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
-import { QueryProvider } from '../providers/QueryProvider';
+import { QueryProvider } from '../configs/queryConfig';
 import { useActivityStore } from '../stores/activityStore';
-import { useActivityTracking } from '../hooks/useActivityQuery';
 
 /**
  * 現代化活動追蹤示例的內容組件
@@ -29,13 +28,14 @@ const ModernActivityContent: React.FC = () => {
   } = useActivityStore();
 
   // 使用綜合 Hook
+  // const activityQuery = useActivityQuery(); // Removed
   const {
     stats,
     loading,
     error,
     trackPageVisit,
     syncData,
-  } = useActivityTracking();
+  } = activityQuery.tracking();
 
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab);
@@ -356,7 +356,7 @@ const UsageGuideContent: React.FC = () => {
             <div className="step-number">2</div>
             <div className="step-content">
               <h5>創建 Store</h5>
-              <code>const useStore = create((set) => ({...}))</code>
+              <code>{`const useStore = create((set) => ({...}))`}</code>
             </div>
           </div>
           <div className="step">

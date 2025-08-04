@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_browser_reload',
-    'ollama_service',
+    'transformers_service',
     'docs_service',
 ]
 
@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'main_db'),
         'USER': os.getenv('DB_USER', 'admin'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
-        'HOST': '127.0.0.1',
+        'HOST': os.getenv('DB_HOST', 'AIOT-mysqldb'),
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
