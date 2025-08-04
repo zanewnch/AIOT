@@ -24,7 +24,7 @@ import { ProgressEvent, ProgressInfo, SSEConnectionState, ProgressTrackingState 
  * 使用 class 封裝所有與 SSE 相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class SSEQuery {
+class SSEQuery {
   
   public SSE_QUERY_KEYS = {
     PROGRESS: (taskId: string) => ['sse', 'progress', taskId] as const,
@@ -307,5 +307,15 @@ export class SSEQuery {
 
 }
 
+// 創建 SSEQuery 實例並匯出主要 Hook
+const sseQuery = new SSEQuery();
 
+/**
+ * useSSEQuery - 主要的 SSE Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useSSEQuery = (taskId?: string | null) => sseQuery.useSSE(taskId);
 
+// 也可以匯出 SSEQuery 類別本身，供進階使用
+export { SSEQuery };

@@ -20,7 +20,7 @@ import { useAuthActions } from '../stores';
  * 使用 class 封裝所有與認證相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class AuthQuery {
+class AuthQuery {
   
   public AUTH_QUERY_KEYS = {
     LOGIN: ['auth', 'login'] as const,
@@ -88,3 +88,18 @@ export class AuthQuery {
   }
 }
 
+// 創建 AuthQuery 實例並匯出主要 Hook
+const authQuery = new AuthQuery();
+
+/**
+ * useAuthQuery - 主要的認證 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useAuthQuery = () => ({
+  login: authQuery.useLogin(),
+  logout: authQuery.useLogout(),
+});
+
+// 也可以匯出 AuthQuery 類別本身，供進階使用
+export { AuthQuery };

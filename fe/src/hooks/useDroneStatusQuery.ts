@@ -25,7 +25,7 @@ import {
  * 使用 class 封裝所有與無人機狀態相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class DroneStatusQuery {
+class DroneStatusQuery {
   
   public DRONE_STATUS_QUERY_KEYS = {
     DRONE_STATUSES: ['droneStatuses'] as const,
@@ -330,3 +330,16 @@ export class DroneStatusQuery {
 
 
 
+
+// 創建 DroneStatusQuery 實例並匯出主要 Hook
+const dronestatusqueryInstance = new DroneStatusQuery();
+
+/**
+ * useDroneStatusQuery - 主要的 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useDroneStatusQuery = () => dronestatusqueryInstance;
+
+// 也可以匯出 DroneStatusQuery 類別本身，供進階使用  
+export { DroneStatusQuery };

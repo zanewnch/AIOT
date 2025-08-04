@@ -35,7 +35,7 @@ import {
  * 使用 class 封裝所有與 RBAC 相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class RbacQuery {
+class RbacQuery {
   
   public RBAC_QUERY_KEYS = {
     USERS: ['rbacUsers'] as const,
@@ -307,3 +307,16 @@ export class RbacQuery {
 }
 
 
+
+// 創建 RbacQuery 實例並匯出主要 Hook
+const rbacqueryInstance = new RbacQuery();
+
+/**
+ * useRbacQuery - 主要的 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useRbacQuery = () => rbacqueryInstance;
+
+// 也可以匯出 RbacQuery 類別本身，供進階使用  
+export { RbacQuery };

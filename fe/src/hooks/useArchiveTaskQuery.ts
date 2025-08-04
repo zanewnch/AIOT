@@ -32,7 +32,7 @@ import {
  * 使用 class 封裝所有與歸檔任務相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class ArchiveTaskQuery {
+class ArchiveTaskQuery {
   
   public ARCHIVE_TASK_QUERY_KEYS : {
     ARCHIVE_TASKS: readonly string[];
@@ -566,3 +566,16 @@ export class ArchiveTaskQuery {
 }
 
 
+
+// 創建 ArchiveTaskQuery 實例並匯出主要 Hook
+const archivetaskqueryInstance = new ArchiveTaskQuery();
+
+/**
+ * useArchiveTaskQuery - 主要的 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useArchiveTaskQuery = () => archivetaskqueryInstance;
+
+// 也可以匯出 ArchiveTaskQuery 類別本身，供進階使用  
+export { ArchiveTaskQuery };

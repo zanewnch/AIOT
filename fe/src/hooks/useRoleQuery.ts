@@ -30,7 +30,7 @@ const logger = createLogger('RoleQuery');
  * 使用 class 封裝所有與角色數據相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class RoleQuery {
+class RoleQuery {
   public ROLE_QUERY_KEYS: {
     readonly ALL: readonly ['role'];
     readonly LIST: readonly ['role', 'list'];
@@ -141,3 +141,16 @@ export class RoleQuery {
 }
 
 
+
+// 創建 RoleQuery 實例並匯出主要 Hook
+const rolequeryInstance = new RoleQuery();
+
+/**
+ * useRoleQuery - 主要的 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useRoleQuery = () => rolequeryInstance;
+
+// 也可以匯出 RoleQuery 類別本身，供進階使用  
+export { RoleQuery };

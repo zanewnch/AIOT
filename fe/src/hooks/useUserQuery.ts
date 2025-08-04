@@ -21,7 +21,7 @@ import { UserProfile, UserSession } from '../types/user';
  * 使用 class 封裝所有與使用者相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class UserQuery {
+class UserQuery {
   
   public USER_QUERY_KEYS = {
     USER_PROFILE: ['userProfile'] as const,
@@ -136,3 +136,16 @@ export class UserQuery {
 }
 
 
+
+// 創建 UserQuery 實例並匯出主要 Hook
+const userqueryInstance = new UserQuery();
+
+/**
+ * useUserQuery - 主要的 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useUserQuery = () => userqueryInstance;
+
+// 也可以匯出 UserQuery 類別本身，供進階使用  
+export { UserQuery };

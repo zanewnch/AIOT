@@ -28,7 +28,7 @@ const logger = createLogger('RTKQuery');
  * 使用 class 封裝所有與 RTK 定位資料相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-export class RTKQuery {
+class RTKQuery {
   public RTK_QUERY_KEYS: {
     readonly ALL: readonly ['rtk'];
     readonly DATA: readonly ['rtk', 'data'];
@@ -113,3 +113,16 @@ export class RTKQuery {
 }
 
 
+
+// 創建 RTKQuery 實例並匯出主要 Hook
+const rtkqueryInstance = new RTKQuery();
+
+/**
+ * useRTKQuery - 主要的 Hook
+ * 
+ * 直接匯出使用的 Hook，與現有代碼相容
+ */
+export const useRTKQuery = () => rtkqueryInstance;
+
+// 也可以匯出 RTKQuery 類別本身，供進階使用  
+export { RTKQuery };
