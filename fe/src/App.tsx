@@ -25,7 +25,10 @@ const InitPage = lazy(() => import("./pages/InitPage").then(module => ({ default
 const SwaggerDocPage = lazy(() => import("./pages/SwaggerDocPage"));
 const MapPage = lazy(() => import("./pages/MapPage"));
 const FlyingPage = lazy(() => import("./pages/FlyingPage"));
-const DroneMonitoringPage = lazy(() => import("./pages/DroneMonitoringPage"));
+const CommandHistoryPage = lazy(() => import("./pages/CommandHistoryPage"));
+const DroneFleetPage = lazy(() => import("./pages/DroneFleetPage"));
+const CommandQueuePage = lazy(() => import("./pages/CommandQueuePage"));
+const DataAnalyticsPage = lazy(() => import("./pages/DataAnalyticsPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 /**
@@ -133,8 +136,14 @@ function App() {
             {/* 地圖頁面 */}
             <Route path="flyingpage" element={<FlyingPage />} /> 
             {/* 飛行頁面 */}
-            <Route path="monitoring" element={<DroneMonitoringPage />} /> 
-            {/* 無人機監控頁面 */}
+            <Route path="command-history" element={<CommandHistoryPage />} /> 
+            {/* 指令歷史頁面 */}
+            <Route path="drone-fleet" element={<DroneFleetPage />} /> 
+            {/* 無人機機隊管理頁面 */}
+            <Route path="command-queue" element={<CommandQueuePage />} /> 
+            {/* 智能指令佇列頁面 */}
+            <Route path="data-analytics" element={<DataAnalyticsPage />} /> 
+            {/* 資料分析頁面 */}
           </Route>
         </Routes>
       </Suspense>

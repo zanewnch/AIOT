@@ -84,6 +84,12 @@ export type DroneCommandAttributes = {
     drone_id: number;
     
     /** 
+     * 佇列外鍵
+     * @type {number | null} 關聯到 drone_command_queues 表的外鍵，可為空表示獨立指令
+     */
+    queue_id: number | null;
+    
+    /** 
      * 指令類型
      * @type {DroneCommandType} 指令的類型（起飛、降落、移動等）
      */
@@ -256,6 +262,19 @@ export class DroneCommandModel extends Model<DroneCommandAttributes, DroneComman
     declare drone_id: number;
 
     /**
+     * 佇列外鍵
+     * 
+     * 關聯到 drone_command_queues 表的外鍵，可為空表示獨立指令。
+     * 
+     * @type {number | null}
+     * @memberof DroneCommandModel
+     * @since 1.0.0
+     */
+    @AllowNull(true)          // 允許空值，表示可以是獨立指令
+    @Column(DataType.BIGINT)  // 定義為 BIGINT 型態
+    declare queue_id: number | null;
+
+    /**
      * 指令類型
      * 
      * 指令的類型，包含 takeoff（起飛）、land（降落）、move（移動）、
@@ -407,6 +426,19 @@ export class DroneCommandModel extends Model<DroneCommandAttributes, DroneComman
      */
     @BelongsTo(() => DroneStatusModel)
     declare drone: DroneStatusModel;
+
+    /**
+     * 關聯到指令佇列表
+     * 
+     * 建立與 DroneCommandQueueModel 的多對一關聯關係。
+     * 使用延遲載入避免循環引用。
+     * 
+     * @type {any}
+     * @memberof DroneCommandModel
+     * @since 1.0.0
+     */
+    @BelongsTo(() => require('./DroneCommandQueueModel.js').DroneCommandQueueModel, { foreignKey: 'queue_id' })
+    declare queue: any;
 
     /**
      * 計算指令等待時間

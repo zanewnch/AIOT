@@ -6,19 +6,17 @@
  * 支援自定義樣式和完整的 TypeScript 類型定義。
  *
  * @author AI Assistant
- * @version 1.0.0
- * @since 2025-07-18
+ * @version 2.0.0
+ * @since 2025-08-04
  */
 
-import React from 'react'; // 引入 React 庫，用於建立組件
-import { Link, useLocation } from 'react-router-dom'; // 引入 React Router 的 Link 組件和 useLocation Hook
-import styles from '../styles/Sidebar.module.scss'; // 引入側邊欄的 SCSS 模組樣式
-import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
+import React, { useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import styles from '../styles/Sidebar.module.scss';
+import { createLogger } from '../configs/loggerConfig';
 
 /**
  * 側邊欄組件的屬性介面
- *
- * 定義側邊欄組件可接受的所有屬性及其類型約束
  */
 interface SidebarProps {
   /** 額外的 CSS 類名，用於自定義樣式 */
@@ -26,113 +24,126 @@ interface SidebarProps {
 }
 
 /**
- * 應用程式側邊欄導航組件
- *
- * 提供一個固定位置的側邊欄，包含品牌標題和主要導航連結。
- * 根據當前路徑自動高亮顯示活動連結，提供良好的用戶體驗。
- *
- * @param props - 側邊欄組件的屬性
- * @returns 渲染後的側邊欄 JSX 元素
- *
- * @example
- * ```tsx
- * // 基本使用
- * <Sidebar />
- *
- * // 帶自定義樣式
- * <Sidebar className="custom-sidebar" />
- * ```
+ * 導航項目配置介面
  */
+interface NavItem {
+  path: string;
+  label: string;
+  icon: string;
+  matchPath: string;
+}
 
 // 創建 Sidebar 專用的 logger 實例
 const logger = createLogger('Sidebar');
 
-export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
-  // 使用 useLocation Hook 獲取當前路徑資訊，用於導航連結的活動狀態判斷
-  const location = useLocation();
+// 導航項目配置陣列
+const NAV_ITEMS: NavItem[] = [
+  { path: '/', label: '首頁', icon: '🏠', matchPath: '/' },
+  { path: '/content/tableviewer', label: 'Table Viewer', icon: '📊', matchPath: '/tableviewer' },
+  { path: '/content/api-docs', label: 'API 文檔', icon: '📚', matchPath: '/api-docs' },
+  { path: '/content/mappage', label: '地圖頁面', icon: '🗺️', matchPath: '/mappage' },
+  { path: '/content/flyingpage', label: '飛行頁面', icon: '✈️', matchPath: '/flyingpage' },
+  { path: '/content/command-history', label: '指令歷史', icon: '📋', matchPath: '/command-history' },
+  { path: '/content/drone-fleet', label: '機隊管理', icon: '🚁', matchPath: '/drone-fleet' },
+  { path: '/content/command-queue', label: '指令佇列', icon: '⚡', matchPath: '/command-queue' },
+  { path: '/content/data-analytics', label: '資料分析', icon: '📈', matchPath: '/data-analytics' }
+];
 
-  /**
-   * 處理導航連結點擊
-   * 
-   * @param path - 目標路徑
-   * @param label - 連結標籤
-   */
-  const handleNavClick = (path: string, label: string) => {
-    logger.info(`Sidebar navigation clicked`, {
-      targetPath: path,
-      label,
+/**
+ * 導航連結項目組件
+ */
+const NavItem: React.FC<{ 
+  item: NavItem; 
+  currentPath: string;
+  onItemClick: (item: NavItem) => void;
+}> = ({ item, currentPath, onItemClick }) => {
+  const isActive = currentPath === item.matchPath;
+  const linkClass = `${styles.sidebarLink} ${isActive ? styles.active : ''}`;
+  
+  return (
+    <Link
+      to={item.path}
+      className={linkClass}
+      onClick={() => onItemClick(item)}
+    >
+      <span className={styles.sidebarIcon}>{item.icon}</span>
+      {item.label}
+    </Link>
+  );
+};
+
+/**
+ * 導航列表組件
+ */
+const NavigationList: React.FC<{
+  items: NavItem[];
+  currentPath: string;
+  onItemClick: (item: NavItem) => void;
+}> = ({ items, currentPath, onItemClick }) => (
+  <nav className={styles.sidebarNav}>
+    {items.map((item) => (
+      <NavItem
+        key={item.path}
+        item={item}
+        currentPath={currentPath}
+        onItemClick={onItemClick}
+      />
+    ))}
+  </nav>
+);
+
+/**
+ * 側邊欄標題組件
+ */
+const SidebarHeader: React.FC = () => (
+  <div className={styles.sidebarHeader}>
+    <h2 className={styles.brandTitle}>我的應用</h2>
+  </div>
+);
+
+/**
+ * 導航區域組件
+ */
+const NavigationSection: React.FC<{
+  currentPath: string;
+  onItemClick: (item: NavItem) => void;
+}> = ({ currentPath, onItemClick }) => (
+  <div className={styles.sidebarSection}>
+    <h3>導航</h3>
+    <NavigationList
+      items={NAV_ITEMS}
+      currentPath={currentPath}
+      onItemClick={onItemClick}
+    />
+  </div>
+);
+
+/**
+ * 應用程式側邊欄導航組件
+ *
+ * 提供一個固定位置的側邊欄，包含品牌標題和主要導航連結。
+ * 根據當前路徑自動高亮顯示活動連結，提供良好的用戶體驗。
+ */
+export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
+  const location = useLocation();
+  
+  const handleItemClick = useMemo(() => (item: NavItem) => {
+    logger.info('Sidebar navigation clicked', {
+      targetPath: item.path,
+      label: item.label,
       currentPath: location.pathname
     });
+  }, [location.pathname]);
 
-  };
+  const sidebarClass = `${styles.sidebar} ${className || ''}`;
 
   return (
-    <aside className={`${styles.sidebar} ${className || ''}`}>
-      {/* 頂部品牌區域 - 顯示應用程式名稱或標誌 */}
-      <div className={styles.sidebarHeader}>
-        <h2 className={styles.brandTitle}>我的應用</h2>
-      </div>
-
-      {/* 導航區域 - 包含所有主要導航連結 */}
-      <div className={styles.sidebarSection}>
-        <h3>導航</h3>
-        <nav className={styles.sidebarNav}>
-          {/* 首頁導航連結 */}
-          <Link
-            to="/" // 路由路徑
-            className={`${styles.sidebarLink} ${location.pathname === '/' ? styles.active : ''}`} // 動態應用活動狀態樣式
-            onClick={() => handleNavClick('/', '首頁')}
-          >
-            <span className={styles.sidebarIcon}>🏠</span>
-            首頁
-          </Link>
-          {/* 表格檢視器導航連結 */}
-          <Link
-            to="/content/tableviewer" // 路由路徑
-            className={`${styles.sidebarLink} ${location.pathname === '/tableviewer' ? styles.active : ''}`} // 動態應用活動狀態樣式
-            onClick={() => handleNavClick('/content/tableviewer', 'Table Viewer')}
-          >
-            <span className={styles.sidebarIcon}>📊</span>
-            Table Viewer
-          </Link>
-          {/* API 文檔導航連結 */}
-          <Link
-            to="/content/api-docs" // 路由路徑
-            className={`${styles.sidebarLink} ${location.pathname === '/api-docs' ? styles.active : ''}`} // 動態應用活動狀態樣式
-            onClick={() => handleNavClick('/content/api-docs', 'API 文檔')}
-          >
-            <span className={styles.sidebarIcon}>📚</span>
-            API 文檔
-          </Link>
-          {/* 地圖頁面導航連結 */}
-          <Link
-            to="/content/mappage" // 路由路徑
-            className={`${styles.sidebarLink} ${location.pathname === '/mappage' ? styles.active : ''}`} // 動態應用活動狀態樣式
-            onClick={() => handleNavClick('/content/mappage', '地圖頁面')}
-          >
-            <span className={styles.sidebarIcon}>🗺️</span>
-            地圖頁面
-          </Link>
-          {/* 飛行頁面導航連結 */}
-          <Link
-            to="/content/flyingpage" // 路由路徑
-            className={`${styles.sidebarLink} ${location.pathname === '/flyingpage' ? styles.active : ''}`} // 動態應用活動狀態樣式
-            onClick={() => handleNavClick('/content/flyingpage', '飛行頁面')}
-          >
-            <span className={styles.sidebarIcon}>✈️</span>
-            飛行頁面
-          </Link>
-          {/* 無人機監控頁面導航連結 */}
-          <Link
-            to="/content/monitoring" // 路由路徑
-            className={`${styles.sidebarLink} ${location.pathname === '/monitoring' ? styles.active : ''}`} // 動態應用活動狀態樣式
-            onClick={() => handleNavClick('/content/monitoring', '無人機監控')}
-          >
-            <span className={styles.sidebarIcon}>📡</span>
-            無人機監控
-          </Link>
-        </nav>
-      </div>
+    <aside className={sidebarClass}>
+      <SidebarHeader />
+      <NavigationSection
+        currentPath={location.pathname}
+        onItemClick={handleItemClick}
+      />
     </aside>
   );
 };

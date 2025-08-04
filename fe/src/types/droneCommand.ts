@@ -1,29 +1,27 @@
 /**
- * 無人機指令相關接口
+ * 無人機指令相關接口 - 匹配後端模型結構
  */
 export interface DroneCommand {
-  id: string;
-  droneId: string;
-  commandType: string;
-  parameters?: any;
-  status: 'pending' | 'executing' | 'completed' | 'failed' | 'cancelled';
-  issuedBy: string;
-  issuedAt: string;
-  executedAt?: string;
-  completedAt?: string;
-  failedAt?: string;
-  errorMessage?: string;
-  retryCount: number;
-  maxRetries: number;
-  createdAt: string;
-  updatedAt: string;
+  id: number;
+  drone_id: number;
+  command_type: 'takeoff' | 'land' | 'move' | 'hover' | 'return';
+  command_data?: any;
+  status: 'pending' | 'executing' | 'completed' | 'failed';
+  issued_by: number;
+  issued_at: Date | string;
+  executed_at?: Date | string | null;
+  completed_at?: Date | string | null;
+  error_message?: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface CreateDroneCommandRequest {
-  droneId: string;
-  commandType: string;
-  parameters?: any;
-  maxRetries?: number;
+  drone_id: number;
+  command_type: 'takeoff' | 'land' | 'move' | 'hover' | 'return';
+  command_data?: any;
+  issued_by: number;
+  issued_at: Date | string;
 }
 
 export interface CreateBatchCommandsRequest {
@@ -31,15 +29,14 @@ export interface CreateBatchCommandsRequest {
 }
 
 export interface UpdateDroneCommandRequest {
-  commandType?: string;
-  parameters?: any;
-  status?: string;
-  maxRetries?: number;
+  command_type?: 'takeoff' | 'land' | 'move' | 'hover' | 'return';
+  command_data?: any;
+  status?: 'pending' | 'executing' | 'completed' | 'failed';
 }
 
 export interface SendCommandRequest {
-  droneId: string;
-  parameters?: any;
+  drone_id: number;
+  command_data?: any;
 }
 
 export interface DateRangeQuery {
@@ -61,7 +58,7 @@ export interface CommandTypeStatistics {
 }
 
 export interface DroneCommandSummary {
-  droneId: string;
+  drone_id: number;
   totalCommands: number;
   recentCommands: DroneCommand[];
   statistics: CommandStatistics;

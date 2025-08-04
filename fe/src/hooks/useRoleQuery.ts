@@ -117,7 +117,7 @@ export class RoleQuery {
   /**
    * 角色權限關聯查詢 Hook (所有關聯)
    */
-  useRolePermissions() {
+  useAllRolePermissions() {
     return useQuery({
       queryKey: this.ROLE_QUERY_KEYS.ROLE_PERMISSIONS,
       queryFn: async (): Promise<RolePermission[]> => {

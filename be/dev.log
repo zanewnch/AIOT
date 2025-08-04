@@ -10741,3 +10741,408 @@ ReferenceError: progressRoutes is not defined
   }
 }
 [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:19:00.471 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:19:00.502 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:19:19.061 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:19:19.091 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:20:01.925 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:20:01.952 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+❌ App initialization failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+❌ Server startup failed ConnectionError [SequelizeConnectionError]: connect ETIMEDOUT
+    at ConnectionManager.connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/mysql/connection-manager.js:126:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConnectionManager._connect (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:332:24)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:250:32)
+    at async ConnectionManager.getConnection (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/connection-manager.js:280:7)
+    at async <anonymous> (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:638:26)
+    at async MySQLQueryInterface.tableExists (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/dialects/abstract/query-interface.js:242:17)
+    at async Function.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/model.js:1349:21)
+    at async Sequelize.sync (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:825:9)
+    at async App.initialize (/home/user/GitHub/AIOT/be/src/app.ts:262:7) {
+  parent: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  },
+  original: Error: connect ETIMEDOUT
+      at Connection._handleTimeoutError (/home/user/GitHub/AIOT/be/node_modules/mysql2/lib/base/connection.js:200:17)
+      at listOnTimeout (node:internal/timers:588:17)
+      at process.processTimers (node:internal/timers:523:7) {
+    errorno: 'ETIMEDOUT',
+    code: 'ETIMEDOUT',
+    syscall: 'connect',
+    fatal: true
+  }
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:20:19.424 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:20:19.458 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:20:19.558 [AIOT-BE] ERROR: uncaughtException: DroneCommandQueueModel is not defined
+ReferenceError: DroneCommandQueueModel is not defined
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:439:22)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: DroneCommandQueueModel is not defined\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:439:22)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:20:19 GMT+0800 (Taiwan Standard Time)","process":{"pid":93741,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":163135488,"heapTotal":70455296,"heapUsed":49368272,"external":6117320,"arrayBuffers":202746}},"os":{"loadavg":[1.58,0.76,0.57],"uptime":49310.5},"trace":[{"column":22,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":439,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:20:34.587 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:20:34.618 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:20:34.692 [AIOT-BE] ERROR: uncaughtException: DroneCommandQueueModel has not been defined
+Error: DroneCommandQueueModel has not been defined
+    at Sequelize.model (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:483:13)
+    at Sequelize.model (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:30:26)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:52:46
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)
+    at createSequelizeInstance (/home/user/GitHub/AIOT/be/src/configs/dbConfig.ts:82:10) {"error":{},"stack":"Error: DroneCommandQueueModel has not been defined\n    at Sequelize.model (/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js:483:13)\n    at Sequelize.model (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:30:26)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:52:46\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)\n    at createSequelizeInstance (/home/user/GitHub/AIOT/be/src/configs/dbConfig.ts:82:10)","exception":true,"date":"Tue Aug 05 2025 01:20:34 GMT+0800 (Taiwan Standard Time)","process":{"pid":94066,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":168140800,"heapTotal":70246400,"heapUsed":50488672,"external":6130554,"arrayBuffers":215980}},"os":{"loadavg":[1.71,0.83,0.59],"uptime":49325.63},"trace":[{"column":13,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize/src/sequelize.js","function":"Sequelize.model","line":483,"method":"model","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.model","line":30,"method":"model","native":false},{"column":46,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":52,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false},{"column":10,"file":"/home/user/GitHub/AIOT/be/src/configs/dbConfig.ts","function":"createSequelizeInstance","line":82,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:20:49.056 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:20:49.088 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:20:49.165 [AIOT-BE] ERROR: uncaughtException: DroneCommandQueueModel is not defined
+ReferenceError: DroneCommandQueueModel is not defined
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:439:22)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: DroneCommandQueueModel is not defined\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:439:22)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:20:49 GMT+0800 (Taiwan Standard Time)","process":{"pid":94444,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":157896704,"heapTotal":70246400,"heapUsed":50223888,"external":6130554,"arrayBuffers":215980}},"os":{"loadavg":[2.05,0.93,0.63],"uptime":49340.1},"trace":[{"column":22,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":439,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:21:04.434 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:21:04.466 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:21:04.540 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:21:04 GMT+0800 (Taiwan Standard Time)","process":{"pid":94977,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":170450944,"heapTotal":69984256,"heapUsed":49458232,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[2.36,1.05,0.67],"uptime":49355.47},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m

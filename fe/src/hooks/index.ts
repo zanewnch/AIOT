@@ -9,7 +9,23 @@
 // 主要查詢 hooks - 統一的 useXxxQuery 格式
 export { useAuthQuery } from './useAuthQuery';
 export { useUserQuery } from './useUserQuery';
-export { useDroneCommandQuery } from './useDroneCommandQuery';
+export { 
+  useDroneCommandQuery,
+  useAllDroneCommands,
+  useDroneCommandById,
+  useDroneCommandsByDroneId,
+  usePendingCommandsByDroneId,
+  useExecutingCommandByDroneId,
+  useLatestDroneCommands,
+  useFailedDroneCommands,
+  useDroneCommandStatistics,
+  useDroneCommandsByStatus,
+  useDroneCommandsByType,
+  useCreateCommand,
+  useCreateBatchCommands,
+  useExecuteCommand,
+  useCancelCommand
+} from './useDroneCommandQuery';
 export { useDroneStatusQuery } from './useDroneStatusQuery';
 export { useDronePositionsQuery } from './useDronePositionQuery';
 export { usePermissionQuery } from './usePermissionQuery';
@@ -19,6 +35,7 @@ export { useInitQuery } from './useInitQuery';
 
 // 其他專用 hooks
 export * from './useArchiveTaskQuery';
+export { useDroneCommandArchiveQuery, useGetAllCommandsArchive, useGetCommandsArchiveByDroneId, useGetLatestCommandsArchive } from './useDroneCommandArchiveQuery';
 export { useDronePositionsArchiveQuery } from './useDronePositionsArchiveQuery';
 export { useDroneStatusArchiveQuery } from './useDroneStatusArchiveQuery';
 export * from './useUserPreferenceQuery';

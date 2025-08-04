@@ -2186,3 +2186,103 @@ TypeError: next is not a function
 2025-08-04 13:19:05.033 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
 2025-08-04 13:19:05.041 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
 2025-08-04 13:19:05.041 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 14:51:17.179 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 14:51:17.181 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 14:51:17.190 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 14:51:17.190 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:18:00.817 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:18:00.818 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:18:00.828 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:18:00.828 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:18:19.300 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:18:19.301 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:18:19.312 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:18:19.313 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:36:57.121 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:36:57.122 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:36:57.128 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:36:57.129 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:47:44.906 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:47:44.906 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:47:44.914 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:47:44.915 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:57:15.312 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:57:15.312 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:57:15.318 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:57:15.319 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 16:59:48.214 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 16:59:48.249 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 16:59:48.250 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 16:59:48.250 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 16:59:48.257 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 16:59:48.257 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 16:59:48.258 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 17:13:25.155 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:13:25.156 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 17:13:25.156 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:13:25.156 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:13:25.159 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:13:25.159 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:13:25.162 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 17:13:25.163 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 17:13:25.164 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 17:13:25.179 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:13:25.179 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:14:28.138 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:14:28.139 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:14:28.145 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:14:28.147 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:14:28.917 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:14:28.918 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 17:14:28.921 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:14:28.921 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:14:28.924 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 17:14:28.924 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 17:14:28.925 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 17:15:11.049 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:11.049 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:15:11.058 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:11.059 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:15:11.758 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:11.759 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 17:15:11.759 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:15:11.759 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:15:11.761 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 17:15:11.761 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 17:15:11.762 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 17:15:26.582 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:26.582 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:15:26.588 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:26.588 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:15:26.931 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:26.931 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 17:15:26.931 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:15:26.931 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:15:26.933 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 17:15:26.934 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 17:15:26.935 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 17:15:42.098 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:42.099 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:15:42.106 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:42.106 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-04 17:15:42.785 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 17:15:42.786 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-04 17:15:42.786 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:15:42.786 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-04 17:15:42.788 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-04 17:15:42.788 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-04 17:15:42.789 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-04 17:19:00.763 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:19:00.799 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 17:19:19.234 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:19:19.272 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 17:20:02.031 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:20:02.077 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 17:20:19.607 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:20:19.644 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 17:20:34.708 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:20:34.747 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 17:20:49.178 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:20:49.208 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-04 17:21:04.521 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 17:21:04.558 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}

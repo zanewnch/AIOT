@@ -9,6 +9,11 @@
             "date": 1754296561121,
             "name": "/home/user/GitHub/AIOT/be/logs/error-2025-08-04.log",
             "hash": "9261ccbdfc1daf483bbe2a05a1ea109286a942d86f70f33256947ad8d0c17a80"
+        },
+        {
+            "date": 1754327940460,
+            "name": "/home/user/GitHub/AIOT/be/logs/error-2025-08-05.log",
+            "hash": "1b8e2ba87d649ce2cb0ec5e54a80f88c251c996540ee470ae0666816b54564aa"
         }
     ],
     "hashType": "sha256"

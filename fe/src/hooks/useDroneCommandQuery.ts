@@ -381,11 +381,160 @@ export class DroneCommandQuery {
       },
       enabled: enabled && !!droneId,
       staleTime: 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      gcTime: 10 * 1000,
       retry: 3,
+    });
+  }
+
+  /**
+   * 創建單個指令 - Mutation
+   */
+  useCreateCommand() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+      mutationFn: async (commandData: Partial<DroneCommand>): Promise<DroneCommand> => {
+        const response = await apiClient.post('/api/drone-commands/data', commandData);
+        const result = RequestResult.fromResponse<DroneCommand>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        return result.unwrap();
+      },
+      onSuccess: () => {
+        // 刷新相關查詢
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS });
+      }
+    });
+  }
+
+  /**
+   * 批次創建指令 - Mutation
+   */
+  useCreateBatchCommands() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+      mutationFn: async (commands: Partial<DroneCommand>[]): Promise<DroneCommand[]> => {
+        const response = await apiClient.post('/api/drone-commands/data/batch', { commands });
+        const result = RequestResult.fromResponse<DroneCommand[]>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        return result.unwrap();
+      },
+      onSuccess: () => {
+        // 刷新相關查詢
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS });
+      }
+    });
+  }
+
+  /**
+   * 執行指令 - Mutation
+   */
+  useExecuteCommand() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+      mutationFn: async (commandId: string): Promise<DroneCommand> => {
+        const response = await apiClient.put(`/api/drone-commands/${commandId}/execute`);
+        const result = RequestResult.fromResponse<DroneCommand>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        return result.unwrap();
+      },
+      onSuccess: () => {
+        // 刷新相關查詢
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS });
+      }
+    });
+  }
+
+  /**
+   * 取消指令 - Mutation
+   */
+  useCancelCommand() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+      mutationFn: async (commandId: string): Promise<DroneCommand> => {
+        const response = await apiClient.put(`/api/drone-commands/${commandId}/cancel`);
+        const result = RequestResult.fromResponse<DroneCommand>(response);
+        
+        if (result.isError()) {
+          throw new Error(result.message);
+        }
+        
+        return result.unwrap();
+      },
+      onSuccess: () => {
+        // 刷新相關查詢
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS });
+      }
     });
   }
 }
 
+// 創建單例實例
+const droneCommandQuery = new DroneCommandQuery();
 
+// 導出 hooks
+export const useDroneCommandQuery = () => droneCommandQuery;
 
+// 導出常用的便捷 hooks
+export const useAllDroneCommands = () => 
+  droneCommandQuery.useAllDroneCommands();
+
+export const useDroneCommandById = (id: string, enabled?: boolean) => 
+  droneCommandQuery.useDroneCommandById(id, enabled);
+
+export const useDroneCommandsByDroneId = (droneId: string, enabled?: boolean) => 
+  droneCommandQuery.useDroneCommandsByDroneId(droneId, enabled);
+
+export const usePendingCommandsByDroneId = (droneId: string, enabled?: boolean) => 
+  droneCommandQuery.usePendingCommandsByDroneId(droneId, enabled);  
+
+export const useExecutingCommandByDroneId = (droneId: string, enabled?: boolean) => 
+  droneCommandQuery.useExecutingCommandByDroneId(droneId, enabled);
+
+export const useLatestDroneCommands = () => 
+  droneCommandQuery.useLatestDroneCommands();
+
+export const useFailedDroneCommands = () => 
+  droneCommandQuery.useFailedDroneCommands();
+
+export const useDroneCommandStatistics = () => 
+  droneCommandQuery.useDroneCommandStatistics();
+
+export const useDroneCommandsByStatus = (status: string, enabled?: boolean) =>
+  droneCommandQuery.useDroneCommandsByStatus(status, enabled);
+
+export const useDroneCommandsByType = (type: string, enabled?: boolean) =>
+  droneCommandQuery.useDroneCommandsByType(type, enabled);
+
+// Mutation hooks
+export const useCreateCommand = () => 
+  droneCommandQuery.useCreateCommand();
+
+export const useCreateBatchCommands = () => 
+  droneCommandQuery.useCreateBatchCommands();
+
+export const useExecuteCommand = () => 
+  droneCommandQuery.useExecuteCommand();
+
+export const useCancelCommand = () => 
+  droneCommandQuery.useCancelCommand();
+
+export default droneCommandQuery;
