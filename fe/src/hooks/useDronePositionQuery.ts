@@ -23,7 +23,7 @@ import {
  * 使用 class 封裝所有與無人機位置相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-class DronePositionQuery {
+export class DronePositionQuery {
   
   public DRONE_POSITION_QUERY_KEYS = {
     DRONE_POSITIONS: ['dronePositions'] as const,
@@ -220,15 +220,3 @@ class DronePositionQuery {
 }
 
 
-// 創建 DronePositionQuery 實例並匯出主要 Hook
-const dronepositionqueryInstance = new DronePositionQuery();
-
-/**
- * useDronePositionQuery - 主要的 Hook
- * 
- * 直接匯出使用的 Hook，與現有代碼相容
- */
-export const useDronePositionQuery = () => dronepositionqueryInstance;
-
-// 也可以匯出 DronePositionQuery 類別本身，供進階使用  
-export { DronePositionQuery };

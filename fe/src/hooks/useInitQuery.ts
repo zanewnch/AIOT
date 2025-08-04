@@ -28,7 +28,7 @@ import type { InitResponse, StressTestResponse, InitAllDemoResponse, InitError }
  * 使用 class 封裝所有與初始化相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-class InitQuery {
+export class InitQuery {
   
   public INIT_QUERY_KEYS = {
     RBAC_DEMO: ['init', 'rbac-demo'] as const,
@@ -334,15 +334,3 @@ class InitQuery {
   }
 }
 
-// 創建 InitQuery 實例並匯出 useInit Hook
-const initQuery = new InitQuery();
-
-/**
- * useInitQuery - 主要的初始化 Hook
- * 
- * 直接匯出使用的 Hook，與現有代碼相容
- */
-export const useInitQuery = () => initQuery.useInit();
-
-// 也可以匯出 InitQuery 類別本身，供進階使用
-export { InitQuery };

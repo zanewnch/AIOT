@@ -28,7 +28,7 @@ const logger = createLogger('PermissionQuery');
  * 使用 class 封裝所有與權限相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-class PermissionQuery {
+export class PermissionQuery {
   
   public PERMISSION_QUERY_KEYS: {
     ALL: readonly string[];
@@ -43,9 +43,9 @@ class PermissionQuery {
   }
   
   /**
-   * 權限數據查詢
+   * 取得所有權限數據
    */
-  usePermissionData() {
+  useAllPermissionData() {
     return useQuery({
       queryKey: this.PERMISSION_QUERY_KEYS.LIST,
       queryFn: async (): Promise<Permission[]> => {
@@ -60,6 +60,13 @@ class PermissionQuery {
           }
           
           logger.info(`Successfully fetched ${result.data?.length || 0} permissions`);
+          
+          // 處理 304 Not Modified 或空資料的情況
+          if (result.data === undefined || result.data === null) {
+            logger.warn('Received empty response, returning empty array');
+            return [];
+          }
+          
           return result.unwrap();
         } catch (error: any) {
           console.error('Failed to fetch permissions:', error);
@@ -108,15 +115,3 @@ class PermissionQuery {
 
 
 
-// 創建 PermissionQuery 實例並匯出主要 Hook
-const permissionqueryInstance = new PermissionQuery();
-
-/**
- * usePermissionQuery - 主要的 Hook
- * 
- * 直接匯出使用的 Hook，與現有代碼相容
- */
-export const usePermissionQuery = () => permissionqueryInstance;
-
-// 也可以匯出 PermissionQuery 類別本身，供進階使用  
-export { PermissionQuery };

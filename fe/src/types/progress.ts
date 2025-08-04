@@ -2,7 +2,7 @@ import type { ProgressInfo } from './sse';
 
 /**
  * 進度追蹤狀態介面
- * @deprecated 請使用 useSSEQuery 中的 ProgressTrackingState
+ * @deprecated SSE 功能已移除
  */
 export interface ProgressState {
   /** 是否正在追蹤進度 */

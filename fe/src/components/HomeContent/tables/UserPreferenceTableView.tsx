@@ -12,7 +12,7 @@
  */
 
 import React from 'react';
-import { useUserPreferences } from '../../../hooks/useUserPreferenceQuery';
+import { UserPreferenceQuery } from '../../../hooks/useUserPreferenceQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
@@ -28,7 +28,8 @@ const logger = createLogger('UserPreferenceTableView');
  */
 export const UserPreferenceTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: userPreferencesData, isLoading, error, refetch } = useUserPreferences();
+  const userPreferenceQuery = new UserPreferenceQuery();
+  const { data: userPreferencesData, isLoading, error, refetch } = userPreferenceQuery.useUserPreferences();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

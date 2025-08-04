@@ -73,8 +73,23 @@ export class RequestResult<T = any> {
 
   /**
    * 從 API 響應創建 RequestResult
+   * 嚴格驗證響應格式必須符合標準 API 格式：{status, message, data}
    */
   static fromResponse<T = any>(response: ApiResponseFormat<T>): RequestResult<T> {
+    // 嚴格檢查是否為標準 API 響應格式
+    if (!response || typeof response !== 'object') {
+      throw new Error('API 響應格式錯誤：響應不是有效的物件');
+    }
+    
+    if (typeof response.status !== 'number') {
+      throw new Error('API 響應格式錯誤：缺少有效的 status 欄位');
+    }
+    
+    if (typeof response.message !== 'string') {
+      throw new Error('API 響應格式錯誤：缺少有效的 message 欄位');
+    }
+    
+    // 標準格式：{status, message, data}
     return new RequestResult(response.status, response.message, response.data);
   }
 
@@ -118,10 +133,10 @@ export class RequestResult<T = any> {
     if (this.isError()) {
       throw new Error(`請求失敗 (${this.status}): ${this.message}`);
     }
-    if (this.data === undefined) {
+    if (this.data === undefined && this.status !== 304) {
       throw new Error('請求響應沒有資料');
     }
-    return this.data;
+    return this.data as T;
   }
 
   /**

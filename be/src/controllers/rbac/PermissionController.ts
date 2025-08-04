@@ -28,6 +28,7 @@ import { PermissionService } from '../../services/PermissionService.js'; // 引�
 import type { IPermissionService } from '../../types/services/IPermissionService.js'; // 引入權限服務介面
 import { IPermissionController } from '../../types/controllers/IPermissionController.js'; // 引入權限控制器介面
 import { createLogger, logRequest } from '../../configs/loggerConfig.js'; // 引入日誌記錄器
+import { ControllerResult } from '../../utils/ControllerResult.js'; // 引入標準化響應格式
 
 // 創建控制器專用的日誌記錄器
 const logger = createLogger('PermissionController');
@@ -95,10 +96,12 @@ export class PermissionController implements IPermissionController {
             const permissions = await this.permissionService.getAllPermissions();
 
             logger.info(`Retrieved ${permissions.length} permissions from service`);
-            res.json(permissions);
+            const result = ControllerResult.success('權限列表獲取成功', permissions);
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error fetching permissions:', error);
-            res.status(500).json({ message: 'Failed to fetch permissions', error: (error as Error).message });
+            const result = ControllerResult.internalError('權限列表獲取失敗');
+            res.status(result.status).json(result.toJSON());
         }
     }
 
@@ -139,22 +142,26 @@ export class PermissionController implements IPermissionController {
             logRequest(req, `Permission retrieval request for ID: ${permissionId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid permission ID' });
+                const result = ControllerResult.badRequest('無效的權限 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             const permission = await this.permissionService.getPermissionById(id);
             if (!permission) {
                 logger.warn(`Permission not found for ID: ${permissionId}`);
-                res.status(404).json({ message: 'Permission not found' });
+                const result = ControllerResult.notFound('權限不存在');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             logger.info(`Permission ID: ${permissionId} retrieved successfully`);
-            res.json(permission);
+            const result = ControllerResult.success('權限獲取成功', permission);
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error fetching permission by ID:', error);
-            res.status(500).json({ message: 'Failed to fetch permission', error: (error as Error).message });
+            const result = ControllerResult.internalError('權限獲取失敗');
+            res.status(result.status).json(result.toJSON());
         }
     }
 
@@ -200,20 +207,24 @@ export class PermissionController implements IPermissionController {
 
             // 驗證輸入
             if (!name || name.trim().length === 0) {
-                res.status(400).json({ message: 'Permission name is required' });
+                const result = ControllerResult.badRequest('權限名稱不能為空');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             const permission = await this.permissionService.createPermission({ name, description });
 
             logger.info(`Permission created successfully: ${name} (ID: ${permission.id})`);
-            res.status(201).json(permission);
+            const result = ControllerResult.created('權限創建成功', permission);
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error creating permission:', error);
             if (error instanceof Error && error.message.includes('already exists')) {
-                res.status(400).json({ message: error.message });
+                const result = ControllerResult.conflict(error.message);
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to create permission', error: (error as Error).message });
+                const result = ControllerResult.internalError('權限創建失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }
@@ -252,30 +263,36 @@ export class PermissionController implements IPermissionController {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid permission ID' });
+                const result = ControllerResult.badRequest('無效的權限 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             if (!name && !description) {
-                res.status(400).json({ message: 'At least one field (name or description) must be provided for update' });
+                const result = ControllerResult.badRequest('至少需要提供一個欄位（名稱或描述）進行更新');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             const updatedPermission = await this.permissionService.updatePermission(id, { name, description });
             if (!updatedPermission) {
                 logger.warn(`Permission update failed - permission not found for ID: ${permissionId}`);
-                res.status(404).json({ message: 'Permission not found' });
+                const result = ControllerResult.notFound('權限不存在');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             logger.info(`Permission updated successfully: ID ${permissionId}`);
-            res.json(updatedPermission);
+            const result = ControllerResult.success('權限更新成功', updatedPermission);
+            res.status(result.status).json(result.toJSON());
         } catch (error) {
             logger.error('Error updating permission:', error);
             if (error instanceof Error && error.message.includes('already exists')) {
-                res.status(400).json({ message: error.message });
+                const result = ControllerResult.conflict(error.message);
+                res.status(result.status).json(result.toJSON());
             } else {
-                res.status(500).json({ message: 'Failed to update permission', error: (error as Error).message });
+                const result = ControllerResult.internalError('權限更新失敗');
+                res.status(result.status).json(result.toJSON());
             }
         }
     }
@@ -307,14 +324,16 @@ export class PermissionController implements IPermissionController {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                res.status(400).json({ message: 'Invalid permission ID' });
+                const result = ControllerResult.badRequest('無效的權限 ID');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
             const deleted = await this.permissionService.deletePermission(id);
             if (!deleted) {
                 logger.warn(`Permission deletion failed - permission not found for ID: ${permissionId}`);
-                res.status(404).json({ message: 'Permission not found' });
+                const result = ControllerResult.notFound('權限不存在');
+                res.status(result.status).json(result.toJSON());
                 return;
             }
 
@@ -322,7 +341,8 @@ export class PermissionController implements IPermissionController {
             res.status(204).send();
         } catch (error) {
             logger.error('Error deleting permission:', error);
-            res.status(500).json({ message: 'Failed to delete permission', error: (error as Error).message });
+            const result = ControllerResult.internalError('權限刪除失敗');
+            res.status(result.status).json(result.toJSON());
         }
     }
 }

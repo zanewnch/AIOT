@@ -25,3 +25,191 @@
 2025-08-04 04:42:24.214 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
 2025-08-04 04:42:54.506 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
 2025-08-04 04:42:54.511 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 05:33:21.461 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 05:33:21.466 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-04 05:33:21.467 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-04 05:33:21.654 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-04 05:33:21.656 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-04 05:33:21.658 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-04 05:33:21.658 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-04 05:50:14.199 [AIOT-BE] INFO: User 1 (admin) permissions loaded: admin_all, user.create, user.read, user.update, user.delete, role.create, role.read, role.update, role.delete, permission.create, permission.read, permission.update, permission.delete, data.view, data.edit, data.delete, rtk.read, rtk.create, rtk.update, rtk.delete, system.admin
+2025-08-04 05:50:14.199 [AIOT-BE] INFO: User 1 (admin) roles: admin
+2025-08-04 05:50:14.200 [AIOT-BE] INFO: Retrieved permissions for user 1: 21 permissions, 1 roles
+2025-08-04 05:50:14.201 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:50:14.201 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:50:14.202 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:50:14.208 [AIOT-BE] ERROR: Error fetching permissions: Cannot read properties of undefined (reading 'permissionService') {"stack":"TypeError: Cannot read properties of undefined (reading 'permissionService')\n    at getPermissions (/app/be/src/controllers/rbac/PermissionController.ts:95:44)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at <anonymous> (/app/be/src/middlewares/PermissionMiddleware.ts:158:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 05:50:15.316 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:50:15.317 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:50:15.317 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:50:15.320 [AIOT-BE] ERROR: Error fetching permissions: Cannot read properties of undefined (reading 'permissionService') {"stack":"TypeError: Cannot read properties of undefined (reading 'permissionService')\n    at getPermissions (/app/be/src/controllers/rbac/PermissionController.ts:95:44)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at <anonymous> (/app/be/src/middlewares/PermissionMiddleware.ts:158:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 05:50:17.506 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:50:17.507 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:50:17.507 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:50:17.510 [AIOT-BE] ERROR: Error fetching permissions: Cannot read properties of undefined (reading 'permissionService') {"stack":"TypeError: Cannot read properties of undefined (reading 'permissionService')\n    at getPermissions (/app/be/src/controllers/rbac/PermissionController.ts:95:44)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at <anonymous> (/app/be/src/middlewares/PermissionMiddleware.ts:158:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 05:50:25.546 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:50:25.546 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:50:25.546 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:50:25.549 [AIOT-BE] ERROR: Error fetching permissions: Cannot read properties of undefined (reading 'permissionService') {"stack":"TypeError: Cannot read properties of undefined (reading 'permissionService')\n    at getPermissions (/app/be/src/controllers/rbac/PermissionController.ts:95:44)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at <anonymous> (/app/be/src/middlewares/PermissionMiddleware.ts:158:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 05:51:25.952 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 05:51:25.955 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 05:52:32.159 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:52:32.163 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:52:32.163 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:52:32.168 [AIOT-BE] ERROR: Error fetching permissions: Cannot read properties of undefined (reading 'permissionService') {"stack":"TypeError: Cannot read properties of undefined (reading 'permissionService')\n    at getPermissions (/app/be/src/controllers/rbac/PermissionController.ts:95:44)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at <anonymous> (/app/be/src/middlewares/PermissionMiddleware.ts:158:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 05:52:34.357 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:52:34.357 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:52:34.357 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:52:34.359 [AIOT-BE] ERROR: Error fetching permissions: Cannot read properties of undefined (reading 'permissionService') {"stack":"TypeError: Cannot read properties of undefined (reading 'permissionService')\n    at getPermissions (/app/be/src/controllers/rbac/PermissionController.ts:95:44)\n    at Layer.handle [as handle_request] (/app/be/node_modules/express/lib/router/layer.js:95:5)\n    at next (/app/be/node_modules/express/lib/router/route.js:149:13)\n    at <anonymous> (/app/be/src/middlewares/PermissionMiddleware.ts:158:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+2025-08-04 05:54:14.648 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 05:54:14.650 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 05:54:20.342 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 05:54:20.344 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 05:55:07.849 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:55:07.851 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:55:07.852 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:55:07.860 [AIOT-BE] INFO: Retrieved 21 permissions from database
+2025-08-04 05:55:07.867 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 05:55:08.977 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:55:08.978 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:55:08.978 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:55:08.979 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 05:55:08.980 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 05:55:11.167 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 05:55:11.167 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 05:55:11.167 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 05:55:11.168 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 05:55:11.168 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:02:45.477 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:02:45.478 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:02:45.478 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:02:45.479 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:02:45.479 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:03:21.902 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:03:21.903 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:03:21.903 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:03:21.907 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:03:21.908 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:03:30.328 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:03:30.329 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:03:30.329 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:03:30.330 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:03:30.330 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:05:20.044 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:05:20.046 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:05:26.644 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:05:26.647 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:07:48.492 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:07:48.493 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:07:48.494 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:07:48.497 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:07:48.497 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:13:56.422 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:13:56.422 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:13:56.423 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:13:56.424 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:13:56.424 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:16:42.387 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:16:42.390 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:16:48.213 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:16:48.215 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:16:53.078 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:16:53.080 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:17:05.382 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:17:05.384 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:17:10.582 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:17:10.584 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:19:41.944 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:19:41.946 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:19:47.430 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:19:47.432 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:19:52.576 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:19:52.577 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:19:57.566 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:19:57.568 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:20:02.053 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:20:02.055 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:21:56.138 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:21:56.140 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:21:56.141 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:21:56.143 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:21:56.144 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:21:57.253 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:21:57.253 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:21:57.254 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:21:57.255 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:21:57.255 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:21:59.439 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:21:59.439 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:21:59.439 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:21:59.441 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:21:59.441 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:22:31.174 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:22:31.176 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:22:34.302 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:22:34.304 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:22:39.081 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:22:39.083 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:22:43.829 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:22:43.831 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:22:48.563 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:22:48.565 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:25:14.050 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:25:14.052 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:26:46.459 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:26:46.461 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:26:51.535 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:26:51.538 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:26:55.855 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:26:55.858 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:00.558 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:00.560 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:06.194 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:06.196 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:09.612 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:09.614 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:15.236 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:15.238 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:20.824 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:20.826 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:29.547 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:29.549 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:27:34.500 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:27:34.502 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:28:25.093 [AIOT-BE] INFO: Permission check: permission.read for user 1 - GRANTED {"userId":1,"permission":"permission.read","result":true,"userRoles":["admin"],"userPermissions":["admin_all","user.create","user.read","user.update","user.delete","role.create","role.read","role.update","role.delete","permission.create","permission.read","permission.update","permission.delete","data.view","data.edit","data.delete","rtk.read","rtk.create","rtk.update","rtk.delete","system.admin"]}
+2025-08-04 06:28:25.095 [AIOT-BE] INFO: Permission granted for user 1 - permission.read
+2025-08-04 06:28:25.095 [AIOT-BE] INFO: Fetching all permissions {"method":"GET","url":"/api/rbac/permissions","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-04 06:28:25.097 [AIOT-BE] INFO: Permissions loaded from Redis cache
+2025-08-04 06:28:25.097 [AIOT-BE] INFO: Retrieved 21 permissions from service
+2025-08-04 06:31:56.381 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:31:56.383 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:32:16.816 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:32:16.818 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:32:34.282 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:32:34.284 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:32:45.900 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:32:45.903 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:33:07.318 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:33:07.320 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:34:39.807 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:34:39.809 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:35:01.890 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:35:01.892 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:36:11.104 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:36:11.106 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:38:17.112 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:38:17.115 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:38:27.221 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:38:27.223 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:38:41.628 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:38:41.630 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:38:58.700 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:38:58.702 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:39:14.359 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:39:14.361 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:39:39.075 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:39:39.077 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:40:55.342 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:40:55.346 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes
+2025-08-04 06:41:02.907 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-04 06:41:02.909 [AIOT-BE] INFO: ProgressService initialized with periodic cleanup every 5 minutes

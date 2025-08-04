@@ -9,7 +9,6 @@
  */
 
 import React, { useState } from 'react';
-import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
 import { QueryProvider } from '../configs/queryConfig';
 import { useActivityStore } from '../stores/activityStore';
 
@@ -153,7 +152,7 @@ const ModernActivityContent: React.FC = () => {
             <div className="tab-panel">
               <h3>完整的活動儀表板</h3>
               <p>包含所有功能的完整儀表板，展示 Zustand + React Query 的完整功能。</p>
-              <ActivityDashboard />
+              {/* ActivityDashboard 組件已移除 */}
             </div>
           )}
 
@@ -161,7 +160,7 @@ const ModernActivityContent: React.FC = () => {
             <div className="tab-panel">
               <h3>簡化版活動統計</h3>
               <p>輕量級組件，只顯示核心統計數據。</p>
-              <SimpleActivityDashboard />
+              {/* SimpleActivityDashboard 組件已移除 */}
             </div>
           )}
 

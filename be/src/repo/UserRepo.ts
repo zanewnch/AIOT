@@ -40,6 +40,10 @@ import { RoleModel } from '../models/rbac/RoleModel.js';
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
 // 引入使用者資料存取介面
 import type { IUserRepository } from '../types/repositories/IUserRepository.js';
+// 引入日誌記錄器
+import { createLogger } from '../configs/loggerConfig.js';
+
+const logger = createLogger('UserRepository');
 
 /**
  * 使用者資料存取實作類別
@@ -82,9 +86,14 @@ export class UserRepository implements IUserRepository {
      * ```
      */
     async findByUsername(username: string): Promise<UserModel | null> {
-        // 使用 Sequelize 的 findOne 方法進行單一記錄查詢
-        // where 條件確保只查詢指定的使用者名稱
-        return await UserModel.findOne({ where: { username } });
+        try {
+            // 使用 Sequelize 的 findOne 方法進行單一記錄查詢
+            // where 條件確保只查詢指定的使用者名稱
+            return await UserModel.findOne({ where: { username } });
+        } catch (error) {
+            logger.error('Error finding user by username:', error);
+            throw error;
+        }
     }
 
     /**
@@ -115,9 +124,14 @@ export class UserRepository implements IUserRepository {
      * ```
      */
     async findById(id: number): Promise<UserModel | null> {
-        // 使用 Sequelize 的 findByPk 方法進行主鍵查詢
-        // 這是最高效的查詢方式，因為主鍵通常有索引支援
-        return await UserModel.findByPk(id);
+        try {
+            // 使用 Sequelize 的 findByPk 方法進行主鍵查詢
+            // 這是最高效的查詢方式，因為主鍵通常有索引支援
+            return await UserModel.findByPk(id);
+        } catch (error) {
+            logger.error('Error finding user by id:', error);
+            throw error;
+        }
     }
 
     /**
@@ -153,23 +167,28 @@ export class UserRepository implements IUserRepository {
      * ```
      */
     async findByIdWithRolesAndPermissions(id: number): Promise<UserModel | null> {
-        // 使用 Sequelize 的 findByPk 方法結合 include 選項進行關聯查詢
-        return await UserModel.findByPk(id, {
-            include: [
-                {
-                    model: RoleModel, // 關聯角色模型
-                    as: 'roles', // 使用別名 'roles'
-                    include: [
-                        {
-                            model: PermissionModel, // 關聯權限模型
-                            as: 'permissions', // 使用別名 'permissions'
-                            through: { attributes: [] } // 不包含 role_permissions 中間表的屬性
-                        }
-                    ],
-                    through: { attributes: [] } // 不包含 user_roles 中間表的屬性
-                }
-            ]
-        });
+        try {
+            // 使用 Sequelize 的 findByPk 方法結合 include 選項進行關聯查詢
+            return await UserModel.findByPk(id, {
+                include: [
+                    {
+                        model: RoleModel, // 關聯角色模型
+                        as: 'roles', // 使用別名 'roles'
+                        include: [
+                            {
+                                model: PermissionModel, // 關聯權限模型
+                                as: 'permissions', // 使用別名 'permissions'
+                                through: { attributes: [] } // 不包含 role_permissions 中間表的屬性
+                            }
+                        ],
+                        through: { attributes: [] } // 不包含 user_roles 中間表的屬性
+                    }
+                ]
+            });
+        } catch (error) {
+            logger.error('Error finding user by id with roles and permissions:', error);
+            throw error;
+        }
     }
 
     /**
@@ -220,19 +239,29 @@ export class UserRepository implements IUserRepository {
      * ```
      */
     async create(userData: { username: string; passwordHash: string; email?: string }): Promise<UserModel> {
-        // 使用 Sequelize 的 create 方法建立新的使用者記錄
-        // 若使用者名稱重複，會自動拋出 SequelizeUniqueConstraintError
-        return await UserModel.create(userData);
+        try {
+            // 使用 Sequelize 的 create 方法建立新的使用者記錄
+            // 若使用者名稱重複，會自動拋出 SequelizeUniqueConstraintError
+            return await UserModel.create(userData);
+        } catch (error) {
+            logger.error('Error creating user:', error);
+            throw error;
+        }
     }
 
     /**
      * 批量建立使用者記錄
      */
     async bulkCreate(usersData: { username: string; passwordHash: string; email?: string }[]): Promise<UserModel[]> {
-        return await UserModel.bulkCreate(usersData, {
-            ignoreDuplicates: true,
-            returning: true
-        });
+        try {
+            return await UserModel.bulkCreate(usersData, {
+                ignoreDuplicates: true,
+                returning: true
+            });
+        } catch (error) {
+            logger.error('Error bulk creating users:', error);
+            throw error;
+        }
     }
 
     /**
@@ -242,10 +271,15 @@ export class UserRepository implements IUserRepository {
         whereCondition: { username: string },
         defaults: { username: string; passwordHash: string; email?: string }
     ): Promise<[UserModel, boolean]> {
-        return await UserModel.findOrCreate({
-            where: whereCondition,
-            defaults
-        });
+        try {
+            return await UserModel.findOrCreate({
+                where: whereCondition,
+                defaults
+            });
+        } catch (error) {
+            logger.error('Error finding or creating user:', error);
+            throw error;
+        }
     }
 
     /**
@@ -258,7 +292,12 @@ export class UserRepository implements IUserRepository {
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
     async findAll(): Promise<UserModel[]> {
-        return await UserModel.findAll();
+        try {
+            return await UserModel.findAll();
+        } catch (error) {
+            logger.error('Error finding all users:', error);
+            throw error;
+        }
     }
 
     /**
@@ -272,7 +311,12 @@ export class UserRepository implements IUserRepository {
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
     async findByEmail(email: string): Promise<UserModel | null> {
-        return await UserModel.findOne({ where: { email } });
+        try {
+            return await UserModel.findOne({ where: { email } });
+        } catch (error) {
+            logger.error('Error finding user by email:', error);
+            throw error;
+        }
     }
 
     /**
@@ -287,17 +331,22 @@ export class UserRepository implements IUserRepository {
      * @throws {Error} 當資料庫連線失敗或更新操作發生錯誤時拋出異常
      */
     async update(id: number, updateData: Partial<{username: string; email: string; passwordHash: string}>): Promise<UserModel | null> {
-        const [affectedCount] = await UserModel.update(updateData, {
-            where: { id },
-            returning: false
-        });
-        
-        if (affectedCount === 0) {
-            return null;
+        try {
+            const [affectedCount] = await UserModel.update(updateData, {
+                where: { id },
+                returning: false
+            });
+            
+            if (affectedCount === 0) {
+                return null;
+            }
+            
+            // 回傳更新後的使用者資料
+            return await UserModel.findByPk(id);
+        } catch (error) {
+            logger.error('Error updating user:', error);
+            throw error;
         }
-        
-        // 回傳更新後的使用者資料
-        return await UserModel.findByPk(id);
     }
 
     /**
@@ -310,10 +359,15 @@ export class UserRepository implements IUserRepository {
      * @throws {Error} 當資料庫連線失敗或刪除操作發生錯誤時拋出異常
      */
     async delete(id: number): Promise<boolean> {
-        const affectedCount = await UserModel.destroy({
-            where: { id }
-        });
-        
-        return affectedCount > 0;
+        try {
+            const affectedCount = await UserModel.destroy({
+                where: { id }
+            });
+            
+            return affectedCount > 0;
+        } catch (error) {
+            logger.error('Error deleting user:', error);
+            throw error;
+        }
     }
 }

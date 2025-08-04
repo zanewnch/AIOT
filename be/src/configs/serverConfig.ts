@@ -78,6 +78,9 @@ export const setupExpressMiddleware = (app: express.Application): void => {
     app.set('view engine', config.viewEngine);
     // 設定伺服器埠號
     app.set('port', config.port);
+    
+    // 禁用 ETag 以避免 304 Not Modified 響應
+    app.set('etag', false);
 
     // 設定 CORS 跨域資源共享中間件
     app.use(cors({

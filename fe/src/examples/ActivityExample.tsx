@@ -9,7 +9,6 @@
  */
 
 import React from 'react';
-import { ActivityDashboard, SimpleActivityDashboard } from '../components/ActivityDashboard';
 import { QueryProvider } from '../configs/queryConfig';
 
 /**
@@ -18,7 +17,7 @@ import { QueryProvider } from '../configs/queryConfig';
  * 展示如何使用 Zustand + React Query 進行狀態管理
  */
 const ActivityExampleContent: React.FC = () => {
-  // const activityQuery = useActivityQuery(); // Removed
+  // const activityQuery = new ActivityQuery(); // Removed
   const {
     autoTrackingEnabled,
     toggleAutoTracking,
@@ -115,7 +114,7 @@ const ActivityExampleContent: React.FC = () => {
       )}
 
       {/* 主要儀表板 */}
-      <ActivityDashboard />
+      {/* ActivityDashboard 組件已移除 */}
     </div>
   );
 };
@@ -141,7 +140,7 @@ export const SimpleActivityExample: React.FC = () => {
     <QueryProvider>
       <div className="simple-activity-example">
         <h1>📈 簡化版活動統計</h1>
-        <SimpleActivityDashboard />
+        {/* SimpleActivityDashboard 組件已移除 */}
         
         {/* 技術說明 */}
         <div className="tech-info">
@@ -196,12 +195,12 @@ export const ActivityUsageGuide: React.FC = () => {
         <p>使用 QueryProvider 包裝你的應用：</p>
         <pre className="code-block">
 {`import { QueryProvider } from './configs/queryConfig';
-import { ActivityDashboard } from './components/ActivityDashboard';
+// import { ActivityDashboard } from './components/ActivityDashboard'; // 已移除
 
 function App() {
   return (
     <QueryProvider>
-      <ActivityDashboard />
+      {/* ActivityDashboard 組件已移除 */}
     </QueryProvider>
   );
 }`}
@@ -310,7 +309,7 @@ function MyComponent() {
       <div className="guide-section">
         <h2>5. 實際示例</h2>
         <QueryProvider>
-          <SimpleActivityDashboard />
+          {/* SimpleActivityDashboard 組件已移除 */}
         </QueryProvider>
       </div>
     </div>

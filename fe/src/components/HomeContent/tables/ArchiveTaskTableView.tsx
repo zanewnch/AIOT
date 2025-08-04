@@ -16,7 +16,7 @@ import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
-import { useArchiveTasksData } from '../../../hooks/useArchiveTaskQuery';
+import { ArchiveTaskQuery } from '../../../hooks/useArchiveTaskQuery';
 import { ArchiveTask } from '../../../types/archiveTask';
 
 const logger = createLogger('ArchiveTaskTableView');
@@ -29,7 +29,8 @@ const logger = createLogger('ArchiveTaskTableView');
  */
 export const ArchiveTaskTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: archiveTaskData, isLoading, error, refetch } = useArchiveTasksData();
+  const archiveTaskQuery = new ArchiveTaskQuery();
+  const { data: archiveTaskData, isLoading, error, refetch } = archiveTaskQuery.useArchiveTasksData();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

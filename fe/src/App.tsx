@@ -56,7 +56,7 @@ function App() {
    * - NotificationContainer: 全域通知系統
    */
   return (
-    <BrowserRouter future={{ v7_startTransition: true }}>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       {/* 啟用瀏覽器路由，支援 HTML5 history API */}
       <Suspense fallback={<div style={{ 
         display: 'flex', 

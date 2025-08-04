@@ -23,7 +23,7 @@ import {
  * 使用 class 封裝所有與使用者偏好設定相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-class UserPreferenceQuery {
+export class UserPreferenceQuery {
   public USER_PREFERENCE_QUERY_KEYS: {
     readonly USER_PREFERENCES: readonly ['userPreferences'];
   };
@@ -224,15 +224,3 @@ class UserPreferenceQuery {
 
 
 
-// 創建 UserPreferenceQuery 實例並匯出主要 Hook
-const userpreferencequeryInstance = new UserPreferenceQuery();
-
-/**
- * useUserPreferenceQuery - 主要的 Hook
- * 
- * 直接匯出使用的 Hook，與現有代碼相容
- */
-export const useUserPreferenceQuery = () => userpreferencequeryInstance;
-
-// 也可以匯出 UserPreferenceQuery 類別本身，供進階使用  
-export { UserPreferenceQuery };

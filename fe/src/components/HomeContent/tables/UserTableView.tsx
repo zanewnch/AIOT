@@ -12,7 +12,7 @@
  */
 
 import React from 'react';
-import { useUserQuery } from '../../../hooks/useUserQuery';
+import { UserQuery } from '../../../hooks/useUserQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
@@ -29,7 +29,7 @@ const logger = createLogger('UserTableView');
  */
 export const UserTableView: React.FC = () => {
   // React Query hooks for data
-  const userQuery = useUserQuery();
+  const userQuery = new UserQuery();
   const { data: userData, isLoading, error, refetch } = userQuery.useRbacUsers();
   const updateUserMutation = userQuery.useUpdateUser();
   

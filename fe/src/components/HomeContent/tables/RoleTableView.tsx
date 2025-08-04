@@ -12,7 +12,7 @@
  */
 
 import React from 'react';
-import { useRoleData, useUpdateRoleData } from '../../../hooks/useRoleQuery';
+import { RoleQuery } from '../../../hooks/useRoleQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
@@ -29,8 +29,9 @@ const logger = createLogger('RoleTableView');
  */
 export const RoleTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: roleData, isLoading, error, refetch } = useRoleData();
-  const updateRoleMutation = useUpdateRoleData();
+  const roleQuery = new RoleQuery();
+  const { data: roleData, isLoading, error, refetch } = roleQuery.useRoleData();
+  const updateRoleMutation = roleQuery.useUpdateRoleData();
   
   // Zustand stores for UI state
   const { 

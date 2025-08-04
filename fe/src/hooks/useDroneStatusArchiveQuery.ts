@@ -26,7 +26,7 @@ import type {
  * 使用 class 封裝所有與無人機狀態變更歷史相關的 React Query 操作
  * 每個方法返回對應的 React Query hook
  */
-class DroneStatusArchiveQuery {
+export class DroneStatusArchiveQuery {
   public DRONE_STATUS_ARCHIVE_QUERY_KEYS: {
     readonly STATUS_ARCHIVES: readonly ['droneStatusArchive'];
     readonly STATUS_ARCHIVE_BY_ID: (id: string) => readonly ['droneStatusArchive', string];
@@ -404,15 +404,3 @@ class DroneStatusArchiveQuery {
 
 
 
-// 創建 DroneStatusArchiveQuery 實例並匯出主要 Hook
-const dronestatusarchivequeryInstance = new DroneStatusArchiveQuery();
-
-/**
- * useDroneStatusArchiveQuery - 主要的 Hook
- * 
- * 直接匯出使用的 Hook，與現有代碼相容
- */
-export const useDroneStatusArchiveQuery = () => dronestatusarchivequeryInstance;
-
-// 也可以匯出 DroneStatusArchiveQuery 類別本身，供進階使用  
-export { DroneStatusArchiveQuery };

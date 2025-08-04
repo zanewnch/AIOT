@@ -119,31 +119,31 @@ class RbacRoutes {
     this.router.get('/api/rbac/permissions',
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.read'),
-      this.permissionController.getPermissions
+      this.permissionController.getPermissions.bind(this.permissionController)
     );
 
     this.router.post('/api/rbac/permissions',
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.create'),
-      this.permissionController.createPermission
+      this.permissionController.createPermission.bind(this.permissionController)
     );
 
     this.router.get('/api/rbac/permissions/:permissionId',
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.read'),
-      this.permissionController.getPermissionById
+      this.permissionController.getPermissionById.bind(this.permissionController)
     );
 
     this.router.put('/api/rbac/permissions/:permissionId',
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.update'),
-      this.permissionController.updatePermission
+      this.permissionController.updatePermission.bind(this.permissionController)
     );
 
     this.router.delete('/api/rbac/permissions/:permissionId',
       this.authMiddleware.authenticate,
       this.permissionMiddleware.requirePermission('permission.delete'),
-      this.permissionController.deletePermission
+      this.permissionController.deletePermission.bind(this.permissionController)
     );
 
     // 使用者角色關聯路由

@@ -122,47 +122,52 @@ export class ArchiveTaskService implements IArchiveTaskService {
      * @throws {Error} 當批次創建失敗時拋出錯誤
      */
     async createBatchTasks(requests: CreateArchiveTaskRequest[]): Promise<BatchArchiveResult> {
-        this.logger.info('開始批次創建歸檔任務', { count: requests.length });
-        
-        const result: BatchArchiveResult = {
-            batchId: '',
-            tasks: [],
-            successCount: 0,
-            failureCount: 0,
-            errors: []
-        };
-        
-        // 生成統一的批次ID前綴
-        const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-        const baseBatchId = `BATCH_${timestamp}`;
-        result.batchId = baseBatchId;
-        
-        for (let i = 0; i < requests.length; i++) {
-            try {
-                const request = requests[i];
-                // 為每個任務設置唯一的批次ID
-                request.batchId = `${baseBatchId}_${String(i + 1).padStart(3, '0')}`;
-                
-                const task = await this.createTask(request);
-                result.tasks.push(task);
-                result.successCount++;
-            } catch (error) {
-                result.failureCount++;
-                result.errors.push(`任務 ${i + 1}: ${error.message}`);
-                this.logger.error(`批次創建任務 ${i + 1} 失敗`, { 
-                    request: requests[i], 
-                    error: error.message 
-                });
+        try {
+            this.logger.info('開始批次創建歸檔任務', { count: requests.length });
+            
+            const result: BatchArchiveResult = {
+                batchId: '',
+                tasks: [],
+                successCount: 0,
+                failureCount: 0,
+                errors: []
+            };
+            
+            // 生成統一的批次ID前綴
+            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            const baseBatchId = `BATCH_${timestamp}`;
+            result.batchId = baseBatchId;
+            
+            for (let i = 0; i < requests.length; i++) {
+                try {
+                    const request = requests[i];
+                    // 為每個任務設置唯一的批次ID
+                    request.batchId = `${baseBatchId}_${String(i + 1).padStart(3, '0')}`;
+                    
+                    const task = await this.createTask(request);
+                    result.tasks.push(task);
+                    result.successCount++;
+                } catch (error) {
+                    result.failureCount++;
+                    result.errors.push(`任務 ${i + 1}: ${error.message}`);
+                    this.logger.error(`批次創建任務 ${i + 1} 失敗`, { 
+                        request: requests[i], 
+                        error: error.message 
+                    });
+                }
             }
+            
+            this.logger.info('批次創建歸檔任務完成', { 
+                total: requests.length,
+                success: result.successCount,
+                failure: result.failureCount 
+            });
+            
+            return result;
+        } catch (error) {
+            this.logger.error('批次創建歸檔任務失敗', { error: error.message });
+            throw new Error(`Failed to create batch tasks: ${error.message}`);
         }
-        
-        this.logger.info('批次創建歸檔任務完成', { 
-            total: requests.length,
-            success: result.successCount,
-            failure: result.failureCount 
-        });
-        
-        return result;
     }
 
     /**
@@ -303,34 +308,39 @@ export class ArchiveTaskService implements IArchiveTaskService {
      * @throws {Error} 當批次執行失敗時拋出錯誤
      */
     async executeBatchTasks(ids: number[]): Promise<ArchiveTaskExecutionResult[]> {
-        this.logger.info('開始批次執行歸檔任務', { taskIds: ids });
-        
-        const results: ArchiveTaskExecutionResult[] = [];
-        
-        for (const id of ids) {
-            try {
-                const result = await this.executeTask(id);
-                results.push(result);
-            } catch (error) {
-                this.logger.error(`批次執行任務 ${id} 失敗`, { error: error.message });
-                // 繼續執行其他任務
-                results.push({
-                    taskId: id,
-                    status: ArchiveTaskStatus.FAILED,
-                    totalRecords: 0,
-                    archivedRecords: 0,
-                    executionTime: 0,
-                    errorMessage: error.message
-                });
+        try {
+            this.logger.info('開始批次執行歸檔任務', { taskIds: ids });
+            
+            const results: ArchiveTaskExecutionResult[] = [];
+            
+            for (const id of ids) {
+                try {
+                    const result = await this.executeTask(id);
+                    results.push(result);
+                } catch (error) {
+                    this.logger.error(`批次執行任務 ${id} 失敗`, { error: error.message });
+                    // 繼續執行其他任務
+                    results.push({
+                        taskId: id,
+                        status: ArchiveTaskStatus.FAILED,
+                        totalRecords: 0,
+                        archivedRecords: 0,
+                        executionTime: 0,
+                        errorMessage: error.message
+                    });
+                }
             }
+            
+            this.logger.info('批次執行歸檔任務完成', { 
+                total: ids.length,
+                results: results.length 
+            });
+            
+            return results;
+        } catch (error) {
+            this.logger.error('批次執行歸檔任務失敗', { error: error.message });
+            throw new Error(`Failed to execute batch tasks: ${error.message}`);
         }
-        
-        this.logger.info('批次執行歸檔任務完成', { 
-            total: ids.length,
-            results: results.length 
-        });
-        
-        return results;
     }
 
     /**

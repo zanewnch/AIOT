@@ -445,7 +445,7 @@ export class DroneCommandService implements IDroneCommandService {
 
             // 驗證時間範圍
             if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
-                throw new Error('開始時間和結束時間必須是有效的日期'];
+                throw new Error('開始時間和結束時間必須是有效的日期');
             }
             if (startDate >= endDate) {
                 throw new Error('開始時間必須早於結束時間');

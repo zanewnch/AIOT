@@ -11,8 +11,8 @@
  * @since 2024-01-01
  */
 
-import React, { useEffect } from 'react';
-import { usePermissionData, useUpdatePermissionData } from '../../../hooks/usePermissionQuery';
+import React from 'react';
+import { PermissionQuery } from '../../../hooks/usePermissionQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
@@ -40,8 +40,9 @@ const logger = createLogger('PermissionTableView');
  */
 export const PermissionTableView: React.FC = () => {
   // React Query hooks for data
-  const { data: permissionData, isLoading, error, refetch } = usePermissionData();
-  const updatePermissionMutation = useUpdatePermissionData();
+  const permissionQuery = new PermissionQuery();
+  const { data: permissionData, isLoading, error, refetch } = permissionQuery.useAllPermissionData();
+  const updatePermissionMutation = permissionQuery.useUpdatePermissionData();
 
   // Zustand stores for UI state
   const {
@@ -74,7 +75,7 @@ export const PermissionTableView: React.FC = () => {
     if (!editModal.editingItem) return;
 
     logger.info('開始保存權限', { permissionId: editModal.editingItem.id });
-    
+
     try {
       await updatePermissionMutation.mutateAsync({
         id: editModal.editingItem.id,
@@ -86,9 +87,9 @@ export const PermissionTableView: React.FC = () => {
       closeEditModal();
       refetch();
     } catch (error) {
-      logger.error('權限更新失敗', { 
-        permissionId: editModal.editingItem.id, 
-        error: (error as Error).message 
+      logger.error('權限更新失敗', {
+        permissionId: editModal.editingItem.id,
+        error: (error as Error).message
       });
       addError('權限更新失敗: ' + (error as Error).message);
     }

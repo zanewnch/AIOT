@@ -16,8 +16,7 @@
 
 import { useState } from "react";
 import { Button } from "../components/Button";
-import { useInitQuery } from "../hooks/useInitQuery";
-import { useSSEQuery } from "../hooks/useSSEQuery";
+import { InitQuery } from "../hooks/useInitQuery";
 import { ProgressTracker } from "../components/ProgressTracker/ProgressTracker";
 import styles from "../styles/InitPage.module.scss";
 import { Link } from 'react-router-dom';
@@ -57,13 +56,13 @@ export const InitPage = () => {
   // 狀態管理：各個功能的消息顯示
   const [messages, setMessages] = useState<{ [key: string]: string }>({});
 
-  // 使用自定義 Hook 進行進度追蹤（用於 SSE 連接）
-  const sseQuery = useSSEQuery();
-  const { progress, isTracking, error: sseError, startTracking, stopTracking } = sseQuery.progressTracking();
+  // SSE 進度追蹤功能已移除
+  // const sseQuery = new SSEQuery();
+  // const { progress, isTracking, error: sseError, startTracking, stopTracking } = sseQuery.useSSE();
 
   // 使用初始化相關的 Hook
-  const initQuery = useInitQuery();
-  const { initRbacDemo, initRtkDemo, createAdminUser, createStressTestData } = initQuery.init();
+  const initQuery = new InitQuery();
+  const { initRbacDemo, initRtkDemo, createAdminUser, createStressTestData } = initQuery.useInit();
 
   /**
    * 更新載入狀態的輔助函數
@@ -187,7 +186,7 @@ export const InitPage = () => {
           "stress",
           `✅ Stress test data creation started! Task ID: ${result.taskId}`
         );
-        startTracking(result.taskId);
+        // startTracking(result.taskId); // SSE 功能已移除
       } else {
         updateMessage(
           "stress",
@@ -275,13 +274,11 @@ export const InitPage = () => {
         <div className={styles.section}>
           <Button
             onClick={handleStressTestData}
-            disabled={loadingStates.stress || isTracking}
+            disabled={loadingStates.stress}
             className={styles.button}
           >
             {loadingStates.stress
               ? "Starting..."
-              : isTracking
-              ? "Tracking Progress..."
               : "Create Stress Test Data"}
           </Button>
           {renderMessage("stress")}
@@ -298,12 +295,13 @@ export const InitPage = () => {
       </div>
 
       {/* SSE 進度追蹤組件 */}
-      <ProgressTracker
+      {/* ProgressTracker 已移除 - SSE 功能不再使用 */}
+      {/* <ProgressTracker
         progress={progress}
         isTracking={isTracking}
         error={sseError}
         onCancel={stopTracking}
-      />
+      /> */}
     </div>
   );
 };

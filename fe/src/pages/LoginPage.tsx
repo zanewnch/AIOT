@@ -11,7 +11,7 @@
 
 import React, { useEffect, useState } from 'react'; // 引入 React 核心庫和 Hooks
 import { useNavigate } from 'react-router-dom'; // 引入 React Router 的導航 Hook
-import { useAuthQuery } from '../hooks/useAuthQuery'; // 引入認證 Hook
+import { AuthQuery } from '../hooks/useAuthQuery'; // 引入認證 Hook
 import { useAuth } from '../stores'; // 引入認證狀態
 import { LoginRequest } from '../types/auth'; // 引入登入請求的類型定義
 import styles from '../styles/LoginForm.module.scss'; // 引入登入表單的 SCSS 模組樣式
@@ -55,7 +55,7 @@ const logger = createLogger('LoginPage');
 export const LoginPage: React.FC = () => {
   // 從認證 Hook 中取得狀態
   const { isAuthenticated, isLoading } = useAuth();
-  const authQuery = useAuthQuery();
+  const authQuery = new AuthQuery();
   const loginMutation = authQuery.useLogin();
   // 取得 React Router 的導航函數
   const navigate = useNavigate();

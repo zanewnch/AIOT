@@ -16,7 +16,6 @@ export { useDronePositionsQuery } from './useDronePositionQuery';
 export { usePermissionQuery } from './usePermissionQuery';
 export { useRoleQuery } from './useRoleQuery';
 export { useRTKQuery } from './useRTKQuery';
-export { useSSEQuery } from './useSSEQuery';
 export { useInitQuery } from './useInitQuery';
 
 // 其他專用 hooks

@@ -77,25 +77,30 @@ export class ProgressService implements IProgressService {
    * @returns 初始化的進度資訊
    */
   createTask(taskId: string, total: number, message: string = '任務已啟動'): ProgressInfo { // 公開方法：建立新任務並開始追蹤
-    const now = new Date(); // 取得當前時間戳，用於記錄任務開始時間
-    const progressInfo: ProgressInfo = { // 建立進度資訊物件，包含任務的完整狀態
-      taskId, // 任務的唯一識別碼
-      status: TaskStatus.STARTED, // 設定任務狀態為已開始
-      stage: TaskStage.INITIALIZING, // 設定任務階段為初始化中
-      percentage: 0, // 初始進度百分比為 0
-      current: 0, // 當前已完成的工作量為 0
-      total, // 總工作量，由參數傳入
-      message, // 任務狀態訊息，預設為「任務已啟動」
-      startTime: now, // 記錄任務開始時間
-      lastUpdated: now // 記錄最後更新時間
-    };
+    try {
+      const now = new Date(); // 取得當前時間戳，用於記錄任務開始時間
+      const progressInfo: ProgressInfo = { // 建立進度資訊物件，包含任務的完整狀態
+        taskId, // 任務的唯一識別碼
+        status: TaskStatus.STARTED, // 設定任務狀態為已開始
+        stage: TaskStage.INITIALIZING, // 設定任務階段為初始化中
+        percentage: 0, // 初始進度百分比為 0
+        current: 0, // 當前已完成的工作量為 0
+        total, // 總工作量，由參數傳入
+        message, // 任務狀態訊息，預設為「任務已啟動」
+        startTime: now, // 記錄任務開始時間
+        lastUpdated: now // 記錄最後更新時間
+      };
 
-    this.tasks.set(taskId, progressInfo); // 將進度資訊儲存到記憶體中的 Map 集合
-    this.broadcastProgress(taskId, progressInfo); // 廣播進度更新給所有 SSE 連線的客戶端
+      this.tasks.set(taskId, progressInfo); // 將進度資訊儲存到記憶體中的 Map 集合
+      this.broadcastProgress(taskId, progressInfo); // 廣播進度更新給所有 SSE 連線的客戶端
 
-    logger.info(`Task created: ${taskId} with total work of ${total}`); // 記錄任務建立成功的資訊日誌
+      logger.info(`Task created: ${taskId} with total work of ${total}`); // 記錄任務建立成功的資訊日誌
 
-    return progressInfo; // 回傳初始化完成的進度資訊物件
+      return progressInfo; // 回傳初始化完成的進度資訊物件
+    } catch (error) {
+      logger.error(`Error creating task ${taskId}:`, error);
+      throw new Error(`Failed to create task: ${taskId}`);
+    }
   }
 
   /**
@@ -107,37 +112,42 @@ export class ProgressService implements IProgressService {
     taskId: string, // 要更新的任務識別碼
     updates: Partial<Pick<ProgressInfo, 'current' | 'stage' | 'message' | 'status'>> // 部分更新資料，只包含需要更新的欄位
   ): void { // 無回傳值的方法
-    const task = this.tasks.get(taskId); // 從記憶體中的 Map 集合取得指定任務的進度資訊
-    if (!task) { // 如果找不到對應的任務
-      logger.warn(`Task ${taskId} not found for progress update`); // 記錄警告訊息
-      return; // 直接結束方法執行
+    try {
+      const task = this.tasks.get(taskId); // 從記憶體中的 Map 集合取得指定任務的進度資訊
+      if (!task) { // 如果找不到對應的任務
+        logger.warn(`Task ${taskId} not found for progress update`); // 記錄警告訊息
+        return; // 直接結束方法執行
+      }
+
+      // 更新任務資訊
+      const updatedTask: ProgressInfo = { // 建立更新後的任務物件
+        ...task, // 複製原有任務的所有屬性
+        ...updates, // 套用更新的屬性，會覆蓋原有的對應屬性
+        lastUpdated: new Date() // 更新最後修改時間為當前時間
+      };
+
+      // 重新計算進度百分比
+      if (updates.current !== undefined || updates.stage !== undefined) { // 如果更新了當前進度或階段
+        updatedTask.percentage = this.calculateOverallProgress( // 調用私有方法重新計算整體進度百分比
+          updates.stage || task.stage, // 使用更新的階段或原有階段
+          updates.current || task.current, // 使用更新的當前進度或原有進度
+          task.total // 總工作量保持不變
+        );
+      }
+
+      // 更新預估完成時間
+      if (updatedTask.percentage > 0 && updatedTask.status === TaskStatus.RUNNING) { // 如果任務正在運行且有進度
+        updatedTask.estimatedCompletion = this.calculateEstimatedCompletion(updatedTask); // 重新計算預估完成時間
+      }
+
+      this.tasks.set(taskId, updatedTask); // 將更新後的任務資訊存回 Map 集合
+      this.broadcastProgress(taskId, updatedTask); // 廣播進度更新給所有訂閱的 SSE 客戶端
+
+      logger.debug(`Task progress updated: ${taskId} - ${updatedTask.percentage}% complete`); // 記錄除錯日誌，顯示更新後的進度百分比
+    } catch (error) {
+      logger.error(`Error updating progress for task ${taskId}:`, error);
+      throw new Error(`Failed to update progress for task: ${taskId}`);
     }
-
-    // 更新任務資訊
-    const updatedTask: ProgressInfo = { // 建立更新後的任務物件
-      ...task, // 複製原有任務的所有屬性
-      ...updates, // 套用更新的屬性，會覆蓋原有的對應屬性
-      lastUpdated: new Date() // 更新最後修改時間為當前時間
-    };
-
-    // 重新計算進度百分比
-    if (updates.current !== undefined || updates.stage !== undefined) { // 如果更新了當前進度或階段
-      updatedTask.percentage = this.calculateOverallProgress( // 調用私有方法重新計算整體進度百分比
-        updates.stage || task.stage, // 使用更新的階段或原有階段
-        updates.current || task.current, // 使用更新的當前進度或原有進度
-        task.total // 總工作量保持不變
-      );
-    }
-
-    // 更新預估完成時間
-    if (updatedTask.percentage > 0 && updatedTask.status === TaskStatus.RUNNING) { // 如果任務正在運行且有進度
-      updatedTask.estimatedCompletion = this.calculateEstimatedCompletion(updatedTask); // 重新計算預估完成時間
-    }
-
-    this.tasks.set(taskId, updatedTask); // 將更新後的任務資訊存回 Map 集合
-    this.broadcastProgress(taskId, updatedTask); // 廣播進度更新給所有訂閱的 SSE 客戶端
-
-    logger.debug(`Task progress updated: ${taskId} - ${updatedTask.percentage}% complete`); // 記錄除錯日誌，顯示更新後的進度百分比
   }
 
   /**
@@ -147,28 +157,33 @@ export class ProgressService implements IProgressService {
    * @param message 完成訊息
    */
   completeTask(taskId: string, result?: any, message: string = '任務已完成'): void { // 公開方法：標記任務完成並設定結果資料
-    this.updateProgress(taskId, { // 調用更新進度方法，設定任務完成狀態
-      status: TaskStatus.COMPLETED, // 將任務狀態設為已完成
-      stage: TaskStage.FINALIZING, // 將任務階段設為最終化階段
-      current: this.tasks.get(taskId)?.total || 0, // 將當前進度設為總工作量，表示 100% 完成
-      message // 使用傳入的完成訊息
-    });
+    try {
+      this.updateProgress(taskId, { // 調用更新進度方法，設定任務完成狀態
+        status: TaskStatus.COMPLETED, // 將任務狀態設為已完成
+        stage: TaskStage.FINALIZING, // 將任務階段設為最終化階段
+        current: this.tasks.get(taskId)?.total || 0, // 將當前進度設為總工作量，表示 100% 完成
+        message // 使用傳入的完成訊息
+      });
 
-    const task = this.tasks.get(taskId); // 取得更新後的任務資訊
-    if (task) { // 如果任務存在
-      task.result = result; // 設定任務執行結果
-      task.percentage = 100; // 確保進度百分比為 100%
-      this.tasks.set(taskId, task); // 將更新後的任務資訊存回集合中
-      this.broadcastProgress(taskId, task); // 廣播最終的任務完成狀態給所有 SSE 客戶端
-      logger.info(`Task completed successfully: ${taskId}`); // 記錄任務成功完成的資訊日誌
-    } else { // 如果任務不存在
-      logger.warn(`Attempted to complete non-existent task: ${taskId}`); // 記錄嘗試完成不存在任務的警告日誌
+      const task = this.tasks.get(taskId); // 取得更新後的任務資訊
+      if (task) { // 如果任務存在
+        task.result = result; // 設定任務執行結果
+        task.percentage = 100; // 確保進度百分比為 100%
+        this.tasks.set(taskId, task); // 將更新後的任務資訊存回集合中
+        this.broadcastProgress(taskId, task); // 廣播最終的任務完成狀態給所有 SSE 客戶端
+        logger.info(`Task completed successfully: ${taskId}`); // 記錄任務成功完成的資訊日誌
+      } else { // 如果任務不存在
+        logger.warn(`Attempted to complete non-existent task: ${taskId}`); // 記錄嘗試完成不存在任務的警告日誌
+      }
+
+      // 延遲關閉 SSE 連線，確保客戶端收到完成事件
+      setTimeout(() => { // 設定延遲執行，確保客戶端有足夠時間接收完成事件
+        this.closeSSEConnections(taskId); // 關閉該任務的所有 SSE 連線
+      }, 1000); // 延遲 1000 毫秒（1 秒）後執行
+    } catch (error) {
+      logger.error(`Error completing task ${taskId}:`, error);
+      throw new Error(`Failed to complete task: ${taskId}`);
     }
-
-    // 延遲關閉 SSE 連線，確保客戶端收到完成事件
-    setTimeout(() => { // 設定延遲執行，確保客戶端有足夠時間接收完成事件
-      this.closeSSEConnections(taskId); // 關閉該任務的所有 SSE 連線
-    }, 1000); // 延遲 1000 毫秒（1 秒）後執行
   }
 
   /**
@@ -177,25 +192,30 @@ export class ProgressService implements IProgressService {
    * @param error 錯誤訊息
    */
   failTask(taskId: string, error: string): void { // 公開方法：標記任務失敗並記錄錯誤資訊
-    const task = this.tasks.get(taskId); // 從任務集合中取得指定的任務資訊
-    if (task) { // 如果任務存在
-      const failedTask: ProgressInfo = { // 建立失敗任務的資訊物件
-        ...task, // 複製原有任務的所有屬性
-        status: TaskStatus.FAILED, // 將任務狀態設為失敗
-        error, // 設定錯誤訊息
-        message: `任務失敗: ${error}`, // 設定使用者友好的失敗訊息
-        lastUpdated: new Date() // 更新最後修改時間為當前時間
-      };
+    try {
+      const task = this.tasks.get(taskId); // 從任務集合中取得指定的任務資訊
+      if (task) { // 如果任務存在
+        const failedTask: ProgressInfo = { // 建立失敗任務的資訊物件
+          ...task, // 複製原有任務的所有屬性
+          status: TaskStatus.FAILED, // 將任務狀態設為失敗
+          error, // 設定錯誤訊息
+          message: `任務失敗: ${error}`, // 設定使用者友好的失敗訊息
+          lastUpdated: new Date() // 更新最後修改時間為當前時間
+        };
 
-      this.tasks.set(taskId, failedTask); // 將失敗的任務資訊存回集合中
-      this.broadcastProgress(taskId, failedTask); // 廣播任務失敗狀態給所有 SSE 客戶端
-      logger.error(`Task failed: ${taskId} - ${error}`); // 記錄任務失敗的錯誤日誌
+        this.tasks.set(taskId, failedTask); // 將失敗的任務資訊存回集合中
+        this.broadcastProgress(taskId, failedTask); // 廣播任務失敗狀態給所有 SSE 客戶端
+        logger.error(`Task failed: ${taskId} - ${error}`); // 記錄任務失敗的錯誤日誌
+      }
+
+      // 延遲關閉 SSE 連線
+      setTimeout(() => { // 設定延遲執行，確保客戶端有時間接收失敗事件
+        this.closeSSEConnections(taskId); // 關閉該任務的所有 SSE 連線
+      }, 1000); // 延遲 1000 毫秒（1 秒）後執行
+    } catch (err) {
+      logger.error(`Error failing task ${taskId}:`, err);
+      throw new Error(`Failed to mark task as failed: ${taskId}`);
     }
-
-    // 延遲關閉 SSE 連線
-    setTimeout(() => { // 設定延遲執行，確保客戶端有時間接收失敗事件
-      this.closeSSEConnections(taskId); // 關閉該任務的所有 SSE 連線
-    }, 1000); // 延遲 1000 毫秒（1 秒）後執行
   }
 
   /**
@@ -214,42 +234,47 @@ export class ProgressService implements IProgressService {
    * @returns 是否成功建立連線
    */
   createSSEConnection(taskId: string, response: Response): boolean { // 公開方法：為指定任務建立 SSE 連線
-    const task = this.tasks.get(taskId); // 從任務集合中取得指定的任務資訊
-    if (!task) { // 如果任務不存在
-      return false; // 回傳 false 表示連線建立失敗
+    try {
+      const task = this.tasks.get(taskId); // 從任務集合中取得指定的任務資訊
+      if (!task) { // 如果任務不存在
+        return false; // 回傳 false 表示連線建立失敗
+      }
+
+      // 設定 SSE headers
+      response.writeHead(200, { // 設定 HTTP 回應狀態碼為 200 OK
+        'Content-Type': 'text/event-stream', // 設定內容類型為 SSE 事件串流
+        'Cache-Control': 'no-cache', // 禁用快取，確保即時資料傳輸
+        'Connection': 'keep-alive', // 保持連線開啟，支援長連線
+        'Access-Control-Allow-Origin': '*', // 允許所有來源的跨域請求
+        'Access-Control-Allow-Headers': 'Cache-Control' // 允許 Cache-Control 標頭的跨域請求
+      });
+
+      // 建立連線記錄
+      const connection: SSEConnection = { // 建立新的 SSE 連線物件
+        response, // 儲存 Express Response 物件的參考
+        connectedAt: new Date(), // 記錄連線建立的時間戳
+        isActive: true // 設定連線狀態為活躍
+      };
+
+      // 儲存連線
+      const connections = this.sseConnections.get(taskId) || []; // 取得該任務現有的連線陣列，若無則建立空陣列
+      connections.push(connection); // 將新連線加入到連線陣列中
+      this.sseConnections.set(taskId, connections); // 將更新後的連線陣列存回 Map 集合
+
+      // 立即發送當前狀態
+      this.sendSSEEvent(response, 'progress', task); // 發送當前任務進度給新連線的客戶端
+
+      // 處理客戶端斷線
+      response.on('close', () => { // 監聽客戶端關閉連線事件
+        connection.isActive = false; // 將連線標記為非活躍狀態
+        this.removeInactiveConnections(taskId); // 清理該任務的非活躍連線
+      });
+
+      return true; // 回傳 true 表示連線建立成功
+    } catch (error) {
+      logger.error(`Error creating SSE connection for task ${taskId}:`, error);
+      return false;
     }
-
-    // 設定 SSE headers
-    response.writeHead(200, { // 設定 HTTP 回應狀態碼為 200 OK
-      'Content-Type': 'text/event-stream', // 設定內容類型為 SSE 事件串流
-      'Cache-Control': 'no-cache', // 禁用快取，確保即時資料傳輸
-      'Connection': 'keep-alive', // 保持連線開啟，支援長連線
-      'Access-Control-Allow-Origin': '*', // 允許所有來源的跨域請求
-      'Access-Control-Allow-Headers': 'Cache-Control' // 允許 Cache-Control 標頭的跨域請求
-    });
-
-    // 建立連線記錄
-    const connection: SSEConnection = { // 建立新的 SSE 連線物件
-      response, // 儲存 Express Response 物件的參考
-      connectedAt: new Date(), // 記錄連線建立的時間戳
-      isActive: true // 設定連線狀態為活躍
-    };
-
-    // 儲存連線
-    const connections = this.sseConnections.get(taskId) || []; // 取得該任務現有的連線陣列，若無則建立空陣列
-    connections.push(connection); // 將新連線加入到連線陣列中
-    this.sseConnections.set(taskId, connections); // 將更新後的連線陣列存回 Map 集合
-
-    // 立即發送當前狀態
-    this.sendSSEEvent(response, 'progress', task); // 發送當前任務進度給新連線的客戶端
-
-    // 處理客戶端斷線
-    response.on('close', () => { // 監聽客戶端關閉連線事件
-      connection.isActive = false; // 將連線標記為非活躍狀態
-      this.removeInactiveConnections(taskId); // 清理該任務的非活躍連線
-    });
-
-    return true; // 回傳 true 表示連線建立成功
   }
 
   /**
