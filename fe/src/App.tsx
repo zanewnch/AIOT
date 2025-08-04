@@ -25,6 +25,7 @@ const InitPage = lazy(() => import("./pages/InitPage").then(module => ({ default
 const SwaggerDocPage = lazy(() => import("./pages/SwaggerDocPage"));
 const MapPage = lazy(() => import("./pages/MapPage"));
 const FlyingPage = lazy(() => import("./pages/FlyingPage"));
+const DroneMonitoringPage = lazy(() => import("./pages/DroneMonitoringPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 /**
@@ -132,6 +133,8 @@ function App() {
             {/* 地圖頁面 */}
             <Route path="flyingpage" element={<FlyingPage />} /> 
             {/* 飛行頁面 */}
+            <Route path="monitoring" element={<DroneMonitoringPage />} /> 
+            {/* 無人機監控頁面 */}
           </Route>
         </Routes>
       </Suspense>

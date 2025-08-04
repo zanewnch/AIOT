@@ -122,6 +122,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             <span className={styles.sidebarIcon}>✈️</span>
             飛行頁面
           </Link>
+          {/* 無人機監控頁面導航連結 */}
+          <Link
+            to="/content/monitoring" // 路由路徑
+            className={`${styles.sidebarLink} ${location.pathname === '/monitoring' ? styles.active : ''}`} // 動態應用活動狀態樣式
+            onClick={() => handleNavClick('/content/monitoring', '無人機監控')}
+          >
+            <span className={styles.sidebarIcon}>📡</span>
+            無人機監控
+          </Link>
         </nav>
       </div>
     </aside>
