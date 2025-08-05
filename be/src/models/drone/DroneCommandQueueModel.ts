@@ -280,11 +280,11 @@ export class DroneCommandQueueModel extends Model<DroneCommandQueueAttributes, D
      * 建立與 DroneCommandModel 的一對多關聯關係。
      * 使用延遲載入避免循環引用。
      */
-    @HasMany(() => require('./DroneCommandModel.js').DroneCommandModel, {
-        foreignKey: 'queue_id',
-        as: 'commands'
-    })
-    declare commands: any[];
+    // @HasMany(() => DroneCommandModel, {
+    //     foreignKey: 'queue_id',
+    //     as: 'commands'
+    // })
+    // declare commands: any[];
 
     /**
      * 計算佇列執行時間

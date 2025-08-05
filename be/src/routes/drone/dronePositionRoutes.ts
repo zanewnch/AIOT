@@ -63,6 +63,12 @@ class DronePositionRoutes {
       (req, res, next) => this.dronePositionController.getAllDronePositions(req, res, next)
     );
 
+    // GET /api/drone-position/data/latest - 獲取最新位置資料 (必須在 /:id 之前)
+    this.router.get(this.ROUTES.LATEST,
+      this.authMiddleware.authenticate,
+      (req, res, next) => this.dronePositionController.getLatestDronePositions(req, res, next)
+    );
+
     // GET /api/drone-position/data/:id - 根據 ID 獲取無人機位置資料
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
@@ -92,11 +98,6 @@ class DronePositionRoutes {
    * 設定查詢路由
    */
   private setupQueryRoutes = (): void => {
-    // GET /api/drone-position/data/latest - 獲取最新無人機位置資料
-    this.router.get(this.ROUTES.LATEST,
-      this.authMiddleware.authenticate,
-      (req, res, next) => this.dronePositionController.getLatestDronePositions(req, res, next)
-    );
 
     // GET /api/drone-position/data/drone/:droneId - 根據無人機 ID 獲取位置資料
     this.router.get(this.ROUTES.BY_DRONE_ID,

@@ -16,6 +16,10 @@ import {
   CreateUserPreferencesRequest,
   UpdateUserPreferencesRequest,
 } from '../types/userPreference';
+import type { TableError } from '../types/table';
+import { createLogger } from '../configs/loggerConfig';
+
+const logger = createLogger('useUserPreferenceQuery');
 
 /**
  * UserPreferenceQuery - 使用者偏好設定查詢服務類
@@ -41,14 +45,24 @@ export class UserPreferenceQuery {
     return useQuery({
       queryKey: this.USER_PREFERENCE_QUERY_KEYS.USER_PREFERENCES,
       queryFn: async (): Promise<UserPreferences> => {
-        const response = await apiClient.get('/api/user/preferences');
-        const result = RequestResult.fromResponse<UserPreferences>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/user/preferences');
+          const result = RequestResult.fromResponse<UserPreferences>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch user preferences', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch user preferences',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 5 * 60 * 1000, // 5分鐘內不會重新獲取
       gcTime: 30 * 60 * 1000, // 30分鐘後清除緩存
@@ -65,21 +79,31 @@ export class UserPreferenceQuery {
 
     return useMutation({
       mutationFn: async (data: CreateUserPreferencesRequest): Promise<UserPreferences> => {
-        const response = await apiClient.post('/api/user/preferences', data);
-        const result = RequestResult.fromResponse<UserPreferences>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/user/preferences', data);
+          const result = RequestResult.fromResponse<UserPreferences>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('創建使用者偏好設定失敗:', error);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || '創建使用者偏好設定失敗',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data) => {
         // 更新查詢緩存
         queryClient.setQueryData(this.USER_PREFERENCE_QUERY_KEYS.USER_PREFERENCES, data);
       },
-      onError: (error) => {
-        console.error('創建使用者偏好設定失敗:', error);
+      onError: (error: TableError) => {
+        logger.error('創建使用者偏好設定失敗:', error);
       },
       retry: 2,
     });
@@ -93,14 +117,24 @@ export class UserPreferenceQuery {
 
     return useMutation({
       mutationFn: async (data: UpdateUserPreferencesRequest): Promise<UserPreferences> => {
-        const response = await apiClient.put('/api/user/preferences', data);
-        const result = RequestResult.fromResponse<UserPreferences>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.put('/api/user/preferences', data);
+          const result = RequestResult.fromResponse<UserPreferences>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('更新使用者偏好設定失敗:', error);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || '更新使用者偏好設定失敗',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onMutate: async (newPreferences) => {
         // 取消任何正在進行的查詢
@@ -125,7 +159,7 @@ export class UserPreferenceQuery {
         queryClient.setQueryData(this.USER_PREFERENCE_QUERY_KEYS.USER_PREFERENCES, data);
       },
       onError: (error, newPreferences, context) => {
-        console.error('更新使用者偏好設定失敗:', error);
+        logger.error('更新使用者偏好設定失敗:', error);
         
         // 回滾到之前的狀態
         if (context?.previousPreferences) {
@@ -221,6 +255,3 @@ export class UserPreferenceQuery {
     };
   }
 }
-
-
-

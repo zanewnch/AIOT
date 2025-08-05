@@ -18,6 +18,10 @@ import {
   UpdateDroneStatusOnlyRequest,
   DroneStatusStatistics,
 } from '../types/droneStatus';
+import type { TableError } from '../types/table';
+import { createLogger } from '../configs/loggerConfig';
+
+const logger = createLogger('useDroneStatusQuery');
 
 /**
  * DroneStatusQuery - 無人機狀態查詢服務類
@@ -46,14 +50,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUSES,
       queryFn: async (): Promise<DroneStatus[]> => {
-        const response = await apiClient.get('/api/drone-status/data');
-        const result = RequestResult.fromResponse<DroneStatus[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-status/data');
+          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch all drone statuses', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch all drone statuses',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 30 * 1000,
       gcTime: 5 * 60 * 1000,
@@ -69,14 +83,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_BY_ID(id),
       queryFn: async (): Promise<DroneStatus> => {
-        const response = await apiClient.get(`/api/drone-status/data/${id}`);
-        const result = RequestResult.fromResponse<DroneStatus>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-status/data/${id}`);
+          const result = RequestResult.fromResponse<DroneStatus>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone status with ID: ${id}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone status with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!id,
       staleTime: 30 * 1000,
@@ -92,14 +116,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_BY_SERIAL(serial),
       queryFn: async (): Promise<DroneStatus> => {
-        const response = await apiClient.get(`/api/drone-status/data/serial/${serial}`);
-        const result = RequestResult.fromResponse<DroneStatus>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-status/data/serial/${serial}`);
+          const result = RequestResult.fromResponse<DroneStatus>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone status with serial: ${serial}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone status with serial: ${serial}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!serial,
       staleTime: 30 * 1000,
@@ -115,14 +149,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_STATUS(status),
       queryFn: async (): Promise<DroneStatus[]> => {
-        const response = await apiClient.get(`/api/drone-status/data/status/${status}`);
-        const result = RequestResult.fromResponse<DroneStatus[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-status/data/status/${status}`);
+          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone statuses with status: ${status}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone statuses with status: ${status}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!status,
       staleTime: 30 * 1000,
@@ -140,14 +184,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_OWNER(ownerId),
       queryFn: async (): Promise<DroneStatus[]> => {
-        const response = await apiClient.get(`/api/drone-status/data/owner/${ownerId}`);
-        const result = RequestResult.fromResponse<DroneStatus[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-status/data/owner/${ownerId}`);
+          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone statuses for owner ID: ${ownerId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone statuses for owner ID: ${ownerId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!ownerId,
       staleTime: 60 * 1000,
@@ -163,14 +217,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_MANUFACTURER(manufacturer),
       queryFn: async (): Promise<DroneStatus[]> => {
-        const response = await apiClient.get(`/api/drone-status/data/manufacturer/${manufacturer}`);
-        const result = RequestResult.fromResponse<DroneStatus[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-status/data/manufacturer/${manufacturer}`);
+          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone statuses by manufacturer: ${manufacturer}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone statuses by manufacturer: ${manufacturer}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!manufacturer,
       staleTime: 60 * 1000,
@@ -186,14 +250,24 @@ export class DroneStatusQuery {
     return useQuery({
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_STATISTICS,
       queryFn: async (): Promise<DroneStatusStatistics> => {
-        const response = await apiClient.get('/api/drone-status/statistics');
-        const result = RequestResult.fromResponse<DroneStatusStatistics>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-status/statistics');
+          const result = RequestResult.fromResponse<DroneStatusStatistics>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch drone status statistics', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch drone status statistics',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 60 * 1000,
       gcTime: 10 * 60 * 1000,
@@ -211,14 +285,24 @@ export class DroneStatusQuery {
 
     return useMutation({
       mutationFn: async (data: CreateDroneStatusRequest): Promise<DroneStatus> => {
-        const response = await apiClient.post('/api/drone-status/data', data);
-        const result = RequestResult.fromResponse<DroneStatus>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/drone-status/data', data);
+          const result = RequestResult.fromResponse<DroneStatus>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to create drone status', { error, data });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create drone status',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUSES });
@@ -242,14 +326,24 @@ export class DroneStatusQuery {
 
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusRequest }): Promise<DroneStatus> => {
-        const response = await apiClient.put(`/api/drone-status/data/${id}`, data);
-        const result = RequestResult.fromResponse<DroneStatus>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.put(`/api/drone-status/data/${id}`, data);
+          const result = RequestResult.fromResponse<DroneStatus>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to update drone status with ID: ${id}`, { error, data });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to update drone status with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data, variables) => {
         queryClient.setQueryData(
@@ -278,14 +372,24 @@ export class DroneStatusQuery {
 
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusOnlyRequest }): Promise<DroneStatus> => {
-        const response = await apiClient.patch(`/api/drone-status/data/${id}/status`, data);
-        const result = RequestResult.fromResponse<DroneStatus>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.patch(`/api/drone-status/data/${id}/status`, data);
+          const result = RequestResult.fromResponse<DroneStatus>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to update drone status only with ID: ${id}`, { error, data });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to update drone status only with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data, variables) => {
         queryClient.setQueryData(
@@ -311,11 +415,21 @@ export class DroneStatusQuery {
 
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
-        const response = await apiClient.delete(`/api/drone-status/data/${id}`);
-        const result = RequestResult.fromResponse(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.delete(`/api/drone-status/data/${id}`);
+          const result = RequestResult.fromResponse(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+        } catch (error: any) {
+          logger.error(`Failed to delete drone status with ID: ${id}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to delete drone status with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (_, id) => {
@@ -327,7 +441,3 @@ export class DroneStatusQuery {
     });
   }
 }
-
-
-
-

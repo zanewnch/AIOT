@@ -17,7 +17,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 // 從環境變數獲取 Google Maps API Key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD_o0dWCymZaMZRzN6Uy2Rt3U_L56L_eH0";
-const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&loading=async`;
+const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`;
 
 // 台北101的座標作為預設中心點
 const DEFAULT_CENTER = {
@@ -135,18 +135,25 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   /**
    * 創建自定義飛行器圖標 - 可旋轉的航空風格
    */
-  const createDroneIcon = (color: string, heading: number = 0) => {
-    return {
-      // 使用飛機形狀的SVG路徑（指向上方）
-      path: 'M12 2L15 6L12 14L9 6L12 2Z M8 6L4 8L8 10Z M16 6L20 8L16 10Z',
-      fillColor: color,
-      fillOpacity: 0.9,
-      strokeColor: '#1a1a1a',
-      strokeWeight: 1.8,
-      scale: 1.2,
-      anchor: new window.google.maps.Point(12, 8), // 設定旋轉中心點
-      rotation: heading, // 根據航向角度旋轉
-    };
+  const createDroneIcon = (color: string, heading: number = 0): HTMLElement => {
+    const droneIcon = document.createElement('div');
+    droneIcon.innerHTML = `
+      <div style="
+        width: 24px;
+        height: 24px;
+        background-color: ${color};
+        border: 2px solid #1a1a1a;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotate(${heading}deg);
+        cursor: pointer;
+      ">
+        <span style="color: white; font-size: 14px; line-height: 1;">✈</span>
+      </div>
+    `;
+    return droneIcon;
   };
 
   /**
@@ -170,6 +177,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
             stylers: [{ visibility: 'on' }]
           }
         ],
+        mapId: 'AIOT_DRONE_MAP' // 必須添加 mapId 以支持 AdvancedMarkerElement
       });
 
       // 儲存地圖實例
@@ -193,11 +201,11 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     const initialPosition = START_POSITION;
 
     // 創建標記
-    const marker = new window.google.maps.Marker({
+    const marker = new window.google.maps.marker.AdvancedMarkerElement({
       position: initialPosition,
       map: map,
       title: DRONE_CONFIG.name,
-      icon: createDroneIcon(DRONE_CONFIG.color, 0), // 初始航向為0度
+      content: createDroneIcon(DRONE_CONFIG.color, 0), // 初始航向為0度
     });
 
     // 創建資訊視窗
@@ -397,9 +405,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     // 後退時航向應該相反
     const newHeading = (droneRef.current.heading + 180) % 360;
     droneRef.current.heading = newHeading;
-    droneRef.current.marker.setIcon(
-      createDroneIcon(DRONE_CONFIG.color, newHeading)
-    );
+    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, newHeading);
     
     flyToPosition({ lat: newLat, lng: newLng });
   };
@@ -418,9 +424,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     // 左移時航向應該向左
     const newHeading = (droneRef.current.heading - 90 + 360) % 360;
     droneRef.current.heading = newHeading;
-    droneRef.current.marker.setIcon(
-      createDroneIcon(DRONE_CONFIG.color, newHeading)
-    );
+    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, newHeading);
     
     flyToPosition({ lat: newLat, lng: newLng });
   };
@@ -439,9 +443,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     // 右移時航向應該向右
     const newHeading = (droneRef.current.heading + 90) % 360;
     droneRef.current.heading = newHeading;
-    droneRef.current.marker.setIcon(
-      createDroneIcon(DRONE_CONFIG.color, newHeading)
-    );
+    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, newHeading);
     
     flyToPosition({ lat: newLat, lng: newLng });
   };
@@ -455,9 +457,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     droneRef.current.heading = (droneRef.current.heading - 45 + 360) % 360;
     
     // 更新標記圖標以反映新的航向
-    droneRef.current.marker.setIcon(
-      createDroneIcon(DRONE_CONFIG.color, droneRef.current.heading)
-    );
+    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, droneRef.current.heading);
     
     updateDroneStats();
   };
@@ -471,9 +471,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     droneRef.current.heading = (droneRef.current.heading + 45) % 360;
     
     // 更新標記圖標以反映新的航向
-    droneRef.current.marker.setIcon(
-      createDroneIcon(DRONE_CONFIG.color, droneRef.current.heading)
-    );
+    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, droneRef.current.heading);
     
     updateDroneStats();
   };
@@ -571,9 +569,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
           drone.heading = normalizedHeading;
           
           // 更新標記圖標以反映飛行方向
-          drone.marker.setIcon(
-            createDroneIcon(DRONE_CONFIG.color, drone.heading)
-          );
+          drone.marker.content = createDroneIcon(DRONE_CONFIG.color, drone.heading);
         }
 
         // 按速度移動向目標

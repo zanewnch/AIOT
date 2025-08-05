@@ -10,7 +10,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   RTKData, 
@@ -51,23 +50,23 @@ export class RTKQuery {
         try {
           logger.debug('Fetching RTK data from API');
           
-          const response = await apiClient.get('/api/rtk/data');
-          const result = RequestResult.fromResponse<RTKData[]>(response);
+          const result = await apiClient.getWithResult<RTKData[]>('/api/rtk/data');
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
           logger.info(`Successfully fetched ${result.data?.length || 0} RTK data entries`);
-          return result.unwrap();
+          return result.data || [];
         } catch (error: any) {
-          console.error('Failed to fetch RTK data:', error);
-          
-          throw {
-            message: error.response?.data?.message || 'Failed to fetch RTK data',
+          logger.error('Failed to fetch RTK data:', error);
+
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch RTK data',
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       staleTime: 2 * 60 * 1000, // 2分鐘
@@ -88,20 +87,23 @@ export class RTKQuery {
         try {
           logger.debug(`Updating RTK data with ID: ${id}`, data);
           
-          const response = await apiClient.put(`/api/rtk/data/${id}`, data);
-          const result = RequestResult.fromResponse<UpdateResponse>(response);
+          const result = await apiClient.putWithResult<UpdateResponse>(`/api/rtk/data/${id}`, data);
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
           logger.info(`Successfully updated RTK data with ID: ${id}`);
           return { id, data };
         } catch (error: any) {
-          console.error(`Failed to update RTK data with ID: ${id}:`, error);
-          
-          const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-          throw new Error(errorMsg);
+          logger.error(`Failed to update RTK data with ID: ${id}:`, error);
+
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Update failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: () => {

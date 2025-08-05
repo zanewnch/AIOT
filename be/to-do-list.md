@@ -53,3 +53,41 @@ date: 2025-06-26
 - [ ] websocket, connection pool, message queue, micro service, frontend(add be connection to page file, start from
   data analysis page), sql script for db initialization
 - [ ] 準備面試內容
+
+
+
+fe
+
+NODE_ENV=development
+VITE_API_BASE_URL=http://localhost:8000
+
+# Google Maps Configuration
+VITE_GOOGLE_MAPS_API_KEY=AIzaSyD_o0dWCymZaMZRzN6Uy2Rt3U_L56L_eH0
+
+# Simulation Mode Configuration
+VITE_ENABLE_SIMULATE_MODE=true
+
+be
+
+
+NODE_ENV=development
+JWT_SECRET=zanewnch
+PORT=8000
+
+# Database Configuration for Docker
+DB_HOST=aiot-mysqldb
+DB_PORT=3306
+DB_NAME=main_db
+DB_USER=admin
+DB_PASSWORD=admin
+
+# Redis Configuration for Docker
+REDIS_HOST=aiot-redis
+REDIS_PORT=6379
+REDIS_DB=0
+
+# MongoDB Configuration for Docker
+MONGODB_URL=mongodb://admin:admin@aiot-mongodb:27017/main_db?authSource=admin
+
+# RabbitMQ Configuration for Docker
+RABBITMQ_URL=amqp://admin:admin@aiot-rabbitmq:5672/

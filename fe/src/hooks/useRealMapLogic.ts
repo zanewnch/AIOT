@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 
 // 從環境變數獲取 Google Maps API Key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD_o0dWCymZaMZRzN6Uy2Rt3U_L56L_eH0";
-const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&loading=async`;
+const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`;
 
 // 台北101的座標作為預設中心點
 const DEFAULT_CENTER = {
@@ -96,15 +96,31 @@ export const useRealMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
         center: DEFAULT_CENTER,
         zoom: 15,
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-        styles: [], // 可以在這裡添加自定義樣式
+        mapId: 'AIOT_DRONE_MAP' // 必須添加 mapId 以支援 AdvancedMarkerElement
       });
 
       // 添加預設標記（台北101）
-      const marker = new window.google.maps.Marker({
+      const markerContent = document.createElement('div');
+      markerContent.innerHTML = `
+        <div style="
+          width: 24px;
+          height: 24px;
+          background-color: #4F46E5;
+          border: 2px solid #1E40AF;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        ">
+          <span style="color: white; font-size: 14px; line-height: 1;">🏢</span>
+        </div>
+      `;
+      const marker = new window.google.maps.marker.AdvancedMarkerElement({
         position: DEFAULT_CENTER,
         map: map,
         title: '台北101',
-        animation: window.google.maps.Animation.DROP,
+        content: markerContent,
       });
 
       // 添加資訊視窗
@@ -155,11 +171,27 @@ export const useRealMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
       lng: center.lng() + (Math.random() - 0.5) * 0.01,
     };
 
-    const marker = new window.google.maps.Marker({
+    const markerContent = document.createElement('div');
+    markerContent.innerHTML = `
+      <div style="
+        width: 20px;
+        height: 20px;
+        background-color: #10B981;
+        border: 2px solid #059669;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      ">
+        <span style="color: white; font-size: 12px; line-height: 1;">📍</span>
+      </div>
+    `;
+    const marker = new window.google.maps.marker.AdvancedMarkerElement({
       position: position,
       map: map,
       title: `標記 ${markersRef.current.length + 1}`,
-      animation: window.google.maps.Animation.DROP,
+      content: markerContent,
     });
 
     markersRef.current.push(marker);

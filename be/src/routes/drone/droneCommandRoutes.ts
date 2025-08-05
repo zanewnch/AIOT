@@ -88,6 +88,18 @@ class DroneCommandRoutes {
       (req, res, next) => this.commandController.getAllCommands(req, res, next)
     );
 
+    // GET /api/drone-commands/data/latest - 獲取最新指令 (必須在 /:id 之前)
+    this.router.get(this.ROUTES.LATEST,
+      this.authMiddleware.authenticate,
+      (req, res, next) => this.commandController.getLatestCommands(req, res, next)
+    );
+
+    // GET /api/drone-commands/data/failed - 獲取失敗指令 (必須在 /:id 之前)
+    this.router.get(this.ROUTES.FAILED,
+      this.authMiddleware.authenticate,
+      (req, res, next) => this.commandController.getFailedCommands(req, res, next)
+    );
+
     // GET /api/drone-commands/data/:id - 根據 ID 獲取指令
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
@@ -165,17 +177,6 @@ class DroneCommandRoutes {
       (req, res, next) => this.commandController.getExecutingCommandByDroneId(req, res, next)
     );
 
-    // GET /api/drone-commands/data/latest - 獲取最新指令
-    this.router.get(this.ROUTES.LATEST,
-      this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getLatestCommands(req, res, next)
-    );
-
-    // GET /api/drone-commands/data/failed - 獲取失敗指令
-    this.router.get(this.ROUTES.FAILED,
-      this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getFailedCommands(req, res, next)
-    );
   };
 
   /**

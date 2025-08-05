@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
 import { createLogger } from '../configs/loggerConfig';
+import type { TableError } from '../types/table';
 
 // 創建 logger
 const logger = createLogger('useDroneCommandArchiveQuery');
@@ -111,13 +112,23 @@ export class DroneCommandArchiveQuery {
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
           const url = `/api/drone-commands-archive/data?${params.toString()}`;
-          const response = await apiClient.get<DroneCommandArchive[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} commands archive records`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          const commands = result.data || [];
+          logger.info(`Successfully fetched ${commands.length} commands archive records`);
+          return commands;
         } catch (error: any) {
           logger.error('Failed to fetch commands archive', { error, options });
-          throw new Error(error.response?.data?.message || 'Failed to fetch commands archive');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch commands archive',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       staleTime: 30 * 1000, // 30 seconds
@@ -147,13 +158,23 @@ export class DroneCommandArchiveQuery {
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
           const url = `/api/drone-commands-archive/data/drone/${droneId}?${params.toString()}`;
-          const response = await apiClient.get<DroneCommandArchive[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} commands archive records for drone ${droneId}`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          const commands = result.data || [];
+          logger.info(`Successfully fetched ${commands.length} commands archive records for drone ${droneId}`);
+          return commands;
         } catch (error: any) {
           logger.error('Failed to fetch commands archive by drone ID', { error, droneId, options });
-          throw new Error(error.response?.data?.message || `Failed to fetch commands archive for drone ${droneId}`);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch commands archive for drone ${droneId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       enabled: !!droneId && droneId > 0,
@@ -184,13 +205,23 @@ export class DroneCommandArchiveQuery {
           if (query.commandType) params.append('commandType', query.commandType);
           
           const url = `/api/drone-commands-archive/data/time-range?${params.toString()}`;
-          const response = await apiClient.get<DroneCommandArchive[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} commands archive records for time range`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          const commands = result.data || [];
+          logger.info(`Successfully fetched ${commands.length} commands archive records for time range`);
+          return commands;
         } catch (error: any) {
           logger.error('Failed to fetch commands archive by time range', { error, query });
-          throw new Error(error.response?.data?.message || 'Failed to fetch commands archive by time range');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch commands archive by time range',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       enabled: !!(query.startDate && query.endDate),
@@ -219,13 +250,23 @@ export class DroneCommandArchiveQuery {
           if (options.page) params.append('page', options.page.toString());
           
           const url = `/api/drone-commands-archive/data/status/${status}?${params.toString()}`;
-          const response = await apiClient.get<DroneCommandArchive[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} commands archive records with status ${status}`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          const commands = result.data || [];
+          logger.info(`Successfully fetched ${commands.length} commands archive records with status ${status}`);
+          return commands;
         } catch (error: any) {
           logger.error('Failed to fetch commands archive by status', { error, status, options });
-          throw new Error(error.response?.data?.message || `Failed to fetch commands archive with status ${status}`);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch commands archive with status ${status}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       enabled: !!status,
@@ -254,13 +295,23 @@ export class DroneCommandArchiveQuery {
           if (options.page) params.append('page', options.page.toString());
           
           const url = `/api/drone-commands-archive/data/command-type/${commandType}?${params.toString()}`;
-          const response = await apiClient.get<DroneCommandArchive[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} commands archive records with type ${commandType}`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          const commands = result.data || [];
+          logger.info(`Successfully fetched ${commands.length} commands archive records with type ${commandType}`);
+          return commands;
         } catch (error: any) {
           logger.error('Failed to fetch commands archive by type', { error, commandType, options });
-          throw new Error(error.response?.data?.message || `Failed to fetch commands archive with type ${commandType}`);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch commands archive with type ${commandType}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       enabled: !!commandType,
@@ -284,13 +335,23 @@ export class DroneCommandArchiveQuery {
           logger.debug('Fetching latest commands archive', { limit });
           
           const url = `/api/drone-commands-archive/data?limit=${limit}&sortBy=issued_at&sortOrder=DESC`;
-          const response = await apiClient.get<DroneCommandArchive[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} latest commands archive records`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          const commands = result.data || [];
+          logger.info(`Successfully fetched ${commands.length} latest commands archive records`);
+          return commands;
         } catch (error: any) {
           logger.error('Failed to fetch latest commands archive', { error, limit });
-          throw new Error(error.response?.data?.message || 'Failed to fetch latest commands archive');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch latest commands archive',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       staleTime: 10 * 1000, // 10 seconds for real-time feel

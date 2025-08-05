@@ -13,6 +13,10 @@ import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
 import { LoginRequest, ExtendedLoginResponse, LogoutResponse } from '../types/auth';
 import { useAuthActions } from '../stores';
+import type { TableError } from '../types/table';
+import { createLogger } from '../configs/loggerConfig';
+
+const logger = createLogger('useAuthQuery');
 
 /**
  * AuthQuery - 認證查詢服務類
@@ -38,20 +42,30 @@ export class AuthQuery {
     return useMutation({
       mutationKey: this.AUTH_QUERY_KEYS.LOGIN,
       mutationFn: async (loginData: LoginRequest): Promise<ExtendedLoginResponse> => {
-        const response = await apiClient.post('/api/auth/login', loginData);
-        const result = RequestResult.fromResponse<ExtendedLoginResponse>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/auth/login', loginData);
+          const result = RequestResult.fromResponse<ExtendedLoginResponse>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Login failed', { error, loginData });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Login failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data) => {
         setAuthData(data);
         setError(null);
       },
-      onError: (error: Error) => {
+      onError: (error: TableError) => {
         setError(error.message);
       },
       retry: 1,
@@ -67,19 +81,29 @@ export class AuthQuery {
     return useMutation({
       mutationKey: this.AUTH_QUERY_KEYS.LOGOUT,
       mutationFn: async (): Promise<LogoutResponse> => {
-        const response = await apiClient.post('/api/auth/logout');
-        const result = RequestResult.fromResponse<LogoutResponse>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/auth/logout');
+          const result = RequestResult.fromResponse<LogoutResponse>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Logout failed', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Logout failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: () => {
         clearAuth();
       },
-      onError: (error: Error) => {
+      onError: (error: TableError) => {
         clearAuth();
         setError(error.message);
       },
@@ -87,4 +111,3 @@ export class AuthQuery {
     });
   }
 }
-

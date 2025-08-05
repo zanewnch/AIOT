@@ -532,8 +532,8 @@ export class DroneCommandModel extends Model<DroneCommandAttributes, DroneComman
      * @memberof DroneCommandModel
      * @since 1.0.0
      */
-    @BelongsTo(() => require('./DroneCommandQueueModel.js').DroneCommandQueueModel, { foreignKey: 'queue_id' })
-    declare queue: any;
+    // @BelongsTo(() => DroneCommandQueueModel, { foreignKey: 'queue_id' })
+    // declare queue: any;
 
     /**
      * 計算指令等待時間

@@ -58,23 +58,23 @@ export class RoleQuery {
         try {
           logger.debug('Fetching roles from API');
           
-          const response = await apiClient.get('/api/rbac/roles');
-          const result = RequestResult.fromResponse<Role[]>(response);
+          const result = await apiClient.getWithResult<Role[]>('/api/rbac/roles');
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
           logger.info(`Successfully fetched ${result.data?.length || 0} roles`);
-          return result.unwrap();
+          return result.data || [];
         } catch (error: any) {
-          console.error('Failed to fetch roles:', error);
+          logger.error('Failed to fetch roles:', error);
           
-          throw {
+          const tableError: TableError = {
             message: error.response?.data?.message || 'Failed to fetch roles',
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       staleTime: 10 * 60 * 1000, // 10分鐘
@@ -93,18 +93,23 @@ export class RoleQuery {
         try {
           logger.debug(`Fetching permissions for role ${roleId}`);
           
-          const response = await apiClient.get<Permission[]>(`/api/rbac/roles/${roleId}/permissions`);
+          const result = await apiClient.getWithResult<Permission[]>(`/api/rbac/roles/${roleId}/permissions`);
           
-          logger.info(`Successfully fetched ${response.length} permissions for role ${roleId}`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully fetched ${result.data?.length || 0} permissions for role ${roleId}`);
+          return result.data || [];
         } catch (error: any) {
-          console.error(`Failed to fetch permissions for role ${roleId}:`, error);
+          logger.error(`Failed to fetch permissions for role ${roleId}:`, error);
           
-          throw {
+          const tableError: TableError = {
             message: error.response?.data?.message || `Failed to fetch permissions for role ${roleId}`,
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       enabled: enabled && roleId > 0,
@@ -124,23 +129,23 @@ export class RoleQuery {
         try {
           logger.debug('Fetching role permissions from API');
           
-          const response = await apiClient.get('/api/rbac/role-permissions');
-          const result = RequestResult.fromResponse<RolePermission[]>(response);
+          const result = await apiClient.getWithResult<RolePermission[]>('/api/rbac/role-permissions');
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
           logger.info(`Successfully fetched ${result.data?.length || 0} role permissions`);
-          return result.unwrap();
+          return result.data || [];
         } catch (error: any) {
-          console.error('Failed to fetch role permissions:', error);
+          logger.error('Failed to fetch role permissions:', error);
           
-          throw {
+          const tableError: TableError = {
             message: error.response?.data?.message || 'Failed to fetch role permissions',
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       staleTime: 5 * 60 * 1000, // 5分鐘
@@ -160,14 +165,19 @@ export class RoleQuery {
         try {
           logger.debug(`Updating role with ID: ${id}`, data);
           
-          const response = await apiClient.put(`/api/rbac/roles/${id}`, data);
+          await apiClient.putWithResult(`/api/rbac/roles/${id}`, data);
           
           logger.info(`Successfully updated role with ID: ${id}`);
           return { id, data };
         } catch (error: any) {
+          logger.error(`Failed to update role with ID: ${id}:`, error);
           
-          const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-          throw new Error(errorMsg);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Update failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: () => {
@@ -178,6 +188,3 @@ export class RoleQuery {
     });
   }
 }
-
-
-

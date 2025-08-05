@@ -204,7 +204,7 @@ export function logRequest(req: any, message: string, level: string = 'info'): v
     method: req.method,
     url: req.url,
     ip: req.ip,
-    userAgent: req.get('user-agent'),
+    userAgent: req.get ? req.get('user-agent') : req.headers?.['user-agent'],
     userId: req.user?.id
   };
   

@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 
 // 從環境變數獲取 Google Maps API Key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD_o0dWCymZaMZRzN6Uy2Rt3U_L56L_eH0";
-const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&loading=async`;
+const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`;
 
 // 台北101的座標作為預設中心點
 const DEFAULT_CENTER = {
@@ -97,24 +97,31 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
         zoom: 15,
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
         styles: [], // 可以在這裡添加自定義樣式
+        mapId: 'AIOT_DRONE_MAP' // 必須添加 mapId 以支持 AdvancedMarkerElement
       });
 
       // 添加預設飛行起點（台北101）
-      const marker = new window.google.maps.Marker({
+      const markerContent = document.createElement('div');
+      markerContent.innerHTML = `
+        <div style="
+          width: 32px;
+          height: 32px;
+          background-color: #4F46E5;
+          border: 2px solid #1E40AF;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        ">
+          <span style="color: white; font-size: 16px; line-height: 1;">✈</span>
+        </div>
+      `;
+      const marker = new window.google.maps.marker.AdvancedMarkerElement({
         position: DEFAULT_CENTER,
         map: map,
         title: '飛行起點 - 台北101',
-        animation: window.google.maps.Animation.DROP,
-        icon: {
-          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <circle cx="16" cy="16" r="12" fill="#4F46E5" stroke="#1E40AF" stroke-width="2"/>
-              <text x="16" y="21" text-anchor="middle" font-family="Arial" font-size="16" fill="white">✈</text>
-            </svg>
-          `),
-          scaledSize: new window.google.maps.Size(32, 32),
-          anchor: new window.google.maps.Point(16, 16),
-        },
+        content: markerContent,
       });
 
       // 添加資訊視窗
@@ -166,21 +173,27 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
       lng: center.lng() + (Math.random() - 0.5) * 0.01,
     };
 
-    const marker = new window.google.maps.Marker({
+    const markerContent = document.createElement('div');
+    markerContent.innerHTML = `
+      <div style="
+        width: 28px;
+        height: 28px;
+        background-color: #10B981;
+        border: 2px solid #059669;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      ">
+        <span style="color: white; font-size: 12px; line-height: 1;">📍</span>
+      </div>
+    `;
+    const marker = new window.google.maps.marker.AdvancedMarkerElement({
       position: position,
       map: map,
       title: `飛行點 ${markersRef.current.length + 1}`,
-      animation: window.google.maps.Animation.DROP,
-      icon: {
-        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
-            <circle cx="14" cy="14" r="10" fill="#10B981" stroke="#059669" stroke-width="2"/>
-            <text x="14" y="19" text-anchor="middle" font-family="Arial" font-size="12" fill="white">📍</text>
-          </svg>
-        `),
-        scaledSize: new window.google.maps.Size(28, 28),
-        anchor: new window.google.maps.Point(14, 14),
-      },
+      content: markerContent,
     });
 
     markersRef.current.push(marker);

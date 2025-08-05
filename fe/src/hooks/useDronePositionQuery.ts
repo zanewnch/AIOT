@@ -16,6 +16,10 @@ import {
   CreateDronePositionRequest,
   UpdateDronePositionRequest,
 } from '../types/dronePosition';
+import type { TableError } from '../types/table';
+import { createLogger } from '../configs/loggerConfig';
+
+const logger = createLogger('useDronePositionQuery');
 
 /**
  * DronePositionQuery - 無人機位置查詢服務類
@@ -41,14 +45,24 @@ export class DronePositionQuery {
     return useQuery({
       queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS,
       queryFn: async (): Promise<DronePosition[]> => {
-        const response = await apiClient.get('/api/drone-position/data');
-        const result = RequestResult.fromResponse<DronePosition[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-position/data');
+          const result = RequestResult.fromResponse<DronePosition[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch all drone positions', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch all drone positions',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 30 * 1000,
       gcTime: 5 * 60 * 1000,
@@ -64,14 +78,24 @@ export class DronePositionQuery {
     return useQuery({
       queryKey: this.DRONE_POSITION_QUERY_KEYS.LATEST_DRONE_POSITIONS,
       queryFn: async (): Promise<DronePosition[]> => {
-        const response = await apiClient.get('/api/drone-position/data/latest');
-        const result = RequestResult.fromResponse<DronePosition[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-position/data/latest');
+          const result = RequestResult.fromResponse<DronePosition[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch latest drone positions', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch latest drone positions',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 10 * 1000,
       gcTime: 2 * 60 * 1000,
@@ -88,14 +112,24 @@ export class DronePositionQuery {
     return useQuery({
       queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITION_BY_ID(id),
       queryFn: async (): Promise<DronePosition> => {
-        const response = await apiClient.get(`/api/drone-position/data/${id}`);
-        const result = RequestResult.fromResponse<DronePosition>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-position/data/${id}`);
+          const result = RequestResult.fromResponse<DronePosition>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone position with ID: ${id}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone position with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!id,
       staleTime: 30 * 1000,
@@ -111,14 +145,24 @@ export class DronePositionQuery {
     return useQuery({
       queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DronePosition[]> => {
-        const response = await apiClient.get(`/api/drone-position/data/drone/${droneId}`);
-        const result = RequestResult.fromResponse<DronePosition[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-position/data/drone/${droneId}`);
+          const result = RequestResult.fromResponse<DronePosition[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone positions for drone ID: ${droneId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone positions for drone ID: ${droneId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!droneId,
       staleTime: 30 * 1000,
@@ -135,14 +179,24 @@ export class DronePositionQuery {
     
     return useMutation({
       mutationFn: async (data: CreateDronePositionRequest): Promise<DronePosition> => {
-        const response = await apiClient.post('/api/drone-position/data', data);
-        const result = RequestResult.fromResponse<DronePosition>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/drone-position/data', data);
+          const result = RequestResult.fromResponse<DronePosition>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to create drone position', { error, data });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create drone position',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data) => {
         // 使相關查詢無效，觸發重新獲取
@@ -164,14 +218,24 @@ export class DronePositionQuery {
     
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDronePositionRequest }): Promise<DronePosition> => {
-        const response = await apiClient.put(`/api/drone-position/data/${id}`, data);
-        const result = RequestResult.fromResponse<DronePosition>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.put(`/api/drone-position/data/${id}`, data);
+          const result = RequestResult.fromResponse<DronePosition>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to update drone position with ID: ${id}`, { error, data });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to update drone position with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: (data, variables) => {
         // 更新快取中的特定項目
@@ -199,11 +263,21 @@ export class DronePositionQuery {
     
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
-        const response = await apiClient.delete(`/api/drone-position/data/${id}`);
-        const result = RequestResult.fromResponse(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.delete(`/api/drone-position/data/${id}`);
+          const result = RequestResult.fromResponse(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+        } catch (error: any) {
+          logger.error(`Failed to delete drone position with ID: ${id}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to delete drone position with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (_, id) => {
@@ -218,5 +292,3 @@ export class DronePositionQuery {
     });
   }
 }
-
-

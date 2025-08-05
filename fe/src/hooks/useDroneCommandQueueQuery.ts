@@ -13,6 +13,7 @@ import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
 import { createLogger } from '../configs/loggerConfig';
 import type { DroneCommand } from '../types/droneCommand';
+import type { TableError } from '../types/table';
 
 // 創建 logger
 const logger = createLogger('useDroneCommandQueueQuery');
@@ -114,13 +115,22 @@ export class DroneCommandQueueQuery {
           if (options.created_by) params.append('created_by', options.created_by.toString());
           
           const url = `/api/drone-command-queues/data?${params.toString()}`;
-          const response = await apiClient.get<DroneCommandQueue[]>(url);
+          const result = await apiClient.getWithResult<DroneCommandQueue[]>(url);
           
-          logger.info(`Successfully fetched ${response.length} command queues`);
-          return response;
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully fetched ${result.data?.length || 0} command queues`);
+          return result.data || [];
         } catch (error: any) {
           logger.error('Failed to fetch command queues', { error, options });
-          throw new Error(error.response?.data?.message || 'Failed to fetch command queues');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch command queues',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       staleTime: 30 * 1000, // 30 seconds
@@ -140,13 +150,22 @@ export class DroneCommandQueueQuery {
           logger.debug('Fetching command queue by ID', { queueId });
           
           const url = `/api/drone-command-queues/data/${queueId}`;
-          const response = await apiClient.get<DroneCommandQueue>(url);
+          const result = await apiClient.getWithResult<DroneCommandQueue>(url);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully fetched command queue ${queueId}`);
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to fetch command queue by ID', { error, queueId });
-          throw new Error(error.response?.data?.message || `Failed to fetch command queue ${queueId}`);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch command queue ${queueId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       enabled: enabled && !!queueId,
@@ -167,13 +186,22 @@ export class DroneCommandQueueQuery {
           logger.debug('Fetching queue statistics');
           
           const url = '/api/drone-command-queues/statistics';
-          const response = await apiClient.get<QueueStatistics>(url);
+          const result = await apiClient.getWithResult<QueueStatistics>(url);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info('Successfully fetched queue statistics');
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to fetch queue statistics', { error });
-          throw new Error(error.response?.data?.message || 'Failed to fetch queue statistics');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch queue statistics',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       staleTime: 60 * 1000, // 1 minute
@@ -194,13 +222,22 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Creating command queue', { queueData });
           
-          const response = await apiClient.post('/api/drone-command-queues/data', queueData);
+          const result = await apiClient.postWithResult<DroneCommandQueue>('/api/drone-command-queues/data', queueData);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info('Successfully created command queue');
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to create command queue', { error, queueData });
-          throw new Error(error.response?.data?.message || 'Failed to create command queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create command queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: () => {
@@ -222,13 +259,22 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Updating command queue', { queueId, queueData });
           
-          const response = await apiClient.put(`/api/drone-command-queues/data/${queueId}`, queueData);
+          const result = await apiClient.putWithResult<DroneCommandQueue>(`/api/drone-command-queues/data/${queueId}`, queueData);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully updated command queue ${queueId}`);
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to update command queue', { error, queueId, queueData });
-          throw new Error(error.response?.data?.message || 'Failed to update command queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to update command queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
@@ -251,12 +297,21 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Deleting command queue', { queueId });
           
-          await apiClient.delete(`/api/drone-command-queues/data/${queueId}`);
+          const result = await apiClient.deleteWithResult(`/api/drone-command-queues/data/${queueId}`);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully deleted command queue ${queueId}`);
         } catch (error: any) {
           logger.error('Failed to delete command queue', { error, queueId });
-          throw new Error(error.response?.data?.message || 'Failed to delete command queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to delete command queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: () => {
@@ -278,13 +333,22 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Starting command queue', { queueId });
           
-          const response = await apiClient.post(`/api/drone-command-queues/${queueId}/start`);
+          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone-command-queues/${queueId}/start`);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully started command queue ${queueId}`);
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to start command queue', { error, queueId });
-          throw new Error(error.response?.data?.message || 'Failed to start command queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to start command queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
@@ -307,13 +371,22 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Pausing command queue', { queueId });
           
-          const response = await apiClient.post(`/api/drone-command-queues/${queueId}/pause`);
+          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone-command-queues/${queueId}/pause`);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully paused command queue ${queueId}`);
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to pause command queue', { error, queueId });
-          throw new Error(error.response?.data?.message || 'Failed to pause command queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to pause command queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
@@ -336,13 +409,22 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Resetting command queue', { queueId });
           
-          const response = await apiClient.post(`/api/drone-command-queues/${queueId}/reset`);
+          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone-command-queues/${queueId}/reset`);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully reset command queue ${queueId}`);
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to reset command queue', { error, queueId });
-          throw new Error(error.response?.data?.message || 'Failed to reset command queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to reset command queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
@@ -365,13 +447,22 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Adding command to queue', { queueId, command });
           
-          const response = await apiClient.post(`/api/drone-command-queues/${queueId}/commands`, command);
+          const result = await apiClient.postWithResult<DroneCommand>(`/api/drone-command-queues/${queueId}/commands`, command);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
           
           logger.info(`Successfully added command to queue ${queueId}`);
-          return response;
+          return result.data!;
         } catch (error: any) {
           logger.error('Failed to add command to queue', { error, queueId, command });
-          throw new Error(error.response?.data?.message || 'Failed to add command to queue');
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to add command to queue',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data, variables) => {

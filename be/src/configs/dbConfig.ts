@@ -24,6 +24,8 @@ import { DroneStatusModel } from '../models/drone/DroneStatusModel.js';
 import { DroneRealTimeStatusModel } from '../models/drone/DroneRealTimeStatusModel.js';
 // 匯入無人機指令模型用於指令管理
 import { DroneCommandModel } from '../models/drone/DroneCommandModel.js';
+// 匯入無人機指令佇列模型用於佇列管理
+import { DroneCommandQueueModel } from '../models/drone/DroneCommandQueueModel.js';
 // 匯入無人機指令歷史模型用於指令歷史管理
 import { DroneCommandsArchiveModel } from '../models/drone/DroneCommandsArchiveModel.js';
 // 匯入無人機位置歷史模型用於位置歷史管理
@@ -92,6 +94,6 @@ export const createSequelizeInstance = (): Sequelize => {
     // 展開資料庫配置物件的所有屬性
     ...config,
     // 註冊所有需要的模型到 Sequelize 實例中，包含 RBAC 模型、無人機相關模型和使用者偏好模型
-    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneRealTimeStatusModel, DroneCommandModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel, UserPreferenceModel],
+    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneRealTimeStatusModel, DroneCommandModel, DroneCommandQueueModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel, UserPreferenceModel],
   });
 };

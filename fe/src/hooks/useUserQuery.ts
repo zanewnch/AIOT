@@ -59,7 +59,7 @@ export class UserQuery {
           try {
             return JSON.parse(userStr);
           } catch (error) {
-            console.error('解析使用者資料失敗:', error);
+            logger.error('解析使用者資料失敗:', error);
             return null;
           }
         }
@@ -90,7 +90,7 @@ export class UserQuery {
               expiresAt: '',
             };
           } catch (error) {
-            console.error('解析會話資料失敗:', error);
+            logger.error('解析會話資料失敗:', error);
             return null;
           }
         }
@@ -161,23 +161,23 @@ export class UserQuery {
         try {
           logger.debug('Fetching RBAC users from API');
           
-          const response = await apiClient.get('/api/rbac/users');
-          const result = RequestResult.fromResponse<User[]>(response);
+          const result = await apiClient.getWithResult<User[]>('/api/rbac/users');
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
           logger.info(`Successfully fetched ${result.data?.length || 0} RBAC users`);
-          return result.unwrap();
+          return result.data || [];
         } catch (error: any) {
-          console.error('Failed to fetch RBAC users:', error);
+          logger.error('Failed to fetch RBAC users:', error);
           
-          throw {
+          const tableError: TableError = {
             message: error.response?.data?.message || 'Failed to fetch users',
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       staleTime: 5 * 60 * 1000, // 5分鐘
@@ -196,23 +196,23 @@ export class UserQuery {
         try {
           logger.debug('Fetching user roles from API');
           
-          const response = await apiClient.get('/api/rbac/user-roles');
-          const result = RequestResult.fromResponse<UserRole[]>(response);
+          const result = await apiClient.getWithResult<UserRole[]>('/api/rbac/user-roles');
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
           logger.info(`Successfully fetched ${result.data?.length || 0} user roles`);
-          return result.unwrap();
+          return result.data || [];
         } catch (error: any) {
-          console.error('Failed to fetch user roles:', error);
+          logger.error('Failed to fetch user roles:', error);
           
-          throw {
+          const tableError: TableError = {
             message: error.response?.data?.message || 'Failed to fetch user roles',
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       staleTime: 2 * 60 * 1000, // 2分鐘
@@ -232,14 +232,19 @@ export class UserQuery {
         try {
           logger.debug(`Updating user with ID: ${id}`, data);
           
-          const response = await apiClient.put(`/api/rbac/users/${id}`, data);
+          await apiClient.putWithResult(`/api/rbac/users/${id}`, data);
           
           logger.info(`Successfully updated user with ID: ${id}`);
           return { id, data };
         } catch (error: any) {
+          logger.error(`Failed to update user with ID: ${id}:`, error);
           
-          const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-          throw new Error(errorMsg);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Update failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: () => {
@@ -250,6 +255,3 @@ export class UserQuery {
     });
   }
 }
-
-
-

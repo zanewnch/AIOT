@@ -52,10 +52,9 @@ export class PermissionQuery {
         try {
           logger.debug('Fetching permissions from API');
           
-          const response = await apiClient.get('/api/rbac/permissions');
-          const result = RequestResult.fromResponse<Permission[]>(response);
+          const result = await apiClient.getWithResult<Permission[]>('/api/rbac/permissions');
           
-          if (result.isError()) {
+          if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
@@ -67,15 +66,16 @@ export class PermissionQuery {
             return [];
           }
           
-          return result.unwrap();
+          return result.data || [];
         } catch (error: any) {
-          console.error('Failed to fetch permissions:', error);
+          logger.error('Failed to fetch permissions:', error);
           
-          throw {
+          const tableError: TableError = {
             message: error.response?.data?.message || 'Failed to fetch permissions',
             status: error.response?.status,
             details: error.response?.data,
-          } as TableError;
+          };
+          throw tableError;
         }
       },
       staleTime: 10 * 60 * 1000,
@@ -95,14 +95,19 @@ export class PermissionQuery {
         try {
           logger.debug(`Updating permission with ID: ${id}`, data);
           
-          await apiClient.put(`/api/rbac/permissions/${id}`, data);
+          await apiClient.putWithResult(`/api/rbac/permissions/${id}`, data);
           
           logger.info(`Successfully updated permission with ID: ${id}`);
           return { id, data };
         } catch (error: any) {
+          logger.error(`Failed to update permission with ID: ${id}:`, error);
           
-          const errorMsg = error.response?.data?.message || error.message || 'Update failed';
-          throw new Error(errorMsg);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Update failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: () => {
@@ -112,6 +117,3 @@ export class PermissionQuery {
     });
   }
 }
-
-
-

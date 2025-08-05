@@ -270,3 +270,1449 @@
 2025-08-05 04:30:42.021 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
 2025-08-05 04:31:04.611 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
 2025-08-05 04:31:04.640 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:44:00.489 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:44:00.524 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:44:04.151 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:44:04.181 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:44:25.860 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:44:25.887 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:44:32.248 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:44:32.278 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:02.240 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:02.270 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:06.157 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:06.188 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:13.823 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:13.851 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:17.133 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:17.165 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:22.018 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:22.048 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:26.122 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:26.152 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:41.033 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:41.063 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:43.718 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:43.748 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:45:59.654 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:45:59.681 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:46:04.898 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 09:46:04.932 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 09:46:17.269 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 09:46:17.270 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 09:46:17.270 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 09:46:17.340 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 09:46:17.342 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 09:46:17.343 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 09:46:17.343 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 09:52:26.226 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 09:52:26.227 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 09:52:26.227 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 09:52:26.289 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 09:52:26.290 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 09:52:26.290 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 09:52:26.290 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 09:52:27.260 [AIOT-BE] INFO: Getting all commands archive with limit: 100 {"method":"GET","url":"/api/drone-commands-archive/data?limit=100&sortBy=issued_at&sortOrder=DESC","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 09:52:27.262 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":100}
+2025-08-05 09:52:27.263 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-05 09:52:27.263 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":100}
+2025-08-05 09:52:27.276 [AIOT-BE] INFO: Successfully fetched 10 commands archive records
+2025-08-05 09:52:27.277 [AIOT-BE] INFO: Successfully retrieved 10 commands archive records
+2025-08-05 09:52:27.279 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":10,"limit":100}
+2025-08-05 09:53:44.237 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 09:53:44.237 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 09:53:44.238 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 09:53:44.295 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 09:53:44.295 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 09:53:44.296 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 09:53:44.296 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 09:53:44.311 [AIOT-BE] INFO: Getting all commands archive with limit: 1 {"method":"GET","url":"/api/drone-commands-archive/data?limit=1","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-05 09:53:44.311 [AIOT-BE] INFO: Commands archive retrieval request received {"limit":1}
+2025-08-05 09:53:44.312 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":1}
+2025-08-05 09:53:44.312 [AIOT-BE] INFO: Fetching all drone commands archive data {"limit":1}
+2025-08-05 09:53:44.313 [AIOT-BE] INFO: Successfully fetched 1 commands archive records
+2025-08-05 09:53:44.313 [AIOT-BE] INFO: Successfully retrieved 1 commands archive records
+2025-08-05 09:53:44.314 [AIOT-BE] INFO: Commands archive retrieval completed successfully {"count":1,"limit":1}
+2025-08-05 10:00:52.703 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 10:00:52.704 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 10:00:52.704 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 10:00:52.765 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 10:00:52.766 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 10:00:52.766 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 10:00:52.767 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 10:01:03.662 [AIOT-BE] ERROR: Error in getDronePositionById {"id":"latest","error":{}}
+2025-08-05 10:01:03.667 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:03.667 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:01:03.668 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:01:03.668 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:01:03.674 [AIOT-BE] INFO: Getting command by ID: NaN {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:03.674 [AIOT-BE] INFO: Command by ID request received {"id":null}
+2025-08-05 10:01:03.674 [AIOT-BE] INFO: Getting command by ID {"id":null}
+2025-08-05 10:01:03.675 [AIOT-BE] ERROR: Error in getCommandById {"id":null,"error":{}}
+2025-08-05 10:01:03.675 [AIOT-BE] ERROR: Error in getCommandById {"id":"latest","error":{}}
+2025-08-05 10:01:03.688 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:01:03.689 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:01:03.691 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:01:04.736 [AIOT-BE] ERROR: Error in getDronePositionById {"id":"latest","error":{}}
+2025-08-05 10:01:04.750 [AIOT-BE] INFO: Getting command by ID: NaN {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:04.750 [AIOT-BE] INFO: Command by ID request received {"id":null}
+2025-08-05 10:01:04.750 [AIOT-BE] INFO: Getting command by ID {"id":null}
+2025-08-05 10:01:04.750 [AIOT-BE] ERROR: Error in getCommandById {"id":null,"error":{}}
+2025-08-05 10:01:04.751 [AIOT-BE] ERROR: Error in getCommandById {"id":"latest","error":{}}
+2025-08-05 10:01:06.861 [AIOT-BE] ERROR: Error in getDronePositionById {"id":"latest","error":{}}
+2025-08-05 10:01:06.871 [AIOT-BE] INFO: Getting command by ID: NaN {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:06.872 [AIOT-BE] INFO: Command by ID request received {"id":null}
+2025-08-05 10:01:06.872 [AIOT-BE] INFO: Getting command by ID {"id":null}
+2025-08-05 10:01:06.872 [AIOT-BE] ERROR: Error in getCommandById {"id":null,"error":{}}
+2025-08-05 10:01:06.872 [AIOT-BE] ERROR: Error in getCommandById {"id":"latest","error":{}}
+2025-08-05 10:01:35.686 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:35.686 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:01:35.696 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:35.697 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:01:36.629 [AIOT-BE] ERROR: Error in getDronePositionById {"id":"latest","error":{}}
+2025-08-05 10:01:36.635 [AIOT-BE] INFO: Getting command by ID: NaN {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:36.635 [AIOT-BE] INFO: Command by ID request received {"id":null}
+2025-08-05 10:01:36.636 [AIOT-BE] INFO: Getting command by ID {"id":null}
+2025-08-05 10:01:36.636 [AIOT-BE] ERROR: Error in getCommandById {"id":null,"error":{}}
+2025-08-05 10:01:36.636 [AIOT-BE] ERROR: Error in getCommandById {"id":"latest","error":{}}
+2025-08-05 10:01:36.641 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:36.641 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:01:36.642 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:01:36.642 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:01:36.644 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:01:36.644 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:01:36.644 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:01:46.069 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:46.070 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:01:46.076 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:46.076 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:01:47.033 [AIOT-BE] ERROR: Error in getDronePositionById {"id":"latest","error":{}}
+2025-08-05 10:01:47.036 [AIOT-BE] INFO: Getting command by ID: NaN {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:47.036 [AIOT-BE] INFO: Command by ID request received {"id":null}
+2025-08-05 10:01:47.037 [AIOT-BE] INFO: Getting command by ID {"id":null}
+2025-08-05 10:01:47.037 [AIOT-BE] ERROR: Error in getCommandById {"id":null,"error":{}}
+2025-08-05 10:01:47.037 [AIOT-BE] ERROR: Error in getCommandById {"id":"latest","error":{}}
+2025-08-05 10:01:47.042 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:01:47.042 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:01:47.042 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:01:47.042 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:01:47.044 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:01:47.044 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:01:47.045 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:01:53.527 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 10:01:53.560 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 10:01:58.873 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 10:01:58.907 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 10:02:15.808 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 10:02:15.809 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 10:02:15.810 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 10:02:15.875 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 10:02:15.877 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 10:02:15.878 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 10:02:15.878 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 10:02:15.893 [AIOT-BE] ERROR: Error in getDronePositionById {"id":"latest","error":{}}
+2025-08-05 10:02:24.926 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 10:02:24.970 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 10:02:30.887 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 10:02:30.929 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 10:02:38.170 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0","userId":1}
+2025-08-05 10:02:38.171 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:02:38.171 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:02:38.171 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:02:38.176 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:02:38.177 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:02:38.179 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:02:42.815 [AIOT-BE] ERROR: Error in getLatestDronePositions {"error":{}}
+2025-08-05 10:02:54.296 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-05 10:02:54.328 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-05 10:02:57.222 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 10:02:57.223 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 10:02:57.224 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 10:02:57.287 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 10:02:57.289 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 10:02:57.289 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 10:02:57.290 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 10:02:57.478 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:02:57.478 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:02:57.478 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:02:57.487 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:02:57.489 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:02:57.492 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:02:57.494 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:02:57.494 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:02:57.494 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:02:57.494 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:02:57.497 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:02:57.497 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:02:57.497 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:02:57.497 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:02:57.500 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:02:57.501 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:02:57.501 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:02:57.503 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:02:57.503 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:02:57.504 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:03:02.599 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 10:03:02.599 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 10:03:02.599 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 10:03:02.655 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 10:03:02.657 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 10:03:02.658 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 10:03:02.658 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"curl/8.5.0"}
+2025-08-05 10:03:02.670 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:03:02.670 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:03:02.671 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:03:02.672 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:03:02.673 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:03:02.674 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:11:58.582 [AIOT-BE] INFO: Login attempt for user: admin {"method":"POST","url":"/api/auth/login","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 10:11:58.583 [AIOT-BE] INFO: Starting login authentication for user: admin, IP: ::ffff:172.18.0.1
+2025-08-05 10:11:58.583 [AIOT-BE] INFO: Login attempt for username: admin from IP: ::ffff:172.18.0.1
+2025-08-05 10:11:58.648 [AIOT-BE] INFO: Cleared 1 sessions for user 1
+2025-08-05 10:11:58.649 [AIOT-BE] INFO: Login successful for user: admin (ID: 1)
+2025-08-05 10:11:58.649 [AIOT-BE] INFO: Login authentication successful for user: admin, userID: 1, rememberMe: false
+2025-08-05 10:11:58.651 [AIOT-BE] INFO: Auth event: login for admin - SUCCESS {"event":"login","username":"admin","success":true,"userId":1,"rememberMe":false,"ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+2025-08-05 10:11:58.957 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:11:58.958 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:11:58.958 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:11:58.961 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:11:58.961 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:11:58.961 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:11:58.961 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:11:58.967 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:11:58.967 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:11:58.967 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:11:58.967 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:11:58.970 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:11:58.971 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:11:58.971 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:11:58.975 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:11:58.975 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:11:58.976 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:11:58.978 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:11:58.979 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:11:58.979 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:12:17.869 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:12:17.869 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:12:17.870 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:12:17.875 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:12:17.875 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:12:17.876 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:12:17.877 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:12:17.882 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:12:17.882 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:12:17.883 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:12:17.887 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:12:17.888 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:12:17.889 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:12:27.447 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:12:27.447 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:12:27.447 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:12:27.450 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:12:27.450 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:12:27.451 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:12:31.276 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:12:31.276 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:12:31.287 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:12:31.287 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:12:32.181 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:12:32.181 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:12:32.182 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:12:32.182 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:12:32.187 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:12:32.187 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:12:32.187 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:12:32.191 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:12:32.191 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:12:32.191 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:12:32.192 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:12:32.195 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:12:32.196 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:12:32.197 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:12:32.201 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:12:32.202 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:12:32.203 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:12:32.204 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:12:32.205 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:12:32.205 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:12:45.838 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:12:45.839 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:12:45.839 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:12:45.841 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:12:45.841 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:12:45.842 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:12:55.002 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:12:55.002 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:12:55.002 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:12:55.002 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:12:55.004 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:12:55.004 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:12:55.005 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:13:05.438 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:13:05.438 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:13:05.445 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:13:05.445 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:13:06.323 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:13:06.323 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:13:06.323 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:13:06.327 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:13:06.327 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:13:06.327 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:13:06.327 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:13:06.330 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:13:06.330 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:13:06.330 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:13:06.330 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:13:06.333 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:13:06.334 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:13:06.334 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:13:06.337 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:13:06.338 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:13:06.339 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:13:06.340 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:13:06.340 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:13:06.341 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:13:18.769 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:13:18.770 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:13:18.770 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:13:18.772 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:13:18.772 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:13:18.773 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:13:48.870 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:13:48.870 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:13:48.871 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:13:48.871 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:13:48.872 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:13:48.872 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:13:48.872 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:13:48.874 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:13:48.875 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:13:48.875 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:13:48.876 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:13:48.877 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:13:48.877 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:14:19.924 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:14:19.924 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:14:19.924 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:14:19.924 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:14:19.925 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:14:19.925 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:14:19.925 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:14:19.927 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:14:19.928 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:14:19.928 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:14:19.929 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:14:19.929 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:14:19.930 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:14:51.010 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:14:51.011 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:14:51.011 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:14:51.011 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:14:51.012 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:14:51.012 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:14:51.012 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:14:51.013 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:14:51.015 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:14:51.015 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:14:51.016 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:14:51.017 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:14:51.017 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:15:22.114 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:15:22.115 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:15:22.115 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:15:22.115 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:15:22.118 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:15:22.118 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:15:22.118 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:15:22.122 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:15:22.122 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:15:22.123 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:15:22.124 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:15:22.124 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:15:22.125 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:15:26.282 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:15:26.282 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:15:26.282 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:15:26.283 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:15:26.284 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:15:26.284 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:15:26.285 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:15:57.357 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:15:57.357 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:15:57.357 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:15:57.358 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:15:57.358 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:15:57.358 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:15:57.358 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:15:57.360 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:15:57.360 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:15:57.361 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:15:57.362 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:15:57.362 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:15:57.362 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:16:00.462 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:00.462 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:16:00.468 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:00.468 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:16:01.395 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:01.396 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:16:01.396 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:16:01.396 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:16:01.397 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:16:01.397 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:16:01.397 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:16:01.398 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:16:01.399 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:16:01.399 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:16:01.402 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:16:01.402 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:16:01.403 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:16:01.403 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:01.403 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:16:01.403 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:16:01.404 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:16:01.405 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:16:01.405 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:16:01.406 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:16:31.646 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:31.647 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:16:31.647 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:16:31.648 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:16:31.649 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:16:31.649 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:16:31.649 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:16:31.650 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:16:31.651 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:16:31.651 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:16:31.652 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:16:31.653 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:16:31.654 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:16:54.453 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:54.453 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:16:54.463 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:54.463 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:16:55.468 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:16:55.468 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:16:55.468 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:16:55.473 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:55.473 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:16:55.473 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:16:55.473 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:16:55.477 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:16:55.477 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:16:55.477 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:16:55.477 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:16:55.479 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:16:55.479 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:16:55.480 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:16:55.482 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:16:55.482 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:16:55.483 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:16:55.483 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:16:55.483 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:16:55.484 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:17:26.495 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:17:26.496 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:17:26.496 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:17:26.499 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:17:26.499 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:17:26.499 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:17:26.499 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:17:26.503 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:17:26.503 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:17:26.504 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:17:26.505 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:17:26.506 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:17:26.507 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:17:42.265 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:17:42.265 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:17:42.266 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:17:42.270 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:17:42.270 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:17:42.270 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:17:42.270 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:17:42.280 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:17:42.280 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:17:42.280 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:17:42.280 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:17:42.282 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:17:42.282 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:17:42.282 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:17:42.284 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:17:42.284 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:17:42.284 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:17:42.286 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:17:42.286 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:17:42.286 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:18:13.001 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:18:13.001 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:18:13.002 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:18:13.002 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:18:13.002 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:18:13.002 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:18:13.002 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:18:13.004 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:18:13.004 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:18:13.005 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:18:13.005 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:18:13.005 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:18:13.006 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:18:44.222 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:18:44.222 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:18:44.222 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:18:44.223 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:18:44.224 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:18:44.224 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:18:44.224 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:18:44.225 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:18:44.226 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:18:44.226 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:18:44.227 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:18:44.227 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:18:44.227 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:19:15.246 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:19:15.246 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:19:15.246 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:19:15.246 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:19:15.247 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:19:15.247 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:19:15.247 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:19:15.248 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:19:15.249 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:19:15.250 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:19:15.251 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:19:15.251 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:19:15.252 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:19:46.125 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:19:46.125 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:19:46.125 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:19:46.125 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:19:46.127 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:19:46.128 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:19:46.128 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:19:46.129 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:19:46.129 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:19:46.129 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:19:46.130 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:19:46.130 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:19:46.131 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:20:17.278 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:20:17.279 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:20:17.279 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:20:17.279 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:20:17.280 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:20:17.280 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:20:17.280 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:20:17.281 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:20:17.282 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:20:17.282 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:20:17.284 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:20:17.284 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:20:17.285 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:20:48.274 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:20:48.274 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:20:48.274 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:20:48.275 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:20:48.275 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:20:48.275 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:20:48.275 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:20:48.276 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:20:48.277 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:20:48.277 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:20:48.278 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:20:48.279 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:20:48.280 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:21:19.667 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:21:19.668 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:21:19.668 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:21:19.672 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:21:19.672 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:21:19.672 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:21:19.672 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:21:19.679 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:21:19.679 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:21:19.680 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:21:19.686 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:21:19.687 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:21:19.687 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:21:50.335 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:21:50.335 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:21:50.335 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:21:50.336 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:21:50.336 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:21:50.336 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:21:50.336 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:21:50.337 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:21:50.337 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:21:50.337 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:21:50.339 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:21:50.340 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:21:50.341 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:22:21.380 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:22:21.380 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:22:21.380 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:22:21.381 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:22:21.382 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:22:21.382 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:22:21.385 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:22:21.386 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:22:21.386 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:22:21.386 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:22:21.388 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:22:21.388 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:22:21.389 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:22:52.387 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:22:52.387 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:22:52.387 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:22:52.389 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:22:52.389 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:22:52.389 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:22:52.390 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:22:52.390 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:22:52.391 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:22:52.391 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:22:52.392 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:22:52.392 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:22:52.392 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:23:23.409 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:23:23.410 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:23:23.410 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:23:23.411 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:23:23.411 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:23:23.411 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:23:23.411 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:23:23.413 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:23:23.413 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:23:23.413 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:23:23.414 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:23:23.414 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:23:23.415 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:23:54.374 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:23:54.374 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:23:54.374 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:23:54.375 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:23:54.375 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:23:54.375 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:23:54.375 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:23:54.376 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:23:54.377 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:23:54.378 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:23:54.378 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:23:54.379 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:23:54.379 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:24:25.287 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:24:25.287 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:24:25.287 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:24:25.288 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:24:25.288 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:24:25.288 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:24:25.289 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:24:25.291 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:24:25.291 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:24:25.291 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:24:25.292 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:24:25.292 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:24:25.293 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:24:56.408 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:24:56.408 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:24:56.408 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:24:56.409 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:24:56.409 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:24:56.409 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:24:56.409 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:24:56.410 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:24:56.411 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:24:56.412 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:24:56.412 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:24:56.413 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:24:56.413 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:25:27.413 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:25:27.413 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:25:27.413 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:25:27.414 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:25:27.415 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:25:27.415 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:25:27.415 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:25:27.417 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:25:27.418 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:25:27.418 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:25:27.419 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:25:27.419 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:25:27.420 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:25:58.443 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:25:58.443 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:25:58.443 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:25:58.444 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:25:58.444 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:25:58.444 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:25:58.444 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:25:58.445 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:25:58.446 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:25:58.446 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:25:58.447 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:25:58.447 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:25:58.447 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:26:29.472 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:26:29.472 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:26:29.472 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:26:29.473 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:26:29.473 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:26:29.473 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:26:29.473 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:26:29.474 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:26:29.475 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:26:29.475 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:26:29.476 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:26:29.476 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:26:29.477 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:27:00.481 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:27:00.481 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:27:00.481 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:27:00.482 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:27:00.482 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:27:00.482 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:27:00.482 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:27:00.484 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:27:00.484 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:27:00.485 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:27:00.485 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:27:00.486 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:27:00.486 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:27:31.470 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:27:31.470 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:27:31.470 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:27:31.471 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:27:31.471 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:27:31.471 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:27:31.471 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:27:31.473 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:27:31.473 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:27:31.474 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:27:31.474 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:27:31.474 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:27:31.475 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:28:02.161 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:28:02.161 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:28:02.161 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:28:02.162 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:28:02.162 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:28:02.162 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:28:02.162 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:28:02.164 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:28:02.164 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:28:02.165 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:28:02.166 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:28:02.166 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:28:02.166 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:28:33.123 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:28:33.123 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:28:33.123 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:28:33.124 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:28:33.124 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:28:33.124 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:28:33.124 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:28:33.126 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:28:33.126 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:28:33.127 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:28:33.127 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:28:33.127 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:28:33.128 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:29:04.102 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:29:04.102 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:29:04.102 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:29:04.102 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:29:04.103 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:29:04.103 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:29:04.103 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:29:04.104 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:29:04.105 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:29:04.106 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:29:04.106 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:29:04.106 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:29:04.107 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:29:35.131 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:29:35.132 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:29:35.132 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:29:35.132 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:29:35.133 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:29:35.133 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:29:35.133 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:29:35.139 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:29:35.139 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:29:35.139 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:29:35.141 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:29:35.141 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:29:35.141 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:30:06.085 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:30:06.085 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:30:06.085 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:30:06.085 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:30:06.086 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:30:06.086 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:30:06.087 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:30:06.089 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:30:06.089 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:30:06.089 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:30:06.090 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:30:06.090 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:30:06.090 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:30:33.292 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:30:33.292 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:30:33.292 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:30:33.295 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:30:33.295 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:30:33.295 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:30:33.295 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:30:33.298 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:30:33.299 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:30:33.299 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:30:33.299 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:30:33.301 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:30:33.301 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:30:33.302 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:30:33.304 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:30:33.304 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:30:33.305 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:30:33.306 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:30:33.306 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:30:33.307 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:31:04.139 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:31:04.140 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:31:04.140 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:31:04.141 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:31:04.141 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:31:04.141 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:31:04.141 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:31:04.142 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:31:04.143 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:31:04.143 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:31:04.146 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:31:04.147 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:31:04.148 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:31:35.102 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:31:35.103 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:31:35.103 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:31:35.104 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:31:35.104 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:31:35.104 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:31:35.104 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:31:35.106 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:31:35.106 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:31:35.106 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:31:35.107 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:31:35.107 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:31:35.108 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:32:06.110 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:32:06.110 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:32:06.110 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:32:06.110 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:32:06.112 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:32:06.112 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:32:06.112 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:32:06.113 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:32:06.114 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:32:06.115 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:32:06.116 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:32:06.116 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:32:06.118 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:32:37.080 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:32:37.081 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:32:37.081 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:32:37.081 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:32:37.082 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:32:37.082 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:32:37.082 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:32:37.083 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:32:37.084 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:32:37.084 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:32:37.085 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:32:37.086 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:32:37.086 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:33:08.110 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:33:08.110 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:33:08.111 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:33:08.111 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:33:08.112 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:33:08.112 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:33:08.112 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:33:08.114 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:33:08.114 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:33:08.114 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:33:08.115 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:33:08.115 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:33:08.116 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:33:39.114 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:33:39.114 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:33:39.114 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:33:39.114 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:33:39.115 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:33:39.115 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:33:39.115 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:33:39.117 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:33:39.118 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:33:39.119 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:33:39.119 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:33:39.119 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:33:39.120 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:34:10.140 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:34:10.141 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:34:10.141 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:34:10.142 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:34:10.142 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:34:10.142 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:34:10.142 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:34:10.143 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:34:10.144 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:34:10.144 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:34:10.145 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:34:10.145 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:34:10.146 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:34:41.159 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:34:41.159 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:34:41.159 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:34:41.160 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:34:41.160 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:34:41.160 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:34:41.161 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:34:41.161 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:34:41.162 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:34:41.163 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:34:41.163 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:34:41.163 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:34:41.164 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:35:12.167 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:35:12.168 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:35:12.168 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:35:12.171 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:35:12.171 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:35:12.171 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:35:12.172 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:35:12.173 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:35:12.173 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:35:12.174 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:35:12.175 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:35:12.175 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:35:12.175 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:35:43.186 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:35:43.187 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:35:43.187 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:35:43.188 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:35:43.188 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:35:43.188 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:35:43.188 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:35:43.189 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:35:43.190 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:35:43.190 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:35:43.191 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:35:43.191 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:35:43.192 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:36:14.208 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:36:14.208 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:36:14.208 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:36:14.209 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:36:14.209 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:36:14.209 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:36:14.209 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:36:14.211 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:36:14.212 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:36:14.212 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:36:14.213 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:36:14.213 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:36:14.214 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:36:45.211 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:36:45.212 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:36:45.212 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:36:45.212 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:36:45.213 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:36:45.213 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:36:45.213 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:36:45.214 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:36:45.214 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:36:45.215 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:36:45.217 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:36:45.217 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:36:45.218 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:37:16.239 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:37:16.239 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:37:16.239 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:37:16.240 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:37:16.240 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:37:16.240 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:37:16.241 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:37:16.243 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:37:16.243 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:37:16.244 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:37:16.244 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:37:16.245 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:37:16.245 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:37:47.216 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:37:47.216 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:37:47.216 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:37:47.218 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:37:47.218 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:37:47.218 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:37:47.218 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:37:47.219 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:37:47.220 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:37:47.220 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:37:47.221 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:37:47.221 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:37:47.222 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:38:18.241 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:38:18.241 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:38:18.241 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:38:18.244 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:38:18.245 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:38:18.245 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:38:18.245 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:38:18.247 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:38:18.247 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:38:18.248 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:38:18.249 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:38:18.249 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:38:18.249 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:38:49.301 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:38:49.301 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:38:49.301 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:38:49.302 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:38:49.302 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:38:49.302 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:38:49.303 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:38:49.304 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:38:49.304 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:38:49.305 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:38:49.305 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:38:49.306 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:38:49.306 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:39:20.301 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:39:20.301 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:39:20.301 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:39:20.301 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:39:20.302 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:39:20.302 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:39:20.303 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:39:20.303 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:39:20.304 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:39:20.305 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:39:20.305 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:39:20.306 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:39:20.306 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:39:51.015 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:39:51.015 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:39:51.015 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:39:51.016 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:39:51.018 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:39:51.018 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:39:51.018 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:39:51.020 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:39:51.020 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:39:51.021 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:39:51.021 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:39:51.022 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:39:51.022 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:40:22.349 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:40:22.349 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:40:22.349 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:40:22.350 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:40:22.350 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:40:22.350 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:40:22.350 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:40:22.353 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:40:22.353 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:40:22.354 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:40:22.354 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:40:22.355 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:40:22.355 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:40:53.281 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:40:53.281 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:40:53.281 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:40:53.281 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:40:53.285 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:40:53.285 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:40:53.285 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:40:53.287 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:40:53.288 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:40:53.288 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:40:53.289 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:40:53.291 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:40:53.291 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:41:24.088 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:41:24.088 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:41:24.088 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:41:24.088 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:41:24.091 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:41:24.091 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:41:24.091 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:41:24.092 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:41:24.092 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:41:24.092 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:41:24.094 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:41:24.094 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:41:24.094 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:41:55.066 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:41:55.066 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:41:55.066 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:41:55.068 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:41:55.068 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:41:55.068 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:41:55.069 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:41:55.070 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:41:55.070 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:41:55.071 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:41:55.071 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:41:55.072 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:41:55.072 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:42:26.053 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:42:26.054 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:42:26.054 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:42:26.054 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:42:26.054 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:42:26.055 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:42:26.055 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:42:26.056 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:42:26.056 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:42:26.057 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:42:26.057 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:42:26.057 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:42:26.058 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:42:57.053 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:42:57.053 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:42:57.053 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:42:57.053 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:42:57.054 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:42:57.054 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:42:57.054 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:42:57.055 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:42:57.056 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:42:57.056 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:42:57.057 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:42:57.057 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:42:57.057 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:43:28.030 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:43:28.030 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:43:28.030 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:43:28.030 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:43:28.031 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:43:28.031 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:43:28.032 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:43:28.034 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:43:28.034 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:43:28.035 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:43:28.036 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:43:28.036 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:43:28.037 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:43:59.002 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:43:59.003 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:43:59.003 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:43:59.003 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:43:59.003 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:43:59.004 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:43:59.004 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:43:59.005 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:43:59.005 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:43:59.006 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:43:59.006 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:43:59.007 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:43:59.007 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:44:30.040 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:44:30.040 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:44:30.040 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:44:30.041 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:44:30.041 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:44:30.041 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:44:30.041 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:44:30.043 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:44:30.043 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:44:30.043 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:44:30.044 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:44:30.044 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:44:30.044 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:45:01.050 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:45:01.050 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:45:01.050 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:45:01.051 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:45:01.051 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:45:01.051 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:45:01.051 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:45:01.052 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:45:01.052 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:45:01.053 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:45:01.054 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:45:01.054 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:45:01.055 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:45:32.059 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:45:32.059 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:45:32.059 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:45:32.059 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:45:32.060 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:45:32.060 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:45:32.060 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:45:32.061 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:45:32.061 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:45:32.062 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:45:32.063 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:45:32.063 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:45:32.064 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:46:03.057 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:46:03.057 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:46:03.057 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:46:03.057 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:46:03.058 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:46:03.058 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:46:03.058 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:46:03.059 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:46:03.059 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:46:03.060 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:46:03.060 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:46:03.061 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:46:03.062 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:46:34.085 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:46:34.085 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:46:34.085 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:46:34.085 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:46:34.086 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:46:34.086 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:46:34.086 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:46:34.088 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:46:34.088 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:46:34.089 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:46:34.089 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:46:34.089 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:46:34.090 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:47:05.090 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:47:05.091 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:47:05.091 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:47:05.091 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:47:05.092 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:47:05.092 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:47:05.092 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:47:05.093 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:47:05.094 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:47:05.094 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:47:05.095 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:47:05.095 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:47:05.095 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:47:36.104 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:47:36.104 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:47:36.105 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:47:36.105 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:47:36.106 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:47:36.106 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:47:36.106 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:47:36.108 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:47:36.109 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:47:36.110 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:47:36.110 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:47:36.111 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:47:36.111 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:48:07.109 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:48:07.109 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:48:07.109 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:48:07.109 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:48:07.110 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:48:07.110 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:48:07.110 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:48:07.112 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:48:07.112 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:48:07.112 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:48:07.113 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:48:07.113 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:48:07.113 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:48:38.131 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:48:38.131 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:48:38.131 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:48:38.131 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:48:38.132 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:48:38.132 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:48:38.132 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:48:38.133 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:48:38.134 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:48:38.134 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:48:38.135 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:48:38.135 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:48:38.135 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:49:09.106 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:49:09.106 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:49:09.106 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:49:09.106 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:49:09.107 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:49:09.107 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:49:09.107 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:49:09.109 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:49:09.109 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:49:09.110 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:49:09.110 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:49:09.110 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:49:09.111 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:49:40.103 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:49:40.104 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:49:40.104 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:49:40.104 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:49:40.108 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:49:40.108 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:49:40.109 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:49:40.110 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:49:40.111 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:49:40.111 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:49:40.112 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:49:40.112 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:49:40.113 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:50:11.159 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:50:11.159 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:50:11.159 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:50:11.159 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:50:11.162 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:50:11.162 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:50:11.162 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:50:11.163 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:50:11.163 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:50:11.164 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:50:11.165 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:50:11.166 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:50:11.166 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:50:42.176 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:50:42.176 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:50:42.176 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:50:42.177 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:50:42.177 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:50:42.177 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:50:42.178 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:50:42.178 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:50:42.179 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:50:42.179 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:50:42.180 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:50:42.180 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:50:42.181 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:51:13.185 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:51:13.185 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:51:13.185 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:51:13.186 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:51:13.186 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:51:13.186 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:51:13.186 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:51:13.188 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:51:13.188 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:51:13.188 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:51:13.190 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:51:13.190 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:51:13.191 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:51:44.204 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:51:44.205 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:51:44.205 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:51:44.206 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:51:44.206 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:51:44.206 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:51:44.206 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:51:44.208 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:51:44.208 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:51:44.208 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:51:44.209 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:51:44.209 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:51:44.210 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:52:15.214 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:52:15.214 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:52:15.215 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:52:15.215 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:52:15.215 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:52:15.215 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:52:15.216 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:52:15.217 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:52:15.217 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:52:15.218 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:52:15.218 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:52:15.218 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:52:15.219 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:52:46.222 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:52:46.222 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:52:46.223 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:52:46.223 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:52:46.224 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:52:46.224 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:52:46.224 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:52:46.225 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:52:46.226 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:52:46.226 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:52:46.227 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:52:46.227 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:52:46.228 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:53:17.181 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:53:17.182 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:53:17.182 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:53:17.183 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:53:17.183 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:53:17.183 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:53:17.183 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:53:17.185 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:53:17.186 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:53:17.187 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:53:17.187 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:53:17.188 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:53:17.188 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:53:21.369 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:53:21.369 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:53:21.369 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:53:21.370 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:53:21.371 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:53:21.371 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:53:21.372 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:53:34.694 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:53:34.694 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:53:34.701 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:53:34.702 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:53:35.464 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:53:35.465 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:53:35.465 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:53:35.469 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:53:35.469 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:53:35.470 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:53:35.470 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:53:35.473 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:53:35.473 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:53:35.473 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:53:35.473 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:53:35.474 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:53:35.475 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:53:35.476 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:53:35.477 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:53:35.477 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:53:35.478 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:53:35.478 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:53:35.478 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:53:35.479 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 10:54:06.083 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:54:06.083 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:54:06.083 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:54:06.086 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:54:06.087 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:54:06.087 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:54:06.087 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:54:06.092 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:54:06.093 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:54:06.093 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:54:06.099 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:54:06.099 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:54:06.100 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:54:09.086 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:54:09.087 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:54:09.092 [AIOT-BE] INFO: Get current user info for: admin {"method":"GET","url":"/api/auth/me","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:54:09.092 [AIOT-BE] INFO: Successfully retrieved user info for: admin, userID: 1
+2025-08-05 10:54:09.954 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 10:54:09.954 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 10:54:09.954 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 10:54:09.955 [AIOT-BE] INFO: Getting latest commands with limit: 20 {"method":"GET","url":"/api/drone-commands/data/latest","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:54:09.955 [AIOT-BE] INFO: Latest commands request received {"limit":20}
+2025-08-05 10:54:09.955 [AIOT-BE] INFO: Getting latest commands {"limit":20}
+2025-08-05 10:54:09.955 [AIOT-BE] INFO: Fetching latest drone commands {"limit":20}
+2025-08-05 10:54:09.956 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 10:54:09.956 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 10:54:09.957 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 10:54:09.958 [AIOT-BE] INFO: Successfully fetched 12 latest commands
+2025-08-05 10:54:09.958 [AIOT-BE] INFO: Successfully retrieved 12 latest commands
+2025-08-05 10:54:09.959 [AIOT-BE] INFO: Latest commands retrieval completed successfully {"count":12,"limit":20}
+2025-08-05 10:54:09.964 [AIOT-BE] INFO: Getting all drone status data {"method":"GET","url":"/api/drone-status/data","ip":"::ffff:172.18.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":1}
+2025-08-05 10:54:09.964 [AIOT-BE] INFO: Drone status data retrieval request received
+2025-08-05 10:54:09.965 [AIOT-BE] INFO: Getting all drone status data
+2025-08-05 10:54:09.965 [AIOT-BE] INFO: Fetching all drone status data
+2025-08-05 10:54:09.968 [AIOT-BE] INFO: Successfully fetched 5 drone status records
+2025-08-05 10:54:09.969 [AIOT-BE] INFO: Retrieved 5 drone status records
+2025-08-05 10:54:09.969 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}

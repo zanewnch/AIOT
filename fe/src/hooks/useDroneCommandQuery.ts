@@ -18,6 +18,10 @@ import {
   CommandTypeStatistics,
   DroneCommandSummary,
 } from '../types/droneCommand';
+import type { TableError } from '../types/table';
+import { createLogger } from '../configs/loggerConfig';
+
+const logger = createLogger('useDroneCommandQuery');
 
 /**
  * DroneCommandQuery - 無人機指令查詢服務類
@@ -68,14 +72,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS,
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get('/api/drone-commands/data');
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-commands/data');
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch all drone commands', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch all drone commands',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 30 * 1000,
       gcTime: 5 * 60 * 1000,
@@ -91,14 +105,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMAND_BY_ID(id),
       queryFn: async (): Promise<DroneCommand> => {
-        const response = await apiClient.get(`/api/drone-commands/data/${id}`);
-        const result = RequestResult.fromResponse<DroneCommand>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/${id}`);
+          const result = RequestResult.fromResponse<DroneCommand>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone command with ID: ${id}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone command with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!id,
       staleTime: 30 * 1000,
@@ -114,14 +138,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get(`/api/drone-commands/data/drone/${droneId}`);
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/drone/${droneId}`);
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone commands for drone ID: ${droneId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone commands for drone ID: ${droneId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!droneId,
       staleTime: 30 * 1000,
@@ -137,14 +171,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS_BY_STATUS(status),
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get(`/api/drone-commands/data/status/${status}`);
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/status/${status}`);
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone commands with status: ${status}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone commands with status: ${status}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!status,
       staleTime: 30 * 1000,
@@ -160,14 +204,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS_BY_TYPE(type),
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get(`/api/drone-commands/data/type/${type}`);
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/type/${type}`);
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone commands with type: ${type}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone commands with type: ${type}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!type,
       staleTime: 30 * 1000,
@@ -183,14 +237,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS_BY_USER(userId),
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get(`/api/drone-commands/data/issued-by/${userId}`);
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/issued-by/${userId}`);
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone commands for user ID: ${userId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone commands for user ID: ${userId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!userId,
       staleTime: 30 * 1000,
@@ -206,14 +270,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: ['droneCommands', 'dateRange', dateRange],
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get('/api/drone-commands/data/date-range', { params: dateRange! });
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-commands/data/date-range', { params: dateRange! });
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch drone commands by date range', { error, dateRange });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch drone commands by date range',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!dateRange,
       staleTime: 30 * 1000,
@@ -229,14 +303,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.PENDING_COMMANDS(droneId),
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get(`/api/drone-commands/data/drone/${droneId}/pending`);
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/drone/${droneId}/pending`);
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch pending drone commands for drone ID: ${droneId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch pending drone commands for drone ID: ${droneId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!droneId,
       staleTime: 15 * 1000,
@@ -254,14 +338,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.EXECUTING_COMMAND(droneId),
       queryFn: async (): Promise<DroneCommand | null> => {
-        const response = await apiClient.get(`/api/drone-commands/data/drone/${droneId}/executing`);
-        const result = RequestResult.fromResponse<DroneCommand | null>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/data/drone/${droneId}/executing`);
+          const result = RequestResult.fromResponse<DroneCommand | null>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch executing drone command for drone ID: ${droneId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch executing drone command for drone ID: ${droneId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!droneId,
       staleTime: 10 * 1000,
@@ -279,14 +373,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS,
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get('/api/drone-commands/data/latest');
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-commands/data/latest');
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch latest drone commands', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch latest drone commands',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 15 * 1000,
       gcTime: 5 * 60 * 1000,
@@ -303,14 +407,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.FAILED_COMMANDS,
       queryFn: async (): Promise<DroneCommand[]> => {
-        const response = await apiClient.get('/api/drone-commands/data/failed');
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-commands/data/failed');
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch failed drone commands', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch failed drone commands',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 60 * 1000,
       gcTime: 10 * 60 * 1000,
@@ -325,14 +439,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.COMMAND_STATISTICS,
       queryFn: async (): Promise<CommandStatistics> => {
-        const response = await apiClient.get('/api/drone-commands/statistics');
-        const result = RequestResult.fromResponse<CommandStatistics>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-commands/statistics');
+          const result = RequestResult.fromResponse<CommandStatistics>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch drone command statistics', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch drone command statistics',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 60 * 1000,
       gcTime: 10 * 60 * 1000,
@@ -348,14 +472,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.COMMAND_TYPE_STATISTICS,
       queryFn: async (): Promise<CommandTypeStatistics> => {
-        const response = await apiClient.get('/api/drone-commands/statistics/types');
-        const result = RequestResult.fromResponse<CommandTypeStatistics>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get('/api/drone-commands/statistics/types');
+          const result = RequestResult.fromResponse<CommandTypeStatistics>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to fetch drone command type statistics', { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to fetch drone command type statistics',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       staleTime: 60 * 1000,
       gcTime: 10 * 60 * 1000,
@@ -370,14 +504,24 @@ export class DroneCommandQuery {
     return useQuery({
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMAND_SUMMARY(droneId),
       queryFn: async (): Promise<DroneCommandSummary> => {
-        const response = await apiClient.get(`/api/drone-commands/summary/${droneId}`);
-        const result = RequestResult.fromResponse<DroneCommandSummary>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.get(`/api/drone-commands/summary/${droneId}`);
+          const result = RequestResult.fromResponse<DroneCommandSummary>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to fetch drone command summary for drone ID: ${droneId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to fetch drone command summary for drone ID: ${droneId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       enabled: enabled && !!droneId,
       staleTime: 60 * 1000,
@@ -394,14 +538,24 @@ export class DroneCommandQuery {
     
     return useMutation({
       mutationFn: async (commandData: Partial<DroneCommand>): Promise<DroneCommand> => {
-        const response = await apiClient.post('/api/drone-commands/data', commandData);
-        const result = RequestResult.fromResponse<DroneCommand>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/drone-commands/data', commandData);
+          const result = RequestResult.fromResponse<DroneCommand>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to create drone command', { error, commandData });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create drone command',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: () => {
         // 刷新相關查詢
@@ -419,14 +573,24 @@ export class DroneCommandQuery {
     
     return useMutation({
       mutationFn: async (commands: Partial<DroneCommand>[]): Promise<DroneCommand[]> => {
-        const response = await apiClient.post('/api/drone-commands/data/batch', { commands });
-        const result = RequestResult.fromResponse<DroneCommand[]>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.post('/api/drone-commands/data/batch', { commands });
+          const result = RequestResult.fromResponse<DroneCommand[]>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error('Failed to create batch drone commands', { error, commands });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create batch drone commands',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: () => {
         // 刷新相關查詢
@@ -444,14 +608,24 @@ export class DroneCommandQuery {
     
     return useMutation({
       mutationFn: async (commandId: string): Promise<DroneCommand> => {
-        const response = await apiClient.put(`/api/drone-commands/${commandId}/execute`);
-        const result = RequestResult.fromResponse<DroneCommand>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.put(`/api/drone-commands/${commandId}/execute`);
+          const result = RequestResult.fromResponse<DroneCommand>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to execute drone command with ID: ${commandId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to execute drone command with ID: ${commandId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: () => {
         // 刷新相關查詢
@@ -469,14 +643,24 @@ export class DroneCommandQuery {
     
     return useMutation({
       mutationFn: async (commandId: string): Promise<DroneCommand> => {
-        const response = await apiClient.put(`/api/drone-commands/${commandId}/cancel`);
-        const result = RequestResult.fromResponse<DroneCommand>(response);
-        
-        if (result.isError()) {
-          throw new Error(result.message);
+        try {
+          const response = await apiClient.put(`/api/drone-commands/${commandId}/cancel`);
+          const result = RequestResult.fromResponse<DroneCommand>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to cancel drone command with ID: ${commandId}`, { error });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to cancel drone command with ID: ${commandId}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
-        
-        return result.unwrap();
       },
       onSuccess: () => {
         // 刷新相關查詢

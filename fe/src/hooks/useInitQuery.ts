@@ -20,7 +20,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
 import { RequestResult } from '../utils/RequestResult';
-import type { InitResponse, StressTestResponse, InitAllDemoResponse, InitError } from '../types/init';
+import type { InitResponse, StressTestResponse, InitAllDemoResponse } from '../types/init';
+import type { TableError } from '../types/table';
+import { createLogger } from '../configs/loggerConfig';
+
+const logger = createLogger('useInitQuery');
 
 /**
  * InitQuery - 初始化查詢服務類
@@ -49,30 +53,35 @@ export class InitQuery {
     return useMutation({
       mutationKey: this.INIT_QUERY_KEYS.RBAC_DEMO,
       mutationFn: async (): Promise<InitResponse> => {
-        const response = await apiClient.post('/api/init/rbac-demo');
-        const result = RequestResult.fromResponse<InitResponse>(response);
-        
-        if (result.isSuccess() && result.data) {
-          console.log('RBAC 示例資料初始化成功');
-          return result.data;
-        } else {
-          console.error('RBAC 示例資料初始化失敗:', result.message);
-          throw {
-            message: result.message || 'Failed to initialize RBAC demo',
-            status: result.status,
-            details: result.error,
-          } as InitError;
+        try {
+          const response = await apiClient.post('/api/init/rbac-demo');
+          const result = RequestResult.fromResponse<InitResponse>(response);
+          
+          if (result.isSuccess() && result.data) {
+            logger.info('RBAC 示例資料初始化成功');
+            return result.data;
+          } else {
+            throw new Error(result.message || 'Failed to initialize RBAC demo');
+          }
+        } catch (error: any) {
+          logger.error('RBAC 示例資料初始化失敗:', error);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to initialize RBAC demo',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
-        console.log('✅ RBAC 示例資料初始化成功:', data.message);
+        logger.info('✅ RBAC 示例資料初始化成功:', data.message);
         // 可以在這裡觸發相關數據的重新獲取
         queryClient.invalidateQueries({ queryKey: ['rbac'] });
       },
-      onError: (error: InitError) => {
-        console.error('❌ RBAC 示例資料初始化失敗:', error.message);
+      onError: (error: TableError) => {
+        logger.error('❌ RBAC 示例資料初始化失敗:', error.message);
         if (error.details) {
-          console.error('錯誤詳情:', error.details);
+          logger.error('錯誤詳情:', error.details);
         }
       },
       retry: 2,
@@ -89,30 +98,35 @@ export class InitQuery {
     return useMutation({
       mutationKey: this.INIT_QUERY_KEYS.RTK_DEMO,
       mutationFn: async (): Promise<InitResponse> => {
-        const response = await apiClient.post('/api/init/rtk-demo');
-        const result = RequestResult.fromResponse<InitResponse>(response);
-        
-        if (result.isSuccess() && result.data) {
-          console.log('RTK 示例資料初始化成功');
-          return result.data;
-        } else {
-          console.error('RTK 示例資料初始化失敗:', result.message);
-          throw {
-            message: result.message || 'Failed to initialize RTK demo',
-            status: result.status,
-            details: result.error,
-          } as InitError;
+        try {
+          const response = await apiClient.post('/api/init/rtk-demo');
+          const result = RequestResult.fromResponse<InitResponse>(response);
+          
+          if (result.isSuccess() && result.data) {
+            logger.info('RTK 示例資料初始化成功');
+            return result.data;
+          } else {
+            throw new Error(result.message || 'Failed to initialize RTK demo');
+          }
+        } catch (error: any) {
+          logger.error('RTK 示例資料初始化失敗:', error);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to initialize RTK demo',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
-        console.log('✅ RTK 示例資料初始化成功:', data.message);
+        logger.info('✅ RTK 示例資料初始化成功:', data.message);
         // 可以在這裡觸發相關數據的重新獲取
         queryClient.invalidateQueries({ queryKey: ['rtk'] });
       },
-      onError: (error: InitError) => {
-        console.error('❌ RTK 示例資料初始化失敗:', error.message);
+      onError: (error: TableError) => {
+        logger.error('❌ RTK 示例資料初始化失敗:', error.message);
         if (error.details) {
-          console.error('錯誤詳情:', error.details);
+          logger.error('錯誤詳情:', error.details);
         }
       },
       retry: 2,
@@ -129,30 +143,35 @@ export class InitQuery {
     return useMutation({
       mutationKey: this.INIT_QUERY_KEYS.ADMIN_USER,
       mutationFn: async (): Promise<InitResponse> => {
-        const response = await apiClient.post('/api/init/admin-user');
-        const result = RequestResult.fromResponse<InitResponse>(response);
-        
-        if (result.isSuccess() && result.data) {
-          console.log('管理員帳號創建成功');
-          return result.data;
-        } else {
-          console.error('管理員帳號創建失敗:', result.message);
-          throw {
-            message: result.message || 'Failed to create admin user',
-            status: result.status,
-            details: result.error,
-          } as InitError;
+        try {
+          const response = await apiClient.post('/api/init/admin-user');
+          const result = RequestResult.fromResponse<InitResponse>(response);
+          
+          if (result.isSuccess() && result.data) {
+            logger.info('管理員帳號創建成功');
+            return result.data;
+          } else {
+            throw new Error(result.message || 'Failed to create admin user');
+          }
+        } catch (error: any) {
+          logger.error('管理員帳號創建失敗:', error);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create admin user',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
-        console.log('✅ 管理員帳號創建成功:', data.message);
+        logger.info('✅ 管理員帳號創建成功:', data.message);
         // 可以在這裡觸發用戶列表的重新獲取
         queryClient.invalidateQueries({ queryKey: ['users'] });
       },
-      onError: (error: InitError) => {
-        console.error('❌ 管理員帳號創建失敗:', error.message);
+      onError: (error: TableError) => {
+        logger.error('❌ 管理員帳號創建失敗:', error.message);
         if (error.details) {
-          console.error('錯誤詳情:', error.details);
+          logger.error('錯誤詳情:', error.details);
         }
       },
       retry: 1, // 創建用戶只重試一次
@@ -166,29 +185,34 @@ export class InitQuery {
     return useMutation({
       mutationKey: this.INIT_QUERY_KEYS.STRESS_TEST,
       mutationFn: async (): Promise<StressTestResponse> => {
-        const response = await apiClient.post('/api/init/stress-test-data');
-        const result = RequestResult.fromResponse<StressTestResponse>(response);
-        
-        if (result.isSuccess() && result.data) {
-          console.log('壓力測試資料創建成功');
-          return result.data;
-        } else {
-          console.error('壓力測試資料創建失敗:', result.message);
-          throw {
-            message: result.message || 'Failed to create stress test data',
-            status: result.status,
-            details: result.error,
-          } as InitError;
+        try {
+          const response = await apiClient.post('/api/init/stress-test-data');
+          const result = RequestResult.fromResponse<StressTestResponse>(response);
+          
+          if (result.isSuccess() && result.data) {
+            logger.info('壓力測試資料創建成功');
+            return result.data;
+          } else {
+            throw new Error(result.message || 'Failed to create stress test data');
+          }
+        } catch (error: any) {
+          logger.error('壓力測試資料創建失敗:', error);
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Failed to create stress test data',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
-        console.log('✅ 壓力測試資料創建開始:', data.taskId);
-        console.log('📊 進度追蹤 URL:', data.progressUrl);
+        logger.info('✅ 壓力測試資料創建開始:', data.taskId);
+        logger.info('📊 進度追蹤 URL:', data.progressUrl);
       },
-      onError: (error: InitError) => {
-        console.error('❌ 壓力測試資料創建失敗:', error.message);
+      onError: (error: TableError) => {
+        logger.error('❌ 壓力測試資料創建失敗:', error.message);
         if (error.details) {
-          console.error('錯誤詳情:', error.details);
+          logger.error('錯誤詳情:', error.details);
         }
       },
       retry: 1, // 壓力測試只重試一次
@@ -205,7 +229,7 @@ export class InitQuery {
       mutationKey: this.INIT_QUERY_KEYS.ALL_DEMO,
       mutationFn: async (): Promise<InitAllDemoResponse> => {
         try {
-          console.log('開始初始化所有示例資料...');
+          logger.info('開始初始化所有示例資料...');
           
           // Helper function for RBAC initialization
           const initRbacDemo = async (): Promise<InitResponse> => {
@@ -213,15 +237,10 @@ export class InitQuery {
             const result = RequestResult.fromResponse<InitResponse>(response);
             
             if (result.isSuccess() && result.data) {
-              console.log('RBAC 示例資料初始化成功');
+              logger.info('RBAC 示例資料初始化成功');
               return result.data;
             } else {
-              console.error('RBAC 示例資料初始化失敗:', result.message);
-              throw {
-                message: result.message || 'Failed to initialize RBAC demo',
-                status: result.status,
-                details: result.error,
-              } as InitError;
+              throw new Error(result.message || 'Failed to initialize RBAC demo');
             }
           };
           
@@ -231,15 +250,10 @@ export class InitQuery {
             const result = RequestResult.fromResponse<InitResponse>(response);
             
             if (result.isSuccess() && result.data) {
-              console.log('RTK 示例資料初始化成功');
+              logger.info('RTK 示例資料初始化成功');
               return result.data;
             } else {
-              console.error('RTK 示例資料初始化失敗:', result.message);
-              throw {
-                message: result.message || 'Failed to initialize RTK demo',
-                status: result.status,
-                details: result.error,
-              } as InitError;
+              throw new Error(result.message || 'Failed to initialize RTK demo');
             }
           };
           
@@ -249,33 +263,34 @@ export class InitQuery {
             initRtkDemo()
           ]);
 
-          console.log('所有示例資料初始化完成');
+          logger.info('所有示例資料初始化完成');
           return {
             rbac: rbacResult,
             rtk: rtkResult
           };
         } catch (error: any) {
-          console.error('Failed to initialize all demo data:', error);
-          throw {
+          logger.error('Failed to initialize all demo data:', error);
+          const tableError: TableError = {
             message: 'Failed to initialize demo data',
             status: error.status,
             details: error,
-          } as InitError;
+          };
+          throw tableError;
         }
       },
       onSuccess: (data) => {
-        console.log('🎉 所有示例資料初始化成功:');
-        console.log('  ✅ RBAC:', data.rbac.message);
-        console.log('  ✅ RTK:', data.rtk.message);
+        logger.info('🎉 所有示例資料初始化成功:');
+        logger.info('  ✅ RBAC:', data.rbac.message);
+        logger.info('  ✅ RTK:', data.rtk.message);
         
         // 觸發相關數據的重新獲取
         queryClient.invalidateQueries({ queryKey: ['rbac'] });
         queryClient.invalidateQueries({ queryKey: ['rtk'] });
       },
-      onError: (error: InitError) => {
-        console.error('❌ 所有示例資料初始化失敗:', error.message);
+      onError: (error: TableError) => {
+        logger.error('❌ 所有示例資料初始化失敗:', error.message);
         if (error.details) {
-          console.error('錯誤詳情:', error.details);
+          logger.error('錯誤詳情:', error.details);
         }
       },
       retry: 1, // 批量初始化只重試一次
@@ -333,4 +348,3 @@ export class InitQuery {
     };
   }
 }
-

@@ -17,7 +17,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 // 從環境變數獲取 Google Maps API Key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD_o0dWCymZaMZRzN6Uy2Rt3U_L56L_eH0";
-const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&loading=async`;
+const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`;
 
 // 台北101的座標作為預設中心點
 const DEFAULT_CENTER = {
@@ -174,16 +174,25 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   /**
    * 創建自定義無人機圖標 - 現代科技風格
    */
-  const createDroneIcon = (color: string) => {
-    return {
-      path: 'M12 9L15 9L15 6L18 6L18 9L21 9L21 12L18 12L18 15L15 15L15 12L12 12L9 12L9 15L6 15L6 12L3 12L3 9L6 9L6 6L9 6L9 9L12 9Z M10.5 10.5L13.5 10.5L13.5 13.5L10.5 13.5Z',
-      fillColor: color,
-      fillOpacity: 0.85,
-      strokeColor: '#1a1a1a',
-      strokeWeight: 1.5,
-      scale: 1.1,
-      anchor: new window.google.maps.Point(12, 12),
-    };
+  const createDroneIcon = (color: string): HTMLElement => {
+    const droneIcon = document.createElement('div');
+    droneIcon.innerHTML = `
+      <div style="
+        width: 24px;
+        height: 24px;
+        background-color: ${color};
+        border: 1.5px solid #1a1a1a;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0.85;
+      ">
+        <span style="color: white; font-size: 14px; line-height: 1;">⚙</span>
+      </div>
+    `;
+    return droneIcon;
   };
 
   /**
@@ -207,6 +216,7 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
             stylers: [{ visibility: 'on' }]
           }
         ],
+        mapId: 'AIOT_DRONE_MAP' // 必須添加 mapId 以支持 AdvancedMarkerElement
       });
 
       // 儲存地圖實例
@@ -232,12 +242,11 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       const initialPosition = path[0];
 
       // 創建標記
-      const marker = new window.google.maps.Marker({
+      const marker = new window.google.maps.marker.AdvancedMarkerElement({
         position: initialPosition,
         map: map,
         title: config.name,
-        icon: createDroneIcon(config.color),
-        // 移除跳躍動畫
+        content: createDroneIcon(config.color),
       });
 
       // 創建資訊視窗
