@@ -1,7 +1,7 @@
 /**
  * @fileoverview 資料庫配置模組
  * 此模組提供 Sequelize ORM 的資料庫連接配置和實例建立
- * 包含 RBAC（角色基礎存取控制）模型和 RTK 資料模型的配置
+ * 包含 RBAC（角色基礎存取控制）模型、無人機相關模型和即時狀態模型的配置
  */
 
 // 匯入 Sequelize TypeScript 版本用於 ORM 操作
@@ -18,12 +18,21 @@ import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
 import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
 // 匯入無人機位置模型用於位置資料管理
 import { DronePositionModel } from '../models/drone/DronePositionModel.js';
+// 匯入無人機狀態模型用於基本狀態管理
 import { DroneStatusModel } from '../models/drone/DroneStatusModel.js';
+// 匯入無人機即時狀態模型用於即時狀態追蹤
+import { DroneRealTimeStatusModel } from '../models/drone/DroneRealTimeStatusModel.js';
+// 匯入無人機指令模型用於指令管理
 import { DroneCommandModel } from '../models/drone/DroneCommandModel.js';
+// 匯入無人機指令歷史模型用於指令歷史管理
 import { DroneCommandsArchiveModel } from '../models/drone/DroneCommandsArchiveModel.js';
+// 匯入無人機位置歷史模型用於位置歷史管理
 import { DronePositionsArchiveModel } from '../models/drone/DronePositionsArchiveModel.js';
+// 匯入無人機狀態歷史模型用於狀態歷史管理
 import { DroneStatusArchiveModel } from '../models/drone/DroneStatusArchiveModel.js';
+// 匯入歷史任務模型用於歷史任務管理
 import { ArchiveTaskModel } from '../models/drone/ArchiveTaskModel.js';
+// 匯入使用者偏好設定模型用於個人化設定
 import { UserPreferenceModel } from '../models/UserPreferenceModel.js';
 
 /**
@@ -82,7 +91,7 @@ export const createSequelizeInstance = (): Sequelize => {
   return new Sequelize({
     // 展開資料庫配置物件的所有屬性
     ...config,
-    // 註冊所有需要的模型到 Sequelize 實例中
-    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneCommandModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel, UserPreferenceModel],
+    // 註冊所有需要的模型到 Sequelize 實例中，包含 RBAC 模型、無人機相關模型和使用者偏好模型
+    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneRealTimeStatusModel, DroneCommandModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel, UserPreferenceModel],
   });
 };

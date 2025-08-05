@@ -31,6 +31,7 @@ import developmentRoutes from './DevelopmentRoutes.js';
 import { dronePositionRoutes } from './drone/dronePositionRoutes.js';
 import { droneStatusRoutes } from './drone/droneStatusRoutes.js';
 import { droneCommandRoutes } from './drone/droneCommandRoutes.js';
+import { droneRealTimeStatusRoutes } from './drone/droneRealTimeStatusRoutes.js';
 
 // Import drone archive routes
 import { dronePositionsArchiveRoutes } from './drone/dronePositionsArchiveRoutes.js';
@@ -128,6 +129,13 @@ const droneRoutes: RouteConfig[] = [
     description: 'Drone command and control routes',
     handler: droneCommandRoutes,
     basePath: '/',
+    requireAuth: true
+  },
+  {
+    name: 'drone-real-time-status',
+    description: 'Drone real-time status monitoring routes',
+    handler: droneRealTimeStatusRoutes,
+    basePath: '/api/drone-real-time-status',
     requireAuth: true
   },
   {

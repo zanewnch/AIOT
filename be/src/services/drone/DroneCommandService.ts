@@ -857,16 +857,16 @@ export class DroneCommandService implements IDroneCommandService {
     }
 
     /**
-     * 發送移動指令
+     * 發送飛行到指定位置指令
      *
      * @param {number} droneId - 無人機 ID
      * @param {number} issuedBy - 發送者 ID
      * @param {object} commandData - 指令參數 { latitude, longitude, altitude, speed }
      * @returns {Promise<CommandExecutionResult>} 指令執行結果
      */
-    async sendMoveCommand(droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> {
+    async sendFlyToCommand(droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
-            logger.info('Sending move command', { droneId, issuedBy, commandData });
+            logger.info('Sending flyTo command', { droneId, issuedBy, commandData });
 
             // 驗證座標
             if (commandData.latitude < -90 || commandData.latitude > 90) {
@@ -889,7 +889,7 @@ export class DroneCommandService implements IDroneCommandService {
 
             const data: DroneCommandCreationAttributes = {
                 drone_id: droneId,
-                command_type: CommandType.MOVE,
+                command_type: CommandType.FLY_TO,
                 command_data: commandData,
                 status: CommandStatus.PENDING,
                 issued_by: issuedBy,
@@ -901,11 +901,11 @@ export class DroneCommandService implements IDroneCommandService {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendMoveCommand', { droneId, issuedBy, commandData, error });
+            logger.error('Error in sendFlyToCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: {} as DroneCommandAttributes,
-                message: '發送移動指令失敗',
+                message: '發送飛行到指定位置指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
         }
@@ -978,6 +978,258 @@ export class DroneCommandService implements IDroneCommandService {
                 success: false,
                 command: {} as DroneCommandAttributes,
                 message: '發送返航指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送前進指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendMoveForwardCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending moveForward command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.MOVE_FORWARD,
+                command_data: commandData || {},
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendMoveForwardCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送前進指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送後退指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendMoveBackwardCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending moveBackward command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.MOVE_BACKWARD,
+                command_data: commandData || {},
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendMoveBackwardCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送後退指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送左移指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendMoveLeftCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending moveLeft command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.MOVE_LEFT,
+                command_data: commandData || {},
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendMoveLeftCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送左移指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送右移指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendMoveRightCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending moveRight command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.MOVE_RIGHT,
+                command_data: commandData || {},
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendMoveRightCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送右移指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送左轉指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { angle }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendRotateLeftCommand(droneId: number, issuedBy: number, commandData?: { angle?: number }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending rotateLeft command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.ROTATE_LEFT,
+                command_data: commandData || {},
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendRotateLeftCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送左轉指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送右轉指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { angle }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendRotateRightCommand(droneId: number, issuedBy: number, commandData?: { angle?: number }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending rotateRight command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.ROTATE_RIGHT,
+                command_data: commandData || {},
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendRotateRightCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送右轉指令失敗',
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
+        }
+    }
+
+    /**
+     * 發送緊急停止指令
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { action }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendEmergencyCommand(droneId: number, issuedBy: number, commandData?: { action?: 'stop' | 'land' }): Promise<CommandExecutionResult> {
+        try {
+            logger.info('Sending emergency command', { droneId, issuedBy, commandData });
+
+            const data: DroneCommandCreationAttributes = {
+                drone_id: droneId,
+                command_type: CommandType.EMERGENCY,
+                command_data: commandData || { action: 'land' },
+                status: CommandStatus.PENDING,
+                issued_by: issuedBy,
+                issued_at: new Date(),
+                executed_at: null,
+                completed_at: null,
+                error_message: null
+            };
+
+            return await this.createCommand(data);
+        } catch (error) {
+            logger.error('Error in sendEmergencyCommand', { droneId, issuedBy, commandData, error });
+            return {
+                success: false,
+                command: {} as DroneCommandAttributes,
+                message: '發送緊急停止指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
         }

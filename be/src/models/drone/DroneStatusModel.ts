@@ -5,6 +5,21 @@
  * 用於儲存無人機的基本規格、狀態資訊和擁有者資料。
  * 提供完整的無人機管理功能，適用於無人機fleet管理系統。
  * 
+ * 資料表欄位 (Table Columns):
+ * - id: 主鍵識別碼 (BIGINT, AUTO_INCREMENT, PRIMARY KEY)
+ * - drone_serial: 無人機序號 (VARCHAR, NOT NULL, UNIQUE) - 無人機唯一識別序號
+ * - drone_name: 無人機名稱 (VARCHAR, NOT NULL) - 顯示名稱
+ * - model: 型號 (VARCHAR, NOT NULL) - 無人機產品型號
+ * - manufacturer: 製造商 (VARCHAR, NOT NULL) - 製造商名稱
+ * - owner_user_id: 擁有者用戶ID (BIGINT, NOT NULL, FOREIGN KEY) - 關聯到users表
+ * - status: 狀態 (ENUM, NOT NULL) - active/inactive/maintenance/flying
+ * - max_altitude: 最大飛行高度 (INT, NOT NULL) - 最大飛行高度限制，單位公尺
+ * - max_range: 最大飛行距離 (INT, NOT NULL) - 最大飛行距離，單位公尺
+ * - battery_capacity: 電池容量 (INT, NOT NULL) - 電池容量，單位mAh
+ * - weight: 重量 (INT, NOT NULL) - 無人機重量，單位公克
+ * - createdAt: 建立時間 (DATE, AUTO) - 記錄建立時間戳記，自動管理
+ * - updatedAt: 更新時間 (DATE, AUTO) - 記錄更新時間戳記，自動維護
+ * 
  * @module DroneStatusModel
  * @author AIOT Team
  * @since 1.0.0

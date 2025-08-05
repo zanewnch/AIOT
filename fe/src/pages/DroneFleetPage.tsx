@@ -12,32 +12,19 @@
  * @since 2025-08-04
  */
 
-import React, { useState, useEffect, useRef } from "react";
-import { useSimulateFlyLogic } from "../hooks/useSimulateFlyLogic";
+import React, { useState } from "react";
+import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
+import type { DroneStatus } from "../types/droneStatus";
 
-// 模擬後端的無人機狀態枚舉
-enum DroneStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
+// 對應後端狀態枚舉
+enum StatusFilter {
+  ALL = 'all',
+  IDLE = 'idle',
+  FLYING = 'flying',
+  CHARGING = 'charging',
   MAINTENANCE = 'maintenance',
-  FLYING = 'flying'
-}
-
-// 模擬無人機規格資料結構
-interface DroneSpec {
-  id: number;
-  drone_serial: string;
-  drone_name: string;
-  model: string;
-  manufacturer: string;
-  owner_user_id: number;
-  status: DroneStatus;
-  max_altitude: number;
-  max_range: number;
-  battery_capacity: number;
-  weight: number;
-  createdAt: Date;
-  updatedAt: Date;
+  OFFLINE = 'offline',
+  ERROR = 'error'
 }
 
 interface DroneFleetPageProps {
@@ -50,68 +37,46 @@ interface DroneFleetPageProps {
  * 提供機隊管理、規格對比和狀態監控功能
  */
 const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const droneLogic = useSimulateFlyLogic(mapRef);
-  const [droneFleet, setDroneFleet] = useState<DroneSpec[]>([]);
-  const [selectedDrones, setSelectedDrones] = useState<number[]>([]);
+  const [selectedDrones, setSelectedDrones] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'table' | 'compare'>('grid');
-  const [filterStatus, setFilterStatus] = useState<DroneStatus | 'all'>('all');
+  const [filterStatus, setFilterStatus] = useState<StatusFilter>(StatusFilter.ALL);
   const [sortBy, setSortBy] = useState<'serial' | 'model' | 'status' | 'battery'>('serial');
 
-  // 生成模擬機隊資料
-  useEffect(() => {
-    generateMockFleet();
-  }, []);
+  // 使用真實 API hooks
+  const droneQuery = new DroneStatusQuery();
+  const { data: droneFleet = [], isLoading, error } = droneQuery.useAll();
 
-  const generateMockFleet = () => {
-    const manufacturers = ['DJI', 'Autel', 'Parrot', 'Yuneec', 'Skydio'];
-    const models = {
-      'DJI': ['Mavic Air 2', 'Mavic 3', 'Mini 3 Pro', 'Phantom 4 Pro', 'Matrice 300'],
-      'Autel': ['EVO II Pro', 'EVO Lite+', 'EVO Max 4T'],
-      'Parrot': ['ANAFI', 'ANAFI Ai', 'ANAFI USA'],
-      'Yuneec': ['Typhoon H3', 'Mantis G'],
-      'Skydio': ['S2+', 'X2']
-    };
+  // 顯示載入狀態
+  if (isLoading) {
+    return (
+      <div className={`${className || ""} min-h-screen bg-gray-900 flex items-center justify-center`}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-300">載入無人機資料中...</p>
+        </div>
+      </div>
+    );
+  }
 
-    const mockFleet: DroneSpec[] = [];
-    
-    for (let i = 1; i <= 12; i++) {
-      const manufacturer = manufacturers[Math.floor(Math.random() * manufacturers.length)];
-      const modelList = models[manufacturer as keyof typeof models];
-      const model = modelList[Math.floor(Math.random() * modelList.length)];
-      
-      const statusValues = Object.values(DroneStatus);
-      const status = i === 1 ? DroneStatus.FLYING : statusValues[Math.floor(Math.random() * statusValues.length)];
+  // 顯示錯誤狀態
+  if (error) {
+    return (
+      <div className={`${className || ""} min-h-screen bg-gray-900 flex items-center justify-center`}>
+        <div className="text-center">
+          <span className="text-4xl mb-4 block">⚠️</span>
+          <p className="text-gray-300">載入無人機資料失敗</p>
+          <p className="text-gray-500 text-sm mt-2">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
-      mockFleet.push({
-        id: i,
-        drone_serial: `${manufacturer.substring(0, 3).toUpperCase()}-${String(i).padStart(3, '0')}`,
-        drone_name: `${manufacturer} ${model} ${i}`,
-        model,
-        manufacturer,
-        owner_user_id: 1,
-        status,
-        max_altitude: 500 + Math.floor(Math.random() * 1000),
-        max_range: 5000 + Math.floor(Math.random() * 10000),
-        battery_capacity: 3000 + Math.floor(Math.random() * 2000),
-        weight: 400 + Math.floor(Math.random() * 800),
-        createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date()
-      });
-    }
-
-    setDroneFleet(mockFleet);
+  const updateDroneStatus = (droneId: string, newStatus: string) => {
+    // TODO: 實作狀態更新 API 呼叫
+    console.log(`更新無人機 ${droneId} 狀態為 ${newStatus}`);
   };
 
-  const updateDroneStatus = (droneId: number, newStatus: DroneStatus) => {
-    setDroneFleet(prev => prev.map(drone => 
-      drone.id === droneId 
-        ? { ...drone, status: newStatus, updatedAt: new Date() }
-        : drone
-    ));
-  };
-
-  const toggleDroneSelection = (droneId: number) => {
+  const toggleDroneSelection = (droneId: string) => {
     setSelectedDrones(prev => 
       prev.includes(droneId) 
         ? prev.filter(id => id !== droneId)
@@ -124,31 +89,33 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
   };
 
   const filteredAndSortedDrones = droneFleet
-    .filter(drone => filterStatus === 'all' || drone.status === filterStatus)
+    .filter(drone => filterStatus === StatusFilter.ALL || drone.status === filterStatus)
     .sort((a, b) => {
       switch (sortBy) {
         case 'serial':
-          return a.drone_serial.localeCompare(b.drone_serial);
+          return a.serialNumber.localeCompare(b.serialNumber);
         case 'model':
           return a.model.localeCompare(b.model);
         case 'status':
           return a.status.localeCompare(b.status);
         case 'battery':
-          return b.battery_capacity - a.battery_capacity;
+          return b.batteryLevel - a.batteryLevel;
         default:
           return 0;
       }
     });
 
-  const getStatusBadge = (status: DroneStatus) => {
+  const getStatusBadge = (status: string) => {
     const configs = {
-      [DroneStatus.ACTIVE]: { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '🟢' },
-      [DroneStatus.INACTIVE]: { bg: 'bg-gray-900/30', text: 'text-gray-300', border: 'border-gray-700', icon: '⚫' },
-      [DroneStatus.MAINTENANCE]: { bg: 'bg-orange-900/30', text: 'text-orange-300', border: 'border-orange-700', icon: '🔧' },
-      [DroneStatus.FLYING]: { bg: 'bg-blue-900/30', text: 'text-blue-300', border: 'border-blue-700', icon: '✈️' },
+      idle: { bg: 'bg-gray-900/30', text: 'text-gray-300', border: 'border-gray-700', icon: '⚫' },
+      flying: { bg: 'bg-blue-900/30', text: 'text-blue-300', border: 'border-blue-700', icon: '✈️' },
+      charging: { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '🔋' },
+      maintenance: { bg: 'bg-orange-900/30', text: 'text-orange-300', border: 'border-orange-700', icon: '🔧' },
+      offline: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '📴' },
+      error: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '⚠️' },
     };
     
-    const config = configs[status];
+    const config = configs[status as keyof typeof configs] || configs.offline;
     return (
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text} border ${config.border}`}>
         <span>{config.icon}</span>
@@ -185,8 +152,8 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
             {/* 標題區域 */}
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-semibold text-gray-100 text-sm">{drone.drone_serial}</h3>
-                <p className="text-xs text-gray-400">{drone.drone_name}</p>
+                <h3 className="font-semibold text-gray-100 text-sm">{drone.serialNumber}</h3>
+                <p className="text-xs text-gray-400">{drone.name}</p>
               </div>
               <input
                 type="checkbox"
@@ -214,35 +181,36 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
             {/* 規格摘要 */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">最大高度</span>
-                <span className="text-gray-200">{drone.max_altitude}m</span>
+                <span className="text-gray-400">電池電量</span>
+                <span className="text-gray-200">{drone.batteryLevel}%</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">航程</span>
-                <span className="text-gray-200">{(drone.max_range / 1000).toFixed(1)}km</span>
+                <span className="text-gray-400">最大航程</span>
+                <span className="text-gray-200">{(drone.maxRange / 1000).toFixed(1)}km</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">電池</span>
-                <span className="text-gray-200">{drone.battery_capacity}mAh</span>
+                <span className="text-gray-400">最大飛行時間</span>
+                <span className="text-gray-200">{drone.maxFlightTime}min</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">重量</span>
-                <span className="text-gray-200">{drone.weight}g</span>
+                <span className="text-gray-400">上次連線</span>
+                <span className="text-gray-200">{new Date(drone.lastSeen).toLocaleString('zh-TW').slice(5, 16)}</span>
               </div>
             </div>
 
             {/* 狀態控制 */}
-            {drone.status !== DroneStatus.FLYING && (
+            {drone.status !== 'flying' && (
               <div className="mt-3 pt-3 border-t border-gray-700">
                 <select
                   value={drone.status}
-                  onChange={(e) => updateDroneStatus(drone.id, e.target.value as DroneStatus)}
+                  onChange={(e) => updateDroneStatus(drone.id, e.target.value)}
                   onClick={(e) => e.stopPropagation()}
                   className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded text-xs text-gray-100 focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value={DroneStatus.ACTIVE}>啟用</option>
-                  <option value={DroneStatus.INACTIVE}>停用</option>
-                  <option value={DroneStatus.MAINTENANCE}>維護中</option>
+                  <option value="idle">待機</option>
+                  <option value="charging">充電中</option>
+                  <option value="maintenance">維護中</option>
+                  <option value="offline">離線</option>
                 </select>
               </div>
             )}
@@ -278,7 +246,7 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">規格項目</th>
                 {selectedDroneData.map((drone) => (
                   <th key={drone.id} className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase">
-                    {drone.drone_serial}
+                    {drone.serialNumber}
                   </th>
                 ))}
               </tr>
@@ -288,21 +256,21 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
                 { label: '製造商', key: 'manufacturer' },
                 { label: '型號', key: 'model' },
                 { label: '狀態', key: 'status' },
-                { label: '最大高度 (m)', key: 'max_altitude' },
-                { label: '最大航程 (km)', key: 'max_range', format: (v: number) => (v / 1000).toFixed(1) },
-                { label: '電池容量 (mAh)', key: 'battery_capacity' },
-                { label: '重量 (g)', key: 'weight' },
+                { label: '電池電量 (%)', key: 'batteryLevel' },
+                { label: '最大航程 (km)', key: 'maxRange', format: (v: number) => (v / 1000).toFixed(1) },
+                { label: '最大飛行時間 (min)', key: 'maxFlightTime' },
+                { label: '韌體版本', key: 'firmwareVersion' },
               ].map((spec) => (
                 <tr key={spec.key}>
                   <td className="px-4 py-3 text-sm font-medium text-gray-200">{spec.label}</td>
                   {selectedDroneData.map((drone) => (
                     <td key={drone.id} className="px-4 py-3 text-center text-sm text-gray-300">
                       {spec.key === 'status' ? (
-                        getStatusBadge(drone[spec.key as keyof DroneSpec] as DroneStatus)
+                        getStatusBadge(drone[spec.key as keyof DroneStatus] as string)
                       ) : spec.format ? (
-                        spec.format(drone[spec.key as keyof DroneSpec] as number)
+                        spec.format(drone[spec.key as keyof DroneStatus] as number)
                       ) : (
-                        String(drone[spec.key as keyof DroneSpec])
+                        String(drone[spec.key as keyof DroneStatus])
                       )}
                     </td>
                   ))}
@@ -361,7 +329,7 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
           </div>
         </div>
 
-        {Object.values(DroneStatus).map((status) => {
+        {['idle', 'flying', 'charging', 'maintenance', 'offline', 'error'].map((status) => {
           const count = droneFleet.filter(drone => drone.status === status).length;
           return (
             <div key={status} className="bg-gray-800 rounded-lg border border-gray-700 p-4">
@@ -386,10 +354,12 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
             className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-gray-100 focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">所有狀態</option>
-            <option value="active">啟用</option>
-            <option value="inactive">停用</option>
-            <option value="maintenance">維護中</option>
+            <option value="idle">待機</option>
             <option value="flying">飛行中</option>
+            <option value="charging">充電中</option>
+            <option value="maintenance">維護中</option>
+            <option value="offline">離線</option>
+            <option value="error">錯誤</option>
           </select>
 
           <select

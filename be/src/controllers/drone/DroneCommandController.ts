@@ -19,9 +19,16 @@
  * - GET /api/drone-commands/data/type/:type - 根據類型查詢指令
  * - POST /api/drone-commands/send/takeoff - 發送起飛指令
  * - POST /api/drone-commands/send/land - 發送降落指令
- * - POST /api/drone-commands/send/move - 發送移動指令
  * - POST /api/drone-commands/send/hover - 發送懸停指令
+ * - POST /api/drone-commands/send/flyTo - 發送飛行到指定位置指令
  * - POST /api/drone-commands/send/return - 發送返航指令
+ * - POST /api/drone-commands/send/moveForward - 發送前進指令
+ * - POST /api/drone-commands/send/moveBackward - 發送後退指令
+ * - POST /api/drone-commands/send/moveLeft - 發送左移指令
+ * - POST /api/drone-commands/send/moveRight - 發送右移指令
+ * - POST /api/drone-commands/send/rotateLeft - 發送左轉指令
+ * - POST /api/drone-commands/send/rotateRight - 發送右轉指令
+ * - POST /api/drone-commands/send/emergency - 發送緊急停止指令
  * - PUT /api/drone-commands/:id/execute - 執行指令
  * - PUT /api/drone-commands/:id/complete - 完成指令
  * - PUT /api/drone-commands/:id/fail - 標記指令失敗
@@ -638,34 +645,34 @@ export class DroneCommandController {
     }
 
     /**
-     * 發送移動指令
+     * 發送飛行到指定位置指令
      *
-     * @route POST /api/drone-commands/send/move
+     * @route POST /api/drone-commands/send/flyTo
      * @param {Request} req - Express 請求物件
      * @param {Response} res - Express 回應物件
      * @param {NextFunction} next - Express 下一個中介軟體函式
      * @returns {Promise<void>}
      */
-    async sendMoveCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async sendFlyToCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { droneId, issuedBy, latitude, longitude, altitude, speed } = req.body;
 
-            logRequest(req, `Sending move command for drone: ${droneId}`);
-            logger.info('Move command request received', { droneId, issuedBy, latitude, longitude, altitude, speed });
+            logRequest(req, `Sending flyTo command for drone: ${droneId}`);
+            logger.info('FlyTo command request received', { droneId, issuedBy, latitude, longitude, altitude, speed });
 
-            const result = await this.commandService.sendMoveCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
+            const result = await this.commandService.sendFlyToCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
             
             if (result.success) {
-                const response = ControllerResult.created('移動指令發送成功', result.command);
+                const response = ControllerResult.created('飛行到指定位置指令發送成功', result.command);
                 res.status(response.status).json(response);
-                logger.info('Move command sent successfully', { droneId, commandId: result.command.id });
+                logger.info('FlyTo command sent successfully', { droneId, commandId: result.command.id });
             } else {
                 const response = ControllerResult.badRequest(result.message);
                 res.status(response.status).json(response);
-                logger.warn('Move command failed', { droneId, error: result.error });
+                logger.warn('FlyTo command failed', { droneId, error: result.error });
             }
         } catch (error) {
-            logger.error('Error in sendMoveCommand', {
+            logger.error('Error in sendFlyToCommand', {
                 requestBody: req.body,
                 error
             });
@@ -738,6 +745,258 @@ export class DroneCommandController {
             }
         } catch (error) {
             logger.error('Error in sendReturnCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送前進指令
+     *
+     * @route POST /api/drone-commands/send/moveForward
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendMoveForwardCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, distance, speed } = req.body;
+
+            logRequest(req, `Sending moveForward command for drone: ${droneId}`);
+            logger.info('MoveForward command request received', { droneId, issuedBy, distance, speed });
+
+            const result = await this.commandService.sendMoveForwardCommand(droneId, issuedBy, { distance, speed });
+            
+            if (result.success) {
+                const response = ControllerResult.created('前進指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('MoveForward command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('MoveForward command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendMoveForwardCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送後退指令
+     *
+     * @route POST /api/drone-commands/send/moveBackward
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendMoveBackwardCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, distance, speed } = req.body;
+
+            logRequest(req, `Sending moveBackward command for drone: ${droneId}`);
+            logger.info('MoveBackward command request received', { droneId, issuedBy, distance, speed });
+
+            const result = await this.commandService.sendMoveBackwardCommand(droneId, issuedBy, { distance, speed });
+            
+            if (result.success) {
+                const response = ControllerResult.created('後退指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('MoveBackward command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('MoveBackward command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendMoveBackwardCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送左移指令
+     *
+     * @route POST /api/drone-commands/send/moveLeft
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendMoveLeftCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, distance, speed } = req.body;
+
+            logRequest(req, `Sending moveLeft command for drone: ${droneId}`);
+            logger.info('MoveLeft command request received', { droneId, issuedBy, distance, speed });
+
+            const result = await this.commandService.sendMoveLeftCommand(droneId, issuedBy, { distance, speed });
+            
+            if (result.success) {
+                const response = ControllerResult.created('左移指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('MoveLeft command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('MoveLeft command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendMoveLeftCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送右移指令
+     *
+     * @route POST /api/drone-commands/send/moveRight
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendMoveRightCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, distance, speed } = req.body;
+
+            logRequest(req, `Sending moveRight command for drone: ${droneId}`);
+            logger.info('MoveRight command request received', { droneId, issuedBy, distance, speed });
+
+            const result = await this.commandService.sendMoveRightCommand(droneId, issuedBy, { distance, speed });
+            
+            if (result.success) {
+                const response = ControllerResult.created('右移指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('MoveRight command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('MoveRight command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendMoveRightCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送左轉指令
+     *
+     * @route POST /api/drone-commands/send/rotateLeft
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendRotateLeftCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, angle } = req.body;
+
+            logRequest(req, `Sending rotateLeft command for drone: ${droneId}`);
+            logger.info('RotateLeft command request received', { droneId, issuedBy, angle });
+
+            const result = await this.commandService.sendRotateLeftCommand(droneId, issuedBy, { angle });
+            
+            if (result.success) {
+                const response = ControllerResult.created('左轉指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('RotateLeft command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('RotateLeft command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendRotateLeftCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送右轉指令
+     *
+     * @route POST /api/drone-commands/send/rotateRight
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendRotateRightCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, angle } = req.body;
+
+            logRequest(req, `Sending rotateRight command for drone: ${droneId}`);
+            logger.info('RotateRight command request received', { droneId, issuedBy, angle });
+
+            const result = await this.commandService.sendRotateRightCommand(droneId, issuedBy, { angle });
+            
+            if (result.success) {
+                const response = ControllerResult.created('右轉指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('RotateRight command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('RotateRight command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendRotateRightCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
+     * 發送緊急停止指令
+     *
+     * @route POST /api/drone-commands/send/emergency
+     * @param {Request} req - Express 請求物件
+     * @param {Response} res - Express 回應物件
+     * @param {NextFunction} next - Express 下一個中介軟體函式
+     * @returns {Promise<void>}
+     */
+    async sendEmergencyCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, action } = req.body;
+
+            logRequest(req, `Sending emergency command for drone: ${droneId}`);
+            logger.info('Emergency command request received', { droneId, issuedBy, action });
+
+            const result = await this.commandService.sendEmergencyCommand(droneId, issuedBy, { action });
+            
+            if (result.success) {
+                const response = ControllerResult.created('緊急停止指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('Emergency command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('Emergency command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendEmergencyCommand', {
                 requestBody: req.body,
                 error
             });
@@ -1057,9 +1316,16 @@ export const getLatestCommands = commandController.getLatestCommands.bind(comman
 export const getFailedCommands = commandController.getFailedCommands.bind(commandController);
 export const sendTakeoffCommand = commandController.sendTakeoffCommand.bind(commandController);
 export const sendLandCommand = commandController.sendLandCommand.bind(commandController);
-export const sendMoveCommand = commandController.sendMoveCommand.bind(commandController);
+export const sendFlyToCommand = commandController.sendFlyToCommand.bind(commandController);
 export const sendHoverCommand = commandController.sendHoverCommand.bind(commandController);
 export const sendReturnCommand = commandController.sendReturnCommand.bind(commandController);
+export const sendMoveForwardCommand = commandController.sendMoveForwardCommand.bind(commandController);
+export const sendMoveBackwardCommand = commandController.sendMoveBackwardCommand.bind(commandController);
+export const sendMoveLeftCommand = commandController.sendMoveLeftCommand.bind(commandController);
+export const sendMoveRightCommand = commandController.sendMoveRightCommand.bind(commandController);
+export const sendRotateLeftCommand = commandController.sendRotateLeftCommand.bind(commandController);
+export const sendRotateRightCommand = commandController.sendRotateRightCommand.bind(commandController);
+export const sendEmergencyCommand = commandController.sendEmergencyCommand.bind(commandController);
 export const executeCommand = commandController.executeCommand.bind(commandController);
 export const completeCommand = commandController.completeCommand.bind(commandController);
 export const failCommand = commandController.failCommand.bind(commandController);

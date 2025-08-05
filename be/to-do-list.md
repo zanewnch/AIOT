@@ -52,3 +52,4 @@ date: 2025-06-26
 
 - [ ] websocket, connection pool, message queue, micro service, frontend(add be connection to page file, start from
   data analysis page), sql script for db initialization
+- [ ] 準備面試內容

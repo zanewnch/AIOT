@@ -5,6 +5,18 @@
  * 用於追蹤無人機狀態的變化記錄，包含變更原因、詳細資訊和操作者。
  * 提供完整的狀態變更審計功能，適用於無人機狀態監控和歷史分析。
  * 
+ * 資料表欄位 (Table Columns):
+ * - id: 主鍵識別碼 (BIGINT, AUTO_INCREMENT, PRIMARY KEY)
+ * - drone_id: 無人機外鍵 (BIGINT, NOT NULL, FOREIGN KEY) - 關聯到drones_status表
+ * - status: 變更後狀態 (ENUM, NOT NULL) - active/inactive/maintenance/flying
+ * - previous_status: 變更前狀態 (ENUM, NULL) - 前一個狀態，初始狀態時為null
+ * - reason: 變更原因 (VARCHAR, NOT NULL) - 狀態變更的原因說明
+ * - details: 詳細資訊 (JSON, NULL) - 結構化詳細資訊，如任務ID、天氣條件等
+ * - timestamp: 狀態變更時間 (DATETIME, NOT NULL) - 狀態變更發生的精確時間
+ * - created_by: 操作者 (BIGINT, NULL) - 執行變更的用戶ID，可為系統自動變更
+ * - createdAt: 建立時間 (DATETIME, AUTO) - 記錄建立時間戳記，自動管理
+ * - updatedAt: 更新時間 (DATETIME, AUTO) - 記錄更新時間戳記，自動維護
+ * 
  * @module DroneStatusArchiveModel
  * @author AIOT Team
  * @since 1.0.0

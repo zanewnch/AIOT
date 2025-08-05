@@ -13,7 +13,10 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
-import { useSimulateFlyLogic } from "../hooks/useSimulateFlyLogic";
+import { useGetCommandsArchiveByTimeRange } from "../hooks/useDroneCommandArchiveQuery";
+import { DronePositionsArchiveQuery } from "../hooks/useDronePositionsArchiveQuery";
+import { DroneStatusArchiveQuery } from "../hooks/useDroneStatusArchiveQuery";
+import type { DronePositionArchive } from "../types/dronePositionsArchive";
 
 interface DataAnalyticsPageProps {
   className?: string;
@@ -49,112 +52,69 @@ interface BatteryDataPoint {
  * 提供各種圖表和分析工具的專業視覺化介面
  */
 const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const droneLogic = useSimulateFlyLogic(mapRef);
-  const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
-  const [flightPathData, setFlightPathData] = useState<FlightPathPoint[]>([]);
-  const [batteryData, setBatteryData] = useState<BatteryDataPoint[]>([]);
   const [selectedChart, setSelectedChart] = useState<'performance' | 'heatmap' | 'battery' | 'statistics'>('performance');
   const [timeRange, setTimeRange] = useState<'1h' | '6h' | '24h' | '7d'>('1h');
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heatmapRef = useRef<HTMLCanvasElement>(null);
 
-  // 模擬資料生成
-  useEffect(() => {
-    generateMockData();
-    
-    // 定期更新資料
-    const interval = setInterval(() => {
-      updateRealTimeData();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const generateMockData = () => {
+  // 計算查詢時間範圍
+  const getTimeRangeQuery = () => {
     const now = new Date();
-    const mockPerformance: PerformanceDataPoint[] = [];
-    const mockFlightPath: FlightPathPoint[] = [];
-    const mockBattery: BatteryDataPoint[] = [];
-
-    // 生成歷史效能資料
-    for (let i = 0; i < 50; i++) {
-      const timestamp = new Date(now.getTime() - i * 300000); // 每5分鐘
-      mockPerformance.push({
-        timestamp,
-        command_type: ['takeoff', 'move', 'hover', 'land'][Math.floor(Math.random() * 4)],
-        execution_time: 1000 + Math.random() * 5000,
-        wait_time: Math.random() * 2000,
-        success: Math.random() > 0.1
-      });
-    }
-
-    // 生成飛行路徑資料
-    let baseLat = 25.0337;
-    let baseLng = 121.5645;
-    for (let i = 0; i < 200; i++) {
-      const timestamp = new Date(now.getTime() - i * 60000); // 每分鐘
-      baseLat += (Math.random() - 0.5) * 0.002;
-      baseLng += (Math.random() - 0.5) * 0.002;
-      
-      mockFlightPath.push({
-        lat: baseLat,
-        lng: baseLng,
-        timestamp,
-        altitude: 30 + Math.random() * 40,
-        speed: Math.random() * 15
-      });
-    }
-
-    // 生成電量資料
-    let batteryLevel = 100;
-    for (let i = 0; i < 60; i++) {
-      const timestamp = new Date(now.getTime() - i * 120000); // 每2分鐘
-      batteryLevel = Math.max(0, batteryLevel - Math.random() * 2);
-      const consumptionRate = 0.5 + Math.random() * 1.5;
-      
-      mockBattery.push({
-        timestamp,
-        battery_level: batteryLevel,
-        consumption_rate: consumptionRate,
-        predicted_remaining: batteryLevel / consumptionRate
-      });
-    }
-
-    setPerformanceData(mockPerformance.reverse());
-    setFlightPathData(mockFlightPath.reverse());
-    setBatteryData(mockBattery.reverse());
+    const timeRangeMap = {
+      '1h': 1 * 60 * 60 * 1000,
+      '6h': 6 * 60 * 60 * 1000,
+      '24h': 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000
+    };
+    
+    const endDate = now.toISOString();
+    const startDate = new Date(now.getTime() - timeRangeMap[timeRange]).toISOString();
+    
+    return { startDate, endDate };
   };
 
-  const updateRealTimeData = () => {
-    const now = new Date();
-    
-    // 更新效能資料
-    if (Math.random() > 0.7) {
-      const newPerformancePoint: PerformanceDataPoint = {
-        timestamp: now,
-        command_type: ['takeoff', 'move', 'hover', 'land'][Math.floor(Math.random() * 4)],
-        execution_time: 1000 + Math.random() * 5000,
-        wait_time: Math.random() * 2000,
-        success: Math.random() > 0.1
-      };
+  // 使用真實 API hooks
+  const timeQuery = getTimeRangeQuery();
+  const { data: commandsArchiveData = [], isLoading: commandsLoading } = useGetCommandsArchiveByTimeRange(timeQuery);
+  
+  const positionsQuery = new DronePositionsArchiveQuery();
+  const { data: positionsData = [], isLoading: positionsLoading } = positionsQuery.useLatest();
+  
+  const statusQuery = new DroneStatusArchiveQuery();
+  const { isLoading: statusLoading } = statusQuery.useLatest();
 
-      setPerformanceData(prev => [...prev.slice(-49), newPerformancePoint]);
-    }
+  // 轉換資料格式
+  const performanceData: PerformanceDataPoint[] = commandsArchiveData.map(cmd => ({
+    timestamp: new Date(cmd.issued_at),
+    command_type: cmd.command_type,
+    execution_time: cmd.getExecutionTime() || 0,
+    wait_time: cmd.getWaitTime() || 0,
+    success: cmd.status === 'completed'
+  }));
 
-    // 更新電量資料
-    if (droneLogic.droneStats) {
-      const newBatteryPoint: BatteryDataPoint = {
-        timestamp: now,
-        battery_level: droneLogic.droneStats.battery,
-        consumption_rate: 0.8,
-        predicted_remaining: droneLogic.droneStats.battery / 0.8
-      };
+  const flightPathData: FlightPathPoint[] = positionsData.map((pos: DronePositionArchive) => ({
+    lat: pos.latitude,
+    lng: pos.longitude,
+    timestamp: new Date(pos.timestamp),
+    altitude: pos.altitude,
+    speed: pos.speed || 0
+  }));
 
-      setBatteryData(prev => [...prev.slice(-59), newBatteryPoint]);
-    }
-  };
+  // 從位置資料中提取電量資訊，因為狀態歸檔沒有電量欄位
+  const batteryData: BatteryDataPoint[] = positionsData
+    .filter((pos: DronePositionArchive) => pos.batteryLevel !== undefined)
+    .map((pos: DronePositionArchive) => ({
+      timestamp: new Date(pos.timestamp),
+      battery_level: pos.batteryLevel || 0,
+      consumption_rate: 0.8, // 預設消耗率
+      predicted_remaining: (pos.batteryLevel || 0) / 0.8
+    }));
+
+  // 載入狀態
+  const isLoading = commandsLoading || positionsLoading || statusLoading;
+
+
 
   // 繪製效能圖表
   const drawPerformanceChart = () => {
@@ -352,6 +312,18 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
   };
 
   const stats = getStatistics();
+
+  // 顯示載入狀態
+  if (isLoading) {
+    return (
+      <div className={`${className || ""} min-h-screen bg-gray-900 flex items-center justify-center`}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-300">載入資料分析中...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`${className || ""} min-h-screen bg-gray-900`}>

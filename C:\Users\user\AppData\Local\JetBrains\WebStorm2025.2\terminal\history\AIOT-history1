@@ -1,0 +1,487 @@
+chmod +x ~/wsl_ssh_server_setup.sh
+sudo service ssh start
+sudo service ssh status
+sudo apt update && sudo apt install -y openssh-server
+dpkg -l | grep openssh-server
+sudo service ssh status | cat
+chmod +x ~/bin/update_duckdns.sh
+mkdir -p ~/.ssh && touch ~/.ssh/config && chmod 600 ~/.ssh/config
+crontab /home/user/crontab_config
+echo "" >> /home/user/crontab_config && crontab /home/user/crontab_config
+~/bin/update_duckdns.sh
+rm -r /mnt/c/Users/user/Documents/GitHub/ssh_connection/*
+sudo apt update && sudo apt install -y openssh-server
+clear
+mkdir -p ~/bin
+mkdir -p ~/logs
+nano ~/.ssh/config
+cd ~
+ls
+cd bin
+ls
+cd ..
+pwd
+cd ..
+ls
+cd ..
+ls
+netstat -tuln | grep 22
+echo "sudo service ssh start" >> ~/.bashrc
+ip addr show | grep inet
+ping -c 4 zanewnch.duckdns.org
+sudo service ssh status | cat
+sudo -s
+clear
+sudo su
+clear
+[200~sudo service ssh status~
+sudo service ssh status
+sudo service ssh start
+sudo netstat -tuln | grep 22
+clear
+sudo ufw status
+sudo apt install inetutils-telent
+sudo apt install netcat-openbsd telnet
+nc -zv localhost 22
+clear
+lsof -i :2222 2>/dev/null || echo "Cannot check port 2222"
+journalctl -u ssh --no-pager -n 20 2>&1 || echo "Cannot access SSH logs"
+ls -la /etc/ssh/ | grep sshd_config
+cat /etc/ssh/sshd_config
+ls -la /etc/ssh/sshd_config.d/
+powershell.exe -Command "Get-NetFirewallRule -DisplayName '*SSH*' | Format-Table -Property DisplayName, Enabled, Direction, Action"
+cmd.exe /c "netsh advfirewall firewall show rule name=all | findstr SSH"
+sudo service ssh restart 2>&1 || echo "Cannot restart SSH service"
+journalctl -u ssh --no-pager -n 10 2>&1 || echo "Cannot access SSH logs"
+ss -tuln | grep 22
+ssh -v localhost
+ip addr show
+cmd.exe /c "netsh interface portproxy show all"
+ss -tuln | grep 22
+ipconfig.exe | grep -A 5 "Wireless LAN adapter"
+cat /etc/resolv.conf | grep nameserver
+curl -v telnet://localhost:22 2>&1 | grep -i connected
+hostname -I
+cat /etc/ssh/sshd_config 2>/dev/null || echo "Cannot access SSH config file"
+ps aux | grep sshd | grep -v grep
+sudo -n ufw status 2>/dev/null || echo "Cannot check firewall status without sudo"
+ss -tuln | grep 2222
+service ssh status 2>&1 || echo "Cannot check SSH service status"
+npx create-react-app react
+sudo -k
+[200~sudo visudo
+~sudo visudo
+sudo visudo
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react && npm start
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && npx create-react-app react
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && npx create-react-app meeting-minutes-app
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && mv meeting-minutes-app/* react/ && mv meeting-minutes-app/.* react/ 2>/dev/null || true
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && rm -rf meeting-minutes-app
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react/src && rm -f App.css index.css logo.svg
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react && npm install --save react-to-print
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && mkdir -p build/react && cd react && npm run build
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && npx create-react-app react --template typescript
+sudo apt-get update && sudo apt-get install -y nodejs npm
+nano ~/.bashrc
+clear
+nano ~/.bashrc
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react-app && npm start
+cd react/
+npx creat my-app --template typescript
+clear
+npx create-react-app react --template typescript
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes && mkdir react-app && cd react-app && npx create-react-app . --template typescript
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react-app && ls -la
+npm list react-dom | cat
+npm list typescript react | cat
+npm run build | cat
+touch public/favicon.ico public/logo192.png public/logo512.png public/robots.txt
+npm install --save react@18.2.0 react-dom@18.2.0 typescript@4.9.5 | cat
+npm start | cat
+npm run build | cat
+npm run dev
+[200~# 建立 TypeScript 專案
+npm create vite@latest my-app -- --template react-ts
+cd react
+clear
+# 建立 TypeScript 專案
+npm create vite@latest my-app -- --template react-ts
+cd my-app
+# 核心依賴安裝
+npm install @reduxjs/toolkit react-redux react-router-dom @types/react-router-dom
+npm install -D tailwindcss@3 postcss autoprefixer @tailwindcss/vite
+cd my-app && npm run dev
+npm run def
+npm run dev
+clear
+npm run start
+clear
+npm run dev
+mkdir -p my-app/src/components
+mkdir -p my-app/src/models
+cd my-app && npm install react-router-dom
+mkdir -p my-app/src/meetings/3_2025/components
+mkdir -p my-app/src/meetings/3_2025/styles
+mkdir -p my-app/src/meetings/3_2025/components
+mkdir -p my-app/src/meetings/3_2025/models
+mkdir -p src/meetings/3_2025/views
+ls -la src/meetings/3_2025/components/
+cat src/meetings/3_2025/views/MeetingPrintView.tsx
+ls -la src/meetings/3_2025/
+ls -la src/meetings/3_2025/models/
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react/my-app && npm start
+npm install dhtmlx-gantt
+find src -name "*.css" | xargs wc -l | sort -n
+cat src/index.css
+cat tailwind.config.js
+cat vite.config.ts
+npm run dev
+npm run dev
+clear
+npm run dev
+clear
+npm run dev
+clear
+npm run dev
+git config --list | cat
+git config --global --list | cat
+git config --global user.name "zanewnch" && git config --global user.email "zanewnch@gmail.com" && echo "配置已完成"
+git config --global --list | cat
+cd /mnt/c/Users/user/Documents/GitHub/TVC/ && git submodule add --name documentation-react ./documentation/meeting_minutes/react/my-app documentation-react
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react/my-app && git init && echo "# Documentation React" > README_SUBMODULE.md && git add . && git commit -m "Initial commit for documentation-react submodule"
+cd /mnt/c/Users/user/Documents/GitHub/TVC && git submodule add -f --name documentation-react ./documentation/meeting_minutes/react/my-app
+cd /mnt/c/Users/user/Documents/GitHub/TVC && mkdir -p temp_documentation_react && cd temp_documentation_react && git init && echo "# Documentation React" > README.md && git add . && git commit -m "Initial commit for documentation-react" && cd ..
+cd /mnt/c/Users/user/Documents/GitHub/TVC && git submodule add -f ./temp_documentation_react documentation/meeting_minutes/react/my-app/documentation-react && git status
+cd /mnt/c/Users/user/Documents/GitHub/TVC/documentation/meeting_minutes/react && git init my-app/documentation-react && cd my-app/documentation-react && echo "# Documentation React Submodule" > README.md && git add . && git commit -m "Initial commit for documentation-react submodule" && cd /mnt/c/Users/user/Documents/GitHub/TVC && git submodule init && echo -e "\n[submodule \"documentation-react\"]\n\tpath = documentation/meeting_minutes/react/my-app/documentation-react\n\turl = ./documentation/meeting_minutes/react/my-app/documentation-react" >> .gitmodules && git add .gitmodules && git commit -m "Add documentation-react as submodule" && git status
+cd /mnt/c/Users/user/Documents/GitHub/TVC && git submodule status
+cd /mnt/c/Users/user/Documents/GitHub/TVC && git submodule update --init && git submodule status
+cd /mnt/c/Users/user/Documents/GitHub/TVC && git add documentation/meeting_minutes/react/my-app/documentation-react && git status
+cd /mnt/c/Users/user/Documents/GitHub/TVC && git commit -m "Add documentation-react as embedded repository" && ls -la documentation/meeting_minutes/react/my-app/documentation-react
+npm run dev
+clear
+npm run dev
+npm run dev
+clear
+npm run dev
+npm install html2pdf.js
+npm i --save-dev @types/html2pdf.js
+ipconfig
+ifconfig
+ipconfig 
+ifconfig
+clear
+ifconfig
+clear
+ifconfig
+clear
+ifconfig
+dpkg -l | grep openssh-server
+cat /etc/ssh/sshd_config | grep -v "^#" | grep -v "^$"
+sudo service ssh status | cat
+sudo service ssh start
+sudo service ssh status | cat
+hostname -I
+sudo netstat -tuln | grep 2222
+sudo ufw status | cat
+ls -la ~/.ssh/
+cat ~/.ssh/authorized_keys
+powershell.exe -Command "Get-NetFirewallRule -DisplayName '*SSH*' | Format-Table -Property DisplayName, Enabled, Direction, Action"
+cmd.exe /c "netsh interface portproxy show all"
+cmd.exe /c "netsh interface portproxy delete v4tov4 listenport=22 listenaddress=0.0.0.0"
+sudo grep "sshd" /var/log/auth.log | tail -20
+sudo service ssh status | cat
+hostname -I
+cmd.exe /c "netsh advfirewall firewall show rule name=SSH"
+sudo tail -n 20 /var/log/auth.log
+sudo tail -f /var/log/auth.log | grep sshd
+sudo service ssh status
+[200~netsh interface portproxy delete v4tov4 listenport=22 listenaddress=0.0.0.0~
+netsh interface portproxy delete v4tov4 listenport=22 listenaddress=0.0.0.0
+sudo apt update && sudo apt install -y openssh-server
+python --version && which python
+sudo apt update && sudo apt install python3 python3-pip -y
+python3 --version && pip3 install pylint python-language-server
+python3 -m venv .venv && source .venv/bin/activate && pip install pylint python-language-server
+sudo apt install python3.12-venv -y
+python3 -m venv .venv && source .venv/bin/activate && pip install pylint python-language-server
+/bin/python3 /home/user/.windsurf-server/extensions/ms-python.python-2025.2.0-universal/python_files/printEnvVariablesToFile.py /home/user/.windsurf-server/extensions/ms-python.python-2025.2.0-universal/python_files/deactivate/bash/envVars.txt
+cd ~
+ls
+cd bin
+ls
+cd ..
+ls
+cd ..
+ls
+pwd
+cd h
+cd home
+ls
+cd user/
+ls
+cd bin
+ls
+mkdir GitHub
+ls
+cd Github
+cd GitHub
+pwd
+cd ..
+ls
+rm -r GitHub/
+mv /mnt/c/Users/user/Documents/GitHub /home/user/bin
+cd ~
+/bin/python3 -m pip install shioaji
+/bin/python3 -m venv .venv
+/bin/python3 /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+source .venv/bin/activate
+/bin/python3 /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+clear
+pip install shioaji
+/bin/python3 /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+clear
+/bin/python3 /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+source .venv/bin/activate
+/bin/python3 /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+python src/sj_trading/__init__.py
+clear
+python src/sj_trading/__init__.py
+pip install python-dotenv
+/home/user/bin/GitHub/k8s/investment/sj-trading/.venv/bin/python /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+pip install shioaji[speed]
+clear
+/home/user/bin/GitHub/k8s/investment/sj-trading/.venv/bin/python /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py
+/home/user/bin/GitHub/k8s/investment/sj-trading/.venv/bin/python /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/data.py
+pip install yfinance
+/home/user/bin/GitHub/k8s/investment/sj-trading/.venv/bin/python /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/data.py
+/home/user/bin/GitHub/k8s/investment/sj-trading/.venv/bin/python /home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/main.py
+source run.sh 
+python3 -u "/home/user/bin/GitHub/k8s/investment/sj-trading/src/sj_trading/__init__.py"
+python src/sj_trading/data.py
+python -m src.sj_trading.data
+python -m src.sj_trading.main
+rm -rf src/sj_trading/__pycache__
+source run.sh
+/bin/python3 /home/user/.windsurf-server/extensions/ms-python.python-2025.2.0-universal/python_files/printEnvVariablesToFile.py /home/user/.windsurf-server/extensions/ms-python.python-2025.2.0-universal/python_files/deactivate/bash/envVars.txt
+python /home/user/.cursor-server/extensions/ms-python.python-2024.12.3/python_files/printEnvVariablesToFile.py /home/user/.cursor-server/extensions/ms-python.python-2024.12.3/python_files/deactivate/bash/envVars.txt
+source run.sh
+pip install overrides
+python /home/user/.cursor-server/extensions/ms-python.python-2024.12.3/python_files/printEnvVariablesToFile.py /home/user/.cursor-server/extensions/ms-python.python-2024.12.3/python_files/deactivate/bash/envVars.txt
+/bin/python3 /home/user/.windsurf-server/extensions/ms-python.python-2025.2.0-universal/python_files/printEnvVariablesToFile.py /home/user/.windsurf-server/extensions/ms-python.python-2025.2.0-universal/python_files/deactivate/bash/envVars.txt
+python /home/user/.cursor-server/extensions/ms-python.python-2024.12.3/python_files/printEnvVariablesToFile.py /home/user/.cursor-server/extensions/ms-python.python-2024.12.3/python_files/deactivate/bash/envVars.txt
+/bin/python3 /home/user/.windsurf-server/extensions/ms-python.python-2025.4.0-universal/python_files/printEnvVariablesToFile.py /home/user/.windsurf-server/extensions/ms-python.python-2025.4.0-universal/python_files/deactivate/bash/envVars.txt
+claude
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+sudo npm install -g @anthropic-ai/claude-code
+claude-code --help
+npm list -g @anthropic-ai/claude-code
+ls -la /usr/local/bin/ | grep claude
+claude --help
+npm install
+claude
+npm install -g @anthropic-ai/claude-code
+claude
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm run dev -- --port 3000
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+curl -s "https://api.generateapi.dev/icon" -X POST -H "Content-Type: application/json" -d '{"text":"Z","size":32,"format":"png","background":"#4682b4","color":"white"}' > app/icon.png
+mv app/icon.svg app/icon.ico
+pkill -f "next dev"
+ps aux | grep "next dev"
+npm run dev
+clear
+npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+echo "重新啟動開發伺服器以確保變更生效"
+ps aux | grep -i "next\|npm\|yarn\|node" | grep -v grep
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+cd /mnt/c/Users/user/Documents/GitHub/VercelBlog && npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+clear
+npm run dev
+claude
+npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+rm -rf .next && npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+pkill -f "next\|npm\|node" || true
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+rm -rf .next && npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+pkill -f "next dev" && sleep 2 && npm run dev
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+pkill -f "next dev" || true
+rm -rf .next node_modules/.cache
+pkill -f node || true
+claude
+clear
+claude
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+. "\home\user\.cursor-server\bin\031e7e0ff1e2eda9c1a0f5df67d44053b059c5d0\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm run dev
+claude
+cd ..
+pwd
+cd github
+ls
+cd ~
+pwd
+ls
+pwd
+claude
+npm i -g 
+npm i -g @anthropic-ai/claude-code
+npm i -g@anthropic-ai/claude-code
+clear
+claude
+clear
+claude
+cd ..
+ls
+cd usr
+ls
+cd local
+cd bin
+ls
+rm -r claude
+sudo rm -r claude
+ls
+. "\home\user\.cursor-server\bin\a8e95743c5268be73767c46944a71f4465d05c90\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm install -g @anthropic-ai/claude-code
+sudo npm install -g @anthropic-ai/claude-code
+cd be
+npm run install
+npm install
+cd ..
+cd fe
+npm install
+cd..
+cd ..
+clear
+claude
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+. "\home\user\.cursor-server\bin\a8e95743c5268be73767c46944a71f4465d05c90\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+which claude
+npm list -g claude
+ls -la /usr/local/bin/claude
+sudo npm uninstall -g @anthropic-ai/claude-code
+sudo npm install -g @anthropic-ai/claude-code@latest
+claude --version
+claude /doctor
+. "\home\user\.cursor-server\bin\a8e95743c5268be73767c46944a71f4465d05c90\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+npm config set prefix ~/.npm-global
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+gemini
+sudo snap install gemini
+npm install -g @google/gemini-cli
+gemini
+claude
+clear
+claude
+clear
+claude
+git config pull.rebase false
+claude
+clear
+claude
+cd AIOT/
+docker compose up
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+cd fe
+npm run build
+claude
+source /home/user/GitHub/investment/venv/bin/activate
+pip install shioaji
+claude
+python -u "/home/user/GitHub/investment/src/main.py"
+source /home/user/GitHub/investment/venv/bin/activate
+python -u "/home/user/GitHub/investment/src/main.py"
+claude
+clear
+python -u "/home/user/GitHub/investment/src/main.py"
+pip install shioaji[speed]
+claude
+clear
+claude
+source /home/user/GitHub/investment/venv/bin/activate
+sudo apt-get
+sudo apt-get update && sudo apt-get
+clear
+sudo apt install python3-tk -y
+sudo apt update
+sudo apt install fonts-noto-cjk
+fc-cache -fv
+/usr/bin/env python3 "/home/user/GitHub/investment/src/chinese_app.py"
+source /home/user/GitHub/investment/venv/bin/activate
+/usr/bin/env python3 "/home/user/GitHub/investment/src/chinese_app.py"
+clear
+gemini
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+gemini
+npm install -g @google/gemini-cli 
+clear
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc
+nvm install node
+clear
+node --version
+clear
+claude
+npm install -g @google/gemini-cli
+clear
+gemini
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+claude
+clear
+. "\home\user\.cursor-server\bin\54c27320fab08c9f5dd5873f07fca101f7a3e070\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+. "\home\user\.cursor-server\bin\54c27320fab08c9f5dd5873f07fca101f7a3e070\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration-bash.sh"
+cd fe && npm install
+cd fe && npm run build
+npm run build
+cd fe && npm run build
+npm run build
+claude

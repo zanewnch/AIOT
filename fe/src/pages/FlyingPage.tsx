@@ -14,6 +14,9 @@
 import React, { useRef, useState } from "react"; // 引入 React 核心庫和 Hooks
 import { useRealFlyLogic } from "../hooks/useRealFlyLogic";
 import { useSimulateFlyLogic } from "../hooks/useSimulateFlyLogic";
+import { DronePositionQuery } from "../hooks/useDronePositionQuery";
+import { DroneCommandQuery } from "../hooks/useDroneCommandQuery";
+import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
 
 // 檢查是否啟用模擬模式
 const ENABLE_SIMULATE_MODE =
@@ -66,8 +69,20 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
   const realFlyLogic = useRealFlyLogic(mapRef);
   const simulateFlyLogic = useSimulateFlyLogic(mapRef);
 
+  // 真實 API 資料 hooks
+  const positionQuery = new DronePositionQuery();
+  const commandQuery = new DroneCommandQuery();
+  const statusQuery = new DroneStatusQuery();
+  
+  const { data: dronePositions = [], isLoading: positionsLoading } = positionQuery.useLatest();
+  const { data: activeCommands = [], isLoading: commandsLoading } = commandQuery.useLatestDroneCommands();
+  const { data: droneStatuses = [], isLoading: statusLoading } = statusQuery.useAll();
+
   // 選擇當前使用的邏輯
   const currentLogic = isSimulateMode ? simulateFlyLogic : realFlyLogic;
+
+  // 真實模式的載入狀態
+  const realModeLoading = !isSimulateMode && (positionsLoading || commandsLoading || statusLoading);
 
   /**
    * 切換模式處理函數
@@ -144,7 +159,7 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
                 />
 
                 {/* 載入覆蓋層 - 改善動畫 */}
-                {currentLogic.isLoading && (
+                {(currentLogic.isLoading || realModeLoading) && (
                   <div className="absolute inset-0 bg-gray-800/90 backdrop-blur-sm flex items-center justify-center">
                     <div className="text-center text-gray-300">
                       <div className="relative mb-4">
@@ -350,62 +365,96 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
                     </div>
                   </div>
                 ) : (
-                  /* 真實模式 - 緊湊設計 */
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-gradient-to-br from-blue-900 to-indigo-900 p-2 rounded border border-blue-700">
-                      <div className="text-xs text-blue-300 mb-1">座標系統</div>
-                      <div className="text-xs font-semibold text-gray-100">
-                        WGS84
+                  /* 真實模式 - 顯示實際資料 */
+                  <div className="space-y-3">
+                    {/* 系統狀態 */}
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-300 mb-2">
+                        系統狀態
+                      </h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-gradient-to-br from-blue-900 to-indigo-900 p-2 rounded border border-blue-700">
+                          <div className="text-xs text-blue-300 mb-1">連線無人機</div>
+                          <div className="text-sm font-bold text-gray-100">
+                            {droneStatuses.length}
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-green-900 to-emerald-900 p-2 rounded border border-green-700">
+                          <div className="text-xs text-green-300 mb-1">飛行中</div>
+                          <div className="text-sm font-bold text-gray-100">
+                            {droneStatuses.filter(d => d.status === 'flying').length}
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-purple-900 to-pink-900 p-2 rounded border border-purple-700">
+                          <div className="text-xs text-purple-300 mb-1">
+                            執行中指令
+                          </div>
+                          <div className="text-sm font-bold text-gray-100">
+                            {activeCommands.length}
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-red-900 to-pink-900 p-2 rounded border border-red-700">
+                          <div className="text-xs text-red-300 mb-1">
+                            飛行點數量
+                          </div>
+                          <div className="text-sm font-bold text-gray-100">
+                            {realFlyLogic.markersCount}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-purple-900 to-pink-900 p-2 rounded border border-purple-700">
-                      <div className="text-xs text-purple-300 mb-1">
-                        地圖提供商
+                    {/* 最新位置資訊 */}
+                    {dronePositions.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-medium text-gray-300 mb-2">
+                          最新位置
+                        </h4>
+                        <div className="bg-gradient-to-br from-cyan-900 to-blue-900 p-2 rounded border border-cyan-700">
+                          <div className="text-xs text-cyan-300 mb-1">
+                            最近更新位置
+                          </div>
+                          <div className="text-xs font-mono text-gray-100">
+                            {dronePositions[0].latitude.toFixed(4)}, {dronePositions[0].longitude.toFixed(4)}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            高度: {dronePositions[0].altitude}m
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs font-semibold text-gray-100">
-                        Google Maps
-                      </div>
-                    </div>
+                    )}
 
-                    <div className="bg-gradient-to-br from-green-900 to-emerald-900 p-2 rounded border border-green-700">
-                      <div className="text-xs text-green-300 mb-1">
-                        預設中心
-                      </div>
-                      <div className="text-xs font-semibold text-gray-100">
-                        台北101
-                      </div>
-                    </div>
+                    {/* 技術資訊 */}
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-300 mb-2">
+                        技術資訊
+                      </h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-gradient-to-br from-teal-900 to-cyan-900 p-2 rounded border border-teal-700">
+                          <div className="text-xs text-teal-300 mb-1">API 狀態</div>
+                          <span
+                            className={`inline-flex items-center px-1 py-0.5 rounded text-xs font-medium ${
+                              currentLogic.isApiLoaded && !realModeLoading
+                                ? "bg-green-900/50 text-green-300 border border-green-700"
+                                : "bg-yellow-900/50 text-yellow-300 border border-yellow-700"
+                            }`}
+                          >
+                            {currentLogic.isApiLoaded && !realModeLoading ? "已載入" : "載入中"}
+                          </span>
+                        </div>
 
-                    <div className="bg-gradient-to-br from-red-900 to-pink-900 p-2 rounded border border-red-700">
-                      <div className="text-xs text-red-300 mb-1">
-                        飛行點數量
+                        <div className="bg-gradient-to-br from-slate-900 to-gray-900 p-2 rounded border border-slate-700">
+                          <div className="text-xs text-slate-300 mb-1">
+                            運行模式
+                          </div>
+                          <span className="inline-flex items-center px-1 py-0.5 rounded text-xs font-medium bg-blue-900/50 text-blue-300 border border-blue-700">
+                            真實模式
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-sm font-bold text-gray-100">
-                        {realFlyLogic.markersCount}
-                      </div>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-teal-900 to-cyan-900 p-2 rounded border border-teal-700">
-                      <div className="text-xs text-teal-300 mb-1">API 狀態</div>
-                      <span
-                        className={`inline-flex items-center px-1 py-0.5 rounded text-xs font-medium ${
-                          currentLogic.isApiLoaded
-                            ? "bg-green-900/50 text-green-300 border border-green-700"
-                            : "bg-yellow-900/50 text-yellow-300 border border-yellow-700"
-                        }`}
-                      >
-                        {currentLogic.isApiLoaded ? "已載入" : "載入中"}
-                      </span>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-slate-900 to-gray-900 p-2 rounded border border-slate-700">
-                      <div className="text-xs text-slate-300 mb-1">
-                        運行模式
-                      </div>
-                      <span className="inline-flex items-center px-1 py-0.5 rounded text-xs font-medium bg-blue-900/50 text-blue-300 border border-blue-700">
-                        真實模式
-                      </span>
                     </div>
                   </div>
                 )}

@@ -14,6 +14,8 @@
 import React, { useRef, useState } from "react"; // 引入 React 核心庫和 Hooks
 import { useRealMapLogic } from "../hooks/useRealMapLogic";
 import { useSimulateMapLogic } from "../hooks/useSimulateMapLogic";
+import { DronePositionQuery } from "../hooks/useDronePositionQuery";
+import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
 
 // 檢查是否啟用模擬模式
 const ENABLE_SIMULATE_MODE =
@@ -61,6 +63,14 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
 
   // 模式狀態：true = 模擬模式, false = 真實模式
   const [isSimulateMode, setIsSimulateMode] = useState(false);
+
+  // API Query hooks 用於獲取真實數據
+  const dronePositionQuery = new DronePositionQuery();
+  const droneStatusQuery = new DroneStatusQuery();
+
+  // 獲取真實無人機數據
+  const { data: dronePositions = [], isLoading: positionsLoading } = dronePositionQuery.useLatest();
+  const { data: droneStatuses = [], isLoading: statusesLoading } = droneStatusQuery.useAll();
 
   // 根據模式選擇對應的 Hook
   const realMapLogic = useRealMapLogic(mapRef);
@@ -422,6 +432,60 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
                       </div>
                       <div className="text-lg font-bold text-gray-100">
                         {realMapLogic.markersCount}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-blue-900 to-indigo-900 p-4 rounded-xl border border-blue-700">
+                      <div className="text-xs font-medium text-blue-300 mb-1">
+                        已連接無人機
+                      </div>
+                      <div className="text-lg font-bold text-gray-100">
+                        {positionsLoading ? '載入中...' : dronePositions.length}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-900 to-emerald-900 p-4 rounded-xl border border-green-700">
+                      <div className="text-xs font-medium text-green-300 mb-1">
+                        飛行中
+                      </div>
+                      <div className="text-lg font-bold text-gray-100">
+                        {statusesLoading ? '載入中...' : droneStatuses.filter(drone => drone.status === 'flying').length}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-orange-900 to-amber-900 p-4 rounded-xl border border-orange-700">
+                      <div className="text-xs font-medium text-orange-300 mb-1">
+                        待機中
+                      </div>
+                      <div className="text-lg font-bold text-gray-100">
+                        {statusesLoading ? '載入中...' : droneStatuses.filter(drone => drone.status === 'idle').length}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-yellow-900 to-amber-900 p-4 rounded-xl border border-yellow-700">
+                      <div className="text-xs font-medium text-yellow-300 mb-1">
+                        充電中
+                      </div>
+                      <div className="text-lg font-bold text-gray-100">
+                        {statusesLoading ? '載入中...' : droneStatuses.filter(drone => drone.status === 'charging').length}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-gray-900 to-slate-900 p-4 rounded-xl border border-gray-700">
+                      <div className="text-xs font-medium text-gray-300 mb-1">
+                        離線
+                      </div>
+                      <div className="text-lg font-bold text-gray-100">
+                        {statusesLoading ? '載入中...' : droneStatuses.filter(drone => drone.status === 'offline').length}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-900 to-pink-900 p-4 rounded-xl border border-purple-700">
+                      <div className="text-xs font-medium text-purple-300 mb-1">
+                        平均電量
+                      </div>
+                      <div className="text-lg font-bold text-gray-100">
+                        {statusesLoading ? '載入中...' : droneStatuses.length > 0 ? Math.round(droneStatuses.reduce((sum, drone) => sum + (drone.batteryLevel || 0), 0) / droneStatuses.length) : 0}%
                       </div>
                     </div>
                   </>

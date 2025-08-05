@@ -5,6 +5,20 @@
  * 用於儲存無人機的 GPS 定位資料、飛行狀態和系統資訊。
  * 提供完整的 3D 定位資訊和飛行參數，適用於無人機追蹤和監控系統。
  * 
+ * 資料表欄位 (Table Columns):
+ * - id: 主鍵識別碼 (BIGINT, AUTO_INCREMENT, PRIMARY KEY)
+ * - drone_id: 無人機外鍵 (BIGINT, NOT NULL)
+ * - latitude: 緯度座標 (FLOAT, NOT NULL) - WGS84 座標系統，範圍 -90 到 90 度
+ * - longitude: 經度座標 (FLOAT, NOT NULL) - WGS84 座標系統，範圍 -180 到 180 度
+ * - altitude: 海拔高度 (FLOAT, NOT NULL) - 距離海平面高度，單位公尺
+ * - timestamp: 資料時間戳記 (DATE, NOT NULL) - 位置資料記錄時間，精確到毫秒
+ * - signal_strength: GPS信號強度 (FLOAT, NOT NULL) - GPS 接收信號強度指標
+ * - speed: 飛行速度 (FLOAT, NOT NULL) - 無人機飛行速度，單位 m/s
+ * - heading: 航向角度 (FLOAT, NOT NULL) - 無人機航向，範圍 0-360 度
+ * - battery_level: 電池電量百分比 (FLOAT, NOT NULL) - 電池電量，範圍 0-100%
+ * - createdAt: 建立時間 (DATE, AUTO) - 記錄建立時間戳記，自動管理
+ * - updatedAt: 更新時間 (DATE, AUTO) - 記錄更新時間戳記，自動維護
+ * 
  * @module DronePositionModel
  * @author AIOT Team
  * @since 1.0.0

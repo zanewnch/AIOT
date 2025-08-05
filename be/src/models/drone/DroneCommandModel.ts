@@ -5,6 +5,21 @@
  * 用於管理無人機的各種指令，包含起飛、降落、移動、懸停、返航等操作。
  * 提供完整的指令狀態追蹤和執行監控功能，適用於無人機遠程控制系統。
  * 
+ * 資料表欄位 (Table Columns):
+ * - id: 主鍵識別碼 (BIGINT, AUTO_INCREMENT, PRIMARY KEY)
+ * - drone_id: 無人機外鍵 (BIGINT, NOT NULL, FOREIGN KEY) - 關聯到drones_status表
+ * - queue_id: 佇列外鍵 (BIGINT, NULL, FOREIGN KEY) - 關聯到drone_command_queues表
+ * - command_type: 指令類型 (ENUM, NOT NULL) - takeoff/land/hover/flyTo/moveForward/moveBackward/moveLeft/moveRight/rotateLeft/rotateRight/return/emergency
+ * - command_data: 指令參數 (JSON, NULL) - 根據指令類型包含不同參數，如座標、距離、角度、速度等
+ * - status: 指令狀態 (ENUM, NOT NULL) - pending/executing/completed/failed
+ * - issued_by: 發送者 (BIGINT, NOT NULL) - 發送指令的使用者ID
+ * - issued_at: 指令發送時間 (TIMESTAMP, NOT NULL) - 指令發送的時間戳記
+ * - executed_at: 指令執行時間 (TIMESTAMP, NULL) - 指令開始執行的時間戳記
+ * - completed_at: 指令完成時間 (TIMESTAMP, NULL) - 指令完成的時間戳記
+ * - error_message: 錯誤訊息 (TEXT, NULL) - 執行失敗時的錯誤訊息
+ * - createdAt: 建立時間 (TIMESTAMP, AUTO) - 記錄建立時間戳記，自動管理
+ * - updatedAt: 更新時間 (TIMESTAMP, AUTO) - 記錄更新時間戳記，自動維護
+ * 
  * @module DroneCommandModel
  * @author AIOT Team
  * @since 1.0.0
@@ -35,16 +50,32 @@ import { DroneStatusModel } from './DroneStatusModel.js';
 /**
  * 無人機指令類型枚舉
  * 
- * 定義無人機支援的指令類型
+ * 定義無人機支援的指令類型，涵蓋基本飛行操作和高級控制功能
  * 
  * @enum {string}
  */
 export enum DroneCommandType {
-    TAKEOFF = 'takeoff',    // 起飛
-    LAND = 'land',          // 降落
-    MOVE = 'move',          // 移動
-    HOVER = 'hover',        // 懸停
-    RETURN = 'return'       // 返航
+    // 基本飛行操作
+    TAKEOFF = 'takeoff',         // 起飛
+    LAND = 'land',               // 降落
+    HOVER = 'hover',             // 懸停
+    
+    // 位置控制
+    FLY_TO = 'flyTo',            // 飛行到指定座標位置
+    RETURN = 'return',           // 返航到起飛點
+    
+    // 方向移動控制
+    MOVE_FORWARD = 'moveForward',   // 前進
+    MOVE_BACKWARD = 'moveBackward', // 後退
+    MOVE_LEFT = 'moveLeft',         // 左移
+    MOVE_RIGHT = 'moveRight',       // 右移
+    
+    // 旋轉控制
+    ROTATE_LEFT = 'rotateLeft',     // 左轉（逆時針旋轉）
+    ROTATE_RIGHT = 'rotateRight',   // 右轉（順時針旋轉）
+    
+    // 緊急控制
+    EMERGENCY = 'emergency'         // 緊急停止/緊急降落
 }
 
 /**
@@ -97,7 +128,7 @@ export type DroneCommandAttributes = {
     
     /** 
      * 指令參數
-     * @type {object | null} JSON 格式的指令參數，根據指令類型包含不同參數
+     * @type {object | null} JSON 格式的指令參數，根據不同指令類型包含不同的參數結構
      */
     command_data: object | null;
     
@@ -189,44 +220,105 @@ export type DroneCommandCreationAttributes = Optional<DroneCommandAttributes, 'i
  * 
  * @example
  * ```typescript
- * // 發送起飛指令
+ * // 1. 發送起飛指令
  * const takeoffCommand = await DroneCommandModel.create({
  *   drone_id: 1,
  *   command_type: DroneCommandType.TAKEOFF,
  *   command_data: { 
- *     altitude: 50,
- *     speed: 2.5
+ *     altitude: 50,        // 起飛到50米高度
+ *     speed: 2.5          // 起飛速度 2.5 m/s
  *   },
  *   status: DroneCommandStatus.PENDING,
  *   issued_by: 1,
- *   issued_at: new Date(),
- *   executed_at: null,
- *   completed_at: null,
- *   error_message: null
+ *   issued_at: new Date()
  * });
  * 
- * // 發送移動指令
- * const moveCommand = await DroneCommandModel.create({
+ * // 2. 發送飛行到指定位置指令
+ * const flyToCommand = await DroneCommandModel.create({
  *   drone_id: 1,
- *   command_type: DroneCommandType.MOVE,
+ *   command_type: DroneCommandType.FLY_TO,
  *   command_data: {
- *     latitude: 25.033964,
+ *     latitude: 25.033964,   // 台北101座標
  *     longitude: 121.564468,
- *     altitude: 100,
- *     speed: 5.0
+ *     altitude: 100,         // 飛行高度100米
+ *     speed: 5.0            // 飛行速度 5.0 m/s
  *   },
  *   status: DroneCommandStatus.PENDING,
  *   issued_by: 2,
  *   issued_at: new Date()
  * });
  * 
- * // 查詢特定無人機的待執行指令
+ * // 3. 發送方向移動指令
+ * const moveForwardCommand = await DroneCommandModel.create({
+ *   drone_id: 1,
+ *   command_type: DroneCommandType.MOVE_FORWARD,
+ *   command_data: {
+ *     distance: 100,         // 前進100米
+ *     speed: 3.0            // 移動速度 3.0 m/s
+ *   },
+ *   status: DroneCommandStatus.PENDING,
+ *   issued_by: 1,
+ *   issued_at: new Date()
+ * });
+ * 
+ * // 4. 發送旋轉指令
+ * const rotateCommand = await DroneCommandModel.create({
+ *   drone_id: 1,
+ *   command_type: DroneCommandType.ROTATE_RIGHT,
+ *   command_data: {
+ *     angle: 45             // 右轉45度
+ *   },
+ *   status: DroneCommandStatus.PENDING,
+ *   issued_by: 1,
+ *   issued_at: new Date()
+ * });
+ * 
+ * // 5. 發送緊急停止指令
+ * const emergencyCommand = await DroneCommandModel.create({
+ *   drone_id: 1,
+ *   command_type: DroneCommandType.EMERGENCY,
+ *   command_data: {
+ *     action: 'land'        // 緊急降落
+ *   },
+ *   status: DroneCommandStatus.PENDING,
+ *   issued_by: 1,
+ *   issued_at: new Date()
+ * });
+ * 
+ * // 6. 查詢特定無人機的待執行指令
  * const pendingCommands = await DroneCommandModel.findAll({
  *   where: { 
  *     drone_id: 1,
  *     status: DroneCommandStatus.PENDING 
  *   },
  *   order: [['issued_at', 'ASC']]
+ * });
+ * 
+ * // 7. 查詢特定類型的指令
+ * const movementCommands = await DroneCommandModel.findAll({
+ *   where: {
+ *     drone_id: 1,
+ *     command_type: {
+ *       [Op.in]: [
+ *         DroneCommandType.MOVE_FORWARD,
+ *         DroneCommandType.MOVE_BACKWARD,
+ *         DroneCommandType.MOVE_LEFT,
+ *         DroneCommandType.MOVE_RIGHT
+ *       ]
+ *     }
+ *   }
+ * });
+ * 
+ * // 8. 統計指令執行情況
+ * const commandStats = await DroneCommandModel.findAll({
+ *   attributes: [
+ *     'command_type',
+ *     'status',
+ *     [fn('COUNT', col('id')), 'count']
+ *   ],
+ *   where: { drone_id: 1 },
+ *   group: ['command_type', 'status'],
+ *   raw: true
  * });
  * ```
  */
@@ -291,12 +383,15 @@ export class DroneCommandModel extends Model<DroneCommandAttributes, DroneComman
     /**
      * 指令參數
      * 
-     * JSON 格式的指令參數，根據不同指令類型包含不同的參數：
-     * - takeoff: { altitude, speed }
-     * - move: { latitude, longitude, altitude, speed }
-     * - hover: { duration }
-     * - land: { speed }
-     * - return: { speed }
+     * JSON 格式的指令參數，根據不同指令類型包含不同的參數結構：
+     * - takeoff: { altitude: number, speed?: number } - 起飛高度和速度
+     * - land: { speed?: number } - 降落速度
+     * - hover: { duration?: number } - 懸停持續時間（秒）
+     * - flyTo: { latitude: number, longitude: number, altitude?: number, speed?: number } - 目標座標和飛行參數
+     * - moveForward/moveBackward/moveLeft/moveRight: { distance?: number, speed?: number } - 移動距離和速度
+     * - rotateLeft/rotateRight: { angle?: number } - 旋轉角度（度）
+     * - return: { speed?: number } - 返航速度
+     * - emergency: { action?: 'stop' | 'land' } - 緊急操作類型
      * 
      * @type {object | null}
      * @memberof DroneCommandModel
