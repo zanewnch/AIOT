@@ -80,8 +80,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
 
             return task;
         } catch (error) {
-            this.logger.error('歸檔任務創建失敗', { error: error.message, data });
-            throw new Error(`創建歸檔任務失敗: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error('歸檔任務創建失敗', { error: errorMessage, data });
+            throw new Error(`創建歸檔任務失敗: ${errorMessage}`);
         }
     }
 
@@ -109,8 +110,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
 
             return task;
         } catch (error) {
-            this.logger.error('查找歸檔任務失敗', { taskId: id, error: error.message });
-            throw new Error(`查找歸檔任務失敗: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error('查找歸檔任務失敗', { taskId: id, error: errorMessage });
+            throw new Error(`查找歸檔任務失敗: ${errorMessage}`);
         }
     }
 
@@ -143,8 +145,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
 
             return tasks;
         } catch (error) {
-            this.logger.error('查找歸檔任務失敗', { options, error: error.message });
-            throw new Error(`查找歸檔任務失敗: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error('查找歸檔任務失敗', { options, error: errorMessage });
+            throw new Error(`查找歸檔任務失敗: ${errorMessage}`);
         }
     }
 
@@ -172,9 +175,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
         } catch (error) {
             this.logger.error('根據批次 ID 查找歸檔任務失敗', {
                 batchId,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`根據批次 ID 查找歸檔任務失敗: ${error.message}`);
+            throw new Error(`根據批次 ID 查找歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -211,9 +214,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
             this.logger.error('根據狀態查找歸檔任務失敗', {
                 status,
                 limit,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`根據狀態查找歸檔任務失敗: ${error.message}`);
+            throw new Error(`根據狀態查找歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -238,9 +241,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
             this.logger.error('根據任務類型查找歸檔任務失敗', {
                 jobType,
                 options,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`根據任務類型查找歸檔任務失敗: ${error.message}`);
+            throw new Error(`根據任務類型查找歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -265,9 +268,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
             this.logger.error('根據創建者查找歸檔任務失敗', {
                 createdBy,
                 options,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`根據創建者查找歸檔任務失敗: ${error.message}`);
+            throw new Error(`根據創建者查找歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -295,9 +298,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
                 startDate,
                 endDate,
                 options,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`根據日期範圍查找歸檔任務失敗: ${error.message}`);
+            throw new Error(`根據日期範圍查找歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -331,9 +334,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
             this.logger.error('更新歸檔任務失敗', {
                 taskId: id,
                 updateData: data,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`更新歸檔任務失敗: ${error.message}`);
+            throw new Error(`更新歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -361,9 +364,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
         } catch (error) {
             this.logger.error('刪除歸檔任務失敗', {
                 taskId: id,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`刪除歸檔任務失敗: ${error.message}`);
+            throw new Error(`刪除歸檔任務失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -387,9 +390,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
         } catch (error) {
             this.logger.error('統計歸檔任務數量失敗', {
                 options,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`統計歸檔任務數量失敗: ${error.message}`);
+            throw new Error(`統計歸檔任務數量失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -439,9 +442,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
                 taskIds: ids,
                 newStatus: status,
                 additionalData,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`批量更新歸檔任務狀態失敗: ${error.message}`);
+            throw new Error(`批量更新歸檔任務狀態失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -484,9 +487,9 @@ export class ArchiveTaskRepository implements IArchiveTaskRepository {
             this.logger.error('清理舊歸檔任務記錄失敗', {
                 daysOld,
                 status,
-                error: error.message
+                error: error instanceof Error ? error.message : String(error)
             });
-            throw new Error(`清理舊歸檔任務記錄失敗: ${error.message}`);
+            throw new Error(`清理舊歸檔任務記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 

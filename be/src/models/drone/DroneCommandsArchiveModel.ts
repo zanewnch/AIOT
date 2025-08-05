@@ -522,9 +522,16 @@ export class DroneCommandsArchiveModel extends Model<DroneCommandsArchiveAttribu
         const thresholds = {
             [DroneCommandType.TAKEOFF]: { excellent: 30, good: 60, fair: 120 },
             [DroneCommandType.LAND]: { excellent: 45, good: 90, fair: 180 },
-            [DroneCommandType.MOVE]: { excellent: 60, good: 120, fair: 300 },
+            [DroneCommandType.FLY_TO]: { excellent: 60, good: 120, fair: 300 },
             [DroneCommandType.HOVER]: { excellent: 5, good: 10, fair: 20 },
-            [DroneCommandType.RETURN]: { excellent: 120, good: 240, fair: 480 }
+            [DroneCommandType.RETURN]: { excellent: 120, good: 240, fair: 480 },
+            [DroneCommandType.MOVE_FORWARD]: { excellent: 30, good: 60, fair: 120 },
+            [DroneCommandType.MOVE_BACKWARD]: { excellent: 30, good: 60, fair: 120 },
+            [DroneCommandType.MOVE_LEFT]: { excellent: 30, good: 60, fair: 120 },
+            [DroneCommandType.MOVE_RIGHT]: { excellent: 30, good: 60, fair: 120 },
+            [DroneCommandType.ROTATE_LEFT]: { excellent: 15, good: 30, fair: 60 },
+            [DroneCommandType.ROTATE_RIGHT]: { excellent: 15, good: 30, fair: 60 },
+            [DroneCommandType.EMERGENCY]: { excellent: 5, good: 10, fair: 20 }
         };
 
         const threshold = thresholds[this.command_type];
@@ -549,9 +556,16 @@ export class DroneCommandsArchiveModel extends Model<DroneCommandsArchiveAttribu
         const typeMap = {
             [DroneCommandType.TAKEOFF]: '起飛',
             [DroneCommandType.LAND]: '降落',
-            [DroneCommandType.MOVE]: '移動',
+            [DroneCommandType.FLY_TO]: '移動',
             [DroneCommandType.HOVER]: '懸停',
-            [DroneCommandType.RETURN]: '返航'
+            [DroneCommandType.RETURN]: '返航',
+            [DroneCommandType.MOVE_FORWARD]: '前進',
+            [DroneCommandType.MOVE_BACKWARD]: '後退',
+            [DroneCommandType.MOVE_LEFT]: '左移',
+            [DroneCommandType.MOVE_RIGHT]: '右移',
+            [DroneCommandType.ROTATE_LEFT]: '左轉',
+            [DroneCommandType.ROTATE_RIGHT]: '右轉',
+            [DroneCommandType.EMERGENCY]: '緊急'
         };
 
         const statusMap = {

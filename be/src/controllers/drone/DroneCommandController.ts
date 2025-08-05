@@ -681,6 +681,41 @@ export class DroneCommandController {
     }
 
     /**
+     * 發送移動指令（别名：飛行到指定位置）
+     *
+     * @route POST /api/drone-commands/move
+     * @param req - Express 請求物件
+     * @param res - Express 回應物件
+     * @param next - Express 下一個中介軟體函數
+     */
+    async sendMoveCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { droneId, issuedBy, latitude, longitude, altitude, speed } = req.body;
+
+            logRequest(req, `Sending move command for drone: ${droneId}`);
+            logger.info('Move command request received', { droneId, issuedBy, latitude, longitude, altitude, speed });
+
+            const result = await this.commandService.sendMoveCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
+            
+            if (result.success) {
+                const response = ControllerResult.created('移動指令發送成功', result.command);
+                res.status(response.status).json(response);
+                logger.info('Move command sent successfully', { droneId, commandId: result.command.id });
+            } else {
+                const response = ControllerResult.badRequest(result.message);
+                res.status(response.status).json(response);
+                logger.warn('Move command failed', { droneId, error: result.error });
+            }
+        } catch (error) {
+            logger.error('Error in sendMoveCommand', {
+                requestBody: req.body,
+                error
+            });
+            next(error);
+        }
+    }
+
+    /**
      * 發送懸停指令
      *
      * @route POST /api/drone-commands/send/hover
@@ -1317,6 +1352,7 @@ export const getFailedCommands = commandController.getFailedCommands.bind(comman
 export const sendTakeoffCommand = commandController.sendTakeoffCommand.bind(commandController);
 export const sendLandCommand = commandController.sendLandCommand.bind(commandController);
 export const sendFlyToCommand = commandController.sendFlyToCommand.bind(commandController);
+export const sendMoveCommand = commandController.sendMoveCommand.bind(commandController);
 export const sendHoverCommand = commandController.sendHoverCommand.bind(commandController);
 export const sendReturnCommand = commandController.sendReturnCommand.bind(commandController);
 export const sendMoveForwardCommand = commandController.sendMoveForwardCommand.bind(commandController);

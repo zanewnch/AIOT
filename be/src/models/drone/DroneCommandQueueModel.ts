@@ -29,7 +29,7 @@ import {
 import type { Optional } from 'sequelize';
 
 // 引入相關模型
-import { DroneCommandModel } from './DroneCommandModel.js';
+// 使用延遲載入避免循環引用
 
 /**
  * 無人機指令佇列狀態枚舉
@@ -276,12 +276,15 @@ export class DroneCommandQueueModel extends Model<DroneCommandQueueAttributes, D
 
     /**
      * 關聯到指令表
+     * 
+     * 建立與 DroneCommandModel 的一對多關聯關係。
+     * 使用延遲載入避免循環引用。
      */
-    @HasMany(() => DroneCommandModel, {
+    @HasMany(() => require('./DroneCommandModel.js').DroneCommandModel, {
         foreignKey: 'queue_id',
         as: 'commands'
     })
-    declare commands: DroneCommandModel[];
+    declare commands: any[];
 
     /**
      * 計算佇列執行時間

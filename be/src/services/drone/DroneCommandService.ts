@@ -912,6 +912,18 @@ export class DroneCommandService implements IDroneCommandService {
     }
 
     /**
+     * 發送移動指令（别名：飛行到指定位置）
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { latitude, longitude, altitude, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    async sendMoveCommand(droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> {
+        return await this.sendFlyToCommand(droneId, issuedBy, commandData);
+    }
+
+    /**
      * 發送懸停指令
      *
      * @param {number} droneId - 無人機 ID
@@ -1445,7 +1457,7 @@ export class DroneCommandService implements IDroneCommandService {
                     }
                     break;
 
-                case CommandType.MOVE:
+                case CommandType.FLY_TO:
                     if (
                         typeof commandData.latitude !== 'number' ||
                         typeof commandData.longitude !== 'number' ||

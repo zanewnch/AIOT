@@ -339,6 +339,86 @@ export interface IDroneCommandService {
     sendReturnCommand(droneId: number, issuedBy: number, commandData?: { speed?: number }): Promise<CommandExecutionResult>;
 
     /**
+     * 發送飛行到指定位置指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { latitude, longitude, altitude, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendFlyToCommand(droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送前進指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendMoveForwardCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送後退指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendMoveBackwardCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送左移指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendMoveLeftCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送右移指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { distance, speed }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendMoveRightCommand(droneId: number, issuedBy: number, commandData?: { distance?: number; speed?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送左轉指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { angle }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendRotateLeftCommand(droneId: number, issuedBy: number, commandData?: { angle?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送右轉指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { angle }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendRotateRightCommand(droneId: number, issuedBy: number, commandData?: { angle?: number }): Promise<CommandExecutionResult>;
+
+    /**
+     * 發送緊急指令
+     * 
+     * @param {number} droneId - 無人機 ID
+     * @param {number} issuedBy - 發送者 ID
+     * @param {object} commandData - 指令參數 { action }
+     * @returns {Promise<CommandExecutionResult>} 指令執行結果
+     */
+    sendEmergencyCommand(droneId: number, issuedBy: number, commandData?: { action?: 'stop' | 'land' }): Promise<CommandExecutionResult>;
+
+    /**
      * 執行指令（標記為執行中）
      * 
      * @param {number} commandId - 指令 ID
