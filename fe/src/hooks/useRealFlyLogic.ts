@@ -96,7 +96,6 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
         center: DEFAULT_CENTER,
         zoom: 15,
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-        styles: [], // 可以在這裡添加自定義樣式
         mapId: 'AIOT_DRONE_MAP' // 必須添加 mapId 以支持 AdvancedMarkerElement
       });
 
@@ -207,7 +206,7 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
     const bounds = new window.google.maps.LatLngBounds();
     markersRef.current.forEach(marker => {
-      bounds.extend(marker.getPosition());
+      bounds.extend(marker.position);
     });
 
     mapInstanceRef.current.fitBounds(bounds);
@@ -218,7 +217,7 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
    */
   const clearMarkers = () => {
     markersRef.current.forEach(marker => {
-      marker.setMap(null);
+      marker.map = null;
     });
     markersRef.current = [];
   };

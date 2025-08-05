@@ -205,7 +205,7 @@ export const useRealMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
     const bounds = new window.google.maps.LatLngBounds();
     markersRef.current.forEach(marker => {
-      bounds.extend(marker.getPosition());
+      bounds.extend(marker.position);
     });
 
     mapInstanceRef.current.fitBounds(bounds);
@@ -216,7 +216,7 @@ export const useRealMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
    */
   const clearMarkers = () => {
     markersRef.current.forEach(marker => {
-      marker.setMap(null);
+      marker.map = null;
     });
     markersRef.current = [];
   };

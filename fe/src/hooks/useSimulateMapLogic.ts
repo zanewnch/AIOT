@@ -209,13 +209,6 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
         center: DEFAULT_CENTER,
         zoom: 14,
         mapTypeId: window.google.maps.MapTypeId.HYBRID, // 使用衛星視圖更適合無人機追蹤
-        styles: [
-          {
-            featureType: 'poi',
-            elementType: 'labels',
-            stylers: [{ visibility: 'on' }]
-          }
-        ],
         mapId: 'AIOT_DRONE_MAP' // 必須添加 mapId 以支持 AdvancedMarkerElement
       });
 
@@ -351,7 +344,7 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       drone.position = { ...targetPosition };
 
       // 更新標記位置
-      drone.marker.setPosition(drone.position);
+      drone.marker.position = drone.position;
 
       // 更新飛行路徑
       const currentPath = drone.polyline.getPath();
@@ -431,7 +424,7 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       drone.targetIndex = 1;
       drone.battery = 100;
       drone.status = 'active';
-      drone.marker.setPosition(drone.position);
+      drone.marker.position = drone.position;
       drone.polyline.setPath([drone.position]);
     });
 
@@ -489,8 +482,8 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     return () => {
       stopSimulation();
       dronesRef.current.forEach(drone => {
-        if (drone.marker) drone.marker.setMap(null);
-        if (drone.polyline) drone.polyline.setMap(null);
+        if (drone.marker) drone.marker.map = null;
+        if (drone.polyline) drone.polyline.map = null;
       });
     };
   }, []);
