@@ -1933,3 +1933,33 @@
 2025-08-05 11:05:20.965 [AIOT-BE] INFO: Successfully fetched 5 drone status records
 2025-08-05 11:05:20.965 [AIOT-BE] INFO: Retrieved 5 drone status records
 2025-08-05 11:05:20.966 [AIOT-BE] INFO: Drone status data retrieval completed successfully {"count":5}
+2025-08-05 11:05:37.112 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 11:05:37.112 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 11:05:37.113 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 11:05:37.114 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 11:05:37.115 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 11:05:37.116 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 11:06:08.056 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 11:06:08.056 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 11:06:08.056 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 11:06:08.057 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 11:06:08.057 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 11:06:08.058 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 11:06:39.065 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 11:06:39.065 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 11:06:39.066 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 11:06:39.066 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 11:06:39.067 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 11:06:39.067 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 11:07:10.038 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 11:07:10.038 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 11:07:10.038 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 11:07:10.039 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 11:07:10.039 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 11:07:10.040 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
+2025-08-05 11:07:41.080 [AIOT-BE] INFO: Latest drone position data request received {"limit":10}
+2025-08-05 11:07:41.080 [AIOT-BE] INFO: Getting latest drone position data {"limit":10}
+2025-08-05 11:07:41.080 [AIOT-BE] INFO: Fetching latest drone position data {"limit":10}
+2025-08-05 11:07:41.081 [AIOT-BE] INFO: Successfully fetched 10 latest drone position records
+2025-08-05 11:07:41.082 [AIOT-BE] INFO: Retrieved 10 latest drone position records
+2025-08-05 11:07:41.083 [AIOT-BE] INFO: Latest drone position data retrieval completed successfully {"count":10,"limit":10}
