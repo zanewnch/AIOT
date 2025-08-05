@@ -37,6 +37,7 @@ import { dronePositionsArchiveRoutes } from './drone/dronePositionsArchiveRoutes
 import { droneCommandsArchiveRoutes } from './drone/droneCommandsArchiveRoutes.js';
 import { droneStatusArchiveRoutes } from './drone/droneStatusArchiveRoutes.js';
 import { archiveTaskRoutes } from './drone/archiveTaskRoutes.js';
+import { droneCommandQueueRoutes } from './drone/droneCommandQueueRoutes.js';
 
 /**
  * Route configuration interface
@@ -155,6 +156,13 @@ const droneRoutes: RouteConfig[] = [
     description: 'Archive task management routes',
     handler: archiveTaskRoutes,
     basePath: '/api/archive-tasks',
+    requireAuth: true
+  },
+  {
+    name: 'drone-command-queues',
+    description: 'Drone command queue management routes',
+    handler: droneCommandQueueRoutes,
+    basePath: '/',
     requireAuth: true
   }
 ];

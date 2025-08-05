@@ -160,7 +160,7 @@ export type DroneCommandAttributes = {
  * @extends {Optional<DroneCommandAttributes, 'id'>}
  * @since 1.0.0
  */
-export type DroneCommandCreationAttributes = Optional<DroneCommandAttributes, 'id' | 'createdAt' | 'updatedAt'>;
+export type DroneCommandCreationAttributes = Optional<DroneCommandAttributes, 'id' | 'createdAt' | 'updatedAt' | 'queue_id'>;
 
 /**
  * 無人機指令模型類別

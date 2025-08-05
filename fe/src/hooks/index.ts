@@ -39,6 +39,19 @@ export { useDroneCommandArchiveQuery, useGetAllCommandsArchive, useGetCommandsAr
 export { useDronePositionsArchiveQuery } from './useDronePositionsArchiveQuery';
 export { useDroneStatusArchiveQuery } from './useDroneStatusArchiveQuery';
 export * from './useUserPreferenceQuery';
+export { 
+  useDroneCommandQueueQuery,
+  useGetAllQueues,
+  useGetQueueById,
+  useGetQueueStatistics,
+  useCreateQueue,
+  useUpdateQueue,
+  useDeleteQueue,
+  useStartQueue,
+  usePauseQueue,
+  useResetQueue,
+  useAddCommandToQueue
+} from './useDroneCommandQueueQuery';
 
 // 地圖邏輯 hooks
 export { useRealMapLogic } from './useRealMapLogic';

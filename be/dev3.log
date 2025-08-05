@@ -11243,3 +11243,335 @@ ReferenceError: require is not defined in ES module scope, you can use import in
 [31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:22:23.520 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:22:23.569 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:22:23.712 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:22:23 GMT+0800 (Taiwan Standard Time)","process":{"pid":96626,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":167215104,"heapTotal":69984256,"heapUsed":49369592,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[1.34,1.01,0.69],"uptime":49434.62},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+(node:87081) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [Bus]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+2025-08-05 01:23:07.072 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:23:07.135 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:23:07.366 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:23:07 GMT+0800 (Taiwan Standard Time)","process":{"pid":97638,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":166510592,"heapTotal":69984256,"heapUsed":49559672,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[1.35,1.11,0.74],"uptime":49478.27},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:23:23.885 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:23:23.935 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:23:24.100 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:23:24 GMT+0800 (Taiwan Standard Time)","process":{"pid":98029,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":166395904,"heapTotal":70246400,"heapUsed":49382496,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[1.65,1.18,0.77],"uptime":49495},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:23:40.143 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:23:40.239 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:23:40.448 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:23:40 GMT+0800 (Taiwan Standard Time)","process":{"pid":98525,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":166014976,"heapTotal":69984256,"heapUsed":49759160,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[1.84,1.24,0.79],"uptime":49511.35},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:27:54.113 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:27:54.146 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:27:54.234 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:27:54 GMT+0800 (Taiwan Standard Time)","process":{"pid":3875,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":164855808,"heapTotal":70246400,"heapUsed":49798776,"external":6114170,"arrayBuffers":199596}},"os":{"loadavg":[1.59,1.3,0.93],"uptime":49765.08},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:28:05.891 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:28:05.942 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:28:06.060 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:28:06 GMT+0800 (Taiwan Standard Time)","process":{"pid":4187,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":164020224,"heapTotal":70246400,"heapUsed":50759040,"external":6114170,"arrayBuffers":199596}},"os":{"loadavg":[1.49,1.29,0.93],"uptime":49776.91},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:29:16.317 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:29:16.349 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:29:16.433 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:29:16 GMT+0800 (Taiwan Standard Time)","process":{"pid":5697,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":165679104,"heapTotal":70246400,"heapUsed":50309032,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[0.65,1.07,0.87],"uptime":49847.26},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:29:42.836 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:29:42.869 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:29:42.968 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:29:42 GMT+0800 (Taiwan Standard Time)","process":{"pid":6252,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":163741696,"heapTotal":70246400,"heapUsed":50852656,"external":6114170,"arrayBuffers":199596}},"os":{"loadavg":[0.67,1.03,0.86],"uptime":49873.79},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `tsx src/server.ts ./src/server.ts`[39m
+2025-08-05 01:31:19.579 [AIOT-BE] [32minfo[39m: 🚀 Winston Logger initialized {
+  "environment": "development",
+  "logLevel": "debug",
+  "consoleOutput": true,
+  "fileOutput": true,
+  "logDirectory": "/home/user/GitHub/AIOT/be/logs"
+}
+✅ Swagger specification loaded from YAML file
+2025-08-05 01:31:19.613 [AIOT-BE] [32minfo[39m: 歸檔任務路由初始化完成 {
+  "routes": [
+    "GET /data",
+    "GET /statistics",
+    "GET /",
+    "GET /:id",
+    "POST /batch",
+    "POST /:id/execute",
+    "POST /:id/cancel",
+    "POST /:id/retry",
+    "POST /",
+    "DELETE /cleanup"
+  ]
+}
+2025-08-05 01:31:19.695 [AIOT-BE] ERROR: uncaughtException: require is not defined in ES module scope, you can use import instead
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)
+    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)
+    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45
+    at Array.forEach (<anonymous>)
+    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26
+    at Array.forEach (<anonymous>)
+    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)
+    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)
+    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22) {"error":{},"stack":"ReferenceError: require is not defined in ES module scope, you can use import instead\n    at BelongsToAssociation.BelongsTo.foreignKey (/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts:440:59)\n    at BelongsToAssociation.getAssociatedClass (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js:10:21)\n    at BelongsToAssociation.getSequelizeOptions (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js:16:38)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:51:45\n    at Array.forEach (<anonymous>)\n    at /home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:50:26\n    at Array.forEach (<anonymous>)\n    at Sequelize.associateModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:46:16)\n    at Sequelize.addModels (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:38:14)\n    at new Sequelize (/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js:20:22)","exception":true,"date":"Tue Aug 05 2025 01:31:19 GMT+0800 (Taiwan Standard Time)","process":{"pid":8413,"uid":1001,"gid":1001,"cwd":"/home/user/GitHub/AIOT/be","execPath":"/home/user/.nvm/versions/node/v22.17.1/bin/node","version":"v22.17.1","argv":["/home/user/.nvm/versions/node/v22.17.1/bin/node","/home/user/GitHub/AIOT/be/src/server.ts","./src/server.ts"],"memoryUsage":{"rss":165601280,"heapTotal":70246400,"heapUsed":50877320,"external":6122362,"arrayBuffers":207788}},"os":{"loadavg":[1.45,1.12,0.91],"uptime":49970.5},"trace":[{"column":59,"file":"/home/user/GitHub/AIOT/be/src/models/drone/DroneCommandModel.ts","function":"BelongsToAssociation.BelongsTo.foreignKey","line":440,"method":"foreignKey","native":false},{"column":21,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/shared/base-association.js","function":"BelongsToAssociation.getAssociatedClass","line":10,"method":"getAssociatedClass","native":false},{"column":38,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/associations/belongs-to/belongs-to-association.js","function":"BelongsToAssociation.getSequelizeOptions","line":16,"method":"getSequelizeOptions","native":false},{"column":45,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":51,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":26,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":null,"line":50,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":16,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.associateModels","line":46,"method":"associateModels","native":false},{"column":14,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"Sequelize.addModels","line":38,"method":"addModels","native":false},{"column":22,"file":"/home/user/GitHub/AIOT/be/node_modules/sequelize-typescript/dist/sequelize/sequelize/sequelize.js","function":"new Sequelize","line":20,"method":null,"native":false}]}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
