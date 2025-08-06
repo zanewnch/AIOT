@@ -152,7 +152,18 @@ class Server {
 
       // 設定伺服器事件監聽器
       this.server.on('error', (error) => this.onError(error)); // 監聽伺服器錯誤事件
-      this.server.on('listening', () => this.onListening()); // 監聽伺服器開始監聽事件
+      this.server.on('listening', async () => {
+        this.onListening(); // 處理伺服器監聽事件
+        
+        // 初始化 WebSocket 服務（必須在 HTTP 伺服器啟動後）
+        try {
+          await this.app.initializeWebSocket(this.server);
+          console.log('🚀 WebSocket services ready');
+        } catch (wsError) {
+          console.error('❌ WebSocket initialization failed:', wsError);
+          // WebSocket 初始化失敗不應該終止整個應用程式
+        }
+      });
 
     } catch (err) {
       console.error('❌ Server startup failed', err); // 輸出伺服器啟動失敗錯誤

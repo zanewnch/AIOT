@@ -82,11 +82,7 @@ export class DroneRealTimeStatusController {
             const droneId = parseInt(req.params.droneId);
             const result = await this.service.getRealTimeStatusByDroneId(droneId);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(404).json(ControllerResult.notFound(result.message));
-            }
+            res.status(200).json(ControllerResult.success('獲取即時狀態記錄成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`獲取即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -103,11 +99,7 @@ export class DroneRealTimeStatusController {
         try {
             const result = await this.service.getAllRealTimeStatuses();
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(500).json(ControllerResult.internalError(result.message));
-            }
+            res.status(200).json(ControllerResult.success('獲取即時狀態記錄列表成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`獲取即時狀態記錄列表時發生錯誤: ${error}`));
         }
@@ -125,11 +117,7 @@ export class DroneRealTimeStatusController {
             const status = req.params.status as DroneRealTimeStatus;
             const result = await this.service.getRealTimeStatusesByStatus(status);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(400).json(ControllerResult.badRequest(result.message));
-            }
+            res.status(200).json(ControllerResult.success('獲取特定狀態的即時狀態記錄成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`獲取特定狀態的即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -146,11 +134,7 @@ export class DroneRealTimeStatusController {
         try {
             const result = await this.service.getOnlineDrones();
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(500).json(ControllerResult.internalError(result.message));
-            }
+            res.status(200).json(ControllerResult.success('獲取在線無人機列表成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`獲取在線無人機列表時發生錯誤: ${error}`));
         }
@@ -168,11 +152,7 @@ export class DroneRealTimeStatusController {
             const thresholdMinutes = req.query.threshold ? parseInt(req.query.threshold as string) : 5;
             const result = await this.service.getOfflineDrones(thresholdMinutes);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(400).json(ControllerResult.badRequest(result.message));
-            }
+            res.status(200).json(ControllerResult.success('獲取離線無人機列表成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`獲取離線無人機列表時發生錯誤: ${error}`));
         }
@@ -191,11 +171,7 @@ export class DroneRealTimeStatusController {
             const data = req.body;
             const result = await this.service.updateRealTimeStatus(id, data);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(400).json(ControllerResult.badRequest(result.message));
-            }
+            res.status(200).json(ControllerResult.success('更新即時狀態記錄成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`更新即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -214,11 +190,7 @@ export class DroneRealTimeStatusController {
             const data = req.body;
             const result = await this.service.updateRealTimeStatusByDroneId(droneId, data);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(404).json(ControllerResult.notFound(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`更新即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -236,11 +208,7 @@ export class DroneRealTimeStatusController {
             const id = parseInt(req.params.id);
             const result = await this.service.deleteRealTimeStatus(id);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(404).json(ControllerResult.notFound(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`刪除即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -258,11 +226,7 @@ export class DroneRealTimeStatusController {
             const droneId = parseInt(req.params.droneId);
             const result = await this.service.deleteRealTimeStatusByDroneId(droneId);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(404).json(ControllerResult.notFound(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`刪除即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -281,11 +245,7 @@ export class DroneRealTimeStatusController {
             const data: DroneRealTimeStatusCreationAttributes = req.body;
             const result = await this.service.upsertRealTimeStatus(droneId, data);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(400).json(ControllerResult.badRequest(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`更新/創建即時狀態記錄時發生錯誤: ${error}`));
         }
@@ -303,11 +263,7 @@ export class DroneRealTimeStatusController {
             const droneId = parseInt(req.params.droneId);
             const result = await this.service.updateHeartbeat(droneId);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(400).json(ControllerResult.badRequest(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`更新心跳包時發生錯誤: ${error}`));
         }
@@ -388,11 +344,7 @@ export class DroneRealTimeStatusController {
             const threshold = req.query.threshold ? parseInt(req.query.threshold as string) : 20;
             const result = await this.service.checkLowBatteryDrones(threshold);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(400).json(ControllerResult.badRequest(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`檢查低電量無人機時發生錯誤: ${error}`));
         }
@@ -411,11 +363,7 @@ export class DroneRealTimeStatusController {
             const { errorMessage } = req.body;
             const result = await this.service.markDroneOffline(droneId, errorMessage);
 
-            if (result.isSuccess()) {
-                res.status(200).json(ControllerResult.success(result.message, result.data));
-            } else {
-                res.status(404).json(ControllerResult.notFound(result.message));
-            }
+            res.status(200).json(ControllerResult.success('操作成功', result));
         } catch (error) {
             res.status(500).json(ControllerResult.internalError(`標記無人機離線狀態時發生錯誤: ${error}`));
         }

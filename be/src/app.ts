@@ -15,6 +15,7 @@
  */
 
 import express from 'express'; // Express 框架，用於建立 HTTP 伺服器應用程式
+import { Server as HTTPServer } from 'http'; // HTTP 伺服器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
@@ -22,6 +23,9 @@ import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證�
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
 import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
+import { WebSocketService } from './configs/websocket/index.js'; // WebSocket 服務
+import { WebSocketAuthMiddleware } from './middlewares/WebSocketAuthMiddleware.js'; // WebSocket 認證中間件
+import { DroneEventHandler } from './websocket/DroneEventHandler.js'; // 無人機事件處理器
 
 /**
  * Express 應用程式配置類別
@@ -80,6 +84,22 @@ export class App {
    * @type {RabbitMQManager}
    */
   private rabbitMQManager: RabbitMQManager;
+
+  /**
+   * WebSocket 服務實例
+   * 用於處理 Socket.IO 連線和即時通訊
+   * @private
+   * @type {WebSocketService | null}
+   */
+  private webSocketService: WebSocketService | null = null;
+
+  /**
+   * 無人機事件處理器實例
+   * 用於處理無人機相關的 WebSocket 事件
+   * @private
+   * @type {DroneEventHandler | null}
+   */
+  private droneEventHandler: DroneEventHandler | null = null;
 
   /**
    * 建構函式 - 初始化 Express 應用程式
@@ -226,6 +246,34 @@ export class App {
   }
 
   /**
+   * 初始化 WebSocket 服務
+   * 
+   * 此方法需要在 HTTP 伺服器建立後呼叫，用於初始化 WebSocket 管理器和事件處理器
+   * 
+   * @param {HTTPServer} httpServer - HTTP 伺服器實例
+   * @returns {Promise<void>} 初始化完成的 Promise
+   */
+  async initializeWebSocket(httpServer: HTTPServer): Promise<void> {
+    try {
+      // 建立 WebSocket 服務
+      this.webSocketService = new WebSocketService(httpServer);
+
+      // 設定 JWT 認證中間件
+      const authMiddleware = new WebSocketAuthMiddleware();
+      this.webSocketService.setupMiddleware(authMiddleware.createMiddleware());
+
+      // 建立無人機事件處理器
+      this.droneEventHandler = new DroneEventHandler(this.webSocketService);
+      this.droneEventHandler.setupEventHandlers();
+
+      console.log('✅ WebSocket services initialized');
+    } catch (error) {
+      console.error('❌ WebSocket initialization failed:', error);
+      throw error;
+    }
+  }
+
+  /**
    * 初始化應用程式
    *
    * 執行完整的應用程式初始化流程，此方法會依序執行以下步驟：
@@ -243,6 +291,8 @@ export class App {
    * - 註冊所有 API 路由
    * - 設定錯誤處理中間件
    *
+   * **注意：** WebSocket 初始化需要在 HTTP 伺服器建立後單獨呼叫 initializeWebSocket()
+   *
    * @public
    * @async
    * @method initialize
@@ -253,6 +303,8 @@ export class App {
    * ```typescript
    * const app = new App();
    * await app.initialize();
+   * const httpServer = http.createServer(app.app);
+   * await app.initializeWebSocket(httpServer);
    * console.log('Application ready to serve requests');
    * ```
    */
@@ -309,6 +361,12 @@ export class App {
    */
   async shutdown(): Promise<void> {
     try {
+      // 步驟 0：關閉 WebSocket 服務（先關閉即時連線）
+      if (this.webSocketService) {
+        console.log('📡 Closing WebSocket connections...');
+        await this.webSocketService.shutdown();
+      }
+
       // 步驟 1：關閉 RabbitMQ 連線
       console.log('🔌 Closing RabbitMQ connection...');
       await this.rabbitMQManager.close(); // 關閉 RabbitMQ 連線和通道
@@ -366,5 +424,39 @@ export class App {
    */
   getSequelize(): any {
     return this.sequelize; // 返回 Sequelize 實例
+  }
+
+  /**
+   * 獲取 WebSocket 服務實例
+   *
+   * 提供對 WebSocket 服務的外部存取，用於即時通訊操作。
+   *
+   * @public
+   * @method getWebSocketService
+   * @returns {WebSocketService | null} WebSocket 服務實例或 null
+   *
+   * @example
+   * ```typescript
+   * const wsService = app.getWebSocketService();
+   * if (wsService) {
+   *   wsService.broadcastDronePosition('drone1', positionData);
+   * }
+   * ```
+   */
+  getWebSocketService(): WebSocketService | null {
+    return this.webSocketService; // 返回 WebSocket 服務實例
+  }
+
+  /**
+   * 獲取無人機事件處理器實例
+   *
+   * 提供對無人機事件處理器的外部存取。
+   *
+   * @public
+   * @method getDroneEventHandler
+   * @returns {DroneEventHandler | null} 無人機事件處理器實例或 null
+   */
+  getDroneEventHandler(): DroneEventHandler | null {
+    return this.droneEventHandler; // 返回無人機事件處理器實例
   }
 }
