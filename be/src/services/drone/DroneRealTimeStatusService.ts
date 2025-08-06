@@ -27,7 +27,14 @@ import {
  * 
  * @interface IDroneRealTimeStatusService
  */
-export interface IDroneRealTimeStatusService {
+import type { 
+    IDroneRealTimeStatusService as IExternalDroneRealTimeStatusService, 
+    DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes, 
+    DroneRealTimeStatusAttributes as ExternalAttributes,
+    RealTimeStatusStatistics 
+} from '../../types/services/IDroneRealTimeStatusService.js';
+
+export interface IDroneRealTimeStatusService extends IExternalDroneRealTimeStatusService {
     createRealTimeStatus(data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel>;
     getRealTimeStatusById(id: number): Promise<DroneRealTimeStatusModel>;
     getRealTimeStatusByDroneId(droneId: number): Promise<DroneRealTimeStatusModel>;
@@ -437,5 +444,103 @@ export class DroneRealTimeStatusService implements IDroneRealTimeStatusService {
         }
 
         return { isSuccess: true, message: '驗證成功' };
+    }
+
+    // 實現外部介面方法
+    async getAllDroneRealTimeStatuses(): Promise<ExternalAttributes[]> {
+        const models = await this.getAllRealTimeStatuses();
+        return models.map(model => model.toJSON() as ExternalAttributes);
+    }
+
+    async getDroneRealTimeStatusById(id: number): Promise<ExternalAttributes | null> {
+        try {
+            const model = await this.getRealTimeStatusById(id);
+            return model.toJSON() as ExternalAttributes;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async getDroneRealTimeStatusByDroneId(droneId: number): Promise<ExternalAttributes | null> {
+        try {
+            const model = await this.getRealTimeStatusByDroneId(droneId);
+            return model.toJSON() as ExternalAttributes;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async getDroneRealTimeStatusesByStatus(status: string): Promise<ExternalAttributes[]> {
+        const models = await this.getRealTimeStatusesByStatus(status as DroneRealTimeStatus);
+        return models.map(model => model.toJSON() as ExternalAttributes);
+    }
+
+    async getActiveDroneRealTimeStatuses(): Promise<ExternalAttributes[]> {
+        const models = await this.getOnlineDrones();
+        return models.map(model => model.toJSON() as ExternalAttributes);
+    }
+
+    async getDroneRealTimeStatusStatistics(): Promise<RealTimeStatusStatistics> {
+        const [statusStats, batteryStats, onlineDrones, offlineDrones] = await Promise.all([
+            this.getStatusStatistics(),
+            this.getBatteryStatistics(),
+            this.getOnlineDrones(),
+            this.getOfflineDrones()
+        ]);
+        
+        return {
+            totalStatuses: onlineDrones.length + offlineDrones.length,
+            activeStatuses: onlineDrones.length,
+            offlineStatuses: offlineDrones.length,
+            lowBatteryCount: batteryStats.lowBatteryCount || 0,
+            averageBatteryLevel: batteryStats.averageBatteryLevel || 0,
+            averageSignalStrength: batteryStats.averageSignalStrength || 0
+        };
+    }
+
+    async createDroneRealTimeStatus(data: ExternalCreationAttributes): Promise<ExternalAttributes> {
+        const model = await this.createRealTimeStatus(data as DroneRealTimeStatusCreationAttributes);
+        return model.toJSON() as ExternalAttributes;
+    }
+
+    async updateDroneRealTimeStatus(id: number, data: Partial<ExternalCreationAttributes>): Promise<ExternalAttributes | null> {
+        try {
+            const model = await this.updateRealTimeStatus(id, data as Partial<DroneRealTimeStatusAttributes>);
+            return model.toJSON() as ExternalAttributes;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async deleteDroneRealTimeStatus(id: number): Promise<number> {
+        const result = await this.deleteRealTimeStatus(id);
+        return result ? 1 : 0;
+    }
+
+    async updateDroneRealTimeStatusByDroneId(droneId: number, data: Partial<ExternalCreationAttributes>): Promise<ExternalAttributes | null> {
+        try {
+            const model = await this.updateRealTimeStatusByDroneId(droneId, data as Partial<DroneRealTimeStatusAttributes>);
+            return model.toJSON() as ExternalAttributes;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async updateDroneRealTimeStatusesBatch(updates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributes> }>): Promise<ExternalAttributes[]> {
+        const results: ExternalAttributes[] = [];
+        
+        for (const update of updates) {
+            try {
+                const model = await this.updateRealTimeStatusByDroneId(
+                    update.droneId, 
+                    update.statusData as Partial<DroneRealTimeStatusAttributes>
+                );
+                results.push(model.toJSON() as ExternalAttributes);
+            } catch (error) {
+                // 忽略錯誤，繼續處理下一個
+            }
+        }
+        
+        return results;
     }
 }

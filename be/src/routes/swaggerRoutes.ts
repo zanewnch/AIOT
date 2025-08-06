@@ -16,7 +16,7 @@
 
 import { Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
-import { SwaggerController } from '../controllers/SwaggerController.js';
+import { SwaggerQueries } from '../controllers/queries/SwaggerQueriesCtrl.js';
 import { specs } from '../configs/swaggerConfig.js';
 import { ErrorHandleMiddleware } from '../middlewares/ErrorHandleMiddleware.js';
 
@@ -27,7 +27,7 @@ import { ErrorHandleMiddleware } from '../middlewares/ErrorHandleMiddleware.js';
  */
 class SwaggerRoutes {
   private router: Router;
-  private swaggerController: SwaggerController;
+  private swaggerQueries: SwaggerQueries;
 
   // 路由端點常數 - 集中管理所有 API 路徑
   private readonly ROUTES = {
@@ -37,7 +37,7 @@ class SwaggerRoutes {
 
   constructor() {
     this.router = Router();
-    this.swaggerController = new SwaggerController();
+    this.swaggerQueries = new SwaggerQueries();
     
     this.setupSwaggerSpecRoute();
     this.setupSwaggerUIRoutes();
@@ -47,9 +47,9 @@ class SwaggerRoutes {
    * 設定 Swagger 規格文件路由
    */
   private setupSwaggerSpecRoute = (): void => {
-    // GET /api/swagger.json - 取得 OpenAPI 規格文件
+    // GET /api/swagger.json - 取得 OpenAPI 規格文件 (Query)
     this.router.get(this.ROUTES.SWAGGER_SPEC,
-      (req, res, next) => this.swaggerController.getSwaggerSpec(req, res, next)
+      (req, res, next) => this.swaggerQueries.getSwaggerSpec(req, res, next)
     );
   };
 

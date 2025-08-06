@@ -289,4 +289,108 @@ export class DronePositionService implements IDronePositionService {
             }
         }
     }
+
+    /**
+     * 取得特定無人機的最新位置
+     *
+     * @param {number} droneId - 無人機 ID
+     * @returns {Promise<DronePositionAttributes | null>} 最新的位置資料
+     * @throws {Error} 當資料取得失敗時
+     */
+    async getLatestDronePosition(droneId: number): Promise<DronePositionAttributes | null> {
+        try {
+            if (!droneId || droneId <= 0) {
+                throw new Error('無效的無人機 ID');
+            }
+
+            logger.info('Getting latest position for drone', { droneId });
+            const positions = await this.dronePositionRepository.findByDroneId(droneId, 1);
+            
+            if (positions.length === 0) {
+                logger.info('No position found for drone', { droneId });
+                return null;
+            }
+
+            return positions[0];
+        } catch (error) {
+            logger.error('Failed to get latest drone position', { droneId, error });
+            throw error;
+        }
+    }
+
+    /**
+     * 根據時間範圍取得無人機位置
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {Date} startTime - 開始時間
+     * @param {Date} endTime - 結束時間
+     * @returns {Promise<DronePositionAttributes[]>} 時間範圍內的位置資料陣列
+     * @throws {Error} 當資料取得失敗時
+     */
+    async getDronePositionsByTimeRange(droneId: number, startTime: Date, endTime: Date): Promise<DronePositionAttributes[]> {
+        try {
+            if (!droneId || droneId <= 0) {
+                throw new Error('無效的無人機 ID');
+            }
+
+            if (!startTime || !endTime) {
+                throw new Error('開始時間和結束時間為必填');
+            }
+
+            if (startTime >= endTime) {
+                throw new Error('開始時間必須早於結束時間');
+            }
+
+            logger.info('Getting drone positions by time range', { droneId, startTime, endTime });
+            // TODO: 實作時間範圍查詢邏輯
+            // 目前先返回空陣列，待倉庫層實作相應方法
+            logger.warn('Time range query not implemented yet, returning empty array');
+            return [];
+        } catch (error) {
+            logger.error('Failed to get drone positions by time range', { droneId, startTime, endTime, error });
+            throw error;
+        }
+    }
+
+    /**
+     * 批量創建無人機位置
+     *
+     * @param {DronePositionCreationAttributes[]} positions - 位置資料陣列
+     * @returns {Promise<DronePositionAttributes[]>} 創建的位置資料陣列
+     * @throws {Error} 當批量創建失敗時
+     */
+    async createDronePositionsBatch(positions: DronePositionCreationAttributes[]): Promise<DronePositionAttributes[]> {
+        try {
+            if (!positions || positions.length === 0) {
+                throw new Error('位置資料陣列不能為空');
+            }
+
+            if (positions.length > 100) {
+                throw new Error('一次最多只能創建 100 筆位置資料');
+            }
+
+            // 驗證所有位置資料
+            for (let i = 0; i < positions.length; i++) {
+                try {
+                    this.validateDronePositionData(positions[i]);
+                } catch (error) {
+                    throw new Error(`第 ${i + 1} 筆資料驗證失敗: ${error instanceof Error ? error.message : String(error)}`);
+                }
+            }
+
+            logger.info('Creating batch drone positions', { count: positions.length });
+            
+            const results: DronePositionAttributes[] = [];
+            for (const position of positions) {
+                const result = await this.dronePositionRepository.insert(position);
+                results.push(result);
+            }
+
+            logger.info('Batch drone positions created successfully', { count: results.length });
+            return results;
+        } catch (error) {
+            logger.error('Failed to create batch drone positions', { count: positions?.length, error });
+            throw error;
+        }
+    }
 }

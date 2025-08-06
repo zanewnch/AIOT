@@ -25,7 +25,7 @@ import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 import { WebSocketService } from './configs/websocket/index.js'; // WebSocket 服務
 import { WebSocketAuthMiddleware } from './middlewares/WebSocketAuthMiddleware.js'; // WebSocket 認證中間件
-import { DroneEventHandler } from './websocket/DroneEventHandler.js'; // 無人機事件處理器
+import { DroneEventHandlerFactory } from './websocket/DroneEventHandlerFactory.js'; // 無人機事件處理器工廠
 
 /**
  * Express 應用程式配置類別
@@ -94,12 +94,12 @@ export class App {
   private webSocketService: WebSocketService | null = null;
 
   /**
-   * 無人機事件處理器實例
-   * 用於處理無人機相關的 WebSocket 事件
+   * 無人機事件處理器工廠實例
+   * 用於創建和管理無人機相關的 WebSocket 事件處理器
    * @private
-   * @type {DroneEventHandler | null}
+   * @type {DroneEventHandlerFactory | null}
    */
-  private droneEventHandler: DroneEventHandler | null = null;
+  private droneEventHandlerFactory: DroneEventHandlerFactory | null = null;
 
   /**
    * 建構函式 - 初始化 Express 應用程式
@@ -262,9 +262,9 @@ export class App {
       const authMiddleware = new WebSocketAuthMiddleware();
       this.webSocketService.setupMiddleware(authMiddleware.createMiddleware());
 
-      // 建立無人機事件處理器
-      this.droneEventHandler = new DroneEventHandler(this.webSocketService);
-      this.droneEventHandler.setupEventHandlers();
+      // 建立無人機事件處理器工廠
+      this.droneEventHandlerFactory = new DroneEventHandlerFactory(this.webSocketService);
+      this.droneEventHandlerFactory.setupEventHandlers();
 
       console.log('✅ WebSocket services initialized');
     } catch (error) {
@@ -448,15 +448,27 @@ export class App {
   }
 
   /**
-   * 獲取無人機事件處理器實例
+   * 獲取無人機事件處理器工廠實例
    *
-   * 提供對無人機事件處理器的外部存取。
+   * 提供對無人機事件處理器工廠的外部存取。
+   *
+   * @public
+   * @method getDroneEventHandlerFactory
+   * @returns {DroneEventHandlerFactory | null} 無人機事件處理器工廠實例或 null
+   */
+  getDroneEventHandlerFactory(): DroneEventHandlerFactory | null {
+    return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠實例
+  }
+
+  /**
+   * 獲取無人機事件處理器實例 (保持向後兼容)
    *
    * @public
    * @method getDroneEventHandler
-   * @returns {DroneEventHandler | null} 無人機事件處理器實例或 null
+   * @returns {DroneEventHandlerFactory | null} 無人機事件處理器工廠實例或 null
+   * @deprecated 請使用 getDroneEventHandlerFactory() 方法
    */
-  getDroneEventHandler(): DroneEventHandler | null {
-    return this.droneEventHandler; // 返回無人機事件處理器實例
+  getDroneEventHandler(): DroneEventHandlerFactory | null {
+    return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠實例
   }
 }

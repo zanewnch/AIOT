@@ -269,7 +269,7 @@ describe('UserToRoleController Unit Tests', () => {
             };
 
             (UserModel.findByPk as jest.Mock).mockResolvedValue(mockUser);
-            (RoleModel.findAll as jest.Mock).mockRejectedValue(new Error('Role query failed'));
+            (RoleModel.findAll as jest.Mock).mockRejectedValue(new Error('Role queries failed'));
 
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -278,7 +278,7 @@ describe('UserToRoleController Unit Tests', () => {
             expect(mockResponse.status).toHaveBeenCalledWith(500);
             expect(mockResponse.json).toHaveBeenCalledWith({
                 message: 'Failed to assign roles',
-                error: 'Role query failed'
+                error: 'Role queries failed'
             });
 
             consoleSpy.mockRestore();

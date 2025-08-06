@@ -15,7 +15,8 @@
  */
 
 import { Router } from 'express';
-import { UserPreferenceController } from '../controllers/UserPreferenceController.js';
+import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
+import { UserPreferenceCommands } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
 
 /**
@@ -25,7 +26,8 @@ import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
  */
 class UserPreferenceRoutes {
   private router: Router;
-  private userPreferenceController: UserPreferenceController;
+  private userPreferenceQueries: UserPreferenceQueries;
+  private userPreferenceCommands: UserPreferenceCommands;
   private authMiddleware: AuthMiddleware;
 
   // 路由端點常數 - 集中管理所有 API 路徑
@@ -35,7 +37,8 @@ class UserPreferenceRoutes {
 
   constructor() {
     this.router = Router();
-    this.userPreferenceController = new UserPreferenceController();
+    this.userPreferenceQueries = new UserPreferenceQueries();
+    this.userPreferenceCommands = new UserPreferenceCommands();
     this.authMiddleware = new AuthMiddleware();
     
     this.setupPreferenceRoutes();
@@ -45,22 +48,22 @@ class UserPreferenceRoutes {
    * 設定偏好設定路由
    */
   private setupPreferenceRoutes = (): void => {
-    // GET /preferences - 獲取使用者偏好設定
+    // GET /preferences - 獲取使用者偏好設定 (Query)
     this.router.get(this.ROUTES.PREFERENCES,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.userPreferenceController.getUserPreferences(req, res, next)
+      (req, res, next) => this.userPreferenceQueries.getUserPreferences(req, res, next)
     );
 
-    // PUT /preferences - 更新使用者偏好設定
+    // PUT /preferences - 更新使用者偏好設定 (Command)
     this.router.put(this.ROUTES.PREFERENCES,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.userPreferenceController.updateUserPreferences(req, res, next)
+      (req, res, next) => this.userPreferenceCommands.updateUserPreferences(req, res, next)
     );
 
-    // POST /preferences - 創建使用者偏好設定
+    // POST /preferences - 創建使用者偏好設定 (Command)
     this.router.post(this.ROUTES.PREFERENCES,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.userPreferenceController.createUserPreferences(req, res, next)
+      (req, res, next) => this.userPreferenceCommands.createUserPreferences(req, res, next)
     );
   };
 

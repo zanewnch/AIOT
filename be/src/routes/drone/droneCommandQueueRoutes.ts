@@ -16,17 +16,20 @@
  */
 
 import { Router } from 'express';
-import { DroneCommandQueueController } from '../../controllers/drone/DroneCommandQueueController.js';
+import { DroneCommandQueueQueries } from '../../controllers/queries/DroneCommandQueueQueriesCtrl.js';
+import { DroneCommandQueueCommands } from '../../controllers/commands/DroneCommandQueueCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
 
 /**
  * 無人機指令佇列路由類別
  *
  * 負責配置和管理所有無人機指令佇列相關的路由端點
+ * 使用 CQRS 模式分離查詢和命令操作
  */
 class DroneCommandQueueRoutes {
   private router: Router;
-  private queueController: DroneCommandQueueController;
+  private queryController: DroneCommandQueueQueries;
+  private commandController: DroneCommandQueueCommands;
   private authMiddleware: AuthMiddleware;
 
   // 路由端點常數 - 集中管理所有 API 路徑
@@ -49,7 +52,8 @@ class DroneCommandQueueRoutes {
 
   constructor() {
     this.router = Router();
-    this.queueController = new DroneCommandQueueController();
+    this.queryController = new DroneCommandQueueQueries();
+    this.commandController = new DroneCommandQueueCommands();
     this.authMiddleware = new AuthMiddleware();
     
     this.setupCrudRoutes();
@@ -62,57 +66,57 @@ class DroneCommandQueueRoutes {
    * 設定基本 CRUD 路由
    */
   private setupCrudRoutes = (): void => {
-    // GET /api/drone-command-queues/data - 獲取所有指令佇列
+    // GET /api/drone-command-queues/data - 獲取所有指令佇列 (查詢操作)
     this.router.get(this.ROUTES.QUEUES,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.getAllQueues(req, res, next)
+      (req, res, next) => this.queryController.getAllDroneCommandQueues(req, res, next)
     );
 
-    // GET /api/drone-command-queues/data/:id - 根據 ID 獲取指令佇列
+    // GET /api/drone-command-queues/data/:id - 根據 ID 獲取指令佇列 (查詢操作)
     this.router.get(this.ROUTES.QUEUE_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.getQueueById(req, res, next)
+      (req, res, next) => this.queryController.getDroneCommandQueueById(req, res, next)
     );
 
-    // POST /api/drone-command-queues/data - 創建指令佇列
+    // POST /api/drone-command-queues/data - 創建指令佇列 (命令操作)
     this.router.post(this.ROUTES.QUEUES,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.createQueue(req, res, next)
+      (req, res, next) => this.commandController.createDroneCommandQueue(req, res, next)
     );
 
-    // PUT /api/drone-command-queues/data/:id - 更新指令佇列
+    // PUT /api/drone-command-queues/data/:id - 更新指令佇列 (命令操作)
     this.router.put(this.ROUTES.QUEUE_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.updateQueue(req, res, next)
+      (req, res, next) => this.commandController.updateDroneCommandQueue(req, res, next)
     );
 
-    // DELETE /api/drone-command-queues/data/:id - 刪除指令佇列
+    // DELETE /api/drone-command-queues/data/:id - 刪除指令佇列 (命令操作)
     this.router.delete(this.ROUTES.QUEUE_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.deleteQueue(req, res, next)
+      (req, res, next) => this.commandController.deleteDroneCommandQueue(req, res, next)
     );
   };
 
   /**
-   * 設定佇列控制路由
+   * 設定佇列控制路由 (所有控制操作使用 commandController)
    */
   private setupControlRoutes = (): void => {
-    // POST /api/drone-command-queues/:id/start - 開始執行佇列
+    // POST /api/drone-command-queues/:id/start - 開始執行佇列 (命令操作)
     this.router.post(this.ROUTES.START_QUEUE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.startQueue(req, res, next)
+      (req, res, next) => this.commandController.startDroneCommandQueue(req, res, next)
     );
 
-    // POST /api/drone-command-queues/:id/pause - 暫停佇列執行
+    // POST /api/drone-command-queues/:id/pause - 暫停佇列執行 (命令操作)
     this.router.post(this.ROUTES.PAUSE_QUEUE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.pauseQueue(req, res, next)
+      (req, res, next) => this.commandController.pauseDroneCommandQueue(req, res, next)
     );
 
-    // POST /api/drone-command-queues/:id/reset - 重置佇列
+    // POST /api/drone-command-queues/:id/reset - 重置佇列 (命令操作)
     this.router.post(this.ROUTES.RESET_QUEUE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.resetQueue(req, res, next)
+      (req, res, next) => this.commandController.resetDroneCommandQueue(req, res, next)
     );
   };
 
@@ -123,7 +127,7 @@ class DroneCommandQueueRoutes {
     // POST /api/drone-command-queues/:id/commands - 向佇列添加指令
     this.router.post(this.ROUTES.ADD_COMMAND,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.addCommandToQueue(req, res, next)
+      (req, res, next) => this.commandController.addCommandToQueue(req, res, next)
     );
   };
 
@@ -134,7 +138,7 @@ class DroneCommandQueueRoutes {
     // GET /api/drone-command-queues/statistics - 獲取佇列統計
     this.router.get(this.ROUTES.STATISTICS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.queueController.getQueueStatistics(req, res, next)
+      (req, res, next) => this.queryController.getQueueStatistics(req, res, next)
     );
   };
 

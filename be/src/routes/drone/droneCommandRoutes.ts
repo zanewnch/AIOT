@@ -15,17 +15,20 @@
  */
 
 import { Router } from 'express';
-import { DroneCommandController } from '../../controllers/drone/DroneCommandController.js';
+import { DroneCommandQueries } from '../../controllers/queries/DroneCommandQueriesCtrl.js';
+import { DroneCommandCommands } from '../../controllers/commands/DroneCommandCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
 
 /**
  * 無人機指令路由類別
  *
  * 負責配置和管理所有無人機指令相關的路由端點
+ * 使用 CQRS 模式分離查詢和命令操作
  */
 class DroneCommandRoutes {
   private router: Router;
-  private commandController: DroneCommandController;
+  private queryController: DroneCommandQueries;
+  private commandController: DroneCommandCommands;
   private authMiddleware: AuthMiddleware;
 
   // 路由端點常數 - 集中管理所有 API 路徑
@@ -68,7 +71,8 @@ class DroneCommandRoutes {
 
   constructor() {
     this.router = Router();
-    this.commandController = new DroneCommandController();
+    this.queryController = new DroneCommandQueries();
+    this.commandController = new DroneCommandCommands();
     this.authMiddleware = new AuthMiddleware();
 
     this.setupCrudRoutes();
@@ -82,49 +86,49 @@ class DroneCommandRoutes {
    * 設定基本 CRUD 路由
    */
   private setupCrudRoutes = (): void => {
-    // GET /api/drone-commands/data - 獲取所有指令
+    // GET /api/drone-commands/data - 獲取所有指令 (查詢操作)
     this.router.get(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getAllCommands(req, res, next)
+      (req, res, next) => this.queryController.getAllCommands(req, res, next)
     );
 
-    // GET /api/drone-commands/data/latest - 獲取最新指令 (必須在 /:id 之前)
+    // GET /api/drone-commands/data/latest - 獲取最新指令 (查詢操作)
     this.router.get(this.ROUTES.LATEST,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getLatestCommands(req, res, next)
+      (req, res, next) => this.queryController.getLatestCommands(req, res, next)
     );
 
-    // GET /api/drone-commands/data/failed - 獲取失敗指令 (必須在 /:id 之前)
+    // GET /api/drone-commands/data/failed - 獲取失敗指令 (查詢操作)
     this.router.get(this.ROUTES.FAILED,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getFailedCommands(req, res, next)
+      (req, res, next) => this.queryController.getFailedCommands(req, res, next)
     );
 
-    // GET /api/drone-commands/data/:id - 根據 ID 獲取指令
+    // GET /api/drone-commands/data/:id - 根據 ID 獲取指令 (查詢操作)
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandById(req, res, next)
+      (req, res, next) => this.queryController.getCommandById(req, res, next)
     );
 
-    // POST /api/drone-commands/data - 建立新指令
+    // POST /api/drone-commands/data - 建立新指令 (命令操作)
     this.router.post(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
       (req, res, next) => this.commandController.createCommand(req, res, next)
     );
 
-    // POST /api/drone-commands/data/batch - 批量建立指令
+    // POST /api/drone-commands/data/batch - 批量建立指令 (命令操作)
     this.router.post(this.ROUTES.DATA_BATCH,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.createBatchCommands(req, res, next)
+      (req, res, next) => this.commandController.createCommandsBatch(req, res, next)
     );
 
-    // PUT /api/drone-commands/data/:id - 更新指令
+    // PUT /api/drone-commands/data/:id - 更新指令 (命令操作)
     this.router.put(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
       (req, res, next) => this.commandController.updateCommand(req, res, next)
     );
 
-    // DELETE /api/drone-commands/data/:id - 刪除指令
+    // DELETE /api/drone-commands/data/:id - 刪除指令 (命令操作)
     this.router.delete(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
       (req, res, next) => this.commandController.deleteCommand(req, res, next)
@@ -132,55 +136,55 @@ class DroneCommandRoutes {
   };
 
   /**
-   * 設定查詢路由
+   * 設定查詢路由 (所有查詢操作使用 queryController)
    */
   private setupQueryRoutes = (): void => {
     // GET /api/drone-commands/data/drone/:droneId - 根據無人機 ID 獲取指令
     this.router.get(this.ROUTES.BY_DRONE_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandsByDroneId(req, res, next)
+      (req, res, next) => this.queryController.getCommandsByDroneId(req, res, next)
     );
 
     // GET /api/drone-commands/data/status/:status - 根據狀態獲取指令
     this.router.get(this.ROUTES.BY_STATUS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandsByStatus(req, res, next)
+      (req, res, next) => this.queryController.getCommandsByStatus(req, res, next)
     );
 
     // GET /api/drone-commands/data/type/:type - 根據類型獲取指令
     this.router.get(this.ROUTES.BY_TYPE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandsByType(req, res, next)
+      (req, res, next) => this.queryController.getCommandsByType(req, res, next)
     );
 
     // GET /api/drone-commands/data/issued-by/:userId - 根據發送者獲取指令
     this.router.get(this.ROUTES.BY_ISSUED_BY,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandsByIssuedBy(req, res, next)
+      (req, res, next) => this.queryController.getCommandsByIssuedBy(req, res, next)
     );
 
     // GET /api/drone-commands/data/date-range - 根據時間範圍獲取指令
     this.router.get(this.ROUTES.BY_DATE_RANGE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandsByDateRange(req, res, next)
+      (req, res, next) => this.queryController.getCommandsByDateRange(req, res, next)
     );
 
     // GET /api/drone-commands/data/drone/:droneId/pending - 獲取待執行指令
     this.router.get(this.ROUTES.PENDING_BY_DRONE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getPendingCommandsByDroneId(req, res, next)
+      (req, res, next) => this.queryController.getPendingCommandsByDroneId(req, res, next)
     );
 
     // GET /api/drone-commands/data/drone/:droneId/executing - 獲取執行中指令
     this.router.get(this.ROUTES.EXECUTING_BY_DRONE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getExecutingCommandByDroneId(req, res, next)
+      (req, res, next) => this.queryController.getExecutingCommandByDroneId(req, res, next)
     );
 
   };
 
   /**
-   * 設定指令發送路由
+   * 設定指令發送路由 (所有指令操作使用 commandController)
    */
   private setupCommandRoutes = (): void => {
     // POST /api/drone-commands/send/takeoff - 發送起飛指令
@@ -215,7 +219,7 @@ class DroneCommandRoutes {
   };
 
   /**
-   * 設定指令狀態管理路由
+   * 設定指令狀態管理路由 (所有狀態變更操作使用 commandController)
    */
   private setupStatusRoutes = (): void => {
     // PUT /api/drone-commands/:id/execute - 執行指令
@@ -250,25 +254,25 @@ class DroneCommandRoutes {
   };
 
   /**
-   * 設定統計路由
+   * 設定統計路由 (所有統計查詢使用 queryController)
    */
   private setupStatisticsRoutes = (): void => {
     // GET /api/drone-commands/statistics - 獲取指令統計
     this.router.get(this.ROUTES.STATISTICS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandStatistics(req, res, next)
+      (req, res, next) => this.queryController.getCommandStatistics(req, res, next)
     );
 
     // GET /api/drone-commands/statistics/types - 獲取指令類型統計
     this.router.get(this.ROUTES.TYPE_STATISTICS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getCommandTypeStatistics(req, res, next)
+      (req, res, next) => this.queryController.getCommandTypeStatistics(req, res, next)
     );
 
     // GET /api/drone-commands/summary/:droneId - 獲取無人機指令摘要
     this.router.get(this.ROUTES.SUMMARY,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.commandController.getDroneCommandSummary(req, res, next)
+      (req, res, next) => this.queryController.getDroneCommandSummary(req, res, next)
     );
   };
 

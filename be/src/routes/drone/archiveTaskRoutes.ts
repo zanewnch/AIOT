@@ -11,7 +11,8 @@
  */
 
 import { Router } from 'express';
-import { ArchiveTaskController } from '../../controllers/drone/ArchiveTaskController.js';
+import { ArchiveTaskQueries } from '../../controllers/queries/index.js';
+import { ArchiveTaskCommands } from '../../controllers/commands/index.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('ArchiveTaskRoutes');
@@ -23,7 +24,8 @@ const logger = createLogger('ArchiveTaskRoutes');
  */
 class ArchiveTaskRoutes {
   private router: Router;
-  private controller: ArchiveTaskController;
+  private queries: ArchiveTaskQueries;
+  private commands: ArchiveTaskCommands;
 
   // 路由端點常數 - 集中管理所有 API 路徑
   private readonly ROUTES = {
@@ -47,7 +49,8 @@ class ArchiveTaskRoutes {
 
   constructor() {
     this.router = Router();
-    this.controller = new ArchiveTaskController();
+    this.queries = new ArchiveTaskQueries();
+    this.commands = new ArchiveTaskCommands();
     
     this.setupQueryRoutes();
     this.setupCreateRoutes();
@@ -64,7 +67,7 @@ class ArchiveTaskRoutes {
     this.router.get(this.ROUTES.DATA, 
       (req, res) => {
         logger.debug('歸檔任務資料查詢路由被調用', { path: '/data' });
-        this.controller.getTasksData(req, res);
+        this.queries.getTasksData(req, res);
       }
     );
 
@@ -72,7 +75,7 @@ class ArchiveTaskRoutes {
     this.router.get(this.ROUTES.STATISTICS, 
       (req, res) => {
         logger.debug('歸檔任務統計查詢路由被調用', { path: '/statistics' });
-        this.controller.getTaskStatistics(req, res);
+        this.queries.getTaskStatistics(req, res);
       }
     );
 
@@ -83,7 +86,7 @@ class ArchiveTaskRoutes {
           path: '/',
           query: req.query 
         });
-        this.controller.getAllTasks(req, res);
+        this.queries.getAllTasks(req, res);
       }
     );
 
@@ -94,7 +97,7 @@ class ArchiveTaskRoutes {
           path: '/:id',
           taskId: req.params.id 
         });
-        this.controller.getTaskById(req, res);
+        this.queries.getTaskById(req, res);
       }
     );
   };
@@ -110,7 +113,7 @@ class ArchiveTaskRoutes {
           path: '/batch',
           requestCount: req.body?.length 
         });
-        this.controller.createBatchTasks(req, res);
+        this.commands.createBatchTasks(req, res);
       }
     );
 
@@ -122,7 +125,7 @@ class ArchiveTaskRoutes {
           jobType: req.body?.jobType,
           tableName: req.body?.tableName 
         });
-        this.controller.createTask(req, res);
+        this.commands.createTask(req, res);
       }
     );
   };
@@ -138,7 +141,7 @@ class ArchiveTaskRoutes {
           path: '/:id/execute',
           taskId: req.params.id 
         });
-        this.controller.executeTask(req, res);
+        this.commands.executeTask(req, res);
       }
     );
 
@@ -150,7 +153,7 @@ class ArchiveTaskRoutes {
           taskId: req.params.id,
           reason: req.body?.reason 
         });
-        this.controller.cancelTask(req, res);
+        this.commands.cancelTask(req, res);
       }
     );
 
@@ -161,7 +164,7 @@ class ArchiveTaskRoutes {
           path: '/:id/retry',
           taskId: req.params.id 
         });
-        this.controller.retryTask(req, res);
+        this.commands.retryTask(req, res);
       }
     );
   };
@@ -178,7 +181,7 @@ class ArchiveTaskRoutes {
           daysOld: req.query.daysOld,
           status: req.query.status 
         });
-        this.controller.cleanupOldTasks(req, res);
+        this.commands.cleanupOldTasks(req, res);
       }
     );
   };

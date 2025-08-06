@@ -82,4 +82,33 @@ export interface IDronePositionService {
      * @throws {Error} 當資料取得失敗時
      */
     getDronePositionsByDroneId(droneId: number, limit?: number): Promise<DronePositionAttributes[]>;
+
+    /**
+     * 取得特定無人機的最新位置
+     *
+     * @param {number} droneId - 無人機 ID
+     * @returns {Promise<DronePositionAttributes | null>} 最新的位置資料
+     * @throws {Error} 當資料取得失敗時
+     */
+    getLatestDronePosition(droneId: number): Promise<DronePositionAttributes | null>;
+
+    /**
+     * 根據時間範圍取得無人機位置
+     *
+     * @param {number} droneId - 無人機 ID
+     * @param {Date} startTime - 開始時間
+     * @param {Date} endTime - 結束時間
+     * @returns {Promise<DronePositionAttributes[]>} 時間範圍內的位置資料陣列
+     * @throws {Error} 當資料取得失敗時
+     */
+    getDronePositionsByTimeRange(droneId: number, startTime: Date, endTime: Date): Promise<DronePositionAttributes[]>;
+
+    /**
+     * 批量創建無人機位置
+     *
+     * @param {DronePositionCreationAttributes[]} positions - 位置資料陣列
+     * @returns {Promise<DronePositionAttributes[]>} 創建的位置資料陣列
+     * @throws {Error} 當批量創建失敗時
+     */
+    createDronePositionsBatch(positions: DronePositionCreationAttributes[]): Promise<DronePositionAttributes[]>;
 }

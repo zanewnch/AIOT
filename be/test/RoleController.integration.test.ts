@@ -142,7 +142,7 @@ describe('RoleController Integration Tests', () => {
         });
 
         test('應該在資料庫錯誤時返回 500 狀態碼', async () => {
-            (RoleModel.findByPk as jest.Mock).mockRejectedValue(new Error('Database query failed'));
+            (RoleModel.findByPk as jest.Mock).mockRejectedValue(new Error('Database queries failed'));
 
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -152,7 +152,7 @@ describe('RoleController Integration Tests', () => {
 
             expect(response.body).toEqual({
                 message: 'Failed to fetch role',
-                error: 'Database query failed'
+                error: 'Database queries failed'
             });
 
             consoleSpy.mockRestore();

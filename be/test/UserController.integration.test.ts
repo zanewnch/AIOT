@@ -164,7 +164,7 @@ describe('UserController Integration Tests', () => {
         });
 
         test('應該在資料庫錯誤時返回 500 狀態碼', async () => {
-            (UserModel.findByPk as jest.Mock).mockRejectedValue(new Error('Database query failed'));
+            (UserModel.findByPk as jest.Mock).mockRejectedValue(new Error('Database queries failed'));
 
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -174,7 +174,7 @@ describe('UserController Integration Tests', () => {
 
             expect(response.body).toEqual({
                 message: 'Failed to fetch user',
-                error: 'Database query failed'
+                error: 'Database queries failed'
             });
 
             consoleSpy.mockRestore();

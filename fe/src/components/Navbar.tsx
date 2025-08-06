@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   // 從認證 store 獲取狀態
   const { user } = useAuth();
-  // 從認證 query 獲取操作方法
+  // 從認證 queries 獲取操作方法
   const authQuery = new AuthQuery();
   const logoutMutation = authQuery.useLogout();
 

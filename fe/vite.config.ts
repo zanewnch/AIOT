@@ -40,7 +40,7 @@ export default defineConfig({
           // 狀態管理
           'state-management': ['@reduxjs/toolkit', 'react-redux', 'zustand'],
           // HTTP 客戶端和查詢
-          'data-fetching': ['@tanstack/react-query', 'axios'],
+          'data-fetching': ['@tanstack/react-queries', 'axios'],
           // 工具庫
           'utils': ['lodash', 'loglevel', 'tslib'],
         },

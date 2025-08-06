@@ -15,7 +15,8 @@
  */
 
 import { Router } from 'express';
-import { AuthController } from '../controllers/AuthController.js';
+import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
 
 /**
@@ -25,7 +26,8 @@ import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
  */
 class AuthRoutes {
   private router: Router;
-  private authController: AuthController;
+  private authQueries: AuthQueries;
+  private authCommands: AuthCommands;
   private authMiddleware: AuthMiddleware;
 
   // 路由端點常數 - 集中管理所有 API 路徑
@@ -37,7 +39,8 @@ class AuthRoutes {
 
   constructor() {
     this.router = Router();
-    this.authController = new AuthController();
+    this.authQueries = new AuthQueries();
+    this.authCommands = new AuthCommands();
     this.authMiddleware = new AuthMiddleware();
     
     this.setupAuthRoutes();
@@ -47,21 +50,21 @@ class AuthRoutes {
    * 設定認證路由
    */
   private setupAuthRoutes = (): void => {
-    // POST /api/auth/login - 使用者登入
+    // POST /api/auth/login - 使用者登入 (Command)
     this.router.post(this.ROUTES.LOGIN, 
-      (req, res, next) => this.authController.login(req, res, next)
+      (req, res, next) => this.authCommands.login(req, res, next)
     );
     
-    // POST /api/auth/logout - 使用者登出
+    // POST /api/auth/logout - 使用者登出 (Command)
     this.router.post(this.ROUTES.LOGOUT,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.authController.logout(req, res, next)
+      (req, res, next) => this.authCommands.logout(req, res, next)
     );
 
-    // GET /api/auth/me - 獲取當前使用者資訊 (用於認證檢查)
+    // GET /api/auth/me - 獲取當前使用者資訊 (Query)
     this.router.get(this.ROUTES.ME,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.authController.me(req, res, next)
+      (req, res, next) => this.authQueries.me(req, res, next)
     );
   };
 
