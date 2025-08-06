@@ -11,6 +11,9 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneCommandRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DroneCommandService } from '../services/drone/DroneCommandService.js';
@@ -24,6 +27,7 @@ import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
  * - 命令結果回應
  * - 命令執行權限驗證
  */
+@injectable()
 export class DroneCommandEventHandler implements DroneEventHandler {
   /**
    * WebSocket 服務實例
@@ -50,15 +54,20 @@ export class DroneCommandEventHandler implements DroneEventHandler {
   private commandExecutionCount = 0;
 
   /**
-   * 建構函式
+   * 建構函式 - 使用依賴注入
    * 
    * @param {WebSocketService} wsService - WebSocket 服務實例
    * @param {WebSocketAuthMiddleware} authMiddleware - 認證中間件實例
+   * @param {DroneCommandService} droneCommandService - 注入的命令服務實例
    */
-  constructor(wsService: WebSocketService, authMiddleware: WebSocketAuthMiddleware) {
+  constructor(
+    @inject(TYPES.WebSocketService) wsService: WebSocketService, 
+    @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
+    @inject(TYPES.DroneCommandService) droneCommandService: DroneCommandService
+  ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
-    this.droneCommandService = new DroneCommandService();
+    this.droneCommandService = droneCommandService; // 使用注入的服務實例
   }
 
   /**

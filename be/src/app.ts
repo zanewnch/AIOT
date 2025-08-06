@@ -14,6 +14,7 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata'; // InversifyJS 需要的元數據反射
 import express from 'express'; // Express 框架，用於建立 HTTP 伺服器應用程式
 import { Server as HTTPServer } from 'http'; // HTTP 伺服器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
@@ -23,9 +24,19 @@ import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證�
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
 import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
-import { WebSocketService } from './configs/websocket/index.js'; // WebSocket 服務
-import { WebSocketAuthMiddleware } from './middlewares/WebSocketAuthMiddleware.js'; // WebSocket 認證中間件
-import { DroneEventHandlerFactory } from './websocket/DroneEventHandlerFactory.js'; // 無人機事件處理器工廠
+// InversifyJS 容器和類型
+import { container, ContainerUtils } from './container/container.js';
+import { TYPES, DroneEventType } from './container/types.js';
+import type { interfaces } from 'inversify';
+import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
+import type {
+  IDroneCommandService,
+  IDronePositionService, 
+  IDroneStatusService,
+  IDroneEventHandler,
+  IWebSocketService,
+  IWebSocketAuthMiddleware
+} from './container/interfaces.js';
 
 /**
  * Express 應用程式配置類別
@@ -86,20 +97,20 @@ export class App {
   private rabbitMQManager: RabbitMQManager;
 
   /**
-   * WebSocket 服務實例
+   * WebSocket 服務實例（透過 IoC 容器取得）
    * 用於處理 Socket.IO 連線和即時通訊
    * @private
-   * @type {WebSocketService | null}
+   * @type {IWebSocketService | null}
    */
-  private webSocketService: WebSocketService | null = null;
+  private webSocketService: IWebSocketService | null = null;
 
   /**
-   * 無人機事件處理器工廠實例
-   * 用於創建和管理無人機相關的 WebSocket 事件處理器
+   * 無人機事件處理器工廠函數（透過 IoC 容器取得）
+   * 用於根據事件類型獲取對應的處理器
    * @private
-   * @type {DroneEventHandlerFactory | null}
+   * @type {interfaces.Factory<IDroneEventHandler> | null}
    */
-  private droneEventHandlerFactory: DroneEventHandlerFactory | null = null;
+  private droneEventHandlerFactory: interfaces.Factory<IDroneEventHandler> | null = null;
 
   /**
    * 建構函式 - 初始化 Express 應用程式
@@ -122,6 +133,36 @@ export class App {
     this.setupSequelize(); // 設定 Sequelize 資料庫連線
     this.setupPassport(); // 配置 Passport JWT 身份驗證
     this.setupMiddleware(); // 設定基本中間件
+    this.initializeBusinessServices(); // 初始化業務服務實例
+  }
+
+  /**
+   * 初始化業務服務實例（使用 InversifyJS IoC 容器）
+   * 
+   * 透過 IoC 容器取得服務實例，確保依賴注入和單例管理，
+   * 供 HTTP 和 WebSocket 共用，避免業務邏輯重複和資料不一致問題
+   * 
+   * @private
+   */
+  private initializeBusinessServices(): void {
+    console.log('🔧 Initializing business services via IoC container...');
+    
+    try {
+      // 透過 IoC 容器取得服務實例
+      // 所有依賴都會自動注入，確保單例和一致性
+      const wsService = ContainerUtils.get<IWebSocketService>(TYPES.WebSocketService);
+      const eventHandlerFactory = ContainerUtils.get<interfaces.Factory<IDroneEventHandler>>(TYPES.DroneEventHandlerFactory);
+      
+      // 保存實例供其他方法使用
+      this.webSocketService = wsService;
+      this.droneEventHandlerFactory = eventHandlerFactory;
+      
+      console.log('✅ Business services initialized via IoC container');
+      console.log('📊 Container stats:', ContainerUtils.getContainerStats());
+    } catch (error) {
+      console.error('❌ Failed to initialize business services:', error);
+      throw error;
+    }
   }
 
   /**
@@ -246,27 +287,42 @@ export class App {
   }
 
   /**
-   * 初始化 WebSocket 服務
+   * 初始化 WebSocket 服務（使用 IoC 容器）
    * 
    * 此方法需要在 HTTP 伺服器建立後呼叫，用於初始化 WebSocket 管理器和事件處理器
+   * WebSocket 服務和事件處理器已透過 IoC 容器管理，只需要傳入 HTTP 伺服器
    * 
    * @param {HTTPServer} httpServer - HTTP 伺服器實例
    * @returns {Promise<void>} 初始化完成的 Promise
    */
   async initializeWebSocket(httpServer: HTTPServer): Promise<void> {
     try {
-      // 建立 WebSocket 服務
-      this.webSocketService = new WebSocketService(httpServer);
-
-      // 設定 JWT 認證中間件
-      const authMiddleware = new WebSocketAuthMiddleware();
+      console.log('🔧 Initializing WebSocket services with IoC container...');
+      
+      // WebSocket 服務已透過容器取得，只需要初始化 HTTP 伺服器
+      if (!this.webSocketService) {
+        throw new Error('WebSocket service not initialized from IoC container');
+      }
+      
+      // 注意: WebSocket 服務的 HTTP 伺服器初始化需要在服務實現中處理
+      // 這個方法呼叫將在接口中定義 initialize 方法後使用
+      
+      // 取得認證中間件
+      const authMiddleware = ContainerUtils.get<IWebSocketAuthMiddleware>(TYPES.WebSocketAuthMiddleware);
       this.webSocketService.setupMiddleware(authMiddleware.createMiddleware());
 
-      // 建立無人機事件處理器工廠
-      this.droneEventHandlerFactory = new DroneEventHandlerFactory(this.webSocketService);
-      this.droneEventHandlerFactory.setupEventHandlers();
+      // 使用 Factory Provider 設定事件處理
+      if (!this.droneEventHandlerFactory) {
+        throw new Error('Drone event handler factory not initialized from IoC container');
+      }
+      
+      // 創建事件設置器並設定處理邏輯
+      const eventSetup = new DroneEventSetup(this.droneEventHandlerFactory);
+      this.webSocketService.setupEventHandlers((socket: any, namespace: string) => {
+        eventSetup.setupSocketHandlers(socket, namespace);
+      });
 
-      console.log('✅ WebSocket services initialized');
+      console.log('✅ WebSocket services initialized via IoC container');
     } catch (error) {
       console.error('❌ WebSocket initialization failed:', error);
       throw error;
@@ -443,32 +499,73 @@ export class App {
    * }
    * ```
    */
-  getWebSocketService(): WebSocketService | null {
+  getWebSocketService(): IWebSocketService | null {
     return this.webSocketService; // 返回 WebSocket 服務實例
   }
 
   /**
-   * 獲取無人機事件處理器工廠實例
+   * 獲取無人機事件處理器工廠函數
    *
    * 提供對無人機事件處理器工廠的外部存取。
    *
    * @public
    * @method getDroneEventHandlerFactory
-   * @returns {DroneEventHandlerFactory | null} 無人機事件處理器工廠實例或 null
+   * @returns {interfaces.Factory<IDroneEventHandler> | null} 無人機事件處理器工廠函數或 null
    */
-  getDroneEventHandlerFactory(): DroneEventHandlerFactory | null {
-    return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠實例
+  getDroneEventHandlerFactory(): interfaces.Factory<IDroneEventHandler> | null {
+    return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠函數
   }
 
   /**
-   * 獲取無人機事件處理器實例 (保持向後兼容)
+   * 根據事件類型獲取無人機事件處理器 (Factory Provider 輔助方法)
    *
    * @public
    * @method getDroneEventHandler
-   * @returns {DroneEventHandlerFactory | null} 無人機事件處理器工廠實例或 null
-   * @deprecated 請使用 getDroneEventHandlerFactory() 方法
+   * @param {DroneEventType} eventType - 事件類型
+   * @returns {IDroneEventHandler | null} 無人機事件處理器實例或 null
    */
-  getDroneEventHandler(): DroneEventHandlerFactory | null {
-    return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠實例
+  getDroneEventHandler(eventType: DroneEventType): IDroneEventHandler | null {
+    if (!this.droneEventHandlerFactory) {
+      return null;
+    }
+    try {
+      return this.droneEventHandlerFactory(eventType);
+    } catch (error) {
+      console.error(`Failed to get handler for event type: ${eventType}`, error);
+      return null;
+    }
+  }
+
+  /**
+   * 獲取無人機命令服務實例（透過 IoC 容器）
+   * 
+   * @public
+   * @method getDroneCommandService
+   * @returns {IDroneCommandService} 無人機命令服務實例
+   */
+  getDroneCommandService(): IDroneCommandService {
+    return ContainerUtils.get<IDroneCommandService>(TYPES.DroneCommandService);
+  }
+
+  /**
+   * 獲取無人機位置服務實例（透過 IoC 容器）
+   * 
+   * @public
+   * @method getDronePositionService
+   * @returns {IDronePositionService} 無人機位置服務實例
+   */
+  getDronePositionService(): IDronePositionService {
+    return ContainerUtils.get<IDronePositionService>(TYPES.DronePositionService);
+  }
+
+  /**
+   * 獲取無人機狀態服務實例（透過 IoC 容器）
+   * 
+   * @public  
+   * @method getDroneStatusService
+   * @returns {IDroneStatusService} 無人機狀態服務實例
+   */
+  getDroneStatusService(): IDroneStatusService {
+    return ContainerUtils.get<IDroneStatusService>(TYPES.DroneStatusService);
   }
 }

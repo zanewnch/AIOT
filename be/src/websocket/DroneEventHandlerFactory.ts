@@ -27,12 +27,15 @@
  *    → getHandler('drone_command') 獲取處理器
  *    → handler.handle(socket, data) 統一處理接口
  * 
- * @version 3.0.0 (Factory Pattern Refactor)
+ * @version 4.0.0 (InversifyJS Integration)
  * @author AIOT Team
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Socket } from 'socket.io';
+import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, WEBSOCKET_NAMESPACES, AuthenticatedSocket } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DronePositionEventHandler } from './DronePositionEventHandler.js';
@@ -59,19 +62,8 @@ import { EventHandlerFactory, DroneEventHandler } from './interfaces/EventHandle
  * 
  * @class DroneEventHandlerFactory
  */
+@injectable()
 export class DroneEventHandlerFactory implements EventHandlerFactory {
-  /**
-   * WebSocket 服務實例
-   * @private
-   */
-  private wsService: WebSocketService;
-
-  /**
-   * 認證中間件實例
-   * @private
-   */
-  private authMiddleware: WebSocketAuthMiddleware;
-
   /**
    * 事件處理器註冊表
    * Key: 事件類型, Value: 處理器實例
@@ -90,37 +82,35 @@ export class DroneEventHandlerFactory implements EventHandlerFactory {
   };
 
   /**
-   * 建構函式 - 初始化事件處理器工廠
+   * 建構函式 - 使用 InversifyJS 依賴注入
    * 
-   * @param {WebSocketService} wsService - WebSocket 服務實例
+   * @param {WebSocketService} wsService - 注入的 WebSocket 服務
+   * @param {DronePositionEventHandler} positionHandler - 注入的位置事件處理器
+   * @param {DroneStatusEventHandler} statusHandler - 注入的狀態事件處理器
+   * @param {DroneCommandEventHandler} commandHandler - 注入的命令事件處理器
    */
-  constructor(wsService: WebSocketService) {
-    this.wsService = wsService;
-    this.authMiddleware = new WebSocketAuthMiddleware();
-    
-    // 註冊預設的事件處理器
-    this.initializeDefaultHandlers();
+  constructor(
+    @inject(TYPES.WebSocketService) private wsService: WebSocketService,
+    @inject(TYPES.DronePositionEventHandler) private positionHandler: DronePositionEventHandler,
+    @inject(TYPES.DroneStatusEventHandler) private statusHandler: DroneStatusEventHandler,
+    @inject(TYPES.DroneCommandEventHandler) private commandHandler: DroneCommandEventHandler
+  ) {
+    // 使用注入的處理器初始化工廠
+    this.initializeHandlersWithInjection();
   }
 
   /**
-   * 初始化預設的事件處理器
+   * 使用 InversifyJS 注入的處理器初始化工廠
    * 
    * @private
    */
-  private initializeDefaultHandlers(): void {
-    // 註冊位置相關事件處理器
-    const positionHandler = new DronePositionEventHandler(this.wsService, this.authMiddleware);
-    this.registerHandler('drone_position', positionHandler);
+  private initializeHandlersWithInjection(): void {
+    // 註冊注入的處理器實例
+    this.registerHandler('drone_position', this.positionHandler);
+    this.registerHandler('drone_status', this.statusHandler);
+    this.registerHandler('drone_command', this.commandHandler);
 
-    // 註冊狀態相關事件處理器  
-    const statusHandler = new DroneStatusEventHandler(this.wsService, this.authMiddleware);
-    this.registerHandler('drone_status', statusHandler);
-
-    // 註冊命令相關事件處理器
-    const commandHandler = new DroneCommandEventHandler(this.wsService, this.authMiddleware);
-    this.registerHandler('drone_command', commandHandler);
-
-    console.log('✅ Default drone event handlers registered');
+    console.log('✅ Default drone event handlers registered via InversifyJS injection');
   }
 
   /**

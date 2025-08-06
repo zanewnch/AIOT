@@ -13,6 +13,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import { createSocketIOServer, setupSocketIONamespaces, setupSocketIOMiddleware } from './factory.js';
@@ -44,6 +46,7 @@ import { AuthenticatedSocket, AuthenticatedUser } from './types.js';
  * 
  * @class WebSocketService
  */
+@injectable()
 export class WebSocketService {
   /**
    * Socket.IO 伺服器實例

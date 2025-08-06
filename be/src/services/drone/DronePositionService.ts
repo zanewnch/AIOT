@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DronePositionRepository } from '../../repo/drone/DronePositionRepo.js';
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
@@ -26,6 +28,7 @@ const logger = createLogger('DronePositionService');
  * @class DronePositionService
  * @implements {IDronePositionService}
  */
+@injectable()
 export class DronePositionService implements IDronePositionService {
     private dronePositionRepository: IDronePositionRepository;
 

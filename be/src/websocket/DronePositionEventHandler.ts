@@ -11,6 +11,9 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DronePositionService } from '../services/drone/DronePositionService.js';
@@ -24,6 +27,7 @@ import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
  * - 實時位置數據推送
  * - 位置存取權限驗證
  */
+@injectable()
 export class DronePositionEventHandler implements DroneEventHandler {
   /**
    * WebSocket 服務實例
@@ -50,15 +54,20 @@ export class DronePositionEventHandler implements DroneEventHandler {
   private positionSubscriptionCount = 0;
 
   /**
-   * 建構函式
+   * 建構函式 - 使用依賴注入
    * 
    * @param {WebSocketService} wsService - WebSocket 服務實例
    * @param {WebSocketAuthMiddleware} authMiddleware - 認證中間件實例
+   * @param {DronePositionService} dronePositionService - 注入的位置服務實例
    */
-  constructor(wsService: WebSocketService, authMiddleware: WebSocketAuthMiddleware) {
+  constructor(
+    @inject(TYPES.WebSocketService) wsService: WebSocketService, 
+    @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
+    @inject(TYPES.DronePositionService) dronePositionService: DronePositionService
+  ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
-    this.dronePositionService = new DronePositionService();
+    this.dronePositionService = dronePositionService; // 使用注入的服務實例
   }
 
   /**

@@ -15,17 +15,20 @@
  */
 
 import { Router } from 'express';
-import { DroneCommandsArchiveController } from '../../controllers/drone/DroneCommandsArchiveController.js';
+import { DroneCommandsArchiveQueries } from '../../controllers/queries/DroneCommandsArchiveQueriesCtrl.js';
+import { DroneCommandsArchiveCommands } from '../../controllers/commands/DroneCommandsArchiveCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
 
 /**
  * 無人機指令歷史歸檔路由類別
  *
  * 負責配置和管理所有無人機指令歷史歸檔相關的路由端點
+ * 使用 CQRS 模式分離查詢和命令操作
  */
 class DroneCommandsArchiveRoutes {
   private router: Router;
-  private archiveController: DroneCommandsArchiveController;
+  private queryController: DroneCommandsArchiveQueries;
+  private commandController: DroneCommandsArchiveCommands;
   private authMiddleware: AuthMiddleware;
 
   // 路由端點常數 - 集中管理所有 API 路徑
@@ -43,7 +46,8 @@ class DroneCommandsArchiveRoutes {
 
   constructor() {
     this.router = Router();
-    this.archiveController = new DroneCommandsArchiveController();
+    this.queryController = new DroneCommandsArchiveQueries();
+    this.commandController = new DroneCommandsArchiveCommands();
     this.authMiddleware = new AuthMiddleware();
     
     this.setupCrudRoutes();
@@ -54,34 +58,34 @@ class DroneCommandsArchiveRoutes {
    * 設定基本 CRUD 路由
    */
   private setupCrudRoutes = (): void => {
-    // GET /api/drone-commands-archive/data - 獲取所有指令歷史歸檔
+    // GET /api/drone-commands-archive/data - 獲取所有指令歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getAllCommandsArchive(req, res, next)
+      (req, res, next) => this.queryController.getAllCommandsArchive(req, res, next)
     );
 
-    // GET /api/drone-commands-archive/data/:id - 根據 ID 獲取指令歷史歸檔
+    // GET /api/drone-commands-archive/data/:id - 根據 ID 獲取指令歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getCommandArchiveById(req, res, next)
+      (req, res, next) => this.queryController.getCommandArchiveById(req, res, next)
     );
 
-    // POST /api/drone-commands-archive/data - 創建指令歷史歸檔記錄
+    // POST /api/drone-commands-archive/data - 創建指令歷史歸檔記錄 (命令操作)
     this.router.post(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.createCommandArchive(req, res, next)
+      (req, res, next) => this.commandController.createCommandArchive(req, res, next)
     );
 
-    // PUT /api/drone-commands-archive/data/:id - 更新指令歷史歸檔資料
+    // PUT /api/drone-commands-archive/data/:id - 更新指令歷史歸檔資料 (命令操作)
     this.router.put(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.updateCommandArchive(req, res, next)
+      (req, res, next) => this.commandController.updateCommandArchive(req, res, next)
     );
 
-    // DELETE /api/drone-commands-archive/data/:id - 刪除指令歷史歸檔資料
+    // DELETE /api/drone-commands-archive/data/:id - 刪除指令歷史歸檔資料 (命令操作)
     this.router.delete(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.deleteCommandArchive(req, res, next)
+      (req, res, next) => this.commandController.deleteCommandArchive(req, res, next)
     );
   };
 
@@ -89,28 +93,28 @@ class DroneCommandsArchiveRoutes {
    * 設定查詢路由
    */
   private setupQueryRoutes = (): void => {
-    // GET /api/drone-commands-archive/data/drone/:droneId - 根據無人機 ID 查詢指令歷史歸檔
+    // GET /api/drone-commands-archive/data/drone/:droneId - 根據無人機 ID 查詢指令歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.BY_DRONE_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getCommandArchivesByDroneId(req, res, next)
+      (req, res, next) => this.queryController.getCommandArchivesByDroneId(req, res, next)
     );
 
-    // GET /api/drone-commands-archive/data/time-range - 根據時間範圍查詢指令歷史歸檔
+    // GET /api/drone-commands-archive/data/time-range - 根據時間範圍查詢指令歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.BY_TIME_RANGE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getCommandArchivesByTimeRange(req, res, next)
+      (req, res, next) => this.queryController.getCommandArchivesByTimeRange(req, res, next)
     );
 
-    // GET /api/drone-commands-archive/data/command-type/:commandType - 根據指令類型查詢歷史歸檔
+    // GET /api/drone-commands-archive/data/command-type/:commandType - 根據指令類型查詢歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.BY_COMMAND_TYPE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getCommandArchivesByType(req, res, next)
+      (req, res, next) => this.queryController.getCommandArchivesByType(req, res, next)
     );
 
-    // GET /api/drone-commands-archive/data/status/:status - 根據指令狀態查詢歷史歸檔
+    // GET /api/drone-commands-archive/data/status/:status - 根據指令狀態查詢歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.BY_STATUS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getCommandArchivesByStatus(req, res, next)
+      (req, res, next) => this.queryController.getCommandArchivesByStatus(req, res, next)
     );
   };
 

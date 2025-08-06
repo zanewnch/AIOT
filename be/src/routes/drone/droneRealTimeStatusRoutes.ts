@@ -1,8 +1,9 @@
 /**
- * @fileoverview 無人機即時狀態路由設定
+ * @fileoverview 無人機即時狀態路由配置
  * 
  * 此文件定義所有與無人機即時狀態相關的 API 路由。
  * 提供完整的 RESTful API 端點，包括 CRUD 操作、狀態監控和統計查詢功能。
+ * 使用 CQRS 模式分離查詢和命令操作。
  * 
  * @author AIOT Team
  * @since 1.0.0
@@ -10,16 +11,35 @@
  */
 
 import { Router } from 'express';
-import { DroneRealTimeStatusController } from '../../controllers/drone/DroneRealTimeStatusController';
+import { DroneRealTimeStatusQueries } from '../../controllers/queries/DroneRealTimeStatusQueriesCtrl.js';
+import { DroneRealTimeStatusCommands } from '../../controllers/commands/DroneRealTimeStatusCommandsCtrl.js';
+import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
 
 /**
- * 創建無人機即時狀態路由
+ * 無人機即時狀態路由類別
  * 
- * @returns {Router} Express 路由器實例
+ * 負責配置和管理所有無人機即時狀態相關的路由端點
+ * 使用 CQRS 模式分離查詢和命令操作
  */
-export const createDroneRealTimeStatusRoutes = (): Router => {
-    const router = Router();
-    const controller = new DroneRealTimeStatusController();
+class DroneRealTimeStatusRoutes {
+    private router: Router;
+    private queryController: DroneRealTimeStatusQueries;
+    private commandController: DroneRealTimeStatusCommands;
+    private authMiddleware: AuthMiddleware;
+
+    constructor() {
+        this.router = Router();
+        this.queryController = new DroneRealTimeStatusQueries();
+        this.commandController = new DroneRealTimeStatusCommands();
+        this.authMiddleware = new AuthMiddleware();
+
+        this.setupRoutes();
+    }
+
+    /**
+     * 設定所有路由
+     */
+    private setupRoutes(): void {
 
     // ===== 基本 CRUD 操作 =====
     

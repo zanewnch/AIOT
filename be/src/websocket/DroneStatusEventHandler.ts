@@ -11,6 +11,9 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DroneRealTimeStatusService } from '../services/drone/DroneRealTimeStatusService.js';
@@ -24,6 +27,7 @@ import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
  * - 實時狀態數據推送
  * - 狀態存取權限驗證
  */
+@injectable()
 export class DroneStatusEventHandler implements DroneEventHandler {
   /**
    * WebSocket 服務實例
@@ -50,15 +54,20 @@ export class DroneStatusEventHandler implements DroneEventHandler {
   private statusSubscriptionCount = 0;
 
   /**
-   * 建構函式
+   * 建構函式 - 使用依賴注入
    * 
    * @param {WebSocketService} wsService - WebSocket 服務實例
    * @param {WebSocketAuthMiddleware} authMiddleware - 認證中間件實例
+   * @param {DroneRealTimeStatusService} droneStatusService - 注入的狀態服務實例
    */
-  constructor(wsService: WebSocketService, authMiddleware: WebSocketAuthMiddleware) {
+  constructor(
+    @inject(TYPES.WebSocketService) wsService: WebSocketService, 
+    @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
+    @inject(TYPES.DroneStatusService) droneStatusService: DroneRealTimeStatusService
+  ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
-    this.droneStatusService = new DroneRealTimeStatusService();
+    this.droneStatusService = droneStatusService; // 使用注入的服務實例
   }
 
   /**

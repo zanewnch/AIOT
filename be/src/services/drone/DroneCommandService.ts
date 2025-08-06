@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import type {
     IDroneCommandService,
     CommandStatistics,
@@ -34,6 +36,7 @@ const logger = createLogger('DroneCommandService');
  * @class DroneCommandService
  * @implements {IDroneCommandService}
  */
+@injectable()
 export class DroneCommandService implements IDroneCommandService {
     private commandRepository: IDroneCommandRepository;
 

@@ -13,6 +13,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
 import { getAuthConfig } from '../configs/authConfig.js';
@@ -69,6 +71,7 @@ interface AuthenticatedSocket extends Socket {
  * 
  * @class WebSocketAuthMiddleware
  */
+@injectable()
 export class WebSocketAuthMiddleware {
   /**
    * JWT 密鑰

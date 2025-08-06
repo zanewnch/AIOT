@@ -17,17 +17,20 @@
  */
 
 import { Router } from 'express';
-import { DronePositionsArchiveController } from '../../controllers/drone/DronePositionsArchiveController.js';
+import { DronePositionsArchiveQueries } from '../../controllers/queries/DronePositionsArchiveQueriesCtrl.js';
+import { DronePositionsArchiveCommands } from '../../controllers/commands/DronePositionsArchiveCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
 
 /**
  * 無人機位置歷史歸檔路由類別
  *
  * 負責配置和管理所有無人機位置歷史歸檔相關的路由端點
+ * 使用 CQRS 模式分離查詢和命令操作
  */
 class DronePositionsArchiveRoutes {
   private router: Router;
-  private archiveController: DronePositionsArchiveController;
+  private queryController: DronePositionsArchiveQueries;
+  private commandController: DronePositionsArchiveCommands;
   private authMiddleware: AuthMiddleware;
 
   // 路由端點常數 - 集中管理所有 API 路徑
@@ -68,7 +71,8 @@ class DronePositionsArchiveRoutes {
 
   constructor() {
     this.router = Router();
-    this.archiveController = new DronePositionsArchiveController();
+    this.queryController = new DronePositionsArchiveQueries();
+    this.commandController = new DronePositionsArchiveCommands();
     this.authMiddleware = new AuthMiddleware();
 
     this.setupCrudRoutes();
@@ -83,46 +87,46 @@ class DronePositionsArchiveRoutes {
    * 設定基本 CRUD 路由
    */
   private setupCrudRoutes = (): void => {
-    // GET /api/drone-positions-archive/data - 獲取所有位置歷史歸檔
+    // GET /api/drone-positions-archive/data - 獲取所有位置歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getAllPositionArchives(req, res, next)
+      (req, res, next) => this.queryController.getAllPositionArchives(req, res, next)
     );
 
-    // GET /api/drone-positions-archive/data/:id - 根據 ID 獲取位置歷史歸檔
+    // GET /api/drone-positions-archive/data/:id - 根據 ID 獲取位置歷史歸檔 (查詢操作)
     this.router.get(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getPositionArchiveById(req, res, next)
+      (req, res, next) => this.queryController.getPositionArchiveById(req, res, next)
     );
 
-    // GET /api/drone-positions-archive/data/original/:originalId - 根據原始 ID 獲取歸檔
+    // GET /api/drone-positions-archive/data/original/:originalId - 根據原始 ID 獲取歸檔 (查詢操作)
     this.router.get(this.ROUTES.DATA_ORIGINAL,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getPositionArchiveByOriginalId(req, res, next)
+      (req, res, next) => this.queryController.getPositionArchiveByOriginalId(req, res, next)
     );
 
-    // POST /api/drone-positions-archive/data - 創建位置歷史歸檔記錄
+    // POST /api/drone-positions-archive/data - 創建位置歷史歸檔記錄 (命令操作)
     this.router.post(this.ROUTES.DATA,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.createPositionArchive(req, res, next)
+      (req, res, next) => this.commandController.createPositionArchive(req, res, next)
     );
 
-    // POST /api/drone-positions-archive/data/bulk - 批量創建位置歷史歸檔記錄
+    // POST /api/drone-positions-archive/data/bulk - 批量創建位置歷史歸檔記錄 (命令操作)
     this.router.post(this.ROUTES.DATA_BULK,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.bulkCreatePositionArchives(req, res, next)
+      (req, res, next) => this.commandController.bulkCreatePositionArchives(req, res, next)
     );
 
-    // PUT /api/drone-positions-archive/data/:id - 更新位置歷史歸檔資料
+    // PUT /api/drone-positions-archive/data/:id - 更新位置歷史歸檔資料 (命令操作)
     this.router.put(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.updatePositionArchive(req, res, next)
+      (req, res, next) => this.commandController.updatePositionArchive(req, res, next)
     );
 
-    // DELETE /api/drone-positions-archive/data/:id - 刪除位置歷史歸檔資料
+    // DELETE /api/drone-positions-archive/data/:id - 刪除位置歷史歸檔資料 (命令操作)
     this.router.delete(this.ROUTES.DATA_BY_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.deletePositionArchive(req, res, next)
+      (req, res, next) => this.commandController.deletePositionArchive(req, res, next)
     );
   };
 
@@ -133,43 +137,43 @@ class DronePositionsArchiveRoutes {
     // GET /api/drone-positions-archive/data/drone/:droneId - 根據無人機 ID 查詢位置歷史歸檔
     this.router.get(this.ROUTES.BY_DRONE_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getPositionArchivesByDroneId(req, res, next)
+      (req, res, next) => this.queryController.getPositionArchivesByDroneId(req, res, next)
     );
 
     // GET /api/drone-positions-archive/data/time-range - 根據時間範圍查詢位置歷史歸檔
     this.router.get(this.ROUTES.BY_TIME_RANGE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getPositionArchivesByTimeRange(req, res, next)
+      (req, res, next) => this.queryController.getPositionArchivesByTimeRange(req, res, next)
     );
 
     // GET /api/drone-positions-archive/data/batch/:batchId - 根據歸檔批次 ID 查詢資料
     this.router.get(this.ROUTES.BY_BATCH_ID,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getPositionArchivesByBatchId(req, res, next)
+      (req, res, next) => this.queryController.getPositionArchivesByBatchId(req, res, next)
     );
 
     // GET /api/drone-positions-archive/data/geo-bounds - 根據地理邊界查詢位置歷史歸檔
     this.router.get(this.ROUTES.BY_GEO_BOUNDS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getPositionArchivesByGeoBounds(req, res, next)
+      (req, res, next) => this.queryController.getPositionArchivesByGeoBounds(req, res, next)
     );
 
     // GET /api/drone-positions-archive/trajectory/:droneId - 根據無人機和時間範圍查詢軌跡
     this.router.get(this.ROUTES.TRAJECTORY,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getTrajectoryByDroneAndTime(req, res, next)
+      (req, res, next) => this.queryController.getTrajectoryByDroneAndTime(req, res, next)
     );
 
     // GET /api/drone-positions-archive/data/latest - 取得最新的歷史歸檔記錄
     this.router.get(this.ROUTES.LATEST,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getLatestPositionArchives(req, res, next)
+      (req, res, next) => this.queryController.getLatestPositionArchives(req, res, next)
     );
 
     // GET /api/drone-positions-archive/data/drone/:droneId/latest - 取得特定無人機的最新歷史歸檔記錄
     this.router.get(this.ROUTES.LATEST_BY_DRONE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getLatestPositionArchiveByDroneId(req, res, next)
+      (req, res, next) => this.queryController.getLatestPositionArchiveByDroneId(req, res, next)
     );
   };
 
@@ -180,31 +184,31 @@ class DronePositionsArchiveRoutes {
     // GET /api/drone-positions-archive/statistics/count - 統計總記錄數
     this.router.get(this.ROUTES.STATS_COUNT,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getTotalArchiveCount(req, res, next)
+      (req, res, next) => this.queryController.getTotalArchiveCount(req, res, next)
     );
 
     // GET /api/drone-positions-archive/statistics/trajectory/:droneId - 計算軌跡統計資料
     this.router.get(this.ROUTES.STATS_TRAJECTORY,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.calculateTrajectoryStatistics(req, res, next)
+      (req, res, next) => this.queryController.calculateTrajectoryStatistics(req, res, next)
     );
 
     // GET /api/drone-positions-archive/statistics/battery/:droneId - 計算電池使用統計資料
     this.router.get(this.ROUTES.STATS_BATTERY,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.calculateBatteryUsageStatistics(req, res, next)
+      (req, res, next) => this.queryController.calculateBatteryUsageStatistics(req, res, next)
     );
 
     // GET /api/drone-positions-archive/statistics/position/:droneId - 計算位置分佈統計資料
     this.router.get(this.ROUTES.STATS_POSITION,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.calculatePositionDistributionStatistics(req, res, next)
+      (req, res, next) => this.queryController.calculatePositionDistributionStatistics(req, res, next)
     );
 
     // GET /api/drone-positions-archive/statistics/batch/:batchId - 取得歸檔批次統計資料
     this.router.get(this.ROUTES.STATS_BATCH,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.getArchiveBatchStatistics(req, res, next)
+      (req, res, next) => this.queryController.getArchiveBatchStatistics(req, res, next)
     );
   };
 
@@ -215,13 +219,13 @@ class DronePositionsArchiveRoutes {
     // GET /api/drone-positions-archive/analysis/patterns/:droneId - 分析飛行模式
     this.router.get(this.ROUTES.ANALYSIS_PATTERNS,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.analyzeFlightPatterns(req, res, next)
+      (req, res, next) => this.queryController.analyzeFlightPatterns(req, res, next)
     );
 
     // GET /api/drone-positions-archive/analysis/anomalies/:droneId - 檢測異常位置資料
     this.router.get(this.ROUTES.ANALYSIS_ANOMALIES,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.detectAnomalousPositions(req, res, next)
+      (req, res, next) => this.queryController.detectAnomalousPositions(req, res, next)
     );
   };
 
@@ -232,7 +236,7 @@ class DronePositionsArchiveRoutes {
     // GET /api/drone-positions-archive/reports/summary/:droneId - 產生軌跡摘要報告
     this.router.get(this.ROUTES.REPORTS_SUMMARY,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.generateTrajectorySummaryReport(req, res, next)
+      (req, res, next) => this.queryController.generateTrajectorySummaryReport(req, res, next)
     );
   };
 
@@ -243,13 +247,13 @@ class DronePositionsArchiveRoutes {
     // DELETE /api/drone-positions-archive/data/before/:beforeDate - 刪除指定時間之前的歸檔資料
     this.router.delete(this.ROUTES.DELETE_BEFORE,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.deleteArchivesBeforeDate(req, res, next)
+      (req, res, next) => this.commandController.deleteArchivesBeforeDate(req, res, next)
     );
 
     // DELETE /api/drone-positions-archive/data/batch/:batchId - 刪除指定批次的歸檔資料
     this.router.delete(this.ROUTES.DELETE_BATCH,
       this.authMiddleware.authenticate,
-      (req, res, next) => this.archiveController.deleteArchiveBatch(req, res, next)
+      (req, res, next) => this.commandController.deleteArchiveBatch(req, res, next)
     );
   };
 

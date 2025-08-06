@@ -9,6 +9,8 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { 
     DroneRealTimeStatusRepository, 
     IDroneRealTimeStatusRepository 
@@ -63,6 +65,7 @@ export interface IDroneRealTimeStatusService extends IExternalDroneRealTimeStatu
  * @class DroneRealTimeStatusService
  * @implements {IDroneRealTimeStatusService}
  */
+@injectable()
 export class DroneRealTimeStatusService implements IDroneRealTimeStatusService {
     private repository: IDroneRealTimeStatusRepository;
 
