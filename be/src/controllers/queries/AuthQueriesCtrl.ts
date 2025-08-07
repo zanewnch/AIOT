@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { AuthQueriesSvc } from '../../services/queries/AuthQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('AuthQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('AuthQueries');
  * @class AuthQueries
  * @since 1.0.0
  */
+@injectable()
 export class AuthQueries {
-    private authQueriesSvc: AuthQueriesSvc;
-
-    constructor() {
-        this.authQueriesSvc = new AuthQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.AuthQueriesSvc) private readonly authQueriesSvc: AuthQueriesSvc
+    ) {}
 
     /**
      * 獲取當前使用者資訊

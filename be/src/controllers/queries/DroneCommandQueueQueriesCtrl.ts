@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandQueueQueriesSvc } from '../../services/queries/DroneCommandQueueQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('DroneCommandQueueQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('DroneCommandQueueQueries');
  * @class DroneCommandQueueQueries
  * @since 1.0.0
  */
+@injectable()
 export class DroneCommandQueueQueries {
-    private queryService: DroneCommandQueueQueriesSvc;
-
-    constructor() {
-        this.queryService = new DroneCommandQueueQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneCommandQueueQueriesSvc) private readonly queryService: DroneCommandQueueQueriesSvc
+    ) {}
 
     /**
      * 取得所有無人機指令佇列資料

@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserQueriesSvc } from '../../services/queries/UserQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('UserQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('UserQueries');
  * @class UserQueries
  * @since 1.0.0
  */
+@injectable()
 export class UserQueries {
-    private userQueriesSvc: UserQueriesSvc;
-
-    constructor() {
-        this.userQueriesSvc = new UserQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.UserQueriesSvc) private readonly userQueriesSvc: UserQueriesSvc
+    ) {}
 
     /**
      * 獲取所有使用者列表

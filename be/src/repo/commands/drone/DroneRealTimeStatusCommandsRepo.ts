@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { Op } from 'sequelize';
 import { 
     DroneRealTimeStatusModel, 
@@ -24,6 +26,7 @@ import { createLogger } from '../../../configs/loggerConfig.js';
  *
  * @class DroneRealTimeStatusCommandsRepository
  */
+@injectable()
 export class DroneRealTimeStatusCommandsRepository {
     private readonly logger = createLogger('DroneRealTimeStatusCommandsRepository');
 

@@ -19,6 +19,8 @@ import { Router } from 'express';
 import { DroneCommandQueueQueries } from '../../controllers/queries/DroneCommandQueueQueriesCtrl.js';
 import { DroneCommandQueueCommands } from '../../controllers/commands/DroneCommandQueueCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 無人機指令佇列路由類別
@@ -52,8 +54,8 @@ class DroneCommandQueueRoutes {
 
   constructor() {
     this.router = Router();
-    this.queryController = new DroneCommandQueueQueries();
-    this.commandController = new DroneCommandQueueCommands();
+    this.queryController = container.get<DroneCommandQueueQueries>(TYPES.DroneCommandQueueQueriesCtrl);
+    this.commandController = container.get<DroneCommandQueueCommands>(TYPES.DroneCommandQueueCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
     
     this.setupCrudRoutes();

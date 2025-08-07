@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
 import type { SessionData, SessionCreationData } from '../../types/repositories/ISessionRepository.js';
@@ -20,6 +22,7 @@ import type { SessionData, SessionCreationData } from '../../types/repositories/
  *
  * @class SessionCommandsRepository
  */
+@injectable()
 export class SessionCommandsRepository {
     private readonly logger = createLogger('SessionCommandsRepository');
 

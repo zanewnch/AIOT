@@ -20,6 +20,8 @@ import { Router } from 'express';
 import { DronePositionsArchiveQueries } from '../../controllers/queries/DronePositionsArchiveQueriesCtrl.js';
 import { DronePositionsArchiveCommands } from '../../controllers/commands/DronePositionsArchiveCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 無人機位置歷史歸檔路由類別
@@ -71,8 +73,8 @@ class DronePositionsArchiveRoutes {
 
   constructor() {
     this.router = Router();
-    this.queryController = new DronePositionsArchiveQueries();
-    this.commandController = new DronePositionsArchiveCommands();
+    this.queryController = container.get<DronePositionsArchiveQueries>(TYPES.DronePositionsArchiveQueriesCtrl);
+    this.commandController = container.get<DronePositionsArchiveCommands>(TYPES.DronePositionsArchiveCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
 
     this.setupCrudRoutes();

@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { UserModel } from '../../../models/rbac/UserModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
 
@@ -21,6 +23,7 @@ const logger = createLogger('UserCommandsRepository');
  * 
  * @class UserCommandsRepository
  */
+@injectable()
 export class UserCommandsRepository {
     /**
      * 建立新的使用者記錄
@@ -35,7 +38,10 @@ export class UserCommandsRepository {
     async create(userData: { username: string; passwordHash: string; email?: string }): Promise<UserModel> {
         try {
             logger.info('Creating new user', { username: userData.username, hasEmail: !!userData.email });
-            const user = await UserModel.create(userData);
+            const user = await UserModel.create({
+                ...userData,
+                isActive: true  // 預設新用戶為活躍狀態
+            });
             
             logger.info('User created successfully', { id: user.id, username: user.username });
             return user;
@@ -55,7 +61,11 @@ export class UserCommandsRepository {
     async bulkCreate(usersData: { username: string; passwordHash: string; email?: string }[]): Promise<UserModel[]> {
         try {
             logger.info('Bulk creating users', { count: usersData.length });
-            const users = await UserModel.bulkCreate(usersData, {
+            const usersWithDefaults = usersData.map(userData => ({
+                ...userData,
+                isActive: true  // 預設新用戶為活躍狀態
+            }));
+            const users = await UserModel.bulkCreate(usersWithDefaults, {
                 ignoreDuplicates: true,
                 returning: true
             });
@@ -84,7 +94,10 @@ export class UserCommandsRepository {
             logger.info('Finding or creating user', { username: whereCondition.username });
             const result = await UserModel.findOrCreate({
                 where: whereCondition,
-                defaults
+                defaults: {
+                    ...defaults,
+                    isActive: true  // 預設新用戶為活躍狀態
+                }
             });
             
             const [user, created] = result;

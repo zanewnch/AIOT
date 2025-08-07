@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { 
   PermissionModel, 
   PermissionCreationAttributes 
@@ -25,6 +27,7 @@ const logger = createLogger('PermissionCommandsRepository');
  * 
  * @class PermissionCommandsRepository
  */
+@injectable()
 export class PermissionCommandsRepository {
   /**
    * 建立新權限
@@ -256,100 +259,20 @@ export class PermissionCommandsRepository {
     }
   }
 
-  /**
-   * 更新權限類型
-   * @param id 權限 ID
-   * @param type 新類型
-   * @param transaction 資料庫交易（可選）
-   * @returns 是否更新成功
-   */
-  async updateType(id: number, type: string, transaction?: Transaction): Promise<boolean> {
-    try {
-      logger.debug(`Updating type for permission ID ${id} to ${type}`);
-      
-      const [updatedCount] = await PermissionModel.update(
-        { type },
-        {
-          where: { id },
-          transaction
-        }
-      );
-      
-      const success = updatedCount > 0;
-      if (success) {
-        logger.info(`Permission type updated successfully (ID: ${id})`);
-      } else {
-        logger.warn(`No permission type updated for ID: ${id}`);
-      }
-      
-      return success;
-    } catch (error) {
-      logger.error(`Error updating permission type for ID ${id}:`, error);
-      throw error;
-    }
-  }
+  // 重複的方法已移除
 
-  /**
-   * 啟用權限
-   * @param id 權限 ID
-   * @param transaction 資料庫交易（可選）
-   * @returns 是否更新成功
-   */
+  // 注意：Permission 模型沒有 isActive 字段，以下方法已被註釋
+  // 如需啟用/停用功能，請考慮在資料庫模型中添加對應字段
+  
+  /*
   async activate(id: number, transaction?: Transaction): Promise<boolean> {
-    try {
-      logger.debug(`Activating permission ID: ${id}`);
-      
-      const [updatedCount] = await PermissionModel.update(
-        { isActive: true },
-        {
-          where: { id },
-          transaction
-        }
-      );
-      
-      const success = updatedCount > 0;
-      if (success) {
-        logger.info(`Permission activated successfully (ID: ${id})`);
-      } else {
-        logger.warn(`No permission activated for ID: ${id}`);
-      }
-      
-      return success;
-    } catch (error) {
-      logger.error(`Error activating permission ID ${id}:`, error);
-      throw error;
-    }
+    // 此方法需要 Permission 模型有 isActive 字段
+    throw new Error('Permission model does not have isActive field');
   }
 
-  /**
-   * 停用權限
-   * @param id 權限 ID
-   * @param transaction 資料庫交易（可選）
-   * @returns 是否更新成功
-   */
   async deactivate(id: number, transaction?: Transaction): Promise<boolean> {
-    try {
-      logger.debug(`Deactivating permission ID: ${id}`);
-      
-      const [updatedCount] = await PermissionModel.update(
-        { isActive: false },
-        {
-          where: { id },
-          transaction
-        }
-      );
-      
-      const success = updatedCount > 0;
-      if (success) {
-        logger.info(`Permission deactivated successfully (ID: ${id})`);
-      } else {
-        logger.warn(`No permission deactivated for ID: ${id}`);
-      }
-      
-      return success;
-    } catch (error) {
-      logger.error(`Error deactivating permission ID ${id}:`, error);
-      throw error;
-    }
+    // 此方法需要 Permission 模型有 isActive 字段  
+    throw new Error('Permission model does not have isActive field');
   }
+  */
 }

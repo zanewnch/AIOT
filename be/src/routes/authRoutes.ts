@@ -18,6 +18,8 @@ import { Router } from 'express';
 import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
+import { container } from '../container/container.js';
+import { TYPES } from '../types/container/dependency-injection.js';
 
 /**
  * 認證路由類別
@@ -39,8 +41,8 @@ class AuthRoutes {
 
   constructor() {
     this.router = Router();
-    this.authQueries = new AuthQueries();
-    this.authCommands = new AuthCommands();
+    this.authQueries = container.get<AuthQueries>(TYPES.AuthQueriesCtrl);
+    this.authCommands = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
     
     this.setupAuthRoutes();

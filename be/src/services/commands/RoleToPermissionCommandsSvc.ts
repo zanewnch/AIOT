@@ -29,7 +29,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 // 匯入角色權限命令資料存取層
 import { RolePermissionCommandsRepository } from '../../repo/commands/rbac/RolePermissionCommandsRepo.js';
 // 匯入角色查詢資料存取層，用於驗證
@@ -73,31 +74,22 @@ export interface IRoleToPermissionCommandsService {
  */
 @injectable()
 export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsService {
-    private rolePermissionCommandsRepository: RolePermissionCommandsRepository; // 角色權限命令資料存取層實例，用於角色權限關聯的資料庫寫入操作
-    private roleQueriesRepository: RoleQueriesRepository; // 角色查詢資料存取層實例，用於角色相關的資料庫查詢和驗證
-    private permissionQueriesRepository: PermissionQueriesRepository; // 權限查詢資料存取層實例，用於權限相關的資料庫查詢和驗證
-    private roleToPermissionQueriesSvc: IRoleToPermissionQueriesService; // 查詢服務實例，用於資料驗證和檢查
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
 
-    /**
-     * 建構函式
-     * @param rolePermissionCommandsRepository 角色權限命令資料存取層
-     * @param roleQueriesRepository 角色查詢資料存取層
-     * @param permissionQueriesRepository 權限查詢資料存取層
-     * @param roleToPermissionQueriesSvc 角色權限查詢服務
-     */
-    constructor( // 建構函式，初始化角色權限關聯命令服務
-        rolePermissionCommandsRepository: RolePermissionCommandsRepository = new RolePermissionCommandsRepository(), // 角色權限命令資料存取層，預設建立新的實例
-        roleQueriesRepository: RoleQueriesRepository = new RoleQueriesRepository(), // 角色查詢資料存取層，預設建立新的實例
-        permissionQueriesRepository: PermissionQueriesRepository = new PermissionQueriesRepository(), // 權限查詢資料存取層，預設建立新的實例
-        roleToPermissionQueriesSvc: IRoleToPermissionQueriesService = new RoleToPermissionQueriesSvc() // 查詢服務實例，預設建立新的實例
+    constructor(
+        @inject(TYPES.RoleToPermissionQueriesSvc)
+        private readonly roleToPermissionQueriesSvc: IRoleToPermissionQueriesService
     ) {
-        this.rolePermissionCommandsRepository = rolePermissionCommandsRepository; // 設定角色權限命令資料存取層實例，用於角色權限關聯寫入操作
-        this.roleQueriesRepository = roleQueriesRepository; // 設定角色查詢資料存取層實例，用於角色查詢和驗證
-        this.permissionQueriesRepository = permissionQueriesRepository; // 設定權限查詢資料存取層實例，用於權限查詢和驗證
-        this.roleToPermissionQueriesSvc = roleToPermissionQueriesSvc; // 設定查詢服務實例，用於資料驗證
+        // Initialize repositories directly for now since they're not in DI container yet
+        this.rolePermissionCommandsRepository = new RolePermissionCommandsRepository();
+        this.roleQueriesRepository = new RoleQueriesRepository();
+        this.permissionQueriesRepository = new PermissionQueriesRepository();
     }
+
+    private readonly rolePermissionCommandsRepository: RolePermissionCommandsRepository;
+    private readonly roleQueriesRepository: RoleQueriesRepository;
+    private readonly permissionQueriesRepository: PermissionQueriesRepository;
 
     /**
      * 取得 Redis 客戶端

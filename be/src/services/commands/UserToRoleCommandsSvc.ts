@@ -24,7 +24,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import { UserRoleCommandsRepository } from '../../repo/commands/rbac/UserRoleCommandsRepo.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
@@ -57,19 +58,18 @@ export interface RemoveRoleRequest {
  */
 @injectable()
 export class UserToRoleCommandsSvc {
-    private userRoleCommandsRepository: UserRoleCommandsRepository;
-    private userToRoleQueriesSvc: UserToRoleQueriesSvc;
-    
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
 
     constructor(
-        userRoleCommandsRepository: UserRoleCommandsRepository = new UserRoleCommandsRepository(),
-        userToRoleQueriesSvc: UserToRoleQueriesSvc = new UserToRoleQueriesSvc()
+        @inject(TYPES.UserToRoleQueriesSvc)
+        private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc
     ) {
-        this.userRoleCommandsRepository = userRoleCommandsRepository;
-        this.userToRoleQueriesSvc = userToRoleQueriesSvc;
+        // Initialize repository directly for now since it's not in DI container yet
+        this.userRoleCommandsRepository = new UserRoleCommandsRepository();
     }
+
+    private readonly userRoleCommandsRepository: UserRoleCommandsRepository;
 
     /**
      * 取得 Redis 客戶端

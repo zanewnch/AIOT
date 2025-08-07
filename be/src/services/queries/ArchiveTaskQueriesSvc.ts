@@ -11,19 +11,23 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import {
     ArchiveTaskModel,
-    ArchiveTaskStatus
-} from '../../models/drone/ArchiveTaskModel';
-import {
+    ArchiveTaskStatus,
+    ArchiveJobType
+} from '../../models/drone/ArchiveTaskModel.js';
+import type {
     ArchiveTaskStatistics
-} from '../../types/services/IArchiveTaskService';
-import {
+} from '../../types/services/IArchiveTaskService.js';
+import type {
     IArchiveTaskRepository,
     ArchiveTaskQueryOptions
-} from '../../types/repositories/IArchiveTaskRepository';
-import { ArchiveTaskRepository } from '../../repo/ArchiveTaskRepo';
-import { createLogger } from '../../configs/loggerConfig';
+} from '../../types/repositories/IArchiveTaskRepository.js';
+import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
+import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 /**
  * 歸檔任務查詢 Service 實作類別
@@ -34,12 +38,23 @@ import { createLogger } from '../../configs/loggerConfig';
  * @class ArchiveTaskQueriesSvc
  * @since 1.0.0
  */
+@injectable()
 export class ArchiveTaskQueriesSvc {
     private readonly logger = createLogger('ArchiveTaskQueriesSvc');
-    private readonly repository: IArchiveTaskRepository;
+    private readonly queriesRepository: ArchiveTaskQueriesRepository;
+    private readonly commandsRepository: ArchiveTaskCommandsRepository;
+    private readonly repository: IArchiveTaskRepository; // 組合介面
 
-    constructor(repository?: IArchiveTaskRepository) {
-        this.repository = repository || new ArchiveTaskRepository();
+    constructor(repository?: ArchiveTaskQueriesRepository) {
+        this.queriesRepository = repository || new ArchiveTaskQueriesRepository();
+        this.commandsRepository = new ArchiveTaskCommandsRepository();
+        
+        // 創建組合repository
+        this.repository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.queriesRepository)),
+            this.queriesRepository,
+            this.commandsRepository
+        ) as IArchiveTaskRepository;
     }
 
     /**
@@ -161,9 +176,9 @@ export class ArchiveTaskQueriesSvc {
                 completedTasks,
                 failedTasks,
                 tasksByType: {
-                    'POSITIONS': positionTasks,
-                    'COMMANDS': commandTasks,
-                    'STATUS': statusTasks
+                    [ArchiveJobType.POSITIONS]: positionTasks,
+                    [ArchiveJobType.COMMANDS]: commandTasks,
+                    [ArchiveJobType.STATUS]: statusTasks
                 },
                 todayTasks,
                 weekTasks,

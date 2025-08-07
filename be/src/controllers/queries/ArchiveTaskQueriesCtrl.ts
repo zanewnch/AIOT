@@ -11,11 +11,14 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { ArchiveTaskQueriesSvc } from '../../services/queries/ArchiveTaskQueriesSvc.js';
 import { ArchiveJobType, ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 歸檔任務查詢 Controller 類別
@@ -28,20 +31,20 @@ import { ControllerResult } from '../../utils/ControllerResult.js';
  * 
  * @example
  * ```typescript
- * const queries = new ArchiveTaskQueries();
+ * const queries = container.get<ArchiveTaskQueries>(TYPES.ArchiveTaskQueriesCtrl);
  * 
  * // 在路由中使用
  * router.get('/api/archive-tasks', queries.getAllTasks.bind(queries));
  * router.get('/api/archive-tasks/:id', queries.getTaskById.bind(queries));
  * ```
  */
+@injectable()
 export class ArchiveTaskQueries {
     private readonly logger = createLogger('ArchiveTaskQueries');
-    private readonly queryService: ArchiveTaskQueriesSvc;
 
-    constructor(queryService?: ArchiveTaskQueriesSvc) {
-        this.queryService = queryService || new ArchiveTaskQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.ArchiveTaskQueriesSvc) private readonly queryService: ArchiveTaskQueriesSvc
+    ) {}
 
     /**
      * 獲取所有歸檔任務

@@ -20,7 +20,8 @@ import type {
     ArchiveBatchStatistics
 } from '../../types/services/IDronePositionsArchiveService.js';
 import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
-import { DronePositionsArchiveRepository } from '../../repo/drone/DronePositionsArchiveRepo.js';
+import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/drone/DronePositionsArchiveQueriesRepo.js';
+import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/drone/DronePositionsArchiveCommandsRepo.js';
 import type { DronePositionsArchiveAttributes } from '../../models/drone/DronePositionsArchiveModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
@@ -37,10 +38,20 @@ const logger = createLogger('DronePositionsArchiveQueriesSvc');
  */
 @injectable()
 export class DronePositionsArchiveQueriesSvc {
-    private archiveRepository: IDronePositionsArchiveRepository;
+    private queriesRepository: DronePositionsArchiveQueriesRepository;
+    private commandsRepository: DronePositionsArchiveCommandsRepository;
+    private archiveRepository: IDronePositionsArchiveRepository; // 組合介面
 
     constructor() {
-        this.archiveRepository = new DronePositionsArchiveRepository();
+        this.queriesRepository = new DronePositionsArchiveQueriesRepository();
+        this.commandsRepository = new DronePositionsArchiveCommandsRepository();
+        
+        // 創建組合repository
+        this.archiveRepository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.queriesRepository)),
+            this.queriesRepository,
+            this.commandsRepository
+        ) as IDronePositionsArchiveRepository;
     }
 
     /**

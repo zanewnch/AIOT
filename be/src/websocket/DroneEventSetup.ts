@@ -9,10 +9,9 @@
  */
 
 import { Socket } from 'socket.io';
-import type { interfaces } from 'inversify';
-import { DroneEventType } from '../container/types.js';
+import { DroneEventType } from '../types/container/dependency-injection.js';
 import { DRONE_EVENTS, WEBSOCKET_NAMESPACES, AuthenticatedSocket } from '../configs/websocket/index.js';
-import type { IDroneEventHandler } from '../container/interfaces.js';
+import type { IDroneEventHandler } from '../types/container/websocket-interfaces.js';
 
 /**
  * 無人機 WebSocket 事件設置器
@@ -22,7 +21,7 @@ import type { IDroneEventHandler } from '../container/interfaces.js';
 export class DroneEventSetup {
   
   constructor(
-    private handlerFactory: interfaces.Factory<IDroneEventHandler>
+    private handlerFactory: (type: DroneEventType) => IDroneEventHandler
   ) {}
 
   /**

@@ -24,5 +24,4 @@ export * from './queries/index.js';
 // 匯出所有命令控制器 (Command Controllers) 
 export * from './commands/index.js';
 
-// 匯出所有 RBAC（角色權限管理）相關控制器
-export * from './rbac/index.js';
+// 注意：RBAC 控制器已重構為 CQRS 模式，分別在 queries 和 commands 目錄中

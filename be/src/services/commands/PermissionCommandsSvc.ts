@@ -23,7 +23,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import { PermissionCommandsRepository } from '../../repo/commands/rbac/PermissionCommandsRepo.js';
 import { PermissionQueriesRepository } from '../../repo/queries/rbac/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/rbac/PermissionModel.js';
@@ -56,20 +57,23 @@ const logger = createLogger('PermissionCommandsSvc');
  */
 @injectable()
 export class PermissionCommandsSvc implements IPermissionCommandsService {
-    private permissionCommandsRepository: PermissionCommandsRepository;
-    private permissionQueriesRepository: PermissionQueriesRepository;
-    private queryService: PermissionQueriesSvc;
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
     private static readonly ALL_PERMISSIONS_KEY = 'permissions:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
-    constructor() {
+    constructor(
+        @inject(TYPES.PermissionQueriesSvc)
+        private readonly queryService: PermissionQueriesSvc
+    ) {
+        // Initialize repositories directly for now since they're not in DI container yet
         this.permissionCommandsRepository = new PermissionCommandsRepository();
         this.permissionQueriesRepository = new PermissionQueriesRepository();
-        this.queryService = new PermissionQueriesSvc();
     }
+
+    private readonly permissionCommandsRepository: PermissionCommandsRepository;
+    private readonly permissionQueriesRepository: PermissionQueriesRepository;
 
     /**
      * 取得 Redis 客戶端

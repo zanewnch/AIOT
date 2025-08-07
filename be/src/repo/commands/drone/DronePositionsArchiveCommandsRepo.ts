@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes, type DronePositionsArchiveCreationAttributes } from '../../../models/drone/DronePositionsArchiveModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
@@ -20,6 +22,7 @@ import { Op } from 'sequelize';
  *
  * @class DronePositionsArchiveCommandsRepository
  */
+@injectable()
 export class DronePositionsArchiveCommandsRepository {
     private readonly logger = createLogger('DronePositionsArchiveCommandsRepository');
 

@@ -11,11 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { PermissionQueriesSvc } from '../../services/queries/PermissionQueriesSvc.js';
-import { IPermissionQueriesService } from '../../types/services/IPermissionQueriesService.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('PermissionQueries');
 
@@ -28,12 +30,11 @@ const logger = createLogger('PermissionQueries');
  * @class PermissionQueries
  * @since 1.0.0
  */
+@injectable()
 export class PermissionQueries {
-    private permissionService: IPermissionQueriesService;
-
-    constructor() {
-        this.permissionService = new PermissionQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.PermissionQueriesSvc) private readonly permissionService: PermissionQueriesSvc
+    ) {}
 
     /**
      * 獲取所有權限列表

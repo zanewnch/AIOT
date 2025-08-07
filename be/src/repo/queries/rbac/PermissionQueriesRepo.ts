@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { 
   PermissionModel, 
   PermissionAttributes 
@@ -26,6 +28,7 @@ const logger = createLogger('PermissionQueriesRepository');
  * 
  * @class PermissionQueriesRepository
  */
+@injectable()
 export class PermissionQueriesRepository {
   /**
    * 根據 ID 查詢權限
@@ -253,7 +256,11 @@ export class PermissionQueriesRepository {
       logger.debug(`Finding permissions by type: ${type}`);
       
       const permissions = await PermissionModel.findAll({
-        where: { type },
+        where: { 
+          name: { 
+            [Op.like]: `${type}%` 
+          } 
+        },
         order: [['name', 'ASC']]
       });
       

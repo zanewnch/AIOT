@@ -12,13 +12,15 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import type {
     CommandExecutionResult,
     BatchCommandResult
 } from '../../types/services/IDroneCommandService.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
-import { DroneCommandRepository } from '../../repo/drone/DroneCommandRepo.js';
+import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
+import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQueriesRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/drone/DroneCommandModel.js';
 import { DroneCommandQueriesSvc } from '../queries/DroneCommandQueriesSvc.js';
@@ -37,13 +39,25 @@ const logger = createLogger('DroneCommandCommandsSvc');
  */
 @injectable()
 export class DroneCommandCommandsSvc {
-    private commandRepository: IDroneCommandRepository;
-    private queryService: DroneCommandQueriesSvc;
-
-    constructor() {
-        this.commandRepository = new DroneCommandRepository();
-        this.queryService = new DroneCommandQueriesSvc();
+    constructor(
+        @inject(TYPES.DroneCommandQueriesSvc)
+        private readonly queryService: DroneCommandQueriesSvc
+    ) {
+        // Initialize repositories directly for now since they're not in DI container yet
+        this.commandsRepository = new DroneCommandCommandsRepository();
+        this.queriesRepository = new DroneCommandQueriesRepository();
+        
+        // 創建組合repository
+        this.commandRepository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IDroneCommandRepository;
     }
+
+    private readonly commandsRepository: DroneCommandCommandsRepository;
+    private readonly queriesRepository: DroneCommandQueriesRepository;
+    private readonly commandRepository: IDroneCommandRepository;
 
     /**
      * 建立新的無人機指令記錄

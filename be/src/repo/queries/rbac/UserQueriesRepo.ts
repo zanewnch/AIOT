@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { UserModel } from '../../../models/rbac/UserModel.js';
 import { RoleModel } from '../../../models/rbac/RoleModel.js';
 import { PermissionModel } from '../../../models/rbac/PermissionModel.js';
@@ -23,6 +25,7 @@ const logger = createLogger('UserQueriesRepository');
  * 
  * @class UserQueriesRepository
  */
+@injectable()
 export class UserQueriesRepository {
     /**
      * 根據使用者名稱查詢使用者

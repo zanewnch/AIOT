@@ -13,12 +13,12 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../container/types.js';
+import { TYPES } from '../types/container/dependency-injection.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneCommandRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DroneCommandQueriesSvc } from '../services/queries/DroneCommandQueriesSvc.js';
 import { DroneCommandCommandsSvc } from '../services/commands/DroneCommandCommandsSvc.js';
-import type { IDroneEventHandler } from '../container/interfaces.js';
+import type { IDroneEventHandler } from '../types/container/websocket-interfaces.js';
 
 /**
  * 無人機命令事件處理器
@@ -74,7 +74,7 @@ export class DroneCommandEventHandler implements IDroneEventHandler {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
     this.droneCommandQueriesSvc = new DroneCommandQueriesSvc();
-    this.droneCommandCommandsSvc = new DroneCommandCommandsSvc();
+    this.droneCommandCommandsSvc = new DroneCommandCommandsSvc(this.droneCommandQueriesSvc);
   }
 
   /**

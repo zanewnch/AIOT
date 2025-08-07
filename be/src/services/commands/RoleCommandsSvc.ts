@@ -24,7 +24,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import { RoleCommandsRepository } from '../../repo/commands/rbac/RoleCommandsRepo.js';
 import { RoleQueriesRepository } from '../../repo/queries/rbac/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/rbac/RoleModel.js';
@@ -73,18 +74,21 @@ export interface IRoleCommandsService {
  */
 @injectable()
 export class RoleCommandsSvc implements IRoleCommandsService {
-    private roleCommandsRepository: RoleCommandsRepository;
-    private roleQueriesRepository: RoleQueriesRepository;
-    private queryService: RoleQueriesSvc;
     private static readonly ROLE_CACHE_PREFIX = 'role:';
     private static readonly ALL_ROLES_KEY = 'roles:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
-    constructor() {
+    constructor(
+        @inject(TYPES.RoleQueriesSvc)
+        private readonly queryService: RoleQueriesSvc
+    ) {
+        // Initialize repositories directly for now since they're not in DI container yet
         this.roleCommandsRepository = new RoleCommandsRepository();
         this.roleQueriesRepository = new RoleQueriesRepository();
-        this.queryService = new RoleQueriesSvc();
     }
+
+    private readonly roleCommandsRepository: RoleCommandsRepository;
+    private readonly roleQueriesRepository: RoleQueriesRepository;
 
     /**
      * 取得 Redis 客戶端

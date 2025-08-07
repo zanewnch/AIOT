@@ -11,11 +11,14 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { RoleCommandsSvc } from '../../services/commands/RoleCommandsSvc.js';
 import type { IRoleCommandsService, CreateRoleRequest, UpdateRoleRequest } from '../../services/commands/RoleCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('RoleCommands');
 
@@ -28,12 +31,11 @@ const logger = createLogger('RoleCommands');
  * @class RoleCommands
  * @since 1.0.0
  */
+@injectable()
 export class RoleCommands {
-    private roleCommandsService: IRoleCommandsService;
-
-    constructor() {
-        this.roleCommandsService = new RoleCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.RoleCommandsSvc) private readonly roleCommandsService: IRoleCommandsService
+    ) {}
 
     /**
      * 創建新角色

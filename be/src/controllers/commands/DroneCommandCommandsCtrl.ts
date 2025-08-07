@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandCommandsSvc } from '../../services/commands/DroneCommandCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 
 const logger = createLogger('DroneCommandCommands');
@@ -28,12 +31,11 @@ const logger = createLogger('DroneCommandCommands');
  * @class DroneCommandCommands
  * @since 1.0.0
  */
+@injectable()
 export class DroneCommandCommands {
-    private commandService: DroneCommandCommandsSvc;
-
-    constructor() {
-        this.commandService = new DroneCommandCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneCommandCommandsSvc) private readonly commandService: DroneCommandCommandsSvc
+    ) {}
 
     /**
      * 創建新的無人機指令

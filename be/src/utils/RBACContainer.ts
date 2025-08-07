@@ -67,6 +67,10 @@ import type {
     IRoleToPermissionController
 } from '../types/controllers/index.js';
 
+// 導入 InversifyJS 容器和類型定義
+import { container } from '../container/container.js';
+import { TYPES } from '../types/container/dependency-injection.js';
+
 
 
 /**
@@ -230,34 +234,34 @@ export class RBACContainer {
      */
     private registerServices(): void {
         // 註冊使用者查詢控制器 - CQRS 模式：處理使用者的查詢操作
-        this.services.set('UserQueries', new UserQueries());
+        this.services.set('UserQueries', container.get<UserQueries>(TYPES.UserQueriesCtrl));
         
         // 註冊使用者命令控制器 - CQRS 模式：處理使用者的修改操作
-        this.services.set('UserCommands', new UserCommands());
+        this.services.set('UserCommands', container.get<UserCommands>(TYPES.UserCommandsCtrl));
         
         // 註冊角色查詢控制器 - CQRS 模式：處理角色的查詢操作
-        this.services.set('RoleQueries', new RoleQueries());
+        this.services.set('RoleQueries', container.get<RoleQueries>(TYPES.RoleQueriesCtrl));
         
         // 註冊角色命令控制器 - CQRS 模式：處理角色的修改操作
-        this.services.set('RoleCommands', new RoleCommands());
+        this.services.set('RoleCommands', container.get<RoleCommands>(TYPES.RoleCommandsCtrl));
         
         // 註冊權限查詢控制器 - CQRS 模式：處理權限的查詢操作
-        this.services.set('PermissionQueries', new PermissionQueries());
+        this.services.set('PermissionQueries', container.get<PermissionQueries>(TYPES.PermissionQueriesCtrl));
         
         // 註冊權限命令控制器 - CQRS 模式：處理權限的修改操作
-        this.services.set('PermissionCommands', new PermissionCommands());
+        this.services.set('PermissionCommands', container.get<PermissionCommands>(TYPES.PermissionCommandsCtrl));
         
         // 註冊使用者角色關聯查詢控制器 - CQRS 模式：處理使用者角色的查詢操作
-        this.services.set('UserToRoleQueries', new UserToRoleQueries());
+        this.services.set('UserToRoleQueries', container.get<UserToRoleQueries>(TYPES.UserToRoleQueriesCtrl));
         
         // 註冊使用者角色關聯命令控制器 - CQRS 模式：處理使用者角色的修改操作
-        this.services.set('UserToRoleCommands', new UserToRoleCommands());
+        this.services.set('UserToRoleCommands', container.get<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl));
         
         // 註冊角色權限關聯查詢控制器 - CQRS 模式：處理角色權限的查詢操作
-        this.services.set('RoleToPermissionQueries', new RoleToPermissionQueries());
+        this.services.set('RoleToPermissionQueries', container.get<RoleToPermissionQueries>(TYPES.RoleToPermissionQueriesCtrl));
         
         // 註冊角色權限關聯命令控制器 - CQRS 模式：處理角色權限的修改操作
-        this.services.set('RoleToPermissionCommands', new RoleToPermissionCommands());
+        this.services.set('RoleToPermissionCommands', container.get<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl));
     }
 
     /**

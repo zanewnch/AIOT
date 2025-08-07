@@ -9,7 +9,10 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes, type DroneCommandsArchiveCreationAttributes } from '../../../models/drone/DroneCommandsArchiveModel.js';
+import { DroneCommandStatus } from '../../../models/drone/DroneCommandModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
 
@@ -23,6 +26,7 @@ const logger = createLogger('DroneCommandsArchiveCommandsRepository');
  *
  * @class DroneCommandsArchiveCommandsRepository
  */
+@injectable()
 export class DroneCommandsArchiveCommandsRepository {
     /**
      * 創建新的指令歷史歸檔資料
@@ -317,7 +321,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {string} status - 新狀態
      * @returns {Promise<boolean>} 是否更新成功
      */
-    async updateStatus(id: number, status: string): Promise<boolean> {
+    async updateStatus(id: number, status: DroneCommandStatus): Promise<boolean> {
         try {
             logger.info('Updating command archive status', { id, status });
             const [affectedRows] = await DroneCommandsArchiveModel.update(
@@ -348,7 +352,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {string} status - 新狀態
      * @returns {Promise<number>} 更新的記錄數
      */
-    async bulkUpdateStatus(ids: number[], status: string): Promise<number> {
+    async bulkUpdateStatus(ids: number[], status: DroneCommandStatus): Promise<number> {
         try {
             logger.info('Bulk updating command archives status', { ids, status, count: ids.length });
             const [affectedRows] = await DroneCommandsArchiveModel.update(

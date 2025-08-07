@@ -14,7 +14,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
-import { DroneCommandsArchiveRepository } from '../../repo/drone/DroneCommandsArchiveRepo.js';
+import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/drone/DroneCommandsArchiveQueriesRepo.js';
+import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/drone/DroneCommandsArchiveCommandsRepo.js';
 import type { DroneCommandsArchiveAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
@@ -31,11 +32,20 @@ const logger = createLogger('DroneCommandsArchiveQueriesSvc');
  */
 @injectable()
 export class DroneCommandsArchiveQueriesSvc {
-    private archiveRepository: IDroneCommandsArchiveRepository;
+    private queriesRepository: DroneCommandsArchiveQueriesRepository;
+    private commandsRepository: DroneCommandsArchiveCommandsRepository;
+    private archiveRepository: IDroneCommandsArchiveRepository; // 組合介面
 
     constructor() {
-        this.archiveRepository = new DroneCommandsArchiveRepository();
-        // TODO: 注入 Repository 依賴當 Repository 創建後
+        this.queriesRepository = new DroneCommandsArchiveQueriesRepository();
+        this.commandsRepository = new DroneCommandsArchiveCommandsRepository();
+        
+        // 創建組合repository
+        this.archiveRepository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.queriesRepository)),
+            this.queriesRepository,
+            this.commandsRepository
+        ) as IDroneCommandsArchiveRepository;
     }
 
     /**

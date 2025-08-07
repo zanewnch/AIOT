@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneStatusArchiveCommandsSvc } from '../../services/commands/DroneStatusArchiveCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import type { DroneStatusArchiveCreationAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
 
 const logger = createLogger('DroneStatusArchiveCommands');
@@ -28,12 +31,11 @@ const logger = createLogger('DroneStatusArchiveCommands');
  * @class DroneStatusArchiveCommands
  * @since 1.0.0
  */
+@injectable()
 export class DroneStatusArchiveCommands {
-    private commandService: DroneStatusArchiveCommandsSvc;
-
-    constructor() {
-        this.commandService = new DroneStatusArchiveCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneStatusArchiveCommandsSvc) private readonly commandService: DroneStatusArchiveCommandsSvc
+    ) {}
 
     /**
      * 創建狀態歷史歸檔

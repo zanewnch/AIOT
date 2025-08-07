@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes } from '../../../models/drone/DroneStatusArchiveModel.js';
 import type { DroneStatus } from '../../../models/drone/DroneStatusModel.js';
 import type { PaginationParams, PaginatedResponse } from '../../../types/ApiResponseType.js';
@@ -22,6 +24,7 @@ import { Op } from 'sequelize';
  *
  * @class DroneStatusArchiveQueriesRepository
  */
+@injectable()
 export class DroneStatusArchiveQueriesRepository {
     private readonly logger = createLogger('DroneStatusArchiveQueriesRepository');
 

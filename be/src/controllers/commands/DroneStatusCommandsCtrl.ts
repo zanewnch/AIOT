@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneStatusCommandsSvc } from '../../services/commands/DroneStatusCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import type { DroneStatusCreationAttributes, DroneStatus } from '../../models/drone/DroneStatusModel.js';
 
 const logger = createLogger('DroneStatusCommands');
@@ -28,12 +31,11 @@ const logger = createLogger('DroneStatusCommands');
  * @class DroneStatusCommands
  * @since 1.0.0
  */
+@injectable()
 export class DroneStatusCommands {
-    private droneStatusService: DroneStatusCommandsSvc;
-
-    constructor() {
-        this.droneStatusService = new DroneStatusCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneStatusService: DroneStatusCommandsSvc
+    ) {}
 
     /**
      * 創建新的無人機狀態資料

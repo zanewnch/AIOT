@@ -279,8 +279,8 @@ export class UserToRoleQueriesSvc {
             // 從資料庫取得使用者角色
             logger.debug(`Fetching roles for user ID: ${userId} from database`);
             const userRoles = await this.userRoleQueriesRepository.findByUserId(userId);
-            const roles = userRoles.map(ur => ur.role).filter(r => r !== null);
-            const rolesDTO = roles.map(r => this.roleModelToDTO(r));
+            const roles = userRoles.map(ur => ur.role).filter(r => r !== null && r !== undefined);
+            const rolesDTO = roles.map(r => this.roleModelToDTO(r!));
 
             logger.info(`Retrieved ${rolesDTO.length} roles for user ID: ${userId}`);
 
@@ -349,8 +349,8 @@ export class UserToRoleQueriesSvc {
             // 從資料庫取得角色使用者
             logger.debug(`Fetching users for role ID: ${roleId} from database`);
             const userRoles = await this.userRoleQueriesRepository.findByRoleId(roleId);
-            const users = userRoles.map(ur => ur.user).filter(u => u !== null);
-            const usersDTO = users.map(u => this.userModelToDTO(u));
+            const users = userRoles.map(ur => ur.user).filter(u => u !== null && u !== undefined);
+            const usersDTO = users.map(u => this.userModelToDTO(u!));
 
             logger.info(`Retrieved ${usersDTO.length} users for role ID: ${roleId}`);
             return usersDTO;

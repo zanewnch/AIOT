@@ -19,7 +19,8 @@ import type {
     DroneCommandSummary
 } from '../../types/services/IDroneCommandService.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
-import { DroneCommandRepository } from '../../repo/drone/DroneCommandRepo.js';
+import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQueriesRepo.js';
+import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/drone/DroneCommandModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -38,9 +39,19 @@ const logger = createLogger('DroneCommandQueriesSvc');
 @injectable()
 export class DroneCommandQueriesSvc {
     private commandRepository: IDroneCommandRepository;
+    private queriesRepository: DroneCommandQueriesRepository;
+    private commandsRepository: DroneCommandCommandsRepository;
 
     constructor() {
-        this.commandRepository = new DroneCommandRepository();
+        this.queriesRepository = new DroneCommandQueriesRepository();
+        this.commandsRepository = new DroneCommandCommandsRepository();
+        
+        // 創建組合repository來滿足IDroneCommandRepository接口
+        this.commandRepository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IDroneCommandRepository;
     }
 
     /**
@@ -445,7 +456,7 @@ export class DroneCommandQueriesSvc {
             for (const commandType of Object.values(CommandType)) {
                 const commands = await this.commandRepository.findByDroneIdAndCommandType(droneId, commandType, 1000);
                 const count = commands.length;
-                const completedCount = commands.filter(cmd => cmd.status === CommandStatus.COMPLETED).length;
+                const completedCount = commands.filter((cmd: any) => cmd.status === CommandStatus.COMPLETED).length;
                 const successRate = count > 0 ? (completedCount / count) * 100 : 0;
 
                 commandTypeStats.push({

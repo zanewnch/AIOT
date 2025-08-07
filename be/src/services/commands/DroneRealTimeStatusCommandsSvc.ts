@@ -12,11 +12,11 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { 
-    DroneRealTimeStatusRepository, 
-    IDroneRealTimeStatusRepository 
-} from '../../repo/drone/DroneRealTimeStatusRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
+import { DroneRealTimeStatusCommandsRepository } from '../../repo/commands/drone/DroneRealTimeStatusCommandsRepo.js';
+// 暫時註解掉不存在的類型導入，使用 any 作為臨時解決方案
+// import type { IDroneRealTimeStatusRepository } from '../../types/repositories/IDroneRealTimeStatusRepository.js';
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatusAttributes, 
@@ -43,13 +43,14 @@ const logger = createLogger('DroneRealTimeStatusCommandsSvc');
  */
 @injectable()
 export class DroneRealTimeStatusCommandsSvc {
-    private repository: IDroneRealTimeStatusRepository;
-    private queryService: DroneRealTimeStatusQueriesSvc;
-
-    constructor(repository?: IDroneRealTimeStatusRepository) {
-        this.repository = repository || new DroneRealTimeStatusRepository();
+    constructor() {
+        // Initialize repository and queryService directly for now since they're not in DI container yet
+        this.repository = new DroneRealTimeStatusCommandsRepository();
         this.queryService = new DroneRealTimeStatusQueriesSvc(this.repository);
     }
+
+    private readonly repository: any; // 暫時使用 any，待類型定義完善
+    private readonly queryService: DroneRealTimeStatusQueriesSvc;
 
     /**
      * 創建新的無人機即時狀態記錄
@@ -376,17 +377,19 @@ export class DroneRealTimeStatusCommandsSvc {
         return {
             drone_id: data.drone_id,
             current_status: data.status as DroneRealTimeStatus,
-            current_battery_level: data.battery_level,
-            signal_strength: data.signal_strength,
-            current_altitude: data.altitude,
-            current_speed: data.speed,
-            current_heading: data.heading,
+            current_battery_level: data.battery_level ?? 0,
+            signal_strength: data.signal_strength ?? null,
+            current_altitude: data.altitude ?? null,
+            current_speed: data.speed ?? null,
+            current_heading: data.heading ?? null,
             // latitude: data.latitude,
             // longitude: data.longitude,
-            temperature: data.temperature,
+            temperature: data.temperature ?? null,
             // humidity: data.humidity,
             // wind_speed: data.wind_speed,
-            last_seen: data.last_seen
+            last_seen: data.last_seen ?? new Date(),
+            is_connected: true, // 預設連線狀態
+            error_message: null // 預設無錯誤訊息
         };
     }
 

@@ -37,15 +37,20 @@
 // 匯入 bcrypt 加密庫，用於密碼雜湊處理
 import bcrypt from 'bcrypt';
 // 匯入資料存取層，用於資料庫操作
-import { PermissionRepository } from '../repo/rbac/PermissionRepo.js';
+import { PermissionCommandsRepository } from '../repo/commands/rbac/PermissionCommandsRepo.js';
+import { PermissionQueriesRepository } from '../repo/queries/rbac/PermissionQueriesRepo.js';
 import { IPermissionRepository } from '../types/repositories/IPermissionRepository.js';
-import { RoleRepository } from '../repo/rbac/RoleRepo.js';
+import { RoleCommandsRepository } from '../repo/commands/rbac/RoleCommandsRepo.js';
+import { RoleQueriesRepository } from '../repo/queries/rbac/RoleQueriesRepo.js';
 import { IRoleRepository } from '../types/repositories/IRoleRepository.js';
-import { RolePermissionRepository } from '../repo/rbac/RolePermissionRepo.js';
+import { RolePermissionCommandsRepository } from '../repo/commands/rbac/RolePermissionCommandsRepo.js';
+import { RolePermissionQueriesRepository } from '../repo/queries/rbac/RolePermissionQueriesRepo.js';
 import { IRolePermissionRepository } from '../types/repositories/IRolePermissionRepository.js';
-import { UserRepository } from '../repo/rbac/UserRepo.js';
+import { UserCommandsRepository } from '../repo/commands/rbac/UserCommandsRepo.js';
+import { UserQueriesRepository } from '../repo/queries/rbac/UserQueriesRepo.js';
 import { IUserRepository } from '../types/repositories/IUserRepository.js';
-import { UserRoleRepository } from '../repo/rbac/UserRoleRepo.js';
+import { UserRoleCommandsRepository } from '../repo/commands/rbac/UserRoleCommandsRepo.js';
+import { UserRoleQueriesRepository } from '../repo/queries/rbac/UserRoleQueriesRepo.js';
 import { IUserRoleRepository } from '../types/repositories/IUserRoleRepository.js';
 // 匯入模型類型，用於類型定義
 import { PermissionModel } from '../models/rbac/PermissionModel.js';
@@ -77,11 +82,27 @@ export class RbacInitService implements IRbacInitService {
    * 初始化所有必要的資料存取層
    */
   constructor() {
-    this.permissionRepository = new PermissionRepository(); // 設定權限資料存取層實例
-    this.roleRepository = new RoleRepository(); // 設定角色資料存取層實例
-    this.rolePermissionRepository = new RolePermissionRepository(); // 設定角色權限關聯資料存取層實例
-    this.userRepository = new UserRepository(); // 設定使用者資料存取層實例
-    this.userRoleRepository = new UserRoleRepository(); // 設定使用者角色關聯資料存取層實例
+    // CQRS 模式：同時使用 Commands 和 Queries repositories 
+    // 創建組合實例以支持完整的 RBAC 功能
+    const permissionCommands = new PermissionCommandsRepository();
+    const permissionQueries = new PermissionQueriesRepository();
+    this.permissionRepository = Object.assign(Object.create(Object.getPrototypeOf(permissionCommands)), permissionCommands, permissionQueries);
+
+    const roleCommands = new RoleCommandsRepository();
+    const roleQueries = new RoleQueriesRepository();
+    this.roleRepository = Object.assign(Object.create(Object.getPrototypeOf(roleCommands)), roleCommands, roleQueries);
+
+    const rolePermissionCommands = new RolePermissionCommandsRepository();
+    const rolePermissionQueries = new RolePermissionQueriesRepository();
+    this.rolePermissionRepository = Object.assign(Object.create(Object.getPrototypeOf(rolePermissionCommands)), rolePermissionCommands, rolePermissionQueries);
+
+    const userCommands = new UserCommandsRepository();
+    const userQueries = new UserQueriesRepository();
+    this.userRepository = Object.assign(Object.create(Object.getPrototypeOf(userCommands)), userCommands, userQueries);
+
+    const userRoleCommands = new UserRoleCommandsRepository();
+    const userRoleQueries = new UserRoleQueriesRepository();
+    this.userRoleRepository = Object.assign(Object.create(Object.getPrototypeOf(userRoleCommands)), userRoleCommands, userRoleQueries);
   }
   /**
    * 建立 RBAC 示範資料

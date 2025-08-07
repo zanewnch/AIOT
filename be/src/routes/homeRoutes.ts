@@ -23,6 +23,7 @@ class HomeRoutes {
    */
   private initializeRoutes(): void {
     this.setupHomeRoute();
+    this.setupStructureDocsRoute();
   }
 
   /**
@@ -33,6 +34,17 @@ class HomeRoutes {
   private setupHomeRoute(): void {
     this.router.get('/', (_req: Request, res: Response) => {
       res.render('index');
+    });
+  }
+
+  /**
+   * 設定專案結構文檔路由
+   *
+   * GET /api/docs/structure_docs - 渲染專案結構文檔模板
+   */
+  private setupStructureDocsRoute(): void {
+    this.router.get('/api/docs/structure_docs', (_req: Request, res: Response) => {
+      res.render('structure_docs');
     });
   }
 

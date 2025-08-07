@@ -30,6 +30,8 @@ import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissi
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
 import { PermissionMiddleware } from '../middlewares/PermissionMiddleware.js';
 import { ErrorHandleMiddleware } from '../middlewares/ErrorHandleMiddleware.js';
+import { container } from '../container/container.js';
+import { TYPES } from '../types/container/dependency-injection.js';
 
 /**
  * RBAC 路由類別
@@ -76,16 +78,16 @@ class RbacRoutes {
 
   constructor() {
     this.router = Router();
-    this.userQueries = new UserQueries();
-    this.userCommands = new UserCommands();
-    this.roleQueries = new RoleQueries();
-    this.roleCommands = new RoleCommands();
-    this.permissionQueries = new PermissionQueries();
-    this.permissionCommands = new PermissionCommands();
-    this.userToRoleQueries = new UserToRoleQueries();
-    this.userToRoleCommands = new UserToRoleCommands();
-    this.roleToPermissionQueries = new RoleToPermissionQueries();
-    this.roleToPermissionCommands = new RoleToPermissionCommands();
+    this.userQueries = container.get<UserQueries>(TYPES.UserQueriesCtrl);
+    this.userCommands = container.get<UserCommands>(TYPES.UserCommandsCtrl);
+    this.roleQueries = container.get<RoleQueries>(TYPES.RoleQueriesCtrl);
+    this.roleCommands = container.get<RoleCommands>(TYPES.RoleCommandsCtrl);
+    this.permissionQueries = container.get<PermissionQueries>(TYPES.PermissionQueriesCtrl);
+    this.permissionCommands = container.get<PermissionCommands>(TYPES.PermissionCommandsCtrl);
+    this.userToRoleQueries = container.get<UserToRoleQueries>(TYPES.UserToRoleQueriesCtrl);
+    this.userToRoleCommands = container.get<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl);
+    this.roleToPermissionQueries = container.get<RoleToPermissionQueries>(TYPES.RoleToPermissionQueriesCtrl);
+    this.roleToPermissionCommands = container.get<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
     this.permissionMiddleware = new PermissionMiddleware();
     

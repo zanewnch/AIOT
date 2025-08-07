@@ -11,6 +11,8 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { 
     CreateArchiveTaskRequest 
@@ -19,6 +21,7 @@ import { ArchiveTaskCommandsSvc } from '../../services/commands/ArchiveTaskComma
 import { ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 歸檔任務命令 Controller 類別
@@ -31,20 +34,20 @@ import { ControllerResult } from '../../utils/ControllerResult.js';
  * 
  * @example
  * ```typescript
- * const commands = new ArchiveTaskCommands();
+ * const commands = container.get<ArchiveTaskCommands>(TYPES.ArchiveTaskCommandsCtrl);
  * 
  * // 在路由中使用
  * router.post('/api/archive-tasks', commands.createTask.bind(commands));
  * router.post('/api/archive-tasks/:id/execute', commands.executeTask.bind(commands));
  * ```
  */
+@injectable()
 export class ArchiveTaskCommands {
     private readonly logger = createLogger('ArchiveTaskCommands');
-    private readonly commandService: ArchiveTaskCommandsSvc;
 
-    constructor(commandService?: ArchiveTaskCommandsSvc) {
-        this.commandService = commandService || new ArchiveTaskCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.ArchiveTaskCommandsSvc) private readonly commandService: ArchiveTaskCommandsSvc
+    ) {}
 
     /**
      * 創建新的歸檔任務

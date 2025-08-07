@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusRepository } from '../../repo/drone/DroneStatusRepo.js';
+import { DroneStatusQueriesRepository } from '../../repo/queries/drone/DroneStatusQueriesRepo.js';
 import type { DroneStatusAttributes } from '../../models/drone/DroneStatusModel.js';
 import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
@@ -32,9 +32,9 @@ const logger = createLogger('DroneStatusQueriesSvc');
  */
 @injectable()
 export class DroneStatusQueriesSvc {
-    private droneStatusRepository: IDroneStatusRepository;
+    private droneStatusRepository: DroneStatusQueriesRepository;
 
-    constructor(droneStatusRepository: IDroneStatusRepository = new DroneStatusRepository()) {
+    constructor(droneStatusRepository: DroneStatusQueriesRepository = new DroneStatusQueriesRepository()) {
         this.droneStatusRepository = droneStatusRepository;
     }
 
@@ -44,7 +44,7 @@ export class DroneStatusQueriesSvc {
     async getAllDroneStatuses(): Promise<DroneStatusAttributes[]> {
         try {
             logger.info('Getting all drone status data');
-            const droneStatuses = await this.droneStatusRepository.selectAll();
+            const droneStatuses = await this.droneStatusRepository.findAll();
 
             logger.info(`Retrieved ${droneStatuses.length} drone status records`);
             return droneStatuses;
@@ -225,7 +225,7 @@ export class DroneStatusQueriesSvc {
     async getTotalDroneCount(): Promise<number> {
         try {
             logger.info('Getting total drone count');
-            const droneStatuses = await this.droneStatusRepository.selectAll();
+            const droneStatuses = await this.droneStatusRepository.findAll();
             const count = droneStatuses.length;
             
             logger.info(`Total drone count: ${count}`);
@@ -314,8 +314,8 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drones by model', { model });
-            const droneStatuses = await this.droneStatusRepository.selectAll();
-            const filteredDrones = droneStatuses.filter(drone => drone.model === model);
+            const droneStatuses = await this.droneStatusRepository.findAll();
+            const filteredDrones = droneStatuses.filter((drone: any) => drone.model === model);
 
             logger.info(`Retrieved ${filteredDrones.length} drones with model ${model}`);
             return filteredDrones;
@@ -335,8 +335,8 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Searching drones', { searchTerm });
-            const allDrones = await this.droneStatusRepository.selectAll();
-            const searchResults = allDrones.filter(drone => 
+            const allDrones = await this.droneStatusRepository.findAll();
+            const searchResults = allDrones.filter((drone: any) => 
                 drone.drone_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 drone.drone_serial.toLowerCase().includes(searchTerm.toLowerCase())
             );

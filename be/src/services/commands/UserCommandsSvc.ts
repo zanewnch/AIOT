@@ -31,7 +31,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import { UserCommandsRepository } from '../../repo/commands/rbac/UserCommandsRepo.js';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import bcrypt from 'bcrypt';
@@ -66,8 +67,6 @@ export interface UpdateUserRequest {
  */
 @injectable()
 export class UserCommandsSvc {
-    private userCommandsRepository: UserCommandsRepository;
-    private userQueriesSvc: UserQueriesSvc;
     private static readonly USER_CACHE_PREFIX = 'user:';
     private static readonly ALL_USERS_KEY = 'users:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -76,16 +75,14 @@ export class UserCommandsSvc {
     /**
      * 建構函式
      * 初始化使用者命令服務，設定資料存取層和查詢服務實例
-     * @param userCommandsRepository 使用者命令資料存取層實例
-     * @param userQueriesSvc 使用者查詢服務實例
      */
-    constructor(
-        userCommandsRepository: UserCommandsRepository = new UserCommandsRepository(),
-        userQueriesSvc: UserQueriesSvc = new UserQueriesSvc()
-    ) {
-        this.userCommandsRepository = userCommandsRepository;
-        this.userQueriesSvc = userQueriesSvc;
+    constructor() {
+        this.userCommandsRepository = new UserCommandsRepository();
+        this.userQueriesSvc = new UserQueriesSvc();
     }
+    
+    private readonly userCommandsRepository: UserCommandsRepository;
+    private readonly userQueriesSvc: UserQueriesSvc;
 
     /**
      * 取得 Redis 客戶端

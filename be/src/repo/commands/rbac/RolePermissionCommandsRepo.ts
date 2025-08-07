@@ -9,9 +9,12 @@
  * @since 2024-01-01
  */
 
-import { RolePermissionModel, RolePermissionCreationAttributes } from '../../../models/rbac/RolePermissionModel.js';
+import 'reflect-metadata';
+import { injectable } from 'inversify';
+import { RolePermissionModel, RolePermissionCreationAttributes, RolePermissionAttributes } from '../../../models/rbac/RoleToPermissionModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
+import { Op } from 'sequelize';
 
 const logger = createLogger('RolePermissionCommandsRepository');
 
@@ -22,6 +25,7 @@ const logger = createLogger('RolePermissionCommandsRepository');
  * 
  * @class RolePermissionCommandsRepository
  */
+@injectable()
 export class RolePermissionCommandsRepository {
   /**
    * 建立角色權限關聯
@@ -102,65 +106,70 @@ export class RolePermissionCommandsRepository {
   }
 
   /**
-   * 更新角色權限關聯
-   * @param id 關聯 ID
+   * 更新角色權限關聯 (根據 roleId 和 permissionId)
+   * @param roleId 角色 ID
+   * @param permissionId 權限 ID  
    * @param updateData 更新資料
    * @param transaction 資料庫交易（可選）
    * @returns 更新的角色權限關聯實例或 null
    */
   async update(
-    id: number,
+    roleId: number,
+    permissionId: number,
     updateData: Partial<RolePermissionCreationAttributes>,
     transaction?: Transaction
   ): Promise<RolePermissionModel | null> {
     try {
-      logger.debug(`Updating role permission ID ${id} with data:`, updateData);
+      logger.debug(`Updating role permission: role ${roleId} -> permission ${permissionId}`);
       
       const [updatedCount] = await RolePermissionModel.update(updateData, {
-        where: { id },
+        where: { roleId, permissionId },
         transaction
       });
       
       if (updatedCount === 0) {
-        logger.warn(`No role permission updated for ID: ${id}`);
+        logger.warn(`No role permission updated for role ${roleId} and permission ${permissionId}`);
         return null;
       }
       
-      const updatedRolePermission = await RolePermissionModel.findByPk(id);
-      logger.info(`Role permission updated successfully (ID: ${id})`);
+      const updatedRolePermission = await RolePermissionModel.findOne({
+        where: { roleId, permissionId }
+      });
+      logger.info(`Role permission updated successfully: role ${roleId} -> permission ${permissionId}`);
       
       return updatedRolePermission;
     } catch (error) {
-      logger.error(`Error updating role permission ID ${id}:`, error);
+      logger.error(`Error updating role permission for role ${roleId} and permission ${permissionId}:`, error);
       throw error;
     }
   }
 
   /**
-   * 刪除角色權限關聯
-   * @param id 關聯 ID
+   * 刪除角色權限關聯 (根據 roleId 和 permissionId)
+   * @param roleId 角色 ID
+   * @param permissionId 權限 ID
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async delete(id: number, transaction?: Transaction): Promise<boolean> {
+  async delete(roleId: number, permissionId: number, transaction?: Transaction): Promise<boolean> {
     try {
-      logger.debug(`Deleting role permission ID: ${id}`);
+      logger.debug(`Deleting role permission: role ${roleId} -> permission ${permissionId}`);
       
       const deletedCount = await RolePermissionModel.destroy({
-        where: { id },
+        where: { roleId, permissionId },
         transaction
       });
       
       const success = deletedCount > 0;
       if (success) {
-        logger.info(`Role permission deleted successfully (ID: ${id})`);
+        logger.info(`Role permission deleted successfully: role ${roleId} -> permission ${permissionId}`);
       } else {
-        logger.warn(`No role permission deleted for ID: ${id}`);
+        logger.warn(`No role permission deleted for role ${roleId} and permission ${permissionId}`);
       }
       
       return success;
     } catch (error) {
-      logger.error(`Error deleting role permission ID ${id}:`, error);
+      logger.error(`Error deleting role permission for role ${roleId} and permission ${permissionId}:`, error);
       throw error;
     }
   }
@@ -243,17 +252,27 @@ export class RolePermissionCommandsRepository {
 
   /**
    * 批量刪除角色權限關聯
-   * @param ids 關聯 ID 陣列
+   * @param rolePermissionPairs 角色權限對陣列 { roleId, permissionId }
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async bulkDelete(ids: number[], transaction?: Transaction): Promise<number> {
+  async bulkDelete(rolePermissionPairs: Array<{roleId: number, permissionId: number}>, transaction?: Transaction): Promise<number> {
     try {
-      logger.debug(`Bulk deleting ${ids.length} role permissions`);
+      logger.debug(`Bulk deleting ${rolePermissionPairs.length} role permissions`);
+      
+      if (rolePermissionPairs.length === 0) {
+        return 0;
+      }
+
+      // 構建 OR 條件陣列
+      const whereConditions = rolePermissionPairs.map(pair => ({
+        roleId: pair.roleId,
+        permissionId: pair.permissionId
+      }));
       
       const deletedCount = await RolePermissionModel.destroy({
         where: {
-          id: ids
+          [Op.or]: whereConditions
         },
         transaction
       });

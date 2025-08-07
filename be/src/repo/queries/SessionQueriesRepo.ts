@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { SessionData } from '../../types/repositories/ISessionRepository.js';
 
@@ -19,6 +21,7 @@ import type { SessionData } from '../../types/repositories/ISessionRepository.js
  *
  * @class SessionQueriesRepository
  */
+@injectable()
 export class SessionQueriesRepository {
     private readonly logger = createLogger('SessionQueriesRepository');
 

@@ -9,9 +9,12 @@
  * @since 2024-01-01
  */
 
-import { UserRoleModel, UserRoleCreationAttributes } from '../../../models/rbac/UserRoleModel.js';
+import 'reflect-metadata';
+import { injectable } from 'inversify';
+import { UserRoleModel, UserRoleCreationAttributes, UserRoleAttributes } from '../../../models/rbac/UserToRoleModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
+import { Op } from 'sequelize';
 
 const logger = createLogger('UserRoleCommandsRepository');
 
@@ -22,6 +25,7 @@ const logger = createLogger('UserRoleCommandsRepository');
  * 
  * @class UserRoleCommandsRepository
  */
+@injectable()
 export class UserRoleCommandsRepository {
   /**
    * 建立使用者角色關聯
@@ -109,29 +113,32 @@ export class UserRoleCommandsRepository {
    * @returns 更新的使用者角色關聯實例或 null
    */
   async update(
-    id: number,
+    userId: number,
+    roleId: number,
     updateData: Partial<UserRoleCreationAttributes>,
     transaction?: Transaction
   ): Promise<UserRoleModel | null> {
     try {
-      logger.debug(`Updating user role ID ${id} with data:`, updateData);
+      logger.debug(`Updating user role: user ${userId} -> role ${roleId}`);
       
       const [updatedCount] = await UserRoleModel.update(updateData, {
-        where: { id },
+        where: { userId, roleId },
         transaction
       });
       
       if (updatedCount === 0) {
-        logger.warn(`No user role updated for ID: ${id}`);
+        logger.warn(`No user role updated for user ${userId} and role ${roleId}`);
         return null;
       }
       
-      const updatedUserRole = await UserRoleModel.findByPk(id);
-      logger.info(`User role updated successfully (ID: ${id})`);
+      const updatedUserRole = await UserRoleModel.findOne({
+        where: { userId, roleId }
+      });
+      logger.info(`User role updated successfully: user ${userId} -> role ${roleId}`);
       
       return updatedUserRole;
     } catch (error) {
-      logger.error(`Error updating user role ID ${id}:`, error);
+      logger.error(`Error updating user role for user ${userId} and role ${roleId}:`, error);
       throw error;
     }
   }
@@ -142,25 +149,25 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async delete(id: number, transaction?: Transaction): Promise<boolean> {
+  async delete(userId: number, roleId: number, transaction?: Transaction): Promise<boolean> {
     try {
-      logger.debug(`Deleting user role ID: ${id}`);
+      logger.debug(`Deleting user role: user ${userId} -> role ${roleId}`);
       
       const deletedCount = await UserRoleModel.destroy({
-        where: { id },
+        where: { userId, roleId },
         transaction
       });
       
       const success = deletedCount > 0;
       if (success) {
-        logger.info(`User role deleted successfully (ID: ${id})`);
+        logger.info(`User role deleted successfully: user ${userId} -> role ${roleId}`);
       } else {
-        logger.warn(`No user role deleted for ID: ${id}`);
+        logger.warn(`No user role deleted for user ${userId} and role ${roleId}`);
       }
       
       return success;
     } catch (error) {
-      logger.error(`Error deleting user role ID ${id}:`, error);
+      logger.error(`Error deleting user role for user ${userId} and role ${roleId}:`, error);
       throw error;
     }
   }
@@ -247,13 +254,23 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async bulkDelete(ids: number[], transaction?: Transaction): Promise<number> {
+  async bulkDelete(userRolePairs: Array<{userId: number, roleId: number}>, transaction?: Transaction): Promise<number> {
     try {
-      logger.debug(`Bulk deleting ${ids.length} user roles`);
+      logger.debug(`Bulk deleting ${userRolePairs.length} user roles`);
+      
+      if (userRolePairs.length === 0) {
+        return 0;
+      }
+
+      // 構建 OR 條件陣列
+      const whereConditions = userRolePairs.map(pair => ({
+        userId: pair.userId,
+        roleId: pair.roleId
+      }));
       
       const deletedCount = await UserRoleModel.destroy({
         where: {
-          id: ids
+          [Op.or]: whereConditions
         },
         transaction
       });

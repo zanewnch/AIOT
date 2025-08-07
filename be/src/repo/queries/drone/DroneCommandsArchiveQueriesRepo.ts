@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes } from '../../../models/drone/DroneCommandsArchiveModel.js';
 import type { PaginationParams, PaginatedResponse } from '../../../types/ApiResponseType.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
@@ -24,6 +26,7 @@ const logger = createLogger('DroneCommandsArchiveQueriesRepository');
  *
  * @class DroneCommandsArchiveQueriesRepository
  */
+@injectable()
 export class DroneCommandsArchiveQueriesRepository {
     /**
      * 取得所有指令歷史歸檔資料

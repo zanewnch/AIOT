@@ -26,15 +26,16 @@ import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
-import { TYPES, DroneEventType } from './container/types.js';
-import { interfaces } from 'inversify';
+import { TYPES, DroneEventType } from './types/container/dependency-injection.js';
 import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
 import type {
-  IDroneStatusService,
+  IDroneStatusService
+} from './types/services/IDroneStatusService.js';
+import type {
   IDroneEventHandler,
   IWebSocketService,
   IWebSocketAuthMiddleware
-} from './container/interfaces.js';
+} from './types/container/websocket-interfaces.js';
 import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
 import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
 
@@ -108,9 +109,9 @@ export class App {
    * 無人機事件處理器工廠函數（透過 IoC 容器取得）
    * 用於根據事件類型獲取對應的處理器
    * @private
-   * @type {interfaces.Factory<IDroneEventHandler> | null}
+   * @type {(type: DroneEventType) => IDroneEventHandler | null}
    */
-  private droneEventHandlerFactory: interfaces.Factory<IDroneEventHandler> | null = null;
+  private droneEventHandlerFactory: ((type: DroneEventType) => IDroneEventHandler) | null = null;
 
   /**
    * 建構函式 - 初始化 Express 應用程式
@@ -151,7 +152,7 @@ export class App {
       // 透過 IoC 容器取得服務實例
       // 所有依賴都會自動注入，確保單例和一致性
       const wsService = ContainerUtils.get<IWebSocketService>(TYPES.WebSocketService);
-      const eventHandlerFactory = ContainerUtils.get<interfaces.Factory<IDroneEventHandler>>(TYPES.DroneEventHandlerFactory);
+      const eventHandlerFactory = ContainerUtils.get<(type: DroneEventType) => IDroneEventHandler>(TYPES.DroneEventHandlerFactory);
       
       // 保存實例供其他方法使用
       this.webSocketService = wsService;
@@ -510,9 +511,9 @@ export class App {
    *
    * @public
    * @method getDroneEventHandlerFactory
-   * @returns {interfaces.Factory<IDroneEventHandler> | null} 無人機事件處理器工廠函數或 null
+   * @returns {(type: DroneEventType) => IDroneEventHandler | null} 無人機事件處理器工廠函數或 null
    */
-  getDroneEventHandlerFactory(): interfaces.Factory<IDroneEventHandler> | null {
+  getDroneEventHandlerFactory(): ((type: DroneEventType) => IDroneEventHandler) | null {
     return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠函數
   }
 

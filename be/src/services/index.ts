@@ -13,8 +13,7 @@
  * @since 2025-07-18
  */
 
-// 匯出認證服務，提供使用者身份驗證和權限管理功能
-export { AuthService } from './AuthService.js';
+// AuthService has been refactored to CQRS pattern - see AuthCommandsSvc and AuthQueriesSvc below
 
 // 匯出角色基礎存取控制初始化服務，負責設定權限系統
 export { RbacInitService } from './RbacInitService.js';

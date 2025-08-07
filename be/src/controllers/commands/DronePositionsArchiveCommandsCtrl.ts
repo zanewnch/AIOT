@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DronePositionsArchiveCommandsSvc } from '../../services/commands/DronePositionsArchiveCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import type { DronePositionsArchiveCreationAttributes } from '../../models/drone/DronePositionsArchiveModel.js';
 
 const logger = createLogger('DronePositionsArchiveCommands');
@@ -28,12 +31,11 @@ const logger = createLogger('DronePositionsArchiveCommands');
  * @class DronePositionsArchiveCommands
  * @since 1.0.0
  */
+@injectable()
 export class DronePositionsArchiveCommands {
-    private archiveService: DronePositionsArchiveCommandsSvc;
-
-    constructor() {
-        this.archiveService = new DronePositionsArchiveCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.DronePositionsArchiveCommandsSvc) private readonly archiveService: DronePositionsArchiveCommandsSvc
+    ) {}
 
     /**
      * 創建位置歷史歸檔記錄

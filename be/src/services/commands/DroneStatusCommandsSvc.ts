@@ -12,8 +12,9 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { DroneStatusRepository } from '../../repo/drone/DroneStatusRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
+import { DroneStatusCommandsRepository } from '../../repo/commands/drone/DroneStatusCommandsRepo.js';
 import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/drone/DroneStatusModel.js';
 import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
@@ -33,13 +34,15 @@ const logger = createLogger('DroneStatusCommandsSvc');
  */
 @injectable()
 export class DroneStatusCommandsSvc {
-    private droneStatusRepository: IDroneStatusRepository;
-    private queryService: DroneStatusQueriesSvc;
-
-    constructor(droneStatusRepository: IDroneStatusRepository = new DroneStatusRepository()) {
-        this.droneStatusRepository = droneStatusRepository;
-        this.queryService = new DroneStatusQueriesSvc(droneStatusRepository);
+    constructor(
+        @inject(TYPES.DroneStatusQueriesSvc)
+        private readonly queryService: DroneStatusQueriesSvc
+    ) {
+        // Initialize repository directly for now since it's not in DI container yet
+        this.droneStatusRepository = new DroneStatusCommandsRepository();
     }
+
+    private readonly droneStatusRepository: DroneStatusCommandsRepository;
 
     /**
      * 建立新的無人機狀態資料
@@ -325,7 +328,7 @@ export class DroneStatusCommandsSvc {
 
             const updatedDrone = await this.updateDroneStatus(id, {
                 owner_user_id: newOwnerUserId,
-                updated_at: new Date()
+                updatedAt: new Date()
             });
 
             logger.info('Successfully updated drone owner', { id, newOwnerUserId });

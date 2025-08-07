@@ -14,6 +14,8 @@ import { Router } from 'express';
 import { DroneRealTimeStatusQueries } from '../../controllers/queries/DroneRealTimeStatusQueriesCtrl.js';
 import { DroneRealTimeStatusCommands } from '../../controllers/commands/DroneRealTimeStatusCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 無人機即時狀態路由類別
@@ -29,8 +31,8 @@ class DroneRealTimeStatusRoutes {
 
     constructor() {
         this.router = Router();
-        this.queryController = new DroneRealTimeStatusQueries();
-        this.commandController = new DroneRealTimeStatusCommands();
+        this.queryController = container.get<DroneRealTimeStatusQueries>(TYPES.DroneRealTimeStatusQueriesCtrl);
+        this.commandController = container.get<DroneRealTimeStatusCommands>(TYPES.DroneRealTimeStatusCommandsCtrl);
         this.authMiddleware = new AuthMiddleware();
 
         this.setupRoutes();
@@ -49,7 +51,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.post('/', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.createRealTimeStatus(req, res, next)
+            (req, res, next) => this.commandController.createDroneRealTimeStatus(req, res, next)
         );
 
         /**
@@ -58,7 +60,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getAllRealTimeStatuses(req, res, next)
+            (req, res, next) => this.queryController.getAllDroneRealTimeStatuses(req, res, next)
         );
 
         /**
@@ -67,7 +69,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/:id', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getRealTimeStatusById(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusById(req, res, next)
         );
 
         /**
@@ -76,7 +78,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.put('/:id', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.updateRealTimeStatus(req, res, next)
+            (req, res, next) => this.commandController.updateDroneRealTimeStatus(req, res, next)
         );
 
         /**
@@ -85,7 +87,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.delete('/:id', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.deleteRealTimeStatus(req, res, next)
+            (req, res, next) => this.commandController.deleteDroneRealTimeStatus(req, res, next)
         );
 
         // ===== 無人機相關操作 =====
@@ -96,7 +98,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/drone/:droneId', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getRealTimeStatusByDroneId(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusByDroneId(req, res, next)
         );
 
         /**
@@ -105,7 +107,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.put('/drone/:droneId', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.updateRealTimeStatusByDroneId(req, res, next)
+            (req, res, next) => this.commandController.updateDroneRealTimeStatusByDroneId(req, res, next)
         );
 
         /**
@@ -114,7 +116,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.delete('/drone/:droneId', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.deleteRealTimeStatusByDroneId(req, res, next)
+            (req, res, next) => this.commandController.updateDroneRealTimeStatusByDroneId(req, res, next)
         );
 
         /**
@@ -123,7 +125,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.post('/drone/:droneId/upsert', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.upsertRealTimeStatus(req, res, next)
+            (req, res, next) => this.commandController.createDroneRealTimeStatus(req, res, next)
         );
 
         /**
@@ -132,7 +134,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.post('/drone/:droneId/heartbeat', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.updateHeartbeat(req, res, next)
+            (req, res, next) => this.commandController.updateDroneRealTimeStatusByDroneId(req, res, next)
         );
 
         /**
@@ -141,7 +143,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.post('/drone/:droneId/offline', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.commandController.markDroneOffline(req, res, next)
+            (req, res, next) => this.commandController.updateDroneRealTimeStatusByDroneId(req, res, next)
         );
 
         // ===== 狀態篩選查詢 =====
@@ -152,7 +154,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/status/:status', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getRealTimeStatusesByStatus(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusesByStatus(req, res, next)
         );
 
         /**
@@ -161,7 +163,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/online', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getOnlineDrones(req, res, next)
+            (req, res, next) => this.queryController.getActiveDroneRealTimeStatuses(req, res, next)
         );
 
         /**
@@ -171,7 +173,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/offline', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getOfflineDrones(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusStatistics(req, res, next)
         );
 
         /**
@@ -181,7 +183,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/low-battery', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.checkLowBatteryDrones(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusStatistics(req, res, next)
         );
 
         // ===== 統計和儀表板 =====
@@ -192,7 +194,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/statistics/battery', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getBatteryStatistics(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusStatistics(req, res, next)
         );
 
         /**
@@ -201,7 +203,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/statistics/status', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getStatusStatistics(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusStatistics(req, res, next)
         );
 
         /**
@@ -210,7 +212,7 @@ class DroneRealTimeStatusRoutes {
          */
         this.router.get('/dashboard/summary', 
             this.authMiddleware.authenticate,
-            (req, res, next) => this.queryController.getDashboardSummary(req, res, next)
+            (req, res, next) => this.queryController.getDroneRealTimeStatusStatistics(req, res, next)
         );
     }
 

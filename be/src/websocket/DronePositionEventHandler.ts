@@ -13,11 +13,11 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../container/types.js';
+import { TYPES } from '../types/container/dependency-injection.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DronePositionQueriesSvc } from '../services/queries/DronePositionQueriesSvc.js';
-import type { IDroneEventHandler } from '../container/interfaces.js';
+import type { IDroneEventHandler } from '../types/container/websocket-interfaces.js';
 
 /**
  * 無人機位置事件處理器

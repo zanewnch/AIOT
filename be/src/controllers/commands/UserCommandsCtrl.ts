@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserCommandsSvc } from '../../services/commands/UserCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('UserCommands');
 
@@ -27,12 +30,11 @@ const logger = createLogger('UserCommands');
  * @class UserCommands
  * @since 1.0.0
  */
+@injectable()
 export class UserCommands {
-    private userCommandsSvc: UserCommandsSvc;
-
-    constructor() {
-        this.userCommandsSvc = new UserCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.UserCommandsSvc) private readonly userCommandsSvc: UserCommandsSvc
+    ) {}
 
     /**
      * 創建新使用者

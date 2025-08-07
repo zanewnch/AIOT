@@ -11,22 +11,23 @@
  * @version 1.0.0
  */
 
-import {
-    ArchiveTaskModel,
-    ArchiveJobType,
-    ArchiveTaskStatus
-} from '../../models/drone/ArchiveTaskModel';
-import {
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
+import type { ArchiveTaskModel } from '../../models/drone/ArchiveTaskModel.js';
+import { ArchiveJobType, ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
+import type {
     CreateArchiveTaskRequest,
     ArchiveTaskExecutionResult,
     BatchArchiveResult
-} from '../../types/services/IArchiveTaskService';
-import {
+} from '../../types/services/IArchiveTaskService.js';
+import type {
     IArchiveTaskRepository
-} from '../../types/repositories/IArchiveTaskRepository';
-import { ArchiveTaskRepository } from '../../repo/ArchiveTaskRepo';
-import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc';
-import { createLogger } from '../../configs/loggerConfig';
+} from '../../types/repositories/IArchiveTaskRepository.js';
+import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
+import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
+import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 /**
  * 歸檔任務命令 Service 實作類別
@@ -37,14 +38,27 @@ import { createLogger } from '../../configs/loggerConfig';
  * @class ArchiveTaskCommandsSvc
  * @since 1.0.0
  */
+@injectable()
 export class ArchiveTaskCommandsSvc {
     private readonly logger = createLogger('ArchiveTaskCommandsSvc');
-    private readonly repository: IArchiveTaskRepository;
-    private readonly queryService: ArchiveTaskQueriesSvc;
+    private readonly repository: IArchiveTaskRepository; // 組合介面
 
-    constructor(repository?: IArchiveTaskRepository) {
-        this.repository = repository || new ArchiveTaskRepository();
-        this.queryService = new ArchiveTaskQueriesSvc(this.repository);
+    constructor(
+        @inject(TYPES.ArchiveTaskCommandsSvc) 
+        private readonly commandsRepository: ArchiveTaskCommandsRepository,
+        
+        @inject(TYPES.ArchiveTaskQueriesSvc) 
+        private readonly queriesRepository: ArchiveTaskQueriesRepository,
+        
+        @inject(TYPES.ArchiveTaskQueriesSvc) 
+        private readonly queryService: ArchiveTaskQueriesSvc
+    ) {
+        // 創建組合repository，支持完整的IArchiveTaskRepository接口
+        this.repository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IArchiveTaskRepository;
     }
 
     /**

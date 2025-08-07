@@ -9,7 +9,9 @@
  * @since 2024-01-01
  */
 
-import { UserRoleModel } from '../../../models/rbac/UserRoleModel.js';
+import 'reflect-metadata';
+import { injectable } from 'inversify';
+import { UserRoleModel } from '../../../models/rbac/UserToRoleModel.js';
 import { UserModel } from '../../../models/rbac/UserModel.js';
 import { RoleModel } from '../../../models/rbac/RoleModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
@@ -23,6 +25,7 @@ const logger = createLogger('UserRoleQueriesRepository');
  * 
  * @class UserRoleQueriesRepository
  */
+@injectable()
 export class UserRoleQueriesRepository {
   /**
    * 根據 ID 查詢使用者角色關聯

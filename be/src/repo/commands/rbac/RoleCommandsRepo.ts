@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { 
   RoleModel, 
   RoleCreationAttributes 
@@ -25,6 +27,7 @@ const logger = createLogger('RoleCommandsRepository');
  * 
  * @class RoleCommandsRepository
  */
+@injectable()
 export class RoleCommandsRepository {
   /**
    * 建立新角色
@@ -268,7 +271,7 @@ export class RoleCommandsRepository {
       logger.debug(`Updating description for role ID ${id}`);
       
       const [updatedCount] = await RoleModel.update(
-        { description },
+        { displayName: description },
         {
           where: { id },
           transaction
@@ -289,67 +292,18 @@ export class RoleCommandsRepository {
     }
   }
 
-  /**
-   * 啟用角色
-   * @param id 角色 ID
-   * @param transaction 資料庫交易（可選）
-   * @returns 是否更新成功
-   */
+  // 注意：Role 模型沒有 isActive 字段，以下方法已被註釋
+  // 如需啟用/停用功能，請考慮在資料庫模型中添加對應字段
+  
+  /*
   async activate(id: number, transaction?: Transaction): Promise<boolean> {
-    try {
-      logger.debug(`Activating role ID: ${id}`);
-      
-      const [updatedCount] = await RoleModel.update(
-        { isActive: true },
-        {
-          where: { id },
-          transaction
-        }
-      );
-      
-      const success = updatedCount > 0;
-      if (success) {
-        logger.info(`Role activated successfully (ID: ${id})`);
-      } else {
-        logger.warn(`No role activated for ID: ${id}`);
-      }
-      
-      return success;
-    } catch (error) {
-      logger.error(`Error activating role ID ${id}:`, error);
-      throw error;
-    }
+    // 此方法需要 Role 模型有 isActive 字段
+    throw new Error('Role model does not have isActive field');
   }
 
-  /**
-   * 停用角色
-   * @param id 角色 ID
-   * @param transaction 資料庫交易（可選）
-   * @returns 是否更新成功
-   */
   async deactivate(id: number, transaction?: Transaction): Promise<boolean> {
-    try {
-      logger.debug(`Deactivating role ID: ${id}`);
-      
-      const [updatedCount] = await RoleModel.update(
-        { isActive: false },
-        {
-          where: { id },
-          transaction
-        }
-      );
-      
-      const success = updatedCount > 0;
-      if (success) {
-        logger.info(`Role deactivated successfully (ID: ${id})`);
-      } else {
-        logger.warn(`No role deactivated for ID: ${id}`);
-      }
-      
-      return success;
-    } catch (error) {
-      logger.error(`Error deactivating role ID ${id}:`, error);
-      throw error;
-    }
+    // 此方法需要 Role 模型有 isActive 字段  
+    throw new Error('Role model does not have isActive field');
   }
+  */
 }

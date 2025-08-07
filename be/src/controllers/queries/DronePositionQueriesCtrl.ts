@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DronePositionQueriesSvc } from '../../services/queries/DronePositionQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('DronePositionQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('DronePositionQueries');
  * @class DronePositionQueries
  * @since 1.0.0
  */
+@injectable()
 export class DronePositionQueries {
-    private dronePositionQueriesSvc: DronePositionQueriesSvc;
-
-    constructor() {
-        this.dronePositionQueriesSvc = new DronePositionQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesSvc: DronePositionQueriesSvc
+    ) {}
 
     /**
      * 取得所有無人機位置資料

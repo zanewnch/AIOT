@@ -15,6 +15,8 @@ import { Router } from 'express';
 import { DroneStatusArchiveQueries } from '../../controllers/queries/DroneStatusArchiveQueriesCtrl.js';
 import { DroneStatusArchiveCommands } from '../../controllers/commands/DroneStatusArchiveCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 無人機狀態歷史路由類別
@@ -54,8 +56,8 @@ class DroneStatusArchiveRoutes {
 
   constructor() {
     this.router = Router();
-    this.queryController = new DroneStatusArchiveQueries();
-    this.commandController = new DroneStatusArchiveCommands();
+    this.queryController = container.get<DroneStatusArchiveQueries>(TYPES.DroneStatusArchiveQueriesCtrl);
+    this.commandController = container.get<DroneStatusArchiveCommands>(TYPES.DroneStatusArchiveCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
 
     this.setupCrudRoutes();

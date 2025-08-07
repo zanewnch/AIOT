@@ -18,6 +18,8 @@ import { Router } from 'express';
 import { DroneStatusQueries } from '../../controllers/queries/DroneStatusQueriesCtrl.js';
 import { DroneStatusCommands } from '../../controllers/commands/DroneStatusCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 無人機狀態路由類別
@@ -54,8 +56,8 @@ class DroneStatusRoutes {
 
   constructor() {
     this.router = Router();
-    this.queryController = new DroneStatusQueries();
-    this.commandController = new DroneStatusCommands();
+    this.queryController = container.get<DroneStatusQueries>(TYPES.DroneStatusQueriesCtrl);
+    this.commandController = container.get<DroneStatusCommands>(TYPES.DroneStatusCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
 
     this.setupCrudRoutes();

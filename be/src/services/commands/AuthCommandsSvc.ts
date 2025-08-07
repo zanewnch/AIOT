@@ -26,9 +26,10 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import { UserCommandsRepository } from '../../repo/commands/rbac/UserCommandsRepo.js';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import { SessionCommandsSvc } from './SessionCommandsSvc.js';
@@ -73,19 +74,16 @@ export interface SessionOptions {
  */
 @injectable()
 export class AuthCommandsSvc {
-    private userCommandsRepository: UserCommandsRepository;
-    private authQueriesSvc: AuthQueriesSvc;
-    private sessionCommandsSvc: SessionCommandsSvc;
-
     constructor(
-        userCommandsRepository: UserCommandsRepository = new UserCommandsRepository(),
-        authQueriesSvc: AuthQueriesSvc = new AuthQueriesSvc(),
-        sessionCommandsSvc: SessionCommandsSvc = new SessionCommandsSvc()
-    ) {
-        this.userCommandsRepository = userCommandsRepository;
-        this.authQueriesSvc = authQueriesSvc;
-        this.sessionCommandsSvc = sessionCommandsSvc;
-    }
+        @inject(TYPES.UserCommandsSvc) 
+        private readonly userCommandsRepository: UserCommandsRepository,
+        
+        @inject(TYPES.AuthQueriesSvc) 
+        private readonly authQueriesSvc: AuthQueriesSvc,
+        
+        @inject(TYPES.SessionCommandsSvc) 
+        private readonly sessionCommandsSvc: SessionCommandsSvc
+    ) {}
 
     /**
      * 生成 JWT Token

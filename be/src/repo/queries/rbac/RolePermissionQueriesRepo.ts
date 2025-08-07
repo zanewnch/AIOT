@@ -9,7 +9,9 @@
  * @since 2024-01-01
  */
 
-import { RolePermissionModel } from '../../../models/rbac/RolePermissionModel.js';
+import 'reflect-metadata';
+import { injectable } from 'inversify';
+import { RolePermissionModel } from '../../../models/rbac/RoleToPermissionModel.js';
 import { RoleModel } from '../../../models/rbac/RoleModel.js';
 import { PermissionModel } from '../../../models/rbac/PermissionModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
@@ -23,6 +25,7 @@ const logger = createLogger('RolePermissionQueriesRepository');
  * 
  * @class RolePermissionQueriesRepository
  */
+@injectable()
 export class RolePermissionQueriesRepository {
   /**
    * 根據 ID 查詢角色權限關聯

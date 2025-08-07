@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DronePositionCommandsSvc } from '../../services/commands/DronePositionCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import type { DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js';
 
 const logger = createLogger('DronePositionCommands');
@@ -28,12 +31,11 @@ const logger = createLogger('DronePositionCommands');
  * @class DronePositionCommands
  * @since 1.0.0
  */
+@injectable()
 export class DronePositionCommands {
-    private dronePositionCommandsSvc: DronePositionCommandsSvc;
-
-    constructor() {
-        this.dronePositionCommandsSvc = new DronePositionCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.DronePositionCommandsSvc) private readonly dronePositionCommandsSvc: DronePositionCommandsSvc
+    ) {}
 
     /**
      * 創建新的無人機位置資料

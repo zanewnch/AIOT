@@ -12,8 +12,10 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { DronePositionRepository } from '../../repo/drone/DronePositionRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
+import { DronePositionCommandsRepository } from '../../repo/commands/drone/DronePositionCommandsRepo.js';
+import { DronePositionQueriesRepository } from '../../repo/queries/drone/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import { DronePositionQueriesSvc } from '../queries/DronePositionQueriesSvc.js';
@@ -32,12 +34,24 @@ const logger = createLogger('DronePositionCommandsSvc');
  */
 @injectable()
 export class DronePositionCommandsSvc {
-    private dronePositionRepository: IDronePositionRepository;
-    private queryService: DronePositionQueriesSvc;
+    private dronePositionRepository: IDronePositionRepository; // 組合介面
 
-    constructor(dronePositionRepository: IDronePositionRepository = new DronePositionRepository()) {
-        this.dronePositionRepository = dronePositionRepository;
-        this.queryService = new DronePositionQueriesSvc(dronePositionRepository);
+    constructor(
+        @inject(TYPES.DronePositionCommandsSvc) 
+        private readonly commandsRepository: DronePositionCommandsRepository,
+        
+        @inject(TYPES.DronePositionQueriesSvc) 
+        private readonly queriesRepository: DronePositionQueriesRepository,
+        
+        @inject(TYPES.DronePositionQueriesSvc) 
+        private readonly queryService: DronePositionQueriesSvc
+    ) {
+        // 創建組合repository
+        this.dronePositionRepository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IDronePositionRepository;
     }
 
     /**
@@ -171,7 +185,7 @@ export class DronePositionCommandsSvc {
             
             const results: DronePositionAttributes[] = [];
             for (const position of positions) {
-                const result = await this.dronePositionRepository.insert(position);
+                const result = await this.dronePositionRepository.create(position);
                 results.push(result);
             }
 
@@ -305,7 +319,7 @@ export class DronePositionCommandsSvc {
 
             // 排序並找出需要刪除的記錄 (保留最新的)
             const sortedPositions = allPositions.sort((a, b) => 
-                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
             
             const positionsToDelete = sortedPositions.slice(keepLatest);

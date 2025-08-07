@@ -13,7 +13,8 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusArchiveRepository } from '../../repo/drone/DroneStatusArchiveRepo.js';
+import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/drone/DroneStatusArchiveQueriesRepo.js';
+import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/drone/DroneStatusArchiveCommandsRepo.js';
 import type { DroneStatusArchiveAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
@@ -33,9 +34,19 @@ const logger = createLogger('DroneStatusArchiveQueriesSvc');
 @injectable()
 export class DroneStatusArchiveQueriesSvc {
     private archiveRepository: IDroneStatusArchiveRepository;
+    private queriesRepository: DroneStatusArchiveQueriesRepository;
+    private commandsRepository: DroneStatusArchiveCommandsRepository;
 
-    constructor(archiveRepository: IDroneStatusArchiveRepository = new DroneStatusArchiveRepository()) {
-        this.archiveRepository = archiveRepository;
+    constructor(archiveRepository?: IDroneStatusArchiveRepository) {
+        this.queriesRepository = new DroneStatusArchiveQueriesRepository();
+        this.commandsRepository = new DroneStatusArchiveCommandsRepository();
+        
+        // 創建組合repository來滿足IDroneStatusArchiveRepository接口
+        this.archiveRepository = archiveRepository || Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IDroneStatusArchiveRepository;
     }
 
     /**

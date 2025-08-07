@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DroneCommandModel, type DroneCommandAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -24,6 +26,7 @@ const logger = createLogger('DroneCommandQueriesRepository');
  * 
  * @class DroneCommandQueriesRepository
  */
+@injectable()
 export class DroneCommandQueriesRepository {
     /**
      * 取得所有無人機指令

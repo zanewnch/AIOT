@@ -19,6 +19,8 @@ import { DronePositionQueries } from '../../controllers/queries/DronePositionQue
 import { DronePositionCommands } from '../../controllers/commands/DronePositionCommandsCtrl.js';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware.js';
 import { ErrorHandleMiddleware } from '../../middlewares/ErrorHandleMiddleware.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 /**
  * 無人機位置路由類別
@@ -49,8 +51,8 @@ class DronePositionRoutes {
 
   constructor() {
     this.router = Router();
-    this.queryController = new DronePositionQueries();
-    this.commandController = new DronePositionCommands();
+    this.queryController = container.get<DronePositionQueries>(TYPES.DronePositionQueriesCtrl);
+    this.commandController = container.get<DronePositionCommands>(TYPES.DronePositionCommandsCtrl);
     this.authMiddleware = new AuthMiddleware();
 
     this.setupCrudRoutes();

@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DroneCommandModel, type DroneCommandAttributes, type DroneCommandCreationAttributes, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
@@ -23,6 +25,7 @@ const logger = createLogger('DroneCommandCommandsRepository');
  * 
  * @class DroneCommandCommandsRepository
  */
+@injectable()
 export class DroneCommandCommandsRepository {
     /**
      * 建立新的無人機指令記錄

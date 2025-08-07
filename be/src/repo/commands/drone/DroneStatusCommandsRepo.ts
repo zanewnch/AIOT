@@ -9,7 +9,9 @@
  * @since 2024-01-01
  */
 
-import { DroneStatusModel, type DroneStatusCreationAttributes } from '../../../models/drone/DroneStatusModel.js';
+import 'reflect-metadata';
+import { injectable } from 'inversify';
+import { DroneStatusModel, DroneStatus, type DroneStatusCreationAttributes } from '../../../models/drone/DroneStatusModel.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
 
 const logger = createLogger('DroneStatusCommandsRepository');
@@ -21,6 +23,7 @@ const logger = createLogger('DroneStatusCommandsRepository');
  * 
  * @class DroneStatusCommandsRepository
  */
+@injectable()
 export class DroneStatusCommandsRepository {
     /**
      * 建立新的無人機狀態記錄
@@ -132,6 +135,36 @@ export class DroneStatusCommandsRepository {
             return success;
         } catch (error) {
             logger.error('Error updating drone status by serial:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 更新無人機狀態 (根據ID)
+     * @param id 無人機 ID
+     * @param status 新狀態
+     * @returns 更新後的無人機狀態實例
+     */
+    async updateStatus(id: number, status: DroneStatus): Promise<DroneStatusModel | null> {
+        try {
+            logger.debug('Updating drone status by ID', { id, status });
+            
+            const [affectedCount] = await DroneStatusModel.update(
+                { status },
+                { where: { id } }
+            );
+            
+            if (affectedCount === 0) {
+                logger.warn('No drone found for status update', { id });
+                return null;
+            }
+            
+            const updatedDrone = await DroneStatusModel.findByPk(id);
+            logger.info('Drone status updated successfully', { id, status });
+            
+            return updatedDrone;
+        } catch (error) {
+            logger.error('Error updating drone status by ID:', error);
             throw error;
         }
     }

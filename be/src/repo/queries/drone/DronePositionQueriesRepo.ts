@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DronePositionModel, type DronePositionAttributes } from '../../../models/drone/DronePositionModel.js';
 import type { PaginationParams, PaginatedResponse } from '../../../types/ApiResponseType.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
@@ -20,6 +22,7 @@ import { createLogger } from '../../../configs/loggerConfig.js';
  *
  * @class DronePositionQueriesRepository
  */
+@injectable()
 export class DronePositionQueriesRepository {
     private readonly logger = createLogger('DronePositionQueriesRepository');
 

@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DronePositionsArchiveQueriesSvc } from '../../services/queries/DronePositionsArchiveQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('DronePositionsArchiveQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('DronePositionsArchiveQueries');
  * @class DronePositionsArchiveQueries
  * @since 1.0.0
  */
+@injectable()
 export class DronePositionsArchiveQueries {
-    private archiveService: DronePositionsArchiveQueriesSvc;
-
-    constructor() {
-        this.archiveService = new DronePositionsArchiveQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DronePositionsArchiveQueriesSvc) private readonly archiveService: DronePositionsArchiveQueriesSvc
+    ) {}
 
     /**
      * 取得所有位置歷史歸檔
@@ -227,7 +229,7 @@ export class DronePositionsArchiveQueries {
             logRequest(req, `Getting position archives by batch ID: ${batchId}`);
             logger.info('Position archives by batch ID request received', { batchId, limit });
 
-            const archives = await this.archiveService.getPositionArchivesByBatchId(batchId, limit);
+            const archives = await this.archiveService.getPositionArchivesByBatchId(batchId);
             const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);

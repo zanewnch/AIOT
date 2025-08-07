@@ -9,6 +9,8 @@
  * @since 2025-08-06
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { Op, WhereOptions, OrderItem } from 'sequelize';
 import {
     ArchiveTaskModel,
@@ -28,6 +30,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
  *
  * @class ArchiveTaskQueriesRepository
  */
+@injectable()
 export class ArchiveTaskQueriesRepository {
     private readonly logger = createLogger('ArchiveTaskQueriesRepository');
 

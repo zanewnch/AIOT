@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserToRoleQueriesSvc } from '../../services/queries/UserToRoleQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('UserToRoleQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('UserToRoleQueries');
  * @class UserToRoleQueries
  * @since 1.0.0
  */
+@injectable()
 export class UserToRoleQueries {
-    private userToRoleQueriesSvc: UserToRoleQueriesSvc;
-
-    constructor() {
-        this.userToRoleQueriesSvc = new UserToRoleQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.UserToRoleQueriesSvc) private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc
+    ) {}
 
     /**
      * 獲取使用者角色關聯數據

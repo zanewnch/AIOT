@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { 
   RoleModel, 
   RoleAttributes 
@@ -26,6 +28,7 @@ const logger = createLogger('RoleQueriesRepository');
  * 
  * @class RoleQueriesRepository
  */
+@injectable()
 export class RoleQueriesRepository {
   /**
    * 根據 ID 查詢角色
@@ -288,7 +291,7 @@ export class RoleQueriesRepository {
       const hasPermission = role !== null && role.permissions && role.permissions.length > 0;
       logger.debug(`Role ${roleId} has permission ${permissionName}: ${hasPermission}`);
       
-      return hasPermission;
+      return Boolean(hasPermission);
     } catch (error) {
       logger.error(`Error checking permission ${permissionName} for role ${roleId}:`, error);
       throw error;

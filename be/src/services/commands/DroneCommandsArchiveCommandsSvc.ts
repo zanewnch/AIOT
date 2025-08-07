@@ -14,7 +14,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
-import { DroneCommandsArchiveRepository } from '../../repo/drone/DroneCommandsArchiveRepo.js';
+import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/drone/DroneCommandsArchiveCommandsRepo.js';
+import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/drone/DroneCommandsArchiveQueriesRepo.js';
 import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
 import { DroneCommandsArchiveQueriesSvc } from '../queries/DroneCommandsArchiveQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -42,13 +43,23 @@ export interface ArchiveOperationResult {
  */
 @injectable()
 export class DroneCommandsArchiveCommandsSvc {
-    private archiveRepository: IDroneCommandsArchiveRepository;
+    private commandsRepository: DroneCommandsArchiveCommandsRepository;
+    private queriesRepository: DroneCommandsArchiveQueriesRepository;
+    private archiveRepository: IDroneCommandsArchiveRepository; // 組合介面
     private queryService: DroneCommandsArchiveQueriesSvc;
 
     constructor() {
-        this.archiveRepository = new DroneCommandsArchiveRepository();
+        this.commandsRepository = new DroneCommandsArchiveCommandsRepository();
+        this.queriesRepository = new DroneCommandsArchiveQueriesRepository();
+        
+        // 創建組合repository
+        this.archiveRepository = Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IDroneCommandsArchiveRepository;
+        
         this.queryService = new DroneCommandsArchiveQueriesSvc();
-        // TODO: 注入 Repository 依賴當 Repository 創建後
     }
 
     /**
@@ -65,15 +76,15 @@ export class DroneCommandsArchiveCommandsSvc {
             this.validateCommandArchiveData(data);
 
             // 檢查是否有重複的歸檔記錄
-            if (data.original_command_id) {
+            if (data.original_id) {
                 const existingArchives = await this.queryService.getCommandArchivesByDroneId(data.drone_id);
                 const duplicateArchive = existingArchives.find(archive => 
-                    archive.original_command_id === data.original_command_id
+                    archive.original_id === data.original_id
                 );
                 
                 if (duplicateArchive) {
                     logger.warn('Duplicate archive found for original command', { 
-                        originalCommandId: data.original_command_id,
+                        originalCommandId: data.original_id,
                         existingArchiveId: duplicateArchive.id
                     });
                     throw new Error('此指令已有歸檔記錄');
@@ -127,7 +138,7 @@ export class DroneCommandsArchiveCommandsSvc {
             }
 
             // 防止修改關鍵歷史資料
-            const protectedFields = ['original_command_id', 'executed_at'];
+            const protectedFields = ['original_id', 'executed_at'];
             const hasProtectedFields = protectedFields.some(field => field in data);
             if (hasProtectedFields) {
                 logger.warn('Attempt to modify protected archive fields', { id, protectedFields });
@@ -376,8 +387,8 @@ export class DroneCommandsArchiveCommandsSvc {
             throw new Error('Invalid executed_at: must be a Date object');
         }
 
-        if (data.original_command_id && (!Number.isInteger(data.original_command_id) || data.original_command_id <= 0)) {
-            throw new Error('Invalid original_command_id: must be a positive integer');
+        if (data.original_id && (!Number.isInteger(data.original_id) || data.original_id <= 0)) {
+            throw new Error('Invalid original_id: must be a positive integer');
         }
 
         // 可以添加更多驗證邏輯

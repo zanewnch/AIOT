@@ -24,7 +24,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../types/container/dependency-injection.js';
 import { UserQueriesRepository } from '../../repo/queries/rbac/UserQueriesRepo.js';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import { SessionQueriesSvc } from './SessionQueriesSvc.js';
@@ -66,10 +67,9 @@ export class AuthQueriesSvc {
     private sessionQueriesSvc: SessionQueriesSvc;
 
     constructor(
-        userQueriesRepository: UserQueriesRepository = new UserQueriesRepository(),
-        sessionQueriesSvc: SessionQueriesSvc = new SessionQueriesSvc()
+        @inject(TYPES.SessionQueriesSvc) sessionQueriesSvc: SessionQueriesSvc
     ) {
-        this.userQueriesRepository = userQueriesRepository;
+        this.userQueriesRepository = new UserQueriesRepository();
         this.sessionQueriesSvc = sessionQueriesSvc;
     }
 

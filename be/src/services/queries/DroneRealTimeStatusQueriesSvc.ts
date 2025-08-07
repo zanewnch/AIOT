@@ -13,8 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneRealTimeStatusRepository } from '../../repo/drone/DroneRealTimeStatusRepo.js';
-import type { IDroneRealTimeStatusRepository } from '../../repo/drone/DroneRealTimeStatusRepo.js';
+import { DroneRealTimeStatusQueriesRepository } from '../../repo/queries/drone/DroneRealTimeStatusQueriesRepo.js';
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatus
@@ -38,10 +37,10 @@ const logger = createLogger('DroneRealTimeStatusQueriesSvc');
  */
 @injectable()
 export class DroneRealTimeStatusQueriesSvc {
-    private repository: IDroneRealTimeStatusRepository;
+    private repository: DroneRealTimeStatusQueriesRepository;
 
-    constructor(repository?: IDroneRealTimeStatusRepository) {
-        this.repository = repository || new DroneRealTimeStatusRepository();
+    constructor(repository?: DroneRealTimeStatusQueriesRepository) {
+        this.repository = repository || new DroneRealTimeStatusQueriesRepository();
     }
 
     /**

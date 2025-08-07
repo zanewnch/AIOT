@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DronePositionRepository } from '../../repo/drone/DronePositionRepo.js';
+import { DronePositionQueriesRepository } from '../../repo/queries/drone/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes } from '../../models/drone/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -31,9 +31,9 @@ const logger = createLogger('DronePositionQueriesSvc');
  */
 @injectable()
 export class DronePositionQueriesSvc {
-    private dronePositionRepository: IDronePositionRepository;
+    private dronePositionRepository: DronePositionQueriesRepository;
 
-    constructor(dronePositionRepository: IDronePositionRepository = new DronePositionRepository()) {
+    constructor(dronePositionRepository: DronePositionQueriesRepository = new DronePositionQueriesRepository()) {
         this.dronePositionRepository = dronePositionRepository;
     }
 

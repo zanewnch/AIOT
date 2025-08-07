@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandsArchiveQueriesSvc } from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('DroneCommandsArchiveQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('DroneCommandsArchiveQueries');
  * @class DroneCommandsArchiveQueries
  * @since 1.0.0
  */
+@injectable()
 export class DroneCommandsArchiveQueries {
-    private queryService: DroneCommandsArchiveQueriesSvc;
-
-    constructor() {
-        this.queryService = new DroneCommandsArchiveQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneCommandsArchiveQueriesSvc) private readonly queryService: DroneCommandsArchiveQueriesSvc
+    ) {}
 
     /**
      * 取得所有指令歷史歸檔資料

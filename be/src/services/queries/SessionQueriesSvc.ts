@@ -353,7 +353,7 @@ export class SessionQueriesSvc {
             
             // 處理結果
             for (let i = 0; i < tokens.length; i++) {
-                const exists = results && results[i] ? (results[i] as number) > 0 : false;
+                const exists = results && results[i] ? ((results[i] as unknown as number) > 0) : false;
                 result.set(tokens[i], exists);
             }
 

@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserToRoleCommandsSvc } from '../../services/commands/UserToRoleCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('UserToRoleCommands');
 
@@ -27,12 +30,11 @@ const logger = createLogger('UserToRoleCommands');
  * @class UserToRoleCommands
  * @since 1.0.0
  */
+@injectable()
 export class UserToRoleCommands {
-    private userToRoleCommandsSvc: UserToRoleCommandsSvc;
-
-    constructor() {
-        this.userToRoleCommandsSvc = new UserToRoleCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.UserToRoleCommandsSvc) private readonly userToRoleCommandsSvc: UserToRoleCommandsSvc
+    ) {}
 
     /**
      * 分配角色給指定使用者

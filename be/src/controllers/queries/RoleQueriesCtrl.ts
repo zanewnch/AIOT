@@ -11,11 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { RoleQueriesSvc } from '../../services/queries/RoleQueriesSvc.js';
-import type { IRoleQueriesService } from '../../services/queries/RoleQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('RoleQueries');
 
@@ -28,12 +30,11 @@ const logger = createLogger('RoleQueries');
  * @class RoleQueries
  * @since 1.0.0
  */
+@injectable()
 export class RoleQueries {
-    private roleQueriesService: IRoleQueriesService;
-
-    constructor() {
-        this.roleQueriesService = new RoleQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.RoleQueriesSvc) private readonly roleQueriesService: RoleQueriesSvc
+    ) {}
 
     /**
      * 獲取所有角色列表

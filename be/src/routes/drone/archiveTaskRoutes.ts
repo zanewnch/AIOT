@@ -12,8 +12,10 @@
 
 import { Router } from 'express';
 import { ArchiveTaskQueries } from '../../controllers/queries/index.js';
-import { ArchiveTaskCommands } from '../../controllers/commands/index.js';
+import { ArchiveTaskCommands } from '../../controllers/commands/ArchiveTaskCommandsCtrl.js';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { container } from '../../container/container.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('ArchiveTaskRoutes');
 
@@ -49,8 +51,8 @@ class ArchiveTaskRoutes {
 
   constructor() {
     this.router = Router();
-    this.queries = new ArchiveTaskQueries();
-    this.commands = new ArchiveTaskCommands();
+    this.queries = container.get<ArchiveTaskQueries>(TYPES.ArchiveTaskQueriesCtrl);
+    this.commands = container.get<ArchiveTaskCommands>(TYPES.ArchiveTaskCommandsCtrl);
     
     this.setupQueryRoutes();
     this.setupCreateRoutes();

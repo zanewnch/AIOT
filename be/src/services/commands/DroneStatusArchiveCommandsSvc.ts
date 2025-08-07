@@ -13,7 +13,8 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusArchiveRepository } from '../../repo/drone/DroneStatusArchiveRepo.js';
+import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/drone/DroneStatusArchiveCommandsRepo.js';
+import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/drone/DroneStatusArchiveQueriesRepo.js';
 import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
@@ -33,12 +34,23 @@ const logger = createLogger('DroneStatusArchiveCommandsSvc');
  */
 @injectable()
 export class DroneStatusArchiveCommandsSvc {
-    private archiveRepository: IDroneStatusArchiveRepository;
+    private commandsRepository: DroneStatusArchiveCommandsRepository;
+    private queriesRepository: DroneStatusArchiveQueriesRepository;
+    private archiveRepository: IDroneStatusArchiveRepository; // 組合介面
     private queryService: DroneStatusArchiveQueriesSvc;
 
-    constructor(archiveRepository: IDroneStatusArchiveRepository = new DroneStatusArchiveRepository()) {
-        this.archiveRepository = archiveRepository;
-        this.queryService = new DroneStatusArchiveQueriesSvc(archiveRepository);
+    constructor(archiveRepository?: IDroneStatusArchiveRepository) {
+        this.commandsRepository = new DroneStatusArchiveCommandsRepository();
+        this.queriesRepository = new DroneStatusArchiveQueriesRepository();
+        
+        // 創建組合repository
+        this.archiveRepository = archiveRepository || Object.assign(
+            Object.create(Object.getPrototypeOf(this.commandsRepository)),
+            this.commandsRepository,
+            this.queriesRepository
+        ) as IDroneStatusArchiveRepository;
+        
+        this.queryService = new DroneStatusArchiveQueriesSvc();
     }
 
     /**

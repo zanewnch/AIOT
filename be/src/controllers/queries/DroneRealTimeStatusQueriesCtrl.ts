@@ -11,10 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneRealTimeStatusQueriesSvc } from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('DroneRealTimeStatusQueries');
 
@@ -27,12 +30,11 @@ const logger = createLogger('DroneRealTimeStatusQueries');
  * @class DroneRealTimeStatusQueries
  * @since 1.0.0
  */
+@injectable()
 export class DroneRealTimeStatusQueries {
-    private droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc;
-
-    constructor() {
-        this.droneRealTimeStatusQueriesService = new DroneRealTimeStatusQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneStatusQueriesService) private readonly droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc
+    ) {}
 
     /**
      * 取得所有無人機即時狀態資料

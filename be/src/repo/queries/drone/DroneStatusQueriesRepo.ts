@@ -9,6 +9,8 @@
  * @since 2024-01-01
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { DroneStatusModel, type DroneStatusAttributes, DroneStatus } from '../../../models/drone/DroneStatusModel.js';
 import type { PaginationParams, PaginatedResponse } from '../../../types/ApiResponseType.js';
 import { createLogger } from '../../../configs/loggerConfig.js';
@@ -22,6 +24,7 @@ const logger = createLogger('DroneStatusQueriesRepository');
  * 
  * @class DroneStatusQueriesRepository
  */
+@injectable()
 export class DroneStatusQueriesRepository {
     /**
      * 取得所有無人機狀態資料

@@ -11,11 +11,13 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { RoleToPermissionQueriesSvc } from '../../services/queries/RoleToPermissionQueriesSvc.js';
-import type { IRoleToPermissionQueriesService } from '../../types/services/IRoleToPermissionQueriesService.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('RoleToPermissionQueries');
 
@@ -28,12 +30,11 @@ const logger = createLogger('RoleToPermissionQueries');
  * @class RoleToPermissionQueries
  * @since 1.0.0
  */
+@injectable()
 export class RoleToPermissionQueries {
-    private roleToPermissionService: IRoleToPermissionQueriesService;
-
-    constructor() {
-        this.roleToPermissionService = new RoleToPermissionQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.RoleToPermissionQueriesSvc) private readonly roleToPermissionService: RoleToPermissionQueriesSvc
+    ) {}
 
     /**
      * 獲取角色權限關聯數據

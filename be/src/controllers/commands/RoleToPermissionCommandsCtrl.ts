@@ -11,11 +11,14 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { RoleToPermissionCommandsSvc } from '../../services/commands/RoleToPermissionCommandsSvc.js';
 import type { IRoleToPermissionCommandsService } from '../../types/services/IRoleToPermissionCommandsService.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../types/container/dependency-injection.js';
 
 const logger = createLogger('RoleToPermissionCommands');
 
@@ -28,12 +31,11 @@ const logger = createLogger('RoleToPermissionCommands');
  * @class RoleToPermissionCommands
  * @since 1.0.0
  */
+@injectable()
 export class RoleToPermissionCommands {
-    private roleToPermissionService: IRoleToPermissionCommandsService;
-
-    constructor() {
-        this.roleToPermissionService = new RoleToPermissionCommandsSvc();
-    }
+    constructor(
+        @inject(TYPES.RoleToPermissionCommandsSvc) private readonly roleToPermissionService: IRoleToPermissionCommandsService
+    ) {}
 
     /**
      * 分配權限給指定角色
