@@ -1,0 +1,76 @@
+{
+  "entryPoints": [
+    "./src/components",
+    "./src/pages", 
+    "./src/services",
+    "./src/utils",
+    "./src/store",
+    "./src/hooks",
+    "./src/types"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "./docs",
+  "theme": "default",
+  "includeVersion": true,
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeInternal": false,
+  "readme": "./README.md",
+  "name": "AIOT Frontend Documentation",
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Pages",
+    "Components",
+    "Services",
+    "Store",
+    "Hooks", 
+    "Utils",
+    "Types",
+    "*"
+  ],
+  "groupOrder": [
+    "Pages",
+    "Components", 
+    "Services",
+    "Store",
+    "Hooks",
+    "Utils", 
+    "Types",
+    "*"
+  ],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project", 
+    "Module",
+    "Namespace",
+    "Enum",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable", 
+    "Function",
+    "Method",
+    "Accessor"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "titleLink": "https://github.com/zanewnch/AIOT",
+  "navigationLinks": {
+    "GitHub": "https://github.com/zanewnch/AIOT",
+    "Backend Docs": "/docs/backend"
+  },
+  "exclude": [
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "**/*.spec.tsx", 
+    "**/*.spec.ts",
+    "**/node_modules/**"
+  ]
+}

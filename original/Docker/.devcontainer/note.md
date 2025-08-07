@@ -1,0 +1,1 @@
+阿 我知道了 應該是我的失誤 我在vscode 開啟一個 workspace, 如果我在這個workspace 然後嘗試 attach running container, 他會先搜尋current workspace whether has .devcontainer folder 對不對 如果沒有 他就會用一個default setting 所以會導致 container 內部的 git 不如我預期
