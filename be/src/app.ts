@@ -27,7 +27,7 @@ import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express �
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
 import { TYPES, DroneEventType } from './container/types.js';
-import type { interfaces } from 'inversify';
+import { interfaces } from 'inversify';
 import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
 import type {
   IDroneStatusService,
