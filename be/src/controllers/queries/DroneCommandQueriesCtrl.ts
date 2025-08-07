@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneCommandService } from '../../services/drone/DroneCommandService.js';
-import type { IDroneCommandService } from '../../types/services/IDroneCommandService.js';
+import { DroneCommandQueriesSvc } from '../../services/queries/DroneCommandQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('DroneCommandQueries');
  * @since 1.0.0
  */
 export class DroneCommandQueries {
-    private commandService: IDroneCommandService;
+    private queryService: DroneCommandQueriesSvc;
 
     constructor() {
-        this.commandService = new DroneCommandService();
+        this.queryService = new DroneCommandQueriesSvc();
     }
 
     /**
@@ -46,7 +45,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting all commands with limit: ${limit}`);
             logger.info('Commands retrieval request received', { limit });
 
-            const commands = await this.commandService.getAllCommands(limit);
+            const commands = await this.queryService.getAllCommands(limit);
             const result = ControllerResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -77,7 +76,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting command by ID: ${id}`);
             logger.info('Command by ID request received', { id });
 
-            const command = await this.commandService.getCommandById(id);
+            const command = await this.queryService.getCommandById(id);
             
             if (!command) {
                 const result = ControllerResult.notFound('找不到指定的無人機指令');
@@ -116,7 +115,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting commands by drone ID: ${droneId}`);
             logger.info('Commands by drone ID request received', { droneId, limit });
 
-            const commands = await this.commandService.getCommandsByDroneId(droneId, limit);
+            const commands = await this.queryService.getCommandsByDroneId(droneId, limit);
             const result = ControllerResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -151,7 +150,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting commands by status: ${status}`);
             logger.info('Commands by status request received', { status, limit });
 
-            const commands = await this.commandService.getCommandsByStatus(status as any, limit);
+            const commands = await this.queryService.getCommandsByStatus(status as any, limit);
             const result = ControllerResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -186,7 +185,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting commands by type: ${type}`);
             logger.info('Commands by type request received', { type, limit });
 
-            const commands = await this.commandService.getCommandsByType(type as any, limit);
+            const commands = await this.queryService.getCommandsByType(type as any, limit);
             const result = ControllerResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -212,7 +211,7 @@ export class DroneCommandQueries {
             logRequest(req, 'Getting command statistics');
             logger.info('Command statistics request received');
 
-            const statistics = await this.commandService.getCommandStatistics();
+            const statistics = await this.queryService.getCommandStatistics();
             const result = ControllerResult.success('無人機指令統計獲取成功', statistics);
 
             res.status(result.status).json(result);
@@ -232,7 +231,7 @@ export class DroneCommandQueries {
             logRequest(req, 'Getting command type statistics');
             logger.info('Command type statistics request received');
 
-            const typeStats = await this.commandService.getCommandTypeStatistics();
+            const typeStats = await this.queryService.getCommandTypeStatistics();
             const result = ControllerResult.success('無人機指令類型統計獲取成功', typeStats);
 
             res.status(result.status).json(result);
@@ -260,7 +259,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting command summary for drone ID: ${droneId}`);
             logger.info('Command summary request received', { droneId });
 
-            const summary = await this.commandService.getDroneCommandSummary(droneId);
+            const summary = await this.queryService.getDroneCommandSummary(droneId);
             const result = ControllerResult.success('無人機指令摘要獲取成功', summary);
 
             res.status(result.status).json(result);
@@ -285,7 +284,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting pending commands with limit: ${limit}`);
             logger.info('Pending commands request received', { limit });
 
-            const commands = await this.commandService.getLatestCommands(limit);
+            const commands = await this.queryService.getLatestCommands(limit);
             const result = ControllerResult.success('待執行無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -309,7 +308,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting executing commands with limit: ${limit}`);
             logger.info('Executing commands request received', { limit });
 
-            const commands = await this.commandService.getLatestCommands(limit);
+            const commands = await this.queryService.getLatestCommands(limit);
             const result = ControllerResult.success('執行中無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -333,7 +332,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting latest commands with limit: ${limit}`);
             logger.info('Latest commands request received', { limit });
 
-            const commands = await this.commandService.getLatestCommands(limit);
+            const commands = await this.queryService.getLatestCommands(limit);
             const result = ControllerResult.success('最新指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -358,7 +357,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting failed commands with limit: ${limit}`);
             logger.info('Failed commands request received', { limit });
 
-            const commands = await this.commandService.getFailedCommands(limit);
+            const commands = await this.queryService.getFailedCommands(limit);
             const result = ControllerResult.success('失敗指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -391,7 +390,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting commands by issued by: ${issuedBy}`);
             logger.info('Commands by issued by request received', { issuedBy, limit });
 
-            const commands = await this.commandService.getCommandsByIssuedBy(issuedBy, limit);
+            const commands = await this.queryService.getCommandsByIssuedBy(issuedBy, limit);
             const result = ControllerResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -430,7 +429,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting commands by date range: ${startDate} to ${endDate}`);
             logger.info('Commands by date range request received', { startDate, endDate, limit });
 
-            const commands = await this.commandService.getCommandsByDateRange(startDate, endDate, limit);
+            const commands = await this.queryService.getCommandsByDateRange(startDate, endDate, limit);
             const result = ControllerResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -469,7 +468,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting pending commands for drone: ${droneId}`);
             logger.info('Pending commands by drone ID request received', { droneId });
 
-            const commands = await this.commandService.getPendingCommandsByDroneId(droneId);
+            const commands = await this.queryService.getPendingCommandsByDroneId(droneId);
             const result = ControllerResult.success('待執行指令獲取成功', commands);
 
             res.status(result.status).json(result);
@@ -504,7 +503,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting executing command for drone: ${droneId}`);
             logger.info('Executing command by drone ID request received', { droneId });
 
-            const command = await this.commandService.getExecutingCommandByDroneId(droneId);
+            const command = await this.queryService.getExecutingCommandByDroneId(droneId);
             const result = ControllerResult.success('執行中指令獲取成功', command);
 
             res.status(result.status).json(result);
@@ -536,7 +535,7 @@ export class DroneCommandQueries {
             logRequest(req, `Getting command summary for drone: ${droneId}`);
             logger.info('Drone command summary request received', { droneId });
 
-            const summary = await this.commandService.getDroneCommandSummary(droneId);
+            const summary = await this.queryService.getDroneCommandSummary(droneId);
             const result = ControllerResult.success('無人機指令摘要獲取成功', summary);
 
             res.status(result.status).json(result);

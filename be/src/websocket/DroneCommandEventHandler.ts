@@ -16,8 +16,9 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneCommandRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
-import { DroneCommandService } from '../services/drone/DroneCommandService.js';
-import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
+import { DroneCommandQueriesSvc } from '../services/queries/DroneCommandQueriesSvc.js';
+import { DroneCommandCommandsSvc } from '../services/commands/DroneCommandCommandsSvc.js';
+import type { IDroneEventHandler } from '../container/interfaces.js';
 
 /**
  * 無人機命令事件處理器
@@ -28,7 +29,7 @@ import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
  * - 命令執行權限驗證
  */
 @injectable()
-export class DroneCommandEventHandler implements DroneEventHandler {
+export class DroneCommandEventHandler implements IDroneEventHandler {
   /**
    * WebSocket 服務實例
    * @private
@@ -42,10 +43,16 @@ export class DroneCommandEventHandler implements DroneEventHandler {
   private authMiddleware: WebSocketAuthMiddleware;
 
   /**
-   * 無人機命令服務
+   * 無人機命令查詢服務
    * @private
    */
-  private droneCommandService: DroneCommandService;
+  private droneCommandQueriesSvc: DroneCommandQueriesSvc;
+
+  /**
+   * 無人機命令執行服務
+   * @private
+   */
+  private droneCommandCommandsSvc: DroneCommandCommandsSvc;
 
   /**
    * 命令執行計數器
@@ -62,12 +69,12 @@ export class DroneCommandEventHandler implements DroneEventHandler {
    */
   constructor(
     @inject(TYPES.WebSocketService) wsService: WebSocketService, 
-    @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
-    @inject(TYPES.DroneCommandService) droneCommandService: DroneCommandService
+    @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware
   ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
-    this.droneCommandService = droneCommandService; // 使用注入的服務實例
+    this.droneCommandQueriesSvc = new DroneCommandQueriesSvc();
+    this.droneCommandCommandsSvc = new DroneCommandCommandsSvc();
   }
 
   /**

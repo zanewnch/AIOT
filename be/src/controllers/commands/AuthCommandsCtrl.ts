@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { AuthService } from '../../services/AuthService.js';
-import { IAuthService } from '../../types/services/IAuthService.js';
+import { AuthCommandsSvc } from '../../services/commands/AuthCommandsSvc.js';
 import { createLogger, logRequest, logAuthEvent } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('AuthCommands');
  * @since 1.0.0
  */
 export class AuthCommands {
-    private authService: IAuthService;
+    private authCommandsSvc: AuthCommandsSvc;
 
     constructor() {
-        this.authService = new AuthService();
+        this.authCommandsSvc = new AuthCommandsSvc();
     }
 
     /**
@@ -63,8 +62,13 @@ export class AuthCommands {
 
             logger.info(`Starting login authentication for user: ${username}, IP: ${ipAddress}`);
 
-            // 調用 service 層進行登入驗證（包含 Redis 會話管理）
-            const result = await this.authService.login(username, password, userAgent, ipAddress);
+            // 調用 CQRS 命令服務進行登入驗證（包含 Redis 會話管理）
+            const result = await this.authCommandsSvc.login({
+                username,
+                password,
+                userAgent,
+                ipAddress
+            });
 
             // 檢查登入結果
             if (!result.success) {
@@ -140,7 +144,10 @@ export class AuthCommands {
             if (token) {
                 logger.debug('Clearing user session from Redis cache');
                 // 從 Redis 清除會話資料，確保 token 無法再被使用
-                await this.authService.logout(token);
+                await this.authCommandsSvc.logout({
+                    token,
+                    userId: req.user?.id
+                });
             } else {
                 logger.warn(`Logout attempted without valid token for user: ${username}`);
             }

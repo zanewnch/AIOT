@@ -12,8 +12,7 @@
  */
 
 import { Request, Response } from 'express';
-import { UserService } from '../../services/rbac/UserService.js';
-import { IUserService } from '../../types/services/IUserService.js';
+import { UserCommandsSvc } from '../../services/commands/UserCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('UserCommands');
  * @since 1.0.0
  */
 export class UserCommands {
-    private userService: IUserService;
+    private userCommandsSvc: UserCommandsSvc;
 
     constructor() {
-        this.userService = new UserService();
+        this.userCommandsSvc = new UserCommandsSvc();
     }
 
     /**
@@ -59,7 +58,7 @@ export class UserCommands {
             logRequest(req, `Creating new user: ${username}`, 'info');
             logger.debug('Creating new user via service', { username, email });
 
-            const newUser = await this.userService.createUser({
+            const newUser = await this.userCommandsSvc.createUser({
                 username,
                 email,
                 password
@@ -113,7 +112,7 @@ export class UserCommands {
             if (email) updateData.email = email;
             if (password) updateData.password = password;
 
-            const updatedUser = await this.userService.updateUser(userId, updateData);
+            const updatedUser = await this.userCommandsSvc.updateUser(userId, updateData);
 
             if (!updatedUser) {
                 const result = ControllerResult.notFound('使用者不存在');
@@ -162,7 +161,7 @@ export class UserCommands {
             logRequest(req, `Deleting user with ID: ${userId}`, 'info');
             logger.debug('Deleting user via service', { userId });
 
-            const deleted = await this.userService.deleteUser(userId);
+            const deleted = await this.userCommandsSvc.deleteUser(userId);
 
             if (!deleted) {
                 const result = ControllerResult.notFound('使用者不存在');

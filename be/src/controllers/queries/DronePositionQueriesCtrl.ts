@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DronePositionService } from '../../services/drone/DronePositionService.js';
-import type { IDronePositionService } from '../../types/services/IDronePositionService.js';
+import { DronePositionQueriesSvc } from '../../services/queries/DronePositionQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('DronePositionQueries');
  * @since 1.0.0
  */
 export class DronePositionQueries {
-    private dronePositionService: IDronePositionService;
+    private dronePositionQueriesSvc: DronePositionQueriesSvc;
 
     constructor() {
-        this.dronePositionService = new DronePositionService();
+        this.dronePositionQueriesSvc = new DronePositionQueriesSvc();
     }
 
     /**
@@ -45,8 +44,8 @@ export class DronePositionQueries {
             logRequest(req, 'Getting all drone position data');
             logger.info('Drone position data retrieval request received');
 
-            // 呼叫服務層取得資料
-            const dronePositions = await this.dronePositionService.getAllDronePositions();
+            // 呼叫查詢服務層取得資料
+            const dronePositions = await this.dronePositionQueriesSvc.getAllDronePositions();
 
             // 建立成功回應
             const result = ControllerResult.success('無人機位置資料獲取成功', dronePositions);
@@ -82,8 +81,8 @@ export class DronePositionQueries {
             logRequest(req, `Getting drone position data with ID: ${id}`);
             logger.info('Drone position data retrieval request received', { id });
 
-            // 呼叫服務層取得資料
-            const dronePosition = await this.dronePositionService.getDronePositionById(id);
+            // 呼叫查詢服務層取得資料
+            const dronePosition = await this.dronePositionQueriesSvc.getDronePositionById(id);
 
             if (!dronePosition) {
                 const result = ControllerResult.notFound('找不到指定的無人機位置資料');
@@ -123,7 +122,7 @@ export class DronePositionQueries {
             logRequest(req, `Getting drone positions by drone ID: ${droneId}`);
             logger.info('Drone positions by drone ID retrieval request received', { droneId });
 
-            const dronePositions = await this.dronePositionService.getDronePositionsByDroneId(droneId);
+            const dronePositions = await this.dronePositionQueriesSvc.getDronePositionsByDroneId(droneId);
 
             const result = ControllerResult.success('無人機位置資料獲取成功', dronePositions);
             res.status(result.status).json(result);
@@ -160,7 +159,7 @@ export class DronePositionQueries {
             logRequest(req, `Getting latest drone position for drone ID: ${droneId}`);
             logger.info('Latest drone position retrieval request received', { droneId });
 
-            const latestPosition = await this.dronePositionService.getLatestDronePosition(droneId);
+            const latestPosition = await this.dronePositionQueriesSvc.getLatestDronePosition(droneId);
 
             if (!latestPosition) {
                 const result = ControllerResult.notFound('找不到該無人機的位置資料');
@@ -217,7 +216,7 @@ export class DronePositionQueries {
             logRequest(req, `Getting drone positions by time range for drone ID: ${droneId}`);
             logger.info('Drone positions by time range retrieval request received', { droneId, startTime, endTime });
 
-            const dronePositions = await this.dronePositionService.getDronePositionsByTimeRange(droneId, start, end);
+            const dronePositions = await this.dronePositionQueriesSvc.getDronePositionsByTimeRange(droneId, start, end);
 
             const result = ControllerResult.success('無人機位置資料獲取成功', dronePositions);
             res.status(result.status).json(result);

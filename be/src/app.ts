@@ -30,13 +30,13 @@ import { TYPES, DroneEventType } from './container/types.js';
 import type { interfaces } from 'inversify';
 import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
 import type {
-  IDroneCommandService,
-  IDronePositionService, 
   IDroneStatusService,
   IDroneEventHandler,
   IWebSocketService,
   IWebSocketAuthMiddleware
 } from './container/interfaces.js';
+import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
+import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
 
 /**
  * Express 應用程式配置類別
@@ -537,25 +537,30 @@ export class App {
   }
 
   /**
-   * 獲取無人機命令服務實例（透過 IoC 容器）
+   * 無人機命令服務已重構為 CQRS 模式
+   * 請使用 DroneCommandQueriesSvc 和 DroneCommandCommandsSvc
+   */
+
+  /**
+   * 獲取無人機位置查詢服務實例（透過 IoC 容器）
    * 
    * @public
-   * @method getDroneCommandService
-   * @returns {IDroneCommandService} 無人機命令服務實例
+   * @method getDronePositionQueriesSvc
+   * @returns {DronePositionQueriesSvc} 無人機位置查詢服務實例
    */
-  getDroneCommandService(): IDroneCommandService {
-    return ContainerUtils.get<IDroneCommandService>(TYPES.DroneCommandService);
+  getDronePositionQueriesSvc(): DronePositionQueriesSvc {
+    return ContainerUtils.get<DronePositionQueriesSvc>(TYPES.DronePositionQueriesSvc);
   }
 
   /**
-   * 獲取無人機位置服務實例（透過 IoC 容器）
+   * 獲取無人機位置命令服務實例（透過 IoC 容器）
    * 
    * @public
-   * @method getDronePositionService
-   * @returns {IDronePositionService} 無人機位置服務實例
+   * @method getDronePositionCommandsSvc
+   * @returns {DronePositionCommandsSvc} 無人機位置命令服務實例
    */
-  getDronePositionService(): IDronePositionService {
-    return ContainerUtils.get<IDronePositionService>(TYPES.DronePositionService);
+  getDronePositionCommandsSvc(): DronePositionCommandsSvc {
+    return ContainerUtils.get<DronePositionCommandsSvc>(TYPES.DronePositionCommandsSvc);
   }
 
   /**

@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DronePositionsArchiveService } from '../../services/drone/DronePositionsArchiveService.js';
-import type { IDronePositionsArchiveService } from '../../types/services/IDronePositionsArchiveService.js';
+import { DronePositionsArchiveQueriesSvc } from '../../services/queries/DronePositionsArchiveQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('DronePositionsArchiveQueries');
  * @since 1.0.0
  */
 export class DronePositionsArchiveQueries {
-    private archiveService: IDronePositionsArchiveService;
+    private archiveService: DronePositionsArchiveQueriesSvc;
 
     constructor() {
-        this.archiveService = new DronePositionsArchiveService();
+        this.archiveService = new DronePositionsArchiveQueriesSvc();
     }
 
     /**

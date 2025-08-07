@@ -10,7 +10,9 @@
  */
 import express from 'express';
 import request from 'supertest';
-import { PermissionController } from '../src/controllers/rbac/PermissionController.js';
+// PermissionController 已重構為 CQRS 模式 - 測試文件需要重構
+// import { PermissionQueries } from '../src/controllers/queries/PermissionQueriesCtrl.js';
+// import { PermissionCommands } from '../src/controllers/commands/PermissionCommandsCtrl.js';
 import { PermissionModel } from '../src/models/rbac/PermissionModel.js';
 import { rbacRoutes } from '../src/routes/rbacRoutes.js';
 

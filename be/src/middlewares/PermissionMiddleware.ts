@@ -21,8 +21,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
-import { UserRepository } from '../repo/rbac/UserRepo.js'; // 引入使用者資料存取層
-import { PermissionService } from '../services/rbac/PermissionService.js'; // 引入權限服務層
+import { UserQueriesRepository } from '../repo/queries/rbac/UserQueriesRepo.js'; // 引入使用者查詢資料存取層
+import { PermissionQueriesSvc } from '../services/queries/PermissionQueriesSvc.js'; // 引入權限查詢服務層
 import { createLogger } from '../configs/loggerConfig.js'; // 引入日誌記錄器
 // Express 類型擴展已透過 tsconfig.json 自動載入
 
@@ -69,11 +69,11 @@ const logger = createLogger('PermissionMiddleware');
  * ```
  */
 export class PermissionMiddleware {
-    /** 使用者資料存取層實例，用於查詢使用者資訊 */
-    private userRepository: UserRepository;
+    /** 使用者查詢資料存取層實例，用於查詢使用者資訊 */
+    private userRepository: UserQueriesRepository;
 
-    /** 權限服務層實例，用於權限驗證邏輯 */
-    private permissionService: PermissionService;
+    /** 權限查詢服務層實例，用於權限驗證邏輯 */
+    private permissionService: PermissionQueriesSvc;
 
     /**
      * 建構函式
@@ -81,8 +81,8 @@ export class PermissionMiddleware {
      * 初始化 PermissionMiddleware 實例，設定依賴注入的服務層。
      * 如果未提供參數，則使用預設實例。
      *
-     * @param {UserRepository} userRepository - 使用者資料存取層實例
-     * @param {PermissionService} permissionService - 權限服務層實例
+     * @param {UserQueriesRepository} userRepository - 使用者查詢資料存取層實例
+     * @param {PermissionQueriesSvc} permissionService - 權限查詢服務層實例
      *
      * @example
      * ```typescript
@@ -90,14 +90,14 @@ export class PermissionMiddleware {
      * const permissionMiddleware = new PermissionMiddleware();
      *
      * // 使用自訂實例
-     * const customUserRepo = new UserRepository();
-     * const customPermissionService = new PermissionService();
+     * const customUserRepo = new UserQueriesRepository();
+     * const customPermissionService = new PermissionQueriesSvc();
      * const permissionMiddleware = new PermissionMiddleware(customUserRepo, customPermissionService);
      * ```
      */
     constructor(
-        userRepository: UserRepository = new UserRepository(),
-        permissionService: PermissionService = new PermissionService()
+        userRepository: UserQueriesRepository = new UserQueriesRepository(),
+        permissionService: PermissionQueriesSvc = new PermissionQueriesSvc()
     ) {
         this.userRepository = userRepository; // 設定使用者資料存取層
         this.permissionService = permissionService; // 設定權限服務層

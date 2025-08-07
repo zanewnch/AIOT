@@ -49,6 +49,10 @@ export type UserAttributes = {
   passwordHash: string;
   /** 電子郵件 - 可選的聯絡信箱 */
   email?: string;
+  /** 帳戶是否啟用 - 用於停用/啟用使用者帳戶 */
+  isActive: boolean;
+  /** 最後登入時間 - 記錄使用者最後一次成功登入的時間 */
+  lastLoginAt: Date | null;
 };
 
 /**
@@ -58,7 +62,7 @@ export type UserAttributes = {
  * 
  * @interface UserCreationAttributes
  */
-export type UserCreationAttributes = Optional<UserAttributes, 'id'>;
+export type UserCreationAttributes = Optional<UserAttributes, 'id' | 'lastLoginAt'>;
 
 /**
  * 使用者模型類別
@@ -141,6 +145,31 @@ export class UserModel extends Model<UserAttributes, UserCreationAttributes> imp
    */
   @Column(DataType.STRING(255))  // 字串類型，最大長度 255
   declare email?: string;
+
+  /**
+   * 帳戶是否啟用
+   * 
+   * 用於控制使用者帳戶的啟用狀態，預設為 true。
+   * 停用的帳戶無法進行登入。
+   * 
+   * @type {boolean}
+   * @memberof UserModel
+   */
+  @AllowNull(false)    // 不允許空值
+  @Column({ type: DataType.BOOLEAN, defaultValue: true })  // 布林類型，預設為 true
+  declare isActive: boolean;
+
+  /**
+   * 最後登入時間
+   * 
+   * 記錄使用者最後一次成功登入的時間戳記。
+   * 初始值為 null，在首次登入後更新。
+   * 
+   * @type {Date | null}
+   * @memberof UserModel
+   */
+  @Column(DataType.DATE)  // 日期類型，允許 null
+  declare lastLoginAt: Date | null;
 
   /**
    * 建立時間

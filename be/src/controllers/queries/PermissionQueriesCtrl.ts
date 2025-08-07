@@ -12,8 +12,8 @@
  */
 
 import { Request, Response } from 'express';
-import { PermissionService } from '../../services/rbac/PermissionService.js';
-import { IPermissionService } from '../../types/services/IPermissionService.js';
+import { PermissionQueriesSvc } from '../../services/queries/PermissionQueriesSvc.js';
+import { IPermissionQueriesService } from '../../types/services/IPermissionQueriesService.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +29,10 @@ const logger = createLogger('PermissionQueries');
  * @since 1.0.0
  */
 export class PermissionQueries {
-    private permissionService: IPermissionService;
+    private permissionService: IPermissionQueriesService;
 
     constructor() {
-        this.permissionService = new PermissionService();
+        this.permissionService = new PermissionQueriesSvc();
     }
 
     /**

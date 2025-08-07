@@ -16,8 +16,9 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
-import { DroneRealTimeStatusService } from '../services/drone/DroneRealTimeStatusService.js';
-import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
+import { DroneRealTimeStatusQueriesSvc } from '../services/queries/DroneRealTimeStatusQueriesSvc.js';
+import { DroneRealTimeStatusCommandsSvc } from '../services/commands/DroneRealTimeStatusCommandsSvc.js';
+import type { IDroneEventHandler } from '../container/interfaces.js';
 
 /**
  * 無人機狀態事件處理器
@@ -28,7 +29,7 @@ import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
  * - 狀態存取權限驗證
  */
 @injectable()
-export class DroneStatusEventHandler implements DroneEventHandler {
+export class DroneStatusEventHandler implements IDroneEventHandler {
   /**
    * WebSocket 服務實例
    * @private
@@ -42,10 +43,16 @@ export class DroneStatusEventHandler implements DroneEventHandler {
   private authMiddleware: WebSocketAuthMiddleware;
 
   /**
-   * 無人機狀態服務
+   * 無人機狀態查詢服務
    * @private
    */
-  private droneStatusService: DroneRealTimeStatusService;
+  private droneStatusQueriesService: DroneRealTimeStatusQueriesSvc;
+
+  /**
+   * 無人機狀態命令服務
+   * @private
+   */
+  private droneStatusCommandsService: DroneRealTimeStatusCommandsSvc;
 
   /**
    * 狀態訂閱計數器
@@ -58,16 +65,19 @@ export class DroneStatusEventHandler implements DroneEventHandler {
    * 
    * @param {WebSocketService} wsService - WebSocket 服務實例
    * @param {WebSocketAuthMiddleware} authMiddleware - 認證中間件實例
-   * @param {DroneRealTimeStatusService} droneStatusService - 注入的狀態服務實例
+   * @param {DroneRealTimeStatusQueriesSvc} droneStatusQueriesService - 注入的狀態查詢服務實例
+   * @param {DroneRealTimeStatusCommandsSvc} droneStatusCommandsService - 注入的狀態命令服務實例
    */
   constructor(
     @inject(TYPES.WebSocketService) wsService: WebSocketService, 
     @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
-    @inject(TYPES.DroneStatusService) droneStatusService: DroneRealTimeStatusService
+    @inject(TYPES.DroneStatusQueriesService) droneStatusQueriesService: DroneRealTimeStatusQueriesSvc,
+    @inject(TYPES.DroneStatusCommandsService) droneStatusCommandsService: DroneRealTimeStatusCommandsSvc
   ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
-    this.droneStatusService = droneStatusService; // 使用注入的服務實例
+    this.droneStatusQueriesService = droneStatusQueriesService; // 使用注入的查詢服務實例
+    this.droneStatusCommandsService = droneStatusCommandsService; // 使用注入的命令服務實例
   }
 
   /**

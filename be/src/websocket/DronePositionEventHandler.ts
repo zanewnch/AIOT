@@ -16,8 +16,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../container/types.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
-import { DronePositionService } from '../services/drone/DronePositionService.js';
-import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
+import { DronePositionQueriesSvc } from '../services/queries/DronePositionQueriesSvc.js';
+import type { IDroneEventHandler } from '../container/interfaces.js';
 
 /**
  * 無人機位置事件處理器
@@ -28,7 +28,7 @@ import { DroneEventHandler } from './interfaces/EventHandlerFactory.js';
  * - 位置存取權限驗證
  */
 @injectable()
-export class DronePositionEventHandler implements DroneEventHandler {
+export class DronePositionEventHandler implements IDroneEventHandler {
   /**
    * WebSocket 服務實例
    * @private
@@ -42,10 +42,10 @@ export class DronePositionEventHandler implements DroneEventHandler {
   private authMiddleware: WebSocketAuthMiddleware;
 
   /**
-   * 無人機位置服務
+   * 無人機位置查詢服務
    * @private
    */
-  private dronePositionService: DronePositionService;
+  private dronePositionQueriesSvc: DronePositionQueriesSvc;
 
   /**
    * 位置訂閱計數器
@@ -58,16 +58,16 @@ export class DronePositionEventHandler implements DroneEventHandler {
    * 
    * @param {WebSocketService} wsService - WebSocket 服務實例
    * @param {WebSocketAuthMiddleware} authMiddleware - 認證中間件實例
-   * @param {DronePositionService} dronePositionService - 注入的位置服務實例
+   * @param {DronePositionQueriesSvc} dronePositionQueriesSvc - 注入的位置查詢服務實例
    */
   constructor(
     @inject(TYPES.WebSocketService) wsService: WebSocketService, 
     @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
-    @inject(TYPES.DronePositionService) dronePositionService: DronePositionService
+    @inject(TYPES.DronePositionQueriesSvc) dronePositionQueriesSvc: DronePositionQueriesSvc
   ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;
-    this.dronePositionService = dronePositionService; // 使用注入的服務實例
+    this.dronePositionQueriesSvc = dronePositionQueriesSvc; // 使用注入的查詢服務實例
   }
 
   /**
@@ -101,10 +101,12 @@ export class DronePositionEventHandler implements DroneEventHandler {
       this.wsService.subscribeToDrone(socket.id, data.droneId, 'position');
       this.positionSubscriptionCount++;
 
-      // 📡 第三步：發送當前位置數據給前端 (暫時跳過實現)
-      // TODO: 實現獲取特定無人機最新位置的方法
-      // → 未來會調用 dronePositionService.getLatestPosition(droneId)
-      // → 然後 socket.emit('drone_position_update', currentPosition)
+      // 📡 第三步：發送當前位置數據給前端
+      // 調用查詢服務取得最新位置
+      const currentPosition = await this.dronePositionQueriesSvc.getLatestDronePosition(parseInt(data.droneId));
+      if (currentPosition) {
+        socket.emit('drone_position_update', currentPosition);
+      }
 
       console.log(`📍 Position subscription added:`, {
         socketId: socket.id,

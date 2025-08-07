@@ -34,14 +34,29 @@ export const TYPES = {
   DroneCommandService: Symbol.for('DroneCommandService'),
 
   /**
-   * 無人機位置服務類型
+   * 無人機位置查詢服務類型
    */
-  DronePositionService: Symbol.for('DronePositionService'),
+  DronePositionQueriesSvc: Symbol.for('DronePositionQueriesSvc'),
 
   /**
-   * 無人機狀態服務類型
+   * 無人機位置命令服務類型
+   */
+  DronePositionCommandsSvc: Symbol.for('DronePositionCommandsSvc'),
+
+  /**
+   * 無人機狀態服務類型 (向下相容)
    */
   DroneStatusService: Symbol.for('DroneStatusService'),
+
+  /**
+   * 無人機即時狀態查詢服務類型
+   */
+  DroneStatusQueriesService: Symbol.for('DroneStatusQueriesService'),
+
+  /**
+   * 無人機即時狀態命令服務類型
+   */
+  DroneStatusCommandsService: Symbol.for('DroneStatusCommandsService'),
 
   // ===== 事件處理器 =====
   /**

@@ -10,11 +10,9 @@
  */
 
 import 'reflect-metadata';
-import { Container, type interfaces } from 'inversify';
+import { Container, interfaces } from 'inversify';
 import { TYPES, DroneEventType } from './types.js';
 import {
-  IDroneCommandService,
-  IDronePositionService,
   IDroneStatusService,
   IDroneEventHandler,
   IWebSocketService,
@@ -22,9 +20,11 @@ import {
 } from './interfaces.js';
 
 // 服務實現導入
-import { DroneCommandService } from '../services/drone/DroneCommandService.js';
-import { DronePositionService } from '../services/drone/DronePositionService.js';
-import { DroneRealTimeStatusService } from '../services/drone/DroneRealTimeStatusService.js';
+// DroneCommandService has been refactored to CQRS pattern
+import { DronePositionQueriesSvc } from '../services/queries/DronePositionQueriesSvc.js';
+import { DronePositionCommandsSvc } from '../services/commands/DronePositionCommandsSvc.js';
+import { DroneRealTimeStatusQueriesSvc } from '../services/queries/DroneRealTimeStatusQueriesSvc.js';
+import { DroneRealTimeStatusCommandsSvc } from '../services/commands/DroneRealTimeStatusCommandsSvc.js';
 import { WebSocketService } from '../configs/websocket/service.js';
 import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
 import { DronePositionEventHandler } from '../websocket/DronePositionEventHandler.js';
@@ -41,29 +41,43 @@ export function createContainer(): Container {
 
   // ===== 業務服務註冊 =====
   
+  // DroneCommandService has been refactored to CQRS pattern
+  // Commands and Queries are now handled by separate services
+
   /**
-   * 無人機命令服務 - Singleton
-   * 整個應用共享一個實例，確保命令狀態一致性
+   * 無人機位置查詢服務 - Singleton  
+   * 整個應用共享一個實例，確保位置查詢一致性
    */
-  container.bind<IDroneCommandService>(TYPES.DroneCommandService)
-    .to(DroneCommandService)
+  container.bind<DronePositionQueriesSvc>(TYPES.DronePositionQueriesSvc)
+    .to(DronePositionQueriesSvc)
     .inSingletonScope();
 
   /**
-   * 無人機位置服務 - Singleton  
-   * 整個應用共享一個實例，確保位置數據一致性
+   * 無人機位置命令服務 - Singleton  
+   * 整個應用共享一個實例，確保位置命令一致性
    */
-  container.bind<IDronePositionService>(TYPES.DronePositionService)
-    .to(DronePositionService)
+  container.bind<DronePositionCommandsSvc>(TYPES.DronePositionCommandsSvc)
+    .to(DronePositionCommandsSvc)
     .inSingletonScope();
 
   /**
-   * 無人機狀態服務 - Singleton
-   * 整個應用共享一個實例，確保狀態數據一致性
+   * 無人機即時狀態查詢服務 - Singleton  
+   * 整個應用共享一個實例，確保即時狀態查詢一致性
    */
-  container.bind<IDroneStatusService>(TYPES.DroneStatusService)
-    .to(DroneRealTimeStatusService)
+  container.bind<DroneRealTimeStatusQueriesSvc>(TYPES.DroneStatusQueriesService)
+    .to(DroneRealTimeStatusQueriesSvc)
     .inSingletonScope();
+
+  /**
+   * 無人機即時狀態命令服務 - Singleton  
+   * 整個應用共享一個實例，確保即時狀態命令一致性
+   */
+  container.bind<DroneRealTimeStatusCommandsSvc>(TYPES.DroneStatusCommandsService)
+    .to(DroneRealTimeStatusCommandsSvc)
+    .inSingletonScope();
+
+  // 注意：DroneStatusService 已重構為 CQRS 模式，舊的服務已移除
+  // 如需舊的相容性介面，請使用 DroneStatusQueriesService 和 DroneStatusCommandsService
 
   // ===== WebSocket 基礎設施服務 =====
 

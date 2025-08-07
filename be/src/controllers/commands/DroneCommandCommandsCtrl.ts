@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneCommandService } from '../../services/drone/DroneCommandService.js';
-import type { IDroneCommandService } from '../../types/services/IDroneCommandService.js';
+import { DroneCommandCommandsSvc } from '../../services/commands/DroneCommandCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
@@ -30,10 +29,10 @@ const logger = createLogger('DroneCommandCommands');
  * @since 1.0.0
  */
 export class DroneCommandCommands {
-    private commandService: IDroneCommandService;
+    private commandService: DroneCommandCommandsSvc;
 
     constructor() {
-        this.commandService = new DroneCommandService();
+        this.commandService = new DroneCommandCommandsSvc();
     }
 
     /**
@@ -276,7 +275,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending land command to drone ${droneId}`);
             logger.info('Land command request received', { droneId });
 
-            const result = await this.commandService.sendLandCommand(droneId, parameters);
+            const result = await this.commandService.sendLandCommand(droneId, 1, parameters);
             
             if (result.success) {
                 const response = ControllerResult.success('降落指令發送成功', result.command);
@@ -313,7 +312,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending hover command to drone ${droneId}`);
             logger.info('Hover command request received', { droneId, duration });
 
-            const result = await this.commandService.sendHoverCommand(droneId, duration, parameters);
+            const result = await this.commandService.sendHoverCommand(droneId, 1, { duration });
             
             if (result.success) {
                 const response = ControllerResult.success('懸停指令發送成功', result.command);
@@ -393,7 +392,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending return command to drone ${droneId}`);
             logger.info('Return command request received', { droneId });
 
-            const result = await this.commandService.sendReturnCommand(droneId, parameters);
+            const result = await this.commandService.sendReturnCommand(droneId, 1, parameters);
             
             if (result.success) {
                 const response = ControllerResult.success('返航指令發送成功', result.command);
@@ -430,7 +429,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending move forward command to drone ${droneId}`);
             logger.info('Move forward command request received', { droneId, distance });
 
-            const result = await this.commandService.sendMoveForwardCommand(droneId, distance, parameters);
+            const result = await this.commandService.sendMoveForwardCommand(droneId, 1, { distance, speed: parameters?.speed });
             
             if (result.success) {
                 const response = ControllerResult.success('前進指令發送成功', result.command);
@@ -467,7 +466,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending move backward command to drone ${droneId}`);
             logger.info('Move backward command request received', { droneId, distance });
 
-            const result = await this.commandService.sendMoveBackwardCommand(droneId, distance, parameters);
+            const result = await this.commandService.sendMoveBackwardCommand(droneId, 1, { distance, speed: parameters?.speed });
             
             if (result.success) {
                 const response = ControllerResult.success('後退指令發送成功', result.command);
@@ -504,7 +503,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending move left command to drone ${droneId}`);
             logger.info('Move left command request received', { droneId, distance });
 
-            const result = await this.commandService.sendMoveLeftCommand(droneId, distance, parameters);
+            const result = await this.commandService.sendMoveLeftCommand(droneId, 1, { distance, speed: parameters?.speed });
             
             if (result.success) {
                 const response = ControllerResult.success('左移指令發送成功', result.command);
@@ -541,7 +540,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending move right command to drone ${droneId}`);
             logger.info('Move right command request received', { droneId, distance });
 
-            const result = await this.commandService.sendMoveRightCommand(droneId, distance, parameters);
+            const result = await this.commandService.sendMoveRightCommand(droneId, 1, { distance, speed: parameters?.speed });
             
             if (result.success) {
                 const response = ControllerResult.success('右移指令發送成功', result.command);
@@ -578,7 +577,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending rotate left command to drone ${droneId}`);
             logger.info('Rotate left command request received', { droneId, degrees });
 
-            const result = await this.commandService.sendRotateLeftCommand(droneId, degrees, parameters);
+            const result = await this.commandService.sendRotateLeftCommand(droneId, 1, { degrees, speed: parameters?.speed });
             
             if (result.success) {
                 const response = ControllerResult.success('左轉指令發送成功', result.command);
@@ -615,7 +614,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending rotate right command to drone ${droneId}`);
             logger.info('Rotate right command request received', { droneId, degrees });
 
-            const result = await this.commandService.sendRotateRightCommand(droneId, degrees, parameters);
+            const result = await this.commandService.sendRotateRightCommand(droneId, 1, { degrees, speed: parameters?.speed });
             
             if (result.success) {
                 const response = ControllerResult.success('右轉指令發送成功', result.command);
@@ -652,7 +651,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending emergency command to drone ${droneId}`);
             logger.info('Emergency command request received', { droneId });
 
-            const result = await this.commandService.sendEmergencyCommand(droneId, parameters);
+            const result = await this.commandService.sendEmergencyCommand(droneId, 1, parameters);
             
             if (result.success) {
                 const response = ControllerResult.success('緊急停止指令發送成功', result.command);
@@ -856,7 +855,7 @@ export class DroneCommandCommands {
             logRequest(req, `Sending move command for drone: ${droneId}`);
             logger.info('Move command request received', { droneId, issuedBy, latitude, longitude, altitude, speed });
 
-            const result = await this.commandService.sendMoveCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
+            const result = await this.commandService.sendFlyToCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
             
             if (result.success) {
                 const response = ControllerResult.created('移動指令發送成功', result.command);

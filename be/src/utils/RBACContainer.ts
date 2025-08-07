@@ -35,20 +35,25 @@
  * ```
  */
 
-// 導入使用者控制器類別 - 處理使用者相關的 CRUD 操作
-import { UserController } from '../controllers/rbac/UserController.js';
+// 導入使用者查詢和命令控制器 - CQRS 模式重構
+import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
+import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
 
-// 導入角色控制器類別 - 處理角色相關的 CRUD 操作
-import { RoleController } from '../controllers/rbac/RoleController.js';
+// 導入角色查詢和命令控制器 - CQRS 模式重構
+import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
+import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
 
-// 導入權限控制器類別 - 處理權限相關的 CRUD 操作
-import { PermissionController } from '../controllers/rbac/PermissionController.js';
+// 導入權限查詢和命令控制器 - CQRS 模式重構
+import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
 
-// 導入使用者角色關聯控制器類別 - 處理使用者與角色的關聯操作
-import { UserToRoleController } from '../controllers/rbac/UserToRoleController.js';
+// 導入使用者角色關聯查詢和命令控制器 - CQRS 模式重構
+import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
 
-// 導入角色權限關聯控制器類別 - 處理角色與權限的關聯操作
-import { RoleToPermissionController } from '../controllers/rbac/RoleToPermissionController.js';
+// 導入角色權限關聯查詢和命令控制器 - CQRS 模式重構
+import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 
 // 導入 RBAC 容器服務類型定義 - 定義容器可儲存的服務類型聯合
 import { RBACContainerServicesType } from '../types/RBACContainerServicesType.js';
@@ -224,20 +229,35 @@ export class RBACContainer {
      * @since 1.0.0
      */
     private registerServices(): void {
-        // 註冊使用者控制器 - 處理使用者的增刪改查操作
-        this.services.set('UserController', new UserController());
+        // 註冊使用者查詢控制器 - CQRS 模式：處理使用者的查詢操作
+        this.services.set('UserQueries', new UserQueries());
         
-        // 註冊角色控制器 - 處理角色的增刪改查操作
-        this.services.set('RoleController', new RoleController());
+        // 註冊使用者命令控制器 - CQRS 模式：處理使用者的修改操作
+        this.services.set('UserCommands', new UserCommands());
         
-        // 註冊權限控制器 - 處理權限的增刪改查操作
-        this.services.set('PermissionController', new PermissionController());
+        // 註冊角色查詢控制器 - CQRS 模式：處理角色的查詢操作
+        this.services.set('RoleQueries', new RoleQueries());
         
-        // 註冊使用者角色關聯控制器 - 處理使用者與角色的關聯管理
-        this.services.set('UserToRoleController', new UserToRoleController());
+        // 註冊角色命令控制器 - CQRS 模式：處理角色的修改操作
+        this.services.set('RoleCommands', new RoleCommands());
         
-        // 註冊角色權限關聯控制器 - 處理角色與權限的關聯管理
-        this.services.set('RoleToPermissionController', new RoleToPermissionController());
+        // 註冊權限查詢控制器 - CQRS 模式：處理權限的查詢操作
+        this.services.set('PermissionQueries', new PermissionQueries());
+        
+        // 註冊權限命令控制器 - CQRS 模式：處理權限的修改操作
+        this.services.set('PermissionCommands', new PermissionCommands());
+        
+        // 註冊使用者角色關聯查詢控制器 - CQRS 模式：處理使用者角色的查詢操作
+        this.services.set('UserToRoleQueries', new UserToRoleQueries());
+        
+        // 註冊使用者角色關聯命令控制器 - CQRS 模式：處理使用者角色的修改操作
+        this.services.set('UserToRoleCommands', new UserToRoleCommands());
+        
+        // 註冊角色權限關聯查詢控制器 - CQRS 模式：處理角色權限的查詢操作
+        this.services.set('RoleToPermissionQueries', new RoleToPermissionQueries());
+        
+        // 註冊角色權限關聯命令控制器 - CQRS 模式：處理角色權限的修改操作
+        this.services.set('RoleToPermissionCommands', new RoleToPermissionCommands());
     }
 
     /**
@@ -265,85 +285,178 @@ export class RBACContainer {
      * const users = await userController.getAllUsers();
      * ```
      */
-    public getUserController(): IUserController {
-        // 從服務註冊表中取得使用者控制器實例
-        const controller = this.services.get('UserController');
-        
-        // 檢查控制器是否存在，Map.get() 可能返回 undefined
+    /**
+     * 取得使用者查詢控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的使用者查詢控制器實例。
+     * 查詢控制器專門負責處理所有與使用者相關的讀取操作。
+     * 
+     * @public
+     * @returns {UserQueries} 使用者查詢控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
+     */
+    public getUserQueries(): UserQueries {
+        const controller = this.services.get('UserQueries');
         if (!controller) {
-            throw new Error('UserController not found in container');
+            throw new Error('UserQueries not found in container');
         }
-        
-        // 進行類型斷言並返回控制器實例
-        return controller as IUserController;
+        return controller as UserQueries;
     }
 
     /**
-     * 取得角色控制器
+     * 取得使用者命令控制器 - CQRS 模式
      * 
-     * 從服務容器中取得已註冊的角色控制器實例。
-     * 角色控制器負責處理所有與角色相關的操作，
-     * 包括角色的建立、查詢、更新和刪除等功能。
+     * 從服務容器中取得已註冊的使用者命令控制器實例。
+     * 命令控制器專門負責處理所有與使用者相關的寫入操作。
      * 
      * @public
-     * @returns {IRoleController} 角色控制器實例
+     * @returns {UserCommands} 使用者命令控制器實例
      * @throws {Error} 當控制器未在容器中找到時拋出錯誤
-     * @since 1.0.0
+     * @since 2.0.0
+     */
+    public getUserCommands(): UserCommands {
+        const controller = this.services.get('UserCommands');
+        if (!controller) {
+            throw new Error('UserCommands not found in container');
+        }
+        return controller as UserCommands;
+    }
+
+    /**
+     * 取得角色查詢控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的角色查詢控制器實例。
+     * 查詢控制器專門負責處理所有與角色相關的讀取操作，
+     * 遵循 CQRS 模式的查詢端職責分離原則。
+     * 
+     * @public
+     * @returns {RoleQueries} 角色查詢控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
      * 
      * @example
      * ```typescript
      * const container = RBACContainer.getInstance();
-     * const roleController = container.getRoleController();
+     * const roleQueries = container.getRoleQueries();
      * 
-     * // 使用控制器進行操作
-     * const roles = await roleController.getAllRoles();
+     * // 使用控制器進行查詢操作
+     * const roles = await roleQueries.getRoles(req, res);
      * ```
      */
-    public getRoleController(): IRoleController {
-        // 從服務註冊表中取得角色控制器實例
-        const controller = this.services.get('RoleController');
+    public getRoleQueries(): RoleQueries {
+        // 從服務註冊表中取得角色查詢控制器實例
+        const controller = this.services.get('RoleQueries');
         
         // 檢查控制器是否存在，Map.get() 可能返回 undefined
         if (!controller) {
-            throw new Error('RoleController not found in container');
+            throw new Error('RoleQueries not found in container');
         }
         
         // 進行類型斷言並返回控制器實例
-        return controller as IRoleController;
+        return controller as RoleQueries;
     }
 
     /**
-     * 取得權限控制器
+     * 取得角色命令控制器 - CQRS 模式
      * 
-     * 從服務容器中取得已註冊的權限控制器實例。
-     * 權限控制器負責處理所有與權限相關的操作，
-     * 包括權限的建立、查詢、更新和刪除等功能。
+     * 從服務容器中取得已註冊的角色命令控制器實例。
+     * 命令控制器專門負責處理所有與角色相關的寫入操作，
+     * 遵循 CQRS 模式的命令端職責分離原則。
      * 
      * @public
-     * @returns {IPermissionController} 權限控制器實例
+     * @returns {RoleCommands} 角色命令控制器實例
      * @throws {Error} 當控制器未在容器中找到時拋出錯誤
-     * @since 1.0.0
+     * @since 2.0.0
      * 
      * @example
      * ```typescript
      * const container = RBACContainer.getInstance();
-     * const permissionController = container.getPermissionController();
+     * const roleCommands = container.getRoleCommands();
      * 
-     * // 使用控制器進行操作
-     * const permissions = await permissionController.getAllPermissions();
+     * // 使用控制器進行命令操作
+     * await roleCommands.createRole(req, res);
      * ```
      */
-    public getPermissionController(): IPermissionController {
-        // 從服務註冊表中取得權限控制器實例
-        const controller = this.services.get('PermissionController');
+    public getRoleCommands(): RoleCommands {
+        // 從服務註冊表中取得角色命令控制器實例
+        const controller = this.services.get('RoleCommands');
         
         // 檢查控制器是否存在，Map.get() 可能返回 undefined
         if (!controller) {
-            throw new Error('PermissionController not found in container');
+            throw new Error('RoleCommands not found in container');
         }
         
         // 進行類型斷言並返回控制器實例
-        return controller as IPermissionController;
+        return controller as RoleCommands;
+    }
+
+    /**
+     * 取得權限查詢控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的權限查詢控制器實例。
+     * 查詢控制器專門負責處理所有與權限相關的讀取操作，
+     * 遵循 CQRS 模式的查詢端職責分離原則。
+     * 
+     * @public
+     * @returns {PermissionQueries} 權限查詢控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
+     * 
+     * @example
+     * ```typescript
+     * const container = RBACContainer.getInstance();
+     * const permissionQueries = container.getPermissionQueries();
+     * 
+     * // 使用控制器進行查詢操作
+     * const permissions = await permissionQueries.getPermissions(req, res);
+     * ```
+     */
+    public getPermissionQueries(): PermissionQueries {
+        // 從服務註冊表中取得權限查詢控制器實例
+        const controller = this.services.get('PermissionQueries');
+        
+        // 檢查控制器是否存在，Map.get() 可能返回 undefined
+        if (!controller) {
+            throw new Error('PermissionQueries not found in container');
+        }
+        
+        // 進行類型斷言並返回控制器實例
+        return controller as PermissionQueries;
+    }
+
+    /**
+     * 取得權限命令控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的權限命令控制器實例。
+     * 命令控制器專門負責處理所有與權限相關的寫入操作，
+     * 遵循 CQRS 模式的命令端職責分離原則。
+     * 
+     * @public
+     * @returns {PermissionCommands} 權限命令控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
+     * 
+     * @example
+     * ```typescript
+     * const container = RBACContainer.getInstance();
+     * const permissionCommands = container.getPermissionCommands();
+     * 
+     * // 使用控制器進行命令操作
+     * await permissionCommands.createPermission(req, res);
+     * ```
+     */
+    public getPermissionCommands(): PermissionCommands {
+        // 從服務註冊表中取得權限命令控制器實例
+        const controller = this.services.get('PermissionCommands');
+        
+        // 檢查控制器是否存在，Map.get() 可能返回 undefined
+        if (!controller) {
+            throw new Error('PermissionCommands not found in container');
+        }
+        
+        // 進行類型斷言並返回控制器實例
+        return controller as PermissionCommands;
     }
 
     /**
@@ -367,51 +480,110 @@ export class RBACContainer {
      * await userToRoleController.assignRoleToUser(userId, roleId);
      * ```
      */
-    public getUserToRoleController(): IUserToRoleController {
-        // 從服務註冊表中取得使用者角色關聯控制器實例
-        const controller = this.services.get('UserToRoleController');
-        
-        // 檢查控制器是否存在，Map.get() 可能返回 undefined
+    /**
+     * 取得使用者角色關聯查詢控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的使用者角色關聯查詢控制器實例。
+     * 查詢控制器專門負責處理所有與使用者角色關聯相關的讀取操作。
+     * 
+     * @public
+     * @returns {UserToRoleQueries} 使用者角色關聯查詢控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
+     */
+    public getUserToRoleQueries(): UserToRoleQueries {
+        const controller = this.services.get('UserToRoleQueries');
         if (!controller) {
-            throw new Error('UserToRoleController not found in container');
+            throw new Error('UserToRoleQueries not found in container');
         }
-        
-        // 進行類型斷言並返回控制器實例
-        return controller as IUserToRoleController;
+        return controller as UserToRoleQueries;
     }
 
     /**
-     * 取得角色權限控制器
+     * 取得使用者角色關聯命令控制器 - CQRS 模式
      * 
-     * 從服務容器中取得已註冊的角色權限關聯控制器實例。
-     * 此控制器負責處理角色與權限之間的關聯操作，
-     * 包括權限授予、撤銷、查詢等功能。
+     * 從服務容器中取得已註冊的使用者角色關聯命令控制器實例。
+     * 命令控制器專門負責處理所有與使用者角色關聯相關的寫入操作。
      * 
      * @public
-     * @returns {IRoleToPermissionController} 角色權限關聯控制器實例
+     * @returns {UserToRoleCommands} 使用者角色關聯命令控制器實例
      * @throws {Error} 當控制器未在容器中找到時拋出錯誤
-     * @since 1.0.0
+     * @since 2.0.0
+     */
+    public getUserToRoleCommands(): UserToRoleCommands {
+        const controller = this.services.get('UserToRoleCommands');
+        if (!controller) {
+            throw new Error('UserToRoleCommands not found in container');
+        }
+        return controller as UserToRoleCommands;
+    }
+
+    /**
+     * 取得角色權限關聯查詢控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的角色權限關聯查詢控制器實例。
+     * 查詢控制器專門負責處理所有與角色權限關聯相關的讀取操作，
+     * 遵循 CQRS 模式的查詢端職責分離原則。
+     * 
+     * @public
+     * @returns {RoleToPermissionQueries} 角色權限關聯查詢控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
      * 
      * @example
      * ```typescript
      * const container = RBACContainer.getInstance();
-     * const roleToPermissionController = container.getRoleToPermissionController();
+     * const roleToPermissionQueries = container.getRoleToPermissionQueries();
      * 
-     * // 使用控制器進行操作
-     * await roleToPermissionController.assignPermissionToRole(roleId, permissionId);
+     * // 使用控制器進行查詢操作
+     * const permissions = await roleToPermissionQueries.getRolePermissions(req, res);
      * ```
      */
-    public getRoleToPermissionController(): IRoleToPermissionController {
-        // 從服務註冊表中取得角色權限關聯控制器實例
-        const controller = this.services.get('RoleToPermissionController');
+    public getRoleToPermissionQueries(): RoleToPermissionQueries {
+        // 從服務註冊表中取得角色權限關聯查詢控制器實例
+        const controller = this.services.get('RoleToPermissionQueries');
         
         // 檢查控制器是否存在，Map.get() 可能返回 undefined
         if (!controller) {
-            throw new Error('RoleToPermissionController not found in container');
+            throw new Error('RoleToPermissionQueries not found in container');
         }
         
         // 進行類型斷言並返回控制器實例
-        return controller as IRoleToPermissionController;
+        return controller as RoleToPermissionQueries;
+    }
+
+    /**
+     * 取得角色權限關聯命令控制器 - CQRS 模式
+     * 
+     * 從服務容器中取得已註冊的角色權限關聯命令控制器實例。
+     * 命令控制器專門負責處理所有與角色權限關聯相關的寫入操作，
+     * 遵循 CQRS 模式的命令端職責分離原則。
+     * 
+     * @public
+     * @returns {RoleToPermissionCommands} 角色權限關聯命令控制器實例
+     * @throws {Error} 當控制器未在容器中找到時拋出錯誤
+     * @since 2.0.0
+     * 
+     * @example
+     * ```typescript
+     * const container = RBACContainer.getInstance();
+     * const roleToPermissionCommands = container.getRoleToPermissionCommands();
+     * 
+     * // 使用控制器進行命令操作
+     * await roleToPermissionCommands.assignPermissionsToRole(req, res);
+     * ```
+     */
+    public getRoleToPermissionCommands(): RoleToPermissionCommands {
+        // 從服務註冊表中取得角色權限關聯命令控制器實例
+        const controller = this.services.get('RoleToPermissionCommands');
+        
+        // 檢查控制器是否存在，Map.get() 可能返回 undefined
+        if (!controller) {
+            throw new Error('RoleToPermissionCommands not found in container');
+        }
+        
+        // 進行類型斷言並返回控制器實例
+        return controller as RoleToPermissionCommands;
     }
 
     /**

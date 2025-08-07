@@ -8,11 +8,21 @@
  * 組合成一個統一的服務類型，便於依賴注入容器的類型檢查和服務管理。
  * 
  * 支援的服務類型：
- * - 使用者控制器（IUserController）
- * - 角色控制器（IRoleController）
- * - 權限控制器（IPermissionController）
- * - 使用者角色關聯控制器（IUserToRoleController）
- * - 角色權限關聯控制器（IRoleToPermissionController）
+ * - 使用者控制器（IUserController - 舊版）
+ * - 使用者查詢控制器（UserQueries - CQRS）
+ * - 使用者命令控制器（UserCommands - CQRS）
+ * - 角色控制器（IRoleController - 舊版）
+ * - 角色查詢控制器（RoleQueries - CQRS）
+ * - 角色命令控制器（RoleCommands - CQRS）
+ * - 權限控制器（IPermissionController - 舊版）
+ * - 權限查詢控制器（PermissionQueries - CQRS）
+ * - 權限命令控制器（PermissionCommands - CQRS）
+ * - 使用者角色關聯控制器（IUserToRoleController - 舊版）
+ * - 使用者角色關聯查詢控制器（UserToRoleQueries - CQRS）
+ * - 使用者角色關聯命令控制器（UserToRoleCommands - CQRS）
+ * - 角色權限關聯控制器（IRoleToPermissionController - 舊版）
+ * - 角色權限關聯查詢控制器（RoleToPermissionQueries - CQRS）
+ * - 角色權限關聯命令控制器（RoleToPermissionCommands - CQRS）
  * 
  * @module Types/RBACContainerServices
  * @version 1.0.0
@@ -28,6 +38,26 @@ import {
     IUserToRoleController, 
     IRoleToPermissionController 
 } from './controllers/index.js';
+
+// 導入 CQRS 模式的權限控制器類型
+import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
+
+// 導入 CQRS 模式的角色控制器類型
+import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
+import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
+
+// 導入 CQRS 模式的角色權限關聯控制器類型
+import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+
+// 導入 CQRS 模式的使用者控制器類型
+import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
+import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
+
+// 導入 CQRS 模式的使用者角色關聯控制器類型
+import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
 
 /**
  * RBAC 容器服務類型聯合定義
@@ -54,8 +84,18 @@ import {
  * @since 1.0.0
  */
 export type RBACContainerServicesType = 
-    | IUserController              // 使用者控制器服務類型
-    | IRoleController              // 角色控制器服務類型
-    | IPermissionController        // 權限控制器服務類型
-    | IUserToRoleController        // 使用者角色關聯控制器服務類型
-    | IRoleToPermissionController; // 角色權限關聯控制器服務類型
+    | IUserController              // 使用者控制器服務類型（向後兼容）
+    | UserQueries                  // 使用者查詢控制器服務類型（CQRS）
+    | UserCommands                 // 使用者命令控制器服務類型（CQRS）
+    | IRoleController              // 角色控制器服務類型（向後兼容）
+    | RoleQueries                  // 角色查詢控制器服務類型（CQRS）
+    | RoleCommands                 // 角色命令控制器服務類型（CQRS）
+    | IPermissionController        // 權限控制器服務類型（向後兼容）
+    | PermissionQueries            // 權限查詢控制器服務類型（CQRS）
+    | PermissionCommands           // 權限命令控制器服務類型（CQRS）
+    | IUserToRoleController        // 使用者角色關聯控制器服務類型（向後兼容）
+    | UserToRoleQueries            // 使用者角色關聯查詢控制器服務類型（CQRS）
+    | UserToRoleCommands           // 使用者角色關聯命令控制器服務類型（CQRS）
+    | IRoleToPermissionController  // 角色權限關聯控制器服務類型（向後兼容）
+    | RoleToPermissionQueries      // 角色權限關聯查詢控制器服務類型（CQRS）
+    | RoleToPermissionCommands;    // 角色權限關聯命令控制器服務類型（CQRS）

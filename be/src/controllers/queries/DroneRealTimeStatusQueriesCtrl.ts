@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneRealTimeStatusService } from '../../services/drone/DroneRealTimeStatusService.js';
-import type { IDroneRealTimeStatusService } from '../../types/services/IDroneRealTimeStatusService.js';
+import { DroneRealTimeStatusQueriesSvc } from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('DroneRealTimeStatusQueries');
  * @since 1.0.0
  */
 export class DroneRealTimeStatusQueries {
-    private droneRealTimeStatusService: IDroneRealTimeStatusService;
+    private droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc;
 
     constructor() {
-        this.droneRealTimeStatusService = new DroneRealTimeStatusService();
+        this.droneRealTimeStatusQueriesService = new DroneRealTimeStatusQueriesSvc();
     }
 
     /**
@@ -44,7 +43,7 @@ export class DroneRealTimeStatusQueries {
             logRequest(req, 'Getting all drone real-time status data');
             logger.info('Drone real-time status data retrieval request received');
 
-            const droneStatuses = await this.droneRealTimeStatusService.getAllDroneRealTimeStatuses();
+            const droneStatuses = await this.droneRealTimeStatusQueriesService.getAllDroneRealTimeStatuses();
 
             const result = ControllerResult.success('無人機即時狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
@@ -76,7 +75,7 @@ export class DroneRealTimeStatusQueries {
             logRequest(req, `Getting drone real-time status data with ID: ${id}`);
             logger.info('Drone real-time status data retrieval request received', { id });
 
-            const droneStatus = await this.droneRealTimeStatusService.getDroneRealTimeStatusById(id);
+            const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusById(id);
 
             if (!droneStatus) {
                 const result = ControllerResult.notFound('找不到指定的無人機即時狀態資料');
@@ -115,7 +114,7 @@ export class DroneRealTimeStatusQueries {
             logRequest(req, `Getting drone real-time status by drone ID: ${droneId}`);
             logger.info('Drone real-time status by drone ID retrieval request received', { droneId });
 
-            const droneStatus = await this.droneRealTimeStatusService.getDroneRealTimeStatusByDroneId(droneId);
+            const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusByDroneId(droneId);
 
             if (!droneStatus) {
                 const result = ControllerResult.notFound('找不到該無人機的即時狀態資料');
@@ -154,7 +153,7 @@ export class DroneRealTimeStatusQueries {
             logRequest(req, `Getting drone real-time statuses by status: ${status}`);
             logger.info('Drone real-time statuses by status retrieval request received', { status });
 
-            const droneStatuses = await this.droneRealTimeStatusService.getDroneRealTimeStatusesByStatus(status.trim());
+            const droneStatuses = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusesByStatus(status.trim());
 
             const result = ControllerResult.success('無人機即時狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
@@ -182,7 +181,7 @@ export class DroneRealTimeStatusQueries {
             logRequest(req, 'Getting active drone real-time status data');
             logger.info('Active drone real-time status data retrieval request received');
 
-            const activeStatuses = await this.droneRealTimeStatusService.getActiveDroneRealTimeStatuses();
+            const activeStatuses = await this.droneRealTimeStatusQueriesService.getActiveDroneRealTimeStatuses();
 
             const result = ControllerResult.success('活躍無人機即時狀態資料獲取成功', activeStatuses);
             res.status(result.status).json(result);
@@ -206,7 +205,7 @@ export class DroneRealTimeStatusQueries {
             logRequest(req, 'Getting drone real-time status statistics');
             logger.info('Drone real-time status statistics retrieval request received');
 
-            const statistics = await this.droneRealTimeStatusService.getDroneRealTimeStatusStatistics();
+            const statistics = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusStatistics();
 
             const result = ControllerResult.success('無人機即時狀態統計獲取成功', statistics);
             res.status(result.status).json(result);

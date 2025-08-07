@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneStatusService } from '../../services/drone/DroneStatusService.js';
-import type { IDroneStatusService } from '../../types/services/IDroneStatusService.js';
+import { DroneStatusQueriesSvc } from '../../services/queries/DroneStatusQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('DroneStatusQueries');
  * @since 1.0.0
  */
 export class DroneStatusQueries {
-    private droneStatusService: IDroneStatusService;
+    private droneStatusService: DroneStatusQueriesSvc;
 
     constructor() {
-        this.droneStatusService = new DroneStatusService();
+        this.droneStatusService = new DroneStatusQueriesSvc();
     }
 
     /**

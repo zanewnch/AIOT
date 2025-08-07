@@ -12,8 +12,8 @@
  */
 
 import { Request, Response } from 'express';
-import { RoleService } from '../../services/rbac/RoleService.js';
-import { IRoleService } from '../../types/services/IRoleService.js';
+import { RoleQueriesSvc } from '../../services/queries/RoleQueriesSvc.js';
+import type { IRoleQueriesService } from '../../services/queries/RoleQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +29,10 @@ const logger = createLogger('RoleQueries');
  * @since 1.0.0
  */
 export class RoleQueries {
-    private roleService: IRoleService;
+    private roleQueriesService: IRoleQueriesService;
 
     constructor() {
-        this.roleService = new RoleService();
+        this.roleQueriesService = new RoleQueriesSvc();
     }
 
     /**
@@ -44,7 +44,7 @@ export class RoleQueries {
             logRequest(req, 'Fetching all roles', 'info');
             logger.debug('Getting all roles from service');
 
-            const roles = await this.roleService.getAllRoles();
+            const roles = await this.roleQueriesService.getAllRoles();
             const result = ControllerResult.success('角色列表獲取成功', roles);
 
             res.status(result.status).json(result);
@@ -73,7 +73,7 @@ export class RoleQueries {
             logRequest(req, `Fetching role with ID: ${roleId}`, 'info');
             logger.debug(`Getting role by ID from service: ${roleId}`);
 
-            const role = await this.roleService.getRoleById(roleId);
+            const role = await this.roleQueriesService.getRoleById(roleId);
             
             if (!role) {
                 const result = ControllerResult.notFound('角色不存在');

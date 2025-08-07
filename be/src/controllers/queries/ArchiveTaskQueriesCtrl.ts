@@ -12,8 +12,7 @@
  */
 
 import { Request, Response } from 'express';
-import { IArchiveTaskService } from '../../types/services/IArchiveTaskService.js';
-import { ArchiveTaskService } from '../../services/ArchiveTaskService.js';
+import { ArchiveTaskQueriesSvc } from '../../services/queries/ArchiveTaskQueriesSvc.js';
 import { ArchiveJobType, ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
@@ -38,10 +37,10 @@ import { ControllerResult } from '../../utils/ControllerResult.js';
  */
 export class ArchiveTaskQueries {
     private readonly logger = createLogger('ArchiveTaskQueries');
-    private readonly service: IArchiveTaskService;
+    private readonly queryService: ArchiveTaskQueriesSvc;
 
-    constructor(service?: IArchiveTaskService) {
-        this.service = service || new ArchiveTaskService();
+    constructor(queryService?: ArchiveTaskQueriesSvc) {
+        this.queryService = queryService || new ArchiveTaskQueriesSvc();
     }
 
     /**
@@ -118,7 +117,7 @@ export class ArchiveTaskQueries {
                 }
             }
 
-            const tasks = await this.service.getAllTasks(options);
+            const tasks = await this.queryService.getAllTasks(options);
             
             this.logger.info('歸檔任務列表獲取成功', { 
                 count: tasks.length,
@@ -160,7 +159,7 @@ export class ArchiveTaskQueries {
 
             this.logger.info('根據 ID 獲取歸檔任務請求', { taskId });
 
-            const task = await this.service.getTaskById(taskId);
+            const task = await this.queryService.getTaskById(taskId);
             
             if (!task) {
                 const result = ControllerResult.notFound(`任務 ${taskId} 不存在`);
@@ -196,7 +195,7 @@ export class ArchiveTaskQueries {
         try {
             this.logger.info('獲取歸檔任務統計資訊請求');
 
-            const statistics = await this.service.getTaskStatistics();
+            const statistics = await this.queryService.getTaskStatistics();
             
             this.logger.info('歸檔任務統計資訊獲取成功', { 
                 totalTasks: statistics.totalTasks 
@@ -228,7 +227,7 @@ export class ArchiveTaskQueries {
             this.logger.info('獲取歸檔任務資料請求', { query: req.query });
 
             // 使用預設的查詢選項來獲取所有任務資料
-            const tasks = await this.service.getAllTasks({
+            const tasks = await this.queryService.getAllTasks({
                 sortBy: 'createdAt',
                 sortOrder: 'DESC',
                 limit: 1000 // 限制返回數量以避免過多資料

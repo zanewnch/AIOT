@@ -12,8 +12,8 @@
  */
 
 import { Request, Response } from 'express';
-import { RoleService } from '../../services/rbac/RoleService.js';
-import { IRoleService } from '../../types/services/IRoleService.js';
+import { RoleCommandsSvc } from '../../services/commands/RoleCommandsSvc.js';
+import type { IRoleCommandsService, CreateRoleRequest, UpdateRoleRequest } from '../../services/commands/RoleCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +29,10 @@ const logger = createLogger('RoleCommands');
  * @since 1.0.0
  */
 export class RoleCommands {
-    private roleService: IRoleService;
+    private roleCommandsService: IRoleCommandsService;
 
     constructor() {
-        this.roleService = new RoleService();
+        this.roleCommandsService = new RoleCommandsSvc();
     }
 
     /**
@@ -53,7 +53,7 @@ export class RoleCommands {
             logRequest(req, `Creating new role: ${name}`, 'info');
             logger.debug('Creating new role via service', { name, description });
 
-            const newRole = await this.roleService.createRole({
+            const newRole = await this.roleCommandsService.createRole({
                 name: name.trim(),
                 displayName: description?.trim() || undefined
             });
@@ -115,7 +115,7 @@ export class RoleCommands {
                 return;
             }
 
-            const updatedRole = await this.roleService.updateRole(roleId, updateData);
+            const updatedRole = await this.roleCommandsService.updateRole(roleId, updateData);
 
             if (!updatedRole) {
                 const result = ControllerResult.notFound('角色不存在');
@@ -164,7 +164,7 @@ export class RoleCommands {
             logRequest(req, `Deleting role with ID: ${roleId}`, 'info');
             logger.debug('Deleting role via service', { roleId });
 
-            const deleted = await this.roleService.deleteRole(roleId);
+            const deleted = await this.roleCommandsService.deleteRole(roleId);
 
             if (!deleted) {
                 const result = ControllerResult.notFound('角色不存在');

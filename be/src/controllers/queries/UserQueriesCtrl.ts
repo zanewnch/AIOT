@@ -12,8 +12,7 @@
  */
 
 import { Request, Response } from 'express';
-import { UserService } from '../../services/rbac/UserService.js';
-import { IUserService } from '../../types/services/IUserService.js';
+import { UserQueriesSvc } from '../../services/queries/UserQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('UserQueries');
  * @since 1.0.0
  */
 export class UserQueries {
-    private userService: IUserService;
+    private userQueriesSvc: UserQueriesSvc;
 
     constructor() {
-        this.userService = new UserService();
+        this.userQueriesSvc = new UserQueriesSvc();
     }
 
     /**
@@ -44,7 +43,7 @@ export class UserQueries {
             logRequest(req, 'Fetching all users', 'info');
             logger.debug('Getting all users from service');
 
-            const users = await this.userService.getAllUsers();
+            const users = await this.userQueriesSvc.getAllUsers();
             const result = ControllerResult.success('使用者列表獲取成功', users);
 
             res.status(result.status).json(result);
@@ -73,7 +72,7 @@ export class UserQueries {
             logRequest(req, `Fetching user with ID: ${userId}`, 'info');
             logger.debug(`Getting user by ID from service: ${userId}`);
 
-            const user = await this.userService.getUserById(userId);
+            const user = await this.userQueriesSvc.getUserById(userId);
             
             if (!user) {
                 const result = ControllerResult.notFound('使用者不存在');

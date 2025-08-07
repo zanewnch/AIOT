@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DronePositionService } from '../../services/drone/DronePositionService.js';
-import type { IDronePositionService } from '../../types/services/IDronePositionService.js';
+import { DronePositionCommandsSvc } from '../../services/commands/DronePositionCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import type { DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js';
@@ -30,10 +29,10 @@ const logger = createLogger('DronePositionCommands');
  * @since 1.0.0
  */
 export class DronePositionCommands {
-    private dronePositionService: IDronePositionService;
+    private dronePositionCommandsSvc: DronePositionCommandsSvc;
 
     constructor() {
-        this.dronePositionService = new DronePositionService();
+        this.dronePositionCommandsSvc = new DronePositionCommandsSvc();
     }
 
     /**
@@ -60,8 +59,8 @@ export class DronePositionCommands {
             logRequest(req, 'Creating new drone position data');
             logger.info('Drone position creation request received', { data: dronePositionData });
 
-            // 呼叫服務層創建資料
-            const createdData = await this.dronePositionService.createDronePosition(dronePositionData);
+            // 呼叫命令服務層創建資料
+            const createdData = await this.dronePositionCommandsSvc.createDronePosition(dronePositionData);
 
             // 建立成功回應
             const result = ControllerResult.created('無人機位置資料創建成功', createdData);
@@ -121,8 +120,8 @@ export class DronePositionCommands {
             logRequest(req, `Updating drone position data with ID: ${id}`);
             logger.info('Drone position update request received', { id, data: updateData });
 
-            // 呼叫服務層更新資料
-            const updatedData = await this.dronePositionService.updateDronePosition(id, updateData);
+            // 呼叫命令服務層更新資料
+            const updatedData = await this.dronePositionCommandsSvc.updateDronePosition(id, updateData);
 
             if (!updatedData) {
                 const result = ControllerResult.notFound('找不到指定的無人機位置資料');
@@ -163,8 +162,8 @@ export class DronePositionCommands {
             logRequest(req, `Deleting drone position data with ID: ${id}`);
             logger.info('Drone position deletion request received', { id });
 
-            // 呼叫服務層刪除資料
-            await this.dronePositionService.deleteDronePosition(id);
+            // 呼叫命令服務層刪除資料
+            await this.dronePositionCommandsSvc.deleteDronePosition(id);
 
             // 刪除成功（如果沒有拋出錯誤）
             const result = ControllerResult.success('無人機位置資料刪除成功');
@@ -214,8 +213,8 @@ export class DronePositionCommands {
             logRequest(req, `Creating ${dronePositionsData.length} drone position records in batch`);
             logger.info('Drone position batch creation request received', { count: dronePositionsData.length });
 
-            // 呼叫服務層批量創建資料
-            const createdData = await this.dronePositionService.createDronePositionsBatch(dronePositionsData);
+            // 呼叫命令服務層批量創建資料
+            const createdData = await this.dronePositionCommandsSvc.createDronePositionsBatch(dronePositionsData);
 
             const result = ControllerResult.created('批量無人機位置資料創建成功', createdData);
             res.status(result.status).json(result);

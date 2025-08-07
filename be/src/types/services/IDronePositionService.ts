@@ -1,9 +1,15 @@
 /**
- * @fileoverview 無人機位置服務介面定義
+ * @fileoverview 無人機位置服務介面定義 (已重構為 CQRS 模式)
  *
- * 定義無人機位置業務邏輯服務的標準介面，遵循依賴倒置原則。
- * 控制器依賴此介面而非具體實現，提高代碼的可測試性和可維護性。
+ * ⚠️ 注意：此介面已被重構為 CQRS 模式
+ * 
+ * 新的服務類別：
+ * - DronePositionQueriesSvc: 處理所有查詢操作 
+ * - DronePositionCommandsSvc: 處理所有命令操作
+ * 
+ * 建議使用新的服務類別而不是此統一介面
  *
+ * @deprecated 請使用 DronePositionQueriesSvc 和 DronePositionCommandsSvc
  * @author AIOT Team
  * @version 1.0.0
  * @since 2024-01-01

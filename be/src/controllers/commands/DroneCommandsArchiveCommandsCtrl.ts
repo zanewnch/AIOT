@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneCommandsArchiveService } from '../../services/drone/DroneCommandsArchiveService.js';
-import type { IDroneCommandsArchiveService } from '../../types/services/IDroneCommandsArchiveService.js';
+import { DroneCommandsArchiveCommandsSvc } from '../../services/commands/DroneCommandsArchiveCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import type { DroneCommandsArchiveCreationAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
@@ -30,10 +29,10 @@ const logger = createLogger('DroneCommandsArchiveCommands');
  * @since 1.0.0
  */
 export class DroneCommandsArchiveCommands {
-    private archiveService: IDroneCommandsArchiveService;
+    private commandService: DroneCommandsArchiveCommandsSvc;
 
     constructor() {
-        this.archiveService = new DroneCommandsArchiveService();
+        this.commandService = new DroneCommandsArchiveCommandsSvc();
     }
 
     /**
@@ -63,7 +62,7 @@ export class DroneCommandsArchiveCommands {
                 command_type: archiveData.command_type
             });
 
-            const createdArchive = await this.archiveService.createCommandArchive(archiveData);
+            const createdArchive = await this.commandService.createCommandArchive(archiveData);
             const result = ControllerResult.created('指令歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
@@ -105,7 +104,7 @@ export class DroneCommandsArchiveCommands {
             logRequest(req, `Updating command archive with ID: ${id}`);
             logger.info('Command archive update request received', { id, updateData });
 
-            const updatedArchive = await this.archiveService.updateCommandArchive(id, updateData);
+            const updatedArchive = await this.commandService.updateCommandArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ControllerResult.notFound('找不到指定的指令歷史歸檔記錄');
@@ -145,7 +144,7 @@ export class DroneCommandsArchiveCommands {
             logRequest(req, `Deleting command archive with ID: ${id}`);
             logger.info('Command archive deletion request received', { id });
 
-            const isDeleted = await this.archiveService.deleteCommandArchive(id);
+            const isDeleted = await this.commandService.deleteCommandArchive(id);
 
             if (!isDeleted) {
                 const result = ControllerResult.notFound('找不到指定的指令歷史歸檔記錄');

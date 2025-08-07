@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { DroneCommandsArchiveService } from '../../services/drone/DroneCommandsArchiveService.js';
-import type { IDroneCommandsArchiveService } from '../../types/services/IDroneCommandsArchiveService.js';
+import { DroneCommandsArchiveQueriesSvc } from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('DroneCommandsArchiveQueries');
  * @since 1.0.0
  */
 export class DroneCommandsArchiveQueries {
-    private archiveService: IDroneCommandsArchiveService;
+    private queryService: DroneCommandsArchiveQueriesSvc;
 
     constructor() {
-        this.archiveService = new DroneCommandsArchiveService();
+        this.queryService = new DroneCommandsArchiveQueriesSvc();
     }
 
     /**
@@ -46,7 +45,7 @@ export class DroneCommandsArchiveQueries {
             logRequest(req, `Getting all commands archive with limit: ${limit}`);
             logger.info('Commands archive retrieval request received', { limit });
 
-            const archives = await this.archiveService.getAllCommandsArchive(limit);
+            const archives = await this.queryService.getAllCommandsArchive(limit);
             const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
@@ -77,7 +76,7 @@ export class DroneCommandsArchiveQueries {
             logRequest(req, `Getting command archive by ID: ${id}`);
             logger.info('Command archive by ID request received', { id });
 
-            const archive = await this.archiveService.getCommandArchiveById(id);
+            const archive = await this.queryService.getCommandArchiveById(id);
             
             if (!archive) {
                 const result = ControllerResult.notFound('找不到指定的指令歷史歸檔');
@@ -116,7 +115,7 @@ export class DroneCommandsArchiveQueries {
             logRequest(req, `Getting command archives by drone ID: ${droneId}`);
             logger.info('Command archives by drone ID request received', { droneId, limit });
 
-            const archives = await this.archiveService.getCommandArchivesByDroneId(droneId, limit);
+            const archives = await this.queryService.getCommandArchivesByDroneId(droneId, limit);
             const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
@@ -153,7 +152,7 @@ export class DroneCommandsArchiveQueries {
             logRequest(req, `Getting command archives by time range: ${startTime} to ${endTime}`);
             logger.info('Command archives by time range request received', { startTime, endTime, limit });
 
-            const archives = await this.archiveService.getCommandArchivesByTimeRange(startTime, endTime, limit);
+            const archives = await this.queryService.getCommandArchivesByTimeRange(startTime, endTime, limit);
             const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
@@ -190,7 +189,7 @@ export class DroneCommandsArchiveQueries {
             logRequest(req, `Getting command archives by type: ${commandType}`);
             logger.info('Command archives by type request received', { commandType, limit });
 
-            const archives = await this.archiveService.getCommandArchivesByType(commandType as any, limit);
+            const archives = await this.queryService.getCommandArchivesByType(commandType as any, limit);
             const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
@@ -225,7 +224,7 @@ export class DroneCommandsArchiveQueries {
             logRequest(req, `Getting command archives by status: ${status}`);
             logger.info('Command archives by status request received', { status, limit });
 
-            const archives = await this.archiveService.getCommandArchivesByStatus(status as any, limit);
+            const archives = await this.queryService.getCommandArchivesByStatus(status as any, limit);
             const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);

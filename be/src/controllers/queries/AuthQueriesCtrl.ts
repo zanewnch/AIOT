@@ -12,8 +12,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { AuthService } from '../../services/AuthService.js';
-import { IAuthService } from '../../types/services/IAuthService.js';
+import { AuthQueriesSvc } from '../../services/queries/AuthQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 
@@ -29,10 +28,10 @@ const logger = createLogger('AuthQueries');
  * @since 1.0.0
  */
 export class AuthQueries {
-    private authService: IAuthService;
+    private authQueriesSvc: AuthQueriesSvc;
 
     constructor() {
-        this.authService = new AuthService();
+        this.authQueriesSvc = new AuthQueriesSvc();
     }
 
     /**
