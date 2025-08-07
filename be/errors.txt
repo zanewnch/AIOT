@@ -1,0 +1,22 @@
+src/services/commands/ArchiveTaskCommandsSvc.ts(46,9): error TS2322: Type 'IArchiveTaskRepository | ArchiveTaskCommandsRepository' is not assignable to type 'IArchiveTaskRepository'.
+  Type 'ArchiveTaskCommandsRepository' is missing the following properties from type 'IArchiveTaskRepository': findById, findAll, findByBatchId, findByStatus, and 4 more.
+src/services/commands/ArchiveTaskCommandsSvc.ts(47,55): error TS2345: Argument of type 'IArchiveTaskRepository' is not assignable to parameter of type 'ArchiveTaskQueriesRepository'.
+  Type 'IArchiveTaskRepository' is missing the following properties from type 'ArchiveTaskQueriesRepository': logger, buildWhereClause, buildOrderClause
+src/services/commands/DroneCommandCommandsSvc.ts(44,9): error TS2740: Type 'DroneCommandCommandsRepository' is missing the following properties from type 'IDroneCommandRepository': selectAll, selectPagination, findById, findByDroneId, and 17 more.
+src/services/commands/DroneCommandsArchiveCommandsSvc.ts(49,9): error TS2740: Type 'DroneCommandsArchiveCommandsRepository' is missing the following properties from type 'IDroneCommandsArchiveRepository': selectAll, selectById, selectByDroneId, selectByTimeRange, and 2 more.
+src/services/commands/DronePositionCommandsSvc.ts(38,17): error TS2739: Type 'DronePositionCommandsRepository' is missing the following properties from type 'IDronePositionRepository': selectAll, selectPagination, findById, findLatest, findByDroneId
+src/services/commands/DronePositionCommandsSvc.ts(40,57): error TS2345: Argument of type 'IDronePositionRepository' is not assignable to parameter of type 'DronePositionQueriesRepository'.
+  Type 'IDronePositionRepository' is missing the following properties from type 'DronePositionQueriesRepository': logger, count, countByDroneId
+src/services/commands/DronePositionCommandsSvc.ts(174,67): error TS2339: Property 'insert' does not exist on type 'IDronePositionRepository'.
+src/services/commands/DronePositionsArchiveCommandsSvc.ts(39,9): error TS2740: Type 'DronePositionsArchiveCommandsRepository' is missing the following properties from type 'IDronePositionsArchiveRepository': selectAll, selectPagination, findById, findByOriginalId, and 16 more.
+src/services/commands/DroneStatusArchiveCommandsSvc.ts(36,32): error TS2552: Cannot find name 'IDroneStatusArchiveCommandsRepository'. Did you mean 'DroneStatusArchiveCommandsRepository'?
+src/services/commands/DroneStatusArchiveCommandsSvc.ts(39,36): error TS2552: Cannot find name 'IDroneStatusArchiveCommandsRepository'. Did you mean 'DroneStatusArchiveCommandsRepository'?
+src/services/queries/ArchiveTaskQueriesSvc.ts(43,9): error TS2739: Type 'ArchiveTaskQueriesRepository' is missing the following properties from type 'IArchiveTaskRepository': create, update, delete, bulkUpdateStatus, cleanup
+src/services/queries/DroneCommandQueriesSvc.ts(40,32): error TS2552: Cannot find name 'IDroneCommandQueriesRepository'. Did you mean 'DroneCommandQueriesRepository'?
+src/services/queries/DroneCommandsArchiveQueriesSvc.ts(37,9): error TS2739: Type 'DroneCommandsArchiveQueriesRepository' is missing the following properties from type 'IDroneCommandsArchiveRepository': insert, update, delete
+src/services/queries/DronePositionsArchiveQueriesSvc.ts(43,9): error TS2740: Type 'DronePositionsArchiveQueriesRepository' is missing the following properties from type 'IDronePositionsArchiveRepository': create, bulkCreate, update, delete, and 6 more.
+src/services/queries/DroneStatusArchiveQueriesSvc.ts(37,72): error TS2552: Cannot find name 'DroneStatusArchiveRepository'. Did you mean 'DroneStatusArchiveQueriesRepository'?
+src/services/queries/DroneStatusQueriesSvc.ts(47,68): error TS2339: Property 'selectAll' does not exist on type 'DroneStatusQueriesRepository'.
+src/services/queries/DroneStatusQueriesSvc.ts(228,68): error TS2339: Property 'selectAll' does not exist on type 'DroneStatusQueriesRepository'.
+src/services/queries/DroneStatusQueriesSvc.ts(317,68): error TS2339: Property 'selectAll' does not exist on type 'DroneStatusQueriesRepository'.
+src/services/queries/DroneStatusQueriesSvc.ts(338,64): error TS2339: Property 'selectAll' does not exist on type 'DroneStatusQueriesRepository'.

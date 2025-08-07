@@ -12,25 +12,48 @@
  * @since 2024-01-01
  */
 
-import React, { useRef, useEffect, useCallback } from "react"; // 引入 React
+import React, { useRef, useEffect, useCallback, Suspense, lazy } from "react"; // 引入 React
 import clsx from "clsx"; // 引入 clsx 用於條件性類名處理
 import { useTableUIStore, TableType } from "../../stores"; // 引入 Zustand stores 和類型
-// 表格數據已分散到各自的 hook 中 // 引入表格數據 Hook
+import LoadingSpinner from "../common/LoadingSpinner"; // 引入 Loading 組件
+
+// 🚀 立即加載的核心表格組件（高頻使用）
 import {
   PermissionTableView, // 權限表格視圖組件
   RoleTableView, // 角色表格視圖組件
   UserTableView, // 用戶表格視圖組件
   RoleToPermissionTableView, // 角色權限關聯表格視圖組件
   UserToRoleTableView, // 用戶角色關聯表格視圖組件
-  ArchiveTaskTableView, // 歸檔任務表格視圖組件
   DroneCommandTableView, // 無人機指令表格視圖組件
-  DroneCommandsArchiveTableView, // 無人機指令歷史歸檔表格視圖組件
   DronePositionTableView, // 無人機位置表格視圖組件
-  DronePositionsArchiveTableView, // 無人機位置歷史歸檔表格視圖組件
-  DroneStatusArchiveTableView, // 無人機狀態歷史歸檔表格視圖組件
   DroneStatusTableView, // 無人機狀態表格視圖組件
   UserPreferenceTableView, // 使用者偏好設定表格視圖組件
 } from "./tables"; // 引入表格組件
+
+// 🔄 懶加載的歸檔表格組件（低頻使用）
+const ArchiveTaskTableView = lazy(() => 
+  import("./tables/ArchiveTaskTableView").then(module => ({
+    default: module.ArchiveTaskTableView
+  }))
+);
+
+const DroneCommandsArchiveTableView = lazy(() => 
+  import("./tables/DroneCommandsArchiveTableView").then(module => ({
+    default: module.DroneCommandsArchiveTableView
+  }))
+);
+
+const DronePositionsArchiveTableView = lazy(() => 
+  import("./tables/DronePositionsArchiveTableView").then(module => ({
+    default: module.DronePositionsArchiveTableView
+  }))
+);
+
+const DroneStatusArchiveTableView = lazy(() => 
+  import("./tables/DroneStatusArchiveTableView").then(module => ({
+    default: module.DroneStatusArchiveTableView
+  }))
+);
 import styles from "../../styles/TableViewer.module.scss"; // 引入表格樣式
 import { createLogger } from "../../configs/loggerConfig"; // 引入日誌配置
 
@@ -269,13 +292,29 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
 
   /**
    * 渲染對應的表格組件
+   * 🚀 支持懶加載 - 歸檔表格組件將按需加載，減少初始bundle大小
    *
    * 根據當前活動的表格類型，渲染對應的表格視圖組件
    *
    * @returns {JSX.Element} 對應的表格組件 JSX 元素
    */
   const renderCurrentTable = () => {
+    // 🔄 懶加載表格組件 - 使用 Suspense 包裝
+    const renderLazyTable = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+      <Suspense 
+        fallback={
+          <div className={styles.tableLoadingContainer}>
+            <LoadingSpinner />
+            <p className={styles.loadingText}>載入表格中...</p>
+          </div>
+        }
+      >
+        <Component />
+      </Suspense>
+    );
+
     switch (activeTable) {
+      // 🚀 立即加載的核心表格（高頻使用）
       case TABLE_TYPES.PERMISSION:
         return <PermissionTableView />; // 渲染權限表格視圖
       case TABLE_TYPES.ROLE:
@@ -292,16 +331,19 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
         return <DroneStatusTableView />; // 渲染無人機狀態表格視圖
       case TABLE_TYPES.DRONE_COMMAND:
         return <DroneCommandTableView />; // 渲染無人機命令表格視圖
-      case TABLE_TYPES.DRONE_POSITIONS_ARCHIVE:
-        return <DronePositionsArchiveTableView />; // 渲染無人機位置歸檔表格視圖
-      case TABLE_TYPES.DRONE_STATUS_ARCHIVE:
-        return <DroneStatusArchiveTableView />; // 渲染無人機狀態歸檔表格視圖
-      case TABLE_TYPES.DRONE_COMMANDS_ARCHIVE:
-        return <DroneCommandsArchiveTableView />; // 渲染無人機命令歸檔表格視圖
-      case TABLE_TYPES.ARCHIVE_TASK:
-        return <ArchiveTaskTableView />; // 渲染歸檔任務表格視圖
       case TABLE_TYPES.USER_PREFERENCE:
         return <UserPreferenceTableView />; // 渲染用戶偏好表格視圖
+      
+      // 🔄 懶加載的歸檔表格組件（低頻使用）
+      case TABLE_TYPES.DRONE_POSITIONS_ARCHIVE:
+        return renderLazyTable(DronePositionsArchiveTableView); // 懶加載無人機位置歸檔表格視圖
+      case TABLE_TYPES.DRONE_STATUS_ARCHIVE:
+        return renderLazyTable(DroneStatusArchiveTableView); // 懶加載無人機狀態歸檔表格視圖
+      case TABLE_TYPES.DRONE_COMMANDS_ARCHIVE:
+        return renderLazyTable(DroneCommandsArchiveTableView); // 懶加載無人機命令歸檔表格視圖
+      case TABLE_TYPES.ARCHIVE_TASK:
+        return renderLazyTable(ArchiveTaskTableView); // 懶加載歸檔任務表格視圖
+        
       default:
         return <div className={styles.noData}>No table selected</div>; // 無選中表格時的提示
     }

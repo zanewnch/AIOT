@@ -44,7 +44,7 @@ export class DroneStatusQuery {
   constructor() {}
   
   /**
-   * 獲取所有無人機狀態的 Hook
+   * 獲取所有無人機狀態的 Hook - 優化版本，支持背景即時更新
    */
   useAll() {
     return useQuery({
@@ -69,10 +69,16 @@ export class DroneStatusQuery {
           throw tableError;
         }
       },
-      staleTime: 30 * 1000,
+      staleTime: 10 * 1000, // 10秒後認為過期 (優化: 從30秒降至10秒)
       gcTime: 5 * 60 * 1000,
       retry: 3,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      // 🚀 背景更新優化
+      refetchInterval: 5 * 1000, // 每5秒背景更新
+      refetchIntervalInBackground: true, // 頁面不在前台時也更新
+      refetchOnWindowFocus: true, // 頁面重新獲得焦點時更新
+      refetchOnReconnect: true, // 網路重連時更新
+      refetchOnMount: 'always', // 組件掛載時總是重新獲取
     });
   }
 
@@ -143,7 +149,7 @@ export class DroneStatusQuery {
   }
 
   /**
-   * 根據狀態獲取無人機列表的 Hook
+   * 根據狀態獲取無人機列表的 Hook - 優化版本，加強即時性
    */
   useByStatus(status: string, enabled: boolean = true) {
     return useQuery({
@@ -169,11 +175,15 @@ export class DroneStatusQuery {
         }
       },
       enabled: enabled && !!status,
-      staleTime: 30 * 1000,
+      staleTime: 5 * 1000, // 5秒過期 (優化: 從30秒降至5秒)
       gcTime: 5 * 60 * 1000,
       retry: 3,
-      refetchInterval: 60 * 1000,
+      // 🚀 加強背景更新
+      refetchInterval: 3 * 1000, // 每3秒更新 (優化: 從60秒降至3秒)
       refetchIntervalInBackground: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMount: 'always',
     });
   }
 
