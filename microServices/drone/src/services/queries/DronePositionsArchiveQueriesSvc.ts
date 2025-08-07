@@ -20,10 +20,10 @@ import type {
     ArchiveBatchStatistics
 } from '../../types/services/IDronePositionsArchiveService.js';
 import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
-import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/drone/DronePositionsArchiveQueriesRepo.js';
-import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/drone/DronePositionsArchiveCommandsRepo.js';
-import type { DronePositionsArchiveAttributes } from '../../models/drone/DronePositionsArchiveModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/DronePositionsArchiveQueriesRepo.js';
+import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/DronePositionsArchiveCommandsRepo.js';
+import type { DronePositionsArchiveAttributes } from '../../models/DronePositionsArchiveModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DronePositionsArchiveQueriesSvc');
 

@@ -13,12 +13,12 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../types/container/dependency-injection.js';
+import { TYPES } from '../types/dependency-injection.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
-import { WebSocketAuthMiddleware } from '../middlewares/WebSocketAuthMiddleware.js';
+import { WebSocketAuthMiddleware } from '../../../../packages/WebSocketAuthMiddleware.js';
 import { DroneRealTimeStatusQueriesSvc } from '../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import { DroneRealTimeStatusCommandsSvc } from '../services/commands/DroneRealTimeStatusCommandsSvc.js';
-import type { IDroneEventHandler } from '../types/container/websocket-interfaces.js';
+import type { IDroneEventHandler } from '../types/websocket-interfaces.js';
 
 /**
  * 無人機狀態事件處理器
@@ -71,8 +71,8 @@ export class DroneStatusEventHandler implements IDroneEventHandler {
   constructor(
     @inject(TYPES.WebSocketService) wsService: WebSocketService, 
     @inject(TYPES.WebSocketAuthMiddleware) authMiddleware: WebSocketAuthMiddleware,
-    @inject(TYPES.DroneStatusQueriesService) droneStatusQueriesService: DroneRealTimeStatusQueriesSvc,
-    @inject(TYPES.DroneStatusCommandsService) droneStatusCommandsService: DroneRealTimeStatusCommandsSvc
+    @inject(TYPES.DroneStatusQueriesSvc) droneStatusQueriesService: DroneRealTimeStatusQueriesSvc,
+    @inject(TYPES.DroneStatusCommandsSvc) droneStatusCommandsService: DroneRealTimeStatusCommandsSvc
   ) {
     this.wsService = wsService;
     this.authMiddleware = authMiddleware;

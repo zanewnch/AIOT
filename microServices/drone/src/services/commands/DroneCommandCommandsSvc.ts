@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../types/dependency-injection.js';
 import type {
     CommandExecutionResult,
     BatchCommandResult
@@ -21,10 +21,10 @@ import type {
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
 import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQueriesRepo.js';
-import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
-import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/drone/DroneCommandModel.js';
+import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
+import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandQueriesSvc } from '../queries/DroneCommandQueriesSvc.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandCommandsSvc');
 

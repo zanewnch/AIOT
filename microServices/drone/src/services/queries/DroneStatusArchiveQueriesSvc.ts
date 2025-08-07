@@ -13,12 +13,12 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/drone/DroneStatusArchiveQueriesRepo.js';
-import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/drone/DroneStatusArchiveCommandsRepo.js';
-import type { DroneStatusArchiveAttributes } from '../../models/drone/DroneStatusArchiveModel.js';
-import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
+import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/DroneStatusArchiveQueriesRepo.js';
+import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/DroneStatusArchiveCommandsRepo.js';
+import type { DroneStatusArchiveAttributes } from '../../models/DroneStatusArchiveModel.js';
+import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusArchiveQueriesSvc');
 

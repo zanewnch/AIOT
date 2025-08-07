@@ -22,9 +22,8 @@
 
 import { Request, Response, NextFunction } from 'express'; // 引入 Express 類型定義
 import jwt from 'jsonwebtoken'; // 引入 JWT 令牌處理庫
-import { UserQueriesRepository } from '../repo/queries/rbac/UserQueriesRepo.js'; // 引入使用者查詢資料存取層
-import { SessionQueriesSvc } from '../services/queries/SessionQueriesSvc.js'; // 引入會話查詢服務層
-import { SessionCommandsSvc } from '../services/commands/SessionCommandsSvc.js'; // 引入會話命令服務層
+// Note: For microservice architecture, authentication will be handled by the API Gateway
+// This is a simplified version for drone service that validates JWT tokens without database dependencies
 // Express 類型擴展已透過 tsconfig.json 自動載入
 
 /**
@@ -81,27 +80,15 @@ export interface JwtPayload {
  * ```
  */
 class AuthMiddleware {
-    /** 用於資料庫查詢操作的使用者儲存庫實例 */
-    private userQueriesRepository: UserQueriesRepository;
-    /** 會話查詢服務實例 */
-    private sessionQueriesSvc: SessionQueriesSvc;
-    /** 會話命令服務實例 */
-    private sessionCommandsSvc: SessionCommandsSvc;
-
     /**
      * 建立 AuthMiddleware 實例
      * 
-     * 初始化 AuthMiddleware，設定 CQRS 服務實例。
-     * 如果未提供服務，則使用預設實例。
+     * 簡化版本的 AuthMiddleware，適用於微服務架構。
+     * 只進行 JWT 令牌驗證，不依賴資料庫和會話服務。
      */
-    constructor(
-        userQueriesRepository: UserQueriesRepository = new UserQueriesRepository(),
-        sessionQueriesSvc: SessionQueriesSvc = new SessionQueriesSvc(),
-        sessionCommandsSvc: SessionCommandsSvc = new SessionCommandsSvc()
-    ) {
-        this.userQueriesRepository = userQueriesRepository;
-        this.sessionQueriesSvc = sessionQueriesSvc;
-        this.sessionCommandsSvc = sessionCommandsSvc;
+    constructor() {
+        // 微服務架構中，驗證由 API Gateway 處理
+        // 此處僅進行 JWT 令牌格式驗證
     }
 
     /**
@@ -138,36 +125,17 @@ class AuthMiddleware {
                 return; // 中止執行，不調用 next()
             }
 
-            // 第二步：檢查 Redis 會話是否有效
-            const sessionData = await this.sessionQueriesSvc.getUserSession(token);
-            if (!sessionData) {
-                // 會話不存在或已過期
-                res.status(401).json({ message: 'Session expired or invalid' });
-                return; // 中止執行，不調用 next()
-            }
-
-            // 第三步：驗證 JWT 簽章和過期時間
+            // 第二步：驗證 JWT 簽章和過期時間
             const decoded = this.verifyToken(token);
             if (!decoded) {
-                // JWT 無效，同時清除 Redis 會話以保持資料一致性
-                await this.sessionCommandsSvc.deleteUserSession({ token, userId: sessionData.userId });
                 res.status(401).json({ message: 'Invalid or expired token' });
                 return; // 中止執行，不調用 next()
             }
 
-            // 第四步：從資料庫獲取用戶資訊（確保使用者仍然存在且有效）
-            const user = await this.userQueriesRepository.findById(decoded.sub);
-            if (!user) {
-                // 使用者不存在，清除會話
-                await this.sessionCommandsSvc.deleteUserSession({ token, userId: sessionData.userId });
-                res.status(401).json({ message: 'User not found' });
-                return; // 中止執行，不調用 next()
-            }
-
-            // 第五步：將用戶資訊添加到 request 物件供後續中間件使用
+            // 第三步：將用戶資訊添加到 request 物件供後續中間件使用
             req.user = {
-                id: user.id, // 使用者 ID
-                username: user.username // 使用者名稱
+                id: decoded.sub, // 使用者 ID
+                username: `user_${decoded.sub}` // 簡化的使用者名稱
             };
 
             next(); // 驗證通過，繼續執行下一個中間件
@@ -208,35 +176,18 @@ class AuthMiddleware {
                 return;
             }
 
-            // 第二步：檢查 Redis 會話
-            const sessionData = await this.sessionQueriesSvc.getUserSession(token);
-            if (!sessionData) {
-                // 會話無效也繼續，但不設置 user
-                next(); // 繼續處理請求，但 req.user 為 undefined
-                return;
-            }
-
-            // 第三步：驗證 JWT 簽章和過期時間
+            // 第二步：驗證 JWT 簽章和過期時間
             const decoded = this.verifyToken(token);
             if (!decoded) {
-                // token 無效，清除會話並繼續
-                await this.sessionCommandsSvc.deleteUserSession({ token, userId: sessionData.userId });
                 next(); // 繼續處理請求，但 req.user 為 undefined
                 return;
             }
 
-            // 第四步：從資料庫獲取用戶資訊
-            const user = await this.userQueriesRepository.findById(decoded.sub);
-            if (user) {
-                // 使用者存在，設置用戶資訊到 request 物件
-                req.user = {
-                    id: user.id, // 使用者 ID
-                    username: user.username // 使用者名稱
-                };
-            } else {
-                // 使用者不存在，清除會話但繼續執行
-                await this.sessionCommandsSvc.deleteUserSession({ token, userId: sessionData.userId });
-            }
+            // 第三步：設置用戶資訊到 request 物件
+            req.user = {
+                id: decoded.sub, // 使用者 ID
+                username: `user_${decoded.sub}` // 簡化的使用者名稱
+            };
 
             next(); // 無論驗證結果如何都繼續執行
         } catch (error) {

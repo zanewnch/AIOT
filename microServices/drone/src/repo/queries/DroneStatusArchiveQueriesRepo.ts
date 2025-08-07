@@ -11,10 +11,10 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes } from '../../../models/drone/DroneStatusArchiveModel.js';
-import type { DroneStatus } from '../../../models/drone/DroneStatusModel.js';
-import type { PaginationParams, PaginatedResponse } from '../../../types/ApiResponseType.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes } from '../../models/DroneStatusArchiveModel.js';
+import type { DroneStatus } from '../../models/DroneStatusModel.js';
+import type { PaginationParams, PaginatedResponse } from '../../../../../packages/types/ApiResponseType.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 import { Op } from 'sequelize';
 
 /**

@@ -15,10 +15,10 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DronePositionCommandsSvc } from '../../services/commands/DronePositionCommandsSvc.js';
-import { createLogger, logRequest } from '../../configs/loggerConfig.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
-import type { DronePositionCreationAttributes } from '../../models/drone/DronePositionModel.js';
+import { createLogger, logRequest } from '../../../../../packages/loggerConfig.js';
+import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { TYPES } from '../../types/dependency-injection.js';
+import type { DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 
 const logger = createLogger('DronePositionCommands');
 

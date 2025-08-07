@@ -18,10 +18,10 @@ import {
     CreateArchiveTaskRequest 
 } from '../../types/services/IArchiveTaskService.js';
 import { ArchiveTaskCommandsSvc } from '../../services/commands/ArchiveTaskCommandsSvc.js';
-import { ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { TYPES } from '../../types/dependency-injection.js';
 
 /**
  * 歸檔任務命令 Controller 類別

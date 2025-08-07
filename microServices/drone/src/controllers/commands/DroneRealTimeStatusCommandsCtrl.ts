@@ -15,9 +15,9 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRealTimeStatusCommandsSvc.js';
-import { createLogger, logRequest } from '../../configs/loggerConfig.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { createLogger, logRequest } from '../../../../../packages/loggerConfig.js';
+import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { TYPES } from '../../types/dependency-injection.js';
 import type { DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes } from '../../types/services/IDroneRealTimeStatusService.js';
 
 const logger = createLogger('DroneRealTimeStatusCommands');
@@ -34,7 +34,7 @@ const logger = createLogger('DroneRealTimeStatusCommands');
 @injectable()
 export class DroneRealTimeStatusCommands {
     constructor(
-        @inject(TYPES.DroneStatusCommandsService) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsSvc
+        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsSvc
     ) {}
 
     /**

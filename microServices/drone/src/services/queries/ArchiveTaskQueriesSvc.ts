@@ -17,7 +17,7 @@ import {
     ArchiveTaskModel,
     ArchiveTaskStatus,
     ArchiveJobType
-} from '../../models/drone/ArchiveTaskModel.js';
+} from '../../models/ArchiveTaskModel.js';
 import type {
     ArchiveTaskStatistics
 } from '../../types/services/IArchiveTaskService.js';
@@ -27,7 +27,7 @@ import type {
 } from '../../types/repositories/IArchiveTaskRepository.js';
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 /**
  * 歸檔任務查詢 Service 實作類別

@@ -13,8 +13,8 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
-import { DroneRealTimeStatusCommandsRepository } from '../../repo/commands/drone/DroneRealTimeStatusCommandsRepo.js';
+import { TYPES } from '../../types/dependency-injection.js';
+import { DroneRealTimeStatusCommandsRepository } from '../../repo/commands/DroneRealTimeStatusCommandsRepo.js';
 // 暫時註解掉不存在的類型導入，使用 any 作為臨時解決方案
 // import type { IDroneRealTimeStatusRepository } from '../../types/repositories/IDroneRealTimeStatusRepository.js';
 import { 
@@ -22,13 +22,13 @@ import {
     DroneRealTimeStatusAttributes, 
     DroneRealTimeStatusCreationAttributes,
     DroneRealTimeStatus
-} from '../../models/drone/DroneRealTimeStatusModel.js';
+} from '../../models/DroneRealTimeStatusModel.js';
 import type { 
     DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes,
     DroneRealTimeStatusAttributes as ExternalAttributes
 } from '../../types/services/IDroneRealTimeStatusService.js';
 import { DroneRealTimeStatusQueriesSvc } from '../queries/DroneRealTimeStatusQueriesSvc.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneRealTimeStatusCommandsSvc');
 

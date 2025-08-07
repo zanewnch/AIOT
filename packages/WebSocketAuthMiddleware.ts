@@ -17,8 +17,8 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
-import { getAuthConfig } from '../configs/authConfig.js';
-import { DRONE_EVENTS } from '../configs/websocket/index.js';
+// Simplified WebSocket auth middleware for microservice architecture
+// Authentication details are handled by the API Gateway
 
 /**
  * JWT Payload 介面

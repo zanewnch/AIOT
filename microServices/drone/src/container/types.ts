@@ -51,12 +51,12 @@ export const TYPES = {
   /**
    * 無人機即時狀態查詢服務類型
    */
-  DroneStatusQueriesService: Symbol.for('DroneStatusQueriesService'),
+  DroneRealTimeStatusQueriesSvc: Symbol.for('DroneRealTimeStatusQueriesSvc'),
 
   /**
    * 無人機即時狀態命令服務類型
    */
-  DroneStatusCommandsService: Symbol.for('DroneStatusCommandsService'),
+  DroneRealTimeStatusCommandsSvc: Symbol.for('DroneRealTimeStatusCommandsSvc'),
 
   // ===== 事件處理器 =====
   /**

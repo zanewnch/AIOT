@@ -9,9 +9,9 @@
  */
 
 import { Socket } from 'socket.io';
-import { DroneEventType } from '../types/container/dependency-injection.js';
+import { DroneEventType } from '../types/dependency-injection.js';
 import { DRONE_EVENTS, WEBSOCKET_NAMESPACES, AuthenticatedSocket } from '../configs/websocket/index.js';
-import type { IDroneEventHandler } from '../types/container/websocket-interfaces.js';
+import type { IDroneEventHandler } from '../types/websocket-interfaces.js';
 
 /**
  * 無人機 WebSocket 事件設置器

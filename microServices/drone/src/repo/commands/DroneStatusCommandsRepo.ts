@@ -11,8 +11,8 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusModel, DroneStatus, type DroneStatusCreationAttributes } from '../../../models/drone/DroneStatusModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+import { DroneStatusModel, DroneStatus, type DroneStatusCreationAttributes } from '../../models/DroneStatusModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusCommandsRepository');
 

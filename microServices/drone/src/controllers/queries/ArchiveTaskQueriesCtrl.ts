@@ -15,10 +15,10 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { ArchiveTaskQueriesSvc } from '../../services/queries/ArchiveTaskQueriesSvc.js';
-import { ArchiveJobType, ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { ArchiveJobType, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { TYPES } from '../../types/dependency-injection.js';
 
 /**
  * 歸檔任務查詢 Controller 類別

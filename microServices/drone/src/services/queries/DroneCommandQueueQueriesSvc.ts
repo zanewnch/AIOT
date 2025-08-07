@@ -17,7 +17,7 @@ import type {
     DroneCommandQueueAttributes,
     QueueStatistics
 } from '../../types/services/IDroneCommandQueueService.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandQueueQueriesSvc');
 

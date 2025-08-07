@@ -11,8 +11,8 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes, type DroneStatusArchiveCreationAttributes } from '../../../models/drone/DroneStatusArchiveModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes, type DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 import { Op } from 'sequelize';
 
 /**

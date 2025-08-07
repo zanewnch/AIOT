@@ -16,8 +16,8 @@ import {
     DroneRealTimeStatusModel, 
     DroneRealTimeStatusAttributes, 
     DroneRealTimeStatusCreationAttributes
-} from '../../../models/drone/DroneRealTimeStatusModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+} from '../../models/DroneRealTimeStatusModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 /**
  * 無人機即時狀態命令 Repository 實現類別 - CQRS 命令端

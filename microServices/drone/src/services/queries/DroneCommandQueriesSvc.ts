@@ -21,9 +21,9 @@ import type {
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQueriesRepo.js';
 import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
-import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/drone/DroneCommandModel.js';
-import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/drone/DroneCommandModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
+import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandQueriesSvc');
 

@@ -341,7 +341,7 @@ AIOT/
 │   │   │   └── deployment.md
 │   │   └── dist/                   # 編譯輸出目錄
 │   │
-│   └── user-preference-service/    # 用戶偏好服務 (Port: 3003)
+│   └── fe-service/    # 用戶偏好服務 (Port: 3003)
 │       ├── Dockerfile
 │       ├── package.json
 │       ├── tsconfig.json

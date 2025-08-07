@@ -14,10 +14,10 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
-import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/drone/DroneCommandsArchiveQueriesRepo.js';
-import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/drone/DroneCommandsArchiveCommandsRepo.js';
-import type { DroneCommandsArchiveAttributes } from '../../models/drone/DroneCommandsArchiveModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/DroneCommandsArchiveQueriesRepo.js';
+import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/DroneCommandsArchiveCommandsRepo.js';
+import type { DroneCommandsArchiveAttributes } from '../../models/DroneCommandsArchiveModel.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandsArchiveQueriesSvc');
 

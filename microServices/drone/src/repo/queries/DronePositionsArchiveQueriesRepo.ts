@@ -11,9 +11,9 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes } from '../../../models/drone/DronePositionsArchiveModel.js';
-import type { PaginationParams, PaginatedResponse } from '../../../types/ApiResponseType.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes } from '../../models/DronePositionsArchiveModel.js';
+import type { PaginationParams, PaginatedResponse } from '../../../../../packages/types/ApiResponseType.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 import { Op } from 'sequelize';
 
 /**

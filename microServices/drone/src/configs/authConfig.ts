@@ -8,10 +8,8 @@
 import passport from 'passport';
 // 從 passport-jwt 匯入 JWT 策略、JWT 提取工具和回調類型
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
-// 匯入用戶模型進行資料庫操作
-import { UserModel } from '../models/rbac/UserModel.js';
-// 匯入 JWT 負載類型定義
-import { JwtPayload } from '../middlewares/AuthMiddleware.js';
+// 匯入 JWT 負載類型定義 - 從共享套件引入
+import { JwtPayload } from '../../../../packages/AuthMiddleware.js';
 
 /**
  * 身份驗證設定的配置介面
@@ -58,14 +56,21 @@ export const setupPassportJWT = (): void => {
   // 向 passport 註冊 JWT 策略
   passport.use(new JwtStrategy(jwtOptions, async (payload: JwtPayload, done: VerifiedCallback) => {
     try {
-      // 嘗試使用 JWT 負載中的主題（用戶 ID）在資料庫中查找用戶
-      const user = await UserModel.findByPk(payload.sub);
-      // 如果用戶存在，身份驗證成功 - 返回用戶物件
-      if (user) return done(null, user);
-      // 如果未找到用戶，身份驗證失敗 - 返回 false
+      // TODO: Drone 服務應該通過 API 調用 rbacService 來驗證用戶
+      // 目前暫時接受所有有效的 JWT 令牌
+      // 在生產環境中，這裡應該調用 rbacService 的 API 來驗證用戶
+      
+      // 如果 payload 包含有效的用戶 ID，則視為認證成功
+      if (payload.sub && typeof payload.sub === 'number') {
+        // 創建一個簡單的用戶對象供 passport 使用
+        const user = { id: payload.sub };
+        return done(null, user);
+      }
+      
+      // 如果 payload 無效，認證失敗
       return done(null, false);
     } catch (err) {
-      // 如果發生資料庫錯誤，返回錯誤和身份驗證失敗
+      // 如果發生錯誤，返回錯誤和身份驗證失敗
       return done(err, false);
     }
   }));

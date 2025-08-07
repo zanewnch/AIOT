@@ -13,16 +13,16 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneRealTimeStatusQueriesRepository } from '../../repo/queries/drone/DroneRealTimeStatusQueriesRepo.js';
+import { DroneRealTimeStatusQueriesRepository } from '../../repo/queries/DroneRealTimeStatusQueriesRepo.js';
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatus
-} from '../../models/drone/DroneRealTimeStatusModel.js';
+} from '../../models/DroneRealTimeStatusModel.js';
 import type { 
     DroneRealTimeStatusAttributes as ExternalAttributes,
     RealTimeStatusStatistics 
 } from '../../types/services/IDroneRealTimeStatusService.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesSvc');
 

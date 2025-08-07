@@ -13,9 +13,9 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
-import type { ArchiveTaskModel } from '../../models/drone/ArchiveTaskModel.js';
-import { ArchiveJobType, ArchiveTaskStatus } from '../../models/drone/ArchiveTaskModel.js';
+import { TYPES } from '../../types/dependency-injection.js';
+import type { ArchiveTaskModel } from '../../models/ArchiveTaskModel.js';
+import { ArchiveJobType, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import type {
     CreateArchiveTaskRequest,
     ArchiveTaskExecutionResult,
@@ -27,7 +27,7 @@ import type {
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 /**
  * 歸檔任務命令 Service 實作類別

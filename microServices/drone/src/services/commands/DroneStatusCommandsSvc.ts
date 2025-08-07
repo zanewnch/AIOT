@@ -13,13 +13,13 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
-import { DroneStatusCommandsRepository } from '../../repo/commands/drone/DroneStatusCommandsRepo.js';
-import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/drone/DroneStatusModel.js';
-import { DroneStatus } from '../../models/drone/DroneStatusModel.js';
+import { TYPES } from '../../types/dependency-injection.js';
+import { DroneStatusCommandsRepository } from '../../repo/commands/DroneStatusCommandsRepo.js';
+import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/DroneStatusModel.js';
+import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import { DroneStatusQueriesSvc } from '../queries/DroneStatusQueriesSvc.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../../../../packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusCommandsSvc');
 
