@@ -17,8 +17,9 @@ import type {
     DroneCommandQueueAttributes,
     DroneCommandQueueCreationAttributes
 } from '../../types/services/IDroneCommandQueueService.js';
+import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 import { DroneCommandQueueQueriesSvc } from '../queries/DroneCommandQueueQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandQueueCommandsSvc');
 
@@ -59,30 +60,38 @@ export class DroneCommandQueueCommandsSvc {
             logger.info('Creating new drone command queue', { data });
 
             // 驗證必要欄位
-            if (!data.drone_id || data.drone_id <= 0) {
-                throw new Error('無人機 ID 必須是正整數');
+            if (!data.name || typeof data.name !== 'string') {
+                throw new Error('佇列名稱為必填項且必須是字串');
             }
 
-            if (!data.command_type || typeof data.command_type !== 'string') {
-                throw new Error('指令類型為必填項且必須是字串');
+            if (typeof data.auto_execute !== 'boolean') {
+                throw new Error('自動執行設定為必填項');
             }
 
-            // 驗證指令類型是否有效
-            const validCommandTypes = ['takeoff', 'land', 'patrol', 'survey', 'return', 'emergency', 'hover', 'flyTo'];
-            if (!validCommandTypes.includes(data.command_type)) {
-                throw new Error('無效的指令類型');
+            // 驗證狀態是否有效
+            const validStatuses = ['pending', 'running', 'paused', 'completed', 'failed'];
+            if (data.status && !validStatuses.includes(data.status)) {
+                throw new Error('無效的狀態');
             }
 
             // TODO: 實作資料庫插入邏輯
             // 暫時創建模擬資料
             const newQueue: DroneCommandQueueAttributes = {
                 id: DroneCommandQueueCommandsSvc.idCounter++,
+                name: data.name,
+                status: data.status || DroneCommandQueueStatus.PENDING,
                 drone_id: data.drone_id,
-                command_type: data.command_type,
-                command_data: data.command_data || {},
                 priority: data.priority || 5,
-                status: data.status || 'pending',
-                scheduled_at: data.scheduled_at || new Date(),
+                command_type: data.command_type || 'default',
+                current_index: data.current_index || 0,
+                auto_execute: data.auto_execute,
+                execution_conditions: data.execution_conditions || null,
+                loop_count: data.loop_count || null,
+                max_loops: data.max_loops || null,
+                created_by: data.created_by,
+                started_at: data.started_at || null,
+                completed_at: data.completed_at || null,
+                error_message: data.error_message || null,
                 createdAt: new Date(),
                 updatedAt: new Date()
             };
@@ -156,7 +165,7 @@ export class DroneCommandQueueCommandsSvc {
             }
 
             // 檢查佇列狀態，運行中的佇列不能刪除
-            if (existingQueue.status === 'running') {
+            if (existingQueue.status === DroneCommandQueueStatus.RUNNING) {
                 throw new Error('運行中的指令佇列無法刪除');
             }
 
@@ -186,11 +195,20 @@ export class DroneCommandQueueCommandsSvc {
 
             // 創建佇列項目
             const queueData: DroneCommandQueueCreationAttributes = {
+                name: `Command-${commandType}-${Date.now()}`,
+                status: DroneCommandQueueStatus.PENDING,
                 drone_id: droneId,
-                command_type: commandType,
-                command_data: commandData,
                 priority: priority || 5,
-                status: 'pending'
+                command_type: commandType,
+                current_index: 0,
+                auto_execute: true,
+                execution_conditions: null,
+                loop_count: null,
+                max_loops: null,
+                created_by: 1, // TODO: 從當前用戶會話獲取
+                started_at: null,
+                completed_at: null,
+                error_message: null
             };
 
             return await this.createDroneCommandQueue(queueData);
@@ -220,7 +238,7 @@ export class DroneCommandQueueCommandsSvc {
 
             // 將狀態更新為執行中
             const updatedQueue = await this.updateDroneCommandQueue(nextCommand.id, {
-                status: 'running'
+                status: DroneCommandQueueStatus.RUNNING
             });
 
             logger.info('Command dequeued successfully', { droneId, commandId: nextCommand.id });
@@ -246,7 +264,7 @@ export class DroneCommandQueueCommandsSvc {
             const droneQueues = await this.queryService.getDroneCommandQueueByDroneId(droneId);
             
             // 過濾出可以刪除的項目（非運行中狀態）
-            const deletableQueues = droneQueues.filter(queue => queue.status !== 'running');
+            const deletableQueues = droneQueues.filter(queue => queue.status !== DroneCommandQueueStatus.RUNNING);
             
             let deletedCount = 0;
             for (const queue of deletableQueues) {
@@ -265,7 +283,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 更新佇列狀態
      */
-    async updateDroneCommandQueueStatus(id: number, status: string): Promise<DroneCommandQueueAttributes | null> {
+    async updateDroneCommandQueueStatus(id: number, status: DroneCommandQueueStatus): Promise<DroneCommandQueueAttributes | null> {
         try {
             logger.info('Updating drone command queue status', { id, status });
 
@@ -293,7 +311,7 @@ export class DroneCommandQueueCommandsSvc {
                 };
             }
 
-            if (queue.status !== 'pending') {
+            if (queue.status !== DroneCommandQueueStatus.PENDING) {
                 return {
                     success: false,
                     queue,
@@ -303,7 +321,7 @@ export class DroneCommandQueueCommandsSvc {
             }
 
             // 更新狀態為執行中
-            const updatedQueue = await this.updateDroneCommandQueue(id, { status: 'running' });
+            const updatedQueue = await this.updateDroneCommandQueue(id, { status: DroneCommandQueueStatus.RUNNING });
             
             if (!updatedQueue) {
                 return {
@@ -347,7 +365,7 @@ export class DroneCommandQueueCommandsSvc {
                 };
             }
 
-            if (queue.status !== 'running') {
+            if (queue.status !== DroneCommandQueueStatus.RUNNING) {
                 return {
                     success: false,
                     queue,
@@ -356,7 +374,7 @@ export class DroneCommandQueueCommandsSvc {
                 };
             }
 
-            const updatedQueue = await this.updateDroneCommandQueue(id, { status: 'paused' });
+            const updatedQueue = await this.updateDroneCommandQueue(id, { status: DroneCommandQueueStatus.PAUSED });
             
             if (!updatedQueue) {
                 return {
@@ -390,7 +408,7 @@ export class DroneCommandQueueCommandsSvc {
         try {
             logger.info('Completing queue', { id });
 
-            const updatedQueue = await this.updateDroneCommandQueue(id, { status: 'completed' });
+            const updatedQueue = await this.updateDroneCommandQueue(id, { status: DroneCommandQueueStatus.COMPLETED });
             
             if (!updatedQueue) {
                 return {

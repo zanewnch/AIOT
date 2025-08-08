@@ -8,9 +8,24 @@
  * @since 2025-08-08
  */
 
-import { DroneRealTimeStatusModel, DroneRealTimeStatusCreationAttributes } from '../../models/DroneRealTimeStatusModel.js';
+import { DroneRealTimeStatusModel, DroneRealTimeStatusCreationAttributes, DroneRealTimeStatusAttributes } from '../../models/DroneRealTimeStatusModel.js';
 
-export { DroneRealTimeStatusCreationAttributes };
+export type { DroneRealTimeStatusCreationAttributes, DroneRealTimeStatusAttributes };
+
+export interface RealTimeStatusStatistics {
+  totalStatuses: number;
+  activeStatuses: number;
+  inactiveStatuses: number;
+  maintenanceStatuses: number;
+  flyingStatuses: number;
+  offlineStatuses: number;
+  chargingStatuses: number;
+  errorStatuses: number;
+  lowBatteryCount: number;
+  averageBatteryLevel: number;
+  averageSignalStrength?: number; // 平均信號強度
+  humidity?: number; // 濕度
+}
 
 export interface IDroneRealTimeStatusService {
   /**

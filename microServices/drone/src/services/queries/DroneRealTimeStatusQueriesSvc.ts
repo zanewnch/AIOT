@@ -16,15 +16,37 @@ import { injectable } from 'inversify';
 import { DroneRealTimeStatusQueriesRepository } from '../../repo/queries/DroneRealTimeStatusQueriesRepo.js';
 import { 
     DroneRealTimeStatusModel, 
-    DroneRealTimeStatus
+    DroneRealTimeStatus,
+    DroneRealTimeStatusAttributes
 } from '../../models/DroneRealTimeStatusModel.js';
 import type { 
-    DroneRealTimeStatusAttributes as ExternalAttributes,
+    DroneRealTimeStatusAttributes as ExternalAttributesLocal,
     RealTimeStatusStatistics 
 } from '../../types/services/IDroneRealTimeStatusService.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesSvc');
+
+/**
+ * 外部屬性介面
+ */
+interface ExternalAttributesLocal {
+  id: number;
+  drone_id: number;
+  status: string;
+  battery_level: number;
+  signal_strength?: number;
+  altitude?: number;
+  latitude?: number;
+  longitude?: number;
+  speed?: number;
+  heading?: number;
+  temperature?: number;
+  last_seen?: Date;
+  is_connected?: boolean;
+  error_message?: string;
+  flight_time_today?: number;
+}
 
 /**
  * 無人機即時狀態查詢 Service 實現類別
@@ -255,21 +277,15 @@ export class DroneRealTimeStatusQueriesSvc {
     }
 
     // 實現外部介面方法
-    async getAllDroneRealTimeStatuses(): Promise<ExternalAttributes[]> {
-        const models = await this.getAllRealTimeStatuses();
-        return models.map(model => this.convertToExternalAttributes(model.toJSON()));
+    async getAllDroneRealTimeStatuses(): Promise<DroneRealTimeStatusAttributes[]> {
+        return await this.getAllRealTimeStatuses();
     }
 
-    async getDroneRealTimeStatusById(id: number): Promise<ExternalAttributes | null> {
-        try {
-            const model = await this.getRealTimeStatusById(id);
-            return this.convertToExternalAttributes(model.toJSON());
-        } catch (error) {
-            return null;
-        }
+    async getDroneRealTimeStatusById(id: number): Promise<DroneRealTimeStatusAttributes | null> {
+        return await this.getRealTimeStatusById(id);
     }
 
-    async getDroneRealTimeStatusByDroneId(droneId: number): Promise<ExternalAttributes | null> {
+    async getDroneRealTimeStatusByDroneId(droneId: number): Promise<DroneRealTimeStatusAttributes | null> {
         try {
             const model = await this.getRealTimeStatusByDroneId(droneId);
             return this.convertToExternalAttributes(model.toJSON());
@@ -278,12 +294,12 @@ export class DroneRealTimeStatusQueriesSvc {
         }
     }
 
-    async getDroneRealTimeStatusesByStatus(status: string): Promise<ExternalAttributes[]> {
+    async getDroneRealTimeStatusesByStatus(status: string): Promise<DroneRealTimeStatusAttributes[]> {
         const models = await this.getRealTimeStatusesByStatus(status as DroneRealTimeStatus);
         return models.map(model => this.convertToExternalAttributes(model.toJSON()));
     }
 
-    async getActiveDroneRealTimeStatuses(): Promise<ExternalAttributes[]> {
+    async getActiveDroneRealTimeStatuses(): Promise<DroneRealTimeStatusAttributes[]> {
         const models = await this.getOnlineDrones();
         return models.map(model => this.convertToExternalAttributes(model.toJSON()));
     }
@@ -292,7 +308,7 @@ export class DroneRealTimeStatusQueriesSvc {
      * 轉換內部模型屬性到外部屬性
      * @private
      */
-    private convertToExternalAttributes(modelData: any): ExternalAttributes {
+    private convertToExternalAttributes(modelData: any): ExternalAttributesLocal {
         return {
             id: modelData.id,
             drone_id: modelData.drone_id,

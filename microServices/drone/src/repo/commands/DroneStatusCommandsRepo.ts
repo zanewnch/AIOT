@@ -12,7 +12,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneStatusModel, DroneStatus, type DroneStatusCreationAttributes } from '../../models/DroneStatusModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusCommandsRepository');
 

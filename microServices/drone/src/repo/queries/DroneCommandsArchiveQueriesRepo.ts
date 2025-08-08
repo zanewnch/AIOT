@@ -12,8 +12,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes } from '../../models/DroneCommandsArchiveModel.js';
-import type { PaginationParams, PaginatedResponse } from '../../../../../packages/types/ApiResponseType.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Op } from 'sequelize';
 
 // 創建 Repository 專用的日誌記錄器
@@ -58,7 +58,7 @@ export class DroneCommandsArchiveQueriesRepository {
      */
     async selectPagination(params: PaginationParams): Promise<PaginatedResponse<DroneCommandsArchiveAttributes>> {
         try {
-            const { page, limit, sortBy = 'created_at', sortOrder = 'DESC' } = params;
+            const { page = 1, limit = 10, sortBy = 'created_at', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
 
             logger.info('Fetching paginated drone commands archive', { page, limit, sortBy, sortOrder });
@@ -79,7 +79,7 @@ export class DroneCommandsArchiveQueriesRepository {
             const response: PaginatedResponse<DroneCommandsArchiveAttributes> = {
                 data,
                 pagination: {
-                    currentPage: page,
+                    page: page,
                     limit,
                     totalItems,
                     totalPages,

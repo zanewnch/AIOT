@@ -12,8 +12,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DronePositionModel, type DronePositionAttributes } from '../../models/DronePositionModel.js';
-import type { PaginationParams, PaginatedResponse } from '../../../../../packages/types/ApiResponseType.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 /**
  * 無人機位置查詢 Repository 實現類別 - CQRS 查詢端
@@ -56,7 +56,7 @@ export class DronePositionQueriesRepository {
      */
     async selectPagination(params: PaginationParams): Promise<PaginatedResponse<DronePositionAttributes>> {
         try {
-            const { page, limit, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
+            const { page = 1, limit = 10, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
 
             this.logger.info('Fetching paginated drone position data', { page, limit, sortBy, sortOrder });
@@ -77,7 +77,7 @@ export class DronePositionQueriesRepository {
             const response: PaginatedResponse<DronePositionAttributes> = {
                 data,
                 pagination: {
-                    currentPage: page,
+                    page: page,
                     limit,
                     totalItems,
                     totalPages,

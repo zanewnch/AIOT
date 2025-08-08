@@ -27,7 +27,7 @@ import type {
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 /**
  * 歸檔任務命令 Service 實作類別
@@ -76,15 +76,15 @@ export class ArchiveTaskCommandsSvc {
             this.validateCreateRequest(request);
 
             // 生成批次ID（如果未提供）
-            const batchId = request.batchId || this.generateBatchId(request.jobType);
+            const batchId = request.batch_id || this.generateBatchId(request.job_type);
 
             // 創建任務資料
             const taskData = {
-                job_type: request.jobType,
-                table_name: request.tableName,
-                archive_table_name: request.archiveTableName,
-                date_range_start: request.dateRangeStart,
-                date_range_end: request.dateRangeEnd,
+                job_type: request.job_type,
+                table_name: request.table_name,
+                archive_table_name: request.archive_table_name,
+                date_range_start: request.date_range_start,
+                date_range_end: request.date_range_end,
                 batch_id: batchId,
                 total_records: 0,
                 archived_records: 0,
@@ -92,15 +92,15 @@ export class ArchiveTaskCommandsSvc {
                 started_at: null,
                 completed_at: null,
                 error_message: null,
-                created_by: request.createdBy
+                created_by: request.created_by
             };
 
             const task = await this.repository.create(taskData);
 
             this.logger.info('歸檔任務創建成功', {
-                taskId: task.id,
+                id: task.id,
                 batchId,
-                jobType: request.jobType
+                jobType: request.job_type
             });
 
             return task;
@@ -122,7 +122,7 @@ export class ArchiveTaskCommandsSvc {
             this.logger.info('開始批次創建歸檔任務', { count: requests.length });
 
             const result: BatchArchiveResult = {
-                batchId: '',
+                batch_id: '',
                 tasks: [],
                 successCount: 0,
                 failureCount: 0,
@@ -132,13 +132,13 @@ export class ArchiveTaskCommandsSvc {
             // 生成統一的批次ID前綴
             const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
             const baseBatchId = `BATCH_${timestamp}`;
-            result.batchId = baseBatchId;
+            result.batch_id = baseBatchId;
 
             for (let i = 0; i < requests.length; i++) {
                 try {
                     const request = requests[i];
                     // 為每個任務設置唯一的批次ID
-                    request.batchId = `${baseBatchId}_${String(i + 1).padStart(3, '0')}`;
+                    request.batch_id = `${baseBatchId}_${String(i + 1).padStart(3, '0')}`;
 
                     const task = await this.createTask(request);
                     result.tasks.push(task);
@@ -175,7 +175,7 @@ export class ArchiveTaskCommandsSvc {
      */
     async executeTask(id: number): Promise<ArchiveTaskExecutionResult> {
         try {
-            this.logger.info('開始執行歸檔任務', { taskId: id });
+            this.logger.info('開始執行歸檔任務', { id: id });
 
             const task = await this.queryService.getTaskById(id);
             if (!task) {
@@ -198,7 +198,7 @@ export class ArchiveTaskCommandsSvc {
                 const executionTime = endTime - startTime;
 
                 const result: ArchiveTaskExecutionResult = {
-                    taskId: id,
+                    id: id,
                     status: task.status,
                     totalRecords: task.total_records,
                     archivedRecords: task.archived_records,
@@ -206,7 +206,7 @@ export class ArchiveTaskCommandsSvc {
                 };
 
                 this.logger.info('歸檔任務執行完成', {
-                    taskId: id,
+                    id: id,
                     status: task.status,
                     executionTime
                 });
@@ -218,7 +218,7 @@ export class ArchiveTaskCommandsSvc {
                 throw executionError;
             }
         } catch (error) {
-            this.logger.error('執行歸檔任務失敗', { taskId: id, error: (error as Error).message });
+            this.logger.error('執行歸檔任務失敗', { id: id, error: (error as Error).message });
             throw error;
         }
     }
@@ -244,7 +244,7 @@ export class ArchiveTaskCommandsSvc {
                     this.logger.error(`批次執行任務 ${id} 失敗`, { error: (error as Error).message });
                     // 繼續執行其他任務
                     results.push({
-                        taskId: id,
+                        id: id,
                         status: ArchiveTaskStatus.FAILED,
                         totalRecords: 0,
                         archivedRecords: 0,
@@ -276,7 +276,7 @@ export class ArchiveTaskCommandsSvc {
      */
     async cancelTask(id: number, reason: string): Promise<ArchiveTaskModel> {
         try {
-            this.logger.info('取消歸檔任務', { taskId: id, reason });
+            this.logger.info('取消歸檔任務', { id: id, reason });
 
             const canCancel = await this.queryService.canCancelTask(id);
             if (!canCancel) {
@@ -293,11 +293,11 @@ export class ArchiveTaskCommandsSvc {
                 throw new Error(`任務 ${id} 不存在`);
             }
 
-            this.logger.info('歸檔任務取消成功', { taskId: id, reason });
+            this.logger.info('歸檔任務取消成功', { id: id, reason });
             return updatedTask;
         } catch (error) {
             this.logger.error('取消歸檔任務失敗', {
-                taskId: id,
+                id: id,
                 reason,
                 error: (error as Error).message
             });
@@ -314,7 +314,7 @@ export class ArchiveTaskCommandsSvc {
      */
     async retryTask(id: number): Promise<ArchiveTaskExecutionResult> {
         try {
-            this.logger.info('重試歸檔任務', { taskId: id });
+            this.logger.info('重試歸檔任務', { id: id });
 
             const task = await this.queryService.getTaskById(id);
             if (!task) {
@@ -337,7 +337,7 @@ export class ArchiveTaskCommandsSvc {
             // 執行任務
             return await this.executeTask(id);
         } catch (error) {
-            this.logger.error('重試歸檔任務失敗', { taskId: id, error: (error as Error).message });
+            this.logger.error('重試歸檔任務失敗', { id: id, error: (error as Error).message });
             throw error;
         }
     }
@@ -352,7 +352,7 @@ export class ArchiveTaskCommandsSvc {
      */
     async updateTaskProgress(id: number, archivedCount: number): Promise<ArchiveTaskModel> {
         try {
-            this.logger.debug('更新任務進度', { taskId: id, archivedCount });
+            this.logger.debug('更新任務進度', { id: id, archivedCount });
 
             const task = await this.queryService.getTaskById(id);
             if (!task) {
@@ -362,7 +362,7 @@ export class ArchiveTaskCommandsSvc {
             return await task.updateProgress(archivedCount);
         } catch (error) {
             this.logger.error('更新任務進度失敗', {
-                taskId: id,
+                id: id,
                 archivedCount,
                 error: (error as Error).message
             });
@@ -380,7 +380,7 @@ export class ArchiveTaskCommandsSvc {
      */
     async completeTask(id: number, finalCount: number): Promise<ArchiveTaskModel> {
         try {
-            this.logger.info('標記任務為完成', { taskId: id, finalCount });
+            this.logger.info('標記任務為完成', { id: id, finalCount });
 
             const updatedTask = await this.repository.update(id, {
                 status: ArchiveTaskStatus.COMPLETED,
@@ -392,11 +392,11 @@ export class ArchiveTaskCommandsSvc {
                 throw new Error(`任務 ${id} 不存在`);
             }
 
-            this.logger.info('任務標記為完成成功', { taskId: id, finalCount });
+            this.logger.info('任務標記為完成成功', { id: id, finalCount });
             return updatedTask;
         } catch (error) {
             this.logger.error('標記任務為完成失敗', {
-                taskId: id,
+                id: id,
                 finalCount,
                 error: (error as Error).message
             });
@@ -414,7 +414,7 @@ export class ArchiveTaskCommandsSvc {
      */
     async failTask(id: number, errorMessage: string): Promise<ArchiveTaskModel> {
         try {
-            this.logger.info('標記任務為失敗', { taskId: id, errorMessage });
+            this.logger.info('標記任務為失敗', { id: id, errorMessage });
 
             const task = await this.queryService.getTaskById(id);
             if (!task) {
@@ -424,7 +424,7 @@ export class ArchiveTaskCommandsSvc {
             return await task.markAsFailed(errorMessage);
         } catch (error) {
             this.logger.error('標記任務為失敗失敗', {
-                taskId: id,
+                id: id,
                 errorMessage,
                 error: (error as Error).message
             });
@@ -469,41 +469,41 @@ export class ArchiveTaskCommandsSvc {
      * @throws {Error} 當驗證失敗時拋出錯誤
      */
     validateCreateRequest(request: CreateArchiveTaskRequest): void {
-        if (!request.jobType) {
+        if (!request.job_type) {
             throw new Error('任務類型不能為空');
         }
 
-        if (!Object.values(ArchiveJobType).includes(request.jobType)) {
-            throw new Error(`無效的任務類型: ${request.jobType}`);
+        if (!Object.values(ArchiveJobType).includes(request.job_type)) {
+            throw new Error(`無效的任務類型: ${request.job_type}`);
         }
 
-        if (!request.tableName || !request.tableName.trim()) {
+        if (!request.table_name || !request.table_name.trim()) {
             throw new Error('目標資料表名稱不能為空');
         }
 
-        if (!request.archiveTableName || !request.archiveTableName.trim()) {
+        if (!request.archive_table_name || !request.archive_table_name.trim()) {
             throw new Error('歸檔表名稱不能為空');
         }
 
-        if (!request.dateRangeStart) {
+        if (!request.date_range_start) {
             throw new Error('起始日期不能為空');
         }
 
-        if (!request.dateRangeEnd) {
+        if (!request.date_range_end) {
             throw new Error('結束日期不能為空');
         }
 
-        if (request.dateRangeStart >= request.dateRangeEnd) {
+        if (request.date_range_start >= request.date_range_end) {
             throw new Error('起始日期必須早於結束日期');
         }
 
-        if (!request.createdBy || !request.createdBy.trim()) {
+        if (!request.created_by || !request.created_by.trim()) {
             throw new Error('創建者不能為空');
         }
 
         // 檢查日期範圍是否合理（不能超過1年）
         const oneYear = 365 * 24 * 60 * 60 * 1000;
-        if (request.dateRangeEnd.getTime() - request.dateRangeStart.getTime() > oneYear) {
+        if (request.date_range_end.getTime() - request.date_range_start.getTime() > oneYear) {
             throw new Error('歸檔日期範圍不能超過1年');
         }
     }

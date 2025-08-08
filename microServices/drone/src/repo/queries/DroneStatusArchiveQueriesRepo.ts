@@ -13,8 +13,8 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes } from '../../models/DroneStatusArchiveModel.js';
 import type { DroneStatus } from '../../models/DroneStatusModel.js';
-import type { PaginationParams, PaginatedResponse } from '../../../../../packages/types/ApiResponseType.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Op } from 'sequelize';
 
 /**
@@ -58,7 +58,7 @@ export class DroneStatusArchiveQueriesRepository {
      */
     async selectPagination(params: PaginationParams): Promise<PaginatedResponse<DroneStatusArchiveAttributes>> {
         try {
-            const { page, limit, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
+            const { page = 1, limit = 10, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
 
             this.logger.info('Fetching paginated drone status archive data', { page, limit, sortBy, sortOrder });
@@ -79,7 +79,7 @@ export class DroneStatusArchiveQueriesRepository {
             const response: PaginatedResponse<DroneStatusArchiveAttributes> = {
                 data,
                 pagination: {
-                    currentPage: page,
+                    page: page,
                     limit,
                     totalItems,
                     totalPages,

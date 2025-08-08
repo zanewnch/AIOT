@@ -123,7 +123,7 @@ const getPoolConfig = () => {
  * @returns {DatabaseConfig} 完整的資料庫配置物件
  */
 export const getDatabaseConfig = (): DatabaseConfig => ({
-  // 從環境變數獲取資料庫主機位址，Docker 環境下使用容器名稱
+  // 從環境變數獲取資料庫主機位址，docker 環境下使用容器名稱
   host: process.env.DB_HOST || 'aiot-mysqldb',
   // 從環境變數獲取資料庫名稱，預設為 main_db
   database: process.env.DB_NAME || 'main_db',

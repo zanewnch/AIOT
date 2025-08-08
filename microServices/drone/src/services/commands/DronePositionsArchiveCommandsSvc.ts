@@ -18,7 +18,7 @@ import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/Dro
 import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/DronePositionsArchiveQueriesRepo.js';
 import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { DronePositionsArchiveQueriesSvc } from '../queries/DronePositionsArchiveQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DronePositionsArchiveCommandsSvc');
 
@@ -177,15 +177,11 @@ export class DronePositionsArchiveCommandsSvc {
                 throw new Error('指定的位置歷史歸檔不存在');
             }
 
-            const success = await this.archiveRepository.delete(id);
-
-            if (success) {
-                logger.info('Position archive deleted successfully', { id });
-            } else {
-                logger.warn('Position archive not found for deletion', { id });
-            }
-
-            return success;
+            await this.archiveRepository.delete(id);
+            
+            logger.info('Position archive deleted successfully', { id });
+            
+            return true;
         } catch (error) {
             logger.error('Error in deletePositionArchive', { id, error });
             throw error;
@@ -267,10 +263,8 @@ export class DronePositionsArchiveCommandsSvc {
             let deletedCount = 0;
             for (const id of ids) {
                 try {
-                    const success = await this.archiveRepository.delete(id);
-                    if (success) {
-                        deletedCount++;
-                    }
+                    await this.archiveRepository.delete(id);
+                    deletedCount++;
                 } catch (error) {
                     logger.warn('Failed to delete position archive', { id, error });
                 }

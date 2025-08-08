@@ -12,8 +12,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneStatusModel, type DroneStatusAttributes, DroneStatus } from '../../models/DroneStatusModel.js';
-import type { PaginationParams, PaginatedResponse } from '../../../../../packages/types/ApiResponseType.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusQueriesRepository');
 
@@ -56,7 +56,7 @@ export class DroneStatusQueriesRepository {
      */
     async findPaginated(params: PaginationParams): Promise<PaginatedResponse<DroneStatusAttributes>> {
         try {
-            const { page, limit, sortBy = 'createdAt', sortOrder = 'DESC' } = params;
+            const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
 
             logger.info('Fetching paginated drone status data', { page, limit, sortBy, sortOrder });
@@ -75,7 +75,7 @@ export class DroneStatusQueriesRepository {
             const response: PaginatedResponse<DroneStatusAttributes> = {
                 data,
                 pagination: {
-                    currentPage: page,
+                    page: page,
                     limit,
                     totalItems,
                     totalPages,

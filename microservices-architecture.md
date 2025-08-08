@@ -12,7 +12,18 @@
 ### 📁 目錄結構
 ```
 AIOT/
-├── services/
+├── microServices/                   # 微服務目錄 (現有結構)
+│   ├── rbac/                       # RBAC服務 (Port: 3001)
+│   ├── drone/                      # 無人機服務 (Port: 3002)  
+│   └── feSetting/                  # 用戶偏好服務 (Port: 3003)
+├── infrastructure/                 # 基礎設施配置
+│   ├── kong/                       # Kong Gateway 配置
+│   ├── consul/                     # Consul 服務發現配置
+│   └── docker/                     # Docker 編排配置
+├── gateway/                        # API Gateway 聲明式配置
+│   └── kong/
+├── aiot-shared-packages/           # 共享套件庫 (Git Submodule)
+└── services/                       # 舊架構文檔參考
 │   ├── rbac-service/               # RBAC服務 (Port: 3001)
 │   │   ├── Dockerfile
 │   │   ├── package.json
@@ -341,7 +352,7 @@ AIOT/
 │   │   │   └── deployment.md
 │   │   └── dist/                   # 編譯輸出目錄
 │   │
-│   └── fe-service/    # 用戶偏好服務 (Port: 3003)
+│   └── fe-setting-service/    # 用戶偏好服務 (Port: 3003)
 │       ├── Dockerfile
 │       ├── package.json
 │       ├── tsconfig.json
@@ -732,43 +743,44 @@ docker-compose -f docker-compose.dev.yml up
 - **指標**: Prometheus + Grafana
 - **追蹤**: Jaeger (分散式追蹤)
 
-## 📦 Monorepo 套件庫管理
+## 📦 共享套件庫管理 (Git Submodule)
 
-### 為何使用 npm packages?
+### 為何使用 Git Submodule?
 
-1. **跨設備部署靈活性**：
-   - 不同設備可以只安裝需要的套件
-   - 邊緣設備可能只需要 `@aiot/auth` + `@aiot/grpc`
-   - 中央服務器可以安裝完整的套件組合
+1. **獨立版本控制**：
+   - `aiot-shared-packages` 有自己的 Git 倉庫和版本歷史
+   - 微服務項目可以鎖定特定版本的共享套件
+   - 便於套件的獨立開發和測試
 
-2. **版本管理**：
-   - 每個套件獨立版本控制
-   - 微服務可以選擇相容的版本
-   - 向後相容性保證
+2. **跨項目共享**：
+   - 多個 AIOT 相關項目可以共用同一套件庫
+   - 套件更新可以選擇性地同步到各個項目
+   - 避免代碼重複，確保一致性
 
-3. **團隊協作**：
-   - 不同團隊可以維護不同套件
-   - 清晰的 API 界面定義
-   - 獨立的測試和發布週期
+3. **依賴管理簡化**：
+   - 直接使用 Git URL 作為 npm 依賴
+   - 無需發布到 npm registry
+   - 適合私有項目和快速開發
 
-### 套件依賴關係
+### Git Submodule 使用方法
 
-```
-┌─────────────┐    ┌─────────────────┐    ┌─────────────┐
-│   Services  │───▶│ @aiot/auth      │───▶│ @aiot/types │
-│             │    └─────────────────┘    └─────────────┘
-│             │    ┌─────────────────┐           ▲
-│             │───▶│ @aiot/grpc      │───────────┤
-│             │    └─────────────────┘           │
-│             │    ┌─────────────────┐           │
-│             │───▶│ @aiot/middleware│───────────┤
-│             │    └─────────────────┘           │
-│             │    ┌─────────────────┐    ┌──────┴──────┐
-│             │───▶│ @aiot/saga      │───▶│@aiot/consul │
-│             │    └─────────────────┘    └─────────────┘
-│             │    ┌─────────────────┐
-│             │───▶│ @aiot/utils     │
-└─────────────┘    └─────────────────┘
+```bash
+# 添加 submodule (已完成)
+git submodule add https://github.com/your-org/aiot-shared-packages.git aiot-shared-packages
+
+# 初始化和更新 submodule
+git submodule init
+git submodule update
+
+# 更新到 submodule 最新版本
+cd aiot-shared-packages
+git pull origin main
+cd ..
+git add aiot-shared-packages
+git commit -m "update shared packages"
+
+# 克隆項目時同時獲取 submodules
+git clone --recurse-submodules https://github.com/your-org/AIOT.git
 ```
 
 ### 套件使用範例
@@ -777,67 +789,50 @@ docker-compose -f docker-compose.dev.yml up
 // rbac-service/package.json
 {
   "dependencies": {
-    "@aiot/types": "^1.0.0",
-    "@aiot/auth": "^1.0.0", 
-    "@aiot/grpc": "^1.0.0",
-    "@aiot/consul": "^1.0.0",
-    "@aiot/middleware": "^1.0.0",  // 共用中間件
-    "@aiot/utils": "^1.0.0"
+    "aiot-shared-packages": "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
   }
 }
+
+// 在代碼中使用
+import { AuthMiddleware, ControllerResult } from 'aiot-shared-packages';
+import { UserType, ApiResponseType } from 'aiot-shared-packages/types';
 
 // drone-service/package.json  
 {
   "dependencies": {
-    "@aiot/types": "^1.0.0",
-    "@aiot/auth": "^1.0.0",
-    "@aiot/grpc": "^1.0.0", 
-    "@aiot/consul": "^1.0.0",
-    "@aiot/saga": "^1.0.0",        // 需要分散式事務
-    "@aiot/middleware": "^1.0.0",  // 共用中間件
-    "@aiot/utils": "^1.0.0"
+    "aiot-shared-packages": "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
   }
 }
+
+// 在代碼中使用
+import { 
+  WebSocketAuthMiddleware, 
+  ErrorHandleMiddleware,
+  ServiceResult 
+} from 'aiot-shared-packages';
 
 // user-preference-service/package.json
 {
   "dependencies": {
-    "@aiot/types": "^1.0.0",
-    "@aiot/auth": "^1.0.0",
-    "@aiot/grpc": "^1.0.0",
-    "@aiot/consul": "^1.0.0", 
-    "@aiot/middleware": "^1.0.0",  // 共用中間件
-    "@aiot/utils": "^1.0.0"
-  }
-}
-
-// 邊緣設備 (minimal setup)
-{
-  "dependencies": {
-    "@aiot/types": "^1.0.0",
-    "@aiot/auth": "^1.0.0",
-    "@aiot/grpc": "^1.0.0"         // 只需要基本通訊
+    "aiot-shared-packages": "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
   }
 }
 ```
 
-### 套件發布策略
+### 套件版本管理策略
 
 ```bash
-# 使用 Lerna 管理 Monorepo
-npm install -g lerna
+# 在 aiot-shared-packages 倉庫中
+# 發布新版本
+git tag v1.0.1
+git push origin v1.0.1
 
-# 初始化 Monorepo
-lerna init
-
-# 安裝所有依賴
-lerna bootstrap
-
-# 發布所有套件
-lerna publish
-
-# 只發布特定套件
-lerna publish --scope @aiot/auth
+# 在主項目中更新到特定版本
+cd aiot-shared-packages
+git checkout v1.0.1
+cd ..
+git add aiot-shared-packages
+git commit -m "update shared packages to v1.0.1"
 ```
 
 ## 🔄 編排式 Saga 設計

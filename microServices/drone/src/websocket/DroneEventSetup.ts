@@ -86,7 +86,7 @@ export class DroneEventSetup {
       const handler = this.handlerFactory(eventType);
       
       // 統一處理接口
-      await handler.handle(socket, action ? { ...data, action } : data);
+      await handler.handleEvent(socket, eventType, action ? { ...data, action } : data);
       
     } catch (error) {
       this.handleError(socket, eventType, error);

@@ -8,9 +8,42 @@
  * @since 2025-08-08
  */
 
-import { ArchiveTaskModel, ArchiveTaskCreationAttributes } from '../../models/ArchiveTaskModel.js';
+import { ArchiveTaskModel, ArchiveTaskCreationAttributes, ArchiveTaskStatus, ArchiveJobType } from '../../models/ArchiveTaskModel.js';
 
 export type CreateArchiveTaskRequest = ArchiveTaskCreationAttributes;
+
+export interface ArchiveTaskStatistics {
+  totalTasks: number;
+  pendingTasks: number;
+  runningTasks: number;
+  completedTasks: number;
+  failedTasks: number;
+  tasksByType: {
+    [ArchiveJobType.POSITIONS]: number;
+    [ArchiveJobType.COMMANDS]: number;
+    [ArchiveJobType.STATUS]: number;
+  };
+  todayTasks: number;
+  weekTasks: number;
+  monthTasks: number;
+}
+
+export interface ArchiveTaskExecutionResult {
+  id?: number;
+  status: ArchiveTaskStatus;
+  totalRecords?: number;
+  archivedRecords: number;
+  executionTime?: number;
+  errorMessage?: string;
+}
+
+export interface BatchArchiveResult {
+  batch_id: string;
+  tasks: ArchiveTaskModel[];
+  successCount: number;
+  failureCount: number;
+  errors: string[];
+}
 
 export interface IArchiveTaskService {
   /**

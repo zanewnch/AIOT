@@ -17,7 +17,8 @@ import type {
     DroneCommandQueueAttributes,
     QueueStatistics
 } from '../../types/services/IDroneCommandQueueService.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandQueueQueriesSvc');
 
@@ -49,23 +50,39 @@ export class DroneCommandQueueQueriesSvc {
             const mockQueues: DroneCommandQueueAttributes[] = [
                 {
                     id: 1,
+                    name: 'Patrol Queue 1',
                     drone_id: 1,
                     command_type: 'patrol',
-                    command_data: { waypoints: 5 },
                     priority: 1,
-                    status: 'pending',
-                    scheduled_at: new Date(),
+                    status: DroneCommandQueueStatus.PENDING,
+                    current_index: 0,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: null,
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
                 {
                     id: 2,
+                    name: 'Survey Queue 1',
                     drone_id: 2,
                     command_type: 'survey',
-                    command_data: { area: 'zone_a' },
                     priority: 2,
-                    status: 'running',
-                    scheduled_at: new Date(),
+                    status: DroneCommandQueueStatus.RUNNING,
+                    current_index: 1,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: new Date(),
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -95,12 +112,20 @@ export class DroneCommandQueueQueriesSvc {
             if (id === 1) {
                 const mockQueue: DroneCommandQueueAttributes = {
                     id: 1,
+                    name: 'Patrol Queue 1',
                     drone_id: 1,
                     command_type: 'patrol',
-                    command_data: { waypoints: 5, duration: 30 },
                     priority: 1,
-                    status: 'pending',
-                    scheduled_at: new Date(),
+                    status: DroneCommandQueueStatus.PENDING,
+                    current_index: 0,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: null,
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 };
@@ -132,23 +157,39 @@ export class DroneCommandQueueQueriesSvc {
             const mockQueues: DroneCommandQueueAttributes[] = [
                 {
                     id: 1,
+                    name: `Takeoff Queue for Drone ${droneId}`,
                     drone_id: droneId,
                     command_type: 'takeoff',
-                    command_data: { altitude: 50 },
                     priority: 1,
-                    status: 'pending',
-                    scheduled_at: new Date(),
+                    status: DroneCommandQueueStatus.PENDING,
+                    current_index: 0,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: null,
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
                 {
                     id: 2,
+                    name: `Patrol Queue for Drone ${droneId}`,
                     drone_id: droneId,
                     command_type: 'patrol',
-                    command_data: { waypoints: 3 },
                     priority: 2,
-                    status: 'pending',
-                    scheduled_at: new Date(),
+                    status: DroneCommandQueueStatus.PENDING,
+                    current_index: 0,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: null,
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -165,12 +206,12 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據狀態查詢指令佇列
      */
-    async getDroneCommandQueuesByStatus(status: string): Promise<DroneCommandQueueAttributes[]> {
+    async getDroneCommandQueuesByStatus(status: DroneCommandQueueStatus): Promise<DroneCommandQueueAttributes[]> {
         try {
             logger.info('Getting command queues by status', { status });
 
-            if (!status || typeof status !== 'string') {
-                throw new Error('狀態參數必須是有效字串');
+            if (!status) {
+                throw new Error('狀態參數為必需項');
             }
 
             // TODO: 實作從資料庫根據狀態取得佇列的邏輯
@@ -178,12 +219,20 @@ export class DroneCommandQueueQueriesSvc {
             const mockQueues: DroneCommandQueueAttributes[] = [
                 {
                     id: 1,
+                    name: 'Status Queue 1',
                     drone_id: 1,
                     command_type: 'patrol',
-                    command_data: { waypoints: 5 },
                     priority: 1,
                     status: status,
-                    scheduled_at: new Date(),
+                    current_index: 0,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: null,
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -213,12 +262,20 @@ export class DroneCommandQueueQueriesSvc {
             const mockQueues: DroneCommandQueueAttributes[] = [
                 {
                     id: 1,
+                    name: 'Emergency Queue 1',
                     drone_id: 1,
                     command_type: 'emergency',
-                    command_data: { action: 'land' },
                     priority: priority,
-                    status: 'pending',
-                    scheduled_at: new Date(),
+                    status: DroneCommandQueueStatus.PENDING,
+                    current_index: 0,
+                    auto_execute: true,
+                    execution_conditions: null,
+                    loop_count: null,
+                    max_loops: null,
+                    created_by: 1,
+                    started_at: null,
+                    completed_at: null,
+                    error_message: null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -240,7 +297,7 @@ export class DroneCommandQueueQueriesSvc {
             logger.info('Getting pending command queues');
 
             // 使用現有的按狀態查詢方法
-            return await this.getDroneCommandQueuesByStatus('pending');
+            return await this.getDroneCommandQueuesByStatus(DroneCommandQueueStatus.PENDING);
         } catch (error) {
             logger.error('Error in getPendingDroneCommandQueues', { error });
             throw error;
@@ -259,6 +316,7 @@ export class DroneCommandQueueQueriesSvc {
             const statistics: QueueStatistics = {
                 totalQueues: 10,
                 pendingQueues: 3,
+                runningQueues: 2,
                 executingQueues: 2,
                 completedQueues: 4,
                 failedQueues: 1
@@ -285,7 +343,7 @@ export class DroneCommandQueueQueriesSvc {
 
             // 取得該無人機的待執行指令，按優先級和時間排序
             const droneQueues = await this.getDroneCommandQueueByDroneId(droneId);
-            const pendingQueues = droneQueues.filter(queue => queue.status === 'pending');
+            const pendingQueues = droneQueues.filter(queue => queue.status === DroneCommandQueueStatus.PENDING);
 
             if (pendingQueues.length === 0) {
                 logger.info('No pending commands found for drone', { droneId });

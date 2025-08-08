@@ -16,7 +16,7 @@ import { injectable } from 'inversify';
 import { DronePositionQueriesRepository } from '../../repo/queries/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes } from '../../models/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DronePositionQueriesSvc');
 

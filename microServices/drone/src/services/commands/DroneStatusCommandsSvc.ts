@@ -19,7 +19,7 @@ import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../..
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import { DroneStatusQueriesSvc } from '../queries/DroneStatusQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusCommandsSvc');
 
@@ -128,11 +128,7 @@ export class DroneStatusCommandsSvc {
             }
 
             logger.info('Deleting drone status data', { id });
-            const success = await this.droneStatusRepository.delete(id);
-
-            if (!success) {
-                throw new Error(`刪除 ID 為 ${id} 的無人機狀態資料失敗`);
-            }
+            await this.droneStatusRepository.delete(id);
 
             logger.info('Successfully deleted drone status data', { id });
         } catch (error) {

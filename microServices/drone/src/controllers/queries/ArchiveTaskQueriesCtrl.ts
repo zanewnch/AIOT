@@ -16,8 +16,8 @@ import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { ArchiveTaskQueriesSvc } from '../../services/queries/ArchiveTaskQueriesSvc.js';
 import { ArchiveJobType, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
-import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
 
 /**

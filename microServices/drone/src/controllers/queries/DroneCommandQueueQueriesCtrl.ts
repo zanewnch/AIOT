@@ -15,9 +15,10 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandQueueQueriesSvc } from '../../services/queries/DroneCommandQueueQueriesSvc.js';
-import { createLogger, logRequest } from '../../../../../packages/loggerConfig.js';
-import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
+import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 
 const logger = createLogger('DroneCommandQueueQueries');
 
@@ -152,7 +153,7 @@ export class DroneCommandQueueQueries {
             logRequest(req, `Getting drone command queues by status: ${status}`);
             logger.info('Drone command queues by status retrieval request received', { status });
 
-            const commandQueues = await this.queryService.getDroneCommandQueuesByStatus(status.trim());
+            const commandQueues = await this.queryService.getDroneCommandQueuesByStatus(status.trim() as DroneCommandQueueStatus);
 
             const result = ControllerResult.success('無人機指令佇列資料獲取成功', commandQueues);
             res.status(result.status).json(result);

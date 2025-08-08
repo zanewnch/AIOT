@@ -61,5 +61,20 @@
 - **🛡️ 類型安全** - 全棧 TypeScript，減少執行時錯誤
 - **🔄 實時互動** - SSE 與 WebSocket 支援即時數據更新
 
+## 🌐 服務端點
+
+當啟動微服務架構後，可以通過以下端點訪問各個服務：
+
+- 🌐 **Kong Gateway (API 入口)**: http://localhost:8000
+- 🏛️ **Consul UI (服務發現)**: http://localhost:8500
+- 🔐 **RBAC Service (認證授權)**: http://localhost:3001
+- 🚁 **Drone Service (無人機管理)**: http://localhost:3002
+- ⚙️ **FeSetting Service (用戶偏好)**: http://localhost:3003
+
+### 其他服務
+- 🐰 **RabbitMQ Management**: http://localhost:15672 (admin/admin)
+- 📊 **Prometheus (監控)**: http://localhost:9090 (可選)
+- 📈 **Grafana (儀表板)**: http://localhost:3000 (admin/admin, 可選)
+
 ---
 

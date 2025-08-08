@@ -24,7 +24,7 @@ import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQu
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandQueriesSvc } from '../queries/DroneCommandQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandCommandsSvc');
 
@@ -69,7 +69,7 @@ export class DroneCommandCommandsSvc {
             if (!await this.queryService.validateCommandData(data)) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '指令資料驗證失敗',
                     error: '無效的指令資料'
                 };
@@ -78,7 +78,7 @@ export class DroneCommandCommandsSvc {
             if (!await this.queryService.canReceiveNewCommand(data.drone_id)) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '無人機目前無法接收新指令',
                     error: '無人機狀態不允許接收新指令'
                 };
@@ -87,7 +87,7 @@ export class DroneCommandCommandsSvc {
             if (await this.queryService.checkCommandConflict(data.drone_id, data.command_type)) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '指令與現有指令衝突',
                     error: '存在衝突的指令'
                 };
@@ -115,7 +115,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in createCommand', { data, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '指令創建失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -134,7 +134,7 @@ export class DroneCommandCommandsSvc {
                 failed: [],
                 total: dataArray.length,
                 successCount: 0,
-                failedCount: 0
+                failureCount: 0
             };
 
             if (!dataArray || dataArray.length === 0) {
@@ -148,7 +148,7 @@ export class DroneCommandCommandsSvc {
             for (const data of dataArray) {
                 try {
                     const commandResult = await this.createCommand(data);
-                    if (commandResult.success) {
+                    if (commandResult.success && commandResult.command) {
                         result.successful.push(commandResult.command);
                         result.successCount++;
                     } else {
@@ -156,21 +156,21 @@ export class DroneCommandCommandsSvc {
                             command: data,
                             error: commandResult.error || '未知錯誤'
                         });
-                        result.failedCount++;
+                        result.failureCount++;
                     }
                 } catch (error) {
                     result.failed.push({
                         command: data,
                         error: error instanceof Error ? error.message : '未知錯誤'
                     });
-                    result.failedCount++;
+                    result.failureCount++;
                 }
             }
 
             logger.info('Batch commands creation completed', {
                 total: result.total,
                 successful: result.successCount,
-                failed: result.failedCount
+                failed: result.failureCount
             });
 
             return result;
@@ -235,15 +235,11 @@ export class DroneCommandCommandsSvc {
                 throw new Error('正在執行的指令無法刪除');
             }
 
-            const success = await this.commandRepository.delete(id);
+            await this.commandRepository.delete(id);
 
-            if (success) {
-                logger.info('Command deleted successfully', { id });
-            } else {
-                logger.warn('Command not found for deletion', { id });
-            }
+            logger.info('Command deleted successfully', { id });
 
-            return success;
+            return true;
         } catch (error) {
             logger.error('Error in deleteCommand', { id, error });
             throw error;
@@ -268,7 +264,7 @@ export class DroneCommandCommandsSvc {
             } else {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '指令執行失敗',
                     error: '指令不存在或無法執行'
                 };
@@ -277,7 +273,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in executeCommand', { commandId, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '指令執行失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -302,7 +298,7 @@ export class DroneCommandCommandsSvc {
             } else {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '指令完成失敗',
                     error: '指令不存在或無法完成'
                 };
@@ -311,7 +307,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in completeCommand', { commandId, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '指令完成失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -336,7 +332,7 @@ export class DroneCommandCommandsSvc {
             } else {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '指令失敗標記失敗',
                     error: '指令不存在'
                 };
@@ -345,7 +341,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in failCommand', { commandId, errorMessage, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '指令失敗標記失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -370,7 +366,7 @@ export class DroneCommandCommandsSvc {
             } else {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '指令取消失敗',
                     error: '指令不存在或無法取消'
                 };
@@ -379,7 +375,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in cancelCommand', { commandId, reason, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '指令取消失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -396,7 +392,7 @@ export class DroneCommandCommandsSvc {
             if (!await this.queryService.validateCommandParameters(CommandType.TAKEOFF, commandData)) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '起飛指令參數無效',
                     error: '高度必須在 1-500 公尺之間'
                 };
@@ -419,7 +415,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendTakeoffCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送起飛指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -450,7 +446,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendLandCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送降落指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -467,7 +463,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.latitude < -90 || commandData.latitude > 90) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '移動指令參數無效',
                     error: '緯度必須在 -90 到 90 度之間'
                 };
@@ -476,7 +472,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.longitude < -180 || commandData.longitude > 180) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '移動指令參數無效',
                     error: '經度必須在 -180 到 180 度之間'
                 };
@@ -499,7 +495,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendFlyToCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送飛行到指定位置指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -537,7 +533,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendHoverCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送懸停指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -568,7 +564,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendReturnCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送返航指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -599,7 +595,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendEmergencyCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送緊急停止指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -692,7 +688,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.distance <= 0 || commandData.distance > 100) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '前進距離參數無效',
                     error: '距離必須在 0.1-100 公尺之間'
                 };
@@ -715,7 +711,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendMoveForwardCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送前進指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -732,7 +728,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.distance <= 0 || commandData.distance > 100) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '後退距離參數無效',
                     error: '距離必須在 0.1-100 公尺之間'
                 };
@@ -755,7 +751,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendMoveBackwardCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送後退指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -772,7 +768,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.distance <= 0 || commandData.distance > 100) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '左移距離參數無效',
                     error: '距離必須在 0.1-100 公尺之間'
                 };
@@ -795,7 +791,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendMoveLeftCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送左移指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -812,7 +808,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.distance <= 0 || commandData.distance > 100) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '右移距離參數無效',
                     error: '距離必須在 0.1-100 公尺之間'
                 };
@@ -835,7 +831,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendMoveRightCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送右移指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -852,7 +848,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.degrees <= 0 || commandData.degrees > 360) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '左轉角度參數無效',
                     error: '角度必須在 1-360 度之間'
                 };
@@ -875,7 +871,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendRotateLeftCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送左轉指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -892,7 +888,7 @@ export class DroneCommandCommandsSvc {
             if (commandData.degrees <= 0 || commandData.degrees > 360) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '右轉角度參數無效',
                     error: '角度必須在 1-360 度之間'
                 };
@@ -915,7 +911,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in sendRotateRightCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '發送右轉指令失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };
@@ -933,7 +929,7 @@ export class DroneCommandCommandsSvc {
             if (!originalCommand) {
                 return {
                     success: false,
-                    command: {} as DroneCommandAttributes,
+                    command: null,
                     message: '重試失敗',
                     error: '原始指令不存在'
                 };
@@ -942,7 +938,7 @@ export class DroneCommandCommandsSvc {
             if (originalCommand.status !== CommandStatus.FAILED) {
                 return {
                     success: false,
-                    command: originalCommand,
+                    command: null,
                     message: '重試失敗',
                     error: '只能重試失敗的指令'
                 };
@@ -962,7 +958,7 @@ export class DroneCommandCommandsSvc {
 
             const result = await this.createCommand(newCommandData);
 
-            if (result.success) {
+            if (result.success && result.command) {
                 logger.info('Command retried successfully', { originalCommandId: commandId, newCommandId: result.command.id });
             }
 
@@ -971,7 +967,7 @@ export class DroneCommandCommandsSvc {
             logger.error('Error in retryFailedCommand', { commandId, issuedBy, error });
             return {
                 success: false,
-                command: {} as DroneCommandAttributes,
+                command: null,
                 message: '重試失敗',
                 error: error instanceof Error ? error.message : '未知錯誤'
             };

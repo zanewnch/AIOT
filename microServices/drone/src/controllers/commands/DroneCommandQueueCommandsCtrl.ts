@@ -15,9 +15,10 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandQueueCommandsSvc } from '../../services/commands/DroneCommandQueueCommandsSvc.js';
-import { createLogger, logRequest } from '../../../../../packages/loggerConfig.js';
-import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
+import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 import type { DroneCommandQueueCreationAttributes } from '../../types/services/IDroneCommandQueueService.js';
 
 const logger = createLogger('DroneCommandQueueCommands');
@@ -45,15 +46,15 @@ export class DroneCommandQueueCommands {
         try {
             const queueData: DroneCommandQueueCreationAttributes = req.body;
 
-            // 基本驗證 (使用服務介面定義的屬性名稱)
-            if (!queueData.drone_id || typeof queueData.drone_id !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+            // 基本驗證 (使用佇列模型的屬性)
+            if (!queueData.name || typeof queueData.name !== 'string') {
+                const result = ControllerResult.badRequest('佇列名稱為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
-            if (!queueData.command_type || typeof queueData.command_type !== 'string') {
-                const result = ControllerResult.badRequest('指令類型為必填項');
+            if (typeof queueData.auto_execute !== 'boolean') {
+                const result = ControllerResult.badRequest('自動執行設定為必填項');
                 res.status(result.status).json(result);
                 return;
             }
@@ -68,8 +69,8 @@ export class DroneCommandQueueCommands {
 
             logger.info('Drone command queue creation completed successfully', {
                 id: createdData.id,
-                droneId: createdData.drone_id,
-                commandType: createdData.command_type
+                name: createdData.name,
+                autoExecute: createdData.auto_execute
             });
 
         } catch (error) {
@@ -241,7 +242,7 @@ export class DroneCommandQueueCommands {
             logger.info('Drone command dequeue completed successfully', {
                 id: dequeuedCommand.id,
                 droneId,
-                commandType: dequeuedCommand.command_type
+                queueName: dequeuedCommand.name
             });
 
         } catch (error) {
@@ -307,10 +308,18 @@ export class DroneCommandQueueCommands {
                 return;
             }
 
+            // 驗證狀態是否為有效的枚舉值
+            const validStatuses = Object.values(DroneCommandQueueStatus);
+            if (!validStatuses.includes(status as DroneCommandQueueStatus)) {
+                const result = ControllerResult.badRequest(`無效的狀態值。允許的狀態: ${validStatuses.join(', ')}`);
+                res.status(result.status).json(result);
+                return;
+            }
+
             logRequest(req, `Updating drone command queue status for ID: ${id} to ${status}`);
             logger.info('Drone command queue status update request received', { id, status });
 
-            const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, status);
+            const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, status as DroneCommandQueueStatus);
 
             if (!updatedData) {
                 const result = ControllerResult.notFound('找不到指定的無人機指令佇列');

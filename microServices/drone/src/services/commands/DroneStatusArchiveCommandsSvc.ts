@@ -19,7 +19,7 @@ import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
 import { DroneStatusArchiveQueriesSvc } from '../queries/DroneStatusArchiveQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusArchiveCommandsSvc');
 
@@ -141,11 +141,7 @@ export class DroneStatusArchiveCommandsSvc {
             }
 
             logger.info('Deleting status archive', { id });
-            const success = await this.archiveRepository.delete(id);
-
-            if (!success) {
-                throw new Error(`找不到 ID 為 ${id} 的狀態歷史資料`);
-            }
+            await this.archiveRepository.delete(id);
 
             logger.info('Successfully deleted status archive', { id });
         } catch (error) {

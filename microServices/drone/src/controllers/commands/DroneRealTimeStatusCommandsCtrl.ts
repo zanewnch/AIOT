@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRealTimeStatusCommandsSvc.js';
-import { createLogger, logRequest } from '../../../../../packages/loggerConfig.js';
-import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
+import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
 import type { DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes } from '../../types/services/IDroneRealTimeStatusService.js';
 

@@ -18,7 +18,7 @@ import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/Dron
 import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/DroneCommandsArchiveQueriesRepo.js';
 import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
 import { DroneCommandsArchiveQueriesSvc } from '../queries/DroneCommandsArchiveQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandsArchiveCommandsSvc');
 
@@ -188,13 +188,11 @@ export class DroneCommandsArchiveCommandsSvc {
                 executedAt: existingArchive.executed_at
             });
 
-            const success = await this.archiveRepository.delete(id);
-
-            if (success) {
-                logger.info('Successfully deleted command archive', { id });
-            }
-
-            return success;
+            await this.archiveRepository.delete(id);
+            
+            logger.info('Successfully deleted command archive', { id });
+            
+            return true;
         } catch (error) {
             logger.error('Error in deleteCommandArchive', { error, id });
             throw error;

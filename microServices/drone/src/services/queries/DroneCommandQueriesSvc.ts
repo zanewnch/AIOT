@@ -23,7 +23,7 @@ import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQu
 import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandQueriesSvc');
 
@@ -468,13 +468,16 @@ export class DroneCommandQueriesSvc {
             }
 
             const summary: DroneCommandSummary = {
-                droneId,
-                totalCommands,
-                latestCommand,
-                pendingCount: pendingCommands.length,
-                executingCommand,
-                latestFailedCommand: failedCommands.length > 0 ? failedCommands[0] : null,
-                commandTypeStats
+                id: latestCommand?.id || 0,
+                drone_id: droneId,
+                droneId: droneId,
+                command_type: latestCommand?.command_type || 'unknown',
+                status: latestCommand?.status || 'unknown',
+                issued_at: latestCommand?.issued_at || new Date(),
+                executed_at: latestCommand?.executed_at,
+                completed_at: latestCommand?.completed_at,
+                error_message: latestCommand?.error_message,
+                totalCommands: totalCommands
             };
 
             logger.info('Drone command summary retrieved successfully', { droneId, summary });

@@ -12,7 +12,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneStatusArchiveModel, type DroneStatusArchiveAttributes, type DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Op } from 'sequelize';
 
 /**

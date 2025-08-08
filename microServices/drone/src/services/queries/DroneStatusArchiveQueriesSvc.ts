@@ -18,7 +18,7 @@ import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/DroneS
 import type { DroneStatusArchiveAttributes } from '../../models/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneStatusArchiveQueriesSvc');
 
@@ -122,10 +122,12 @@ export class DroneStatusArchiveQueriesSvc {
             }
 
             logger.info('Getting status archives by drone ID', { droneId, limit });
-            const archives = await this.archiveRepository.findByDroneId(droneId, limit);
+            const archives = await this.archiveRepository.findByDroneId(droneId);
+            // 如果需要限制結果數量，可以在這裡截取
+            const limitedArchives = limit ? archives.slice(0, limit) : archives;
 
-            logger.info(`Retrieved ${archives.length} status archives for drone ${droneId}`);
-            return archives;
+            logger.info(`Retrieved ${limitedArchives.length} status archives for drone ${droneId}`);
+            return limitedArchives;
         } catch (error) {
             logger.error('Failed to get status archives by drone ID', { droneId, limit, error });
             throw error;
@@ -151,10 +153,12 @@ export class DroneStatusArchiveQueriesSvc {
             }
 
             logger.info('Getting status archives by status', { status, limit });
-            const archives = await this.archiveRepository.findByStatus(status, limit);
+            const archives = await this.archiveRepository.findByStatus(status);
+            // 如果需要限制結果數量，可以在這裡截取
+            const limitedArchives = limit ? archives.slice(0, limit) : archives;
 
-            logger.info(`Retrieved ${archives.length} status archives with status ${status}`);
-            return archives;
+            logger.info(`Retrieved ${limitedArchives.length} status archives with status ${status}`);
+            return limitedArchives;
         } catch (error) {
             logger.error('Failed to get status archives by status', { status, limit, error });
             throw error;
@@ -180,10 +184,12 @@ export class DroneStatusArchiveQueriesSvc {
             }
 
             logger.info('Getting status archives by created by', { createdBy, limit });
-            const archives = await this.archiveRepository.findByCreatedBy(createdBy, limit);
+            const archives = await this.archiveRepository.findByCreatedBy(createdBy);
+            // 如果需要限制結果數量，可以在這裡截取
+            const limitedArchives = limit ? archives.slice(0, limit) : archives;
 
-            logger.info(`Retrieved ${archives.length} status archives created by user ${createdBy}`);
-            return archives;
+            logger.info(`Retrieved ${limitedArchives.length} status archives created by user ${createdBy}`);
+            return limitedArchives;
         } catch (error) {
             logger.error('Failed to get status archives by created by', { createdBy, limit, error });
             throw error;
@@ -350,8 +356,13 @@ export class DroneStatusArchiveQueriesSvc {
      */
     async getStatusChangeStatistics(startDate?: Date, endDate?: Date): Promise<{ [key: string]: number }> {
         try {
+            // 驗證必需參數
+            if (!startDate || !endDate) {
+                throw new Error('開始時間和結束時間都是必需的');
+            }
+
             // 驗證時間範圍
-            if (startDate && endDate && startDate >= endDate) {
+            if (startDate >= endDate) {
                 throw new Error('開始時間必須早於結束時間');
             }
 
@@ -476,7 +487,10 @@ export class DroneStatusArchiveQueriesSvc {
             };
 
             droneArchives.forEach(archive => {
-                statusCount[archive.status]++;
+                // 確保 status 是有效的枚舉值
+                if (archive.status && archive.status in statusCount) {
+                    statusCount[archive.status as DroneStatus]++;
+                }
             });
 
             const mostCommonStatus = Object.entries(statusCount).reduce((a, b) =>

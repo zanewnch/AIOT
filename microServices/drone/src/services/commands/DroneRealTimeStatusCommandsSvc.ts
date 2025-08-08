@@ -24,13 +24,28 @@ import {
     DroneRealTimeStatus
 } from '../../models/DroneRealTimeStatusModel.js';
 import type { 
-    DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes,
+    DroneRealTimeStatusCreationAttributes as ExternalCreationAttributesLocal,
     DroneRealTimeStatusAttributes as ExternalAttributes
 } from '../../types/services/IDroneRealTimeStatusService.js';
 import { DroneRealTimeStatusQueriesSvc } from '../queries/DroneRealTimeStatusQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneRealTimeStatusCommandsSvc');
+
+/**
+ * 外部資料創建屬性介面
+ */
+interface ExternalCreationAttributesLocalLocal {
+  drone_id: number;
+  status?: string;
+  battery_level?: number;
+  altitude?: number;
+  speed?: number;
+  heading?: number;
+  signal_strength?: number | null;
+  temperature?: number | null;
+  last_seen?: Date;
+}
 
 /**
  * 無人機即時狀態命令 Service 實現類別
@@ -328,15 +343,15 @@ export class DroneRealTimeStatusCommandsSvc {
     }
 
     // 實現外部介面方法
-    async createDroneRealTimeStatus(data: ExternalCreationAttributes): Promise<ExternalAttributes> {
-        const convertedData = this.convertFromExternalCreationAttributes(data);
+    async createDroneRealTimeStatus(data: ExternalCreationAttributesLocal): Promise<ExternalAttributes> {
+        const convertedData = this.convertFromExternalCreationAttributesLocal(data);
         const model = await this.createRealTimeStatus(convertedData);
         return this.convertToExternalAttributes(model.toJSON());
     }
 
-    async updateDroneRealTimeStatus(id: number, data: Partial<ExternalCreationAttributes>): Promise<ExternalAttributes | null> {
+    async updateDroneRealTimeStatus(id: number, data: Partial<ExternalCreationAttributesLocal>): Promise<ExternalAttributes | null> {
         try {
-            const convertedData = this.convertFromPartialExternalCreationAttributes(data);
+            const convertedData = this.convertFromPartialExternalCreationAttributesLocal(data);
             const model = await this.updateRealTimeStatus(id, convertedData);
             return this.convertToExternalAttributes(model.toJSON());
         } catch (error) {
@@ -349,9 +364,9 @@ export class DroneRealTimeStatusCommandsSvc {
         return result ? 1 : 0;
     }
 
-    async updateDroneRealTimeStatusByDroneId(droneId: number, data: Partial<ExternalCreationAttributes>): Promise<ExternalAttributes | null> {
+    async updateDroneRealTimeStatusByDroneId(droneId: number, data: Partial<ExternalCreationAttributesLocal>): Promise<ExternalAttributes | null> {
         try {
-            const convertedData = this.convertFromPartialExternalCreationAttributes(data);
+            const convertedData = this.convertFromPartialExternalCreationAttributesLocal(data);
             const model = await this.updateRealTimeStatusByDroneId(droneId, convertedData);
             return this.convertToExternalAttributes(model.toJSON());
         } catch (error) {
@@ -359,10 +374,10 @@ export class DroneRealTimeStatusCommandsSvc {
         }
     }
 
-    async updateDroneRealTimeStatusesBatch(updates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributes> }>): Promise<ExternalAttributes[]> {
+    async updateDroneRealTimeStatusesBatch(updates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributesLocal> }>): Promise<ExternalAttributes[]> {
         const convertedUpdates = updates.map(update => ({
             droneId: update.droneId,
-            statusData: this.convertFromPartialExternalCreationAttributes(update.statusData)
+            statusData: this.convertFromPartialExternalCreationAttributesLocal(update.statusData)
         }));
         
         const results = await this.updateRealTimeStatusesBatch(convertedUpdates);
@@ -373,20 +388,16 @@ export class DroneRealTimeStatusCommandsSvc {
      * 轉換外部創建屬性到內部創建屬性
      * @private
      */
-    private convertFromExternalCreationAttributes(data: ExternalCreationAttributes): DroneRealTimeStatusCreationAttributes {
+    private convertFromExternalCreationAttributesLocal(data: ExternalCreationAttributesLocal): DroneRealTimeStatusCreationAttributes {
         return {
             drone_id: data.drone_id,
-            current_status: data.status as DroneRealTimeStatus,
-            current_battery_level: data.battery_level ?? 0,
+            current_status: (data as any).current_status || (data as any).status || DroneRealTimeStatus.IDLE,
+            current_battery_level: (data as any).current_battery_level || (data as any).battery_level || 0,
             signal_strength: data.signal_strength ?? null,
-            current_altitude: data.altitude ?? null,
-            current_speed: data.speed ?? null,
-            current_heading: data.heading ?? null,
-            // latitude: data.latitude,
-            // longitude: data.longitude,
+            current_altitude: (data as any).current_altitude || (data as any).altitude || null,
+            current_speed: (data as any).current_speed || (data as any).speed || null,
+            current_heading: (data as any).current_heading || (data as any).heading || null,
             temperature: data.temperature ?? null,
-            // humidity: data.humidity,
-            // wind_speed: data.wind_speed,
             last_seen: data.last_seen ?? new Date(),
             is_connected: true, // 預設連線狀態
             error_message: null // 預設無錯誤訊息
@@ -397,16 +408,21 @@ export class DroneRealTimeStatusCommandsSvc {
      * 轉換部分外部創建屬性到內部屬性
      * @private
      */
-    private convertFromPartialExternalCreationAttributes(data: Partial<ExternalCreationAttributes>): Partial<DroneRealTimeStatusAttributes> {
+    private convertFromPartialExternalCreationAttributesLocal(data: Partial<ExternalCreationAttributesLocal>): Partial<DroneRealTimeStatusAttributes> {
         const result: Partial<DroneRealTimeStatusAttributes> = {};
         
         if (data.drone_id !== undefined) result.drone_id = data.drone_id;
-        if (data.status !== undefined) result.current_status = data.status as DroneRealTimeStatus;
-        if (data.battery_level !== undefined) result.current_battery_level = data.battery_level;
+        if ((data as any).status !== undefined) result.current_status = (data as any).status as DroneRealTimeStatus;
+        if ((data as any).current_status !== undefined) result.current_status = (data as any).current_status as DroneRealTimeStatus;
+        if ((data as any).battery_level !== undefined) result.current_battery_level = (data as any).battery_level;
+        if ((data as any).current_battery_level !== undefined) result.current_battery_level = (data as any).current_battery_level;
         if (data.signal_strength !== undefined) result.signal_strength = data.signal_strength;
-        if (data.altitude !== undefined) result.current_altitude = data.altitude;
-        if (data.speed !== undefined) result.current_speed = data.speed;
-        if (data.heading !== undefined) result.current_heading = data.heading;
+        if ((data as any).altitude !== undefined) result.current_altitude = (data as any).altitude;
+        if ((data as any).current_altitude !== undefined) result.current_altitude = (data as any).current_altitude;
+        if ((data as any).speed !== undefined) result.current_speed = (data as any).speed;
+        if ((data as any).current_speed !== undefined) result.current_speed = (data as any).current_speed;
+        if ((data as any).heading !== undefined) result.current_heading = (data as any).heading;
+        if ((data as any).current_heading !== undefined) result.current_heading = (data as any).current_heading;
         // 注意：這些欄位在內部模型中可能不存在，需要根據實際模型調整
         // if (data.latitude !== undefined) result.latitude = data.latitude;
         // if (data.longitude !== undefined) result.longitude = data.longitude;
@@ -426,18 +442,17 @@ export class DroneRealTimeStatusCommandsSvc {
         return {
             id: modelData.id,
             drone_id: modelData.drone_id,
-            status: modelData.current_status || 'idle',
-            battery_level: modelData.current_battery_level,
-            signal_strength: modelData.signal_strength,
-            altitude: modelData.current_altitude,
-            speed: modelData.current_speed,
-            heading: modelData.current_heading,
-            latitude: modelData.latitude,
-            longitude: modelData.longitude,
-            temperature: modelData.temperature,
-            humidity: modelData.humidity,
-            wind_speed: modelData.wind_speed,
+            current_battery_level: modelData.current_battery_level,
+            current_status: modelData.current_status || DroneRealTimeStatus.IDLE,
             last_seen: modelData.last_seen,
+            current_altitude: modelData.current_altitude,
+            current_speed: modelData.current_speed,
+            current_heading: modelData.current_heading,
+            signal_strength: modelData.signal_strength,
+            is_connected: modelData.is_connected,
+            error_message: modelData.error_message,
+            temperature: modelData.temperature,
+            flight_time_today: modelData.flight_time_today || 0,
             createdAt: modelData.createdAt,
             updatedAt: modelData.updatedAt
         };

@@ -19,7 +19,7 @@ import { DronePositionQueriesRepository } from '../../repo/queries/DronePosition
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import { DronePositionQueriesSvc } from '../queries/DronePositionQueriesSvc.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DronePositionCommandsSvc');
 
@@ -142,11 +142,9 @@ export class DronePositionCommandsSvc {
             }
 
             logger.info('Deleting drone position data', { id });
-            const success = await this.dronePositionRepository.delete(id);
-
-            if (!success) {
-                throw new Error(`找不到 ID 為 ${id} 的無人機位置資料`);
-            }
+            await this.dronePositionRepository.delete(id);
+            
+            logger.info('Successfully deleted drone position data', { id });
 
             logger.info('Successfully deleted drone position data', { id });
         } catch (error) {

@@ -61,6 +61,7 @@ export const TYPES = {
     
     // === WebSocket 相關 ===
     WebSocketService: Symbol.for('WebSocketService'),
+    WebSocketAuthMiddleware: Symbol.for('WebSocketAuthMiddleware'),
     DronePositionEventHandler: Symbol.for('DronePositionEventHandler'),
     DroneStatusEventHandler: Symbol.for('DroneStatusEventHandler'),
     DroneCommandEventHandler: Symbol.for('DroneCommandEventHandler'),
@@ -70,6 +71,9 @@ export const TYPES = {
  * Drone 事件類型列舉
  */
 export enum DroneEventType {
+    POSITION = 'position',
+    STATUS = 'status',
+    COMMAND = 'command',
     POSITION_UPDATE = 'drone_position_update',
     STATUS_UPDATE = 'drone_status_update', 
     COMMAND_RECEIVED = 'drone_command_received',

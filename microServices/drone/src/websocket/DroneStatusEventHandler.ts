@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../types/dependency-injection.js';
 import { WebSocketService, DRONE_EVENTS, AuthenticatedSocket, DroneSubscriptionRequest } from '../configs/websocket/index.js';
-import { WebSocketAuthMiddleware } from '../../../../packages/WebSocketAuthMiddleware.js';
+import { WebSocketAuthMiddleware } from '@aiot/shared-packages/WebSocketAuthMiddleware.js';
 import { DroneRealTimeStatusQueriesSvc } from '../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import { DroneRealTimeStatusCommandsSvc } from '../services/commands/DroneRealTimeStatusCommandsSvc.js';
 import type { IDroneEventHandler } from '../types/websocket-interfaces.js';
@@ -205,7 +205,14 @@ export class DroneStatusEventHandler implements IDroneEventHandler {
    * @param {AuthenticatedSocket} socket - Socket 連線實例
    * @param {any} data - 事件數據
    */
-  public async handle(socket: AuthenticatedSocket, data: any): Promise<void> {
+    /**
+   * 統一的事件處理入口 (實現 IDroneEventHandler 接口)
+   * 
+   * @param {Socket} socket - Socket 連線實例
+   * @param {DroneEventType} eventType - 事件類型
+   * @param {any} data - 事件數據
+   */
+  public async handleEvent(socket: any, eventType: any, data: any): Promise<void> {
     // 根據 data 中的事件類型進行處理
     if (data.action === 'subscribe') {
       await this.handleStatusSubscription(socket, data);
@@ -217,6 +224,16 @@ export class DroneStatusEventHandler implements IDroneEventHandler {
         message: 'Unknown status action type'
       });
     }
+  }
+
+  /**
+   * 統一的事件處理入口 (保留向後兼容)
+   * 
+   * @param {AuthenticatedSocket} socket - Socket 連線實例
+   * @param {any} data - 事件數據
+   */
+  public async handle(socket: AuthenticatedSocket, data: any): Promise<void> {
+    await this.handleEvent(socket, null, data);
   }
 
   /**

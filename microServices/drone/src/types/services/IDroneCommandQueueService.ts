@@ -8,9 +8,18 @@
  * @since 2025-08-08
  */
 
-import { DroneCommandQueueModel, DroneCommandQueueCreationAttributes } from '../../models/DroneCommandQueueModel.js';
+import { DroneCommandQueueModel, DroneCommandQueueCreationAttributes, DroneCommandQueueAttributes } from '../../models/DroneCommandQueueModel.js';
 
-export { DroneCommandQueueCreationAttributes };
+export type { DroneCommandQueueCreationAttributes, DroneCommandQueueAttributes };
+
+export interface QueueStatistics {
+  totalQueues: number;
+  pendingQueues: number;
+  runningQueues: number;
+  completedQueues: number;
+  failedQueues: number;
+  executingQueues: number;
+}
 
 export interface IDroneCommandQueueService {
   /**

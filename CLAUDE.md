@@ -82,5 +82,5 @@ docker ps
 docker logs AIOT-be --tail=20
 
 # 檢查前端日誌  
-docker logs AIOT-fe --tail=20
+docker logs AIOT-feSetting --tail=20
 ```

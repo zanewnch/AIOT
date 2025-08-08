@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandCommandsSvc } from '../../services/commands/DroneCommandCommandsSvc.js';
-import { createLogger, logRequest } from '../../../../../packages/loggerConfig.js';
-import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
+import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
 import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 
@@ -126,14 +126,14 @@ export class DroneCommandCommands {
                 logger.info('Commands batch creation completed successfully', {
                     total: result.total,
                     successful: result.successCount,
-                    failed: result.failedCount
+                    failed: result.failureCount
                 });
             } else {
                 const response = ControllerResult.badRequest('所有批量指令創建失敗');
                 res.status(response.status).json(response);
                 logger.warn('All commands batch creation failed', { 
                     total: result.total,
-                    failedCount: result.failedCount
+                    failedCount: result.failureCount
                 });
             }
         } catch (error) {
@@ -859,7 +859,7 @@ export class DroneCommandCommands {
 
             const result = await this.commandService.sendFlyToCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
             
-            if (result.success) {
+            if (result.success && result.command) {
                 const response = ControllerResult.created('移動指令發送成功', result.command);
                 res.status(response.status).json(response);
                 logger.info('Move command sent successfully', { droneId, commandId: result.command.id });
@@ -904,7 +904,7 @@ export class DroneCommandCommands {
 
             const result = await this.commandService.retryFailedCommand(commandId, issuedBy);
             
-            if (result.success) {
+            if (result.success && result.command) {
                 const response = ControllerResult.created('指令重試成功', result.command);
                 res.status(response.status).json(response);
                 logger.info('Command retried successfully', { originalCommandId: commandId, newCommandId: result.command.id });

@@ -19,8 +19,8 @@ import {
 } from '../../types/services/IArchiveTaskService.js';
 import { ArchiveTaskCommandsSvc } from '../../services/commands/ArchiveTaskCommandsSvc.js';
 import { ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
-import { ControllerResult } from '../../../../../packages/ControllerResult.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
 
 /**
@@ -65,19 +65,19 @@ export class ArchiveTaskCommands {
             const request: CreateArchiveTaskRequest = req.body;
             
             // 簡單的請求驗證
-            if (!request.jobType || !request.tableName || !request.archiveTableName ||
-                !request.dateRangeStart || !request.dateRangeEnd || !request.createdBy) {
+            if (!request.job_type || !request.table_name || !request.archive_table_name ||
+                !request.date_range_start || !request.date_range_end || !request.created_by) {
                 const result = ControllerResult.badRequest('缺少必要的請求參數');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 轉換日期字串為 Date 對象
-            if (typeof request.dateRangeStart === 'string') {
-                request.dateRangeStart = new Date(request.dateRangeStart);
+            if (typeof request.date_range_start === 'string') {
+                request.date_range_start = new Date(request.date_range_start);
             }
-            if (typeof request.dateRangeEnd === 'string') {
-                request.dateRangeEnd = new Date(request.dateRangeEnd);
+            if (typeof request.date_range_end === 'string') {
+                request.date_range_end = new Date(request.date_range_end);
             }
 
             const task = await this.commandService.createTask(request);
@@ -125,11 +125,11 @@ export class ArchiveTaskCommands {
 
             // 轉換日期字串為 Date 對象
             requests.forEach(request => {
-                if (typeof request.dateRangeStart === 'string') {
-                    request.dateRangeStart = new Date(request.dateRangeStart);
+                if (typeof request.date_range_start === 'string') {
+                    request.date_range_start = new Date(request.date_range_start);
                 }
-                if (typeof request.dateRangeEnd === 'string') {
-                    request.dateRangeEnd = new Date(request.dateRangeEnd);
+                if (typeof request.date_range_end === 'string') {
+                    request.date_range_end = new Date(request.date_range_end);
                 }
             });
 

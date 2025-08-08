@@ -20,6 +20,7 @@ import {
     PrimaryKey,   // 主鍵裝飾器
     AutoIncrement, // 自動遞增裝飾器
     AllowNull,    // 允許空值設定裝飾器
+    Default,      // 預設值裝飾器
     CreatedAt,    // 建立時間裝飾器
     UpdatedAt,    // 更新時間裝飾器
     HasMany,      // 一對多關聯裝飾器
@@ -83,6 +84,24 @@ export type DroneCommandQueueAttributes = {
      * @type {DroneCommandQueueStatus} 佇列當前的執行狀態
      */
     status: DroneCommandQueueStatus;
+    
+    /** 
+     * 無人機ID
+     * @type {number} 關聯的無人機識別碼
+     */
+    drone_id: number;
+    
+    /** 
+     * 優先級
+     * @type {number} 佇列執行優先級（1-10，越小優先級越高）
+     */
+    priority: number;
+    
+    /** 
+     * 命令類型
+     * @type {string} 佇列中包含的命令類型
+     */
+    command_type: string;
     
     /** 
      * 當前執行索引
@@ -196,6 +215,28 @@ export class DroneCommandQueueModel extends Model<DroneCommandQueueAttributes, D
     @AllowNull(false)
     @Column(DataType.ENUM(...Object.values(DroneCommandQueueStatus)))
     declare status: DroneCommandQueueStatus;
+
+    /**
+     * 無人機ID
+     */
+    @AllowNull(false)
+    @Column(DataType.BIGINT)
+    declare drone_id: number;
+
+    /**
+     * 優先級
+     */
+    @AllowNull(false)
+    @Default(5)
+    @Column(DataType.INTEGER)
+    declare priority: number;
+
+    /**
+     * 命令類型
+     */
+    @AllowNull(false)
+    @Column(DataType.STRING(100))
+    declare command_type: string;
 
     /**
      * 當前執行索引

@@ -17,7 +17,7 @@ import type { IDroneCommandsArchiveRepository } from '../../types/repositories/I
 import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/DroneCommandsArchiveQueriesRepo.js';
 import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/DroneCommandsArchiveCommandsRepo.js';
 import type { DroneCommandsArchiveAttributes } from '../../models/DroneCommandsArchiveModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DroneCommandsArchiveQueriesSvc');
 

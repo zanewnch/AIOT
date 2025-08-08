@@ -27,7 +27,7 @@ import type {
 } from '../../types/repositories/IArchiveTaskRepository.js';
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 /**
  * 歸檔任務查詢 Service 實作類別

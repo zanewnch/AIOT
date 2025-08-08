@@ -1,0 +1,3 @@
+[submodule "aiot-shared-packages"]
+	path = aiot-shared-packages
+	url = https://github.com/zanewnch/aiot-shared-packages.git

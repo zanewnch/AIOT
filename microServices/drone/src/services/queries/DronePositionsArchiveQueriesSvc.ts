@@ -23,7 +23,7 @@ import type { IDronePositionsArchiveRepository } from '../../types/repositories/
 import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/DronePositionsArchiveQueriesRepo.js';
 import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/DronePositionsArchiveCommandsRepo.js';
 import type { DronePositionsArchiveAttributes } from '../../models/DronePositionsArchiveModel.js';
-import { createLogger } from '../../../../../packages/loggerConfig.js';
+import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DronePositionsArchiveQueriesSvc');
 
@@ -327,9 +327,11 @@ export class DronePositionsArchiveQueriesSvc {
                 throw new Error('限制筆數必須在 1 到 1000 之間');
             }
 
-            const archives = await this.archiveRepository.findByAltitudeRange(minAltitude, maxAltitude, limit);
-            logger.info(`Successfully retrieved ${archives.length} position archives in altitude range`);
-            return archives;
+            const archives = await this.archiveRepository.findByAltitudeRange(minAltitude, maxAltitude);
+            // 如果需要限制結果數量，可以在這裡截取
+            const limitedArchives = limit ? archives.slice(0, limit) : archives;
+            logger.info(`Successfully retrieved ${limitedArchives.length} position archives in altitude range`);
+            return limitedArchives;
         } catch (error) {
             logger.error('Error in getPositionArchivesByAltitudeRange', { minAltitude, maxAltitude, limit, error });
             throw error;
@@ -350,9 +352,11 @@ export class DronePositionsArchiveQueriesSvc {
                 throw new Error('限制筆數必須在 1 到 1000 之間');
             }
 
-            const archives = await this.archiveRepository.findByTemperatureRange(minTemp, maxTemp, limit);
-            logger.info(`Successfully retrieved ${archives.length} position archives in temperature range`);
-            return archives;
+            const archives = await this.archiveRepository.findByTemperatureRange(minTemp, maxTemp);
+            // 如果需要限制結果數量，可以在這裡截取
+            const limitedArchives = limit ? archives.slice(0, limit) : archives;
+            logger.info(`Successfully retrieved ${limitedArchives.length} position archives in temperature range`);
+            return limitedArchives;
         } catch (error) {
             logger.error('Error in getPositionArchivesByTemperatureRange', { minTemp, maxTemp, limit, error });
             throw error;
@@ -640,10 +644,8 @@ export class DronePositionsArchiveQueriesSvc {
 
             const statistics: PositionDistributionStatistics = {
                 bounds: {
-                    north: north === Number.MIN_VALUE ? 0 : north,
-                    south: south === Number.MAX_VALUE ? 0 : south,
-                    east: east === Number.MIN_VALUE ? 0 : east,
-                    west: west === Number.MAX_VALUE ? 0 : west
+                    northEast: { lat: north === Number.MIN_VALUE ? 0 : north, lng: east === Number.MIN_VALUE ? 0 : east },
+                    southWest: { lat: south === Number.MAX_VALUE ? 0 : south, lng: west === Number.MAX_VALUE ? 0 : west }
                 },
                 center: {
                     latitude: centerLat,

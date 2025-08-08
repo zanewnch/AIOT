@@ -18,6 +18,7 @@
     "docs:watch-scss": "sass --watch src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css"
   },
   "dependencies": {
+    "@aiot/shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",
     "@types/amqplib": "^0.10.7",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.19",
@@ -66,7 +67,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/mongodb": "^4.0.6",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^20.19.1",
+    "@types/node": "^20.19.9",
     "@types/supertest": "^6.0.3",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/uuid": "^10.0.0",
