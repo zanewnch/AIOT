@@ -7,3 +7,4 @@ _includes:
   - routes.yaml
   - plugins.yaml
   - upstreams.yaml
+  - consumers.yaml

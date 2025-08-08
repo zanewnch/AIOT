@@ -1,0 +1,104 @@
+# Docker Compose 配置用於測試完整的三階段權限系統
+# 包含：Redis、OPA、以及 feSetting 服務
+
+version: '3.8'
+
+services:
+  # Redis 服務 - 用於權限快取
+  redis:
+    image: redis:7-alpine
+    container_name: fesetting-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # OPA 服務 - 用於政策引擎
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: fesetting-opa
+    ports:
+      - "8181:8181"
+    volumes:
+      - ./policies:/policies:ro
+    command: >
+      run --server 
+      --bundle /policies 
+      --addr 0.0.0.0:8181
+      --log-level debug
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8181/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - redis
+
+  # MySQL 資料庫 - 用於資料持久化
+  mysql:
+    image: mysql:8.0
+    container_name: fesetting-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: fesetting_db
+      MYSQL_USER: fesetting_user
+      MYSQL_PASSWORD: fesetting_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # feSetting 服務
+  fesetting:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fesetting-service
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - OPA_URL=http://opa:8181
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=fesetting_db
+      - DB_USER=fesetting_user
+      - DB_PASSWORD=fesetting_password
+      - JWT_SECRET=your-super-secret-jwt-key
+      - LOG_LEVEL=debug
+    volumes:
+      - ./src:/app/src:ro
+      - ./policies:/app/policies:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      opa:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis-data:
+  mysql-data:
+
+networks:
+  default:
+    name: fesetting-network

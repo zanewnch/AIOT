@@ -1,0 +1,55 @@
+# OPA Server Configuration
+# This configuration sets up the OPA server for centralized policy management
+
+# Server configuration
+server:
+  addr: 0.0.0.0:8181
+
+# Bundle configuration for policy management
+bundles:
+  aiot:
+    resource: "/bundles/aiot.tar.gz"
+    service: bundle
+    polling:
+      min_delay_seconds: 10
+      max_delay_seconds: 30
+
+# Services configuration
+services:
+  bundle:
+    url: http://opa-bundle-server:80
+    credentials:
+      bearer:
+        token: ""
+
+# Decision logging configuration
+decision_logs:
+  console: true
+  reporting:
+    min_delay_seconds: 5
+    max_delay_seconds: 15
+
+# Status configuration
+status:
+  console: true
+  prometheus: true
+
+# Query caching configuration
+caching:
+  inter_query_builtin_cache:
+    max_size_bytes: 104857600  # 100MB
+
+# Distributed tracing
+distributed_tracing:
+  type: jaeger
+  address: http://jaeger:14268/api/traces
+  service_name: opa-server
+
+# Plugin configuration
+plugins:
+  envoy_ext_authz_grpc:
+    addr: :9191
+    query: data.aiot.gateway.allow
+    enable_reflection: true
+    dry_run: false
+    enable_stats: true

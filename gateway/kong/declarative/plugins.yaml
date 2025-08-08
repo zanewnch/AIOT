@@ -18,6 +18,155 @@ plugins:
     config:
       allowed_payload_size: 10
 
+  # JWT 驗證插件 - 套用到需要驗證的路由
+  - name: jwt
+    route: rbac-routes
+    config:
+      secret_is_base64: false
+      key_claim_name: iss  
+      anonymous: ""
+      run_on_preflight: true
+      maximum_expiration: 0
+      claims_to_verify:
+        - exp
+        - iat
+      cookie_names:
+        - jwt
+      header_names:
+        - authorization
+    tags:
+      - authentication
+      - security
+
+  - name: jwt
+    route: drone-api-routes
+    config:
+      secret_is_base64: false
+      key_claim_name: iss
+      anonymous: ""
+      run_on_preflight: true
+      maximum_expiration: 0
+      claims_to_verify:
+        - exp
+        - iat
+      cookie_names:
+        - jwt
+      header_names:
+        - authorization
+    tags:
+      - authentication
+      - security
+
+  - name: jwt
+    route: fesetting-routes
+    config:
+      secret_is_base64: false
+      key_claim_name: iss
+      anonymous: ""
+      run_on_preflight: true
+      maximum_expiration: 0
+      claims_to_verify:
+        - exp
+        - iat
+      cookie_names:
+        - jwt
+      header_names:
+        - authorization
+    tags:
+      - authentication
+      - security
+
+  - name: jwt
+    route: drone-websocket-routes
+    config:
+      secret_is_base64: false
+      key_claim_name: iss
+      anonymous: ""
+      run_on_preflight: true
+      maximum_expiration: 0
+      claims_to_verify:
+        - exp
+        - iat
+      cookie_names:
+        - jwt
+      header_names:
+        - authorization
+    tags:
+      - authentication
+      - security
+
+  # Request Transformer - 添加 OPA 需要的標頭
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - "X-Original-URI:$(uri)"
+          - "X-Original-Method:$(method)"
+        querystring: []
+        body: []
+      remove:
+        headers: []
+        querystring: []
+        body: []
+      replace:
+        headers: []
+        querystring: []
+        body: []
+    tags:
+      - transformation
+
+  # Kong 官方 OPA 插件 - RBAC 路由
+  - name: opa
+    route: rbac-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - Drone 路由
+  - name: opa
+    route: drone-api-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - WebSocket 路由
+  - name: opa
+    route: drone-websocket-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - FE Setting 路由
+  - name: opa
+    route: fesetting-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
   # CORS 插件 - 應用到所有路由
   - name: cors
     route: rbac-auth-routes
