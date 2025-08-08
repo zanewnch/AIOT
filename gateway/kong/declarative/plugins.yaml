@@ -1,0 +1,167 @@
+_format_version: "3.0"
+
+plugins:
+  # 全局插件
+  - name: prometheus
+    config:
+      per_consumer: true
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+
+  - name: request-id
+    config:
+      header_name: X-Request-ID
+      echo_downstream: true
+
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 10
+
+  # CORS 插件 - 應用到所有路由
+  - name: cors
+    route: rbac-auth-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
+
+  - name: cors
+    route: rbac-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
+
+  - name: cors
+    route: drone-api-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      credentials: true
+      max_age: 3600
+
+  - name: cors
+    route: drone-websocket-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      credentials: true
+
+  - name: cors
+    route: fesetting-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      credentials: true
+      max_age: 3600
+
+  # 限流插件
+  - name: rate-limiting
+    route: rbac-auth-routes
+    config:
+      minute: 100
+      hour: 1000
+      policy: local
+      hide_client_headers: false
+
+  - name: rate-limiting
+    route: rbac-routes
+    config:
+      minute: 100
+      hour: 1000
+      policy: local
+      hide_client_headers: false
+
+  - name: rate-limiting
+    route: drone-api-routes
+    config:
+      minute: 200
+      hour: 2000
+      policy: local
+      hide_client_headers: false
+
+  - name: rate-limiting
+    route: fesetting-routes
+    config:
+      minute: 50
+      hour: 500
+      policy: local
+      hide_client_headers: false

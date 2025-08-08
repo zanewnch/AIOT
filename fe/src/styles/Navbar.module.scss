@@ -1,0 +1,134 @@
+@use '../styles/themes.scss' as *;
+
+// Header styles
+.header {
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  @include theme-transition;
+  width: 100vw; // 確保 header 填滿視窗寬度
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0; // 移除 padding 讓 navbar 完全填滿
+  height: 64px;
+  max-width: none; // 移除最大寬度限制
+  margin: 0;
+  padding-left: 24px; // 只保留左側 padding 與 sidebar 內容對齊
+  padding-right: 24px; // 保留右側 padding 讓按鈕不會貼邊
+  width: 100vw; // 確保填滿視窗寬度
+}
+
+.navBrand {
+  flex-shrink: 0;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  @include theme-transition;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: var(--bg-secondary);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    @include theme-transition;
+    white-space: nowrap;
+    margin: 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent-color), var(--text-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    
+    // Fallback for browsers that don't support background-clip
+    @supports not (-webkit-background-clip: text) {
+      background: none;
+      color: var(--accent-color);
+    }
+  }
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.username {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  @include theme-transition;
+}
+
+.logoutButton {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  @include theme-transition;
+  
+  &:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// Responsive design for Navbar
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+  }
+  
+  .navBrand {
+    padding: 6px 10px;
+    
+    h2 {
+      font-size: 24px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+    height: 56px;
+  }
+  
+  .navBrand {
+    padding: 4px 8px;
+    
+    h2 {
+      font-size: 20px;
+    }
+  }
+} 

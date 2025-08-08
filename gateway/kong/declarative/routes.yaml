@@ -1,0 +1,70 @@
+_format_version: "3.0"
+
+routes:
+  - name: rbac-auth-routes
+    service: rbac-service
+    paths:
+      - /api/auth
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - auth
+      - login
+
+  - name: rbac-routes
+    service: rbac-service
+    paths:
+      - /api/rbac
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - rbac
+      - permissions
+
+  - name: drone-api-routes
+    service: drone-service
+    paths:
+      - /api/drone
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - drone
+      - api
+
+  - name: drone-websocket-routes
+    service: drone-service
+    paths:
+      - /socket.io
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+      - https
+      - ws
+      - wss
+    tags:
+      - drone
+      - websocket
+      - realtime
+
+  - name: fesetting-routes
+    service: fesetting-service
+    paths:
+      - /api/user-preferences
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - user-preferences
+      - settings

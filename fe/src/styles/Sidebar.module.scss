@@ -1,0 +1,108 @@
+@use '../styles/themes.scss' as *;
+
+// Sidebar styles
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 64px; // navbar的高度
+  width: 240px;
+  padding: 0;
+  border-right: 1px solid var(--border-color);
+  @include theme-transition;
+  overflow-y: auto;
+  height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+  z-index: 50;
+}
+
+.sidebarHeader {
+  padding: 20px 16px 16px 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 8px;
+
+  .brandTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    @include theme-transition;
+  }
+}
+
+.sidebarSection {
+  padding: 0 16px;
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    @include theme-transition;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    @include theme-transition;
+  }
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 8px;
+  @include theme-transition;
+  word-break: break-word;
+  hyphens: auto;
+
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background-color: var(--active-bg);
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}
+
+.sidebarIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+// 響應式設計
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+}

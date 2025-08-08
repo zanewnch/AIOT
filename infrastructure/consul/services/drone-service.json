@@ -1,0 +1,57 @@
+{
+  "service": {
+    "id": "drone-service",
+    "name": "drone-service",
+    "tags": [
+      "drone",
+      "iot",
+      "websocket",
+      "microservice",
+      "nodejs",
+      "express",
+      "socketio"
+    ],
+    "address": "drone-service",
+    "port": 3002,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "http,grpc,websocket"
+    },
+    "check": {
+      "id": "drone-service-health",
+      "name": "Drone Service Health Check",
+      "http": "http://drone-service:3002/health",
+      "interval": "10s",
+      "timeout": "3s",
+      "deregister_critical_service_after": "30s"
+    },
+    "checks": [
+      {
+        "id": "drone-service-api",
+        "name": "Drone API Check",
+        "http": "http://drone-service:3002/api/health",
+        "interval": "30s",
+        "timeout": "5s"
+      },
+      {
+        "id": "drone-service-grpc",
+        "name": "Drone gRPC Check",
+        "grpc": "drone-service:50052",
+        "interval": "30s",
+        "timeout": "5s"
+      },
+      {
+        "id": "drone-service-websocket",
+        "name": "Drone WebSocket Check",
+        "tcp": "drone-service:3002",
+        "interval": "30s",
+        "timeout": "5s"
+      }
+    ],
+    "weights": {
+      "passing": 10,
+      "warning": 1
+    }
+  }
+}

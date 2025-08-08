@@ -1,0 +1,9 @@
+_format_version: "3.0"
+_transform: true
+
+# 包含其他配置文件
+_includes:
+  - services.yaml
+  - routes.yaml
+  - plugins.yaml
+  - upstreams.yaml

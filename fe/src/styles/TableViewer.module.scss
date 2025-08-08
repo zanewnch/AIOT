@@ -1,0 +1,751 @@
+@use './themes.scss' as *;
+
+.tableViewerRoot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  @include theme-transition;
+  overflow: hidden; // 防止溢出
+}
+
+.tableContainer {
+  background-color: var(--bg-secondary);
+  border-radius: 12px; // 添加圓角讓外觀更柔和
+  padding: 0; // 內容仍然無 padding 讓表格邊緣貼齊
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // 添加陰影增加層次感
+  border: 1px solid var(--border-color); // 添加邊框
+  margin: 24px; // 添加外邊距讓容器與父元素有間距
+  @include theme-transition;
+  flex: 1; // 填滿父容器的剩餘空間
+  display: flex;
+  flex-direction: column;
+  min-height: 0; // 允許 flex 收縮
+  overflow: hidden; // 確保圓角邊緣正確顯示
+}
+
+// 標籤包裝器 - 包含滾動箭頭和滾動容器
+.tabsWrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 12px 12px 0 0;
+  padding: 8px 8px 0 8px;
+  gap: 4px;
+  @include theme-transition;
+}
+
+// 滾動箭頭樣式
+.scrollArrow {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  height: 32px;
+  width: 32px;
+
+  &:hover:not(.disabled) {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+  }
+
+  &:active:not(.disabled) {
+    transform: scale(0.95);
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+
+    svg {
+      opacity: 0.5;
+    }
+  }
+
+  svg {
+    transition: transform 0.1s ease;
+  }
+
+  @include theme-transition;
+}
+
+// 標籤滾動容器
+.tabsContainer {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  // scroll-behavior: smooth;
+  gap: 4px;
+  padding: 0 8px;
+  // scroll-snap-type: x mandatory;
+
+  // 隱藏滾動條但保持滾動功能
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  @include theme-transition;
+}
+
+.tab {
+  padding: 12px 16px;
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  width: 250px;
+  text-align: center;
+  white-space: nowrap;
+  // scroll-snap-align: start;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background-color: var(--bg-primary);
+    color: var(--accent-color);
+    font-weight: 600;
+    border-bottom: 2px solid var(--accent-color);
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: var(--bg-primary);
+      z-index: 1;
+    }
+  }
+
+  @include theme-transition;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0; // 移除下邊距
+  padding: 20px 24px; // 添加內邊距保持美觀
+  flex-shrink: 0; // 防止 header 被壓縮
+  background-color: var(--bg-secondary); // 添加背景色區分
+  border-bottom: 1px solid var(--border-color); // 添加底部邊框
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    @include theme-transition;
+  }
+
+  .recordCount {
+    font-size: 14px;
+    color: var(--text-secondary);
+    background-color: var(--bg-secondary);
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: 500;
+    @include theme-transition;
+  }
+}
+
+.tableWrapper {
+  overflow: auto; // 允許水平和垂直滾動
+  border-radius: 0; // 移除圓角讓邊緣完全貼齊
+  border: none; // 移除邊框讓邊緣完全貼齊
+  @include theme-transition;
+  flex: 1; // 填滿剩餘空間
+  min-height: 0; // 允許 flex 收縮
+  width: 100%; // 確保包裝器填滿容器寬度
+}
+
+.table {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 100%; // 讓表格填滿整個容器高度
+  border-collapse: collapse;
+  background-color: var(--bg-primary);
+  table-layout: fixed; // 強制列均勻分配
+
+  thead {
+    background-color: var(--bg-secondary);
+
+    th {
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--border-color);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      @include theme-transition;
+      width: auto;
+
+      &:not(:last-child) {
+        border-right: 1px solid var(--border-color);
+      }
+
+      &:last-child {
+        text-align: center;
+      }
+    }
+  }
+
+  tbody {
+    height: 100%; // 讓tbody填滿剩餘空間
+    display: table-row-group; // 確保正確的表格顯示
+
+    tr {
+      height: calc(100% / var(--row-count, 10)); // 動態計算每行高度，默認10行
+      @include theme-transition;
+
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      td {
+        padding: 14px 16px;
+        color: var(--text-primary);
+        font-size: 14px;
+        vertical-align: middle; // 垂直居中對齊
+        height: inherit; // 繼承行高度
+        @include theme-transition;
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--border-color);
+        }
+
+        &:first-child {
+          font-weight: 600;
+          color: var(--accent-color);
+        }
+
+        &:nth-child(2),
+        &:nth-child(3),
+        &:nth-child(4),
+        &:nth-child(5) {
+          font-family: 'Courier New', monospace;
+          font-size: 13px;
+        }
+
+        &:nth-child(6) {
+          font-family: 'Courier New', monospace;
+          font-size: 12px;
+        }
+
+        &:last-child {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+// Sort controls styles
+.sortControls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 20px 24px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  @include theme-transition;
+}
+
+.sortDropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    @include theme-transition;
+  }
+
+  select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--accent-color);
+      background-color: var(--hover-bg);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.15);
+    }
+
+    option {
+      padding: 8px;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    @include theme-transition;
+  }
+}
+
+// Edit button styles
+.editButton {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--accent-color-dark, #0056b3);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Modal styles
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  @include theme-transition;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    @include theme-transition;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+  }
+}
+
+.modalBody {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    @include theme-transition;
+  }
+}
+
+.input, .disabledInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.15);
+  }
+
+  // 隱藏數字輸入框的預設spinner
+  &[type="number"] {
+    -moz-appearance: textfield; // Firefox
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none; // Chrome, Safari, Edge
+      margin: 0;
+    }
+  }
+
+  @include theme-transition;
+}
+
+.disabledInput {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+
+  &:focus {
+    box-shadow: none;
+    border-color: var(--border-color);
+  }
+}
+
+.modalFooter {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.cancelButton, .saveButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelButton {
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+  }
+}
+
+.saveButton {
+  background-color: var(--accent-color);
+  color: white;
+
+  &:hover {
+    background-color: var(--accent-color-dark, #0056b3);
+  }
+}
+
+// Status badge styles
+.statusBadge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusActive {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.statusWarning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.statusInactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+[data-theme="dark"] {
+  .tableContainer {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2); // 深色主題下使用更深的陰影
+  }
+
+  .statusActive {
+    background-color: #1e3a1e;
+    color: #4ade80;
+  }
+
+  .statusWarning {
+    background-color: #3a2e1e;
+    color: #fbbf24;
+  }
+
+  .statusInactive {
+    background-color: #3a1e1e;
+    color: #f87171;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .tableContainer {
+    margin: 12px; // 在小屏幕上減少外邊距
+    border-radius: 8px; // 在小屏幕上使用較小的圓角
+  }
+
+  .modal {
+    max-width: 95%;
+    max-height: 95vh;
+    margin: 10px;
+  }
+
+  .modalBody {
+    padding: 20px;
+  }
+
+  .modalFooter {
+    padding: 16px 20px;
+  }
+
+  .tabsWrapper {
+    padding: 6px 6px 0 6px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .tabsContainer {
+    padding: 0 6px;
+    gap: 1px;
+  }
+
+  .scrollArrow {
+    height: 28px;
+    width: 28px;
+    padding: 6px;
+  }
+
+  .tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .sortControls {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 16px 20px;
+  }
+
+  .sortDropdown {
+    label {
+      font-size: 12px;
+    }
+
+    select {
+      font-size: 13px;
+      padding: 6px 10px;
+    }
+  }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px; // 調整小屏幕的 padding
+
+    h2 {
+      font-size: 20px;
+    }
+  }
+
+  .table {
+    font-size: 12px;
+
+    thead th {
+      padding: 12px 8px;
+      font-size: 11px;
+    }
+
+    tbody td {
+      padding: 10px 8px;
+      font-size: 12px;
+
+      &:nth-child(2),
+      &:nth-child(3) {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tableContainer {
+    padding: 0; // 極小屏幕也保持無 padding
+  }
+
+  .modal {
+    max-width: 98%;
+    max-height: 98vh;
+    margin: 5px;
+  }
+
+  .modalBody {
+    padding: 16px;
+  }
+
+  .modalFooter {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cancelButton, .saveButton {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .tabsWrapper {
+    padding: 4px 4px 0 4px;
+    flex-wrap: nowrap; // 極小屏幕也保持水平滾動
+  }
+
+  .tabsContainer {
+    padding: 0 4px;
+    // 移除 flex-wrap，使用滾動代替換行
+  }
+
+  .scrollArrow {
+    height: 24px;
+    width: 24px;
+    padding: 4px;
+  }
+
+  .tab {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-width: auto;
+    flex: 1;
+    text-align: center;
+  }
+
+  .sortControls {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .sortDropdown {
+    label {
+      font-size: 11px;
+    }
+
+    select {
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+  }
+
+  .tableHeader {
+    padding: 12px 16px; // 極小屏幕的 padding
+  }
+
+  .tableWrapper {
+    border-radius: 0; // 移除圓角保持邊緣貼齊
+  }
+
+  .table {
+    thead th {
+      padding: 10px 6px;
+      font-size: 10px;
+    }
+
+    tbody td {
+      padding: 8px 6px;
+      font-size: 11px;
+
+      &:nth-child(2),
+      &:nth-child(3) {
+        font-size: 10px;
+      }
+    }
+  }
+}
