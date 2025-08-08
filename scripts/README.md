@@ -4,54 +4,29 @@
 
 ## 📋 腳本列表
 
-### 🚀 start-microservices.sh - 微服務快速啟動腳本
+### 🎛️ manage-microservices.sh - 微服務管理腳本
 
-簡單易用的微服務啟動腳本，一鍵啟動整個 AIOT 微服務架構。
-
-#### 使用方法
-
-```bash
-# 啟動所有微服務
-./scripts/start-microservices.sh
-
-# 停止所有微服務
-./scripts/start-microservices.sh stop
-
-# 查看服務狀態
-./scripts/start-microservices.sh status
-
-# 查看日誌
-./scripts/start-microservices.sh logs
-
-# 重啟服務
-./scripts/start-microservices.sh restart
-
-# 清理所有資源
-./scripts/start-microservices.sh clean
-```
-
-### 🎛️ manage-microservices.sh - 微服務高級管理腳本
-
-功能完整的微服務管理工具，提供分階段啟動、健康檢查等高級功能。
+功能完整的微服務管理工具，提供分階段啟動、健康檢查、服務發現等功能。
 
 #### 使用方法
 
 ```bash
-# 分階段啟動
+# 一鍵啟動所有服務
+./scripts/manage-microservices.sh start-all
+
+# 分階段啟動 (更細粒度控制)
 ./scripts/manage-microservices.sh start-infra      # 只啟動基礎設施
 ./scripts/manage-microservices.sh start-gateway    # 啟動 API Gateway
 ./scripts/manage-microservices.sh start-services   # 啟動微服務
 
-# 一鍵啟動
-./scripts/manage-microservices.sh start-all        # 啟動所有服務
-
-# 啟動監控服務
+# 監控服務 (可選)
 ./scripts/manage-microservices.sh start-monitoring
 
-# 其他管理命令
+# 管理命令
 ./scripts/manage-microservices.sh status           # 服務狀態
 ./scripts/manage-microservices.sh logs [service]   # 查看日誌
 ./scripts/manage-microservices.sh stop             # 停止服務
+./scripts/manage-microservices.sh restart          # 重啟服務
 ./scripts/manage-microservices.sh clean            # 清理資源
 ```
 

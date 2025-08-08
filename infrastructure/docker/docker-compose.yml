@@ -1,6 +1,5 @@
 # AIOT Microservices Architecture with Kong Gateway & Consul
 # 微服務架構 Docker Compose 配置
-version: '3.8'
 
 x-logging: &default-logging
   driver: "json-file"
@@ -38,7 +37,7 @@ services:
   
   # Consul 服務發現
   consul:
-    image: consul:latest
+    image: consul:1.15
     logging: *default-logging
     container_name: aiot-consul
     ports:
@@ -61,7 +60,7 @@ services:
 
   # Kong API Gateway
   kong:
-    image: kong:latest
+    image: kong:3.4
     logging: *default-logging
     container_name: aiot-kong
     ports:
@@ -298,7 +297,7 @@ services:
 
   # Prometheus 監控
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.45.0
     logging: *default-logging
     container_name: aiot-prometheus
     ports:
@@ -314,7 +313,7 @@ services:
 
   # Grafana 儀表板
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.0.0
     logging: *default-logging
     container_name: aiot-grafana
     ports:

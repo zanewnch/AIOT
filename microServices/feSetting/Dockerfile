@@ -8,8 +8,8 @@ COPY package*.json ./
 # 建置階段：安裝依賴
 RUN npm install
 
-# 建置階段：安裝全域套件（如果真的需要）
-RUN npm install -g @anthropic-ai/claude-code @google/gemini-cli
+# 建置階段：安裝全域套件
+RUN npm install -g @anthropic-ai/claude-code @google/gemini-cli nodemon tsx
 
 # 建置階段：設定 Git（如果真的需要）
 RUN git config --global user.name "zanewnch" && \
