@@ -19,7 +19,7 @@ RUN git config --global user.name "zanewnch" && \
 COPY .env* ./
 
 # 複製程式碼
-COPY . .
+COPY src .
 
 EXPOSE 8000
 
