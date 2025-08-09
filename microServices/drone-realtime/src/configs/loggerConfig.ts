@@ -1,7 +1,7 @@
 /**
- * @fileoverview Winston 日誌配置 - RBAC 服務
+ * @fileoverview Winston 日誌配置 - DRONE-REALTIME 服務
  * 
- * 提供 RBAC 服務的日誌記錄功能，支援多種輸出格式和日誌級別。
+ * 提供 DRONE-REALTIME 服務的日誌記錄功能，支援多種輸出格式和日誌級別。
  * 包含檔案輪轉、彩色輸出和錯誤追蹤等功能。
  * 
  * 環境配置策略：
@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 日誌輸出目錄
-const logDir = path.join(__dirname, '../../../logs/rbac');
+const logDir = path.join(__dirname, '../../../logs/drone-realtime');
 
 /**
  * 自訂日誌格式
@@ -35,7 +35,7 @@ const customFormat = winston.format.combine(
   winston.format.splat(),
   winston.format.json(),
   winston.format.printf(({ timestamp, level, message, service, ...meta }: any) => {
-    let logMessage = `${timestamp} [${service || 'RBAC'}] ${level.toUpperCase()}: ${message}`;
+    let logMessage = `${timestamp} [${service || 'DRONE-REALTIME'}] ${level.toUpperCase()}: ${message}`;
     
     // 如果有額外的 metadata，將其附加到日誌中
     if (Object.keys(meta).length > 0) {
@@ -53,7 +53,7 @@ const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
   winston.format.printf(({ timestamp, level, message, service, ...meta }: any) => {
-    let logMessage = `${timestamp} [${service || 'RBAC'}] ${level}: ${message}`;
+    let logMessage = `${timestamp} [${service || 'DRONE-REALTIME'}] ${level}: ${message}`;
     
     if (Object.keys(meta).length > 0) {
       logMessage += ` ${JSON.stringify(meta, null, 2)}`;
@@ -67,7 +67,7 @@ const consoleFormat = winston.format.combine(
  * 檔案輪轉傳輸配置 - 一般日誌
  */
 const fileRotateTransport = new DailyRotateFile({
-  filename: path.join(logDir, 'rbac-app-%DATE%.log'),
+  filename: path.join(logDir, 'drone-realtime-app-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '20m',
   maxFiles: '14d',
@@ -79,7 +79,7 @@ const fileRotateTransport = new DailyRotateFile({
  * 檔案輪轉傳輸配置 - 錯誤日誌
  */
 const errorFileRotateTransport = new DailyRotateFile({
-  filename: path.join(logDir, 'rbac-error-%DATE%.log'),
+  filename: path.join(logDir, 'drone-realtime-error-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '20m',
   maxFiles: '30d',
@@ -116,7 +116,7 @@ const getTransports = (): winston.transport[] => {
 const getExceptionHandlers = (): winston.transport[] => {
   const handlers: winston.transport[] = [
     new winston.transports.File({ 
-      filename: path.join(logDir, 'rbac-exceptions.log'),
+      filename: path.join(logDir, 'drone-realtime-exceptions.log'),
       format: customFormat 
     })
   ];
@@ -139,7 +139,7 @@ const getExceptionHandlers = (): winston.transport[] => {
 const getRejectionHandlers = (): winston.transport[] => {
   const handlers: winston.transport[] = [
     new winston.transports.File({ 
-      filename: path.join(logDir, 'rbac-rejections.log'),
+      filename: path.join(logDir, 'drone-realtime-rejections.log'),
       format: customFormat 
     })
   ];
@@ -162,7 +162,7 @@ const getRejectionHandlers = (): winston.transport[] => {
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
   format: customFormat,
-  defaultMeta: { service: 'AIOT-RBAC' },
+  defaultMeta: { service: 'AIOT-DRONE-REALTIME' },
   transports: getTransports(),
   // 處理未捕獲的異常
   exceptionHandlers: getExceptionHandlers(),
@@ -174,7 +174,7 @@ const logger = winston.createLogger({
 const isProduction = process.env.NODE_ENV === 'production';
 const logLevel = process.env.LOG_LEVEL || (isProduction ? 'info' : 'debug');
 
-logger.info('🚀 RBAC Winston Logger initialized', {
+logger.info('🚀 DRONE-REALTIME Winston Logger initialized', {
   environment: isProduction ? 'production' : 'development',
   logLevel,
   consoleOutput: !isProduction,
@@ -189,7 +189,7 @@ logger.info('🚀 RBAC Winston Logger initialized', {
  * @returns 具有特定服務標籤的子記錄器
  */
 export function createLogger(service: string): winston.Logger {
-  return logger.child({ service: `RBAC-${service}` });
+  return logger.child({ service: `DRONE-REALTIME-${service}` });
 }
 
 /**

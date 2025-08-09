@@ -1,7 +1,7 @@
 /**
- * @fileoverview MySQL資料庫連接池配置模組 - RBAC 服務
+ * @fileoverview MySQL資料庫連接池配置模組 - DRONE 服務
  * 
- * 此模組提供了一個高效且可靠的MySQL資料庫連接池實現，專為 RBAC 服務設計。
+ * 此模組提供了一個高效且可靠的MySQL資料庫連接池實現，專為 DRONE 服務設計。
  * 連接池可以有效管理資料庫連接，避免頻繁建立和關閉連接的開銷，提升應用程式性能。
  * 
  * 主要特性：
@@ -19,10 +19,10 @@
 import mysql from "mysql2/promise";
 
 /**
- * RBAC 服務的 MySQL 資料庫連接池實例
+ * DRONE 服務的 MySQL 資料庫連接池實例
  * 
- * 創建一個MySQL連接池，用於管理 RBAC 服務的資料庫連接。
- * 預設資料庫名稱為 rbac_db，可透過環境變數 DB_NAME 覆蓋。
+ * 創建一個MySQL連接池，用於管理 DRONE 服務的資料庫連接。
+ * 預設資料庫名稱為 drone_db，可透過環境變數 DB_NAME 覆蓋。
  * 
  * @type {mysql.Pool}
  */
@@ -33,8 +33,8 @@ export const db = mysql.createPool({
   user: process.env.DB_USER || "admin",
   /** 資料庫密碼 - 從環境變數DB_PASSWORD獲取，預設為admin */
   password: process.env.DB_PASSWORD || "admin",
-  /** 資料庫名稱 - 從環境變數DB_NAME獲取，預設為rbac_db */
-  database: process.env.DB_NAME || "rbac_db",
+  /** 資料庫名稱 - 從環境變數DB_NAME獲取，預設為drone_db */
+  database: process.env.DB_NAME || "drone_db",
   /** 資料庫端口號 - 從環境變數DB_PORT獲取，預設為3306 */
   port: parseInt(process.env.DB_PORT || "3306"),
   /** 當連接池已滿時是否等待可用連接 */
@@ -53,11 +53,11 @@ export const db = mysql.createPool({
 export const testConnection = async (): Promise<boolean> => {
   try {
     const connection = await db.getConnection();
-    console.log("✅ [RBAC] MySQL 資料庫連接成功");
+    console.log("✅ [DRONE] MySQL 資料庫連接成功");
     connection.release();
     return true;
   } catch (error) {
-    console.error("❌ [RBAC] MySQL 資料庫連接失敗:", error);
+    console.error("❌ [DRONE] MySQL 資料庫連接失敗:", error);
     return false;
   }
 };
@@ -70,8 +70,8 @@ export const testConnection = async (): Promise<boolean> => {
 export const closeConnection = async (): Promise<void> => {
   try {
     await db.end();
-    console.log("📴 [RBAC] MySQL 連接池已關閉");
+    console.log("📴 [DRONE] MySQL 連接池已關閉");
   } catch (error) {
-    console.error("❌ [RBAC] 關閉 MySQL 連接池時發生錯誤:", error);
+    console.error("❌ [DRONE] 關閉 MySQL 連接池時發生錯誤:", error);
   }
 };

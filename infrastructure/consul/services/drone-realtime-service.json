@@ -1,0 +1,49 @@
+{
+  "service": {
+    "id": "drone-realtime-service",
+    "name": "drone-realtime-service",
+    "tags": [
+      "websocket",
+      "realtime",
+      "drone",
+      "iot",
+      "microservice",
+      "nodejs"
+    ],
+    "address": "aiot-drone-realtime-service",
+    "port": 3004,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "websocket,http"
+    },
+    "check": {
+      "id": "drone-realtime-service-health",
+      "name": "Drone Realtime Service Health Check",
+      "http": "http://aiot-drone-realtime-service:3004/health",
+      "interval": "10s",
+      "timeout": "3s",
+      "deregister_critical_service_after": "30s"
+    },
+    "checks": [
+      {
+        "id": "drone-realtime-service-api",
+        "name": "Drone Realtime API Check",
+        "http": "http://aiot-drone-realtime-service:3004/api/health",
+        "interval": "30s",
+        "timeout": "5s"
+      },
+      {
+        "id": "drone-realtime-service-websocket",
+        "name": "Drone Realtime WebSocket Check",
+        "tcp": "aiot-drone-realtime-service:3004",
+        "interval": "30s",
+        "timeout": "5s"
+      }
+    ],
+    "weights": {
+      "passing": 10,
+      "warning": 1
+    }
+  }
+}

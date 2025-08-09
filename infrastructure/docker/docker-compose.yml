@@ -31,6 +31,27 @@ x-common-env: &common-env
   JWT_EXPIRES_IN: 24h
   # OPA 配置
   OPA_URL: http://aiot-opa:8181
+  
+  # ========== Microservice 間通訊配置 ==========
+  # RBAC 服務
+  RBAC_SERVICE_HOST: aiot-rbac-service
+  RBAC_SERVICE_PORT: 50051
+  RBAC_SERVICE_URL: aiot-rbac-service:50051
+  
+  # Drone 服務
+  DRONE_SERVICE_HOST: aiot-drone-service
+  DRONE_SERVICE_PORT: 50052
+  DRONE_SERVICE_URL: aiot-drone-service:50052
+  
+  # FeSetting 服務
+  FESETTING_SERVICE_HOST: aiot-fesetting-service
+  FESETTING_SERVICE_PORT: 50053
+  FESETTING_SERVICE_URL: aiot-fesetting-service:50053
+  
+  # Drone Realtime 服務
+  DRONE_REALTIME_SERVICE_HOST: aiot-drone-realtime-service
+  DRONE_REALTIME_SERVICE_PORT: 3004
+  DRONE_REALTIME_SERVICE_URL: http://aiot-drone-realtime-service:3004
 
 services:
   # ==========================================================================
@@ -81,6 +102,8 @@ services:
       - KONG_PLUGINS=bundled
     volumes:
       - ../kong:/kong:ro
+      - ../kong/protos:/kong/protos:ro
+      - kong_logs:/tmp
     networks:
       - aiot-network
     depends_on:
@@ -156,8 +179,12 @@ services:
       - MYSQL_PASSWORD=admin
       - MYSQL_DATABASE=main_db
       - TZ=Asia/Taipei
+      # 跳過時區資訊初始化以加快啟動速度
+      - MYSQL_INITDB_SKIP_TZINFO=1
     volumes:
       - mysql_data:/var/lib/mysql
+      # 自動執行 MySQL 初始化腳本（按字母順序：01_, 02_, 03_...）
+      - ../database/mysql:/docker-entrypoint-initdb.d:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -442,6 +469,8 @@ volumes:
   prometheus_data:
     driver: local
   grafana_data:
+    driver: local
+  kong_logs:
     driver: local
 
 # ==========================================================================

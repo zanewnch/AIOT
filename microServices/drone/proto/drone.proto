@@ -1,0 +1,369 @@
+syntax = "proto3";
+
+package drone;
+
+// Drone gRPC 服務定義
+service DroneService {
+  // 無人機狀態管理
+  rpc GetDroneStatuses(GetDroneStatusesRequest) returns (GetDroneStatusesResponse);
+  rpc GetDroneStatusById(GetDroneStatusByIdRequest) returns (GetDroneStatusByIdResponse);
+  rpc CreateDroneStatus(CreateDroneStatusRequest) returns (CreateDroneStatusResponse);
+  rpc UpdateDroneStatus(UpdateDroneStatusRequest) returns (UpdateDroneStatusResponse);
+  rpc DeleteDroneStatus(DeleteDroneStatusRequest) returns (DeleteDroneStatusResponse);
+
+  // 無人機位置管理
+  rpc GetDronePositions(GetDronePositionsRequest) returns (GetDronePositionsResponse);
+  rpc GetDronePositionById(GetDronePositionByIdRequest) returns (GetDronePositionByIdResponse);
+  rpc CreateDronePosition(CreateDronePositionRequest) returns (CreateDronePositionResponse);
+  rpc UpdateDronePosition(UpdateDronePositionRequest) returns (UpdateDronePositionResponse);
+  rpc DeleteDronePosition(DeleteDronePositionRequest) returns (DeleteDronePositionResponse);
+
+  // 無人機命令管理
+  rpc GetDroneCommands(GetDroneCommandsRequest) returns (GetDroneCommandsResponse);
+  rpc GetDroneCommandById(GetDroneCommandByIdRequest) returns (GetDroneCommandByIdResponse);
+  rpc CreateDroneCommand(CreateDroneCommandRequest) returns (CreateDroneCommandResponse);
+  rpc UpdateDroneCommand(UpdateDroneCommandRequest) returns (UpdateDroneCommandResponse);
+  rpc DeleteDroneCommand(DeleteDroneCommandRequest) returns (DeleteDroneCommandResponse);
+
+  // 無人機命令佇列管理
+  rpc GetDroneCommandQueue(GetDroneCommandQueueRequest) returns (GetDroneCommandQueueResponse);
+  rpc AddToCommandQueue(AddToCommandQueueRequest) returns (AddToCommandQueueResponse);
+  rpc RemoveFromCommandQueue(RemoveFromCommandQueueRequest) returns (RemoveFromCommandQueueResponse);
+
+  // 無人機即時狀態
+  rpc GetDroneRealTimeStatus(GetDroneRealTimeStatusRequest) returns (GetDroneRealTimeStatusResponse);
+  rpc UpdateDroneRealTimeStatus(UpdateDroneRealTimeStatusRequest) returns (UpdateDroneRealTimeStatusResponse);
+
+  // 封存任務管理
+  rpc GetArchiveTasks(GetArchiveTasksRequest) returns (GetArchiveTasksResponse);
+  rpc CreateArchiveTask(CreateArchiveTaskRequest) returns (CreateArchiveTaskResponse);
+}
+
+// 共用訊息類型
+message DroneStatus {
+  int32 id = 1;
+  string drone_id = 2;
+  string status = 3;
+  string battery_level = 4;
+  string altitude = 5;
+  string speed = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message DronePosition {
+  int32 id = 1;
+  string drone_id = 2;
+  double latitude = 3;
+  double longitude = 4;
+  double altitude = 5;
+  string timestamp = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message DroneCommand {
+  int32 id = 1;
+  string drone_id = 2;
+  string command_type = 3;
+  string parameters = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message DroneCommandQueue {
+  int32 id = 1;
+  string drone_id = 2;
+  int32 command_id = 3;
+  string priority = 4;
+  string status = 5;
+  string scheduled_time = 6;
+  string created_at = 7;
+}
+
+message DroneRealTimeStatus {
+  int32 id = 1;
+  string drone_id = 2;
+  string status = 3;
+  string battery_level = 4;
+  double latitude = 5;
+  double longitude = 6;
+  double altitude = 7;
+  string last_updated = 8;
+}
+
+message ArchiveTask {
+  int32 id = 1;
+  string task_name = 2;
+  string description = 3;
+  string status = 4;
+  string created_at = 5;
+  string completed_at = 6;
+}
+
+// 無人機狀態相關請求/回應
+message GetDroneStatusesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string drone_id = 3;
+}
+
+message GetDroneStatusesResponse {
+  repeated DroneStatus statuses = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetDroneStatusByIdRequest {
+  int32 status_id = 1;
+}
+
+message GetDroneStatusByIdResponse {
+  DroneStatus status = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateDroneStatusRequest {
+  string drone_id = 1;
+  string status = 2;
+  string battery_level = 3;
+  string altitude = 4;
+  string speed = 5;
+}
+
+message CreateDroneStatusResponse {
+  DroneStatus status = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateDroneStatusRequest {
+  int32 status_id = 1;
+  string status = 2;
+  string battery_level = 3;
+  string altitude = 4;
+  string speed = 5;
+}
+
+message UpdateDroneStatusResponse {
+  DroneStatus status = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteDroneStatusRequest {
+  int32 status_id = 1;
+}
+
+message DeleteDroneStatusResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 無人機位置相關請求/回應
+message GetDronePositionsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string drone_id = 3;
+}
+
+message GetDronePositionsResponse {
+  repeated DronePosition positions = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetDronePositionByIdRequest {
+  int32 position_id = 1;
+}
+
+message GetDronePositionByIdResponse {
+  DronePosition position = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateDronePositionRequest {
+  string drone_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  double altitude = 4;
+  string timestamp = 5;
+}
+
+message CreateDronePositionResponse {
+  DronePosition position = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateDronePositionRequest {
+  int32 position_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  double altitude = 4;
+  string timestamp = 5;
+}
+
+message UpdateDronePositionResponse {
+  DronePosition position = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteDronePositionRequest {
+  int32 position_id = 1;
+}
+
+message DeleteDronePositionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 無人機命令相關請求/回應
+message GetDroneCommandsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string drone_id = 3;
+}
+
+message GetDroneCommandsResponse {
+  repeated DroneCommand commands = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetDroneCommandByIdRequest {
+  int32 command_id = 1;
+}
+
+message GetDroneCommandByIdResponse {
+  DroneCommand command = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateDroneCommandRequest {
+  string drone_id = 1;
+  string command_type = 2;
+  string parameters = 3;
+}
+
+message CreateDroneCommandResponse {
+  DroneCommand command = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateDroneCommandRequest {
+  int32 command_id = 1;
+  string command_type = 2;
+  string parameters = 3;
+  string status = 4;
+}
+
+message UpdateDroneCommandResponse {
+  DroneCommand command = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteDroneCommandRequest {
+  int32 command_id = 1;
+}
+
+message DeleteDroneCommandResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 無人機命令佇列相關請求/回應
+message GetDroneCommandQueueRequest {
+  string drone_id = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message GetDroneCommandQueueResponse {
+  repeated DroneCommandQueue queue_items = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message AddToCommandQueueRequest {
+  string drone_id = 1;
+  int32 command_id = 2;
+  string priority = 3;
+  string scheduled_time = 4;
+}
+
+message AddToCommandQueueResponse {
+  DroneCommandQueue queue_item = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message RemoveFromCommandQueueRequest {
+  int32 queue_id = 1;
+}
+
+message RemoveFromCommandQueueResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 無人機即時狀態相關請求/回應
+message GetDroneRealTimeStatusRequest {
+  string drone_id = 1;
+}
+
+message GetDroneRealTimeStatusResponse {
+  DroneRealTimeStatus status = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateDroneRealTimeStatusRequest {
+  string drone_id = 1;
+  string status = 2;
+  string battery_level = 3;
+  double latitude = 4;
+  double longitude = 5;
+  double altitude = 6;
+}
+
+message UpdateDroneRealTimeStatusResponse {
+  DroneRealTimeStatus status = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+// 封存任務相關請求/回應
+message GetArchiveTasksRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetArchiveTasksResponse {
+  repeated ArchiveTask tasks = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message CreateArchiveTaskRequest {
+  string task_name = 1;
+  string description = 2;
+}
+
+message CreateArchiveTaskResponse {
+  ArchiveTask task = 1;
+  bool success = 2;
+  string message = 3;
+}

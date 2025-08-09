@@ -9,7 +9,7 @@
       "nodejs",
       "express"
     ],
-    "address": "fesetting-service",
+    "address": "aiot-fesetting-service",
     "port": 3003,
     "meta": {
       "version": "1.0.0",
@@ -19,7 +19,7 @@
     "check": {
       "id": "fesetting-service-health",
       "name": "FeSetting Service Health Check",
-      "http": "http://fesetting-service:3003/health",
+      "http": "http://aiot-fesetting-service:3003/health",
       "interval": "10s",
       "timeout": "3s",
       "deregister_critical_service_after": "30s"
@@ -28,14 +28,14 @@
       {
         "id": "fesetting-service-api",
         "name": "FeSetting API Check",
-        "http": "http://fesetting-service:3003/api/health",
+        "http": "http://aiot-fesetting-service:3003/api/health",
         "interval": "30s",
         "timeout": "5s"
       },
       {
         "id": "fesetting-service-grpc",
         "name": "FeSetting gRPC Check",
-        "grpc": "fesetting-service:50053",
+        "grpc": "aiot-fesetting-service:50053",
         "interval": "30s",
         "timeout": "5s"
       }

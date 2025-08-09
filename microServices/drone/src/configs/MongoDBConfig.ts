@@ -1,7 +1,7 @@
 /**
- * @fileoverview MongoDB資料庫連接配置模組 - RBAC 服務
+ * @fileoverview MongoDB資料庫連接配置模組 - DRONE 服務
  * 
- * 此模組提供了完整的MongoDB資料庫連接管理功能，專為 RBAC 服務優化。
+ * 此模組提供了完整的MongoDB資料庫連接管理功能，專為 DRONE 服務優化。
  * 包括連接建立、斷開、狀態監控和錯誤處理。
  * 
  * 主要特性：
@@ -38,12 +38,12 @@ export interface MongoConfig {
 }
 
 /**
- * RBAC 服務的 MongoDB 連接配置
+ * DRONE 服務的 MongoDB 連接配置
  */
 const mongoConfig: MongoConfig = {
   host: process.env.DB_HOST || "localhost",
   port: parseInt(process.env.DB_PORT || "27017"),
-  database: process.env.DB_NAME || "rbac_db",
+  database: process.env.DB_NAME || "drone_db",
   username: process.env.DB_USER || "admin",
   password: process.env.DB_PASSWORD || "admin",
   authSource: "admin",
@@ -79,32 +79,32 @@ const mongoOptions = {
 export const connectMongoDB = async (): Promise<typeof mongoose> => {
   try {
     if (mongoose.connection.readyState === 1) {
-      console.log("📡 [RBAC] 使用現有的 MongoDB 連接");
+      console.log("📡 [DRONE] 使用現有的 MongoDB 連接");
       return mongoose;
     }
 
     const mongoUrl = buildMongoUrl();
-    console.log("[RBAC] 正在連接 MongoDB...");
-    console.log("[RBAC] 連接字串:", mongoUrl.replace(/\/\/.*@/, "//***:***@"));
+    console.log("[DRONE] 正在連接 MongoDB...");
+    console.log("[DRONE] 連接字串:", mongoUrl.replace(/\/\/.*@/, "//***:***@"));
 
     await mongoose.connect(mongoUrl, mongoOptions);
-    console.log("✅ [RBAC] MongoDB 連接成功");
+    console.log("✅ [DRONE] MongoDB 連接成功");
 
     mongoose.connection.on("error", (error: Error) => {
-      console.error("❌ [RBAC] MongoDB 連接錯誤:", error);
+      console.error("❌ [DRONE] MongoDB 連接錯誤:", error);
     });
 
     mongoose.connection.on("disconnected", () => {
-      console.log("⚠️ [RBAC] MongoDB 連接已斷開");
+      console.log("⚠️ [DRONE] MongoDB 連接已斷開");
     });
 
     mongoose.connection.on("reconnected", () => {
-      console.log("🔄 [RBAC] MongoDB 重新連接成功");
+      console.log("🔄 [DRONE] MongoDB 重新連接成功");
     });
 
     return mongoose;
   } catch (error) {
-    console.error("❌ [RBAC] MongoDB 連接失敗:", error);
+    console.error("❌ [DRONE] MongoDB 連接失敗:", error);
     process.exit(1);
   }
 };
@@ -116,10 +116,10 @@ export const disconnectMongoDB = async (): Promise<void> => {
   try {
     if (mongoose.connection.readyState !== 0) {
       await mongoose.disconnect();
-      console.log("📴 [RBAC] MongoDB 連接已關閉");
+      console.log("📴 [DRONE] MongoDB 連接已關閉");
     }
   } catch (error) {
-    console.error("❌ [RBAC] MongoDB 斷開連接時發生錯誤:", error);
+    console.error("❌ [DRONE] MongoDB 斷開連接時發生錯誤:", error);
   }
 };
 

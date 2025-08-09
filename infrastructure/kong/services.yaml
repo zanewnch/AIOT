@@ -32,10 +32,10 @@ services:
 
   # Drone 即時通訊微服務 - 專門處理 WebSocket 連線
   - name: drone-realtime-service
-    protocol: http
+    protocol: ws
     host: aiot-drone-realtime-service
     port: 3004
-    path: /
+    path: /socket.io
     connect_timeout: 60000
     write_timeout: 60000
     read_timeout: 60000

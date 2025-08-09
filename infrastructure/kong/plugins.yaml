@@ -9,6 +9,262 @@ plugins:
       latency_metrics: true
       bandwidth_metrics: true
 
+  # gRPC-Gateway 插件 - RBAC 服務
+  - name: grpc-gateway
+    service: rbac-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package rbac;
+        
+        import "google/api/annotations.proto";
+        
+        service RbacService {
+          rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+            option (google.api.http) = {
+              get: "/api/rbac/users"
+            };
+          }
+          rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+            option (google.api.http) = {
+              post: "/api/rbac/users"
+              body: "*"
+            };
+          }
+        }
+        
+        message GetUsersRequest {
+          int32 page = 1;
+          int32 limit = 2;
+        }
+        
+        message GetUsersResponse {
+          repeated User users = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateUserRequest {
+          string username = 1;
+          string email = 2;
+          string password = 3;
+        }
+        
+        message CreateUserResponse {
+          User user = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message User {
+          int32 id = 1;
+          string username = 2;
+          string email = 3;
+          bool is_active = 4;
+          string created_at = 5;
+          string updated_at = 6;
+        }
+    tags:
+      - grpc-gateway
+      - rbac
+
+  # gRPC-Gateway 插件 - Drone 服務
+  - name: grpc-gateway
+    service: drone-grpc-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package drone;
+        
+        import "google/api/annotations.proto";
+        
+        service DroneService {
+          rpc GetDroneStatuses(GetDroneStatusesRequest) returns (GetDroneStatusesResponse) {
+            option (google.api.http) = {
+              get: "/api/drone/statuses"
+            };
+          }
+          rpc CreateDroneStatus(CreateDroneStatusRequest) returns (CreateDroneStatusResponse) {
+            option (google.api.http) = {
+              post: "/api/drone/statuses"
+              body: "*"
+            };
+          }
+          rpc GetDronePositions(GetDronePositionsRequest) returns (GetDronePositionsResponse) {
+            option (google.api.http) = {
+              get: "/api/drone/positions"
+            };
+          }
+          rpc CreateDroneCommand(CreateDroneCommandRequest) returns (CreateDroneCommandResponse) {
+            option (google.api.http) = {
+              post: "/api/drone/commands"
+              body: "*"
+            };
+          }
+        }
+        
+        message GetDroneStatusesRequest {
+          int32 page = 1;
+          int32 limit = 2;
+          string drone_id = 3;
+        }
+        
+        message GetDroneStatusesResponse {
+          repeated DroneStatus statuses = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateDroneStatusRequest {
+          string drone_id = 1;
+          string status = 2;
+          string battery_level = 3;
+        }
+        
+        message CreateDroneStatusResponse {
+          DroneStatus status = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message GetDronePositionsRequest {
+          int32 page = 1;
+          int32 limit = 2;
+          string drone_id = 3;
+        }
+        
+        message GetDronePositionsResponse {
+          repeated DronePosition positions = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateDroneCommandRequest {
+          string drone_id = 1;
+          string command_type = 2;
+          string parameters = 3;
+        }
+        
+        message CreateDroneCommandResponse {
+          DroneCommand command = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message DroneStatus {
+          int32 id = 1;
+          string drone_id = 2;
+          string status = 3;
+          string battery_level = 4;
+          string created_at = 5;
+        }
+        
+        message DronePosition {
+          int32 id = 1;
+          string drone_id = 2;
+          double latitude = 3;
+          double longitude = 4;
+          double altitude = 5;
+          string timestamp = 6;
+        }
+        
+        message DroneCommand {
+          int32 id = 1;
+          string drone_id = 2;
+          string command_type = 3;
+          string parameters = 4;
+          string status = 5;
+          string created_at = 6;
+        }
+    tags:
+      - grpc-gateway
+      - drone
+
+  # gRPC-Gateway 插件 - FeSetting 服務
+  - name: grpc-gateway
+    service: fesetting-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package fesetting;
+        
+        import "google/api/annotations.proto";
+        
+        service FeSettingService {
+          rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse) {
+            option (google.api.http) = {
+              get: "/api/user-preferences"
+            };
+          }
+          rpc CreateUserPreference(CreateUserPreferenceRequest) returns (CreateUserPreferenceResponse) {
+            option (google.api.http) = {
+              post: "/api/user-preferences"
+              body: "*"
+            };
+          }
+          rpc UpdateUserPreference(UpdateUserPreferenceRequest) returns (UpdateUserPreferenceResponse) {
+            option (google.api.http) = {
+              put: "/api/user-preferences/{preference_id}"
+              body: "*"
+            };
+          }
+        }
+        
+        message GetUserPreferencesRequest {
+          int32 user_id = 1;
+          string category = 2;
+        }
+        
+        message GetUserPreferencesResponse {
+          repeated UserPreference preferences = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateUserPreferenceRequest {
+          int32 user_id = 1;
+          string preference_key = 2;
+          string preference_value = 3;
+          string category = 4;
+        }
+        
+        message CreateUserPreferenceResponse {
+          UserPreference preference = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message UpdateUserPreferenceRequest {
+          int32 preference_id = 1;
+          string preference_value = 2;
+          string category = 3;
+        }
+        
+        message UpdateUserPreferenceResponse {
+          UserPreference preference = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message UserPreference {
+          int32 id = 1;
+          int32 user_id = 2;
+          string preference_key = 3;
+          string preference_value = 4;
+          string category = 5;
+          string created_at = 6;
+        }
+    tags:
+      - grpc-gateway
+      - fesetting
+
   - name: correlation-id
     config:
       header_name: X-Request-ID
@@ -18,101 +274,119 @@ plugins:
     config:
       allowed_payload_size: 10
 
-  # JWT 驗證插件 - 套用到需要驗證的路由
-  - name: jwt
-    route: rbac-auth-routes
+  # File Log 插件 - 訪問日誌記錄
+  - name: file-log
     config:
-      secret_is_base64: false
-      key_claim_name: iss  
-      anonymous: ""
-      run_on_preflight: true
-      maximum_expiration: 0
-      claims_to_verify:
-        - exp
-        - iat
-      cookie_names:
-        - jwt
-      header_names:
-        - authorization
+      path: /tmp/kong-access.log
+      reopen: true
     tags:
-      - authentication
-      - security
+      - logging
+      - monitoring
 
-  - name: jwt
-    route: rbac-routes
+  # Gzip 插件 - 回應壓縮
+  - name: gzip
     config:
-      secret_is_base64: false
-      key_claim_name: iss  
-      anonymous: ""
-      run_on_preflight: true
-      maximum_expiration: 0
-      claims_to_verify:
-        - exp
-        - iat
-      cookie_names:
-        - jwt
-      header_names:
-        - authorization
+      types:
+        - text/plain
+        - text/html
+        - text/css
+        - text/xml
+        - text/javascript
+        - application/javascript
+        - application/xml+rss
+        - application/atom+xml
+        - image/svg+xml
+        - application/json
+        - application/grpc
     tags:
-      - authentication
-      - security
+      - performance
+      - compression
 
-  - name: jwt
-    route: drone-api-routes
+  # Response Caching 插件 - API 回應快取
+  - name: proxy-cache
     config:
-      secret_is_base64: false
-      key_claim_name: iss
-      anonymous: ""
-      run_on_preflight: true
-      maximum_expiration: 0
-      claims_to_verify:
-        - exp
-        - iat
-      cookie_names:
-        - jwt
-      header_names:
-        - authorization
+      response_code:
+        - 200
+        - 301
+        - 404
+      request_method:
+        - GET
+        - HEAD
+      content_type:
+        - application/json
+        - application/grpc
+      cache_ttl: 300
+      storage_ttl: 3600
+      strategy: memory
     tags:
-      - authentication
-      - security
+      - performance
+      - caching
 
-  - name: jwt
-    route: fesetting-routes
+  # Bot Detection 插件 - 防護機器人
+  - name: bot-detection
     config:
-      secret_is_base64: false
-      key_claim_name: iss
-      anonymous: ""
-      run_on_preflight: true
-      maximum_expiration: 0
-      claims_to_verify:
-        - exp
-        - iat
-      cookie_names:
-        - jwt
-      header_names:
-        - authorization
+      allow:
+        - googlebot
+        - bingbot
+        - slackbot
+      deny:
+        - BadBot
+        - MaliciousBot
     tags:
-      - authentication
       - security
+      - bot-protection
 
-  - name: jwt
-    route: drone-websocket-routes
+  # Request Transformer Advanced - 添加追蹤標頭
+  - name: request-transformer-advanced
     config:
-      secret_is_base64: false
-      key_claim_name: iss
-      anonymous: ""
-      run_on_preflight: true
-      maximum_expiration: 0
-      claims_to_verify:
-        - exp
-        - iat
-      cookie_names:
-        - jwt
-      header_names:
-        - authorization
+      add:
+        headers:
+          - "X-Service-Name:AIOT"
+          - "X-Version:v1.0"
+          - "X-Request-ID:$(uuid)"
+          - "X-Timestamp:$(timestamp)"
+          - "X-Client-IP:$(client_ip)"
+        querystring: []
+        body: []
+      remove:
+        headers:
+          - "X-Internal-Secret"
+        querystring: []
+        body: []
+      replace:
+        headers: []
+        querystring: []
+        body: []
     tags:
-      - authentication
-      - security
+      - transformation
+      - tracing
+
+  # Response Transformer - 統一回應格式
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - "X-Powered-By:AIOT-Kong-Gateway"
+          - "X-Response-Time:$(latency)"
+          - "X-Kong-Upstream-Latency:$(upstream_response_time)"
+          - "X-Kong-Proxy-Latency:$(kong_proxy_latency)"
+        json: []
+        json_types: []
+      remove:
+        headers:
+          - "X-Internal-Info"
+          - "Server"
+        json: []
+      replace:
+        headers: []
+        json: []
+      rename:
+        headers: []
+    tags:
+      - transformation
+      - response-headers
+
+
 
   # Request Transformer - 添加 OPA 需要的標頭
   - name: request-transformer
@@ -133,6 +407,19 @@ plugins:
         body: []
     tags:
       - transformation
+
+  # Kong 官方 OPA 插件 - RBAC Auth 路由
+  - name: opa
+    route: rbac-auth-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
 
   # Kong 官方 OPA 插件 - RBAC 路由
   - name: opa
