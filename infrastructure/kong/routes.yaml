@@ -1,6 +1,7 @@
 _format_version: "3.0"
 
 routes:
+  # RBAC 認證路由 - 僅允許 HTTPS 訪問
   - name: rbac-auth-routes
     service: rbac-service
     paths:
@@ -8,12 +9,13 @@ routes:
     strip_path: false
     preserve_host: false
     protocols:
-      - http
       - https
     tags:
       - auth
       - login
+      - secure
 
+  # RBAC 管理路由 - 僅允許 HTTPS 訪問
   - name: rbac-routes
     service: rbac-service
     paths:
@@ -21,41 +23,44 @@ routes:
     strip_path: false
     preserve_host: false
     protocols:
-      - http
       - https
     tags:
       - rbac
       - permissions
+      - secure
 
+  # Drone API 路由 - 僅允許 HTTPS 訪問，連接到 gRPC 服務
   - name: drone-api-routes
-    service: drone-service
+    service: drone-grpc-service
     paths:
       - /api/drone
     strip_path: false
     preserve_host: false
     protocols:
-      - http
       - https
     tags:
       - drone
       - api
+      - secure
+      - grpc
 
+  # Drone WebSocket 路由 - 連接到獨立的即時通訊服務
   - name: drone-websocket-routes
-    service: drone-service
+    service: drone-realtime-service
     paths:
       - /socket.io
     strip_path: false
     preserve_host: false
     protocols:
-      - http
       - https
-      - ws
       - wss
     tags:
       - drone
       - websocket
       - realtime
+      - secure
 
+  # FeSetting 路由 - 僅允許 HTTPS 訪問
   - name: fesetting-routes
     service: fesetting-service
     paths:
@@ -63,8 +68,8 @@ routes:
     strip_path: false
     preserve_host: false
     protocols:
-      - http
       - https
     tags:
       - user-preferences
       - settings
+      - secure

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "nodemon",
+    "start": "node --loader tsx/esm src/server.ts",
     "dev": "npx nodemon ./src/server.ts",
     "build": "npx tsc",
     "build:watch": "tsc --watch",
@@ -18,6 +18,8 @@
     "docs:watch-scss": "sass --watch src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.12.2",
+    "@grpc/proto-loader": "^0.7.13",
     "@types/amqplib": "^0.10.7",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.19",
@@ -35,6 +37,7 @@
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "grpc-tools": "^1.12.4",
     "http-errors": "~1.6.3",
     "inversify": "^7.7.0",
     "jade": "^0.29.0",

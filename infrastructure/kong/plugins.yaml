@@ -9,7 +9,7 @@ plugins:
       latency_metrics: true
       bandwidth_metrics: true
 
-  - name: request-id
+  - name: correlation-id
     config:
       header_name: X-Request-ID
       echo_downstream: true
@@ -19,6 +19,25 @@ plugins:
       allowed_payload_size: 10
 
   # JWT 驗證插件 - 套用到需要驗證的路由
+  - name: jwt
+    route: rbac-auth-routes
+    config:
+      secret_is_base64: false
+      key_claim_name: iss  
+      anonymous: ""
+      run_on_preflight: true
+      maximum_expiration: 0
+      claims_to_verify:
+        - exp
+        - iat
+      cookie_names:
+        - jwt
+      header_names:
+        - authorization
+    tags:
+      - authentication
+      - security
+
   - name: jwt
     route: rbac-routes
     config:

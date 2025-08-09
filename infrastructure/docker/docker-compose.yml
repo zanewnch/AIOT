@@ -49,8 +49,8 @@ services:
       - CONSUL_BIND_INTERFACE=eth0
     volumes:
       - consul_data:/consul/data
-      - ./consul/consul.json:/consul/config/consul.json:ro
-      - ./consul/services:/consul/config/services:ro
+      - ../consul/consul.json:/consul/config/consul.json:ro
+      - ../consul/services:/consul/config/services:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -72,15 +72,15 @@ services:
       - "8444:8444"  # Admin API HTTPS
     environment:
       - KONG_DATABASE=off
-      - KONG_DECLARATIVE_CONFIG=/kong/declarative/kong.yml
+      - KONG_DECLARATIVE_CONFIG=/kong/kong.yaml
       - KONG_PROXY_ACCESS_LOG=/dev/stdout
       - KONG_ADMIN_ACCESS_LOG=/dev/stdout
       - KONG_PROXY_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
-      - KONG_PLUGINS=bundled,prometheus,request-id,cors,rate-limiting,opa
+      - KONG_PLUGINS=bundled
     volumes:
-      - ../kong/kong.yml:/kong/declarative/kong.yml:ro
+      - ../kong:/kong:ro
     networks:
       - aiot-network
     depends_on:
@@ -158,7 +158,6 @@ services:
       - TZ=Asia/Taipei
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./sql/init:/docker-entrypoint-initdb.d:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -216,8 +215,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./AIOT/config/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./AIOT/config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ../rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ../rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -266,15 +265,15 @@ services:
       timeout: 10s
       retries: 3
 
-  # Drone 微服務
+  # Drone API 微服務 (僅 gRPC API，移除 WebSocket)
   drone-service:
     build:
       context: ../../microServices/drone
-      dockerfile: src/Dockerfile
+      dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-service
     ports:
-      - "3002:3002"   # HTTP API & WebSocket
+      - "3002:3002"   # HTTP API (development/debug)
       - "50052:50052" # gRPC
     environment:
       <<: *common-env
@@ -282,7 +281,6 @@ services:
       SERVICE_PORT: 3002
       GRPC_PORT: 50052
       DB_NAME: drone_db
-      WEBSOCKET_PORT: 3002
     volumes:
       - ../../microServices/drone:/app
       - /app/node_modules
@@ -300,6 +298,53 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Drone 即時通訊微服務 (專門處理 WebSocket)
+  drone-realtime-service:
+    build:
+      context: ../../microServices/drone-realtime
+      dockerfile: Dockerfile
+    logging: *default-logging
+    container_name: aiot-drone-realtime-service
+    ports:
+      - "3004:3004"   # WebSocket 服務
+    environment:
+      NODE_ENV: development
+      SERVICE_NAME: drone-realtime-service
+      SERVICE_PORT: 3004
+      # MySQL 配置 (需要訪問無人機資料)
+      DB_HOST: aiot-mysqldb
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASSWORD: admin
+      DB_NAME: drone_db
+      # Redis 配置 (用於 WebSocket 連線狀態管理)
+      REDIS_HOST: aiot-redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_URL: redis://aiot-redis:6379/0
+      # CORS 配置
+      CORS_ORIGIN: "*"
+      # OPA 配置 (透過 Kong Gateway)
+      OPA_URL: http://aiot-opa:8181
+    volumes:
+      - ../../microServices/drone-realtime:/app
+      - /app/node_modules
+    networks:
+      - aiot-network
+    depends_on:
+      aiot-mysqldb:
+        condition: service_healthy
+      aiot-redis:
+        condition: service_started
+      aiot-opa:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -353,7 +398,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     networks:
       - aiot-network
