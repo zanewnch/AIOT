@@ -24,7 +24,6 @@ import { Op } from 'sequelize';
  * @class UserPreferenceQueriesRepository
  */
 @injectable()
-@Logger('UserPreferenceQueriesRepository')
 export class UserPreferenceQueriesRepository {
 
     /**

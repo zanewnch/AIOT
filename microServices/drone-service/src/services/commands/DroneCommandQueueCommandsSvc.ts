@@ -56,7 +56,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 創建新的無人機指令佇列
      */
-    @LogService()
     createDroneCommandQueue = async (data: DroneCommandQueueCreationAttributes): Promise<DroneCommandQueueAttributes> => {
         try {
             logger.info('Creating new drone command queue', { data });
@@ -108,7 +107,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 更新無人機指令佇列資料
      */
-    @LogService()
     updateDroneCommandQueue = async (id: number, data: Partial<DroneCommandQueueCreationAttributes>): Promise<DroneCommandQueueAttributes | null> => {
         try {
             logger.info('Updating drone command queue', { id, data });
@@ -150,7 +148,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 刪除無人機指令佇列資料
      */
-    @LogService()
     deleteDroneCommandQueue = async (id: number): Promise<number> => {
         try {
             logger.info('Deleting drone command queue', { id });
@@ -182,7 +179,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 將指令加入佇列
      */
-    @LogService()
     enqueueDroneCommand = async (droneId: number, commandType: string, commandData?: any, priority?: number): Promise<DroneCommandQueueAttributes> => {
         try {
             logger.info('Enqueueing drone command', { droneId, commandType, commandData, priority });
@@ -222,7 +218,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 從佇列中取出指令
      */
-    @LogService()
     dequeueDroneCommand = async (droneId: number): Promise<DroneCommandQueueAttributes | null> => {
         try {
             logger.info('Dequeuing drone command', { droneId });
@@ -253,7 +248,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 清空指令佇列
      */
-    @LogService()
     clearDroneCommandQueue = async (droneId: number): Promise<number> => {
         try {
             logger.info('Clearing drone command queue', { droneId });
@@ -284,7 +278,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 更新佇列狀態
      */
-    @LogService()
     updateDroneCommandQueueStatus = async (id: number, status: DroneCommandQueueStatus): Promise<DroneCommandQueueAttributes | null> => {
         try {
             logger.info('Updating drone command queue status', { id, status });
@@ -298,7 +291,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 執行指令佇列
      */
-    @LogService()
     executeQueue = async (id: number): Promise<QueueExecutionResult> => {
         try {
             logger.info('Executing queue', { id });
@@ -352,7 +344,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 暫停指令佇列
      */
-    @LogService()
     pauseQueue = async (id: number): Promise<QueueExecutionResult> => {
         try {
             logger.info('Pausing queue', { id });
@@ -405,7 +396,6 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 完成指令佇列
      */
-    @LogService()
     completeQueue = async (id: number): Promise<QueueExecutionResult> => {
         try {
             logger.info('Completing queue', { id });

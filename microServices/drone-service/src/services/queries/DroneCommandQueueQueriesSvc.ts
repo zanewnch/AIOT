@@ -42,7 +42,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得所有無人機指令佇列
      */
-    @LogService()
     getAllDroneCommandQueues = async (): Promise<DroneCommandQueueAttributes[]> => {
         try {
             logger.info('Getting all drone command queues');
@@ -100,7 +99,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據 ID 取得單筆無人機指令佇列
      */
-    @LogService()
     getDroneCommandQueueById = async (id: number): Promise<DroneCommandQueueAttributes | null> => {
         try {
             logger.info('Getting drone command queue by ID', { id });
@@ -145,7 +143,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據無人機 ID 查詢指令佇列
      */
-    @LogService()
     getDroneCommandQueueByDroneId = async (droneId: number): Promise<DroneCommandQueueAttributes[]> => {
         try {
             logger.info('Getting command queues by drone ID', { droneId });
@@ -207,7 +204,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據狀態查詢指令佇列
      */
-    @LogService()
     getDroneCommandQueuesByStatus = async (status: DroneCommandQueueStatus): Promise<DroneCommandQueueAttributes[]> => {
         try {
             logger.info('Getting command queues by status', { status });
@@ -250,7 +246,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據優先級查詢指令佇列
      */
-    @LogService()
     getDroneCommandQueuesByPriority = async (priority: number): Promise<DroneCommandQueueAttributes[]> => {
         try {
             logger.info('Getting command queues by priority', { priority });
@@ -293,7 +288,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得待執行的指令佇列
      */
-    @LogService()
     getPendingDroneCommandQueues = async (): Promise<DroneCommandQueueAttributes[]> => {
         try {
             logger.info('Getting pending command queues');
@@ -308,7 +302,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得佇列統計
      */
-    @LogService()
     getDroneCommandQueueStatistics = async (): Promise<QueueStatistics> => {
         try {
             logger.info('Getting command queue statistics');
@@ -334,7 +327,6 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得下一個指令
      */
-    @LogService()
     getNextDroneCommand = async (droneId: number): Promise<DroneCommandQueueAttributes | null> => {
         try {
             logger.info('Getting next drone command', { droneId });

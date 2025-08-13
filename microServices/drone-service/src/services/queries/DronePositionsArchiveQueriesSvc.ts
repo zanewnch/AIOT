@@ -58,7 +58,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得所有位置歷史歸檔資料
      */
-    @LogService()
     getAllPositionArchives = async (limit: number = 100): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting all position archives', { limit });
@@ -78,7 +77,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據 ID 取得單筆位置歷史歸檔資料
      */
-    @LogService()
     getPositionArchiveById = async (id: number): Promise<DronePositionsArchiveAttributes | null> => {
         try {
             logger.info('Getting position archive by ID', { id });
@@ -104,7 +102,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據原始 ID 取得歸檔資料
      */
-    @LogService()
     getPositionArchiveByOriginalId = async (originalId: number): Promise<DronePositionsArchiveAttributes | null> => {
         try {
             logger.info('Getting position archive by original ID', { originalId });
@@ -130,7 +127,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據無人機 ID 查詢位置歷史歸檔
      */
-    @LogService()
     getPositionArchivesByDroneId = async (droneId: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by drone ID', { droneId, limit });
@@ -153,7 +149,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據時間範圍查詢位置歷史歸檔
      */
-    @LogService()
     getPositionArchivesByTimeRange = async (startTime: Date, endTime: Date, limit: number = 500): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by time range', { startTime, endTime, limit });
@@ -176,7 +171,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據歸檔批次 ID 查詢資料
      */
-    @LogService()
     getPositionArchivesByBatchId = async (batchId: string): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by batch ID', { batchId });
@@ -196,7 +190,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據歸檔時間範圍查詢資料
      */
-    @LogService()
     getPositionArchivesByArchivedDateRange = async (startDate: Date, endDate: Date, limit: number = 200): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by archived date range', { startDate, endDate, limit });
@@ -219,7 +212,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據地理邊界查詢位置歷史歸檔
      */
-    @LogService()
     getPositionArchivesByGeoBounds = async (minLat: number, maxLat: number, minLng: number, maxLng: number, limit: number = 200): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by geo bounds', { minLat, maxLat, minLng, maxLng, limit });
@@ -245,7 +237,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據無人機和時間範圍查詢軌跡
      */
-    @LogService()
     getTrajectoryByDroneAndTime = async (droneId: number, startTime: Date, endTime: Date, limit: number = 1000): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting trajectory by drone and time', { droneId, startTime, endTime, limit });
@@ -271,7 +262,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據電池電量範圍查詢資料
      */
-    @LogService()
     getPositionArchivesByBatteryRange = async (minBattery: number, maxBattery: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by battery range', { minBattery, maxBattery, limit });
@@ -294,7 +284,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據飛行速度範圍查詢資料
      */
-    @LogService()
     getPositionArchivesBySpeedRange = async (minSpeed: number, maxSpeed: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by speed range', { minSpeed, maxSpeed, limit });
@@ -317,7 +306,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據高度範圍查詢資料
      */
-    @LogService()
     getPositionArchivesByAltitudeRange = async (minAltitude: number, maxAltitude: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by altitude range', { minAltitude, maxAltitude, limit });
@@ -342,7 +330,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據溫度範圍查詢資料
      */
-    @LogService()
     getPositionArchivesByTemperatureRange = async (minTemp: number, maxTemp: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting position archives by temperature range', { minTemp, maxTemp, limit });
@@ -367,7 +354,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得最新的歷史歸檔記錄
      */
-    @LogService()
     getLatestPositionArchives = async (limit: number = 50): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Getting latest position archives', { limit });
@@ -387,7 +373,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得特定無人機的最新歷史歸檔記錄
      */
-    @LogService()
     getLatestPositionArchiveByDroneId = async (droneId: number): Promise<DronePositionsArchiveAttributes | null> => {
         try {
             logger.info('Getting latest position archive by drone ID', { droneId });
@@ -413,7 +398,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 統計總記錄數
      */
-    @LogService()
     getTotalArchiveCount = async (): Promise<number> => {
         try {
             logger.info('Getting total archive count');
@@ -428,7 +412,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據無人機 ID 統計記錄數
      */
-    @LogService()
     getArchiveCountByDroneId = async (droneId: number): Promise<number> => {
         try {
             logger.info('Getting archive count by drone ID', { droneId });
@@ -448,7 +431,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據時間範圍統計記錄數
      */
-    @LogService()
     getArchiveCountByTimeRange = async (startTime: Date, endTime: Date): Promise<number> => {
         try {
             logger.info('Getting archive count by time range', { startTime, endTime });
@@ -468,7 +450,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據歸檔批次統計記錄數
      */
-    @LogService()
     getArchiveCountByBatchId = async (batchId: string): Promise<number> => {
         try {
             logger.info('Getting archive count by batch ID', { batchId });
@@ -488,7 +469,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 計算軌跡統計資料
      */
-    @LogService()
     calculateTrajectoryStatistics = async (droneId: number, startTime: Date, endTime: Date): Promise<TrajectoryStatistics> => {
         try {
             logger.info('Calculating trajectory statistics', { droneId, startTime, endTime });
@@ -555,7 +535,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 計算電池使用統計資料
      */
-    @LogService()
     calculateBatteryUsageStatistics = async (droneId: number, startTime: Date, endTime: Date): Promise<BatteryUsageStatistics> => {
         try {
             logger.info('Calculating battery usage statistics', { droneId, startTime, endTime });
@@ -604,7 +583,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 計算位置分佈統計資料
      */
-    @LogService()
     calculatePositionDistributionStatistics = async (droneId: number, startTime: Date, endTime: Date): Promise<PositionDistributionStatistics> => {
         try {
             logger.info('Calculating position distribution statistics', { droneId, startTime, endTime });
@@ -667,7 +645,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得歸檔批次統計資料
      */
-    @LogService()
     getArchiveBatchStatistics = async (batchId: string): Promise<ArchiveBatchStatistics> => {
         try {
             logger.info('Getting archive batch statistics', { batchId });
@@ -702,7 +679,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 分析飛行模式
      */
-    @LogService()
     analyzeFlightPatterns = async (droneId: number, startTime: Date, endTime: Date): Promise<string[]> => {
         try {
             logger.info('Analyzing flight patterns', { droneId, startTime, endTime });
@@ -745,7 +721,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 檢測異常位置資料
      */
-    @LogService()
     detectAnomalousPositions = async (droneId: number, startTime: Date, endTime: Date): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             logger.info('Detecting anomalous positions', { droneId, startTime, endTime });
@@ -815,7 +790,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 產生軌跡摘要報告
      */
-    @LogService()
     generateTrajectorySummaryReport = async (droneId: number, startTime: Date, endTime: Date): Promise<object> => {
         try {
             logger.info('Generating trajectory summary report', { droneId, startTime, endTime });
@@ -861,7 +835,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 驗證位置座標有效性
      */
-    @LogService()
     validateCoordinates = async (latitude: number, longitude: number): Promise<boolean> => {
         try {
             if (latitude < -90 || latitude > 90) {
@@ -889,7 +862,6 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 驗證時間範圍有效性
      */
-    @LogService()
     validateTimeRange = async (startTime: Date, endTime: Date): Promise<boolean> => {
         try {
             if (!(startTime instanceof Date) || !(endTime instanceof Date)) {

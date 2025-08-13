@@ -69,7 +69,6 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {DroneCommandsArchiveCreationAttributes} data - 要創建的歸檔資料
      * @returns {Promise<DroneCommandsArchiveAttributes>} 創建後的歸檔資料
      */
-    @LogService()
     createCommandArchive = async (data: DroneCommandsArchiveCreationAttributes): Promise<DroneCommandsArchiveAttributes> => {
         try {
             logger.info('Creating new drone command archive', { droneId: data.drone_id, commandType: data.command_type });
@@ -109,7 +108,6 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {Partial<DroneCommandsArchiveAttributes>} data - 要更新的資料
      * @returns {Promise<DroneCommandsArchiveAttributes | null>} 更新後的歸檔資料或 null
      */
-    @LogService()
     updateCommandArchive = async (id: number, data: Partial<DroneCommandsArchiveAttributes>): Promise<DroneCommandsArchiveAttributes | null> => {
         try {
             logger.info('Updating drone command archive', { id, data });
@@ -165,7 +163,6 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {number} id - 歸檔資料 ID
      * @returns {Promise<boolean>} 是否成功刪除
      */
-    @LogService()
     deleteCommandArchive = async (id: number): Promise<boolean> => {
         try {
             logger.info('Deleting drone command archive', { id });
@@ -206,7 +203,6 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {DroneCommandsArchiveCreationAttributes[]} dataArray - 要創建的歸檔資料陣列
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 創建後的歸檔資料陣列
      */
-    @LogService()
     batchCreateCommandArchives = async (dataArray: DroneCommandsArchiveCreationAttributes[]): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Batch creating drone command archives', { count: dataArray.length });
@@ -266,7 +262,6 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {number} batchSize - 批次大小，預設為 50
      * @returns {Promise<ArchiveOperationResult>} 歸檔操作結果
      */
-    @LogService()
     archiveCommandsBefore = async (beforeDate: Date, batchSize: number = 50): Promise<ArchiveOperationResult> => {
         try {
             logger.info('Archiving commands before date', { beforeDate, batchSize });
@@ -311,7 +306,6 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {number} retentionDays - 保留天數
      * @returns {Promise<number>} 清理的記錄數量
      */
-    @LogService()
     cleanupExpiredArchives = async (retentionDays: number): Promise<number> => {
         try {
             logger.info('Cleaning up expired archives', { retentionDays });

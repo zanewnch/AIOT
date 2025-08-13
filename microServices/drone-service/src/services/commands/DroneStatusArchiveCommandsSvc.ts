@@ -61,7 +61,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<DroneStatusArchiveAttributes>} 建立的狀態歷史資料
      * @throws {Error} 當資料驗證失敗或建立失敗時
      */
-    @LogService()
     createStatusArchive = async (data: DroneStatusArchiveCreationAttributes): Promise<DroneStatusArchiveAttributes> => {
         try {
             // 驗證必要欄位
@@ -90,7 +89,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<DroneStatusArchiveAttributes>} 更新後的狀態歷史資料
      * @throws {Error} 當 ID 無效、資料驗證失敗或更新失敗時
      */
-    @LogService()
     updateStatusArchive = async (id: number, data: Partial<DroneStatusArchiveCreationAttributes>): Promise<DroneStatusArchiveAttributes> => {
         try {
             // 驗證 ID
@@ -128,7 +126,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<void>}
      * @throws {Error} 當 ID 無效或刪除失敗時
      */
-    @LogService()
     deleteStatusArchive = async (id: number): Promise<void> => {
         try {
             // 驗證 ID
@@ -163,7 +160,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<DroneStatusArchiveAttributes>} 建立的狀態變更記錄
      * @throws {Error} 當參數無效或記錄失敗時
      */
-    @LogService()
     recordStatusChange = async (
         droneId: number,
         newStatus: DroneStatus,
@@ -229,7 +225,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<number>} 成功刪除的記錄數量
      * @throws {Error} 當 ID 陣列為空或刪除失敗時
      */
-    @LogService()
     bulkDeleteStatusArchives = async (ids: number[]): Promise<number> => {
         try {
             if (!ids || ids.length === 0) {
@@ -271,7 +266,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<number>} 刪除的記錄數量
      * @throws {Error} 當無人機 ID 無效或刪除失敗時
      */
-    @LogService()
     deleteAllArchivesByDroneId = async (droneId: number): Promise<number> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -305,7 +299,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @returns {Promise<number>} 刪除的記錄數量
      * @throws {Error} 當日期無效或刪除失敗時
      */
-    @LogService()
     deleteOldArchives = async (beforeDate: Date): Promise<number> => {
         try {
             if (!beforeDate || isNaN(beforeDate.getTime())) {
@@ -340,7 +333,6 @@ export class DroneStatusArchiveCommandsSvc {
      * @param {DroneStatus} toStatus - 轉換後狀態
      * @returns {Promise<boolean>} 是否為有效的狀態轉換
      */
-    @LogService()
     isValidStatusTransition = async (fromStatus: DroneStatus | null, toStatus: DroneStatus): Promise<boolean> => {
         try {
             // 定義有效的狀態轉換規則

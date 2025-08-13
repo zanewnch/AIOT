@@ -30,7 +30,6 @@ import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from 
  * @since 1.0.0
  */
 @injectable()
-@Logger('UserPreferenceCommands')
 export class UserPreferenceCommands {
     constructor(
         @inject(TYPES.UserPreferenceCommandsSvc) 

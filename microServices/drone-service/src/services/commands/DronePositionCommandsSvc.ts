@@ -62,7 +62,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<DronePositionAttributes>} 建立的無人機位置資料
      * @throws {Error} 當資料驗證失敗或建立失敗時
      */
-    @LogService()
     createDronePosition = async (data: DronePositionCreationAttributes): Promise<DronePositionAttributes> => {
         try {
             // 驗證必要欄位
@@ -86,7 +85,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<DronePositionAttributes>} 更新後的無人機位置資料
      * @throws {Error} 當 ID 無效、資料驗證失敗或更新失敗時
      */
-    @LogService()
     updateDronePosition = async (id: number, data: Partial<DronePositionCreationAttributes>): Promise<DronePositionAttributes> => {
         try {
             // 驗證 ID
@@ -129,7 +127,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<void>}
      * @throws {Error} 當 ID 無效或刪除失敗時
      */
-    @LogService()
     deleteDronePosition = async (id: number): Promise<void> => {
         try {
             // 驗證 ID
@@ -161,7 +158,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<DronePositionAttributes[]>} 創建的位置資料陣列
      * @throws {Error} 當批量創建失敗時
      */
-    @LogService()
     createDronePositionsBatch = async (positions: DronePositionCreationAttributes[]): Promise<DronePositionAttributes[]> => {
         try {
             if (!positions || positions.length === 0) {
@@ -203,7 +199,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<number>} 成功刪除的筆數
      * @throws {Error} 當批量刪除失敗時
      */
-    @LogService()
     deleteDronePositionsBatch = async (ids: number[]): Promise<number> => {
         try {
             if (!ids || ids.length === 0) {
@@ -249,7 +244,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<number>} 成功更新的筆數
      * @throws {Error} 當批量更新失敗時
      */
-    @LogService()
     updateDronePositionsBatch = async (updates: Array<{id: number, data: Partial<DronePositionCreationAttributes>}>): Promise<number> => {
         try {
             if (!updates || updates.length === 0) {
@@ -296,7 +290,6 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<number>} 清除的筆數
      * @throws {Error} 當清除失敗時
      */
-    @LogService()
     cleanupDronePositionHistory = async (droneId: number, keepLatest: number = 10): Promise<number> => {
         try {
             if (!droneId || droneId <= 0) {

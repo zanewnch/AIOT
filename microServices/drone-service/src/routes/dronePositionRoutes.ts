@@ -44,7 +44,6 @@ export class DronePositionRoutes {
     /**
      * 設定所有路由
      */
-    @LogRoute()
     private setupRoutes(): void {
         this.setupQueryRoutes();
         this.setupCommandRoutes();
@@ -54,7 +53,6 @@ export class DronePositionRoutes {
     /**
      * 設定查詢路由 (GET 操作)
      */
-    @LogRoute()
     private setupQueryRoutes(): void {
         // 獲取所有無人機位置
         this.router.get('/', (req, res, next) => this.dronePositionQueries.getAllDronePositions(req, res, next));
@@ -75,7 +73,6 @@ export class DronePositionRoutes {
     /**
      * 設定歸檔路由
      */
-    @LogRoute()
     private setupArchiveRoutes(): void {
         // 獲取所有歷史位置記錄
         this.router.get('/archive', (req, res, next) => this.dronePositionsArchiveQueries.getAllPositionArchives(req, res, next));
@@ -108,7 +105,6 @@ export class DronePositionRoutes {
     /**
      * 設定命令路由 (POST, PUT, DELETE 操作)
      */
-    @LogRoute()
     private setupCommandRoutes(): void {
         // 注意：命令相關的路由會在實現相關控制器後新增
         // 目前 DronePositionCommands 控制器可能尚未實現這些方法
@@ -117,7 +113,6 @@ export class DronePositionRoutes {
     /**
      * 獲取路由器實例
      */
-    @LogRoute()
     getRouter(): Router {
         return this.router;
     }

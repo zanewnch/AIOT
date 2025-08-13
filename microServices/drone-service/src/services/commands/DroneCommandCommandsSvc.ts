@@ -63,7 +63,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 建立新的無人機指令記錄
      */
-    @LogService()
     createCommand = async (data: DroneCommandCreationAttributes): Promise<CommandExecutionResult> => {
         try {
             logger.info('Creating command', { data });
@@ -126,7 +125,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 批量建立無人機指令記錄
      */
-    @LogService()
     createBatchCommands = async (dataArray: DroneCommandCreationAttributes[]): Promise<BatchCommandResult> => {
         try {
             logger.info('Creating batch commands', { count: dataArray.length });
@@ -184,7 +182,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 更新無人機指令資料
      */
-    @LogService()
     updateCommand = async (id: number, data: Partial<DroneCommandCreationAttributes>): Promise<DroneCommandAttributes | null> => {
         try {
             logger.info('Updating command', { id, data });
@@ -219,7 +216,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 刪除無人機指令資料
      */
-    @LogService()
     deleteCommand = async (id: number): Promise<boolean> => {
         try {
             logger.info('Deleting command', { id });
@@ -250,7 +246,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 執行指令（標記為執行中）
      */
-    @LogService()
     executeCommand = async (commandId: number): Promise<CommandExecutionResult> => {
         try {
             logger.info('Executing command', { commandId });
@@ -284,7 +279,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 完成指令
      */
-    @LogService()
     completeCommand = async (commandId: number): Promise<CommandExecutionResult> => {
         try {
             logger.info('Completing command', { commandId });
@@ -318,7 +312,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 標記指令失敗
      */
-    @LogService()
     failCommand = async (commandId: number, errorMessage: string): Promise<CommandExecutionResult> => {
         try {
             logger.info('Marking command as failed', { commandId, errorMessage });
@@ -352,7 +345,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 取消待執行指令
      */
-    @LogService()
     cancelCommand = async (commandId: number, reason: string): Promise<CommandExecutionResult> => {
         try {
             logger.info('Cancelling command', { commandId, reason });
@@ -386,7 +378,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送起飛指令
      */
-    @LogService()
     sendTakeoffCommand = async (droneId: number, issuedBy: number, commandData: { altitude: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending takeoff command', { droneId, issuedBy, commandData });
@@ -426,7 +417,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送降落指令
      */
-    @LogService()
     sendLandCommand = async (droneId: number, issuedBy: number, commandData?: { speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending land command', { droneId, issuedBy, commandData });
@@ -457,7 +447,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送飛行到指定位置指令
      */
-    @LogService()
     sendFlyToCommand = async (droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending flyTo command', { droneId, issuedBy, commandData });
@@ -506,7 +495,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送移動指令（别名：飛行到指定位置）
      */
-    @LogService()
     sendMoveCommand = async (droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> => {
         return await this.sendFlyToCommand(droneId, issuedBy, commandData);
     }
@@ -514,7 +502,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送懸停指令
      */
-    @LogService()
     sendHoverCommand = async (droneId: number, issuedBy: number, commandData?: { duration?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending hover command', { droneId, issuedBy, commandData });
@@ -545,7 +532,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送返航指令
      */
-    @LogService()
     sendReturnCommand = async (droneId: number, issuedBy: number, commandData?: { speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending return command', { droneId, issuedBy, commandData });
@@ -576,7 +562,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送緊急停止指令
      */
-    @LogService()
     sendEmergencyCommand = async (droneId: number, issuedBy: number, commandData?: { action?: 'stop' | 'land' }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending emergency command', { droneId, issuedBy, commandData });
@@ -607,7 +592,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 處理超時指令
      */
-    @LogService()
     handleTimeoutCommands = async (timeoutMinutes: number): Promise<number> => {
         try {
             logger.info('Handling timeout commands', { timeoutMinutes });
@@ -633,7 +617,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 清理舊指令記錄
      */
-    @LogService()
     cleanupOldCommands = async (beforeDate: Date, onlyCompleted: boolean = true): Promise<number> => {
         try {
             logger.info('Cleaning up old commands', { beforeDate, onlyCompleted });
@@ -655,7 +638,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 批量更新指令狀態
      */
-    @LogService()
     batchUpdateCommandStatus = async (commandIds: number[], status: DroneCommandStatus, errorMessage?: string): Promise<number> => {
         try {
             logger.info('Batch updating command status', { commandIds, status, errorMessage });
@@ -681,7 +663,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送前進指令
      */
-    @LogService()
     sendMoveForwardCommand = async (droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending move forward command', { droneId, issuedBy, commandData });
@@ -721,7 +702,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送後退指令
      */
-    @LogService()
     sendMoveBackwardCommand = async (droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending move backward command', { droneId, issuedBy, commandData });
@@ -761,7 +741,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送左移指令
      */
-    @LogService()
     sendMoveLeftCommand = async (droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending move left command', { droneId, issuedBy, commandData });
@@ -801,7 +780,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送右移指令
      */
-    @LogService()
     sendMoveRightCommand = async (droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending move right command', { droneId, issuedBy, commandData });
@@ -841,7 +819,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送左轉指令
      */
-    @LogService()
     sendRotateLeftCommand = async (droneId: number, issuedBy: number, commandData: { degrees: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending rotate left command', { droneId, issuedBy, commandData });
@@ -881,7 +858,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送右轉指令
      */
-    @LogService()
     sendRotateRightCommand = async (droneId: number, issuedBy: number, commandData: { degrees: number; speed?: number }): Promise<CommandExecutionResult> => {
         try {
             logger.info('Sending rotate right command', { droneId, issuedBy, commandData });
@@ -921,7 +897,6 @@ export class DroneCommandCommandsSvc {
     /**
      * 重試失敗的指令
      */
-    @LogService()
     retryFailedCommand = async (commandId: number, issuedBy: number): Promise<CommandExecutionResult> => {
         try {
             logger.info('Retrying failed command', { commandId, issuedBy });

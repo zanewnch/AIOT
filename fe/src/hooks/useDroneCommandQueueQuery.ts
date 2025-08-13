@@ -114,7 +114,7 @@ export class DroneCommandQueueQuery {
           if (options.status) params.append('status', options.status);
           if (options.created_by) params.append('created_by', options.created_by.toString());
           
-          const url = `/api/drone-command-queues/data?${params.toString()}`;
+          const url = `/api/drone/commands/queues/data?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandQueue[]>(url);
           
           if (!result.isSuccess()) {
@@ -149,7 +149,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Fetching command queue by ID', { queueId });
           
-          const url = `/api/drone-command-queues/data/${queueId}`;
+          const url = `/api/drone/commands/queues/data/${queueId}`;
           const result = await apiClient.getWithResult<DroneCommandQueue>(url);
           
           if (!result.isSuccess()) {
@@ -185,7 +185,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Fetching queue statistics');
           
-          const url = '/api/drone-command-queues/statistics';
+          const url = '/api/drone/commands/queues/statistics';
           const result = await apiClient.getWithResult<QueueStatistics>(url);
           
           if (!result.isSuccess()) {
@@ -222,7 +222,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Creating command queue', { queueData });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>('/api/drone-command-queues/data', queueData);
+          const result = await apiClient.postWithResult<DroneCommandQueue>('/api/drone/commands/queues/data', queueData);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -259,7 +259,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Updating command queue', { queueId, queueData });
           
-          const result = await apiClient.putWithResult<DroneCommandQueue>(`/api/drone-command-queues/data/${queueId}`, queueData);
+          const result = await apiClient.putWithResult<DroneCommandQueue>(`/api/drone/commands/queues/data/${queueId}`, queueData);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -297,7 +297,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Deleting command queue', { queueId });
           
-          const result = await apiClient.deleteWithResult(`/api/drone-command-queues/data/${queueId}`);
+          const result = await apiClient.deleteWithResult(`/api/drone/commands/queues/data/${queueId}`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -333,7 +333,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Starting command queue', { queueId });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone-command-queues/${queueId}/start`);
+          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone/commands/queues/${queueId}/start`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -371,7 +371,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Pausing command queue', { queueId });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone-command-queues/${queueId}/pause`);
+          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone/commands/queues/${queueId}/pause`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -409,7 +409,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Resetting command queue', { queueId });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone-command-queues/${queueId}/reset`);
+          const result = await apiClient.postWithResult<DroneCommandQueue>(`/api/drone/commands/queues/${queueId}/reset`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -447,7 +447,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Adding command to queue', { queueId, command });
           
-          const result = await apiClient.postWithResult<DroneCommand>(`/api/drone-command-queues/${queueId}/commands`, command);
+          const result = await apiClient.postWithResult<DroneCommand>(`/api/drone/commands/queues/${queueId}/commands`, command);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

@@ -48,7 +48,6 @@ export class DroneStatusCommandsSvc {
     /**
      * 建立新的無人機狀態資料
      */
-    @LogService()
     createDroneStatus = async (data: DroneStatusCreationAttributes): Promise<DroneStatusAttributes> => {
         try {
             // 驗證必要欄位
@@ -69,7 +68,6 @@ return droneStatus;
     /**
      * 更新無人機狀態資料
      */
-    @LogService()
     updateDroneStatus = async (id: number, data: Partial<DroneStatusCreationAttributes>): Promise<DroneStatusAttributes> => {
         try {
             // 驗證 ID
@@ -107,7 +105,6 @@ return updatedDroneStatus;
     /**
      * 刪除無人機狀態資料
      */
-    @LogService()
     deleteDroneStatus = async (id: number): Promise<void> => {
         try {
             // 驗證 ID
@@ -129,7 +126,6 @@ await this.droneStatusRepository.delete(id);
     /**
      * 更新無人機狀態
      */
-    @LogService()
     updateDroneStatusOnly = async (id: number, status: DroneStatus): Promise<DroneStatusAttributes> => {
         try {
             // 驗證 ID
@@ -161,7 +157,6 @@ return updatedDroneStatus;
     /**
      * 批量更新無人機狀態
      */
-    @LogService()
     bulkUpdateDroneStatus = async (ids: number[], status: DroneStatus): Promise<number> => {
         try {
             if (!ids || ids.length === 0) {
@@ -195,7 +190,6 @@ if (errors.length > 0) {
     /**
      * 批量刪除無人機狀態資料
      */
-    @LogService()
     bulkDeleteDroneStatus = async (ids: number[]): Promise<number> => {
         try {
             if (!ids || ids.length === 0) {
@@ -225,7 +219,6 @@ if (errors.length > 0) {
     /**
      * 重置無人機為非活躍狀態
      */
-    @LogService()
     resetInactiveDrones = async (): Promise<number> => {
         try {
 const activeDrones = await this.queryService.getDronesByStatus(DroneStatus.ACTIVE);
@@ -249,7 +242,6 @@ return resetCount;
     /**
      * 將維護中的無人機設為活躍
      */
-    @LogService()
     activateMaintenanceDrones = async (): Promise<number> => {
         try {
 const maintenanceDrones = await this.queryService.getDronesByStatus(DroneStatus.MAINTENANCE);
@@ -269,7 +261,6 @@ return activatedCount;
     /**
      * 更新無人機擁有者
      */
-    @LogService()
     updateDroneOwner = async (id: number, newOwnerUserId: number): Promise<DroneStatusAttributes> => {
         try {
             if (!id || id <= 0) {
@@ -292,7 +283,6 @@ return updatedDrone;
     /**
      * 驗證無人機狀態資料
      */
-    @LogService()
     private validateDroneStatusData = async (data: DroneStatusCreationAttributes): Promise<void> => {
         // 驗證必要欄位
         if (!data.drone_serial || data.drone_serial.trim() === '') {

@@ -46,7 +46,7 @@ interface DroneCommandsArchive {
  * API 函數：獲取無人機指令歷史歸檔數據
  */
 const fetchDroneCommandsArchive = async (): Promise<DroneCommandsArchive[]> => {
-  const response = await apiClient.get('/api/drone-commands-archive/data');
+  const response = await apiClient.get('/api/drone/commands/archive/data');
   const result = RequestResult.fromResponse<DroneCommandsArchive[]>(response);
   
   if (result.isError()) {

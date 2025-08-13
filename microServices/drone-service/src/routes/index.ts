@@ -53,23 +53,23 @@ export class RouteManager {
             console.log('✅ Health routes registered');
 
             // 註冊歸檔任務路由
-            app.use('/api/archive-tasks', this.archiveTaskRoutes.getRouter());
+            app.use('/archive-tasks', this.archiveTaskRoutes.getRouter());
             console.log('✅ Archive task routes registered');
 
             // 註冊無人機位置路由
-            app.use('/api/drone/positions', this.dronePositionRoutes.getRouter());
+            app.use('/positions', this.dronePositionRoutes.getRouter());
             console.log('✅ Drone position routes registered');
 
             // 註冊無人機狀態路由
-            app.use('/api/drone/statuses', this.droneStatusRoutes.getRouter());
+            app.use('/statuses', this.droneStatusRoutes.getRouter());
             console.log('✅ Drone status routes registered');
 
             // 註冊無人機命令路由
-            app.use('/api/drone/commands', this.droneCommandRoutes.getRouter());
+            app.use('/commands', this.droneCommandRoutes.getRouter());
             console.log('✅ Drone command routes registered');
 
             // 註冊無人機即時狀態路由
-            app.use('/api/drone/realtime', this.droneRealtimeRoutes.getRouter());
+            app.use('/realtime', this.droneRealtimeRoutes.getRouter());
             console.log('✅ Drone realtime routes registered');
 
             console.log('🚀 All routes registered successfully');

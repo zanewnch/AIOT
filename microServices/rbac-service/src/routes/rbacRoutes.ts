@@ -49,25 +49,25 @@ class RbacRoutes {
 
   // 路由端點常數 - 集中管理所有 API 路徑
   private readonly ROUTES = {
-    // 使用者管理路由
-    USERS: '/api/rbac/users',
-    USER_BY_ID: '/api/rbac/users/:userId',
+    // 使用者管理路由 (Kong strip_path 後的內部路徑)
+    USERS: '/users',
+    USER_BY_ID: '/users/:userId',
     
     // 角色管理路由
-    ROLES: '/api/rbac/roles',
-    ROLE_BY_ID: '/api/rbac/roles/:roleId',
+    ROLES: '/roles',
+    ROLE_BY_ID: '/roles/:roleId',
     
     // 權限管理路由
-    PERMISSIONS: '/api/rbac/permissions',
-    PERMISSION_BY_ID: '/api/rbac/permissions/:permissionId',
+    PERMISSIONS: '/permissions',
+    PERMISSION_BY_ID: '/permissions/:permissionId',
     
     // 使用者角色關聯路由
-    USER_ROLES: '/api/rbac/user-roles',
-    USER_ROLE_BY_ID: '/api/rbac/user-roles/:userRoleId',
+    USER_ROLES: '/user-roles',
+    USER_ROLE_BY_ID: '/user-roles/:userRoleId',
     
     // 角色權限關聯路由
-    ROLE_PERMISSIONS: '/api/rbac/role-permissions',
-    ROLE_PERMISSION_BY_ID: '/api/rbac/role-permissions/:rolePermissionId'
+    ROLE_PERMISSIONS: '/role-permissions',
+    ROLE_PERMISSION_BY_ID: '/role-permissions/:rolePermissionId'
   } as const;
 
   constructor() {

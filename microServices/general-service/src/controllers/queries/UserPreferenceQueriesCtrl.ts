@@ -30,7 +30,6 @@ import type { PaginationParams } from '../../types/ApiResponseType.js';
  * @since 1.0.0
  */
 @injectable()
-@Logger('UserPreferenceQueries')
 export class UserPreferenceQueries {
     constructor(
         @inject(TYPES.UserPreferenceQueriesSvc) 

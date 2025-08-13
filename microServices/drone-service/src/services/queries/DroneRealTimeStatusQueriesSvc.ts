@@ -69,7 +69,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 根據 ID 獲取即時狀態記錄
      */
-    @LogService()
     getRealTimeStatusById = async (id: number): Promise<DroneRealTimeStatusModel> => {
         try {
             if (!id || id <= 0) {
@@ -93,7 +92,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 根據無人機 ID 獲取即時狀態記錄
      */
-    @LogService()
     getRealTimeStatusByDroneId = async (droneId: number): Promise<DroneRealTimeStatusModel> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -117,7 +115,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取所有即時狀態記錄
      */
-    @LogService()
     getAllRealTimeStatuses = async (): Promise<DroneRealTimeStatusModel[]> => {
         try {
             logger.info('Getting all drone real-time statuses');
@@ -134,7 +131,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 根據狀態獲取即時狀態記錄
      */
-    @LogService()
     getRealTimeStatusesByStatus = async (status: DroneRealTimeStatus): Promise<DroneRealTimeStatusModel[]> => {
         try {
             if (!Object.values(DroneRealTimeStatus).includes(status)) {
@@ -154,7 +150,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取所有在線的無人機
      */
-    @LogService()
     getOnlineDrones = async (): Promise<DroneRealTimeStatusModel[]> => {
         try {
             logger.info('Getting online drones');
@@ -170,7 +165,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取離線的無人機
      */
-    @LogService()
     getOfflineDrones = async (thresholdMinutes: number = 5): Promise<DroneRealTimeStatusModel[]> => {
         try {
             if (thresholdMinutes <= 0) {
@@ -190,7 +184,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取電池統計資訊
      */
-    @LogService()
     getBatteryStatistics = async (): Promise<any> => {
         try {
             logger.info('Getting battery statistics');
@@ -206,7 +199,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取狀態統計資訊
      */
-    @LogService()
     getStatusStatistics = async (): Promise<any> => {
         try {
             logger.info('Getting status statistics');
@@ -222,7 +214,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取儀表板摘要資訊
      */
-    @LogService()
     getDashboardSummary = async (): Promise<any> => {
         try {
             logger.info('Getting dashboard summary');
@@ -257,7 +248,6 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 檢查低電量無人機
      */
-    @LogService()
     checkLowBatteryDrones = async (threshold: number = 20): Promise<DroneRealTimeStatusModel[]> => {
         try {
             if (threshold <= 0 || threshold > 100) {
@@ -278,17 +268,14 @@ export class DroneRealTimeStatusQueriesSvc {
     }
 
     // 實現外部介面方法
-    @LogService()
     getAllDroneRealTimeStatuses = async (): Promise<DroneRealTimeStatusAttributes[]> => {
         return await this.getAllRealTimeStatuses();
     }
 
-    @LogService()
     getDroneRealTimeStatusById = async (id: number): Promise<DroneRealTimeStatusAttributes | null> => {
         return await this.getRealTimeStatusById(id);
     }
 
-    @LogService()
     getDroneRealTimeStatusByDroneId = async (droneId: number): Promise<DroneRealTimeStatusAttributes | null> => {
         try {
             const model = await this.getRealTimeStatusByDroneId(droneId);
@@ -298,13 +285,11 @@ export class DroneRealTimeStatusQueriesSvc {
         }
     }
 
-    @LogService()
     getDroneRealTimeStatusesByStatus = async (status: string): Promise<DroneRealTimeStatusAttributes[]> => {
         const models = await this.getRealTimeStatusesByStatus(status as DroneRealTimeStatus);
         return models.map(model => this.convertToExternalAttributes(model.toJSON()));
     }
 
-    @LogService()
     getActiveDroneRealTimeStatuses = async (): Promise<DroneRealTimeStatusAttributes[]> => {
         const models = await this.getOnlineDrones();
         return models.map(model => this.convertToExternalAttributes(model.toJSON()));
@@ -335,7 +320,6 @@ export class DroneRealTimeStatusQueriesSvc {
         };
     }
 
-    @LogService()
     getDroneRealTimeStatusStatistics = async (): Promise<RealTimeStatusStatistics> => {
         const [statusStats, batteryStats, onlineDrones, offlineDrones] = await Promise.all([
             this.getStatusStatistics(),

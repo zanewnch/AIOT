@@ -87,7 +87,7 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
     fetchNextPage,
     refetch,
   } = useInfiniteTableData<DroneStatus>({
-    endpoint: '/api/drone-status/data',
+    endpoint: '/api/drone/statuses/data',
     pageSize,
     queryKey: ['droneStatuses', 'enhanced'],
     enabled: enableInfiniteScroll,

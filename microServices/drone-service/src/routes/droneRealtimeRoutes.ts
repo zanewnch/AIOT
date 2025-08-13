@@ -41,7 +41,6 @@ export class DroneRealtimeRoutes {
     /**
      * 設定所有路由
      */
-    @LogRoute()
     private setupRoutes(): void {
         this.setupQueryRoutes();
         this.setupCommandRoutes();
@@ -50,7 +49,6 @@ export class DroneRealtimeRoutes {
     /**
      * 設定即時狀態查詢路由 (GET 操作)
      */
-    @LogRoute()
     private setupQueryRoutes(): void {
         // 獲取所有無人機的即時狀態總覽
         this.router.get('/status', (req, res, next) => this.droneRealTimeStatusQueries.getAllRealTimeStatuses(req, res, next));
@@ -68,7 +66,6 @@ export class DroneRealtimeRoutes {
     /**
      * 設定即時狀態命令路由 (POST, PUT, DELETE 操作)
      */
-    @LogRoute()
     private setupCommandRoutes(): void {
         // 更新即時狀態
         this.router.put('/status/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res, next));
@@ -86,7 +83,6 @@ export class DroneRealtimeRoutes {
     /**
      * 獲取路由器實例
      */
-    @LogRoute()
     getRouter(): Router {
         return this.router;
     }

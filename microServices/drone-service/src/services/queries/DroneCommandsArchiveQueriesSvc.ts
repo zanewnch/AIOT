@@ -55,7 +55,6 @@ export class DroneCommandsArchiveQueriesSvc {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
      */
-    @LogService()
     getAllCommandsArchive = async (limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Getting all drone commands archive data', { limit });
@@ -80,7 +79,6 @@ export class DroneCommandsArchiveQueriesSvc {
      * @param {number} id - 歸檔資料 ID
      * @returns {Promise<DroneCommandsArchiveAttributes | null>} 指令歷史歸檔資料或 null
      */
-    @LogService()
     getCommandArchiveById = async (id: number): Promise<DroneCommandsArchiveAttributes | null> => {
         try {
             logger.info('Getting drone command archive by ID', { id });
@@ -111,7 +109,6 @@ export class DroneCommandsArchiveQueriesSvc {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
      */
-    @LogService()
     getCommandArchivesByDroneId = async (droneId: number, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Getting drone command archives by drone ID', { droneId, limit });
@@ -141,7 +138,6 @@ export class DroneCommandsArchiveQueriesSvc {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
      */
-    @LogService()
     getCommandArchivesByTimeRange = async (startTime: Date, endTime: Date, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Getting drone command archives by time range', { startTime, endTime, limit });
@@ -173,7 +169,6 @@ export class DroneCommandsArchiveQueriesSvc {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
      */
-    @LogService()
     getCommandArchivesByType = async (commandType: string, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Getting drone command archives by command type', { commandType, limit });
@@ -202,7 +197,6 @@ export class DroneCommandsArchiveQueriesSvc {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
      */
-    @LogService()
     getCommandArchivesByStatus = async (status: string, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Getting drone command archives by status', { status, limit });

@@ -42,7 +42,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得所有無人機狀態資料
      */
-    @LogService()
     getAllDroneStatuses = async (): Promise<DroneStatusAttributes[]> => {
         try {
             logger.info('Getting all drone status data');
@@ -58,7 +57,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據 ID 取得無人機狀態資料
      */
-    @LogService()
     getDroneStatusById = async (id: number): Promise<DroneStatusAttributes> => {
         try {
             if (!id || id <= 0) {
@@ -82,7 +80,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據無人機序號取得無人機狀態資料
      */
-    @LogService()
     getDroneStatusBySerial = async (droneSerial: string): Promise<DroneStatusAttributes> => {
         try {
             if (!droneSerial || droneSerial.trim() === '') {
@@ -106,7 +103,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據狀態查詢無人機
      */
-    @LogService()
     getDronesByStatus = async (status: DroneStatus): Promise<DroneStatusAttributes[]> => {
         try {
             if (!Object.values(DroneStatus).includes(status)) {
@@ -126,7 +122,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據擁有者 ID 查詢無人機
      */
-    @LogService()
     getDronesByOwner = async (ownerUserId: number): Promise<DroneStatusAttributes[]> => {
         try {
             if (!ownerUserId || ownerUserId <= 0) {
@@ -146,7 +141,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據製造商查詢無人機
      */
-    @LogService()
     getDronesByManufacturer = async (manufacturer: string): Promise<DroneStatusAttributes[]> => {
         try {
             if (!manufacturer || manufacturer.trim() === '') {
@@ -166,7 +160,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 檢查無人機序號是否已存在
      */
-    @LogService()
     isDroneSerialExists = async (droneSerial: string, excludeId?: number): Promise<boolean> => {
         try {
             const existingDrone = await this.droneStatusRepository.findByDroneSerial(droneSerial);
@@ -189,7 +182,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得無人機狀態統計
      */
-    @LogService()
     getDroneStatusStatistics = async (): Promise<{ [key in DroneStatus]: number }> => {
         try {
             logger.info('Getting drone status statistics');
@@ -223,7 +215,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得總無人機數量
      */
-    @LogService()
     getTotalDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting total drone count');
@@ -240,7 +231,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得活躍無人機數量
      */
-    @LogService()
     getActiveDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting active drone count');
@@ -257,7 +247,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得飛行中無人機數量
      */
-    @LogService()
     getFlyingDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting flying drone count');
@@ -274,7 +263,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得需要維護的無人機數量
      */
-    @LogService()
     getMaintenanceDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting maintenance drone count');
@@ -291,7 +279,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得離線無人機數量
      */
-    @LogService()
     getInactiveDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting inactive drone count');
@@ -308,7 +295,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據型號查詢無人機
      */
-    @LogService()
     getDronesByModel = async (model: string): Promise<DroneStatusAttributes[]> => {
         try {
             if (!model || model.trim() === '') {
@@ -329,7 +315,6 @@ export class DroneStatusQueriesSvc {
     /**
      * 搜尋無人機（根據名稱或序號）
      */
-    @LogService()
     searchDrones = async (searchTerm: string): Promise<DroneStatusAttributes[]> => {
         try {
             if (!searchTerm || searchTerm.trim() === '') {

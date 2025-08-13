@@ -43,7 +43,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 無人機位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getAllDronePositions = async (): Promise<DronePositionAttributes[]> => {
         try {
             logger.info('Getting all drone position data');
@@ -63,7 +62,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes>} 無人機位置資料
      * @throws {Error} 當 ID 無效或資料不存在時
      */
-    @LogService()
     getDronePositionById = async (id: number): Promise<DronePositionAttributes> => {
         try {
             // 驗證 ID
@@ -92,7 +90,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 最新的無人機位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getLatestDronePositions = async (limit: number = 10): Promise<DronePositionAttributes[]> => {
         try {
             // 驗證 limit 參數
@@ -118,7 +115,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 特定無人機的位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getDronePositionsByDroneId = async (droneId: number, limit: number = 10): Promise<DronePositionAttributes[]> => {
         try {
             // 驗證 droneId
@@ -148,7 +144,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes | null>} 最新的位置資料
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getLatestDronePosition = async (droneId: number): Promise<DronePositionAttributes | null> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -178,7 +173,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 時間範圍內的位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getDronePositionsByTimeRange = async (droneId: number, startTime: Date, endTime: Date): Promise<DronePositionAttributes[]> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -230,7 +224,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @param {number} id - 位置記錄 ID
      * @returns {Promise<boolean>} 是否存在
      */
-    @LogService()
     isDronePositionExists = async (id: number): Promise<boolean> => {
         try {
             if (!id || id <= 0) {
@@ -249,7 +242,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      *
      * @returns {Promise<{total: number, byDrone: Record<number, number>}>} 統計資料
      */
-    @LogService()
     getDronePositionStatistics = async (): Promise<{total: number, byDrone: Record<number, number>}> => {
         try {
             logger.info('Getting drone position statistics');
@@ -277,7 +269,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      *
      * @returns {Promise<number>} 總位置記錄數量
      */
-    @LogService()
     getTotalPositionCount = async (): Promise<number> => {
         try {
             logger.info('Getting total position count');
@@ -297,7 +288,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 該無人機的位置記錄數量
      */
-    @LogService()
     getPositionCountByDrone = async (droneId: number): Promise<number> => {
         try {
             if (!droneId || droneId <= 0) {

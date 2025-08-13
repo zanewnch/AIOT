@@ -55,7 +55,6 @@ export interface UserPreferenceStatistics {
  * @since 1.0.0
  */
 @injectable()
-@Logger('UserPreferenceQueriesSvc')
 export class UserPreferenceQueriesSvc {
     constructor(
         @inject(TYPES.UserPreferenceQueriesRepo) 

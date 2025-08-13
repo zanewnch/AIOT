@@ -40,7 +40,6 @@ const DEFAULT_USER_PREFERENCES = {
  * @since 1.0.0
  */
 @injectable()
-@Logger('UserPreferenceCommandsSvc')
 export class UserPreferenceCommandsSvc {
     constructor(
         @inject(TYPES.UserPreferenceCommandsRepo) 

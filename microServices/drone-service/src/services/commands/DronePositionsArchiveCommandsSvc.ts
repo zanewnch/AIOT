@@ -56,7 +56,6 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 建立新的位置歷史歸檔記錄
      */
-    @LogService()
     createPositionArchive = async (data: DronePositionsArchiveCreationAttributes): Promise<DronePositionsArchiveAttributes> => {
         try {
 // 驗證資料完整性
@@ -79,7 +78,6 @@ return createdArchive;
     /**
      * 批量建立位置歷史歸檔記錄
      */
-    @LogService()
     bulkCreatePositionArchives = async (dataArray: DronePositionsArchiveCreationAttributes[]): Promise<DronePositionsArchiveAttributes[]> => {
         try {
 // 驗證批量資料
@@ -111,7 +109,6 @@ return createdArchives;
     /**
      * 更新位置歷史歸檔資料
      */
-    @LogService()
     updatePositionArchive = async (id: number, data: Partial<DronePositionsArchiveCreationAttributes>): Promise<DronePositionsArchiveAttributes | null> => {
         try {
 // 驗證 ID 參數
@@ -151,7 +148,6 @@ return createdArchives;
     /**
      * 刪除位置歷史歸檔資料
      */
-    @LogService()
     deletePositionArchive = async (id: number): Promise<boolean> => {
         try {
 // 驗證 ID 參數
@@ -175,7 +171,6 @@ return true;
     /**
      * 刪除指定時間之前的歸檔資料
      */
-    @LogService()
     deleteArchivesBeforeDate = async (beforeDate: Date): Promise<number> => {
         try {
 // 驗證日期
@@ -193,7 +188,6 @@ return deletedCount;
     /**
      * 刪除指定批次的歸檔資料
      */
-    @LogService()
     deleteArchiveBatch = async (batchId: string): Promise<number> => {
         try {
 // 驗證批次 ID
@@ -217,7 +211,6 @@ return deletedCount;
     /**
      * 批量刪除位置歷史歸檔資料
      */
-    @LogService()
     bulkDeletePositionArchives = async (ids: number[]): Promise<number> => {
         try {
 if (!ids || ids.length === 0) {
@@ -252,7 +245,6 @@ return deletedCount;
     /**
      * 根據條件批量刪除歷史歸檔資料
      */
-    @LogService()
     deleteArchivesByConditions = async (conditions: {
         droneId?: number;
         beforeDate?: Date;
@@ -295,7 +287,6 @@ return deletedCount;
     /**
      * 清理過時的歸檔資料
      */
-    @LogService()
     cleanupOldArchives = async (daysOld: number): Promise<number> => {
         try {
 if (daysOld <= 0) {
@@ -315,7 +306,6 @@ return deletedCount;
     /**
      * 優化歷史歸檔儲存（刪除重複或異常資料）
      */
-    @LogService()
     optimizeArchiveStorage = async (droneId: number, timeRange: { start: Date; end: Date }): Promise<{
         duplicatesRemoved: number;
         anomaliesRemoved: number;
@@ -368,7 +358,6 @@ return result;
     /**
      * 批量更新歸檔資料的批次 ID
      */
-    @LogService()
     updateArchiveBatchId = async (oldBatchId: string, newBatchId: string): Promise<number> => {
         try {
 if (!oldBatchId || oldBatchId.trim() === '') {
@@ -405,7 +394,6 @@ return updatedCount;
     /**
      * 驗證歸檔資料完整性
      */
-    @LogService()
     private validateArchiveData = async (data: DronePositionsArchiveCreationAttributes): Promise<boolean> => {
         try {
             // 檢查必填欄位

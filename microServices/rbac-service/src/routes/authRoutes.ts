@@ -32,11 +32,11 @@ class AuthRoutes {
   private authCommands: AuthCommands;
   private authMiddleware: AuthMiddleware;
 
-  // 路由端點常數 - 集中管理所有 API 路徑
+  // 路由端點常數 - Kong strip_path 後的內部路徑
   private readonly ROUTES = {
-    LOGIN: '/api/auth/login',
-    LOGOUT: '/api/auth/logout',
-    ME: '/api/auth/me'
+    LOGIN: '/login',
+    LOGOUT: '/logout', 
+    ME: '/me'
   } as const;
 
   constructor() {

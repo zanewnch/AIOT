@@ -58,7 +58,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得所有無人機指令
      */
-    @LogService()
     getAllCommands = async (limit: number = 100): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting all commands', { limit });
@@ -78,7 +77,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據 ID 取得單筆無人機指令
      */
-    @LogService()
     getCommandById = async (id: number): Promise<DroneCommandAttributes | null> => {
         try {
             logger.info('Getting command by ID', { id });
@@ -104,7 +102,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據無人機 ID 查詢指令
      */
-    @LogService()
     getCommandsByDroneId = async (droneId: number, limit: number = 50): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting commands by drone ID', { droneId, limit });
@@ -127,7 +124,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據指令狀態查詢
      */
-    @LogService()
     getCommandsByStatus = async (status: DroneCommandStatus, limit: number = 50): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting commands by status', { status, limit });
@@ -150,7 +146,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據指令類型查詢
      */
-    @LogService()
     getCommandsByType = async (commandType: DroneCommandType, limit: number = 50): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting commands by type', { commandType, limit });
@@ -173,7 +168,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據發送者查詢指令
      */
-    @LogService()
     getCommandsByIssuedBy = async (issuedBy: number, limit: number = 50): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting commands by issued by', { issuedBy, limit });
@@ -196,7 +190,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據時間範圍查詢指令
      */
-    @LogService()
     getCommandsByDateRange = async (startDate: Date, endDate: Date, limit: number = 100): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting commands by date range', { startDate, endDate, limit });
@@ -222,7 +215,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得無人機的待執行指令
      */
-    @LogService()
     getPendingCommandsByDroneId = async (droneId: number): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting pending commands by drone ID', { droneId });
@@ -242,7 +234,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得正在執行的指令
      */
-    @LogService()
     getExecutingCommandByDroneId = async (droneId: number): Promise<DroneCommandAttributes | null> => {
         try {
             logger.info('Getting executing command by drone ID', { droneId });
@@ -268,7 +259,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得最新的指令記錄
      */
-    @LogService()
     getLatestCommands = async (limit: number = 20): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting latest commands', { limit });
@@ -288,7 +278,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得特定無人機的最新指令
      */
-    @LogService()
     getLatestCommandByDroneId = async (droneId: number): Promise<DroneCommandAttributes | null> => {
         try {
             logger.info('Getting latest command by drone ID', { droneId });
@@ -314,7 +303,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得失敗的指令
      */
-    @LogService()
     getFailedCommands = async (limit: number = 50): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting failed commands', { limit });
@@ -334,7 +322,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得超時的指令
      */
-    @LogService()
     getTimeoutCommands = async (timeoutMinutes: number, limit: number = 50): Promise<DroneCommandAttributes[]> => {
         try {
             logger.info('Getting timeout commands', { timeoutMinutes, limit });
@@ -357,7 +344,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得指令統計資料
      */
-    @LogService()
     getCommandStatistics = async (startDate?: Date, endDate?: Date): Promise<CommandStatistics> => {
         try {
             logger.info('Getting command statistics', { startDate, endDate });
@@ -401,7 +387,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得指令類型統計
      */
-    @LogService()
     getCommandTypeStatistics = async (startDate?: Date, endDate?: Date): Promise<CommandTypeStatistics[]> => {
         try {
             logger.info('Getting command type statistics', { startDate, endDate });
@@ -431,7 +416,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得無人機指令執行摘要
      */
-    @LogService()
     getDroneCommandSummary = async (droneId: number): Promise<DroneCommandSummary> => {
         try {
             logger.info('Getting drone command summary', { droneId });
@@ -492,7 +476,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得下一個待執行指令
      */
-    @LogService()
     getNextPendingCommand = async (droneId: number): Promise<DroneCommandAttributes | null> => {
         try {
             logger.info('Getting next pending command', { droneId });
@@ -515,7 +498,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 驗證指令資料
      */
-    @LogService()
     validateCommandData = async (data: DroneCommandCreationAttributes): Promise<boolean> => {
         try {
             if (!data.drone_id || !data.command_type || !data.issued_by) {
@@ -547,7 +529,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 驗證指令參數
      */
-    @LogService()
     validateCommandParameters = async (commandType: DroneCommandType, commandData: any): Promise<boolean> => {
         try {
             if (!commandData) {
@@ -597,7 +578,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 檢查無人機是否可以接收新指令
      */
-    @LogService()
     canReceiveNewCommand = async (droneId: number): Promise<boolean> => {
         try {
             const executingCommand = await this.commandRepository.findExecutingCommandByDroneId(droneId);
@@ -622,7 +602,6 @@ export class DroneCommandQueriesSvc {
     /**
      * 檢查指令衝突
      */
-    @LogService()
     checkCommandConflict = async (droneId: number, commandType: DroneCommandType): Promise<boolean> => {
         try {
             const pendingCommands = await this.commandRepository.findPendingCommandsByDroneId(droneId);

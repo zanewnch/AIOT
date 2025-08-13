@@ -57,7 +57,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 狀態歷史資料陣列
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getAllStatusArchives = async (limit: number = 100): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證 limit 參數
@@ -82,7 +81,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes>} 狀態歷史資料
      * @throws {Error} 當 ID 無效或資料不存在時
      */
-    @LogService()
     getStatusArchiveById = async (id: number): Promise<DroneStatusArchiveAttributes> => {
         try {
             // 驗證 ID
@@ -112,7 +110,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定無人機的狀態歷史陣列
      * @throws {Error} 當無人機 ID 無效或查詢失敗時
      */
-    @LogService()
     getStatusArchivesByDroneId = async (droneId: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證參數
@@ -143,7 +140,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定狀態的歷史記錄陣列
      * @throws {Error} 當狀態無效或查詢失敗時
      */
-    @LogService()
     getStatusArchivesByStatus = async (status: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證狀態
@@ -174,7 +170,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定操作者的歷史記錄陣列
      * @throws {Error} 當用戶 ID 無效或查詢失敗時
      */
-    @LogService()
     getStatusArchivesByCreatedBy = async (createdBy: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證參數
@@ -206,7 +201,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定時間範圍的歷史記錄陣列
      * @throws {Error} 當時間範圍無效或查詢失敗時
      */
-    @LogService()
     getStatusArchivesByDateRange = async (startDate: Date, endDate: Date, limit: number = 100): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證時間範圍
@@ -238,7 +232,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 包含指定原因的歷史記錄陣列
      * @throws {Error} 當原因字串無效或查詢失敗時
      */
-    @LogService()
     getStatusArchivesByReason = async (reason: string, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證參數
@@ -266,7 +259,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 最新的狀態變更記錄陣列
      * @throws {Error} 當資料取得失敗時
      */
-    @LogService()
     getLatestStatusArchives = async (limit: number = 20): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證 limit 參數
@@ -291,7 +283,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes | null>} 最新的狀態變更記錄或 null
      * @throws {Error} 當無人機 ID 無效或查詢失敗時
      */
-    @LogService()
     getLatestStatusArchiveByDroneId = async (droneId: number): Promise<DroneStatusArchiveAttributes | null> => {
         try {
             // 驗證無人機 ID
@@ -323,7 +314,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 符合狀態轉換的歷史記錄陣列
      * @throws {Error} 當狀態無效或查詢失敗時
      */
-    @LogService()
     getStatusArchivesByTransition = async (fromStatus: DroneStatus | null, toStatus: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             // 驗證狀態
@@ -355,7 +345,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<{[key: string]: number}>} 狀態變更統計資料
      * @throws {Error} 當時間範圍無效或統計失敗時
      */
-    @LogService()
     getStatusChangeStatistics = async (startDate?: Date, endDate?: Date): Promise<{ [key: string]: number }> => {
         try {
             // 驗證必需參數
@@ -389,7 +378,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<{date: string, changes: number}[]>} 狀態變更趨勢資料
      * @throws {Error} 當參數無效或分析失敗時
      */
-    @LogService()
     getStatusChangeTrend = async (droneId: number, days: number = 30): Promise<{ date: string, changes: number }[]> => {
         try {
             // 驗證參數
@@ -452,7 +440,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<{totalChanges: number, mostCommonStatus: DroneStatus, lastChange: Date}>} 活動摘要
      * @throws {Error} 當參數無效或查詢失敗時
      */
-    @LogService()
     getDroneActivitySummary = async (droneId: number, days: number = 7): Promise<{
         totalChanges: number;
         mostCommonStatus: DroneStatus;
@@ -526,7 +513,6 @@ export class DroneStatusArchiveQueriesSvc {
      * @param {number} id - 記錄 ID
      * @returns {Promise<boolean>} 記錄是否存在
      */
-    @LogService()
     isArchiveExists = async (id: number): Promise<boolean> => {
         try {
             if (!id || id <= 0) {

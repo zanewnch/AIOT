@@ -23,7 +23,6 @@ import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
  * 使用 arrow functions 避免 this 綁定問題並提供更清晰的代碼結構
  */
 @injectable()
-@Logger('HealthRoutes')
 export class HealthRoutes {
     private readonly router: Router;
 

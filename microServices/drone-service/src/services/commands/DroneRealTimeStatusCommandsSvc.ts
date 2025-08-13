@@ -71,7 +71,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 創建新的無人機即時狀態記錄
      */
-    @LogService()
     createRealTimeStatus = async (data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> => {
         try {
             // 驗證資料
@@ -101,7 +100,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 更新即時狀態記錄
      */
-    @LogService()
     updateRealTimeStatus = async (id: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel> => {
         try {
             if (!id || id <= 0) {
@@ -130,7 +128,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 根據無人機 ID 更新即時狀態記錄
      */
-    @LogService()
     updateRealTimeStatusByDroneId = async (droneId: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -153,7 +150,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 刪除即時狀態記錄
      */
-    @LogService()
     deleteRealTimeStatus = async (id: number): Promise<boolean> => {
         try {
             if (!id || id <= 0) {
@@ -182,7 +178,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 根據無人機 ID 刪除即時狀態記錄
      */
-    @LogService()
     deleteRealTimeStatusByDroneId = async (droneId: number): Promise<boolean> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -205,7 +200,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * Upsert 即時狀態記錄
      */
-    @LogService()
     upsertRealTimeStatus = async (droneId: number, data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -231,7 +225,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 更新心跳包（最後連線時間）
      */
-    @LogService()
     updateHeartbeat = async (droneId: number): Promise<boolean> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -256,7 +249,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 標記無人機為離線狀態
      */
-    @LogService()
     markDroneOffline = async (droneId: number, errorMessage?: string): Promise<DroneRealTimeStatusModel> => {
         try {
             if (!droneId || droneId <= 0) {
@@ -285,7 +277,6 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 批量更新無人機即時狀態
      */
-    @LogService()
     updateRealTimeStatusesBatch = async (updates: Array<{ droneId: number; statusData: Partial<DroneRealTimeStatusAttributes> }>): Promise<DroneRealTimeStatusModel[]> => {
         const results: DroneRealTimeStatusModel[] = [];
         
@@ -345,14 +336,12 @@ export class DroneRealTimeStatusCommandsSvc {
     }
 
     // 實現外部介面方法
-    @LogService()
     createDroneRealTimeStatus = async (data: ExternalCreationAttributesLocal): Promise<ExternalAttributes> => {
         const convertedData = this.convertFromExternalCreationAttributesLocal(data);
         const model = await this.createRealTimeStatus(convertedData);
         return this.convertToExternalAttributes(model.toJSON());
     }
 
-    @LogService()
     updateDroneRealTimeStatus = async (id: number, data: Partial<ExternalCreationAttributesLocal>): Promise<ExternalAttributes | null> => {
         try {
             const convertedData = this.convertFromPartialExternalCreationAttributesLocal(data);
@@ -363,13 +352,11 @@ export class DroneRealTimeStatusCommandsSvc {
         }
     }
 
-    @LogService()
     deleteDroneRealTimeStatus = async (id: number): Promise<number> => {
         const result = await this.deleteRealTimeStatus(id);
         return result ? 1 : 0;
     }
 
-    @LogService()
     updateDroneRealTimeStatusByDroneId = async (droneId: number, data: Partial<ExternalCreationAttributesLocal>): Promise<ExternalAttributes | null> => {
         try {
             const convertedData = this.convertFromPartialExternalCreationAttributesLocal(data);
@@ -380,7 +367,6 @@ export class DroneRealTimeStatusCommandsSvc {
         }
     }
 
-    @LogService()
     updateDroneRealTimeStatusesBatch = async (updates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributesLocal> }>): Promise<ExternalAttributes[]> => {
         const convertedUpdates = updates.map(update => ({
             droneId: update.droneId,

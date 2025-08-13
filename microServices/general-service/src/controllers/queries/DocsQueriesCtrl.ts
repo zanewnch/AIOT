@@ -34,7 +34,6 @@ import path from 'path';
  * @since 1.0.0
  */
 @injectable()
-@Logger('DocsController')
 export class DocsController {
     
     private readonly microservices = [

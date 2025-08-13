@@ -64,7 +64,6 @@ export class ArchiveTaskQueriesSvc {
      * @param id - 任務 ID
      * @returns Promise<ArchiveTaskModel | null> 歸檔任務或 null
      */
-    @LogService()
     getTaskById = async (id: number): Promise<ArchiveTaskModel | null> => {
         try {
             this.logger.debug('根據 ID 獲取歸檔任務', { taskId: id });
@@ -81,7 +80,6 @@ export class ArchiveTaskQueriesSvc {
      * @param options - 查詢選項
      * @returns Promise<ArchiveTaskModel[]> 歸檔任務列表
      */
-    @LogService()
     getAllTasks = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
         try {
             this.logger.debug('獲取所有歸檔任務', { options });
@@ -99,7 +97,6 @@ export class ArchiveTaskQueriesSvc {
      * @param limit - 限制數量（可選）
      * @returns Promise<ArchiveTaskModel[]> 指定狀態的歸檔任務列表
      */
-    @LogService()
     getTasksByStatus = async (status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> => {
         try {
             this.logger.debug('根據狀態獲取歸檔任務', { status, limit });
@@ -120,7 +117,6 @@ export class ArchiveTaskQueriesSvc {
      * @param batchId - 批次 ID
      * @returns Promise<ArchiveTaskModel[]> 該批次的歸檔任務列表
      */
-    @LogService()
     getTasksByBatchId = async (batchId: string): Promise<ArchiveTaskModel[]> => {
         try {
             this.logger.debug('根據批次 ID 獲取歸檔任務', { batchId });
@@ -139,7 +135,6 @@ export class ArchiveTaskQueriesSvc {
      *
      * @returns Promise<ArchiveTaskStatistics> 統計資訊
      */
-    @LogService()
     getTaskStatistics = async (): Promise<ArchiveTaskStatistics> => {
         try {
             this.logger.debug('獲取歸檔任務統計資訊');
@@ -205,7 +200,6 @@ export class ArchiveTaskQueriesSvc {
      * @param id - 任務 ID
      * @returns Promise<boolean> 是否可以執行
      */
-    @LogService()
     canExecuteTask = async (id: number): Promise<boolean> => {
         try {
             const task = await this.getTaskById(id);
@@ -226,7 +220,6 @@ export class ArchiveTaskQueriesSvc {
      * @param id - 任務 ID
      * @returns Promise<boolean> 是否可以取消
      */
-    @LogService()
     canCancelTask = async (id: number): Promise<boolean> => {
         try {
             const task = await this.getTaskById(id);

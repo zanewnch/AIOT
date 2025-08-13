@@ -26,7 +26,6 @@ import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
  * 避免 this 綁定問題並提供更清晰的代碼結構
  */
 @injectable()
-@Logger('UserPreferenceRoutes')
 export class UserPreferenceRoutes {
     private readonly router: Router;
 

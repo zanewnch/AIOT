@@ -40,7 +40,6 @@ export class ArchiveTaskRoutes {
     /**
      * 設定所有路由
      */
-    @LogRoute()
     private setupRoutes(): void {
         this.setupQueryRoutes();
         this.setupCommandRoutes();
@@ -49,7 +48,6 @@ export class ArchiveTaskRoutes {
     /**
      * 設定查詢路由 (GET 操作)
      */
-    @LogRoute()
     private setupQueryRoutes(): void {
         // 獲取所有歸檔任務
         this.router.get('/', (req, res, next) => this.archiveTaskQueries.getAllTasks(req, res, next));
@@ -67,7 +65,6 @@ export class ArchiveTaskRoutes {
     /**
      * 設定命令路由 (POST, PUT, DELETE 操作)
      */
-    @LogRoute()
     private setupCommandRoutes(): void {
         // 建立新的歸檔任務
         this.router.post('/', (req, res, next) => this.archiveTaskCommands.createTask(req, res, next));
@@ -91,7 +88,6 @@ export class ArchiveTaskRoutes {
     /**
      * 獲取路由器實例
      */
-    @LogRoute()
     getRouter(): Router {
         return this.router;
     }
