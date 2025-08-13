@@ -1,0 +1,103 @@
+# RBAC 微服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbac-service-deployment
+  namespace: aiot
+  labels:
+    app: rbac-service
+    app.kubernetes.io/name: rbac-service
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rbac-service
+  template:
+    metadata:
+      labels:
+        app: rbac-service
+    spec:
+      containers:
+      - name: rbac-service
+        image: aiot-rbac-service:latest
+        imagePullPolicy: Never  # 使用本地構建的鏡像
+        ports:
+        - containerPort: 50051
+          name: grpc
+        env:
+        - name: SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: RBAC_SERVICE_NAME
+        - name: GRPC_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: RBAC_GRPC_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: RBAC_DB_NAME
+        # 從公共配置引入環境變數
+        envFrom:
+        - configMapRef:
+            name: aiot-common-config
+        - secretRef:
+            name: aiot-database-secrets
+        - secretRef:
+            name: aiot-app-secrets
+        # 開發模式：掛載源代碼進行 hot-reload
+        volumeMounts:
+        - name: rbac-source
+          mountPath: /app
+        livenessProbe:
+          tcpSocket:
+            port: 50051
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 50051
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: rbac-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/rbac-service
+          type: Directory
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rbac-service
+  namespace: aiot
+  labels:
+    app: rbac-service
+    app.kubernetes.io/name: rbac-service
+    app.kubernetes.io/component: microservice
+spec:
+  selector:
+    app: rbac-service
+  ports:
+  - port: 50051
+    targetPort: 50051
+    protocol: TCP
+    name: grpc
+  type: ClusterIP

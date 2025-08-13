@@ -1,5 +1,5 @@
 /**
- * @fileoverview Logger Decorator Pattern 實現
+ * @fileoverview Logger Decorator Pattern 實現 - Docs Service
  * 
  * 正確實作設計模式中的 Decorator Pattern 來處理日誌記錄。
  * 這不是 TypeScript 的 @decorator 語法糖，而是真正的設計模式實現。
@@ -9,6 +9,8 @@
  * - 提供方法執行前後的日誌記錄
  * - 支援錯誤記錄和執行時間統計
  * - 可組合和可擴展
+ * - 適配 Docs Service 的 logger 系統
+ * - 特別支援文檔存取和服務發現的日誌記錄
  * 
  * @author AIOT Team
  * @version 1.0.0
@@ -16,7 +18,7 @@
  */
 
 import { Request } from 'express';
-import { createLogger, logRequest } from '../configs/loggerConfig.js';
+import { createLogger, logRequest, logDocumentAccess, logServiceDiscovery } from '../configs/loggerConfig.js';
 
 /**
  * 日誌配置選項
@@ -34,6 +36,10 @@ export interface LoggerOptions {
     logLevel?: 'info' | 'debug' | 'warn' | 'error';
     /** 是否記錄 HTTP 請求資訊 */
     logRequest?: boolean;
+    /** 是否記錄文檔存取 */
+    logDocumentAccess?: boolean;
+    /** 是否記錄服務發現 */
+    logServiceDiscovery?: boolean;
     /** 方法名稱（用於日誌顯示） */
     methodName?: string;
 }
@@ -98,6 +104,8 @@ export class LoggerDecorator implements Component {
                 logErrors: true,
                 logLevel: 'info' as const,
                 logRequest: this.isControllerMethod(methodName),
+                logDocumentAccess: this.isDocumentMethod(methodName),
+                logServiceDiscovery: this.isServiceDiscoveryMethod(methodName),
                 ...this.options,
                 methodName: fullMethodName
             };
@@ -115,6 +123,9 @@ export class LoggerDecorator implements Component {
                 // 執行原始方法（綁定正確的 this 上下文）
                 const result = await originalMethod.apply(this.component, args);
                 
+                // 特殊日誌記錄處理
+                this.handleSpecialLogging(config, methodName, args, result);
+                
                 // 記錄執行完成
                 this.logMethodSuccess(config, result, startTime);
                 
@@ -126,6 +137,35 @@ export class LoggerDecorator implements Component {
                 throw error;
             }
         };
+    };
+
+    /**
+     * 處理特殊的日誌記錄（文檔存取、服務發現等）
+     */
+    private handleSpecialLogging = (config: LoggerOptions & { methodName: string }, methodName: string, args: any[], result: any) => {
+        // 文檔存取日誌
+        if (config.logDocumentAccess && this.isDocumentMethod(methodName)) {
+            const docInfo = this.extractDocumentInfo(args, methodName, result);
+            if (docInfo.docType && docInfo.docPath) {
+                logDocumentAccess(
+                    docInfo.docType,
+                    docInfo.docPath,
+                    docInfo.userAgent
+                );
+            }
+        }
+        
+        // 服務發現日誌
+        if (config.logServiceDiscovery && this.isServiceDiscoveryMethod(methodName)) {
+            const serviceInfo = this.extractServiceDiscoveryInfo(args, methodName, result);
+            if (serviceInfo.service && serviceInfo.action) {
+                logServiceDiscovery(
+                    serviceInfo.service,
+                    serviceInfo.action,
+                    serviceInfo.details
+                );
+            }
+        }
     };
 
     /**
@@ -187,8 +227,24 @@ export class LoggerDecorator implements Component {
      * 判斷是否為控制器方法
      */
     private isControllerMethod = (methodName: string): boolean => {
-        const controllerMethods = ['create', 'update', 'delete', 'get', 'list', 'find'];
+        const controllerMethods = ['getDocs', 'getHealth', 'getServices', 'getDocumentation', 'serveDocs', 'health'];
         return controllerMethods.some(method => methodName.toLowerCase().includes(method));
+    };
+
+    /**
+     * 判斷是否為文檔相關方法
+     */
+    private isDocumentMethod = (methodName: string): boolean => {
+        const documentMethods = ['docs', 'documentation', 'serve', 'file', 'static'];
+        return documentMethods.some(method => methodName.toLowerCase().includes(method));
+    };
+
+    /**
+     * 判斷是否為服務發現相關方法
+     */
+    private isServiceDiscoveryMethod = (methodName: string): boolean => {
+        const serviceDiscoveryMethods = ['service', 'discover', 'list', 'health', 'info'];
+        return serviceDiscoveryMethods.some(method => methodName.toLowerCase().includes(method));
     };
 
     /**
@@ -198,6 +254,61 @@ export class LoggerDecorator implements Component {
         return args.length >= 2 && 
                args[0] && typeof args[0] === 'object' && 'method' in args[0] && 'url' in args[0] &&
                args[1] && typeof args[1] === 'object' && 'status' in args[1] && 'json' in args[1];
+    };
+
+    // 輔助方法：從參數中提取資訊
+    private extractDocumentInfo = (args: any[], methodName: string, result: any) => {
+        const req = args[0];
+        const docType = this.inferDocumentType(req?.url || req?.path || '', methodName);
+        const docPath = req?.url || req?.path || '';
+        const userAgent = req?.get?.('user-agent') || req?.headers?.['user-agent'];
+
+        return {
+            docType,
+            docPath,
+            userAgent
+        };
+    };
+
+    private extractServiceDiscoveryInfo = (args: any[], methodName: string, result: any) => {
+        const req = args[0];
+        const service = this.inferServiceName(req?.url || req?.path || '', methodName);
+        const action = this.inferServiceAction(methodName);
+        const details = {
+            url: req?.url || req?.path,
+            method: req?.method,
+            statusCode: result?.statusCode
+        };
+
+        return {
+            service,
+            action,
+            details
+        };
+    };
+
+    private inferDocumentType = (url: string, methodName: string): string => {
+        if (url.includes('/docs/rbac')) return 'rbac-docs';
+        if (url.includes('/docs/drone-websocket')) return 'drone-websocket-docs';
+        if (url.includes('/docs/drone')) return 'drone-docs';
+        if (url.includes('/docs/general')) return 'general-docs';
+        if (url.includes('/docs')) return 'docs';
+        return 'unknown-doc';
+    };
+
+    private inferServiceName = (url: string, methodName: string): string => {
+        if (url.includes('/rbac') || methodName.includes('rbac')) return 'rbac-service';
+        if (url.includes('/drone-websocket') || methodName.includes('dronewebsocket')) return 'drone-websocket-service';
+        if (url.includes('/drone') || methodName.includes('drone')) return 'drone-service';
+        if (url.includes('/general') || methodName.includes('general')) return 'general-service';
+        if (url.includes('/services') || methodName.includes('service')) return 'all-services';
+        return 'docs-service';
+    };
+
+    private inferServiceAction = (methodName: string): 'discover' | 'list' | 'health_check' => {
+        if (methodName.toLowerCase().includes('health')) return 'health_check';
+        if (methodName.toLowerCase().includes('list') || methodName.toLowerCase().includes('services')) return 'list';
+        return 'discover';
     };
 }
 
@@ -213,6 +324,8 @@ export const createLoggedController = <T extends Component>(
         logRequest: true,
         logExecutionTime: true,
         logErrors: true,
+        logDocumentAccess: true,
+        logServiceDiscovery: true,
         ...options
     }) as unknown as T;
 };
@@ -229,23 +342,44 @@ export const createLoggedService = <T extends Component>(
         logRequest: false,
         logExecutionTime: true,
         logErrors: true,
+        logDocumentAccess: false,
+        logServiceDiscovery: true,
         ...options
     }) as unknown as T;
 };
 
 /**
- * 工廠方法：創建帶有日誌功能的倉庫
+ * 工廠方法：創建帶有日誌功能的文檔服務
  */
-export const createLoggedRepository = <T extends Component>(
-    repository: T, 
+export const createLoggedDocsService = <T extends Component>(
+    service: T, 
     className: string, 
     options?: LoggerOptions
 ): T => {
-    return new LoggerDecorator(repository, className, {
+    return new LoggerDecorator(service, className, {
         logRequest: false,
         logExecutionTime: true,
         logErrors: true,
-        logLevel: 'debug',
+        logDocumentAccess: true,
+        logServiceDiscovery: true,
+        logLevel: 'info',
+        ...options
+    }) as unknown as T;
+};
+
+/**
+ * 工廠方法：創建帶有日誌功能的路由處理器
+ */
+export const createLoggedRoutes = <T extends Component>(
+    routes: T, 
+    className: string, 
+    options?: LoggerOptions
+): T => {
+    return new LoggerDecorator(routes, className, {
+        logRequest: true,
+        logExecutionTime: false,
+        logErrors: true,
+        logLevel: 'info',
         ...options
     }) as unknown as T;
 };
@@ -264,7 +398,7 @@ export class DecoratorChain<T extends Component> {
      * 添加日誌裝飾器
      */
     withLogger = (className: string, options?: LoggerOptions): DecoratorChain<T> => {
-        this.component = new LoggerDecorator(this.component, className, options) as unknown as T;
+        this.component = new LoggerDecorator(this.component, className, options) as T;
         return this;
     };
 

@@ -84,19 +84,39 @@
 
 ### 後端開發
 - 後端使用 **hot-reload** 功能，代碼更改會自動重新加載
-- **不需要重新啟動** `AIOT-be` 容器來應用代碼更改
-- 只需要保存文件，後端會自動檢測並重新加載
+- Kubernetes Pod 會自動檢測代碼更改並重新加載（透過 Volume 掛載）
+- 只需要保存文件，微服務會自動重新加載
 
 ### 前端開發  
 - 前端也支持 hot-reload (Vite)
 - 代碼更改會自動反映在瀏覽器中
 
-### Docker 容器管理
-- 只有在以下情況才需要重新啟動容器：
-  - 環境變數更改
-  - Dockerfile 更改
-  - package.json 依賴更改
-  - 數據庫模式更改
+### Kubernetes 部署管理
+
+#### 初次部署
+```bash
+# 進入 Kubernetes 目錄
+cd infrastructure/kubernetes
+
+# 執行自動部署腳本
+./deploy.sh
+```
+
+#### 日常操作
+- **重新部署服務**：`kubectl apply -f microservices/<service-name>.yaml`
+- **重新構建鏡像**：先構建 Docker 鏡像，再重新應用配置
+- **配置更新**：使用 ConfigMap 和 Secret，更新後需重啟相關 Pod
+- **查看部署狀態**：`kubectl get pods,services -n aiot`
+
+#### 重要端點
+- **API Gateway (Kong)**：http://localhost:30000
+- **Kong Admin API**：http://localhost:30001
+- **Consul UI**：`kubectl port-forward -n aiot svc/consul-service 8500:8500`
+
+#### 故障排除
+- **查看 Pod 詳情**：`kubectl describe pod <pod-name> -n aiot`
+- **查看容器日誌**：`kubectl logs <pod-name> -n aiot`
+- **進入容器調試**：`kubectl exec -it <pod-name> -n aiot -- /bin/bash`
 
 ## API 開發規範
 
@@ -116,24 +136,28 @@
 
 ### 測試 API 端點
 ```bash
-# 登入
-curl -X POST http://localhost:8000/api/auth/login -H "Content-Type: application/json" -d '{"username":"admin","password":"admin"}' -c /tmp/cookies.txt
+# 登入（通過 Kong Gateway）
+curl -X POST http://localhost:30000/api/auth/login -H "Content-Type: application/json" -d '{"username":"admin","password":"admin"}' -c /tmp/cookies.txt
 
 # 測試認證端點
-curl -s http://localhost:8000/api/auth/me -b /tmp/cookies.txt
+curl -s http://localhost:30000/api/auth/me -b /tmp/cookies.txt
 
 # 測試其他 API（需要認證）
-curl -s http://localhost:8000/api/rbac/roles -b /tmp/cookies.txt
+curl -s http://localhost:30000/api/rbac/roles -b /tmp/cookies.txt
 ```
 
 ### 服務狀態檢查
 ```bash
-# 檢查所有容器狀態
-docker ps
+# 檢查所有 Pod 狀態
+kubectl get pods -n aiot
 
-# 檢查後端日誌
-docker logs AIOT-be --tail=20
+# 檢查所有服務狀態
+kubectl get services -n aiot
 
-# 檢查前端日誌  
-docker logs AIOT-feSetting --tail=20
+# 檢查特定服務日誌
+kubectl logs -n aiot <pod-name> --tail=20
+
+# 檢查微服務日誌範例
+kubectl logs -n aiot -l app=rbac-service --tail=20
+kubectl logs -n aiot -l app=drone-service --tail=20
 ```

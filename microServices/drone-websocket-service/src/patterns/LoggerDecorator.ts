@@ -16,7 +16,7 @@
  * @since 2025-08-13
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request } from 'express';
 import { createLogger, logRequest } from '../configs/loggerConfig.js';
 
 /**
@@ -65,11 +65,17 @@ export class LoggerDecorator implements Component {
         // 動態代理所有方法
         return new Proxy(this, {
             get: (target, prop) => {
-                const originalMethod = target.component[prop];
+                // 處理 symbol 屬性
+                if (typeof prop === 'symbol') {
+                    return Reflect.get(target.component, prop);
+                }
+                
+                const propName = prop.toString();
+                const originalMethod = target.component[propName];
                 
                 // 如果是方法且是 arrow function，則包裝它
-                if (typeof originalMethod === 'function' && prop !== 'constructor') {
-                    return target.wrapMethod(originalMethod, prop.toString());
+                if (typeof originalMethod === 'function' && propName !== 'constructor') {
+                    return target.wrapMethod(originalMethod, propName);
                 }
                 
                 // 如果是屬性，直接返回
@@ -209,7 +215,7 @@ export const createLoggedController = <T extends Component>(
         logExecutionTime: true,
         logErrors: true,
         ...options
-    }) as T;
+    }) as unknown as T;
 };
 
 /**
@@ -225,7 +231,7 @@ export const createLoggedService = <T extends Component>(
         logExecutionTime: true,
         logErrors: true,
         ...options
-    }) as T;
+    }) as unknown as T;
 };
 
 /**
@@ -242,7 +248,7 @@ export const createLoggedRepository = <T extends Component>(
         logErrors: true,
         logLevel: 'debug',
         ...options
-    }) as T;
+    }) as unknown as T;
 };
 
 /**
@@ -259,7 +265,7 @@ export const createLoggedWebSocketService = <T extends Component>(
         logErrors: true,
         logLevel: 'info',
         ...options
-    }) as T;
+    }) as unknown as T;
 };
 
 /**

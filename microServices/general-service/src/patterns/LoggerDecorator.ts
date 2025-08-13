@@ -1,5 +1,5 @@
 /**
- * @fileoverview Logger Decorator Pattern 實現
+ * @fileoverview Logger Decorator Pattern 實現 - General Service
  * 
  * 正確實作設計模式中的 Decorator Pattern 來處理日誌記錄。
  * 這不是 TypeScript 的 @decorator 語法糖，而是真正的設計模式實現。
@@ -9,6 +9,7 @@
  * - 提供方法執行前後的日誌記錄
  * - 支援錯誤記錄和執行時間統計
  * - 可組合和可擴展
+ * - 適配 General Service 的 logger 系統
  * 
  * @author AIOT Team
  * @version 1.0.0
@@ -187,7 +188,7 @@ export class LoggerDecorator implements Component {
      * 判斷是否為控制器方法
      */
     private isControllerMethod = (methodName: string): boolean => {
-        const controllerMethods = ['create', 'update', 'delete', 'get', 'list', 'find'];
+        const controllerMethods = ['create', 'update', 'delete', 'get', 'list', 'find', 'health', 'getUserPreference', 'setUserPreference', 'getDocs'];
         return controllerMethods.some(method => methodName.toLowerCase().includes(method));
     };
 
@@ -251,6 +252,40 @@ export const createLoggedRepository = <T extends Component>(
 };
 
 /**
+ * 工廠方法：創建帶有日誌功能的路由處理器
+ */
+export const createLoggedRoutes = <T extends Component>(
+    routes: T, 
+    className: string, 
+    options?: LoggerOptions
+): T => {
+    return new LoggerDecorator(routes, className, {
+        logRequest: true,
+        logExecutionTime: true,
+        logErrors: true,
+        logLevel: 'info',
+        ...options
+    }) as unknown as T;
+};
+
+/**
+ * 工廠方法：創建帶有日誌功能的 gRPC 服務
+ */
+export const createLoggedGrpcService = <T extends Component>(
+    service: T, 
+    className: string, 
+    options?: LoggerOptions
+): T => {
+    return new LoggerDecorator(service, className, {
+        logRequest: false,
+        logExecutionTime: true,
+        logErrors: true,
+        logLevel: 'info',
+        ...options
+    }) as unknown as T;
+};
+
+/**
  * 裝飾器鏈：可組合多個裝飾器
  */
 export class DecoratorChain<T extends Component> {
@@ -264,7 +299,7 @@ export class DecoratorChain<T extends Component> {
      * 添加日誌裝飾器
      */
     withLogger = (className: string, options?: LoggerOptions): DecoratorChain<T> => {
-        this.component = new LoggerDecorator(this.component, className, options) as unknown as T;
+        this.component = new LoggerDecorator(this.component, className, options) as T;
         return this;
     };
 

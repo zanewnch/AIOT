@@ -1,0 +1,156 @@
+# Docs 文檔服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docs-service-deployment
+  namespace: aiot
+  labels:
+    app: docs-service
+    app.kubernetes.io/name: docs-service
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docs-service
+  template:
+    metadata:
+      labels:
+        app: docs-service
+    spec:
+      containers:
+      - name: docs-service
+        image: aiot-docs-service:latest
+        imagePullPolicy: Never  # 使用本地構建的鏡像
+        ports:
+        - containerPort: 3005
+          name: http
+        env:
+        - name: SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DOCS_SERVICE_NAME
+        - name: SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DOCS_SERVICE_PORT
+        # 從公共配置引入環境變數
+        envFrom:
+        - configMapRef:
+            name: aiot-common-config
+        # 開發模式：掛載源代碼和文檔
+        volumeMounts:
+        - name: docs-service-source
+          mountPath: /app
+        # 掛載所有微服務的完整目錄以支援智能緩存
+        - name: rbac-service-source
+          mountPath: /app/microservices/rbac-service
+          readOnly: true
+        - name: drone-service-source
+          mountPath: /app/microservices/drone-service
+          readOnly: true
+        - name: drone-websocket-service-source
+          mountPath: /app/microservices/drone-websocket-service
+          readOnly: true
+        - name: general-service-source
+          mountPath: /app/microservices/general-service
+          readOnly: true
+        # 靜態文檔掛載
+        - name: rbac-docs
+          mountPath: /app/docs/rbac
+          readOnly: true
+        - name: drone-docs
+          mountPath: /app/docs/drone
+          readOnly: true
+        - name: drone-websocket-docs
+          mountPath: /app/docs/drone-websocket
+          readOnly: true
+        - name: general-docs
+          mountPath: /app/docs/general
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: docs-service-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/docs-service
+          type: Directory
+      # 微服務源代碼目錄
+      - name: rbac-service-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/rbac-service
+          type: Directory
+      - name: drone-service-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/drone-service
+          type: Directory
+      - name: drone-websocket-service-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/drone-websocket-service
+          type: Directory
+      - name: general-service-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/general-service
+          type: Directory
+      # 文檔目錄
+      - name: rbac-docs
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/rbac-service/docs
+          type: Directory
+      - name: drone-docs
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/drone-service/docs
+          type: Directory
+      - name: drone-websocket-docs
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/drone-websocket-service/docs
+          type: Directory
+      - name: general-docs
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/general-service/docs
+          type: Directory
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docs-service
+  namespace: aiot
+  labels:
+    app: docs-service
+    app.kubernetes.io/name: docs-service
+    app.kubernetes.io/component: microservice
+spec:
+  selector:
+    app: docs-service
+  ports:
+  - port: 3005
+    targetPort: 3005
+    protocol: TCP
+    name: http
+  type: ClusterIP

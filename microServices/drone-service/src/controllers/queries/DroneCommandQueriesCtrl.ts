@@ -28,7 +28,6 @@ import { Logger } from '../../decorators/LoggerDecorator.js';
  * @class DroneCommandQueries
  * @since 1.0.0
  */
-@Logger('DroneCommandQueries')
 @injectable()
 export class DroneCommandQueries {
     constructor(

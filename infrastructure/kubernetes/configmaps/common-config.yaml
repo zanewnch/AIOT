@@ -1,0 +1,98 @@
+# AIOT 公共配置 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiot-common-config
+  namespace: aiot
+  labels:
+    app.kubernetes.io/name: aiot-microservices
+    app.kubernetes.io/component: configuration
+data:
+  # 環境配置
+  NODE_ENV: "development"
+  
+  # 資料庫主機配置 (Kubernetes 內部 DNS)
+  DB_HOST: "mysql-service.aiot.svc.cluster.local"
+  DB_PORT: "3306"
+  
+  # MongoDB 配置
+  MONGODB_HOST: "mongodb-service.aiot.svc.cluster.local"
+  MONGODB_PORT: "27017"
+  MONGODB_DATABASE: "main_db"
+  
+  # Redis 配置
+  REDIS_HOST: "redis-service.aiot.svc.cluster.local"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  REDIS_URL: "redis://redis-service.aiot.svc.cluster.local:6379/0"
+  
+  # RabbitMQ 配置
+  RABBITMQ_HOST: "rabbitmq-service.aiot.svc.cluster.local"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_URL: "amqp://admin:admin@rabbitmq-service.aiot.svc.cluster.local:5672/"
+  
+  # Consul 配置
+  CONSUL_HOST: "consul-service.aiot.svc.cluster.local"
+  CONSUL_PORT: "8500"
+  
+  # OPA 配置
+  OPA_URL: "http://opa-service.aiot.svc.cluster.local:8181"
+  
+  # JWT 配置
+  JWT_EXPIRES_IN: "24000h"
+  
+  # ========== 微服務間通訊配置 ==========
+  # RBAC 服務
+  RBAC_SERVICE_HOST: "rbac-service.aiot.svc.cluster.local"
+  RBAC_SERVICE_PORT: "50051"
+  RBAC_SERVICE_URL: "rbac-service.aiot.svc.cluster.local:50051"
+  
+  # Drone 服務
+  DRONE_SERVICE_HOST: "drone-service.aiot.svc.cluster.local"
+  DRONE_SERVICE_PORT: "50052"
+  DRONE_SERVICE_URL: "drone-service.aiot.svc.cluster.local:50052"
+  
+  # General 服務
+  GENERAL_SERVICE_HOST: "general-service.aiot.svc.cluster.local"
+  GENERAL_SERVICE_PORT: "50053"
+  GENERAL_SERVICE_URL: "general-service.aiot.svc.cluster.local:50053"
+  
+  # Drone WebSocket 服務
+  DRONE_REALTIME_SERVICE_HOST: "drone-websocket-service.aiot.svc.cluster.local"
+  DRONE_REALTIME_SERVICE_PORT: "3004"
+  DRONE_REALTIME_SERVICE_URL: "http://drone-websocket-service.aiot.svc.cluster.local:3004"
+
+---
+# 微服務特定配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiot-microservice-config
+  namespace: aiot
+  labels:
+    app.kubernetes.io/name: aiot-microservices
+    app.kubernetes.io/component: microservice-configuration
+data:
+  # RBAC 服務配置
+  RBAC_SERVICE_NAME: "rbac-service"
+  RBAC_GRPC_PORT: "50051"
+  RBAC_DB_NAME: "rbac_db"
+  
+  # Drone 服務配置
+  DRONE_SERVICE_NAME: "drone-service"
+  DRONE_GRPC_PORT: "50052"
+  DRONE_DB_NAME: "drone_db"
+  
+  # General 服務配置
+  GENERAL_SERVICE_NAME: "general-service"
+  GENERAL_GRPC_PORT: "50053"
+  GENERAL_DB_NAME: "general_db"
+  
+  # Drone WebSocket 服務配置
+  DRONE_WEBSOCKET_SERVICE_NAME: "drone-websocket-service"
+  DRONE_WEBSOCKET_SERVICE_PORT: "3004"
+  CORS_ORIGIN: "*"
+  
+  # Docs 服務配置
+  DOCS_SERVICE_NAME: "docs-service"
+  DOCS_SERVICE_PORT: "3005"

@@ -1,0 +1,103 @@
+# Drone 微服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-service-deployment
+  namespace: aiot
+  labels:
+    app: drone-service
+    app.kubernetes.io/name: drone-service
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drone-service
+  template:
+    metadata:
+      labels:
+        app: drone-service
+    spec:
+      containers:
+      - name: drone-service
+        image: aiot-drone-service:latest
+        imagePullPolicy: Never  # 使用本地構建的鏡像
+        ports:
+        - containerPort: 50052
+          name: grpc
+        env:
+        - name: SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DRONE_SERVICE_NAME
+        - name: GRPC_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DRONE_GRPC_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DRONE_DB_NAME
+        # 從公共配置引入環境變數
+        envFrom:
+        - configMapRef:
+            name: aiot-common-config
+        - secretRef:
+            name: aiot-database-secrets
+        - secretRef:
+            name: aiot-app-secrets
+        # 開發模式：掛載源代碼進行 hot-reload
+        volumeMounts:
+        - name: drone-source
+          mountPath: /app
+        livenessProbe:
+          tcpSocket:
+            port: 50052
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 50052
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: drone-source
+        hostPath:
+          path: /home/user/GitHub/AIOT/microServices/drone-service
+          type: Directory
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone-service
+  namespace: aiot
+  labels:
+    app: drone-service
+    app.kubernetes.io/name: drone-service
+    app.kubernetes.io/component: microservice
+spec:
+  selector:
+    app: drone-service
+  ports:
+  - port: 50052
+    targetPort: 50052
+    protocol: TCP
+    name: grpc
+  type: ClusterIP
