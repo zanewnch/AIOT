@@ -72,39 +72,39 @@ has_emergency_privileges(user_roles) {
 }
 
 # Universal admin override
-admin_override {
+admin_override if {
     input.user.roles[_] in ["superadmin", "admin"]
 }
 
 # System maintenance mode check
-maintenance_mode_active {
+maintenance_mode_active if {
     input.context.maintenanceMode == true
 }
 
 # During maintenance, only system administrators allowed
-allow {
+allow if {
     maintenance_mode_active
     input.user.roles[_] in ["superadmin", "system_maintainer"]
 }
 
 # Emergency override rule
-allow {
+allow if {
     is_emergency_operation(input.context)
     has_emergency_privileges(input.user.roles)
     requires_audit
 }
 
 # Audit requirements for sensitive operations
-requires_audit {
+requires_audit if {
     input.user.roles[_] == "superadmin"
     input.action in ["delete", "create", "update"]
 }
 
-requires_audit {
+requires_audit if {
     is_emergency_operation(input.context)
 }
 
-requires_audit {
+requires_audit if {
     input.action == "delete"
     input.resource != "session"
 }

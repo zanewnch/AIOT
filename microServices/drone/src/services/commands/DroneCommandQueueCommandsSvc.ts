@@ -20,6 +20,7 @@ import type {
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 import { DroneCommandQueueQueriesSvc } from '../queries/DroneCommandQueueQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandQueueCommandsSvc');
 
@@ -55,6 +56,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 創建新的無人機指令佇列
      */
+    @LogService()
     async createDroneCommandQueue(data: DroneCommandQueueCreationAttributes): Promise<DroneCommandQueueAttributes> {
         try {
             logger.info('Creating new drone command queue', { data });
@@ -99,7 +101,6 @@ export class DroneCommandQueueCommandsSvc {
             logger.info('Command queue created successfully', { id: newQueue.id });
             return newQueue;
         } catch (error) {
-            logger.error('Error in createDroneCommandQueue', { data, error });
             throw error;
         }
     }
@@ -107,6 +108,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 更新無人機指令佇列資料
      */
+    @LogService()
     async updateDroneCommandQueue(id: number, data: Partial<DroneCommandQueueCreationAttributes>): Promise<DroneCommandQueueAttributes | null> {
         try {
             logger.info('Updating drone command queue', { id, data });
@@ -141,7 +143,6 @@ export class DroneCommandQueueCommandsSvc {
             logger.info('Command queue updated successfully', { id });
             return updatedQueue;
         } catch (error) {
-            logger.error('Error in updateDroneCommandQueue', { id, data, error });
             throw error;
         }
     }
@@ -149,6 +150,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 刪除無人機指令佇列資料
      */
+    @LogService()
     async deleteDroneCommandQueue(id: number): Promise<number> {
         try {
             logger.info('Deleting drone command queue', { id });
@@ -173,7 +175,6 @@ export class DroneCommandQueueCommandsSvc {
             logger.info('Command queue deleted successfully', { id });
             return 1; // 返回刪除的筆數
         } catch (error) {
-            logger.error('Error in deleteDroneCommandQueue', { id, error });
             throw error;
         }
     }
@@ -181,6 +182,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 將指令加入佇列
      */
+    @LogService()
     async enqueueDroneCommand(droneId: number, commandType: string, commandData?: any, priority?: number): Promise<DroneCommandQueueAttributes> {
         try {
             logger.info('Enqueueing drone command', { droneId, commandType, commandData, priority });
@@ -213,7 +215,6 @@ export class DroneCommandQueueCommandsSvc {
 
             return await this.createDroneCommandQueue(queueData);
         } catch (error) {
-            logger.error('Error in enqueueDroneCommand', { droneId, commandType, commandData, priority, error });
             throw error;
         }
     }
@@ -221,6 +222,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 從佇列中取出指令
      */
+    @LogService()
     async dequeueDroneCommand(droneId: number): Promise<DroneCommandQueueAttributes | null> {
         try {
             logger.info('Dequeuing drone command', { droneId });
@@ -244,7 +246,6 @@ export class DroneCommandQueueCommandsSvc {
             logger.info('Command dequeued successfully', { droneId, commandId: nextCommand.id });
             return updatedQueue;
         } catch (error) {
-            logger.error('Error in dequeueDroneCommand', { droneId, error });
             throw error;
         }
     }
@@ -252,6 +253,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 清空指令佇列
      */
+    @LogService()
     async clearDroneCommandQueue(droneId: number): Promise<number> {
         try {
             logger.info('Clearing drone command queue', { droneId });
@@ -275,7 +277,6 @@ export class DroneCommandQueueCommandsSvc {
             logger.info('Command queue cleared', { droneId, deletedCount, totalQueues: droneQueues.length });
             return deletedCount;
         } catch (error) {
-            logger.error('Error in clearDroneCommandQueue', { droneId, error });
             throw error;
         }
     }
@@ -283,13 +284,13 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 更新佇列狀態
      */
+    @LogService()
     async updateDroneCommandQueueStatus(id: number, status: DroneCommandQueueStatus): Promise<DroneCommandQueueAttributes | null> {
         try {
             logger.info('Updating drone command queue status', { id, status });
 
             return await this.updateDroneCommandQueue(id, { status });
         } catch (error) {
-            logger.error('Error in updateDroneCommandQueueStatus', { id, status, error });
             throw error;
         }
     }
@@ -297,6 +298,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 執行指令佇列
      */
+    @LogService()
     async executeQueue(id: number): Promise<QueueExecutionResult> {
         try {
             logger.info('Executing queue', { id });
@@ -338,7 +340,6 @@ export class DroneCommandQueueCommandsSvc {
                 message: '佇列開始執行'
             };
         } catch (error) {
-            logger.error('Error in executeQueue', { id, error });
             return {
                 success: false,
                 queue: {} as DroneCommandQueueAttributes,
@@ -351,6 +352,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 暫停指令佇列
      */
+    @LogService()
     async pauseQueue(id: number): Promise<QueueExecutionResult> {
         try {
             logger.info('Pausing queue', { id });
@@ -391,7 +393,6 @@ export class DroneCommandQueueCommandsSvc {
                 message: '佇列已暫停'
             };
         } catch (error) {
-            logger.error('Error in pauseQueue', { id, error });
             return {
                 success: false,
                 queue: {} as DroneCommandQueueAttributes,
@@ -404,6 +405,7 @@ export class DroneCommandQueueCommandsSvc {
     /**
      * 完成指令佇列
      */
+    @LogService()
     async completeQueue(id: number): Promise<QueueExecutionResult> {
         try {
             logger.info('Completing queue', { id });
@@ -425,7 +427,6 @@ export class DroneCommandQueueCommandsSvc {
                 message: '佇列執行完成'
             };
         } catch (error) {
-            logger.error('Error in completeQueue', { id, error });
             return {
                 success: false,
                 queue: {} as DroneCommandQueueAttributes,

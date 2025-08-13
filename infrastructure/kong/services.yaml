@@ -45,16 +45,16 @@ services:
       - websocket
       - realtime
 
-  # FeSetting 微服務 - 使用 gRPC 協議
-  - name: fesetting-service
+  # General 微服務 - 使用 gRPC 協議
+  - name: general-service
     protocol: grpc
-    host: fesetting-service.service.consul
+    host: general-service.service.consul
     port: 50053
     connect_timeout: 60000
     write_timeout: 60000
     read_timeout: 60000
     retries: 5
     tags:
-      - user-preferences
-      - settings
+      - general
+      - documentation
       - grpc

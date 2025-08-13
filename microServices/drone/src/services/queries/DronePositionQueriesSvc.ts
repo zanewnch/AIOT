@@ -18,6 +18,7 @@ import type { DronePositionAttributes } from '../../models/DronePositionModel.js
 import type { IDronePositionQueriesSvc } from '../../types/services/IDronePositionService.js';
 import { TYPES } from '../../types/dependency-injection.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DronePositionQueriesSvc');
 
@@ -42,6 +43,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 無人機位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getAllDronePositions(): Promise<DronePositionAttributes[]> {
         try {
             logger.info('Getting all drone position data');
@@ -50,7 +52,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info(`Retrieved ${dronePositions.length} drone position records`);
             return dronePositions;
         } catch (error) {
-            logger.error('Failed to get all drone position data', { error });
             throw new Error('無法取得無人機位置資料');
         }
     }
@@ -62,6 +63,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes>} 無人機位置資料
      * @throws {Error} 當 ID 無效或資料不存在時
      */
+    @LogService()
     async getDronePositionById(id: number): Promise<DronePositionAttributes> {
         try {
             // 驗證 ID
@@ -79,7 +81,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info('Successfully retrieved drone position data', { id });
             return dronePosition;
         } catch (error) {
-            logger.error('Failed to get drone position data by ID', { id, error });
             throw error;
         }
     }
@@ -91,6 +92,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 最新的無人機位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getLatestDronePositions(limit: number = 10): Promise<DronePositionAttributes[]> {
         try {
             // 驗證 limit 參數
@@ -104,7 +106,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info(`Retrieved ${dronePositions.length} latest drone position records`);
             return dronePositions;
         } catch (error) {
-            logger.error('Failed to get latest drone position data', { limit, error });
             throw error;
         }
     }
@@ -117,6 +118,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 特定無人機的位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getDronePositionsByDroneId(droneId: number, limit: number = 10): Promise<DronePositionAttributes[]> {
         try {
             // 驗證 droneId
@@ -135,7 +137,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info(`Retrieved ${dronePositions.length} positions for drone ${droneId}`);
             return dronePositions;
         } catch (error) {
-            logger.error('Failed to get drone positions by drone ID', { droneId, limit, error });
             throw error;
         }
     }
@@ -147,6 +148,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes | null>} 最新的位置資料
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getLatestDronePosition(droneId: number): Promise<DronePositionAttributes | null> {
         try {
             if (!droneId || droneId <= 0) {
@@ -163,7 +165,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
             return positions[0];
         } catch (error) {
-            logger.error('Failed to get latest drone position', { droneId, error });
             throw error;
         }
     }
@@ -177,6 +178,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @returns {Promise<DronePositionAttributes[]>} 時間範圍內的位置資料陣列
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getDronePositionsByTimeRange(droneId: number, startTime: Date, endTime: Date): Promise<DronePositionAttributes[]> {
         try {
             if (!droneId || droneId <= 0) {
@@ -197,7 +199,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.warn('Time range query not implemented yet, returning empty array');
             return [];
         } catch (error) {
-            logger.error('Failed to get drone positions by time range', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -229,6 +230,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @param {number} id - 位置記錄 ID
      * @returns {Promise<boolean>} 是否存在
      */
+    @LogService()
     async isDronePositionExists(id: number): Promise<boolean> {
         try {
             if (!id || id <= 0) {
@@ -238,7 +240,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             const position = await this.dronePositionRepository.findById(id);
             return !!position;
         } catch (error) {
-            logger.error('Error checking drone position existence', { id, error });
             return false;
         }
     }
@@ -248,6 +249,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      *
      * @returns {Promise<{total: number, byDrone: Record<number, number>}>} 統計資料
      */
+    @LogService()
     async getDronePositionStatistics(): Promise<{total: number, byDrone: Record<number, number>}> {
         try {
             logger.info('Getting drone position statistics');
@@ -266,7 +268,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info('Successfully retrieved drone position statistics', { statistics });
             return statistics;
         } catch (error) {
-            logger.error('Failed to get drone position statistics', { error });
             throw error;
         }
     }
@@ -276,6 +277,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      *
      * @returns {Promise<number>} 總位置記錄數量
      */
+    @LogService()
     async getTotalPositionCount(): Promise<number> {
         try {
             logger.info('Getting total position count');
@@ -285,7 +287,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info(`Total position count: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get total position count', { error });
             throw error;
         }
     }
@@ -296,6 +297,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 該無人機的位置記錄數量
      */
+    @LogService()
     async getPositionCountByDrone(droneId: number): Promise<number> {
         try {
             if (!droneId || droneId <= 0) {
@@ -309,7 +311,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             logger.info(`Position count for drone ${droneId}: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get position count by drone', { droneId, error });
             throw error;
         }
     }

@@ -21,14 +21,14 @@ user_id := request_headers["x-consumer-custom-id"]
 user_roles_str := request_headers["x-consumer-username"] 
 
 # Authentication endpoints - no JWT required
-allow {
+allow if {
     service_name == "rbac-service"
     startswith(route_path, "/api/auth")
     request_method in ["POST", "OPTIONS"]
 }
 
 # Health check endpoints - no authentication required
-allow {
+allow if {
     endswith(route_path, "/health")
     request_method == "GET"
 }
@@ -38,7 +38,7 @@ user_data := data.users[user_id]
 user_roles := user_data.roles
 
 # RBAC Service Authorization  
-allow {
+allow if {
     service_name == "rbac-service"
     not startswith(route_path, "/api/auth")  # Exclude auth endpoints
     user_roles[_] in ["admin", "superadmin", "department_manager"]
@@ -46,7 +46,7 @@ allow {
 }
 
 # Regular users can access their own data in RBAC service
-allow {
+allow if {
     service_name == "rbac-service"
     route_path == "/api/rbac/me"
     user_roles[_] == "user"
@@ -54,54 +54,54 @@ allow {
 }
 
 # Drone Service Authorization
-allow {
+allow if {
     service_name == "drone-service"
     user_roles[_] in ["drone_operator", "flight_controller", "drone_admin"]
     request_method in ["GET", "POST", "PUT", "DELETE"]
 }
 
 # WebSocket connections for real-time data
-allow {
+allow if {
     service_name == "drone-service"
     startswith(route_path, "/socket.io")
     user_roles[_] in ["drone_operator", "flight_controller", "monitor_operator"]
 }
 
 # Frontend Settings Service Authorization
-allow {
+allow if {
     service_name == "fesetting-service"
     user_roles[_] in ["user", "admin", "superadmin"]
     request_method in ["GET", "POST", "PUT", "DELETE"]
 }
 
 # LLM Service Authorization (if applicable)
-allow {
+allow if {
     service_name == "llm-service"
     user_roles[_] in ["user", "admin", "researcher"]
     request_method in ["GET", "POST"]
 }
 
 # Kong Admin API - restricted access
-allow {
+allow if {
     startswith(route_path, "/kong-admin")
     user_roles[_] in ["superadmin", "system_admin"]
     request_method in ["GET", "POST", "PUT", "DELETE"]
 }
 
 # Monitoring and metrics endpoints
-allow {
+allow if {
     route_path in ["/metrics", "/prometheus", "/health", "/status"]
     user_roles[_] in ["admin", "monitor_operator", "system_admin"]
     request_method == "GET"
 }
 
 # CORS preflight requests
-allow {
+allow if {
     request_method == "OPTIONS"
 }
 
 # Rate limiting bypass for admins
-rate_limit_exempt {
+rate_limit_exempt if {
     user_roles[_] in ["superadmin", "admin"]
 }
 
@@ -114,12 +114,12 @@ headers_to_add := {
 }
 
 # Audit logging requirements
-requires_audit {
+requires_audit if {
     request_method in ["POST", "PUT", "DELETE"]
     user_roles[_] in ["admin", "superadmin"]
 }
 
-requires_audit {
+requires_audit if {
     service_name == "rbac-service"
     request_method in ["POST", "PUT", "DELETE"]
 }

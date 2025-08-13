@@ -20,6 +20,7 @@ import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import type { IArchiveTaskQueries } from '../../types/controllers/queries/IArchiveTaskQueries.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 歸檔任務查詢 Controller 類別
@@ -65,7 +66,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
      */
     async getAllTasks(req: Request, res: Response): Promise<void> {
         try {
-            this.logger.info('獲取所有歸檔任務請求', { 
+            this.this.logger.info('獲取所有歸檔任務請求', { 
                 query: req.query,
                 userAgent: req.get('User-Agent') 
             });
@@ -123,7 +124,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
 
             const tasks = await this.queryService.getAllTasks(options);
             
-            this.logger.info('歸檔任務列表獲取成功', { 
+            this.this.logger.info('歸檔任務列表獲取成功', { 
                 count: tasks.length,
                 options 
             });
@@ -131,7 +132,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
             const result = ControllerResult.success('歸檔任務列表獲取成功', tasks);
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務列表失敗', { 
+            this.this.logger.error('獲取歸檔任務列表失敗', { 
                 query: req.query,
                 error: (error as Error).message,
                 stack: (error as Error).stack 
@@ -161,7 +162,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 return;
             }
 
-            this.logger.info('根據 ID 獲取歸檔任務請求', { taskId });
+            this.this.logger.info('根據 ID 獲取歸檔任務請求', { taskId });
 
             const task = await this.queryService.getTaskById(taskId);
             
@@ -171,12 +172,12 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 return;
             }
 
-            this.logger.info('歸檔任務獲取成功', { taskId, status: task.status });
+            this.this.logger.info('歸檔任務獲取成功', { taskId, status: task.status });
 
             const result = ControllerResult.success('歸檔任務獲取成功', task);
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務失敗', { 
+            this.this.logger.error('獲取歸檔任務失敗', { 
                 taskId: req.params.id,
                 error: (error as Error).message,
                 stack: (error as Error).stack 
@@ -197,18 +198,18 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
      */
     async getTaskStatistics(req: Request, res: Response): Promise<void> {
         try {
-            this.logger.info('獲取歸檔任務統計資訊請求');
+            this.this.logger.info('獲取歸檔任務統計資訊請求');
 
             const statistics = await this.queryService.getTaskStatistics();
             
-            this.logger.info('歸檔任務統計資訊獲取成功', { 
+            this.this.logger.info('歸檔任務統計資訊獲取成功', { 
                 totalTasks: statistics.totalTasks 
             });
 
             const result = ControllerResult.success('歸檔任務統計資訊獲取成功', statistics);
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務統計資訊失敗', { 
+            this.this.logger.error('獲取歸檔任務統計資訊失敗', { 
                 error: (error as Error).message,
                 stack: (error as Error).stack 
             });
@@ -228,7 +229,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
      */
     async getTasksData(req: Request, res: Response): Promise<void> {
         try {
-            this.logger.info('獲取歸檔任務資料請求', { query: req.query });
+            this.this.logger.info('獲取歸檔任務資料請求', { query: req.query });
 
             // 使用預設的查詢選項來獲取所有任務資料
             const tasks = await this.queryService.getAllTasks({
@@ -237,12 +238,12 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 limit: 1000 // 限制返回數量以避免過多資料
             });
             
-            this.logger.info('歸檔任務資料獲取成功', { count: tasks.length });
+            this.this.logger.info('歸檔任務資料獲取成功', { count: tasks.length });
 
             const result = ControllerResult.success('歸檔任務資料獲取成功', tasks);
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務資料失敗', { 
+            this.this.logger.error('獲取歸檔任務資料失敗', { 
                 query: req.query,
                 error: (error as Error).message,
                 stack: (error as Error).stack 

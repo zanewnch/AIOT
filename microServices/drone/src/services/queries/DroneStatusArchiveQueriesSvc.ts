@@ -19,6 +19,7 @@ import type { DroneStatusArchiveAttributes } from '../../models/DroneStatusArchi
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusArchiveQueriesSvc');
 
@@ -56,6 +57,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 狀態歷史資料陣列
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getAllStatusArchives(limit: number = 100): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證 limit 參數
@@ -69,7 +71,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${archives.length} status archive records`);
             return archives;
         } catch (error) {
-            logger.error('Failed to get all status archive data', { limit, error });
             throw error;
         }
     }
@@ -81,6 +82,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes>} 狀態歷史資料
      * @throws {Error} 當 ID 無效或資料不存在時
      */
+    @LogService()
     async getStatusArchiveById(id: number): Promise<DroneStatusArchiveAttributes> {
         try {
             // 驗證 ID
@@ -98,7 +100,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info('Successfully retrieved status archive', { id });
             return archive;
         } catch (error) {
-            logger.error('Failed to get status archive by ID', { id, error });
             throw error;
         }
     }
@@ -111,6 +112,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定無人機的狀態歷史陣列
      * @throws {Error} 當無人機 ID 無效或查詢失敗時
      */
+    @LogService()
     async getStatusArchivesByDroneId(droneId: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證參數
@@ -129,7 +131,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${limitedArchives.length} status archives for drone ${droneId}`);
             return limitedArchives;
         } catch (error) {
-            logger.error('Failed to get status archives by drone ID', { droneId, limit, error });
             throw error;
         }
     }
@@ -142,6 +143,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定狀態的歷史記錄陣列
      * @throws {Error} 當狀態無效或查詢失敗時
      */
+    @LogService()
     async getStatusArchivesByStatus(status: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證狀態
@@ -160,7 +162,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${limitedArchives.length} status archives with status ${status}`);
             return limitedArchives;
         } catch (error) {
-            logger.error('Failed to get status archives by status', { status, limit, error });
             throw error;
         }
     }
@@ -173,6 +174,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定操作者的歷史記錄陣列
      * @throws {Error} 當用戶 ID 無效或查詢失敗時
      */
+    @LogService()
     async getStatusArchivesByCreatedBy(createdBy: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證參數
@@ -191,7 +193,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${limitedArchives.length} status archives created by user ${createdBy}`);
             return limitedArchives;
         } catch (error) {
-            logger.error('Failed to get status archives by created by', { createdBy, limit, error });
             throw error;
         }
     }
@@ -205,6 +206,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定時間範圍的歷史記錄陣列
      * @throws {Error} 當時間範圍無效或查詢失敗時
      */
+    @LogService()
     async getStatusArchivesByDateRange(startDate: Date, endDate: Date, limit: number = 100): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證時間範圍
@@ -224,7 +226,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${archives.length} status archives in date range`);
             return archives;
         } catch (error) {
-            logger.error('Failed to get status archives by date range', { startDate, endDate, limit, error });
             throw error;
         }
     }
@@ -237,6 +238,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 包含指定原因的歷史記錄陣列
      * @throws {Error} 當原因字串無效或查詢失敗時
      */
+    @LogService()
     async getStatusArchivesByReason(reason: string, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證參數
@@ -253,7 +255,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${archives.length} status archives with reason containing "${reason}"`);
             return archives;
         } catch (error) {
-            logger.error('Failed to get status archives by reason', { reason, limit, error });
             throw error;
         }
     }
@@ -265,6 +266,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 最新的狀態變更記錄陣列
      * @throws {Error} 當資料取得失敗時
      */
+    @LogService()
     async getLatestStatusArchives(limit: number = 20): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證 limit 參數
@@ -278,7 +280,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${archives.length} latest status archives`);
             return archives;
         } catch (error) {
-            logger.error('Failed to get latest status archives', { limit, error });
             throw error;
         }
     }
@@ -290,6 +291,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes | null>} 最新的狀態變更記錄或 null
      * @throws {Error} 當無人機 ID 無效或查詢失敗時
      */
+    @LogService()
     async getLatestStatusArchiveByDroneId(droneId: number): Promise<DroneStatusArchiveAttributes | null> {
         try {
             // 驗證無人機 ID
@@ -308,7 +310,6 @@ export class DroneStatusArchiveQueriesSvc {
 
             return archive;
         } catch (error) {
-            logger.error('Failed to get latest status archive by drone ID', { droneId, error });
             throw error;
         }
     }
@@ -322,6 +323,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 符合狀態轉換的歷史記錄陣列
      * @throws {Error} 當狀態無效或查詢失敗時
      */
+    @LogService()
     async getStatusArchivesByTransition(fromStatus: DroneStatus | null, toStatus: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
         try {
             // 驗證狀態
@@ -341,7 +343,6 @@ export class DroneStatusArchiveQueriesSvc {
             logger.info(`Retrieved ${archives.length} status archives for transition ${fromStatus} -> ${toStatus}`);
             return archives;
         } catch (error) {
-            logger.error('Failed to get status archives by transition', { fromStatus, toStatus, limit, error });
             throw error;
         }
     }
@@ -354,6 +355,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<{[key: string]: number}>} 狀態變更統計資料
      * @throws {Error} 當時間範圍無效或統計失敗時
      */
+    @LogService()
     async getStatusChangeStatistics(startDate?: Date, endDate?: Date): Promise<{ [key: string]: number }> {
         try {
             // 驗證必需參數
@@ -375,7 +377,6 @@ export class DroneStatusArchiveQueriesSvc {
 
             return statistics;
         } catch (error) {
-            logger.error('Failed to get status change statistics', { startDate, endDate, error });
             throw error;
         }
     }
@@ -388,6 +389,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<{date: string, changes: number}[]>} 狀態變更趨勢資料
      * @throws {Error} 當參數無效或分析失敗時
      */
+    @LogService()
     async getStatusChangeTrend(droneId: number, days: number = 30): Promise<{ date: string, changes: number }[]> {
         try {
             // 驗證參數
@@ -438,7 +440,6 @@ export class DroneStatusArchiveQueriesSvc {
 
             return trend;
         } catch (error) {
-            logger.error('Failed to get status change trend', { droneId, days, error });
             throw error;
         }
     }
@@ -451,6 +452,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @returns {Promise<{totalChanges: number, mostCommonStatus: DroneStatus, lastChange: Date}>} 活動摘要
      * @throws {Error} 當參數無效或查詢失敗時
      */
+    @LogService()
     async getDroneActivitySummary(droneId: number, days: number = 7): Promise<{
         totalChanges: number;
         mostCommonStatus: DroneStatus;
@@ -514,7 +516,6 @@ export class DroneStatusArchiveQueriesSvc {
 
             return summary;
         } catch (error) {
-            logger.error('Failed to get drone activity summary', { droneId, days, error });
             throw error;
         }
     }
@@ -525,6 +526,7 @@ export class DroneStatusArchiveQueriesSvc {
      * @param {number} id - 記錄 ID
      * @returns {Promise<boolean>} 記錄是否存在
      */
+    @LogService()
     async isArchiveExists(id: number): Promise<boolean> {
         try {
             if (!id || id <= 0) {
@@ -534,7 +536,6 @@ export class DroneStatusArchiveQueriesSvc {
             const archive = await this.archiveRepository.findById(id);
             return !!archive;
         } catch (error) {
-            logger.error('Error checking archive existence', { id, error });
             return false;
         }
     }

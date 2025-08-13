@@ -18,6 +18,7 @@ import { DronePositionCommandsSvc } from '../../services/commands/DronePositionC
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 import type { DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 
 const logger = createLogger('DronePositionCommands');
@@ -41,6 +42,7 @@ export class DronePositionCommands {
      * 創建新的無人機位置資料
      * @route POST /api/drone-position/data
      */
+    @LogController()
     async createDronePosition(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const dronePositionData: DronePositionCreationAttributes = req.body;
@@ -57,11 +59,7 @@ export class DronePositionCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, 'Creating new drone position data');
-            logger.info('Drone position creation request received', { data: dronePositionData });
-
-            // 呼叫命令服務層創建資料
+// 呼叫命令服務層創建資料
             const createdData = await this.dronePositionCommandsSvc.createDronePosition(dronePositionData);
 
             // 建立成功回應
@@ -69,17 +67,7 @@ export class DronePositionCommands {
 
             // 回傳結果
             res.status(result.status).json(result);
-
-            logger.info('Drone position creation completed successfully', {
-                id: createdData.id,
-                droneId: createdData.drone_id
-            });
-
-        } catch (error) {
-            logger.error('Error in createDronePosition', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -88,6 +76,7 @@ export class DronePositionCommands {
      * 更新指定無人機位置資料
      * @route PUT /api/drone-position/data/:id
      */
+    @LogController()
     async updateDronePosition(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -118,11 +107,7 @@ export class DronePositionCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Updating drone position data with ID: ${id}`);
-            logger.info('Drone position update request received', { id, data: updateData });
-
-            // 呼叫命令服務層更新資料
+// 呼叫命令服務層更新資料
             const updatedData = await this.dronePositionCommandsSvc.updateDronePosition(id, updateData);
 
             if (!updatedData) {
@@ -133,15 +118,7 @@ export class DronePositionCommands {
 
             const result = ControllerResult.success('無人機位置資料更新成功', updatedData);
             res.status(result.status).json(result);
-
-            logger.info('Drone position update completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in updateDronePosition', {
-                id: req.params.id,
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -150,6 +127,7 @@ export class DronePositionCommands {
      * 刪除指定無人機位置資料
      * @route DELETE /api/drone-position/data/:id
      */
+    @LogController()
     async deleteDronePosition(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -160,24 +138,13 @@ export class DronePositionCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting drone position data with ID: ${id}`);
-            logger.info('Drone position deletion request received', { id });
-
-            // 呼叫命令服務層刪除資料
+// 呼叫命令服務層刪除資料
             await this.dronePositionCommandsSvc.deleteDronePosition(id);
 
             // 刪除成功（如果沒有拋出錯誤）
             const result = ControllerResult.success('無人機位置資料刪除成功');
             res.status(result.status).json(result);
-
-            logger.info('Drone position deletion completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in deleteDronePosition', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -186,6 +153,7 @@ export class DronePositionCommands {
      * 批量創建無人機位置資料
      * @route POST /api/drone-position/data/batch
      */
+    @LogController()
     async createDronePositionsBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const dronePositionsData: DronePositionCreationAttributes[] = req.body;
@@ -211,25 +179,12 @@ export class DronePositionCommands {
                     return;
                 }
             }
-
-            logRequest(req, `Creating ${dronePositionsData.length} drone position records in batch`);
-            logger.info('Drone position batch creation request received', { count: dronePositionsData.length });
-
-            // 呼叫命令服務層批量創建資料
+// 呼叫命令服務層批量創建資料
             const createdData = await this.dronePositionCommandsSvc.createDronePositionsBatch(dronePositionsData);
 
             const result = ControllerResult.created('批量無人機位置資料創建成功', createdData);
             res.status(result.status).json(result);
-
-            logger.info('Drone position batch creation completed successfully', {
-                count: createdData.length
-            });
-
-        } catch (error) {
-            logger.error('Error in createDronePositionsBatch', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }

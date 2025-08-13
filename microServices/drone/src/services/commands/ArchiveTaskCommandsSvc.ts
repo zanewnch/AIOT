@@ -28,6 +28,7 @@ import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCo
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 歸檔任務命令 Service 實作類別
@@ -68,6 +69,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskModel> 創建的歸檔任務
      * @throws {Error} 當請求資料無效或創建失敗時拋出錯誤
      */
+    @LogService()
     async createTask(request: CreateArchiveTaskRequest): Promise<ArchiveTaskModel> {
         try {
             this.logger.info('開始創建歸檔任務', { request });
@@ -117,6 +119,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<BatchArchiveResult> 批次創建結果
      * @throws {Error} 當批次創建失敗時拋出錯誤
      */
+    @LogService()
     async createBatchTasks(requests: CreateArchiveTaskRequest[]): Promise<BatchArchiveResult> {
         try {
             this.logger.info('開始批次創建歸檔任務', { count: requests.length });
@@ -173,6 +176,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskExecutionResult> 執行結果
      * @throws {Error} 當任務執行失敗時拋出錯誤
      */
+    @LogService()
     async executeTask(id: number): Promise<ArchiveTaskExecutionResult> {
         try {
             this.logger.info('開始執行歸檔任務', { id: id });
@@ -230,6 +234,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskExecutionResult[]> 執行結果列表
      * @throws {Error} 當批次執行失敗時拋出錯誤
      */
+    @LogService()
     async executeBatchTasks(ids: number[]): Promise<ArchiveTaskExecutionResult[]> {
         try {
             this.logger.info('開始批次執行歸檔任務', { taskIds: ids });
@@ -274,6 +279,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskModel> 更新後的任務
      * @throws {Error} 當取消失敗時拋出錯誤
      */
+    @LogService()
     async cancelTask(id: number, reason: string): Promise<ArchiveTaskModel> {
         try {
             this.logger.info('取消歸檔任務', { id: id, reason });
@@ -312,6 +318,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskExecutionResult> 重試執行結果
      * @throws {Error} 當重試失敗時拋出錯誤
      */
+    @LogService()
     async retryTask(id: number): Promise<ArchiveTaskExecutionResult> {
         try {
             this.logger.info('重試歸檔任務', { id: id });
@@ -350,6 +357,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskModel> 更新後的任務
      * @throws {Error} 當更新失敗時拋出錯誤
      */
+    @LogService()
     async updateTaskProgress(id: number, archivedCount: number): Promise<ArchiveTaskModel> {
         try {
             this.logger.debug('更新任務進度', { id: id, archivedCount });
@@ -378,6 +386,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskModel> 完成的任務
      * @throws {Error} 當標記失敗時拋出錯誤
      */
+    @LogService()
     async completeTask(id: number, finalCount: number): Promise<ArchiveTaskModel> {
         try {
             this.logger.info('標記任務為完成', { id: id, finalCount });
@@ -412,6 +421,7 @@ export class ArchiveTaskCommandsSvc {
      * @returns Promise<ArchiveTaskModel> 失敗的任務
      * @throws {Error} 當標記失敗時拋出錯誤
      */
+    @LogService()
     async failTask(id: number, errorMessage: string): Promise<ArchiveTaskModel> {
         try {
             this.logger.info('標記任務為失敗', { id: id, errorMessage });
@@ -439,6 +449,7 @@ export class ArchiveTaskCommandsSvc {
      * @param status - 要清理的任務狀態（可選）
      * @returns Promise<number> 清理的任務數量
      */
+    @LogService()
     async cleanupOldTasks(daysOld: number, status?: ArchiveTaskStatus): Promise<number> {
         try {
             this.logger.info('開始清理舊的歸檔任務記錄', { daysOld, status });
@@ -535,6 +546,7 @@ export class ArchiveTaskCommandsSvc {
      * @private
      * @param task - 歸檔任務
      */
+    @LogService()
     private async performArchiving(task: ArchiveTaskModel): Promise<void> {
         // 標記任務開始執行
         await task.startExecution(0);

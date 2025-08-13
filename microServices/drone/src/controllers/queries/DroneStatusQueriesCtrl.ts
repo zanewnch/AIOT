@@ -18,6 +18,7 @@ import { DroneStatusQueriesSvc } from '../../services/queries/DroneStatusQueries
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusQueries');
 
@@ -40,27 +41,11 @@ export class DroneStatusQueries {
      * 取得所有無人機狀態資料
      * @route GET /api/drone-status/data
      */
+    @LogController()
     async getAllDroneStatuses(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             // 記錄請求
-            logRequest(req, 'Getting all drone status data');
-            logger.info('Drone status data retrieval request received');
-
-            // 呼叫服務層取得資料
-            const droneStatuses = await this.droneStatusService.getAllDroneStatuses();
-
-            // 建立成功回應
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
-
-            // 回傳結果
-            res.status(result.status).json(result);
-
-            logger.info('Drone status data retrieval completed successfully', {
-                count: droneStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getAllDroneStatuses', { error });
+} catch (error) {
             next(error);
         }
     }
@@ -69,6 +54,7 @@ export class DroneStatusQueries {
      * 根據 ID 取得無人機狀態資料
      * @route GET /api/drone-status/data/:id
      */
+    @LogController()
     async getDroneStatusById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -79,11 +65,7 @@ export class DroneStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone status data with ID: ${id}`);
-            logger.info('Drone status data retrieval request received', { id });
-
-            // 呼叫服務層取得資料
+// 呼叫服務層取得資料
             const droneStatus = await this.droneStatusService.getDroneStatusById(id);
 
             if (!droneStatus) {
@@ -94,14 +76,7 @@ export class DroneStatusQueries {
 
             const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatus);
             res.status(result.status).json(result);
-
-            logger.info('Drone status data retrieval completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in getDroneStatusById', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -110,6 +85,7 @@ export class DroneStatusQueries {
      * 根據序號取得無人機狀態資料
      * @route GET /api/drone-status/data/serial/:serial
      */
+    @LogController()
     async getDroneStatusBySerial(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const serial = req.params.serial;
@@ -119,11 +95,7 @@ export class DroneStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone status data with serial: ${serial}`);
-            logger.info('Drone status data by serial retrieval request received', { serial });
-
-            const droneStatus = await this.droneStatusService.getDroneStatusBySerial(serial.trim());
+const droneStatus = await this.droneStatusService.getDroneStatusBySerial(serial.trim());
 
             if (!droneStatus) {
                 const result = ControllerResult.notFound('找不到指定序號的無人機狀態資料');
@@ -133,14 +105,7 @@ export class DroneStatusQueries {
 
             const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatus);
             res.status(result.status).json(result);
-
-            logger.info('Drone status data by serial retrieval completed successfully', { serial });
-
-        } catch (error) {
-            logger.error('Error in getDroneStatusBySerial', {
-                serial: req.params.serial,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -149,6 +114,7 @@ export class DroneStatusQueries {
      * 根據狀態查詢無人機
      * @route GET /api/drone-status/data/status/:status
      */
+    @LogController()
     async getDroneStatusesByStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const status = req.params.status;
@@ -158,25 +124,11 @@ export class DroneStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone statuses by status: ${status}`);
-            logger.info('Drone statuses by status retrieval request received', { status });
-
-            const droneStatuses = await this.droneStatusService.getDronesByStatus(status.trim() as any);
+const droneStatuses = await this.droneStatusService.getDronesByStatus(status.trim() as any);
 
             const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
-
-            logger.info('Drone statuses by status retrieval completed successfully', {
-                status,
-                count: droneStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getDroneStatusesByStatus', {
-                status: req.params.status,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -185,6 +137,7 @@ export class DroneStatusQueries {
      * 根據擁有者查詢無人機
      * @route GET /api/drone-status/data/owner/:ownerId
      */
+    @LogController()
     async getDroneStatusesByOwner(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const ownerId = parseInt(req.params.ownerId);
@@ -194,25 +147,11 @@ export class DroneStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone statuses by owner ID: ${ownerId}`);
-            logger.info('Drone statuses by owner retrieval request received', { ownerId });
-
-            const droneStatuses = await this.droneStatusService.getDronesByOwner(ownerId);
+const droneStatuses = await this.droneStatusService.getDronesByOwner(ownerId);
 
             const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
-
-            logger.info('Drone statuses by owner retrieval completed successfully', {
-                ownerId,
-                count: droneStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getDroneStatusesByOwner', {
-                ownerId: req.params.ownerId,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -221,6 +160,7 @@ export class DroneStatusQueries {
      * 根據製造商查詢無人機
      * @route GET /api/drone-status/data/manufacturer/:manufacturer
      */
+    @LogController()
     async getDroneStatusesByManufacturer(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const manufacturer = req.params.manufacturer;
@@ -230,25 +170,11 @@ export class DroneStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone statuses by manufacturer: ${manufacturer}`);
-            logger.info('Drone statuses by manufacturer retrieval request received', { manufacturer });
-
-            const droneStatuses = await this.droneStatusService.getDronesByManufacturer(manufacturer.trim());
+const droneStatuses = await this.droneStatusService.getDronesByManufacturer(manufacturer.trim());
 
             const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
-
-            logger.info('Drone statuses by manufacturer retrieval completed successfully', {
-                manufacturer,
-                count: droneStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getDroneStatusesByManufacturer', {
-                manufacturer: req.params.manufacturer,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -257,20 +183,14 @@ export class DroneStatusQueries {
      * 取得無人機狀態統計
      * @route GET /api/drone-status/statistics
      */
+    @LogController()
     async getDroneStatusStatistics(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Getting drone status statistics');
-            logger.info('Drone status statistics retrieval request received');
-
-            const statistics = await this.droneStatusService.getDroneStatusStatistics();
+const statistics = await this.droneStatusService.getDroneStatusStatistics();
 
             const result = ControllerResult.success('無人機狀態統計獲取成功', statistics);
             res.status(result.status).json(result);
-
-            logger.info('Drone status statistics retrieval completed successfully');
-
-        } catch (error) {
-            logger.error('Error in getDroneStatusStatistics', { error });
+} catch (error) {
             next(error);
         }
     }

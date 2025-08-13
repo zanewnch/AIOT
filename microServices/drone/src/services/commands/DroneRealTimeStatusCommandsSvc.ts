@@ -29,6 +29,7 @@ import type {
 } from '../../types/services/IDroneRealTimeStatusService.js';
 import { DroneRealTimeStatusQueriesSvc } from '../queries/DroneRealTimeStatusQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneRealTimeStatusCommandsSvc');
 
@@ -70,6 +71,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 創建新的無人機即時狀態記錄
      */
+    @LogService()
     async createRealTimeStatus(data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> {
         try {
             // 驗證資料
@@ -91,7 +93,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully created drone real-time status', { id: result.id, droneId: data.drone_id });
             return result;
         } catch (error) {
-            logger.error('Failed to create drone real-time status', { data, error });
             const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(`創建即時狀態記錄失敗: ${errorMessage}`);
         }
@@ -100,6 +101,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 更新即時狀態記錄
      */
+    @LogService()
     async updateRealTimeStatus(id: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel> {
         try {
             if (!id || id <= 0) {
@@ -121,7 +123,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully updated drone real-time status', { id });
             return result;
         } catch (error) {
-            logger.error('Failed to update drone real-time status', { id, data, error });
             throw new Error(`更新即時狀態記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -129,6 +130,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 根據無人機 ID 更新即時狀態記錄
      */
+    @LogService()
     async updateRealTimeStatusByDroneId(droneId: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel> {
         try {
             if (!droneId || droneId <= 0) {
@@ -144,7 +146,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully updated drone real-time status by drone ID', { droneId });
             return result;
         } catch (error) {
-            logger.error('Failed to update drone real-time status by drone ID', { droneId, data, error });
             throw new Error(`更新即時狀態記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -152,6 +153,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 刪除即時狀態記錄
      */
+    @LogService()
     async deleteRealTimeStatus(id: number): Promise<boolean> {
         try {
             if (!id || id <= 0) {
@@ -173,7 +175,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully deleted drone real-time status', { id });
             return true;
         } catch (error) {
-            logger.error('Failed to delete drone real-time status', { id, error });
             throw new Error(`刪除即時狀態記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -181,6 +182,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 根據無人機 ID 刪除即時狀態記錄
      */
+    @LogService()
     async deleteRealTimeStatusByDroneId(droneId: number): Promise<boolean> {
         try {
             if (!droneId || droneId <= 0) {
@@ -196,7 +198,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully deleted drone real-time status by drone ID', { droneId });
             return true;
         } catch (error) {
-            logger.error('Failed to delete drone real-time status by drone ID', { droneId, error });
             throw new Error(`刪除即時狀態記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -204,6 +205,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * Upsert 即時狀態記錄
      */
+    @LogService()
     async upsertRealTimeStatus(droneId: number, data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> {
         try {
             if (!droneId || droneId <= 0) {
@@ -222,7 +224,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully upserted drone real-time status', { droneId });
             return result;
         } catch (error) {
-            logger.error('Failed to upsert drone real-time status', { droneId, data, error });
             throw new Error(`更新/創建即時狀態記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -230,6 +231,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 更新心跳包（最後連線時間）
      */
+    @LogService()
     async updateHeartbeat(droneId: number): Promise<boolean> {
         try {
             if (!droneId || droneId <= 0) {
@@ -247,7 +249,6 @@ export class DroneRealTimeStatusCommandsSvc {
             
             return result;
         } catch (error) {
-            logger.error('Failed to update drone heartbeat', { droneId, error });
             throw new Error(`更新心跳包失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -255,6 +256,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 標記無人機為離線狀態
      */
+    @LogService()
     async markDroneOffline(droneId: number, errorMessage?: string): Promise<DroneRealTimeStatusModel> {
         try {
             if (!droneId || droneId <= 0) {
@@ -276,7 +278,6 @@ export class DroneRealTimeStatusCommandsSvc {
             logger.info('Successfully marked drone as offline', { droneId });
             return result;
         } catch (error) {
-            logger.error('Failed to mark drone as offline', { droneId, errorMessage, error });
             throw new Error(`標記無人機離線狀態失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -284,6 +285,7 @@ export class DroneRealTimeStatusCommandsSvc {
     /**
      * 批量更新無人機即時狀態
      */
+    @LogService()
     async updateRealTimeStatusesBatch(updates: Array<{ droneId: number; statusData: Partial<DroneRealTimeStatusAttributes> }>): Promise<DroneRealTimeStatusModel[]> {
         const results: DroneRealTimeStatusModel[] = [];
         
@@ -343,12 +345,14 @@ export class DroneRealTimeStatusCommandsSvc {
     }
 
     // 實現外部介面方法
+    @LogService()
     async createDroneRealTimeStatus(data: ExternalCreationAttributesLocal): Promise<ExternalAttributes> {
         const convertedData = this.convertFromExternalCreationAttributesLocal(data);
         const model = await this.createRealTimeStatus(convertedData);
         return this.convertToExternalAttributes(model.toJSON());
     }
 
+    @LogService()
     async updateDroneRealTimeStatus(id: number, data: Partial<ExternalCreationAttributesLocal>): Promise<ExternalAttributes | null> {
         try {
             const convertedData = this.convertFromPartialExternalCreationAttributesLocal(data);
@@ -359,11 +363,13 @@ export class DroneRealTimeStatusCommandsSvc {
         }
     }
 
+    @LogService()
     async deleteDroneRealTimeStatus(id: number): Promise<number> {
         const result = await this.deleteRealTimeStatus(id);
         return result ? 1 : 0;
     }
 
+    @LogService()
     async updateDroneRealTimeStatusByDroneId(droneId: number, data: Partial<ExternalCreationAttributesLocal>): Promise<ExternalAttributes | null> {
         try {
             const convertedData = this.convertFromPartialExternalCreationAttributesLocal(data);
@@ -374,6 +380,7 @@ export class DroneRealTimeStatusCommandsSvc {
         }
     }
 
+    @LogService()
     async updateDroneRealTimeStatusesBatch(updates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributesLocal> }>): Promise<ExternalAttributes[]> {
         const convertedUpdates = updates.map(update => ({
             droneId: update.droneId,

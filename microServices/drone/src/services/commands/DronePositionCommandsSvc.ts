@@ -20,6 +20,7 @@ import type { DronePositionAttributes, DronePositionCreationAttributes } from '.
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import { DronePositionQueriesSvc } from '../queries/DronePositionQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DronePositionCommandsSvc');
 
@@ -61,6 +62,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<DronePositionAttributes>} 建立的無人機位置資料
      * @throws {Error} 當資料驗證失敗或建立失敗時
      */
+    @LogService()
     async createDronePosition(data: DronePositionCreationAttributes): Promise<DronePositionAttributes> {
         try {
             // 驗證必要欄位
@@ -72,7 +74,6 @@ export class DronePositionCommandsSvc {
             logger.info('Successfully created drone position data', { id: dronePosition.id });
             return dronePosition;
         } catch (error) {
-            logger.error('Failed to create drone position data', { data, error });
             throw error;
         }
     }
@@ -85,6 +86,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<DronePositionAttributes>} 更新後的無人機位置資料
      * @throws {Error} 當 ID 無效、資料驗證失敗或更新失敗時
      */
+    @LogService()
     async updateDronePosition(id: number, data: Partial<DronePositionCreationAttributes>): Promise<DronePositionAttributes> {
         try {
             // 驗證 ID
@@ -116,7 +118,6 @@ export class DronePositionCommandsSvc {
             logger.info('Successfully updated drone position data', { id });
             return updatedDronePosition;
         } catch (error) {
-            logger.error('Failed to update drone position data', { id, data, error });
             throw error;
         }
     }
@@ -128,6 +129,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<void>}
      * @throws {Error} 當 ID 無效或刪除失敗時
      */
+    @LogService()
     async deleteDronePosition(id: number): Promise<void> {
         try {
             // 驗證 ID
@@ -148,7 +150,6 @@ export class DronePositionCommandsSvc {
 
             logger.info('Successfully deleted drone position data', { id });
         } catch (error) {
-            logger.error('Failed to delete drone position data', { id, error });
             throw error;
         }
     }
@@ -160,6 +161,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<DronePositionAttributes[]>} 創建的位置資料陣列
      * @throws {Error} 當批量創建失敗時
      */
+    @LogService()
     async createDronePositionsBatch(positions: DronePositionCreationAttributes[]): Promise<DronePositionAttributes[]> {
         try {
             if (!positions || positions.length === 0) {
@@ -190,7 +192,6 @@ export class DronePositionCommandsSvc {
             logger.info('Batch drone positions created successfully', { count: results.length });
             return results;
         } catch (error) {
-            logger.error('Failed to create batch drone positions', { count: positions?.length, error });
             throw error;
         }
     }
@@ -202,6 +203,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<number>} 成功刪除的筆數
      * @throws {Error} 當批量刪除失敗時
      */
+    @LogService()
     async deleteDronePositionsBatch(ids: number[]): Promise<number> {
         try {
             if (!ids || ids.length === 0) {
@@ -236,7 +238,6 @@ export class DronePositionCommandsSvc {
 
             return successCount;
         } catch (error) {
-            logger.error('Failed to bulk delete drone position data', { ids, error });
             throw error;
         }
     }
@@ -248,6 +249,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<number>} 成功更新的筆數
      * @throws {Error} 當批量更新失敗時
      */
+    @LogService()
     async updateDronePositionsBatch(updates: Array<{id: number, data: Partial<DronePositionCreationAttributes>}>): Promise<number> {
         try {
             if (!updates || updates.length === 0) {
@@ -282,7 +284,6 @@ export class DronePositionCommandsSvc {
 
             return successCount;
         } catch (error) {
-            logger.error('Failed to bulk update drone position data', { updates, error });
             throw error;
         }
     }
@@ -295,6 +296,7 @@ export class DronePositionCommandsSvc {
      * @returns {Promise<number>} 清除的筆數
      * @throws {Error} 當清除失敗時
      */
+    @LogService()
     async cleanupDronePositionHistory(droneId: number, keepLatest: number = 10): Promise<number> {
         try {
             if (!droneId || droneId <= 0) {
@@ -334,7 +336,6 @@ export class DronePositionCommandsSvc {
 
             return deletedCount;
         } catch (error) {
-            logger.error('Failed to cleanup drone position history', { droneId, keepLatest, error });
             throw error;
         }
     }

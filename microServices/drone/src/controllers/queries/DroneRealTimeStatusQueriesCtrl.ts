@@ -18,6 +18,7 @@ import { DroneRealTimeStatusQueriesSvc } from '../../services/queries/DroneRealT
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneRealTimeStatusQueries');
 
@@ -40,22 +41,10 @@ export class DroneRealTimeStatusQueries {
      * 取得所有無人機即時狀態資料
      * @route GET /api/drone-realtime-status/data
      */
+    @LogController()
     async getAllDroneRealTimeStatuses(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Getting all drone real-time status data');
-            logger.info('Drone real-time status data retrieval request received');
-
-            const droneStatuses = await this.droneRealTimeStatusQueriesService.getAllDroneRealTimeStatuses();
-
-            const result = ControllerResult.success('無人機即時狀態資料獲取成功', droneStatuses);
-            res.status(result.status).json(result);
-
-            logger.info('Drone real-time status data retrieval completed successfully', {
-                count: droneStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getAllDroneRealTimeStatuses', { error });
+} catch (error) {
             next(error);
         }
     }
@@ -64,6 +53,7 @@ export class DroneRealTimeStatusQueries {
      * 根據 ID 取得無人機即時狀態資料
      * @route GET /api/drone-realtime-status/data/:id
      */
+    @LogController()
     async getDroneRealTimeStatusById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -73,11 +63,7 @@ export class DroneRealTimeStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone real-time status data with ID: ${id}`);
-            logger.info('Drone real-time status data retrieval request received', { id });
-
-            const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusById(id);
+const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusById(id);
 
             if (!droneStatus) {
                 const result = ControllerResult.notFound('找不到指定的無人機即時狀態資料');
@@ -87,14 +73,7 @@ export class DroneRealTimeStatusQueries {
 
             const result = ControllerResult.success('無人機即時狀態資料獲取成功', droneStatus);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status data retrieval completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in getDroneRealTimeStatusById', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -103,6 +82,7 @@ export class DroneRealTimeStatusQueries {
      * 根據無人機 ID 取得即時狀態資料
      * @route GET /api/drone-realtime-status/data/drone/:droneId
      */
+    @LogController()
     async getDroneRealTimeStatusByDroneId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -112,11 +92,7 @@ export class DroneRealTimeStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone real-time status by drone ID: ${droneId}`);
-            logger.info('Drone real-time status by drone ID retrieval request received', { droneId });
-
-            const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusByDroneId(droneId);
+const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusByDroneId(droneId);
 
             if (!droneStatus) {
                 const result = ControllerResult.notFound('找不到該無人機的即時狀態資料');
@@ -126,14 +102,7 @@ export class DroneRealTimeStatusQueries {
 
             const result = ControllerResult.success('無人機即時狀態資料獲取成功', droneStatus);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status by drone ID retrieval completed successfully', { droneId });
-
-        } catch (error) {
-            logger.error('Error in getDroneRealTimeStatusByDroneId', {
-                droneId: req.params.droneId,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -142,6 +111,7 @@ export class DroneRealTimeStatusQueries {
      * 根據狀態查詢無人機即時狀態
      * @route GET /api/drone-realtime-status/data/status/:status
      */
+    @LogController()
     async getDroneRealTimeStatusesByStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const status = req.params.status;
@@ -151,25 +121,11 @@ export class DroneRealTimeStatusQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting drone real-time statuses by status: ${status}`);
-            logger.info('Drone real-time statuses by status retrieval request received', { status });
-
-            const droneStatuses = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusesByStatus(status.trim());
+const droneStatuses = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusesByStatus(status.trim());
 
             const result = ControllerResult.success('無人機即時狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time statuses by status retrieval completed successfully', {
-                status,
-                count: droneStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getDroneRealTimeStatusesByStatus', {
-                status: req.params.status,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -178,22 +134,10 @@ export class DroneRealTimeStatusQueries {
      * 取得活躍中的無人機即時狀態
      * @route GET /api/drone-realtime-status/data/active
      */
+    @LogController()
     async getActiveDroneRealTimeStatuses(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Getting active drone real-time status data');
-            logger.info('Active drone real-time status data retrieval request received');
-
-            const activeStatuses = await this.droneRealTimeStatusQueriesService.getActiveDroneRealTimeStatuses();
-
-            const result = ControllerResult.success('活躍無人機即時狀態資料獲取成功', activeStatuses);
-            res.status(result.status).json(result);
-
-            logger.info('Active drone real-time status data retrieval completed successfully', {
-                count: activeStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in getActiveDroneRealTimeStatuses', { error });
+} catch (error) {
             next(error);
         }
     }
@@ -202,20 +146,14 @@ export class DroneRealTimeStatusQueries {
      * 取得無人機即時狀態統計
      * @route GET /api/drone-realtime-status/statistics
      */
+    @LogController()
     async getDroneRealTimeStatusStatistics(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Getting drone real-time status statistics');
-            logger.info('Drone real-time status statistics retrieval request received');
-
-            const statistics = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusStatistics();
+const statistics = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusStatistics();
 
             const result = ControllerResult.success('無人機即時狀態統計獲取成功', statistics);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status statistics retrieval completed successfully');
-
-        } catch (error) {
-            logger.error('Error in getDroneRealTimeStatusStatistics', { error });
+} catch (error) {
             next(error);
         }
     }

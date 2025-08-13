@@ -19,6 +19,7 @@ import type {
 } from '../../types/services/IDroneCommandQueueService.js';
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandQueueQueriesSvc');
 
@@ -41,6 +42,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得所有無人機指令佇列
      */
+    @LogService()
     async getAllDroneCommandQueues(): Promise<DroneCommandQueueAttributes[]> {
         try {
             logger.info('Getting all drone command queues');
@@ -91,7 +93,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info(`Successfully retrieved ${mockQueues.length} command queues`);
             return mockQueues;
         } catch (error) {
-            logger.error('Error in getAllDroneCommandQueues', { error });
             throw error;
         }
     }
@@ -99,6 +100,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據 ID 取得單筆無人機指令佇列
      */
+    @LogService()
     async getDroneCommandQueueById(id: number): Promise<DroneCommandQueueAttributes | null> {
         try {
             logger.info('Getting drone command queue by ID', { id });
@@ -136,7 +138,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info('Command queue not found', { id });
             return null;
         } catch (error) {
-            logger.error('Error in getDroneCommandQueueById', { id, error });
             throw error;
         }
     }
@@ -144,6 +145,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據無人機 ID 查詢指令佇列
      */
+    @LogService()
     async getDroneCommandQueueByDroneId(droneId: number): Promise<DroneCommandQueueAttributes[]> {
         try {
             logger.info('Getting command queues by drone ID', { droneId });
@@ -198,7 +200,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info(`Successfully retrieved ${mockQueues.length} command queues for drone ${droneId}`);
             return mockQueues;
         } catch (error) {
-            logger.error('Error in getDroneCommandQueueByDroneId', { droneId, error });
             throw error;
         }
     }
@@ -206,6 +207,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據狀態查詢指令佇列
      */
+    @LogService()
     async getDroneCommandQueuesByStatus(status: DroneCommandQueueStatus): Promise<DroneCommandQueueAttributes[]> {
         try {
             logger.info('Getting command queues by status', { status });
@@ -241,7 +243,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info(`Successfully retrieved ${mockQueues.length} command queues with status ${status}`);
             return mockQueues;
         } catch (error) {
-            logger.error('Error in getDroneCommandQueuesByStatus', { status, error });
             throw error;
         }
     }
@@ -249,6 +250,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 根據優先級查詢指令佇列
      */
+    @LogService()
     async getDroneCommandQueuesByPriority(priority: number): Promise<DroneCommandQueueAttributes[]> {
         try {
             logger.info('Getting command queues by priority', { priority });
@@ -284,7 +286,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info(`Successfully retrieved ${mockQueues.length} command queues with priority ${priority}`);
             return mockQueues;
         } catch (error) {
-            logger.error('Error in getDroneCommandQueuesByPriority', { priority, error });
             throw error;
         }
     }
@@ -292,6 +293,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得待執行的指令佇列
      */
+    @LogService()
     async getPendingDroneCommandQueues(): Promise<DroneCommandQueueAttributes[]> {
         try {
             logger.info('Getting pending command queues');
@@ -299,7 +301,6 @@ export class DroneCommandQueueQueriesSvc {
             // 使用現有的按狀態查詢方法
             return await this.getDroneCommandQueuesByStatus(DroneCommandQueueStatus.PENDING);
         } catch (error) {
-            logger.error('Error in getPendingDroneCommandQueues', { error });
             throw error;
         }
     }
@@ -307,6 +308,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得佇列統計
      */
+    @LogService()
     async getDroneCommandQueueStatistics(): Promise<QueueStatistics> {
         try {
             logger.info('Getting command queue statistics');
@@ -325,7 +327,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info('Command queue statistics retrieved successfully', { statistics });
             return statistics;
         } catch (error) {
-            logger.error('Error in getDroneCommandQueueStatistics', { error });
             throw error;
         }
     }
@@ -333,6 +334,7 @@ export class DroneCommandQueueQueriesSvc {
     /**
      * 取得下一個指令
      */
+    @LogService()
     async getNextDroneCommand(droneId: number): Promise<DroneCommandQueueAttributes | null> {
         try {
             logger.info('Getting next drone command', { droneId });
@@ -362,7 +364,6 @@ export class DroneCommandQueueQueriesSvc {
             logger.info('Next command found', { droneId, commandId: nextCommand.id });
             return nextCommand;
         } catch (error) {
-            logger.error('Error in getNextDroneCommand', { droneId, error });
             throw error;
         }
     }

@@ -24,6 +24,7 @@ import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/Drone
 import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/DronePositionsArchiveCommandsRepo.js';
 import type { DronePositionsArchiveAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DronePositionsArchiveQueriesSvc');
 
@@ -57,6 +58,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得所有位置歷史歸檔資料
      */
+    @LogService()
     async getAllPositionArchives(limit: number = 100): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting all position archives', { limit });
@@ -69,7 +71,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives`);
             return archives;
         } catch (error) {
-            logger.error('Error in getAllPositionArchives', { limit, error });
             throw error;
         }
     }
@@ -77,6 +78,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據 ID 取得單筆位置歷史歸檔資料
      */
+    @LogService()
     async getPositionArchiveById(id: number): Promise<DronePositionsArchiveAttributes | null> {
         try {
             logger.info('Getting position archive by ID', { id });
@@ -95,7 +97,6 @@ export class DronePositionsArchiveQueriesSvc {
 
             return archive;
         } catch (error) {
-            logger.error('Error in getPositionArchiveById', { id, error });
             throw error;
         }
     }
@@ -103,6 +104,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據原始 ID 取得歸檔資料
      */
+    @LogService()
     async getPositionArchiveByOriginalId(originalId: number): Promise<DronePositionsArchiveAttributes | null> {
         try {
             logger.info('Getting position archive by original ID', { originalId });
@@ -121,7 +123,6 @@ export class DronePositionsArchiveQueriesSvc {
 
             return archive;
         } catch (error) {
-            logger.error('Error in getPositionArchiveByOriginalId', { originalId, error });
             throw error;
         }
     }
@@ -129,6 +130,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據無人機 ID 查詢位置歷史歸檔
      */
+    @LogService()
     async getPositionArchivesByDroneId(droneId: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by drone ID', { droneId, limit });
@@ -144,7 +146,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives for drone ${droneId}`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByDroneId', { droneId, limit, error });
             throw error;
         }
     }
@@ -152,6 +153,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據時間範圍查詢位置歷史歸檔
      */
+    @LogService()
     async getPositionArchivesByTimeRange(startTime: Date, endTime: Date, limit: number = 500): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by time range', { startTime, endTime, limit });
@@ -167,7 +169,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives in time range`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByTimeRange', { startTime, endTime, limit, error });
             throw error;
         }
     }
@@ -175,6 +176,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據歸檔批次 ID 查詢資料
      */
+    @LogService()
     async getPositionArchivesByBatchId(batchId: string): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by batch ID', { batchId });
@@ -187,7 +189,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives for batch ${batchId}`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByBatchId', { batchId, error });
             throw error;
         }
     }
@@ -195,6 +196,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據歸檔時間範圍查詢資料
      */
+    @LogService()
     async getPositionArchivesByArchivedDateRange(startDate: Date, endDate: Date, limit: number = 200): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by archived date range', { startDate, endDate, limit });
@@ -210,7 +212,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives in archived date range`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByArchivedDateRange', { startDate, endDate, limit, error });
             throw error;
         }
     }
@@ -218,6 +219,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據地理邊界查詢位置歷史歸檔
      */
+    @LogService()
     async getPositionArchivesByGeoBounds(minLat: number, maxLat: number, minLng: number, maxLng: number, limit: number = 200): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by geo bounds', { minLat, maxLat, minLng, maxLng, limit });
@@ -236,7 +238,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives in geo bounds`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByGeoBounds', { minLat, maxLat, minLng, maxLng, limit, error });
             throw error;
         }
     }
@@ -244,6 +245,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據無人機和時間範圍查詢軌跡
      */
+    @LogService()
     async getTrajectoryByDroneAndTime(droneId: number, startTime: Date, endTime: Date, limit: number = 1000): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting trajectory by drone and time', { droneId, startTime, endTime, limit });
@@ -262,7 +264,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${trajectory.length} trajectory points for drone ${droneId}`);
             return trajectory;
         } catch (error) {
-            logger.error('Error in getTrajectoryByDroneAndTime', { droneId, startTime, endTime, limit, error });
             throw error;
         }
     }
@@ -270,6 +271,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據電池電量範圍查詢資料
      */
+    @LogService()
     async getPositionArchivesByBatteryRange(minBattery: number, maxBattery: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by battery range', { minBattery, maxBattery, limit });
@@ -285,7 +287,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives in battery range`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByBatteryRange', { minBattery, maxBattery, limit, error });
             throw error;
         }
     }
@@ -293,6 +294,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據飛行速度範圍查詢資料
      */
+    @LogService()
     async getPositionArchivesBySpeedRange(minSpeed: number, maxSpeed: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by speed range', { minSpeed, maxSpeed, limit });
@@ -308,7 +310,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} position archives in speed range`);
             return archives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesBySpeedRange', { minSpeed, maxSpeed, limit, error });
             throw error;
         }
     }
@@ -316,6 +317,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據高度範圍查詢資料
      */
+    @LogService()
     async getPositionArchivesByAltitudeRange(minAltitude: number, maxAltitude: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by altitude range', { minAltitude, maxAltitude, limit });
@@ -333,7 +335,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${limitedArchives.length} position archives in altitude range`);
             return limitedArchives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByAltitudeRange', { minAltitude, maxAltitude, limit, error });
             throw error;
         }
     }
@@ -341,6 +342,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據溫度範圍查詢資料
      */
+    @LogService()
     async getPositionArchivesByTemperatureRange(minTemp: number, maxTemp: number, limit: number = 100): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting position archives by temperature range', { minTemp, maxTemp, limit });
@@ -358,7 +360,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${limitedArchives.length} position archives in temperature range`);
             return limitedArchives;
         } catch (error) {
-            logger.error('Error in getPositionArchivesByTemperatureRange', { minTemp, maxTemp, limit, error });
             throw error;
         }
     }
@@ -366,6 +367,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得最新的歷史歸檔記錄
      */
+    @LogService()
     async getLatestPositionArchives(limit: number = 50): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Getting latest position archives', { limit });
@@ -378,7 +380,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Successfully retrieved ${archives.length} latest position archives`);
             return archives;
         } catch (error) {
-            logger.error('Error in getLatestPositionArchives', { limit, error });
             throw error;
         }
     }
@@ -386,6 +387,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得特定無人機的最新歷史歸檔記錄
      */
+    @LogService()
     async getLatestPositionArchiveByDroneId(droneId: number): Promise<DronePositionsArchiveAttributes | null> {
         try {
             logger.info('Getting latest position archive by drone ID', { droneId });
@@ -404,7 +406,6 @@ export class DronePositionsArchiveQueriesSvc {
 
             return archive;
         } catch (error) {
-            logger.error('Error in getLatestPositionArchiveByDroneId', { droneId, error });
             throw error;
         }
     }
@@ -412,6 +413,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 統計總記錄數
      */
+    @LogService()
     async getTotalArchiveCount(): Promise<number> {
         try {
             logger.info('Getting total archive count');
@@ -419,7 +421,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Total position archive records: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Error in getTotalArchiveCount', { error });
             throw error;
         }
     }
@@ -427,6 +428,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據無人機 ID 統計記錄數
      */
+    @LogService()
     async getArchiveCountByDroneId(droneId: number): Promise<number> {
         try {
             logger.info('Getting archive count by drone ID', { droneId });
@@ -439,7 +441,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Position archive records for drone ${droneId}: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Error in getArchiveCountByDroneId', { droneId, error });
             throw error;
         }
     }
@@ -447,6 +448,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據時間範圍統計記錄數
      */
+    @LogService()
     async getArchiveCountByTimeRange(startTime: Date, endTime: Date): Promise<number> {
         try {
             logger.info('Getting archive count by time range', { startTime, endTime });
@@ -459,7 +461,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Position archive records in time range: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Error in getArchiveCountByTimeRange', { startTime, endTime, error });
             throw error;
         }
     }
@@ -467,6 +468,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 根據歸檔批次統計記錄數
      */
+    @LogService()
     async getArchiveCountByBatchId(batchId: string): Promise<number> {
         try {
             logger.info('Getting archive count by batch ID', { batchId });
@@ -479,7 +481,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info(`Position archive records for batch ${batchId}: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Error in getArchiveCountByBatchId', { batchId, error });
             throw error;
         }
     }
@@ -487,6 +488,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 計算軌跡統計資料
      */
+    @LogService()
     async calculateTrajectoryStatistics(droneId: number, startTime: Date, endTime: Date): Promise<TrajectoryStatistics> {
         try {
             logger.info('Calculating trajectory statistics', { droneId, startTime, endTime });
@@ -546,7 +548,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Trajectory statistics calculated successfully', { droneId, statistics });
             return statistics;
         } catch (error) {
-            logger.error('Error in calculateTrajectoryStatistics', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -554,6 +555,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 計算電池使用統計資料
      */
+    @LogService()
     async calculateBatteryUsageStatistics(droneId: number, startTime: Date, endTime: Date): Promise<BatteryUsageStatistics> {
         try {
             logger.info('Calculating battery usage statistics', { droneId, startTime, endTime });
@@ -595,7 +597,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Battery usage statistics calculated successfully', { droneId, statistics });
             return statistics;
         } catch (error) {
-            logger.error('Error in calculateBatteryUsageStatistics', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -603,6 +604,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 計算位置分佈統計資料
      */
+    @LogService()
     async calculatePositionDistributionStatistics(droneId: number, startTime: Date, endTime: Date): Promise<PositionDistributionStatistics> {
         try {
             logger.info('Calculating position distribution statistics', { droneId, startTime, endTime });
@@ -658,7 +660,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Position distribution statistics calculated successfully', { droneId, statistics });
             return statistics;
         } catch (error) {
-            logger.error('Error in calculatePositionDistributionStatistics', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -666,6 +667,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 取得歸檔批次統計資料
      */
+    @LogService()
     async getArchiveBatchStatistics(batchId: string): Promise<ArchiveBatchStatistics> {
         try {
             logger.info('Getting archive batch statistics', { batchId });
@@ -693,7 +695,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Archive batch statistics calculated successfully', { batchId, statistics });
             return statistics;
         } catch (error) {
-            logger.error('Error in getArchiveBatchStatistics', { batchId, error });
             throw error;
         }
     }
@@ -701,6 +702,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 分析飛行模式
      */
+    @LogService()
     async analyzeFlightPatterns(droneId: number, startTime: Date, endTime: Date): Promise<string[]> {
         try {
             logger.info('Analyzing flight patterns', { droneId, startTime, endTime });
@@ -736,7 +738,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Flight patterns analyzed successfully', { droneId, patterns });
             return patterns;
         } catch (error) {
-            logger.error('Error in analyzeFlightPatterns', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -744,6 +745,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 檢測異常位置資料
      */
+    @LogService()
     async detectAnomalousPositions(droneId: number, startTime: Date, endTime: Date): Promise<DronePositionsArchiveAttributes[]> {
         try {
             logger.info('Detecting anomalous positions', { droneId, startTime, endTime });
@@ -806,7 +808,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Anomalous positions detected', { droneId, anomalousCount: anomalous.length });
             return anomalous;
         } catch (error) {
-            logger.error('Error in detectAnomalousPositions', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -814,6 +815,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 產生軌跡摘要報告
      */
+    @LogService()
     async generateTrajectorySummaryReport(droneId: number, startTime: Date, endTime: Date): Promise<object> {
         try {
             logger.info('Generating trajectory summary report', { droneId, startTime, endTime });
@@ -852,7 +854,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.info('Trajectory summary report generated successfully', { droneId, reportSize: JSON.stringify(report).length });
             return report;
         } catch (error) {
-            logger.error('Error in generateTrajectorySummaryReport', { droneId, startTime, endTime, error });
             throw error;
         }
     }
@@ -860,6 +861,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 驗證位置座標有效性
      */
+    @LogService()
     async validateCoordinates(latitude: number, longitude: number): Promise<boolean> {
         try {
             if (latitude < -90 || latitude > 90) {
@@ -880,7 +882,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.debug('Coordinates validated successfully', { latitude, longitude });
             return true;
         } catch (error) {
-            logger.error('Error in validateCoordinates', { latitude, longitude, error });
             return false;
         }
     }
@@ -888,6 +889,7 @@ export class DronePositionsArchiveQueriesSvc {
     /**
      * 驗證時間範圍有效性
      */
+    @LogService()
     async validateTimeRange(startTime: Date, endTime: Date): Promise<boolean> {
         try {
             if (!(startTime instanceof Date) || !(endTime instanceof Date)) {
@@ -914,7 +916,6 @@ export class DronePositionsArchiveQueriesSvc {
             logger.debug('Time range validated successfully', { startTime, endTime });
             return true;
         } catch (error) {
-            logger.error('Error in validateTimeRange', { startTime, endTime, error });
             return false;
         }
     }

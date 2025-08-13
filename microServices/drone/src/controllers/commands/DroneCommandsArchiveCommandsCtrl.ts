@@ -18,6 +18,7 @@ import { DroneCommandsArchiveCommandsSvc } from '../../services/commands/DroneCo
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 import type { DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
 
 const logger = createLogger('DroneCommandsArchiveCommands');
@@ -41,6 +42,7 @@ export class DroneCommandsArchiveCommands {
      * 創建指令歷史歸檔記錄
      * @route POST /api/drone-commands-archive/data
      */
+    @LogController()
     async createCommandArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const archiveData: DroneCommandsArchiveCreationAttributes = req.body;
@@ -57,27 +59,11 @@ export class DroneCommandsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Creating command archive for drone ID: ${archiveData.drone_id}`);
-            logger.info('Command archive creation request received', {
-                drone_id: archiveData.drone_id,
-                command_type: archiveData.command_type
-            });
-
-            const createdArchive = await this.commandService.createCommandArchive(archiveData);
+const createdArchive = await this.commandService.createCommandArchive(archiveData);
             const result = ControllerResult.created('指令歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
-            logger.info('Command archive creation completed successfully', {
-                id: createdArchive.id,
-                drone_id: archiveData.drone_id
-            });
-
-        } catch (error) {
-            logger.error('Error in createCommandArchive', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -86,6 +72,7 @@ export class DroneCommandsArchiveCommands {
      * 更新指令歷史歸檔資料
      * @route PUT /api/drone-commands-archive/data/:id
      */
+    @LogController()
     async updateCommandArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -102,11 +89,7 @@ export class DroneCommandsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Updating command archive with ID: ${id}`);
-            logger.info('Command archive update request received', { id, updateData });
-
-            const updatedArchive = await this.commandService.updateCommandArchive(id, updateData);
+const updatedArchive = await this.commandService.updateCommandArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ControllerResult.notFound('找不到指定的指令歷史歸檔記錄');
@@ -116,15 +99,7 @@ export class DroneCommandsArchiveCommands {
 
             const result = ControllerResult.success('指令歷史歸檔資料更新成功', updatedArchive);
             res.status(result.status).json(result);
-
-            logger.info('Command archive update completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in updateCommandArchive', {
-                id: req.params.id,
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -133,6 +108,7 @@ export class DroneCommandsArchiveCommands {
      * 刪除指令歷史歸檔資料
      * @route DELETE /api/drone-commands-archive/data/:id
      */
+    @LogController()
     async deleteCommandArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -142,11 +118,7 @@ export class DroneCommandsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting command archive with ID: ${id}`);
-            logger.info('Command archive deletion request received', { id });
-
-            const isDeleted = await this.commandService.deleteCommandArchive(id);
+const isDeleted = await this.commandService.deleteCommandArchive(id);
 
             if (!isDeleted) {
                 const result = ControllerResult.notFound('找不到指定的指令歷史歸檔記錄');
@@ -156,14 +128,7 @@ export class DroneCommandsArchiveCommands {
 
             const result = ControllerResult.success('指令歷史歸檔資料刪除成功');
             res.status(result.status).json(result);
-
-            logger.info('Command archive deletion completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in deleteCommandArchive', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }

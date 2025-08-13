@@ -22,6 +22,7 @@ import { ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 歸檔任務命令 Controller 類別
@@ -60,7 +61,7 @@ export class ArchiveTaskCommands {
      */
     async createTask(req: Request, res: Response): Promise<void> {
         try {
-            this.logger.info('創建歸檔任務請求', { body: req.body });
+            this.this.logger.info('創建歸檔任務請求', { body: req.body });
 
             const request: CreateArchiveTaskRequest = req.body;
             
@@ -82,7 +83,7 @@ export class ArchiveTaskCommands {
 
             const task = await this.commandService.createTask(request);
             
-            this.logger.info('歸檔任務創建成功', { 
+            this.this.logger.info('歸檔任務創建成功', { 
                 taskId: task.id,
                 batchId: task.batch_id,
                 jobType: task.job_type 
@@ -91,7 +92,7 @@ export class ArchiveTaskCommands {
             const result = ControllerResult.created('歸檔任務創建成功', task);
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('創建歸檔任務失敗', { 
+            this.this.logger.error('創建歸檔任務失敗', { 
                 body: req.body,
                 error: (error as Error).message,
                 stack: (error as Error).stack 
@@ -113,7 +114,7 @@ export class ArchiveTaskCommands {
      */
     async createBatchTasks(req: Request, res: Response): Promise<void> {
         try {
-            this.logger.info('批次創建歸檔任務請求', { count: req.body?.length });
+            this.this.logger.info('批次創建歸檔任務請求', { count: req.body?.length });
 
             const requests: CreateArchiveTaskRequest[] = req.body;
             
@@ -135,7 +136,7 @@ export class ArchiveTaskCommands {
 
             const result = await this.commandService.createBatchTasks(requests);
             
-            this.logger.info('批次創建歸檔任務完成', { 
+            this.this.logger.info('批次創建歸檔任務完成', { 
                 total: requests.length,
                 success: result.successCount,
                 failure: result.failureCount 
@@ -146,7 +147,7 @@ export class ArchiveTaskCommands {
                 ControllerResult.success(`批次創建完成: 成功 ${result.successCount} 個，失敗 ${result.failureCount} 個`, result);
             res.status(result.failureCount === 0 ? 201 : 207).json(finalResult);
         } catch (error) {
-            this.logger.error('批次創建歸檔任務失敗', { 
+            this.this.logger.error('批次創建歸檔任務失敗', { 
                 count: req.body?.length,
                 error: (error as Error).message,
                 stack: (error as Error).stack 
@@ -176,11 +177,11 @@ export class ArchiveTaskCommands {
                 return;
             }
 
-            this.logger.info('執行歸檔任務請求', { taskId });
+            this.this.logger.info('執行歸檔任務請求', { taskId });
 
             const result = await this.commandService.executeTask(taskId);
             
-            this.logger.info('歸檔任務執行完成', { 
+            this.this.logger.info('歸檔任務執行完成', { 
                 taskId,
                 status: result.status,
                 archivedRecords: result.archivedRecords 
@@ -192,7 +193,7 @@ export class ArchiveTaskCommands {
 
             res.status(controllerResult.status).json(controllerResult);
         } catch (error) {
-            this.logger.error('執行歸檔任務失敗', { 
+            this.this.logger.error('執行歸檔任務失敗', { 
                 taskId: req.params.id,
                 error: (error as Error).message,
                 stack: (error as Error).stack 
@@ -230,16 +231,16 @@ export class ArchiveTaskCommands {
                 return;
             }
 
-            this.logger.info('取消歸檔任務請求', { taskId, reason });
+            this.this.logger.info('取消歸檔任務請求', { taskId, reason });
 
             const task = await this.commandService.cancelTask(taskId, reason);
             
-            this.logger.info('歸檔任務取消成功', { taskId, reason });
+            this.this.logger.info('歸檔任務取消成功', { taskId, reason });
 
             const result = ControllerResult.success('歸檔任務取消成功', task);
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('取消歸檔任務失敗', { 
+            this.this.logger.error('取消歸檔任務失敗', { 
                 taskId: req.params.id,
                 reason: req.body?.reason,
                 error: (error as Error).message,
@@ -270,11 +271,11 @@ export class ArchiveTaskCommands {
                 return;
             }
 
-            this.logger.info('重試歸檔任務請求', { taskId });
+            this.this.logger.info('重試歸檔任務請求', { taskId });
 
             const result = await this.commandService.retryTask(taskId);
             
-            this.logger.info('歸檔任務重試完成', { 
+            this.this.logger.info('歸檔任務重試完成', { 
                 taskId,
                 status: result.status 
             });
@@ -285,7 +286,7 @@ export class ArchiveTaskCommands {
 
             res.status(controllerResult.status).json(controllerResult);
         } catch (error) {
-            this.logger.error('重試歸檔任務失敗', { 
+            this.this.logger.error('重試歸檔任務失敗', { 
                 taskId: req.params.id,
                 error: (error as Error).message,
                 stack: (error as Error).stack 
@@ -328,11 +329,11 @@ export class ArchiveTaskCommands {
                 statusFilter = status as ArchiveTaskStatus;
             }
 
-            this.logger.info('清理舊歸檔任務記錄請求', { daysOld: daysOldNum, status: statusFilter });
+            this.this.logger.info('清理舊歸檔任務記錄請求', { daysOld: daysOldNum, status: statusFilter });
 
             const cleanedCount = await this.commandService.cleanupOldTasks(daysOldNum, statusFilter);
             
-            this.logger.info('舊歸檔任務記錄清理完成', { 
+            this.this.logger.info('舊歸檔任務記錄清理完成', { 
                 daysOld: daysOldNum,
                 status: statusFilter,
                 cleanedCount 
@@ -341,7 +342,7 @@ export class ArchiveTaskCommands {
             const result = ControllerResult.success(`成功清理 ${cleanedCount} 筆舊記錄`, { cleanedCount });
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('清理舊歸檔任務記錄失敗', { 
+            this.this.logger.error('清理舊歸檔任務記錄失敗', { 
                 query: req.query,
                 error: (error as Error).message,
                 stack: (error as Error).stack 

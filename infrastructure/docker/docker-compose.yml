@@ -43,10 +43,10 @@ x-common-env: &common-env
   DRONE_SERVICE_PORT: 50052
   DRONE_SERVICE_URL: aiot-drone-service:50052
   
-  # FeSetting 服務
-  FESETTING_SERVICE_HOST: aiot-fesetting-service
-  FESETTING_SERVICE_PORT: 50053
-  FESETTING_SERVICE_URL: aiot-fesetting-service:50053
+  # General 服務
+  GENERAL_SERVICE_HOST: aiot-general-service
+  GENERAL_SERVICE_PORT: 50053
+  GENERAL_SERVICE_URL: aiot-general-service:50053
   
   # Drone Realtime 服務
   DRONE_REALTIME_SERVICE_HOST: aiot-drone-realtime-service
@@ -377,24 +377,24 @@ services:
       timeout: 10s
       retries: 3
 
-  # User Preference 微服務
-  fesetting-service:
+  # General 微服務
+  general-service:
     build:
-      context: ../../microServices/feSetting
+      context: ../../microServices/general
       dockerfile: Dockerfile
     logging: *default-logging
-    container_name: aiot-fesetting-service
+    container_name: aiot-general-service
     ports:
       - "3003:3003"   # HTTP API
       - "50053:50053" # gRPC
     environment:
       <<: *common-env
-      SERVICE_NAME: fesetting-service
+      SERVICE_NAME: general-service
       SERVICE_PORT: 3003
       GRPC_PORT: 50053
-      DB_NAME: user_preference_db
+      DB_NAME: general_db
     volumes:
-      - ../../microServices/feSetting:/app
+      - ../../microServices/general:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -409,7 +409,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -25,6 +25,7 @@ import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneComma
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandQueriesSvc } from '../queries/DroneCommandQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandCommandsSvc');
 
@@ -62,6 +63,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 建立新的無人機指令記錄
      */
+    @LogService()
     async createCommand(data: DroneCommandCreationAttributes): Promise<CommandExecutionResult> {
         try {
             logger.info('Creating command', { data });
@@ -112,7 +114,6 @@ export class DroneCommandCommandsSvc {
                 message: '指令創建成功'
             };
         } catch (error) {
-            logger.error('Error in createCommand', { data, error });
             return {
                 success: false,
                 command: null,
@@ -125,6 +126,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 批量建立無人機指令記錄
      */
+    @LogService()
     async createBatchCommands(dataArray: DroneCommandCreationAttributes[]): Promise<BatchCommandResult> {
         try {
             logger.info('Creating batch commands', { count: dataArray.length });
@@ -175,7 +177,6 @@ export class DroneCommandCommandsSvc {
 
             return result;
         } catch (error) {
-            logger.error('Error in createBatchCommands', { count: dataArray?.length, error });
             throw error;
         }
     }
@@ -183,6 +184,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 更新無人機指令資料
      */
+    @LogService()
     async updateCommand(id: number, data: Partial<DroneCommandCreationAttributes>): Promise<DroneCommandAttributes | null> {
         try {
             logger.info('Updating command', { id, data });
@@ -210,7 +212,6 @@ export class DroneCommandCommandsSvc {
 
             return updatedCommand;
         } catch (error) {
-            logger.error('Error in updateCommand', { id, data, error });
             throw error;
         }
     }
@@ -218,6 +219,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 刪除無人機指令資料
      */
+    @LogService()
     async deleteCommand(id: number): Promise<boolean> {
         try {
             logger.info('Deleting command', { id });
@@ -241,7 +243,6 @@ export class DroneCommandCommandsSvc {
 
             return true;
         } catch (error) {
-            logger.error('Error in deleteCommand', { id, error });
             throw error;
         }
     }
@@ -249,6 +250,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 執行指令（標記為執行中）
      */
+    @LogService()
     async executeCommand(commandId: number): Promise<CommandExecutionResult> {
         try {
             logger.info('Executing command', { commandId });
@@ -270,7 +272,6 @@ export class DroneCommandCommandsSvc {
                 };
             }
         } catch (error) {
-            logger.error('Error in executeCommand', { commandId, error });
             return {
                 success: false,
                 command: null,
@@ -283,6 +284,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 完成指令
      */
+    @LogService()
     async completeCommand(commandId: number): Promise<CommandExecutionResult> {
         try {
             logger.info('Completing command', { commandId });
@@ -304,7 +306,6 @@ export class DroneCommandCommandsSvc {
                 };
             }
         } catch (error) {
-            logger.error('Error in completeCommand', { commandId, error });
             return {
                 success: false,
                 command: null,
@@ -317,6 +318,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 標記指令失敗
      */
+    @LogService()
     async failCommand(commandId: number, errorMessage: string): Promise<CommandExecutionResult> {
         try {
             logger.info('Marking command as failed', { commandId, errorMessage });
@@ -338,7 +340,6 @@ export class DroneCommandCommandsSvc {
                 };
             }
         } catch (error) {
-            logger.error('Error in failCommand', { commandId, errorMessage, error });
             return {
                 success: false,
                 command: null,
@@ -351,6 +352,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 取消待執行指令
      */
+    @LogService()
     async cancelCommand(commandId: number, reason: string): Promise<CommandExecutionResult> {
         try {
             logger.info('Cancelling command', { commandId, reason });
@@ -372,7 +374,6 @@ export class DroneCommandCommandsSvc {
                 };
             }
         } catch (error) {
-            logger.error('Error in cancelCommand', { commandId, reason, error });
             return {
                 success: false,
                 command: null,
@@ -385,6 +386,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送起飛指令
      */
+    @LogService()
     async sendTakeoffCommand(droneId: number, issuedBy: number, commandData: { altitude: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending takeoff command', { droneId, issuedBy, commandData });
@@ -412,7 +414,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendTakeoffCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -425,6 +426,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送降落指令
      */
+    @LogService()
     async sendLandCommand(droneId: number, issuedBy: number, commandData?: { speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending land command', { droneId, issuedBy, commandData });
@@ -443,7 +445,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendLandCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -456,6 +457,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送飛行到指定位置指令
      */
+    @LogService()
     async sendFlyToCommand(droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending flyTo command', { droneId, issuedBy, commandData });
@@ -492,7 +494,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendFlyToCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -505,6 +506,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送移動指令（别名：飛行到指定位置）
      */
+    @LogService()
     async sendMoveCommand(droneId: number, issuedBy: number, commandData: { latitude: number; longitude: number; altitude: number; speed?: number }): Promise<CommandExecutionResult> {
         return await this.sendFlyToCommand(droneId, issuedBy, commandData);
     }
@@ -512,6 +514,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送懸停指令
      */
+    @LogService()
     async sendHoverCommand(droneId: number, issuedBy: number, commandData?: { duration?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending hover command', { droneId, issuedBy, commandData });
@@ -530,7 +533,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendHoverCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -543,6 +545,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送返航指令
      */
+    @LogService()
     async sendReturnCommand(droneId: number, issuedBy: number, commandData?: { speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending return command', { droneId, issuedBy, commandData });
@@ -561,7 +564,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendReturnCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -574,6 +576,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送緊急停止指令
      */
+    @LogService()
     async sendEmergencyCommand(droneId: number, issuedBy: number, commandData?: { action?: 'stop' | 'land' }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending emergency command', { droneId, issuedBy, commandData });
@@ -592,7 +595,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendEmergencyCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -605,6 +607,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 處理超時指令
      */
+    @LogService()
     async handleTimeoutCommands(timeoutMinutes: number): Promise<number> {
         try {
             logger.info('Handling timeout commands', { timeoutMinutes });
@@ -617,14 +620,12 @@ export class DroneCommandCommandsSvc {
                     await this.commandRepository.markAsFailed(command.id, '指令執行超時');
                     handledCount++;
                 } catch (error) {
-                    logger.error('Error handling timeout command', { commandId: command.id, error });
-                }
+                    }
             }
 
             logger.info('Timeout commands handled', { timeoutMinutes, handledCount });
             return handledCount;
         } catch (error) {
-            logger.error('Error in handleTimeoutCommands', { timeoutMinutes, error });
             throw error;
         }
     }
@@ -632,6 +633,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 清理舊指令記錄
      */
+    @LogService()
     async cleanupOldCommands(beforeDate: Date, onlyCompleted: boolean = true): Promise<number> {
         try {
             logger.info('Cleaning up old commands', { beforeDate, onlyCompleted });
@@ -646,7 +648,6 @@ export class DroneCommandCommandsSvc {
             logger.info('Old commands cleaned up', { beforeDate, onlyCompleted, deletedCount });
             return deletedCount;
         } catch (error) {
-            logger.error('Error in cleanupOldCommands', { beforeDate, onlyCompleted, error });
             throw error;
         }
     }
@@ -654,6 +655,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 批量更新指令狀態
      */
+    @LogService()
     async batchUpdateCommandStatus(commandIds: number[], status: DroneCommandStatus, errorMessage?: string): Promise<number> {
         try {
             logger.info('Batch updating command status', { commandIds, status, errorMessage });
@@ -666,14 +668,12 @@ export class DroneCommandCommandsSvc {
                         updatedCount++;
                     }
                 } catch (error) {
-                    logger.error('Error updating command status', { commandId, error });
-                }
+                    }
             }
 
             logger.info('Batch command status update completed', { updatedCount, total: commandIds.length });
             return updatedCount;
         } catch (error) {
-            logger.error('Error in batchUpdateCommandStatus', { commandIds, status, errorMessage, error });
             throw error;
         }
     }
@@ -681,6 +681,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送前進指令
      */
+    @LogService()
     async sendMoveForwardCommand(droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending move forward command', { droneId, issuedBy, commandData });
@@ -708,7 +709,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendMoveForwardCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -721,6 +721,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送後退指令
      */
+    @LogService()
     async sendMoveBackwardCommand(droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending move backward command', { droneId, issuedBy, commandData });
@@ -748,7 +749,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendMoveBackwardCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -761,6 +761,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送左移指令
      */
+    @LogService()
     async sendMoveLeftCommand(droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending move left command', { droneId, issuedBy, commandData });
@@ -788,7 +789,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendMoveLeftCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -801,6 +801,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送右移指令
      */
+    @LogService()
     async sendMoveRightCommand(droneId: number, issuedBy: number, commandData: { distance: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending move right command', { droneId, issuedBy, commandData });
@@ -828,7 +829,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendMoveRightCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -841,6 +841,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送左轉指令
      */
+    @LogService()
     async sendRotateLeftCommand(droneId: number, issuedBy: number, commandData: { degrees: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending rotate left command', { droneId, issuedBy, commandData });
@@ -868,7 +869,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendRotateLeftCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -881,6 +881,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 發送右轉指令
      */
+    @LogService()
     async sendRotateRightCommand(droneId: number, issuedBy: number, commandData: { degrees: number; speed?: number }): Promise<CommandExecutionResult> {
         try {
             logger.info('Sending rotate right command', { droneId, issuedBy, commandData });
@@ -908,7 +909,6 @@ export class DroneCommandCommandsSvc {
 
             return await this.createCommand(data);
         } catch (error) {
-            logger.error('Error in sendRotateRightCommand', { droneId, issuedBy, commandData, error });
             return {
                 success: false,
                 command: null,
@@ -921,6 +921,7 @@ export class DroneCommandCommandsSvc {
     /**
      * 重試失敗的指令
      */
+    @LogService()
     async retryFailedCommand(commandId: number, issuedBy: number): Promise<CommandExecutionResult> {
         try {
             logger.info('Retrying failed command', { commandId, issuedBy });
@@ -964,7 +965,6 @@ export class DroneCommandCommandsSvc {
 
             return result;
         } catch (error) {
-            logger.error('Error in retryFailedCommand', { commandId, issuedBy, error });
             return {
                 success: false,
                 command: null,

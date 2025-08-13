@@ -20,6 +20,7 @@ import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import { DroneStatusQueriesSvc } from '../queries/DroneStatusQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusCommandsSvc');
 
@@ -47,6 +48,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 建立新的無人機狀態資料
      */
+    @LogService()
     async createDroneStatus(data: DroneStatusCreationAttributes): Promise<DroneStatusAttributes> {
         try {
             // 驗證必要欄位
@@ -57,14 +59,9 @@ export class DroneStatusCommandsSvc {
             if (isDuplicate) {
                 throw new Error('無人機序號已存在');
             }
-
-            logger.info('Creating new drone status data', { data });
-            const droneStatus = await this.droneStatusRepository.create(data);
-
-            logger.info('Successfully created drone status data', { id: droneStatus.id });
-            return droneStatus;
+const droneStatus = await this.droneStatusRepository.create(data);
+return droneStatus;
         } catch (error) {
-            logger.error('Failed to create drone status data', { data, error });
             throw error;
         }
     }
@@ -72,6 +69,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 更新無人機狀態資料
      */
+    @LogService()
     async updateDroneStatus(id: number, data: Partial<DroneStatusCreationAttributes>): Promise<DroneStatusAttributes> {
         try {
             // 驗證 ID
@@ -95,18 +93,13 @@ export class DroneStatusCommandsSvc {
 
             // 驗證數值範圍
             this.validateNumericFields(data);
-
-            logger.info('Updating drone status data', { id, data });
-            const updatedDroneStatus = await this.droneStatusRepository.update(id, data);
+const updatedDroneStatus = await this.droneStatusRepository.update(id, data);
 
             if (!updatedDroneStatus) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機狀態資料`);
             }
-
-            logger.info('Successfully updated drone status data', { id });
-            return updatedDroneStatus;
+return updatedDroneStatus;
         } catch (error) {
-            logger.error('Failed to update drone status data', { id, data, error });
             throw error;
         }
     }
@@ -114,6 +107,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 刪除無人機狀態資料
      */
+    @LogService()
     async deleteDroneStatus(id: number): Promise<void> {
         try {
             // 驗證 ID
@@ -126,13 +120,8 @@ export class DroneStatusCommandsSvc {
             if (!existingDrone) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機狀態資料`);
             }
-
-            logger.info('Deleting drone status data', { id });
-            await this.droneStatusRepository.delete(id);
-
-            logger.info('Successfully deleted drone status data', { id });
-        } catch (error) {
-            logger.error('Failed to delete drone status data', { id, error });
+await this.droneStatusRepository.delete(id);
+} catch (error) {
             throw error;
         }
     }
@@ -140,6 +129,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 更新無人機狀態
      */
+    @LogService()
     async updateDroneStatusOnly(id: number, status: DroneStatus): Promise<DroneStatusAttributes> {
         try {
             // 驗證 ID
@@ -157,18 +147,13 @@ export class DroneStatusCommandsSvc {
             if (!existingDrone) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機`);
             }
-
-            logger.info('Updating drone status only', { id, status });
-            const updatedDroneStatus = await this.droneStatusRepository.updateStatus(id, status);
+const updatedDroneStatus = await this.droneStatusRepository.updateStatus(id, status);
 
             if (!updatedDroneStatus) {
                 throw new Error(`更新 ID 為 ${id} 的無人機狀態失敗`);
             }
-
-            logger.info('Successfully updated drone status', { id, status });
-            return updatedDroneStatus;
+return updatedDroneStatus;
         } catch (error) {
-            logger.error('Failed to update drone status', { id, status, error });
             throw error;
         }
     }
@@ -176,6 +161,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 批量更新無人機狀態
      */
+    @LogService()
     async bulkUpdateDroneStatus(ids: number[], status: DroneStatus): Promise<number> {
         try {
             if (!ids || ids.length === 0) {
@@ -185,10 +171,7 @@ export class DroneStatusCommandsSvc {
             if (!Object.values(DroneStatus).includes(status)) {
                 throw new Error('無效的無人機狀態');
             }
-
-            logger.info('Bulk updating drone status', { ids, status });
-
-            let successCount = 0;
+let successCount = 0;
             const errors: string[] = [];
 
             for (const id of ids) {
@@ -198,19 +181,13 @@ export class DroneStatusCommandsSvc {
                 } catch (error) {
                     const errorMessage = `Failed to update drone ${id}: ${error instanceof Error ? error.message : '未知錯誤'}`;
                     errors.push(errorMessage);
-                    logger.warn(errorMessage);
-                }
+}
             }
-
-            logger.info('Bulk update completed', { total: ids.length, success: successCount, errors: errors.length });
-
-            if (errors.length > 0) {
-                logger.warn('Some updates failed', { errors });
-            }
+if (errors.length > 0) {
+}
 
             return successCount;
         } catch (error) {
-            logger.error('Failed to bulk update drone status', { ids, status, error });
             throw error;
         }
     }
@@ -218,15 +195,13 @@ export class DroneStatusCommandsSvc {
     /**
      * 批量刪除無人機狀態資料
      */
+    @LogService()
     async bulkDeleteDroneStatus(ids: number[]): Promise<number> {
         try {
             if (!ids || ids.length === 0) {
                 throw new Error('無人機 ID 陣列不能為空');
             }
-
-            logger.info('Bulk deleting drone status data', { ids });
-
-            let successCount = 0;
+let successCount = 0;
             const errors: string[] = [];
 
             for (const id of ids) {
@@ -236,19 +211,13 @@ export class DroneStatusCommandsSvc {
                 } catch (error) {
                     const errorMessage = `Failed to delete drone ${id}: ${error instanceof Error ? error.message : '未知錯誤'}`;
                     errors.push(errorMessage);
-                    logger.warn(errorMessage);
-                }
+}
             }
-
-            logger.info('Bulk delete completed', { total: ids.length, success: successCount, errors: errors.length });
-
-            if (errors.length > 0) {
-                logger.warn('Some deletions failed', { errors });
-            }
+if (errors.length > 0) {
+}
 
             return successCount;
         } catch (error) {
-            logger.error('Failed to bulk delete drone status data', { ids, error });
             throw error;
         }
     }
@@ -256,11 +225,10 @@ export class DroneStatusCommandsSvc {
     /**
      * 重置無人機為非活躍狀態
      */
+    @LogService()
     async resetInactiveDrones(): Promise<number> {
         try {
-            logger.info('Resetting inactive drones');
-
-            const activeDrones = await this.queryService.getDronesByStatus(DroneStatus.ACTIVE);
+const activeDrones = await this.queryService.getDronesByStatus(DroneStatus.ACTIVE);
             const flyingDrones = await this.queryService.getDronesByStatus(DroneStatus.FLYING);
             
             const activeIds = activeDrones.map(drone => drone.id);
@@ -268,16 +236,12 @@ export class DroneStatusCommandsSvc {
             const allActiveIds = [...activeIds, ...flyingIds];
 
             if (allActiveIds.length === 0) {
-                logger.info('No active or flying drones to reset');
-                return 0;
+return 0;
             }
 
             const resetCount = await this.bulkUpdateDroneStatus(allActiveIds, DroneStatus.INACTIVE);
-
-            logger.info('Inactive drones reset completed', { resetCount });
-            return resetCount;
+return resetCount;
         } catch (error) {
-            logger.error('Failed to reset inactive drones', { error });
             throw error;
         }
     }
@@ -285,24 +249,19 @@ export class DroneStatusCommandsSvc {
     /**
      * 將維護中的無人機設為活躍
      */
+    @LogService()
     async activateMaintenanceDrones(): Promise<number> {
         try {
-            logger.info('Activating maintenance drones');
-
-            const maintenanceDrones = await this.queryService.getDronesByStatus(DroneStatus.MAINTENANCE);
+const maintenanceDrones = await this.queryService.getDronesByStatus(DroneStatus.MAINTENANCE);
             const maintenanceIds = maintenanceDrones.map(drone => drone.id);
 
             if (maintenanceIds.length === 0) {
-                logger.info('No maintenance drones to activate');
-                return 0;
+return 0;
             }
 
             const activatedCount = await this.bulkUpdateDroneStatus(maintenanceIds, DroneStatus.ACTIVE);
-
-            logger.info('Maintenance drones activation completed', { activatedCount });
-            return activatedCount;
+return activatedCount;
         } catch (error) {
-            logger.error('Failed to activate maintenance drones', { error });
             throw error;
         }
     }
@@ -310,6 +269,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 更新無人機擁有者
      */
+    @LogService()
     async updateDroneOwner(id: number, newOwnerUserId: number): Promise<DroneStatusAttributes> {
         try {
             if (!id || id <= 0) {
@@ -319,18 +279,12 @@ export class DroneStatusCommandsSvc {
             if (!newOwnerUserId || newOwnerUserId <= 0) {
                 throw new Error('無效的新擁有者用戶 ID');
             }
-
-            logger.info('Updating drone owner', { id, newOwnerUserId });
-
-            const updatedDrone = await this.updateDroneStatus(id, {
+const updatedDrone = await this.updateDroneStatus(id, {
                 owner_user_id: newOwnerUserId,
                 updatedAt: new Date()
             });
-
-            logger.info('Successfully updated drone owner', { id, newOwnerUserId });
-            return updatedDrone;
+return updatedDrone;
         } catch (error) {
-            logger.error('Failed to update drone owner', { id, newOwnerUserId, error });
             throw error;
         }
     }
@@ -338,6 +292,7 @@ export class DroneStatusCommandsSvc {
     /**
      * 驗證無人機狀態資料
      */
+    @LogService()
     private async validateDroneStatusData(data: DroneStatusCreationAttributes): Promise<void> {
         // 驗證必要欄位
         if (!data.drone_serial || data.drone_serial.trim() === '') {

@@ -24,6 +24,7 @@ import type {
     RealTimeStatusStatistics 
 } from '../../types/services/IDroneRealTimeStatusService.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesSvc');
 
@@ -68,6 +69,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 根據 ID 獲取即時狀態記錄
      */
+    @LogService()
     async getRealTimeStatusById(id: number): Promise<DroneRealTimeStatusModel> {
         try {
             if (!id || id <= 0) {
@@ -83,7 +85,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info('Successfully retrieved drone real-time status', { id });
             return result;
         } catch (error) {
-            logger.error('Failed to get drone real-time status by ID', { id, error });
             const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(`獲取即時狀態記錄失敗: ${errorMessage}`);
         }
@@ -92,6 +93,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 根據無人機 ID 獲取即時狀態記錄
      */
+    @LogService()
     async getRealTimeStatusByDroneId(droneId: number): Promise<DroneRealTimeStatusModel> {
         try {
             if (!droneId || droneId <= 0) {
@@ -107,7 +109,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info('Successfully retrieved drone real-time status by drone ID', { droneId });
             return result;
         } catch (error) {
-            logger.error('Failed to get drone real-time status by drone ID', { droneId, error });
             const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(`獲取即時狀態記錄失敗: ${errorMessage}`);
         }
@@ -116,6 +117,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取所有即時狀態記錄
      */
+    @LogService()
     async getAllRealTimeStatuses(): Promise<DroneRealTimeStatusModel[]> {
         try {
             logger.info('Getting all drone real-time statuses');
@@ -124,7 +126,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info(`Retrieved ${result.length} drone real-time status records`);
             return result;
         } catch (error) {
-            logger.error('Failed to get all drone real-time statuses', { error });
             const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(`獲取即時狀態記錄列表失敗: ${errorMessage}`);
         }
@@ -133,6 +134,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 根據狀態獲取即時狀態記錄
      */
+    @LogService()
     async getRealTimeStatusesByStatus(status: DroneRealTimeStatus): Promise<DroneRealTimeStatusModel[]> {
         try {
             if (!Object.values(DroneRealTimeStatus).includes(status)) {
@@ -145,7 +147,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info(`Retrieved ${result.length} drone real-time status records with status ${status}`);
             return result;
         } catch (error) {
-            logger.error('Failed to get drone real-time statuses by status', { status, error });
             throw new Error(`獲取特定狀態的即時狀態記錄失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -153,6 +154,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取所有在線的無人機
      */
+    @LogService()
     async getOnlineDrones(): Promise<DroneRealTimeStatusModel[]> {
         try {
             logger.info('Getting online drones');
@@ -161,7 +163,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info(`Retrieved ${result.length} online drones`);
             return result;
         } catch (error) {
-            logger.error('Failed to get online drones', { error });
             throw new Error(`獲取在線無人機列表失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -169,6 +170,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取離線的無人機
      */
+    @LogService()
     async getOfflineDrones(thresholdMinutes: number = 5): Promise<DroneRealTimeStatusModel[]> {
         try {
             if (thresholdMinutes <= 0) {
@@ -181,7 +183,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info(`Retrieved ${result.length} offline drones`);
             return result;
         } catch (error) {
-            logger.error('Failed to get offline drones', { thresholdMinutes, error });
             throw new Error(`獲取離線無人機列表失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -189,6 +190,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取電池統計資訊
      */
+    @LogService()
     async getBatteryStatistics(): Promise<any> {
         try {
             logger.info('Getting battery statistics');
@@ -197,7 +199,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info('Successfully retrieved battery statistics');
             return result;
         } catch (error) {
-            logger.error('Failed to get battery statistics', { error });
             throw new Error(`獲取電池統計資訊失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -205,6 +206,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取狀態統計資訊
      */
+    @LogService()
     async getStatusStatistics(): Promise<any> {
         try {
             logger.info('Getting status statistics');
@@ -213,7 +215,6 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info('Successfully retrieved status statistics');
             return result;
         } catch (error) {
-            logger.error('Failed to get status statistics', { error });
             throw new Error(`獲取狀態統計資訊失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -221,6 +222,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 獲取儀表板摘要資訊
      */
+    @LogService()
     async getDashboardSummary(): Promise<any> {
         try {
             logger.info('Getting dashboard summary');
@@ -248,7 +250,6 @@ export class DroneRealTimeStatusQueriesSvc {
             });
             return summary;
         } catch (error) {
-            logger.error('Failed to get dashboard summary', { error });
             throw new Error(`獲取儀表板摘要失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -256,6 +257,7 @@ export class DroneRealTimeStatusQueriesSvc {
     /**
      * 檢查低電量無人機
      */
+    @LogService()
     async checkLowBatteryDrones(threshold: number = 20): Promise<DroneRealTimeStatusModel[]> {
         try {
             if (threshold <= 0 || threshold > 100) {
@@ -271,20 +273,22 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info(`Found ${lowBatteryDrones.length} low battery drones with threshold ${threshold}%`);
             return lowBatteryDrones;
         } catch (error) {
-            logger.error('Failed to check low battery drones', { threshold, error });
             throw new Error(`檢查低電量無人機失敗: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
     // 實現外部介面方法
+    @LogService()
     async getAllDroneRealTimeStatuses(): Promise<DroneRealTimeStatusAttributes[]> {
         return await this.getAllRealTimeStatuses();
     }
 
+    @LogService()
     async getDroneRealTimeStatusById(id: number): Promise<DroneRealTimeStatusAttributes | null> {
         return await this.getRealTimeStatusById(id);
     }
 
+    @LogService()
     async getDroneRealTimeStatusByDroneId(droneId: number): Promise<DroneRealTimeStatusAttributes | null> {
         try {
             const model = await this.getRealTimeStatusByDroneId(droneId);
@@ -294,11 +298,13 @@ export class DroneRealTimeStatusQueriesSvc {
         }
     }
 
+    @LogService()
     async getDroneRealTimeStatusesByStatus(status: string): Promise<DroneRealTimeStatusAttributes[]> {
         const models = await this.getRealTimeStatusesByStatus(status as DroneRealTimeStatus);
         return models.map(model => this.convertToExternalAttributes(model.toJSON()));
     }
 
+    @LogService()
     async getActiveDroneRealTimeStatuses(): Promise<DroneRealTimeStatusAttributes[]> {
         const models = await this.getOnlineDrones();
         return models.map(model => this.convertToExternalAttributes(model.toJSON()));
@@ -329,6 +335,7 @@ export class DroneRealTimeStatusQueriesSvc {
         };
     }
 
+    @LogService()
     async getDroneRealTimeStatusStatistics(): Promise<RealTimeStatusStatistics> {
         const [statusStats, batteryStats, onlineDrones, offlineDrones] = await Promise.all([
             this.getStatusStatistics(),

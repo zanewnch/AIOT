@@ -19,6 +19,7 @@ import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/DroneC
 import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
 import { DroneCommandsArchiveQueriesSvc } from '../queries/DroneCommandsArchiveQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandsArchiveCommandsSvc');
 
@@ -68,6 +69,7 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {DroneCommandsArchiveCreationAttributes} data - 要創建的歸檔資料
      * @returns {Promise<DroneCommandsArchiveAttributes>} 創建後的歸檔資料
      */
+    @LogService()
     async createCommandArchive(data: DroneCommandsArchiveCreationAttributes): Promise<DroneCommandsArchiveAttributes> {
         try {
             logger.info('Creating new drone command archive', { droneId: data.drone_id, commandType: data.command_type });
@@ -96,7 +98,6 @@ export class DroneCommandsArchiveCommandsSvc {
 
             return archive;
         } catch (error) {
-            logger.error('Error in createCommandArchive', { error, data });
             throw error;
         }
     }
@@ -108,6 +109,7 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {Partial<DroneCommandsArchiveAttributes>} data - 要更新的資料
      * @returns {Promise<DroneCommandsArchiveAttributes | null>} 更新後的歸檔資料或 null
      */
+    @LogService()
     async updateCommandArchive(id: number, data: Partial<DroneCommandsArchiveAttributes>): Promise<DroneCommandsArchiveAttributes | null> {
         try {
             logger.info('Updating drone command archive', { id, data });
@@ -153,7 +155,6 @@ export class DroneCommandsArchiveCommandsSvc {
 
             return updatedArchive;
         } catch (error) {
-            logger.error('Error in updateCommandArchive', { error, id, data });
             throw error;
         }
     }
@@ -164,6 +165,7 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {number} id - 歸檔資料 ID
      * @returns {Promise<boolean>} 是否成功刪除
      */
+    @LogService()
     async deleteCommandArchive(id: number): Promise<boolean> {
         try {
             logger.info('Deleting drone command archive', { id });
@@ -194,7 +196,6 @@ export class DroneCommandsArchiveCommandsSvc {
             
             return true;
         } catch (error) {
-            logger.error('Error in deleteCommandArchive', { error, id });
             throw error;
         }
     }
@@ -205,6 +206,7 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {DroneCommandsArchiveCreationAttributes[]} dataArray - 要創建的歸檔資料陣列
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 創建後的歸檔資料陣列
      */
+    @LogService()
     async batchCreateCommandArchives(dataArray: DroneCommandsArchiveCreationAttributes[]): Promise<DroneCommandsArchiveAttributes[]> {
         try {
             logger.info('Batch creating drone command archives', { count: dataArray.length });
@@ -253,7 +255,6 @@ export class DroneCommandsArchiveCommandsSvc {
 
             return createdArchives;
         } catch (error) {
-            logger.error('Error in batchCreateCommandArchives', { error, count: dataArray?.length });
             throw error;
         }
     }
@@ -265,6 +266,7 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {number} batchSize - 批次大小，預設為 50
      * @returns {Promise<ArchiveOperationResult>} 歸檔操作結果
      */
+    @LogService()
     async archiveCommandsBefore(beforeDate: Date, batchSize: number = 50): Promise<ArchiveOperationResult> {
         try {
             logger.info('Archiving commands before date', { beforeDate, batchSize });
@@ -294,7 +296,6 @@ export class DroneCommandsArchiveCommandsSvc {
                 error: undefined
             };
         } catch (error) {
-            logger.error('Error in archiveCommandsBefore', { error, beforeDate, batchSize });
             return {
                 success: false,
                 archive: {} as DroneCommandsArchiveAttributes,
@@ -310,6 +311,7 @@ export class DroneCommandsArchiveCommandsSvc {
      * @param {number} retentionDays - 保留天數
      * @returns {Promise<number>} 清理的記錄數量
      */
+    @LogService()
     async cleanupExpiredArchives(retentionDays: number): Promise<number> {
         try {
             logger.info('Cleaning up expired archives', { retentionDays });
@@ -340,11 +342,7 @@ export class DroneCommandsArchiveCommandsSvc {
                         deletedCount++;
                     }
                 } catch (error) {
-                    logger.error('Failed to delete expired archive', { 
-                        archiveId: archive.id,
-                        error: error instanceof Error ? error.message : 'Unknown error'
-                    });
-                }
+                    }
             }
 
             logger.info('Cleanup completed', { 
@@ -356,7 +354,6 @@ export class DroneCommandsArchiveCommandsSvc {
 
             return deletedCount;
         } catch (error) {
-            logger.error('Error in cleanupExpiredArchives', { error, retentionDays });
             throw error;
         }
     }

@@ -18,6 +18,7 @@ import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRea
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 import type { DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes } from '../../types/services/IDroneRealTimeStatusService.js';
 
 const logger = createLogger('DroneRealTimeStatusCommands');
@@ -41,6 +42,7 @@ export class DroneRealTimeStatusCommands {
      * 創建新的無人機即時狀態資料
      * @route POST /api/drone-realtime-status/data
      */
+    @LogController()
     async createDroneRealTimeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const statusData: ExternalCreationAttributes = req.body;
@@ -51,25 +53,11 @@ export class DroneRealTimeStatusCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, 'Creating new drone real-time status data');
-            logger.info('Drone real-time status creation request received', { data: statusData });
-
-            const createdData = await this.droneRealTimeStatusCommandsService.createDroneRealTimeStatus(statusData);
+const createdData = await this.droneRealTimeStatusCommandsService.createDroneRealTimeStatus(statusData);
 
             const result = ControllerResult.created('無人機即時狀態資料創建成功', createdData);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status creation completed successfully', {
-                id: createdData.id,
-                droneId: createdData.drone_id
-            });
-
-        } catch (error) {
-            logger.error('Error in createDroneRealTimeStatus', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -78,6 +66,7 @@ export class DroneRealTimeStatusCommands {
      * 更新指定無人機即時狀態資料
      * @route PUT /api/drone-realtime-status/data/:id
      */
+    @LogController()
     async updateDroneRealTimeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -88,11 +77,7 @@ export class DroneRealTimeStatusCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Updating drone real-time status data with ID: ${id}`);
-            logger.info('Drone real-time status update request received', { id, data: updateData });
-
-            const updatedData = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatus(id, updateData);
+const updatedData = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatus(id, updateData);
 
             if (!updatedData) {
                 const result = ControllerResult.notFound('找不到指定的無人機即時狀態資料');
@@ -102,15 +87,7 @@ export class DroneRealTimeStatusCommands {
 
             const result = ControllerResult.success('無人機即時狀態資料更新成功', updatedData);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status update completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in updateDroneRealTimeStatus', {
-                id: req.params.id,
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -119,6 +96,7 @@ export class DroneRealTimeStatusCommands {
      * 刪除指定無人機即時狀態資料
      * @route DELETE /api/drone-realtime-status/data/:id
      */
+    @LogController()
     async deleteDroneRealTimeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -128,11 +106,7 @@ export class DroneRealTimeStatusCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting drone real-time status data with ID: ${id}`);
-            logger.info('Drone real-time status deletion request received', { id });
-
-            const deletedRows = await this.droneRealTimeStatusCommandsService.deleteDroneRealTimeStatus(id);
+const deletedRows = await this.droneRealTimeStatusCommandsService.deleteDroneRealTimeStatus(id);
 
             if (deletedRows === 0) {
                 const result = ControllerResult.notFound('找不到指定的無人機即時狀態資料');
@@ -142,14 +116,7 @@ export class DroneRealTimeStatusCommands {
 
             const result = ControllerResult.success('無人機即時狀態資料刪除成功');
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status deletion completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in deleteDroneRealTimeStatus', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -158,6 +125,7 @@ export class DroneRealTimeStatusCommands {
      * 更新無人機即時狀態
      * @route PATCH /api/drone-realtime-status/data/:droneId/status
      */
+    @LogController()
     async updateDroneRealTimeStatusByDroneId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -168,11 +136,7 @@ export class DroneRealTimeStatusCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Updating drone real-time status for drone ID: ${droneId}`);
-            logger.info('Drone real-time status by drone ID update request received', { droneId, data: statusData });
-
-            const updatedData = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatusByDroneId(droneId, statusData);
+const updatedData = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatusByDroneId(droneId, statusData);
 
             if (!updatedData) {
                 const result = ControllerResult.notFound('找不到該無人機的即時狀態資料');
@@ -182,15 +146,7 @@ export class DroneRealTimeStatusCommands {
 
             const result = ControllerResult.success('無人機即時狀態更新成功', updatedData);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status by drone ID update completed successfully', { droneId });
-
-        } catch (error) {
-            logger.error('Error in updateDroneRealTimeStatusByDroneId', {
-                droneId: req.params.droneId,
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -199,6 +155,7 @@ export class DroneRealTimeStatusCommands {
      * 批量更新無人機即時狀態
      * @route PUT /api/drone-realtime-status/data/batch
      */
+    @LogController()
     async updateDroneRealTimeStatusesBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const statusUpdates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributes> }> = req.body;
@@ -218,24 +175,11 @@ export class DroneRealTimeStatusCommands {
                     return;
                 }
             }
-
-            logRequest(req, `Batch updating ${statusUpdates.length} drone real-time statuses`);
-            logger.info('Drone real-time status batch update request received', { count: statusUpdates.length });
-
-            const updatedStatuses = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatusesBatch(statusUpdates);
+const updatedStatuses = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatusesBatch(statusUpdates);
 
             const result = ControllerResult.success('批量無人機即時狀態更新成功', updatedStatuses);
             res.status(result.status).json(result);
-
-            logger.info('Drone real-time status batch update completed successfully', {
-                count: updatedStatuses.length
-            });
-
-        } catch (error) {
-            logger.error('Error in updateDroneRealTimeStatusesBatch', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }

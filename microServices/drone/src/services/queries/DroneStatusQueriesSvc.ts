@@ -18,6 +18,7 @@ import type { DroneStatusAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusQueriesSvc');
 
@@ -41,6 +42,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得所有無人機狀態資料
      */
+    @LogService()
     async getAllDroneStatuses(): Promise<DroneStatusAttributes[]> {
         try {
             logger.info('Getting all drone status data');
@@ -49,7 +51,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Retrieved ${droneStatuses.length} drone status records`);
             return droneStatuses;
         } catch (error) {
-            logger.error('Failed to get all drone status data', { error });
             throw new Error('無法取得無人機狀態資料');
         }
     }
@@ -57,6 +58,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據 ID 取得無人機狀態資料
      */
+    @LogService()
     async getDroneStatusById(id: number): Promise<DroneStatusAttributes> {
         try {
             if (!id || id <= 0) {
@@ -73,7 +75,6 @@ export class DroneStatusQueriesSvc {
             logger.info('Successfully retrieved drone status data', { id });
             return droneStatus;
         } catch (error) {
-            logger.error('Failed to get drone status data by ID', { id, error });
             throw error;
         }
     }
@@ -81,6 +82,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據無人機序號取得無人機狀態資料
      */
+    @LogService()
     async getDroneStatusBySerial(droneSerial: string): Promise<DroneStatusAttributes> {
         try {
             if (!droneSerial || droneSerial.trim() === '') {
@@ -97,7 +99,6 @@ export class DroneStatusQueriesSvc {
             logger.info('Successfully retrieved drone status data by serial', { droneSerial });
             return droneStatus;
         } catch (error) {
-            logger.error('Failed to get drone status data by serial', { droneSerial, error });
             throw error;
         }
     }
@@ -105,6 +106,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據狀態查詢無人機
      */
+    @LogService()
     async getDronesByStatus(status: DroneStatus): Promise<DroneStatusAttributes[]> {
         try {
             if (!Object.values(DroneStatus).includes(status)) {
@@ -117,7 +119,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Retrieved ${droneStatuses.length} drones with status ${status}`);
             return droneStatuses;
         } catch (error) {
-            logger.error('Failed to get drones by status', { status, error });
             throw error;
         }
     }
@@ -125,6 +126,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據擁有者 ID 查詢無人機
      */
+    @LogService()
     async getDronesByOwner(ownerUserId: number): Promise<DroneStatusAttributes[]> {
         try {
             if (!ownerUserId || ownerUserId <= 0) {
@@ -137,7 +139,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Retrieved ${droneStatuses.length} drones for owner ${ownerUserId}`);
             return droneStatuses;
         } catch (error) {
-            logger.error('Failed to get drones by owner', { ownerUserId, error });
             throw error;
         }
     }
@@ -145,6 +146,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據製造商查詢無人機
      */
+    @LogService()
     async getDronesByManufacturer(manufacturer: string): Promise<DroneStatusAttributes[]> {
         try {
             if (!manufacturer || manufacturer.trim() === '') {
@@ -157,7 +159,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Retrieved ${droneStatuses.length} drones from manufacturer ${manufacturer}`);
             return droneStatuses;
         } catch (error) {
-            logger.error('Failed to get drones by manufacturer', { manufacturer, error });
             throw error;
         }
     }
@@ -165,6 +166,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 檢查無人機序號是否已存在
      */
+    @LogService()
     async isDroneSerialExists(droneSerial: string, excludeId?: number): Promise<boolean> {
         try {
             const existingDrone = await this.droneStatusRepository.findByDroneSerial(droneSerial);
@@ -180,7 +182,6 @@ export class DroneStatusQueriesSvc {
 
             return true;
         } catch (error) {
-            logger.error('Error checking drone serial existence', { droneSerial, excludeId, error });
             throw error;
         }
     }
@@ -188,6 +189,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得無人機狀態統計
      */
+    @LogService()
     async getDroneStatusStatistics(): Promise<{ [key in DroneStatus]: number }> {
         try {
             logger.info('Getting drone status statistics');
@@ -214,7 +216,6 @@ export class DroneStatusQueriesSvc {
             logger.info('Successfully retrieved drone status statistics', { statistics });
             return statistics;
         } catch (error) {
-            logger.error('Failed to get drone status statistics', { error });
             throw error;
         }
     }
@@ -222,6 +223,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得總無人機數量
      */
+    @LogService()
     async getTotalDroneCount(): Promise<number> {
         try {
             logger.info('Getting total drone count');
@@ -231,7 +233,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Total drone count: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get total drone count', { error });
             throw error;
         }
     }
@@ -239,6 +240,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得活躍無人機數量
      */
+    @LogService()
     async getActiveDroneCount(): Promise<number> {
         try {
             logger.info('Getting active drone count');
@@ -248,7 +250,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Active drone count: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get active drone count', { error });
             throw error;
         }
     }
@@ -256,6 +257,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得飛行中無人機數量
      */
+    @LogService()
     async getFlyingDroneCount(): Promise<number> {
         try {
             logger.info('Getting flying drone count');
@@ -265,7 +267,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Flying drone count: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get flying drone count', { error });
             throw error;
         }
     }
@@ -273,6 +274,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得需要維護的無人機數量
      */
+    @LogService()
     async getMaintenanceDroneCount(): Promise<number> {
         try {
             logger.info('Getting maintenance drone count');
@@ -282,7 +284,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Maintenance drone count: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get maintenance drone count', { error });
             throw error;
         }
     }
@@ -290,6 +291,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 取得離線無人機數量
      */
+    @LogService()
     async getInactiveDroneCount(): Promise<number> {
         try {
             logger.info('Getting inactive drone count');
@@ -299,7 +301,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Inactive drone count: ${count}`);
             return count;
         } catch (error) {
-            logger.error('Failed to get inactive drone count', { error });
             throw error;
         }
     }
@@ -307,6 +308,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 根據型號查詢無人機
      */
+    @LogService()
     async getDronesByModel(model: string): Promise<DroneStatusAttributes[]> {
         try {
             if (!model || model.trim() === '') {
@@ -320,7 +322,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Retrieved ${filteredDrones.length} drones with model ${model}`);
             return filteredDrones;
         } catch (error) {
-            logger.error('Failed to get drones by model', { model, error });
             throw error;
         }
     }
@@ -328,6 +329,7 @@ export class DroneStatusQueriesSvc {
     /**
      * 搜尋無人機（根據名稱或序號）
      */
+    @LogService()
     async searchDrones(searchTerm: string): Promise<DroneStatusAttributes[]> {
         try {
             if (!searchTerm || searchTerm.trim() === '') {
@@ -344,7 +346,6 @@ export class DroneStatusQueriesSvc {
             logger.info(`Found ${searchResults.length} drones matching search term: ${searchTerm}`);
             return searchResults;
         } catch (error) {
-            logger.error('Failed to search drones', { searchTerm, error });
             throw error;
         }
     }

@@ -24,6 +24,7 @@ import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommand
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandQueriesSvc');
 
@@ -57,6 +58,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得所有無人機指令
      */
+    @LogService()
     async getAllCommands(limit: number = 100): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting all commands', { limit });
@@ -69,7 +71,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} commands`);
             return commands;
         } catch (error) {
-            logger.error('Error in getAllCommands', { limit, error });
             throw error;
         }
     }
@@ -77,6 +78,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據 ID 取得單筆無人機指令
      */
+    @LogService()
     async getCommandById(id: number): Promise<DroneCommandAttributes | null> {
         try {
             logger.info('Getting command by ID', { id });
@@ -95,7 +97,6 @@ export class DroneCommandQueriesSvc {
 
             return command;
         } catch (error) {
-            logger.error('Error in getCommandById', { id, error });
             throw error;
         }
     }
@@ -103,6 +104,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據無人機 ID 查詢指令
      */
+    @LogService()
     async getCommandsByDroneId(droneId: number, limit: number = 50): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting commands by drone ID', { droneId, limit });
@@ -118,7 +120,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} commands for drone ${droneId}`);
             return commands;
         } catch (error) {
-            logger.error('Error in getCommandsByDroneId', { droneId, limit, error });
             throw error;
         }
     }
@@ -126,6 +127,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據指令狀態查詢
      */
+    @LogService()
     async getCommandsByStatus(status: DroneCommandStatus, limit: number = 50): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting commands by status', { status, limit });
@@ -141,7 +143,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} commands with status ${status}`);
             return commands;
         } catch (error) {
-            logger.error('Error in getCommandsByStatus', { status, limit, error });
             throw error;
         }
     }
@@ -149,6 +150,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據指令類型查詢
      */
+    @LogService()
     async getCommandsByType(commandType: DroneCommandType, limit: number = 50): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting commands by type', { commandType, limit });
@@ -164,7 +166,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} commands of type ${commandType}`);
             return commands;
         } catch (error) {
-            logger.error('Error in getCommandsByType', { commandType, limit, error });
             throw error;
         }
     }
@@ -172,6 +173,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據發送者查詢指令
      */
+    @LogService()
     async getCommandsByIssuedBy(issuedBy: number, limit: number = 50): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting commands by issued by', { issuedBy, limit });
@@ -187,7 +189,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} commands issued by user ${issuedBy}`);
             return commands;
         } catch (error) {
-            logger.error('Error in getCommandsByIssuedBy', { issuedBy, limit, error });
             throw error;
         }
     }
@@ -195,6 +196,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 根據時間範圍查詢指令
      */
+    @LogService()
     async getCommandsByDateRange(startDate: Date, endDate: Date, limit: number = 100): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting commands by date range', { startDate, endDate, limit });
@@ -213,7 +215,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} commands in date range`);
             return commands;
         } catch (error) {
-            logger.error('Error in getCommandsByDateRange', { startDate, endDate, limit, error });
             throw error;
         }
     }
@@ -221,6 +222,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得無人機的待執行指令
      */
+    @LogService()
     async getPendingCommandsByDroneId(droneId: number): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting pending commands by drone ID', { droneId });
@@ -233,7 +235,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} pending commands for drone ${droneId}`);
             return commands;
         } catch (error) {
-            logger.error('Error in getPendingCommandsByDroneId', { droneId, error });
             throw error;
         }
     }
@@ -241,6 +242,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得正在執行的指令
      */
+    @LogService()
     async getExecutingCommandByDroneId(droneId: number): Promise<DroneCommandAttributes | null> {
         try {
             logger.info('Getting executing command by drone ID', { droneId });
@@ -259,7 +261,6 @@ export class DroneCommandQueriesSvc {
 
             return command;
         } catch (error) {
-            logger.error('Error in getExecutingCommandByDroneId', { droneId, error });
             throw error;
         }
     }
@@ -267,6 +268,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得最新的指令記錄
      */
+    @LogService()
     async getLatestCommands(limit: number = 20): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting latest commands', { limit });
@@ -279,7 +281,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} latest commands`);
             return commands;
         } catch (error) {
-            logger.error('Error in getLatestCommands', { limit, error });
             throw error;
         }
     }
@@ -287,6 +288,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得特定無人機的最新指令
      */
+    @LogService()
     async getLatestCommandByDroneId(droneId: number): Promise<DroneCommandAttributes | null> {
         try {
             logger.info('Getting latest command by drone ID', { droneId });
@@ -305,7 +307,6 @@ export class DroneCommandQueriesSvc {
 
             return command;
         } catch (error) {
-            logger.error('Error in getLatestCommandByDroneId', { droneId, error });
             throw error;
         }
     }
@@ -313,6 +314,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得失敗的指令
      */
+    @LogService()
     async getFailedCommands(limit: number = 50): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting failed commands', { limit });
@@ -325,7 +327,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} failed commands`);
             return commands;
         } catch (error) {
-            logger.error('Error in getFailedCommands', { limit, error });
             throw error;
         }
     }
@@ -333,6 +334,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得超時的指令
      */
+    @LogService()
     async getTimeoutCommands(timeoutMinutes: number, limit: number = 50): Promise<DroneCommandAttributes[]> {
         try {
             logger.info('Getting timeout commands', { timeoutMinutes, limit });
@@ -348,7 +350,6 @@ export class DroneCommandQueriesSvc {
             logger.info(`Successfully retrieved ${commands.length} timeout commands`);
             return commands;
         } catch (error) {
-            logger.error('Error in getTimeoutCommands', { timeoutMinutes, limit, error });
             throw error;
         }
     }
@@ -356,6 +357,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得指令統計資料
      */
+    @LogService()
     async getCommandStatistics(startDate?: Date, endDate?: Date): Promise<CommandStatistics> {
         try {
             logger.info('Getting command statistics', { startDate, endDate });
@@ -392,7 +394,6 @@ export class DroneCommandQueriesSvc {
             logger.info('Command statistics retrieved successfully', { statistics });
             return statistics;
         } catch (error) {
-            logger.error('Error in getCommandStatistics', { startDate, endDate, error });
             throw error;
         }
     }
@@ -400,6 +401,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得指令類型統計
      */
+    @LogService()
     async getCommandTypeStatistics(startDate?: Date, endDate?: Date): Promise<CommandTypeStatistics[]> {
         try {
             logger.info('Getting command type statistics', { startDate, endDate });
@@ -422,7 +424,6 @@ export class DroneCommandQueriesSvc {
             logger.info('Command type statistics retrieved successfully', { typeStats });
             return typeStats;
         } catch (error) {
-            logger.error('Error in getCommandTypeStatistics', { startDate, endDate, error });
             throw error;
         }
     }
@@ -430,6 +431,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得無人機指令執行摘要
      */
+    @LogService()
     async getDroneCommandSummary(droneId: number): Promise<DroneCommandSummary> {
         try {
             logger.info('Getting drone command summary', { droneId });
@@ -483,7 +485,6 @@ export class DroneCommandQueriesSvc {
             logger.info('Drone command summary retrieved successfully', { droneId, summary });
             return summary;
         } catch (error) {
-            logger.error('Error in getDroneCommandSummary', { droneId, error });
             throw error;
         }
     }
@@ -491,6 +492,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 取得下一個待執行指令
      */
+    @LogService()
     async getNextPendingCommand(droneId: number): Promise<DroneCommandAttributes | null> {
         try {
             logger.info('Getting next pending command', { droneId });
@@ -506,7 +508,6 @@ export class DroneCommandQueriesSvc {
                 return null;
             }
         } catch (error) {
-            logger.error('Error in getNextPendingCommand', { droneId, error });
             throw error;
         }
     }
@@ -514,6 +515,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 驗證指令資料
      */
+    @LogService()
     async validateCommandData(data: DroneCommandCreationAttributes): Promise<boolean> {
         try {
             if (!data.drone_id || !data.command_type || !data.issued_by) {
@@ -538,7 +540,6 @@ export class DroneCommandQueriesSvc {
             logger.debug('Command data validated successfully', { data });
             return true;
         } catch (error) {
-            logger.error('Error in validateCommandData', { data, error });
             return false;
         }
     }
@@ -546,6 +547,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 驗證指令參數
      */
+    @LogService()
     async validateCommandParameters(commandType: DroneCommandType, commandData: any): Promise<boolean> {
         try {
             if (!commandData) {
@@ -588,7 +590,6 @@ export class DroneCommandQueriesSvc {
             logger.debug('Command parameters validated successfully', { commandType, commandData });
             return true;
         } catch (error) {
-            logger.error('Error in validateCommandParameters', { commandType, commandData, error });
             return false;
         }
     }
@@ -596,6 +597,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 檢查無人機是否可以接收新指令
      */
+    @LogService()
     async canReceiveNewCommand(droneId: number): Promise<boolean> {
         try {
             const executingCommand = await this.commandRepository.findExecutingCommandByDroneId(droneId);
@@ -613,7 +615,6 @@ export class DroneCommandQueriesSvc {
             logger.debug('Drone can receive new command', { droneId });
             return true;
         } catch (error) {
-            logger.error('Error in canReceiveNewCommand', { droneId, error });
             return false;
         }
     }
@@ -621,6 +622,7 @@ export class DroneCommandQueriesSvc {
     /**
      * 檢查指令衝突
      */
+    @LogService()
     async checkCommandConflict(droneId: number, commandType: DroneCommandType): Promise<boolean> {
         try {
             const pendingCommands = await this.commandRepository.findPendingCommandsByDroneId(droneId);
@@ -636,7 +638,6 @@ export class DroneCommandQueriesSvc {
             logger.debug('No command conflict detected', { droneId, commandType });
             return false;
         } catch (error) {
-            logger.error('Error in checkCommandConflict', { droneId, commandType, error });
             return false;
         }
     }

@@ -20,6 +20,7 @@ import type { IDroneCommandQueueCommands } from '../types/controllers/commands/I
 import type { IDroneCommandsArchiveQueries } from '../types/controllers/queries/IDroneCommandsArchiveQueries.js';
 import type { IDroneCommandsArchiveCommands } from '../types/controllers/commands/IDroneCommandsArchiveCommands.js';
 import { TYPES } from '../types/dependency-injection.js';
+import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**
  * 無人機命令路由類別
@@ -47,6 +48,7 @@ export class DroneCommandRoutes {
     /**
      * 設定所有路由
      */
+    @LogRoute()
     private setupRoutes(): void {
         this.setupQueryRoutes();
         this.setupQueueRoutes();
@@ -57,6 +59,7 @@ export class DroneCommandRoutes {
     /**
      * 設定查詢路由 (GET 操作)
      */
+    @LogRoute()
     private setupQueryRoutes(): void {
         // 獲取所有無人機命令
         this.router.get('/', (req, res, next) => this.droneCommandQueries.getAllCommands(req, res, next));
@@ -71,6 +74,7 @@ export class DroneCommandRoutes {
     /**
      * 設定命令佇列路由
      */
+    @LogRoute()
     private setupQueueRoutes(): void {
         // 獲取命令佇列統計
         this.router.get('/queue', (req, res, next) => this.droneCommandQueueQueries.getQueueStatistics(req, res, next));
@@ -91,6 +95,7 @@ export class DroneCommandRoutes {
     /**
      * 設定歷史命令路由
      */
+    @LogRoute()
     private setupArchiveRoutes(): void {
         // 獲取歷史命令記錄
         this.router.get('/archive', (req, res, next) => this.droneCommandsArchiveQueries.getAllCommandsArchive(req, res, next));
@@ -108,6 +113,7 @@ export class DroneCommandRoutes {
     /**
      * 設定命令路由 (POST, PUT, DELETE 操作)
      */
+    @LogRoute()
     private setupCommandRoutes(): void {
         // 建立新的無人機命令
         this.router.post('/', (req, res, next) => this.droneCommandCommands.createCommand(req, res, next));
@@ -128,6 +134,7 @@ export class DroneCommandRoutes {
     /**
      * 獲取路由器實例
      */
+    @LogRoute()
     getRouter(): Router {
         return this.router;
     }

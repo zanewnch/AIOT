@@ -19,6 +19,7 @@ import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/Drone
 import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { DronePositionsArchiveQueriesSvc } from '../queries/DronePositionsArchiveQueriesSvc.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DronePositionsArchiveCommandsSvc');
 
@@ -55,11 +56,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 建立新的位置歷史歸檔記錄
      */
+    @LogService()
     async createPositionArchive(data: DronePositionsArchiveCreationAttributes): Promise<DronePositionsArchiveAttributes> {
         try {
-            logger.info('Creating position archive', { data });
-
-            // 驗證資料完整性
+// 驗證資料完整性
             if (!await this.validateArchiveData(data)) {
                 throw new Error('歸檔資料驗證失敗');
             }
@@ -70,11 +70,8 @@ export class DronePositionsArchiveCommandsSvc {
             }
 
             const createdArchive = await this.archiveRepository.create(data);
-
-            logger.info('Position archive created successfully', { id: createdArchive.id });
-            return createdArchive;
+return createdArchive;
         } catch (error) {
-            logger.error('Error in createPositionArchive', { data, error });
             throw error;
         }
     }
@@ -82,11 +79,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 批量建立位置歷史歸檔記錄
      */
+    @LogService()
     async bulkCreatePositionArchives(dataArray: DronePositionsArchiveCreationAttributes[]): Promise<DronePositionsArchiveAttributes[]> {
         try {
-            logger.info('Bulk creating position archives', { count: dataArray.length });
-
-            // 驗證批量資料
+// 驗證批量資料
             if (!dataArray || dataArray.length === 0) {
                 throw new Error('批量建立資料不能為空');
             }
@@ -106,11 +102,8 @@ export class DronePositionsArchiveCommandsSvc {
             }
 
             const createdArchives = await this.archiveRepository.bulkCreate(dataArray);
-
-            logger.info('Position archives bulk created successfully', { count: createdArchives.length });
-            return createdArchives;
+return createdArchives;
         } catch (error) {
-            logger.error('Error in bulkCreatePositionArchives', { count: dataArray?.length, error });
             throw error;
         }
     }
@@ -118,11 +111,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 更新位置歷史歸檔資料
      */
+    @LogService()
     async updatePositionArchive(id: number, data: Partial<DronePositionsArchiveCreationAttributes>): Promise<DronePositionsArchiveAttributes | null> {
         try {
-            logger.info('Updating position archive', { id, data });
-
-            // 驗證 ID 參數
+// 驗證 ID 參數
             if (!id || id <= 0) {
                 throw new Error('ID 必須是正整數');
             }
@@ -147,14 +139,11 @@ export class DronePositionsArchiveCommandsSvc {
             const updatedArchive = await this.archiveRepository.update(id, data);
 
             if (updatedArchive) {
-                logger.info('Position archive updated successfully', { id });
-            } else {
-                logger.warn('Position archive not found for update', { id });
-            }
+} else {
+}
 
             return updatedArchive;
         } catch (error) {
-            logger.error('Error in updatePositionArchive', { id, data, error });
             throw error;
         }
     }
@@ -162,11 +151,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 刪除位置歷史歸檔資料
      */
+    @LogService()
     async deletePositionArchive(id: number): Promise<boolean> {
         try {
-            logger.info('Deleting position archive', { id });
-
-            // 驗證 ID 參數
+// 驗證 ID 參數
             if (!id || id <= 0) {
                 throw new Error('ID 必須是正整數');
             }
@@ -178,12 +166,8 @@ export class DronePositionsArchiveCommandsSvc {
             }
 
             await this.archiveRepository.delete(id);
-            
-            logger.info('Position archive deleted successfully', { id });
-            
-            return true;
+return true;
         } catch (error) {
-            logger.error('Error in deletePositionArchive', { id, error });
             throw error;
         }
     }
@@ -191,21 +175,17 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 刪除指定時間之前的歸檔資料
      */
+    @LogService()
     async deleteArchivesBeforeDate(beforeDate: Date): Promise<number> {
         try {
-            logger.info('Deleting archives before date', { beforeDate });
-
-            // 驗證日期
+// 驗證日期
             if (!beforeDate || beforeDate > new Date()) {
                 throw new Error('無效的刪除日期');
             }
 
             const deletedCount = await this.archiveRepository.deleteBeforeDate(beforeDate);
-
-            logger.info(`Deleted ${deletedCount} position archive records before ${beforeDate}`);
-            return deletedCount;
+return deletedCount;
         } catch (error) {
-            logger.error('Error in deleteArchivesBeforeDate', { beforeDate, error });
             throw error;
         }
     }
@@ -213,11 +193,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 刪除指定批次的歸檔資料
      */
+    @LogService()
     async deleteArchiveBatch(batchId: string): Promise<number> {
         try {
-            logger.info('Deleting archive batch', { batchId });
-
-            // 驗證批次 ID
+// 驗證批次 ID
             if (!batchId || batchId.trim() === '') {
                 throw new Error('歸檔批次 ID 不能為空');
             }
@@ -229,11 +208,8 @@ export class DronePositionsArchiveCommandsSvc {
             }
 
             const deletedCount = await this.archiveRepository.deleteBatch(batchId);
-
-            logger.info(`Deleted ${deletedCount} position archive records for batch ${batchId}`);
-            return deletedCount;
+return deletedCount;
         } catch (error) {
-            logger.error('Error in deleteArchiveBatch', { batchId, error });
             throw error;
         }
     }
@@ -241,11 +217,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 批量刪除位置歷史歸檔資料
      */
+    @LogService()
     async bulkDeletePositionArchives(ids: number[]): Promise<number> {
         try {
-            logger.info('Bulk deleting position archives', { ids });
-
-            if (!ids || ids.length === 0) {
+if (!ids || ids.length === 0) {
                 throw new Error('刪除 ID 陣列不能為空');
             }
 
@@ -266,14 +241,10 @@ export class DronePositionsArchiveCommandsSvc {
                     await this.archiveRepository.delete(id);
                     deletedCount++;
                 } catch (error) {
-                    logger.warn('Failed to delete position archive', { id, error });
-                }
+}
             }
-
-            logger.info('Bulk position archives deletion completed', { total: ids.length, deleted: deletedCount });
-            return deletedCount;
+return deletedCount;
         } catch (error) {
-            logger.error('Error in bulkDeletePositionArchives', { ids, error });
             throw error;
         }
     }
@@ -281,6 +252,7 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 根據條件批量刪除歷史歸檔資料
      */
+    @LogService()
     async deleteArchivesByConditions(conditions: {
         droneId?: number;
         beforeDate?: Date;
@@ -288,9 +260,7 @@ export class DronePositionsArchiveCommandsSvc {
         maxBattery?: number;
     }): Promise<number> {
         try {
-            logger.info('Deleting archives by conditions', { conditions });
-
-            let deletedCount = 0;
+let deletedCount = 0;
 
             // 根據無人機 ID 刪除
             if (conditions.droneId) {
@@ -316,11 +286,8 @@ export class DronePositionsArchiveCommandsSvc {
             else if (conditions.beforeDate) {
                 deletedCount = await this.deleteArchivesBeforeDate(conditions.beforeDate);
             }
-
-            logger.info('Archives deleted by conditions', { conditions, deletedCount });
-            return deletedCount;
+return deletedCount;
         } catch (error) {
-            logger.error('Error in deleteArchivesByConditions', { conditions, error });
             throw error;
         }
     }
@@ -328,11 +295,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 清理過時的歸檔資料
      */
+    @LogService()
     async cleanupOldArchives(daysOld: number): Promise<number> {
         try {
-            logger.info('Cleaning up old archives', { daysOld });
-
-            if (daysOld <= 0) {
+if (daysOld <= 0) {
                 throw new Error('清理天數必須是正整數');
             }
 
@@ -340,11 +306,8 @@ export class DronePositionsArchiveCommandsSvc {
             cutoffDate.setDate(cutoffDate.getDate() - daysOld);
 
             const deletedCount = await this.deleteArchivesBeforeDate(cutoffDate);
-
-            logger.info('Old archives cleaned up', { daysOld, cutoffDate, deletedCount });
-            return deletedCount;
+return deletedCount;
         } catch (error) {
-            logger.error('Error in cleanupOldArchives', { daysOld, error });
             throw error;
         }
     }
@@ -352,15 +315,14 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 優化歷史歸檔儲存（刪除重複或異常資料）
      */
+    @LogService()
     async optimizeArchiveStorage(droneId: number, timeRange: { start: Date; end: Date }): Promise<{
         duplicatesRemoved: number;
         anomaliesRemoved: number;
         totalRemoved: number;
     }> {
         try {
-            logger.info('Optimizing archive storage', { droneId, timeRange });
-
-            const trajectory = await this.queryService.getTrajectoryByDroneAndTime(
+const trajectory = await this.queryService.getTrajectoryByDroneAndTime(
                 droneId, timeRange.start, timeRange.end, 10000
             );
 
@@ -397,11 +359,8 @@ export class DronePositionsArchiveCommandsSvc {
                 anomaliesRemoved: anomalies.length,
                 totalRemoved
             };
-
-            logger.info('Archive storage optimized', { droneId, timeRange, result });
-            return result;
+return result;
         } catch (error) {
-            logger.error('Error in optimizeArchiveStorage', { droneId, timeRange, error });
             throw error;
         }
     }
@@ -409,11 +368,10 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 批量更新歸檔資料的批次 ID
      */
+    @LogService()
     async updateArchiveBatchId(oldBatchId: string, newBatchId: string): Promise<number> {
         try {
-            logger.info('Updating archive batch ID', { oldBatchId, newBatchId });
-
-            if (!oldBatchId || oldBatchId.trim() === '') {
+if (!oldBatchId || oldBatchId.trim() === '') {
                 throw new Error('舊批次 ID 不能為空');
             }
             if (!newBatchId || newBatchId.trim() === '') {
@@ -436,14 +394,10 @@ export class DronePositionsArchiveCommandsSvc {
                         updatedCount++;
                     }
                 } catch (error) {
-                    logger.warn('Failed to update archive batch ID', { archiveId: archive.id, error });
-                }
+}
             }
-
-            logger.info('Archive batch ID updated', { oldBatchId, newBatchId, updatedCount });
-            return updatedCount;
+return updatedCount;
         } catch (error) {
-            logger.error('Error in updateArchiveBatchId', { oldBatchId, newBatchId, error });
             throw error;
         }
     }
@@ -451,6 +405,7 @@ export class DronePositionsArchiveCommandsSvc {
     /**
      * 驗證歸檔資料完整性
      */
+    @LogService()
     private async validateArchiveData(data: DronePositionsArchiveCreationAttributes): Promise<boolean> {
         try {
             // 檢查必填欄位
@@ -464,42 +419,33 @@ export class DronePositionsArchiveCommandsSvc {
             for (const field of requiredFields) {
                 if (data[field as keyof DronePositionsArchiveCreationAttributes] === undefined ||
                     data[field as keyof DronePositionsArchiveCreationAttributes] === null) {
-                    logger.warn(`Missing required field: ${field}`, { data });
-                    return false;
+return false;
                 }
             }
 
             // 驗證數值範圍
             if (data.battery_level < 0 || data.battery_level > 100) {
-                logger.warn('Invalid battery level', { battery_level: data.battery_level });
-                return false;
+return false;
             }
 
             if (data.signal_strength < 0 || data.signal_strength > 100) {
-                logger.warn('Invalid signal strength', { signal_strength: data.signal_strength });
-                return false;
+return false;
             }
 
             if (data.speed < 0) {
-                logger.warn('Invalid speed', { speed: data.speed });
-                return false;
+return false;
             }
 
             if (data.heading < 0 || data.heading >= 360) {
-                logger.warn('Invalid heading', { heading: data.heading });
-                return false;
+return false;
             }
 
             // 驗證字串欄位
             if (!data.archive_batch_id || data.archive_batch_id.trim() === '') {
-                logger.warn('Invalid archive batch ID', { archive_batch_id: data.archive_batch_id });
-                return false;
+return false;
             }
-
-            logger.debug('Archive data validated successfully', { data });
-            return true;
+return true;
         } catch (error) {
-            logger.error('Error in validateArchiveData', { data, error });
             return false;
         }
     }

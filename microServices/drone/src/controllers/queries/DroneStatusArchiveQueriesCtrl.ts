@@ -18,6 +18,7 @@ import { DroneStatusArchiveQueriesSvc } from '../../services/queries/DroneStatus
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusArchiveQueries');
 
@@ -40,23 +41,15 @@ export class DroneStatusArchiveQueries {
      * 取得所有狀態歷史歸檔
      * @route GET /api/drone-status-archive/data
      */
+    @LogController()
     async getAllStatusArchives(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
-
-            logRequest(req, `Getting all status archives with limit: ${limit}`);
-            logger.info('Status archives retrieval request received', { limit });
-
-            const archives = await this.queryService.getAllStatusArchives(limit);
+const archives = await this.queryService.getAllStatusArchives(limit);
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives retrieval completed successfully', {
-                count: archives.length,
-                limit
-            });
-        } catch (error) {
-            logger.error('Error in getAllStatusArchives', { error, limit: req.query.limit });
+} catch (error) {
             next(error);
         }
     }
@@ -65,6 +58,7 @@ export class DroneStatusArchiveQueries {
      * 根據 ID 取得狀態歷史歸檔
      * @route GET /api/drone-status-archive/data/:id
      */
+    @LogController()
     async getStatusArchiveById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -74,11 +68,7 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archive by ID: ${id}`);
-            logger.info('Status archive by ID request received', { id });
-
-            const archive = await this.queryService.getStatusArchiveById(id);
+const archive = await this.queryService.getStatusArchiveById(id);
             
             if (!archive) {
                 const result = ControllerResult.notFound('找不到指定的狀態歷史歸檔');
@@ -88,13 +78,7 @@ export class DroneStatusArchiveQueries {
 
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archive);
             res.status(result.status).json(result);
-            
-            logger.info('Status archive by ID retrieval completed successfully', { id });
-        } catch (error) {
-            logger.error('Error in getStatusArchiveById', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -103,6 +87,7 @@ export class DroneStatusArchiveQueries {
      * 根據無人機 ID 獲取狀態歷史
      * @route GET /api/drone-status-archive/data/drone/:droneId
      */
+    @LogController()
     async getStatusArchivesByDroneId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -113,23 +98,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archives by drone ID: ${droneId}`);
-            logger.info('Status archives by drone ID request received', { droneId, limit });
-
-            const archives = await this.queryService.getStatusArchivesByDroneId(droneId, limit);
+const archives = await this.queryService.getStatusArchivesByDroneId(droneId, limit);
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives by drone ID retrieval completed successfully', {
-                droneId,
-                count: archives.length
-            });
-        } catch (error) {
-            logger.error('Error in getStatusArchivesByDroneId', {
-                droneId: req.params.droneId,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -138,6 +111,7 @@ export class DroneStatusArchiveQueries {
      * 根據狀態獲取歷史記錄
      * @route GET /api/drone-status-archive/data/status/:status
      */
+    @LogController()
     async getStatusArchivesByStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const status = req.params.status;
@@ -148,23 +122,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archives by status: ${status}`);
-            logger.info('Status archives by status request received', { status, limit });
-
-            const archives = await this.queryService.getStatusArchivesByStatus(status as any, limit);
+const archives = await this.queryService.getStatusArchivesByStatus(status as any, limit);
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives by status retrieval completed successfully', {
-                status,
-                count: archives.length
-            });
-        } catch (error) {
-            logger.error('Error in getStatusArchivesByStatus', {
-                status: req.params.status,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -173,6 +135,7 @@ export class DroneStatusArchiveQueries {
      * 根據創建者獲取歷史記錄
      * @route GET /api/drone-status-archive/data/created-by/:userId
      */
+    @LogController()
     async getStatusArchivesByCreatedBy(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const createdBy = parseInt(req.params.userId);
@@ -183,23 +146,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archives by created by: ${createdBy}`);
-            logger.info('Status archives by created by request received', { createdBy, limit });
-
-            const archives = await this.queryService.getStatusArchivesByCreatedBy(createdBy, limit);
+const archives = await this.queryService.getStatusArchivesByCreatedBy(createdBy, limit);
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives by created by retrieval completed successfully', {
-                createdBy,
-                count: archives.length
-            });
-        } catch (error) {
-            logger.error('Error in getStatusArchivesByCreatedBy', {
-                createdBy: req.params.userId,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -208,6 +159,7 @@ export class DroneStatusArchiveQueries {
      * 根據時間範圍獲取歷史記錄
      * @route GET /api/drone-status-archive/data/date-range
      */
+    @LogController()
     async getStatusArchivesByDateRange(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const startDate = new Date(req.query.startDate as string);
@@ -220,25 +172,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archives by date range: ${startDate} to ${endDate}`);
-            logger.info('Status archives by date range request received', { startDate, endDate, limit });
-
-            const archives = await this.queryService.getStatusArchivesByDateRange(startDate, endDate, limit);
+const archives = await this.queryService.getStatusArchivesByDateRange(startDate, endDate, limit);
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives by date range retrieval completed successfully', {
-                startDate,
-                endDate,
-                count: archives.length
-            });
-        } catch (error) {
-            logger.error('Error in getStatusArchivesByDateRange', {
-                startDate: req.query.startDate,
-                endDate: req.query.endDate,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -247,6 +185,7 @@ export class DroneStatusArchiveQueries {
      * 根據變更原因獲取歷史記錄
      * @route GET /api/drone-status-archive/data/reason/:reason
      */
+    @LogController()
     async getStatusArchivesByReason(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const reason = req.params.reason;
@@ -257,23 +196,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archives by reason: ${reason}`);
-            logger.info('Status archives by reason request received', { reason, limit });
-
-            const archives = await this.queryService.getStatusArchivesByReason(reason, limit);
+const archives = await this.queryService.getStatusArchivesByReason(reason, limit);
             const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives by reason retrieval completed successfully', {
-                reason,
-                count: archives.length
-            });
-        } catch (error) {
-            logger.error('Error in getStatusArchivesByReason', {
-                reason: req.params.reason,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -282,23 +209,15 @@ export class DroneStatusArchiveQueries {
      * 獲取最新狀態歷史記錄
      * @route GET /api/drone-status-archive/data/latest
      */
+    @LogController()
     async getLatestStatusArchives(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
-
-            logRequest(req, `Getting latest status archives with limit: ${limit}`);
-            logger.info('Latest status archives request received', { limit });
-
-            const archives = await this.queryService.getLatestStatusArchives(limit);
+const archives = await this.queryService.getLatestStatusArchives(limit);
             const result = ControllerResult.success('最新狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Latest status archives retrieval completed successfully', {
-                count: archives.length,
-                limit
-            });
-        } catch (error) {
-            logger.error('Error in getLatestStatusArchives', { limit: req.query.limit, error });
+} catch (error) {
             next(error);
         }
     }
@@ -307,6 +226,7 @@ export class DroneStatusArchiveQueries {
      * 獲取特定無人機的最新狀態歷史
      * @route GET /api/drone-status-archive/data/drone/:droneId/latest
      */
+    @LogController()
     async getLatestStatusArchiveByDroneId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -316,20 +236,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting latest status archive for drone: ${droneId}`);
-            logger.info('Latest status archive by drone ID request received', { droneId });
-
-            const archive = await this.queryService.getLatestStatusArchiveByDroneId(droneId);
+const archive = await this.queryService.getLatestStatusArchiveByDroneId(droneId);
             const result = ControllerResult.success('最新狀態歷史歸檔資料獲取成功', archive);
 
             res.status(result.status).json(result);
-            logger.info('Latest status archive by drone ID retrieval completed successfully', { droneId });
-        } catch (error) {
-            logger.error('Error in getLatestStatusArchiveByDroneId', {
-                droneId: req.params.droneId,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -338,6 +249,7 @@ export class DroneStatusArchiveQueries {
      * 獲取狀態轉換歷史記錄
      * @route GET /api/drone-status-archive/data/transition
      */
+    @LogController()
     async getStatusArchivesByTransition(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const fromStatus = req.query.fromStatus as string;
@@ -349,25 +261,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Getting status archives by transition: ${fromStatus} -> ${toStatus}`);
-            logger.info('Status archives by transition request received', { fromStatus, toStatus, limit });
-
-            const archives = await this.queryService.getStatusArchivesByTransition(fromStatus as any, toStatus as any, limit);
+const archives = await this.queryService.getStatusArchivesByTransition(fromStatus as any, toStatus as any, limit);
             const result = ControllerResult.success('狀態轉換歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
-            logger.info('Status archives by transition retrieval completed successfully', {
-                fromStatus,
-                toStatus,
-                count: archives.length
-            });
-        } catch (error) {
-            logger.error('Error in getStatusArchivesByTransition', {
-                fromStatus: req.query.fromStatus,
-                toStatus: req.query.toStatus,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -376,6 +274,7 @@ export class DroneStatusArchiveQueries {
      * 獲取狀態變更統計資料
      * @route GET /api/drone-status-archive/statistics
      */
+    @LogController()
     async getStatusChangeStatistics(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const droneId = req.query.droneId ? parseInt(req.query.droneId as string) : undefined;
@@ -394,17 +293,11 @@ export class DroneStatusArchiveQueries {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, 'Getting status change statistics');
-            logger.info('Status change statistics request received', { droneId, startDate, endDate });
-
-            const statistics = await this.queryService.getStatusChangeStatistics(startDate, endDate);
+const statistics = await this.queryService.getStatusChangeStatistics(startDate, endDate);
             const result = ControllerResult.success('狀態變更統計資料獲取成功', statistics);
 
             res.status(result.status).json(result);
-            logger.info('Status change statistics retrieval completed successfully');
-        } catch (error) {
-            logger.error('Error in getStatusChangeStatistics', { query: req.query, error });
+} catch (error) {
             next(error);
         }
     }

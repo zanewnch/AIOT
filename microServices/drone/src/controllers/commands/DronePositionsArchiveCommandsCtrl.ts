@@ -18,6 +18,7 @@ import { DronePositionsArchiveCommandsSvc } from '../../services/commands/DroneP
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 import type { DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 
 const logger = createLogger('DronePositionsArchiveCommands');
@@ -41,6 +42,7 @@ export class DronePositionsArchiveCommands {
      * 創建位置歷史歸檔記錄
      * @route POST /api/drone-positions-archive/data
      */
+    @LogController()
     async createPositionArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const archiveData: DronePositionsArchiveCreationAttributes = req.body;
@@ -57,28 +59,11 @@ export class DronePositionsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Creating position archive for drone ID: ${archiveData.drone_id}`);
-            logger.info('Position archive creation request received', {
-                drone_id: archiveData.drone_id,
-                latitude: archiveData.latitude,
-                longitude: archiveData.longitude
-            });
-
-            const createdArchive = await this.archiveService.createPositionArchive(archiveData);
+const createdArchive = await this.archiveService.createPositionArchive(archiveData);
             const result = ControllerResult.created('位置歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
-            logger.info('Position archive creation completed successfully', {
-                id: createdArchive.id,
-                drone_id: archiveData.drone_id
-            });
-
-        } catch (error) {
-            logger.error('Error in createPositionArchive', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -87,6 +72,7 @@ export class DronePositionsArchiveCommands {
      * 批量創建位置歷史歸檔記錄
      * @route POST /api/drone-positions-archive/data/bulk
      */
+    @LogController()
     async bulkCreatePositionArchives(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const archivesData: DronePositionsArchiveCreationAttributes[] = req.body;
@@ -107,28 +93,14 @@ export class DronePositionsArchiveCommands {
                     return;
                 }
             }
-
-            logRequest(req, `Bulk creating ${archivesData.length} position archives`);
-            logger.info('Bulk position archive creation request received', {
-                count: archivesData.length
-            });
-
-            const createdArchives = await this.archiveService.bulkCreatePositionArchives(archivesData);
+const createdArchives = await this.archiveService.bulkCreatePositionArchives(archivesData);
             const result = ControllerResult.created('批量位置歷史歸檔記錄創建成功', {
                 created: createdArchives.length,
                 data: createdArchives
             });
 
             res.status(result.status).json(result);
-            logger.info('Bulk position archive creation completed successfully', {
-                created: createdArchives.length
-            });
-
-        } catch (error) {
-            logger.error('Error in bulkCreatePositionArchives', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -137,6 +109,7 @@ export class DronePositionsArchiveCommands {
      * 更新位置歷史歸檔資料
      * @route PUT /api/drone-positions-archive/data/:id
      */
+    @LogController()
     async updatePositionArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -153,11 +126,7 @@ export class DronePositionsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Updating position archive with ID: ${id}`);
-            logger.info('Position archive update request received', { id, updateData });
-
-            const updatedArchive = await this.archiveService.updatePositionArchive(id, updateData);
+const updatedArchive = await this.archiveService.updatePositionArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ControllerResult.notFound('找不到指定的位置歷史歸檔記錄');
@@ -167,15 +136,7 @@ export class DronePositionsArchiveCommands {
 
             const result = ControllerResult.success('位置歷史歸檔資料更新成功', updatedArchive);
             res.status(result.status).json(result);
-
-            logger.info('Position archive update completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in updatePositionArchive', {
-                id: req.params.id,
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -184,6 +145,7 @@ export class DronePositionsArchiveCommands {
      * 刪除位置歷史歸檔資料
      * @route DELETE /api/drone-positions-archive/data/:id
      */
+    @LogController()
     async deletePositionArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -193,11 +155,7 @@ export class DronePositionsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting position archive with ID: ${id}`);
-            logger.info('Position archive deletion request received', { id });
-
-            const isDeleted = await this.archiveService.deletePositionArchive(id);
+const isDeleted = await this.archiveService.deletePositionArchive(id);
 
             if (!isDeleted) {
                 const result = ControllerResult.notFound('找不到指定的位置歷史歸檔記錄');
@@ -207,14 +165,7 @@ export class DronePositionsArchiveCommands {
 
             const result = ControllerResult.success('位置歷史歸檔資料刪除成功');
             res.status(result.status).json(result);
-
-            logger.info('Position archive deletion completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in deletePositionArchive', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -223,6 +174,7 @@ export class DronePositionsArchiveCommands {
      * 刪除指定時間之前的歸檔資料
      * @route DELETE /api/drone-positions-archive/data/before/:beforeDate
      */
+    @LogController()
     async deleteArchivesBeforeDate(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const beforeDate = new Date(req.params.beforeDate);
@@ -232,21 +184,11 @@ export class DronePositionsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting archives before date: ${beforeDate}`);
-            logger.info('Delete archives before date request received', { beforeDate });
-
-            const deletedCount = await this.archiveService.deleteArchivesBeforeDate(beforeDate);
+const deletedCount = await this.archiveService.deleteArchivesBeforeDate(beforeDate);
             const result = ControllerResult.success(`已刪除 ${deletedCount} 筆歷史歸檔記錄`, { deletedCount });
 
             res.status(result.status).json(result);
-            logger.info('Delete archives before date completed successfully', { deletedCount, beforeDate });
-
-        } catch (error) {
-            logger.error('Error in deleteArchivesBeforeDate', {
-                beforeDate: req.params.beforeDate,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -255,6 +197,7 @@ export class DronePositionsArchiveCommands {
      * 刪除指定批次的歸檔資料
      * @route DELETE /api/drone-positions-archive/data/batch/:batchId
      */
+    @LogController()
     async deleteArchiveBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const batchId = req.params.batchId;
@@ -264,24 +207,14 @@ export class DronePositionsArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting archive batch: ${batchId}`);
-            logger.info('Delete archive batch request received', { batchId });
-
-            const deletedCount = await this.archiveService.deleteArchiveBatch(batchId);
+const deletedCount = await this.archiveService.deleteArchiveBatch(batchId);
             const result = ControllerResult.success(`已刪除批次 ${batchId} 的 ${deletedCount} 筆記錄`, { 
                 deletedCount, 
                 batchId 
             });
 
             res.status(result.status).json(result);
-            logger.info('Delete archive batch completed successfully', { deletedCount, batchId });
-
-        } catch (error) {
-            logger.error('Error in deleteArchiveBatch', {
-                batchId: req.params.batchId,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }

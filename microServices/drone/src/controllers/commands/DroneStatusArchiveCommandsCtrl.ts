@@ -18,6 +18,7 @@ import { DroneStatusArchiveCommandsSvc } from '../../services/commands/DroneStat
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 import type { DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
 
 const logger = createLogger('DroneStatusArchiveCommands');
@@ -41,6 +42,7 @@ export class DroneStatusArchiveCommands {
      * 創建狀態歷史歸檔
      * @route POST /api/drone-status-archive/data
      */
+    @LogController()
     async createStatusArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const archiveData: DroneStatusArchiveCreationAttributes = req.body;
@@ -63,29 +65,11 @@ export class DroneStatusArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Creating status archive for drone ID: ${archiveData.drone_id}`);
-            logger.info('Status archive creation request received', {
-                drone_id: archiveData.drone_id,
-                status: archiveData.status,
-                previous_status: archiveData.previous_status,
-                reason: archiveData.reason
-            });
-
-            const createdArchive = await this.commandService.createStatusArchive(archiveData);
+const createdArchive = await this.commandService.createStatusArchive(archiveData);
             const result = ControllerResult.created('狀態歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
-            logger.info('Status archive creation completed successfully', {
-                id: createdArchive.id,
-                drone_id: archiveData.drone_id
-            });
-
-        } catch (error) {
-            logger.error('Error in createStatusArchive', {
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -94,6 +78,7 @@ export class DroneStatusArchiveCommands {
      * 更新狀態歷史歸檔
      * @route PUT /api/drone-status-archive/data/:id
      */
+    @LogController()
     async updateStatusArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -110,11 +95,7 @@ export class DroneStatusArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Updating status archive with ID: ${id}`);
-            logger.info('Status archive update request received', { id, updateData });
-
-            const updatedArchive = await this.commandService.updateStatusArchive(id, updateData);
+const updatedArchive = await this.commandService.updateStatusArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ControllerResult.notFound('找不到指定的狀態歷史歸檔記錄');
@@ -124,15 +105,7 @@ export class DroneStatusArchiveCommands {
 
             const result = ControllerResult.success('狀態歷史歸檔資料更新成功', updatedArchive);
             res.status(result.status).json(result);
-
-            logger.info('Status archive update completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in updateStatusArchive', {
-                id: req.params.id,
-                body: req.body,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
@@ -141,6 +114,7 @@ export class DroneStatusArchiveCommands {
      * 刪除狀態歷史歸檔
      * @route DELETE /api/drone-status-archive/data/:id
      */
+    @LogController()
     async deleteStatusArchive(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -150,22 +124,11 @@ export class DroneStatusArchiveCommands {
                 res.status(result.status).json(result);
                 return;
             }
-
-            logRequest(req, `Deleting status archive with ID: ${id}`);
-            logger.info('Status archive deletion request received', { id });
-
-            await this.commandService.deleteStatusArchive(id);
+await this.commandService.deleteStatusArchive(id);
 
             const result = ControllerResult.success('狀態歷史歸檔資料刪除成功');
             res.status(result.status).json(result);
-
-            logger.info('Status archive deletion completed successfully', { id });
-
-        } catch (error) {
-            logger.error('Error in deleteStatusArchive', {
-                id: req.params.id,
-                error
-            });
+} catch (error) {
             next(error);
         }
     }
