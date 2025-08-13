@@ -9,7 +9,7 @@
  */
 
 import { Socket } from 'socket.io';
-import { DroneEventType } from './dependency-injection.js';
+import { DroneEventType } from '@/container';
 
 /**
  * Drone 事件處理器介面

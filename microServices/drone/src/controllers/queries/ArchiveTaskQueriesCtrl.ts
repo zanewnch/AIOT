@@ -18,6 +18,7 @@ import { ArchiveTaskQueriesSvc } from '../../services/queries/ArchiveTaskQueries
 import { ArchiveJobType, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
+import type { IArchiveTaskQueries } from '../../types/controllers/queries/IArchiveTaskQueries.js';
 import { TYPES } from '../../types/dependency-injection.js';
 
 /**
@@ -39,7 +40,7 @@ import { TYPES } from '../../types/dependency-injection.js';
  * ```
  */
 @injectable()
-export class ArchiveTaskQueries {
+export class ArchiveTaskQueries implements IArchiveTaskQueries {
     private readonly logger = createLogger('ArchiveTaskQueries');
 
     constructor(

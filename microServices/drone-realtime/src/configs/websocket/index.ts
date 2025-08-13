@@ -40,4 +40,4 @@ export {
 } from './factory.js';
 
 // WebSocket 服務類別
-export { WebSocketService } from './service.js';
+export { IntegratedWebSocketService } from './service.js';

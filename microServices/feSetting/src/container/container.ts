@@ -25,6 +25,9 @@ import { UserPreferenceQueriesSvc } from '../services/queries/UserPreferenceQuer
 import { UserPreferenceCommands } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
 import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
 
+// Routes 層 imports
+import { UserPreferenceRoutes } from '../routes/userPreferenceRoutes.js';
+
 /**
  * 建立和配置 feSetting 服務 IoC 容器
  * 
@@ -92,7 +95,17 @@ export function createContainer(): Container {
         .to(UserPreferenceQueries)
         .inSingletonScope();
 
-    console.log('✅ feSetting 服務 IoC Container 配置完成 - UserPreference CQRS 架構已註冊');
+    // ===== Routes 層註冊 =====
+    
+    /**
+     * 用戶偏好設定路由
+     * 使用 InversifyJS + Arrow Functions 封裝路由邏輯
+     */
+    container.bind<UserPreferenceRoutes>(TYPES.UserPreferenceRoutes)
+        .to(UserPreferenceRoutes)
+        .inSingletonScope();
+
+    console.log('✅ feSetting 服務 IoC Container 配置完成 - UserPreference CQRS 架構 + Routes 已註冊');
     
     return container;
 }

@@ -4,7 +4,7 @@ services:
   # RBAC 微服務 - 使用 gRPC 協議進行內部通訊
   - name: rbac-service
     protocol: grpc
-    host: aiot-rbac-service
+    host: rbac-service.service.consul
     port: 50051
     connect_timeout: 60000
     write_timeout: 60000
@@ -19,7 +19,7 @@ services:
   # Drone API 微服務 - 使用 gRPC 協議處理 API 請求
   - name: drone-grpc-service
     protocol: grpc
-    host: aiot-drone-service
+    host: drone-service.service.consul
     port: 50052
     connect_timeout: 60000
     write_timeout: 60000
@@ -33,7 +33,7 @@ services:
   # Drone 即時通訊微服務 - 專門處理 WebSocket 連線
   - name: drone-realtime-service
     protocol: ws
-    host: aiot-drone-realtime-service
+    host: drone-realtime-service.service.consul
     port: 3004
     path: /socket.io
     connect_timeout: 60000
@@ -48,7 +48,7 @@ services:
   # FeSetting 微服務 - 使用 gRPC 協議
   - name: fesetting-service
     protocol: grpc
-    host: aiot-fesetting-service
+    host: fesetting-service.service.consul
     port: 50053
     connect_timeout: 60000
     write_timeout: 60000

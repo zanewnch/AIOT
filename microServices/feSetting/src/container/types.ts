@@ -59,6 +59,11 @@ export const TYPES = {
   UserPreferenceQueriesCtrl: Symbol.for('UserPreferenceQueriesCtrl'),
 
   /**
+   * 用戶偏好設定路由類型
+   */
+  UserPreferenceRoutes: Symbol.for('UserPreferenceRoutes'),
+
+  /**
    * 無人機位置查詢服務類型
    */
   DronePositionQueriesSvc: Symbol.for('DronePositionQueriesSvc'),

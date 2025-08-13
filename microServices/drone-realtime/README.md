@@ -23,7 +23,7 @@
 npm install
 
 # 複製環境配置
-cp .env.example .env
+cp .env .env
 
 # 啟動開發伺服器
 npm run dev

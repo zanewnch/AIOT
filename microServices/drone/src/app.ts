@@ -21,21 +21,15 @@ import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; 
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
-import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
-import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
-import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
+import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
-import { container, ContainerUtils } from './container/container.js';
-import { TYPES, DroneEventType } from './types/container/dependency-injection.js';
-import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
-import type {
-    IDroneStatusService
-} from './types/services/IDroneStatusService.js';
+import { container } from './container/container.js';
+import { TYPES } from './types/dependency-injection.js';
 import type {
     IDroneEventHandler,
     IWebSocketService,
     IWebSocketAuthMiddleware
-} from './types/container/websocket-interfaces.js';
+} from './types/websocket-interfaces.js';
 import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
 import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
 
@@ -266,8 +260,9 @@ export class App {
      * @returns {Promise<void>} 路由設定完成的 Promise
      */
     private async setRoutes(): Promise<void> {
-        // 使用統一的路由管理系統註冊所有路由
-        registerAllRoutes(this.app);
+        // 使用 IoC 容器獲取路由管理器並註冊所有路由
+        const routeManager = ContainerUtils.get<RouteManager>(TYPES.RouteManager);
+        routeManager.registerAllRoutes(this.app);
     }
 
     /**

@@ -1,14 +1,15 @@
 /**
- * @fileoverview AIOT 無人機即時通訊服務應用程式主體配置檔案
+ * @fileoverview AIOT 無人機即時通訊微服務應用程式主體配置檔案
  *
- * 此檔案定義了無人機即時通訊服務的核心應用程式類別 App，專注於：
- * - WebSocket 連線管理和即時通訊
- * - 無人機位置和狀態的即時廣播
- * - 簡化的依賴管理（專注於即時通訊功能）
+ * 此檔案定義了專注於 WebSocket 實時通信的微服務應用程式，負責：
+ * - WebSocket 連線管理和實時通訊
+ * - 無人機狀態實時廣播和訂閱
+ * - 簡化的輔助 HTTP 端點（健康檢查和服務資訊）
+ * - 與主 drone 微服務分離，專注於實時通信功能
  *
  * @version 1.0.0
  * @author AIOT Team
- * @since 2024-01-01
+ * @since 2025-08-12
  */
 
 import 'reflect-metadata';
@@ -17,16 +18,24 @@ import { Server as HTTPServer } from 'http';
 import cors from 'cors';
 import { redisConfig } from './configs/redisConfig.js';
 import { createSequelizeInstance } from './configs/dbConfig.js';
-import { WebSocketService } from './configs/websocket/service-simple.js';
+import { IntegratedWebSocketService as WebSocketService } from './configs/websocket/service.js';
+// Legacy simple service import (if needed for backward compatibility)
+// import { WebSocketService as SimpleWebSocketService } from './configs/websocket/service-simple.js';
+import { container } from './container/container.js';
+import { TYPES } from './container/types.js';
+import { RouteManager } from './routes/index.js';
+import { createLogger } from './configs/loggerConfig.js';
 // 移除 JWT 認證 - 使用 OPA 進行集中式權限管理
 
+const logger = createLogger('App');
+
 /**
- * 無人機即時通訊服務應用程式配置類別
+ * 無人機實時通信微服務應用程式配置類別
  *
- * 此類別專注於 WebSocket 即時通訊功能：
- * - WebSocket 連線管理
- * - 無人機資料即時廣播
- * - 認證和權限控制
+ * 此類別專注於 WebSocket 實時通訊功能：
+ * - WebSocket 連線管理與實時廣播
+ * - 無人機狀態訂閱與推送
+ * - 輔助 HTTP 端點（健康檢查、服務資訊）
  * - 連線監控和統計
  *
  * @class App
@@ -88,41 +97,59 @@ export class App {
     }
 
     /**
-     * 設定基本路由
+     * 設定路由系統
      */
     private setupRoutes(): void {
-        // 健康檢查
+        try {
+            // 從 IoC 容器獲取路由管理器
+            const routeManager = container.get<RouteManager>(TYPES.RouteManager);
+            
+            // 註冊所有路由
+            this.app.use('', routeManager.getRouter());
+            
+            logger.info('Routes setup completed successfully');
+            logger.info('Route statistics', routeManager.getRouteStats());
+            
+        } catch (error) {
+            logger.error('Failed to setup routes', { error });
+            
+            // 如果路由設定失敗，設定基本的備用路由
+            this.setupFallbackRoutes();
+        }
+    }
+
+    /**
+     * 設定備用路由 (當主路由系統失敗時)
+     */
+    private setupFallbackRoutes(): void {
+        logger.warn('Using fallback routes due to main route system failure');
+        
+        // 基本健康檢查
         this.app.get('/health', (req, res) => {
-            const stats = this.webSocketService?.getConnectionStats() || {};
             res.json({
-                status: 'healthy',
+                status: 'degraded',
                 service: 'drone-realtime-service',
-                timestamp: new Date().toISOString(),
-                websocket: {
-                    enabled: !!this.webSocketService,
-                    ...stats
-                }
+                message: 'Service running in fallback mode',
+                timestamp: new Date().toISOString()
             });
         });
 
         // 服務資訊
-        this.app.get('/', (req, res) => {
+        this.app.get('/info', (req, res) => {
             res.json({
                 service: 'AIOT Drone Real-time Service',
                 version: '1.0.0',
-                description: '無人機即時通訊 WebSocket 服務',
-                endpoints: {
-                    health: '/health',
-                    websocket: '/socket.io'
-                }
+                description: '無人機即時通訊服務 (備用模式)',
+                mode: 'fallback',
+                timestamp: new Date().toISOString()
             });
         });
 
         // 404 處理
         this.app.use('*', (req, res) => {
             res.status(404).json({
-                error: 'Not Found',
-                message: 'This is a WebSocket service. Connect via Socket.IO client.',
+                error: 'Service in maintenance mode',
+                message: 'Main API temporarily unavailable',
                 timestamp: new Date().toISOString()
             });
         });
@@ -140,22 +167,15 @@ export class App {
      */
     async initializeWebSocket(httpServer: HTTPServer): Promise<void> {
         try {
-            console.log('🔧 Initializing WebSocket service...');
+            logger.info('Initializing WebSocket service...');
             
-            // 創建 WebSocket 服務
-            this.webSocketService = new WebSocketService(httpServer);
+            // 使用整合的 WebSocket 服務
+            this.webSocketService = container.get<WebSocketService>(TYPES.IntegratedWebSocketService);
+            await this.webSocketService.initialize(httpServer);
 
-            // OPA 處理認證和授權，WebSocket 服務不需要額外認證
-
-            // 設定事件處理器
-            this.webSocketService.setupEventHandlers((socket, namespace) => {
-                // 基本事件處理邏輯將在這裡添加
-                console.log(`🔗 Socket connected to ${namespace}: ${socket.id}`);
-            });
-
-            console.log('✅ WebSocket service initialized');
+            logger.info('WebSocket service initialized successfully');
         } catch (error) {
-            console.error('❌ WebSocket initialization failed:', error);
+            logger.error('WebSocket initialization failed', { error: error instanceof Error ? error.message : 'Unknown error' });
             throw error;
         }
     }
@@ -187,21 +207,21 @@ export class App {
         try {
             // 關閉 WebSocket 服務
             if (this.webSocketService) {
-                console.log('📡 Closing WebSocket connections...');
+                logger.info('Closing WebSocket service...');
                 await this.webSocketService.shutdown();
             }
 
             // 關閉 Redis 連線
-            console.log('🔴 Closing Redis connection...');
+            logger.info('Closing Redis connection...');
             await redisConfig.disconnect();
 
             // 關閉資料庫連線
-            console.log('🗃️ Closing database connection...');
+            logger.info('Closing database connection...');
             await this.sequelize.close();
 
-            console.log('✅ Drone Real-time Service shutdown successfully');
+            logger.info('Drone Real-time Service shutdown successfully');
         } catch (error) {
-            console.error('❌ Error during app shutdown:', error);
+            logger.error('Error during app shutdown', { error: error instanceof Error ? error.message : 'Unknown error' });
             throw error;
         }
     }

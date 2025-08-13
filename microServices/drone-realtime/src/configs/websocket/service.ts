@@ -1,396 +1,373 @@
 /**
- * @fileoverview WebSocket 服務
+ * @fileoverview 整合的 WebSocket 服務
  * 
- * 此檔案實現 Socket.IO 伺服器的核心服務功能，包括：
- * - Socket.IO 伺服器實例管理
- * - 命名空間和房間管理
- * - 連線狀態監控
- * - 訊息廣播和私人通訊
- * - 錯誤處理和日誌記錄
+ * 整合新的 IoC 容器和服務層架構的 WebSocket 服務：
+ * - 使用 IoC 容器管理事件處理器
+ * - 整合 CQRS 模式的業務邏輯
+ * - 提供完整的實時通訊功能
  * 
- * @version 1.0.0
  * @author AIOT Team
- * @since 2024-01-01
+ * @version 1.0.0
+ * @since 2025-08-12
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HTTPServer } from 'http';
-import { createSocketIOServer, setupSocketIONamespaces, setupSocketIOMiddleware } from './factory.js';
-import { WEBSOCKET_NAMESPACES, SOCKET_ROOMS } from './namespaces.js';
+import { TYPES } from '@/container';
+import { IntegratedDroneStatusEventHandler } from './handlers/DroneStatusEventHandler.js';
+import { createLogger } from '@/configs/loggerConfig.js';
+import { createSocketIOServer, setupSocketIONamespaces } from './factory.js';
+import { WEBSOCKET_NAMESPACES } from './namespaces.js';
 import { DRONE_EVENTS } from './events.js';
-import { AuthenticatedSocket, AuthenticatedUser } from './types.js';
+
+const logger = createLogger('IntegratedWebSocketService');
 
 /**
- * WebSocket 服務類別
+ * 整合的 WebSocket 服務類別
  * 
- * 負責管理整個 Socket.IO 伺服器的生命週期和功能，包括：
- * 
- * **核心功能：**
- * - Socket.IO 伺服器實例的建立和管理
- * - 多命名空間的設定和管理
- * - 房間訂閱和取消訂閱管理
- * - 連線狀態監控和統計
- * 
- * **無人機專用功能：**
- * - 無人機位置數據即時推送
- * - 無人機狀態監控和通知
- * - 無人機命令下發和回應處理
- * - 多無人機同時管理
- * 
- * **安全機制：**
- * - JWT 認證整合
- * - 權限驗證和存取控制
- * - 連線速率限制
- * 
- * @class WebSocketService
+ * 提供完整的 WebSocket 功能，整合：
+ * - 事件處理器管理
+ * - 房間和命名空間管理
+ * - 服務層整合
+ * - 連線監控和統計
  */
 @injectable()
-export class WebSocketService {
-  /**
-   * Socket.IO 伺服器實例
-   * @private
-   */
-  private io: SocketIOServer;
-
-  /**
-   * 已認證的連線映射表
-   * Key: socket.id, Value: 用戶資訊
-   * @private
-   */
-  private authenticatedConnections: Map<string, AuthenticatedUser> = new Map();
-
-  /**
-   * 無人機訂閱映射表
-   * Key: droneId, Value: 訂閱此無人機的 socket.id 集合
-   * @private
-   */
-  private droneSubscriptions: Map<string, Set<string>> = new Map();
-
-  /**
-   * 用戶連線統計
-   * @private
-   */
-  private connectionStats = {
-    totalConnections: 0,
-    authenticatedConnections: 0,
-    droneSubscriptions: 0
-  };
-
-  /**
-   * 建構函式 - 初始化 WebSocket 管理器
-   * 
-   * @param {HTTPServer} httpServer - HTTP 伺服器實例
-   */
-  constructor(httpServer: HTTPServer) {
-    this.io = createSocketIOServer(httpServer);
-    setupSocketIONamespaces(this.io);
-    this.startConnectionMonitoring();
-  }
-
-  /**
-   * 開始連線監控
-   * 
-   * 設定定期統計和日誌記錄，監控系統健康狀態
-   * 
-   * @private
-   */
-  private startConnectionMonitoring(): void {
-    // 每30秒記錄一次連線統計
-    setInterval(() => {
-      this.logConnectionStats();
-    }, 30000);
-  }
-
-  /**
-   * 記錄連線統計資訊
-   * 
-   * @private
-   */
-  private logConnectionStats(): void {
-    const stats = this.getConnectionStats();
-    console.log('📊 WebSocket Connection Stats:', {
-      timestamp: new Date().toISOString(),
-      ...stats
-    });
-  }
-
-  /**
-   * 設定 Socket.IO 中間件
-   * 
-   * 註冊認證中間件到指定命名空間
-   * 
-   * @param {Function} authMiddleware - JWT 認證中間件
-   */
-  public setupMiddleware(authMiddleware: (socket: Socket, next: (err?: Error) => void) => void): void {
-    setupSocketIOMiddleware(this.io, authMiddleware);
-  }
-
-  /**
-   * 設定事件處理器
-   * 
-   * 註冊各種 Socket.IO 事件的處理邏輯
-   * 
-   * @param {Function} eventHandler - 事件處理器函式
-   */
-  public setupEventHandlers(
-    eventHandler: (socket: Socket, namespace: string) => void
-  ): void {
-    // 為無人機命名空間設定事件處理器
-    const namespace = WEBSOCKET_NAMESPACES.DRONE;
-    this.io.of(namespace).on(DRONE_EVENTS.CONNECTION, (socket: Socket) => {
-      const authSocket = socket as AuthenticatedSocket;
-      this.handleConnection(authSocket, namespace);
-      eventHandler(socket, namespace);
-    });
-    
-    console.log('✅ WebSocket event handlers configured');
-  }
-
-  /**
-   * 處理新連線
-   * 
-   * @param {AuthenticatedSocket} socket - Socket 連線實例
-   * @param {string} namespace - 命名空間
-   * @private
-   */
-  private handleConnection(socket: AuthenticatedSocket, namespace: string): void {
-    this.connectionStats.totalConnections++;
-    
-    if (socket.isAuthenticated) {
-      this.connectionStats.authenticatedConnections++;
-    }
-
-    console.log(`🔌 New connection to ${namespace}:`, {
-      socketId: socket.id,
-      authenticated: socket.isAuthenticated,
-      user: socket.user?.username || 'anonymous'
-    });
-
-    // 處理斷線
-    socket.on(DRONE_EVENTS.DISCONNECT, () => {
-      this.handleDisconnection(socket, namespace);
-    });
-  }
-
-  /**
-   * 處理連線斷線
-   * 
-   * @param {AuthenticatedSocket} socket - Socket 連線實例
-   * @param {string} namespace - 命名空間
-   * @private
-   */
-  private handleDisconnection(socket: AuthenticatedSocket, namespace: string): void {
-    this.connectionStats.totalConnections--;
-    
-    if (socket.isAuthenticated) {
-      this.connectionStats.authenticatedConnections--;
-      this.authenticatedConnections.delete(socket.id);
-    }
-
-    // 清理無人機訂閱
-    this.cleanupDroneSubscriptions(socket.id);
-
-    console.log(`🔌 Disconnection from ${namespace}:`, {
-      socketId: socket.id,
-      user: socket.user?.username || 'anonymous'
-    });
-  }
-
-  /**
-   * 清理無人機訂閱
-   * 
-   * @param {string} socketId - Socket ID
-   * @private
-   */
-  private cleanupDroneSubscriptions(socketId: string): void {
-    this.droneSubscriptions.forEach((subscribers, droneId) => {
-      if (subscribers.has(socketId)) {
-        subscribers.delete(socketId);
-        if (subscribers.size === 0) {
-          this.droneSubscriptions.delete(droneId);
-        }
-        this.connectionStats.droneSubscriptions--;
-      }
-    });
-  }
-
-  /**
-   * 註冊已認證用戶
-   * 
-   * @param {string} socketId - Socket ID
-   * @param {AuthenticatedUser} user - 用戶資訊
-   */
-  public registerAuthenticatedUser(socketId: string, user: AuthenticatedUser): void {
-    this.authenticatedConnections.set(socketId, user);
-    console.log(`✅ User authenticated: ${user.username} (${socketId})`);
-  }
-
-  /**
-   * 訂閱無人機數據
-   * 
-   * @param {string} socketId - Socket ID
-   * @param {string} droneId - 無人機 ID
-   * @param {'position' | 'status'} dataType - 數據類型
-   */
-  public subscribeToDrone(socketId: string, droneId: string, dataType: 'position' | 'status'): void {
-    const socket = this.getSocketById(socketId);
-    if (!socket) return;
-
-    const roomName = dataType === 'position' 
-      ? SOCKET_ROOMS.getDronePositionRoom(droneId)
-      : SOCKET_ROOMS.getDroneStatusRoom(droneId);
-
-    socket.join(roomName);
-
-    // 更新訂閱記錄
-    if (!this.droneSubscriptions.has(droneId)) {
-      this.droneSubscriptions.set(droneId, new Set());
-    }
-    this.droneSubscriptions.get(droneId)!.add(socketId);
-    this.connectionStats.droneSubscriptions++;
-
-    console.log(`📡 Subscribed to drone ${dataType}:`, {
-      socketId,
-      droneId,
-      dataType,
-      room: roomName
-    });
-  }
-
-  /**
-   * 取消訂閱無人機數據
-   * 
-   * @param {string} socketId - Socket ID
-   * @param {string} droneId - 無人機 ID
-   * @param {'position' | 'status'} dataType - 數據類型
-   */
-  public unsubscribeFromDrone(socketId: string, droneId: string, dataType: 'position' | 'status'): void {
-    const socket = this.getSocketById(socketId);
-    if (!socket) return;
-
-    const roomName = dataType === 'position' 
-      ? SOCKET_ROOMS.getDronePositionRoom(droneId)
-      : SOCKET_ROOMS.getDroneStatusRoom(droneId);
-
-    socket.leave(roomName);
-
-    // 更新訂閱記錄
-    const subscribers = this.droneSubscriptions.get(droneId);
-    if (subscribers?.has(socketId)) {
-      subscribers.delete(socketId);
-      this.connectionStats.droneSubscriptions--;
-      
-      if (subscribers.size === 0) {
-        this.droneSubscriptions.delete(droneId);
-      }
-    }
-
-    console.log(`📡 Unsubscribed from drone ${dataType}:`, {
-      socketId,
-      droneId,
-      dataType,
-      room: roomName
-    });
-  }
-
-  /**
-   * 廣播無人機位置更新
-   * 
-   * @param {string} droneId - 無人機 ID
-   * @param {any} positionData - 位置數據
-   */
-  public broadcastDronePosition(droneId: string, positionData: any): void {
-    const roomName = SOCKET_ROOMS.getDronePositionRoom(droneId);
-    this.io.to(roomName).emit(DRONE_EVENTS.DRONE_POSITION_UPDATE, {
-      droneId,
-      data: positionData,
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  /**
-   * 廣播無人機狀態更新
-   * 
-   * @param {string} droneId - 無人機 ID
-   * @param {any} statusData - 狀態數據
-   */
-  public broadcastDroneStatus(droneId: string, statusData: any): void {
-    const roomName = SOCKET_ROOMS.getDroneStatusRoom(droneId);
-    this.io.to(roomName).emit(DRONE_EVENTS.DRONE_STATUS_UPDATE, {
-      droneId,
-      data: statusData,
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  /**
-   * 發送無人機命令回應
-   * 
-   * @param {string} socketId - Socket ID
-   * @param {any} commandResponse - 命令回應數據
-   */
-  public sendCommandResponse(socketId: string, commandResponse: any): void {
-    const socket = this.getSocketById(socketId);
-    if (socket) {
-      socket.emit(DRONE_EVENTS.DRONE_COMMAND_RESPONSE, commandResponse);
-    }
-  }
-
-  /**
-   * 根據 Socket ID 獲取 Socket 實例
-   * 
-   * @param {string} socketId - Socket ID
-   * @returns {Socket | null} Socket 實例或 null
-   * @private
-   */
-  private getSocketById(socketId: string): Socket | null {
-    // 遍歷所有命名空間尋找 Socket
-    for (const namespace of Object.values(WEBSOCKET_NAMESPACES)) {
-      const socket = this.io.of(namespace).sockets.get(socketId);
-      if (socket) return socket;
-    }
-    return null;
-  }
-
-  /**
-   * 獲取連線統計資訊
-   * 
-   * @returns {object} 連線統計資訊
-   */
-  public getConnectionStats(): object {
-    return {
-      ...this.connectionStats,
-      authenticatedUsers: this.authenticatedConnections.size,
-      activeDroneSubscriptions: this.droneSubscriptions.size
+export class IntegratedWebSocketService {
+    private io!: SocketIOServer;
+    private connectedClients: Map<string, Socket> = new Map();
+    private connectionStats = {
+        totalConnections: 0,
+        statusSubscriptions: 0,
+        positionSubscriptions: 0,
+        commandSubscriptions: 0
     };
-  }
 
-  /**
-   * 獲取 Socket.IO 伺服器實例
-   * 
-   * @returns {SocketIOServer} Socket.IO 伺服器實例
-   */
-  public getIO(): SocketIOServer {
-    return this.io;
-  }
+    constructor(
+        @inject(TYPES.DroneStatusEventHandler) 
+        private readonly statusEventHandler: IntegratedDroneStatusEventHandler
+    ) {}
 
-  /**
-   * 關閉 WebSocket 管理器
-   * 
-   * 清理所有連線和資源
-   */
-  public async shutdown(): Promise<void> {
-    console.log('🔄 Shutting down WebSocket manager...');
-    
-    // 清理所有連線記錄
-    this.authenticatedConnections.clear();
-    this.droneSubscriptions.clear();
-    
-    // 關閉 Socket.IO 伺服器
-    this.io.close();
-    
-    console.log('✅ WebSocket manager shut down successfully');
-  }
+    /**
+     * 初始化 WebSocket 服務
+     */
+    async initialize(httpServer: HTTPServer): Promise<void> {
+        try {
+            logger.info('Initializing Integrated WebSocket Service...');
+
+            // 創建 Socket.IO 伺服器
+            this.io = createSocketIOServer(httpServer);
+            
+            // 設置命名空間
+            setupSocketIONamespaces(this.io);
+
+            // 設置事件處理器的 Socket.IO 實例
+            this.statusEventHandler.setSocketIOInstance(this.io);
+
+            // 設置中間件
+            this.setupMiddleware();
+
+            // 設置事件處理器
+            this.setupEventHandlers();
+
+            // 開始連線監控
+            this.startConnectionMonitoring();
+
+            logger.info('Integrated WebSocket Service initialized successfully');
+
+        } catch (error) {
+            logger.error('Failed to initialize WebSocket service', {
+                error: error instanceof Error ? error.message : 'Unknown error'
+            });
+            throw error;
+        }
+    }
+
+    /**
+     * 設置中間件
+     */
+    private setupMiddleware(): void {
+        // 基本連線中間件
+        this.io.use((socket: Socket, next) => {
+            logger.debug('New WebSocket connection attempt', {
+                socketId: socket.id,
+                clientIP: socket.handshake.address,
+                userAgent: socket.handshake.headers['user-agent']
+            });
+            next();
+        });
+
+        // 認證中間件 (簡化版，實際環境可能需要更複雜的認證)
+        this.io.use((socket: Socket, next) => {
+            // 這裡可以添加認證邏輯
+            // 目前簡化處理，允許所有連線
+            next();
+        });
+    }
+
+    /**
+     * 設置事件處理器
+     */
+    private setupEventHandlers(): void {
+        // 設置狀態相關的命名空間
+        this.setupStatusNamespace();
+        
+        // 設置位置相關的命名空間 (預留)
+        this.setupPositionNamespace();
+        
+        // 設置命令相關的命名空間 (預留)
+        this.setupCommandNamespace();
+        
+        // 設置管理命名空間 (預留)
+        this.setupAdminNamespace();
+    }
+
+    /**
+     * 設置狀態命名空間事件處理
+     */
+    private setupStatusNamespace(): void {
+        const statusNamespace = this.io.of(WEBSOCKET_NAMESPACES.DRONE);
+        
+        statusNamespace.on('connection', (socket: Socket) => {
+            this.handleConnection(socket, 'status');
+
+            // 狀態訂閱事件
+            socket.on('drone_status_subscribe', async (data) => {
+                await this.statusEventHandler.handleEvent(socket, 'drone_status_subscribe', data);
+            });
+
+            // 狀態取消訂閱事件
+            socket.on('drone_status_unsubscribe', async (data) => {
+                await this.statusEventHandler.handleEvent(socket, 'drone_status_unsubscribe', data);
+            });
+
+            // 狀態更新事件
+            socket.on('drone_status_update', async (data) => {
+                await this.statusEventHandler.handleEvent(socket, 'drone_status_update', data);
+            });
+
+            // 健康摘要請求事件
+            socket.on('get_drone_health_summary', async (data) => {
+                await this.statusEventHandler.handleEvent(socket, 'get_drone_health_summary', data);
+            });
+
+            // 在線無人機列表請求
+            socket.on('get_online_drones', async () => {
+                await this.statusEventHandler.handleEvent(socket, 'get_online_drones', {});
+            });
+
+            // 斷線處理
+            socket.on('disconnect', () => {
+                this.handleDisconnection(socket, 'status');
+            });
+        });
+
+        logger.info('Status namespace event handlers configured');
+    }
+
+    /**
+     * 設置位置命名空間 (預留實現)
+     */
+    private setupPositionNamespace(): void {
+        const positionNamespace = this.io.of('/drone-position');
+        
+        positionNamespace.on('connection', (socket: Socket) => {
+            this.handleConnection(socket, 'position');
+
+            // 位置相關事件處理 (預留)
+            socket.on('drone_position_subscribe', (data) => {
+                logger.info('Position subscription received', { socketId: socket.id, data });
+                // TODO: 實現位置訂閱處理
+            });
+
+            socket.on('disconnect', () => {
+                this.handleDisconnection(socket, 'position');
+            });
+        });
+
+        logger.info('Position namespace event handlers configured');
+    }
+
+    /**
+     * 設置命令命名空間 (預留實現)
+     */
+    private setupCommandNamespace(): void {
+        const commandNamespace = this.io.of('/drone-commands');
+        
+        commandNamespace.on('connection', (socket: Socket) => {
+            this.handleConnection(socket, 'command');
+
+            // 命令相關事件處理 (預留)
+            socket.on('drone_command_send', (data) => {
+                logger.info('Command received', { socketId: socket.id, data });
+                // TODO: 實現命令處理
+            });
+
+            socket.on('disconnect', () => {
+                this.handleDisconnection(socket, 'command');
+            });
+        });
+
+        logger.info('Command namespace event handlers configured');
+    }
+
+    /**
+     * 設置管理命名空間 (預留實現)
+     */
+    private setupAdminNamespace(): void {
+        const adminNamespace = this.io.of('/admin');
+        
+        adminNamespace.on('connection', (socket: Socket) => {
+            this.handleConnection(socket, 'admin');
+
+            // 管理相關事件處理 (預留)
+            socket.on('get_system_stats', () => {
+                socket.emit('system_stats', this.getSystemStats());
+            });
+
+            socket.on('disconnect', () => {
+                this.handleDisconnection(socket, 'admin');
+            });
+        });
+
+        logger.info('Admin namespace event handlers configured');
+    }
+
+    /**
+     * 處理新連線
+     */
+    private handleConnection(socket: Socket, type: string): void {
+        this.connectionStats.totalConnections++;
+        this.connectedClients.set(socket.id, socket);
+
+        logger.info('New WebSocket connection', {
+            socketId: socket.id,
+            type,
+            clientIP: socket.handshake.address,
+            timestamp: new Date().toISOString(),
+            totalConnections: this.connectionStats.totalConnections
+        });
+
+        // 發送歡迎訊息
+        socket.emit('connection_established', {
+            socketId: socket.id,
+            type,
+            timestamp: new Date().toISOString(),
+            message: `Connected to ${type} namespace successfully`
+        });
+    }
+
+    /**
+     * 處理斷線
+     */
+    private handleDisconnection(socket: Socket, type: string): void {
+        this.connectionStats.totalConnections--;
+        this.connectedClients.delete(socket.id);
+
+        logger.info('WebSocket disconnection', {
+            socketId: socket.id,
+            type,
+            timestamp: new Date().toISOString(),
+            totalConnections: this.connectionStats.totalConnections
+        });
+    }
+
+    /**
+     * 開始連線監控
+     */
+    private startConnectionMonitoring(): void {
+        setInterval(() => {
+            const stats = this.getConnectionStats();
+            logger.debug('WebSocket Connection Stats', stats);
+
+            // 廣播系統狀態到管理員命名空間
+            this.io.of('/admin').emit('system_stats_update', stats);
+        }, 30000); // 每 30 秒記錄一次
+    }
+
+    /**
+     * 獲取連線統計資訊
+     */
+    getConnectionStats(): object {
+        return {
+            ...this.connectionStats,
+            connectedClients: this.connectedClients.size,
+            timestamp: new Date().toISOString(),
+            handlerStats: {
+                status: this.statusEventHandler.getHandlerStats()
+            }
+        };
+    }
+
+    /**
+     * 獲取系統統計資訊
+     */
+    private getSystemStats(): object {
+        return {
+            connections: this.getConnectionStats(),
+            namespaces: {
+                status: this.io.of('/drone-status').sockets.size,
+                position: this.io.of('/drone-position').sockets.size,
+                commands: this.io.of('/drone-commands').sockets.size,
+                admin: this.io.of('/admin').sockets.size
+            },
+            uptime: process.uptime(),
+            memory: process.memoryUsage(),
+            timestamp: new Date().toISOString()
+        };
+    }
+
+    /**
+     * 廣播系統級別的訊息
+     */
+    broadcastSystemMessage(message: string, data?: any): void {
+        this.io.emit('system_message', {
+            message,
+            data,
+            timestamp: new Date().toISOString()
+        });
+
+        logger.info('System message broadcasted', { message, data });
+    }
+
+    /**
+     * 獲取 Socket.IO 伺服器實例
+     */
+    getIO(): SocketIOServer {
+        return this.io;
+    }
+
+    /**
+     * 關閉服務
+     */
+    async shutdown(): Promise<void> {
+        logger.info('Shutting down Integrated WebSocket Service...');
+
+        try {
+            // 清理連線
+            this.connectedClients.clear();
+            
+            // 重置統計
+            this.connectionStats = {
+                totalConnections: 0,
+                statusSubscriptions: 0,
+                positionSubscriptions: 0,
+                commandSubscriptions: 0
+            };
+
+            // 關閉 Socket.IO 伺服器
+            if (this.io) {
+                this.io.close();
+            }
+
+            logger.info('Integrated WebSocket Service shut down successfully');
+
+        } catch (error) {
+            logger.error('Error during WebSocket service shutdown', {
+                error: error instanceof Error ? error.message : 'Unknown error'
+            });
+            throw error;
+        }
+    }
 }

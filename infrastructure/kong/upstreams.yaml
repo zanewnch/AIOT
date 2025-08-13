@@ -63,7 +63,7 @@ upstreams:
       - rbac
       - auth
     targets:
-      - target: aiot-rbac-service:3001
+      - target: rbac-service.service.consul:3001
         weight: 100
 
   - name: drone-upstream
@@ -128,7 +128,7 @@ upstreams:
       - drone
       - iot
     targets:
-      - target: aiot-drone-service:3002
+      - target: drone-service.service.consul:3002
         weight: 100
 
   - name: fesetting-upstream
@@ -193,7 +193,7 @@ upstreams:
       - user-preferences
       - settings
     targets:
-      - target: aiot-fesetting-service:3003
+      - target: fesetting-service.service.consul:3003
         weight: 100
 
   # Drone 即時通訊微服務 Upstream
@@ -260,5 +260,5 @@ upstreams:
       - realtime
       - websocket
     targets:
-      - target: aiot-drone-realtime-service:3004
+      - target: drone-realtime-service.service.consul:3004
         weight: 100

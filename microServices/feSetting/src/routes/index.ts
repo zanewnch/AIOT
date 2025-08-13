@@ -11,7 +11,9 @@
  */
 
 import { Router } from 'express';
-import userPreferenceRoutes from './userPreferenceRoutes.js';
+import { container } from '../container/container.js';
+import { TYPES } from '../container/types.js';
+import { UserPreferenceRoutes } from './userPreferenceRoutes.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('Routes');
@@ -58,7 +60,8 @@ router.get('/info', (req, res) => {
 /**
  * 用戶偏好設定路由
  */
-router.use('/user-preferences', userPreferenceRoutes);
+const userPreferenceRoutes = container.get<UserPreferenceRoutes>(TYPES.UserPreferenceRoutes);
+router.use('/user-preferences', userPreferenceRoutes.getRouter());
 
 /**
  * 404 處理器 - 必須放在所有路由之後

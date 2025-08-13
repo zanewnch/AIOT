@@ -34,7 +34,13 @@
       "@/*": ["./*"],
       "@/configs/*": ["./configs/*"],
       "@/websocket/*": ["./websocket/*"],
-      "@/types/*": ["./types/*"]
+      "@/types/*": ["./types/*"],
+      "@/interfaces/*": ["./interfaces/*"],
+      "@/services/*": ["./services/*"],
+      "@/repo/*": ["./repo/*"],
+      "@/container/*": ["./container/*"],
+      "@/models/*": ["./models/*"],
+      "@/routes/*": ["./routes/*"]
     }
   },
   "include": [

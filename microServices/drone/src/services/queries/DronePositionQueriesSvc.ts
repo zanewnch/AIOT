@@ -12,10 +12,11 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { DronePositionQueriesRepository } from '../../repo/queries/DronePositionQueriesRepo.js';
+import { injectable, inject } from 'inversify';
+import type { DronePositionQueriesRepository } from '../../repo/queries/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes } from '../../models/DronePositionModel.js';
-import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
+import type { IDronePositionQueriesSvc } from '../../types/services/IDronePositionService.js';
+import { TYPES } from '../../types/dependency-injection.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 
 const logger = createLogger('DronePositionQueriesSvc');
@@ -30,12 +31,10 @@ const logger = createLogger('DronePositionQueriesSvc');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionQueriesSvc {
-    private dronePositionRepository: DronePositionQueriesRepository;
-
-    constructor(dronePositionRepository: DronePositionQueriesRepository = new DronePositionQueriesRepository()) {
-        this.dronePositionRepository = dronePositionRepository;
-    }
+export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
+    constructor(
+        @inject(TYPES.DronePositionQueriesRepository) private readonly dronePositionRepository: DronePositionQueriesRepository
+    ) {}
 
     /**
      * 取得所有無人機位置資料

@@ -59,6 +59,37 @@ export const TYPES = {
     DroneCommandQueriesRepository: Symbol.for('DroneCommandQueriesRepository'),
     DroneCommandCommandsRepository: Symbol.for('DroneCommandCommandsRepository'),
     
+    // === 控制器層 ===
+    // 查詢控制器
+    ArchiveTaskQueriesCtrl: Symbol.for('ArchiveTaskQueriesCtrl'),
+    DroneCommandQueriesCtrl: Symbol.for('DroneCommandQueriesCtrl'),
+    DroneCommandQueueQueriesCtrl: Symbol.for('DroneCommandQueueQueriesCtrl'),
+    DroneCommandsArchiveQueriesCtrl: Symbol.for('DroneCommandsArchiveQueriesCtrl'),
+    DronePositionQueriesCtrl: Symbol.for('DronePositionQueriesCtrl'),
+    DronePositionsArchiveQueriesCtrl: Symbol.for('DronePositionsArchiveQueriesCtrl'),
+    DroneRealTimeStatusQueriesCtrl: Symbol.for('DroneRealTimeStatusQueriesCtrl'),
+    DroneStatusArchiveQueriesCtrl: Symbol.for('DroneStatusArchiveQueriesCtrl'),
+    DroneStatusQueriesCtrl: Symbol.for('DroneStatusQueriesCtrl'),
+    
+    // 命令控制器
+    ArchiveTaskCommandsCtrl: Symbol.for('ArchiveTaskCommandsCtrl'),
+    DroneCommandCommandsCtrl: Symbol.for('DroneCommandCommandsCtrl'),
+    DroneCommandQueueCommandsCtrl: Symbol.for('DroneCommandQueueCommandsCtrl'),
+    DroneCommandsArchiveCommandsCtrl: Symbol.for('DroneCommandsArchiveCommandsCtrl'),
+    DronePositionCommandsCtrl: Symbol.for('DronePositionCommandsCtrl'),
+    DronePositionsArchiveCommandsCtrl: Symbol.for('DronePositionsArchiveCommandsCtrl'),
+    DroneRealTimeStatusCommandsCtrl: Symbol.for('DroneRealTimeStatusCommandsCtrl'),
+    DroneStatusArchiveCommandsCtrl: Symbol.for('DroneStatusArchiveCommandsCtrl'),
+    DroneStatusCommandsCtrl: Symbol.for('DroneStatusCommandsCtrl'),
+    
+    // === 路由層 ===
+    ArchiveTaskRoutes: Symbol.for('ArchiveTaskRoutes'),
+    DroneCommandRoutes: Symbol.for('DroneCommandRoutes'),
+    DroneStatusRoutes: Symbol.for('DroneStatusRoutes'),
+    DronePositionRoutes: Symbol.for('DronePositionRoutes'),
+    DroneRealtimeRoutes: Symbol.for('DroneRealtimeRoutes'),
+    RouteManager: Symbol.for('RouteManager'),
+
     // === WebSocket 相關 ===
     WebSocketService: Symbol.for('WebSocketService'),
     WebSocketAuthMiddleware: Symbol.for('WebSocketAuthMiddleware'),

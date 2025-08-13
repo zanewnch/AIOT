@@ -7,23 +7,23 @@
 // 匯入 Sequelize TypeScript 版本用於 ORM 操作
 import { Sequelize } from 'sequelize-typescript';
 // 匯入無人機位置模型用於位置資料管理
-import { DronePositionModel } from '../models/DronePositionModel.js';
+import { DronePositionModel } from '@/models/DronePositionModel.js';
 // 匯入無人機狀態模型用於基本狀態管理
-import { DroneStatusModel } from '../models/DroneStatusModel.js';
+import { DroneStatusModel } from '@/models/DroneStatusModel.js';
 // 匯入無人機即時狀態模型用於即時狀態追蹤
-import { DroneRealTimeStatusModel } from '../models/DroneRealTimeStatusModel.js';
+import { DroneRealTimeStatusModel } from '@/models/DroneRealTimeStatusModel.js';
 // 匯入無人機指令模型用於指令管理
-import { DroneCommandModel } from '../models/DroneCommandModel.js';
+import { DroneCommandModel } from '@/models/DroneCommandModel.js';
 // 匯入無人機指令佇列模型用於佇列管理
-import { DroneCommandQueueModel } from '../models/DroneCommandQueueModel.js';
+import { DroneCommandQueueModel } from '@/models/DroneCommandQueueModel.js';
 // 匯入無人機指令歷史模型用於指令歷史管理
-import { DroneCommandsArchiveModel } from '../models/DroneCommandsArchiveModel.js';
+import { DroneCommandsArchiveModel } from '@/models/DroneCommandsArchiveModel.js';
 // 匯入無人機位置歷史模型用於位置歷史管理
-import { DronePositionsArchiveModel } from '../models/DronePositionsArchiveModel.js';
+import { DronePositionsArchiveModel } from '@/models/DronePositionsArchiveModel.js';
 // 匯入無人機狀態歷史模型用於狀態歷史管理
-import { DroneStatusArchiveModel } from '../models/DroneStatusArchiveModel.js';
+import { DroneStatusArchiveModel } from '@/models/DroneStatusArchiveModel.js';
 // 匯入歷史任務模型用於歷史任務管理
-import { ArchiveTaskModel } from '../models/ArchiveTaskModel.js';
+import { ArchiveTaskModel } from '@/models/ArchiveTaskModel.js';
 
 /**
  * 資料庫配置介面

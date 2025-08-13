@@ -17,6 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { DronePositionQueriesSvc } from '../../services/queries/DronePositionQueriesSvc.js';
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
+import { IDronePositionQueries } from '../../types/controllers/queries/IDronePositionQueries.js';
 import { TYPES } from '../../types/dependency-injection.js';
 
 const logger = createLogger('DronePositionQueries');
@@ -31,7 +32,7 @@ const logger = createLogger('DronePositionQueries');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionQueries {
+export class DronePositionQueries implements IDronePositionQueries {
     constructor(
         @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesSvc: DronePositionQueriesSvc
     ) {}
