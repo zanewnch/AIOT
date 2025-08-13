@@ -27,6 +27,9 @@ import { DocsController } from '../controllers/queries/DocsQueriesCtrl.js';
 
 // Routes 層 imports
 import { UserPreferenceRoutes } from '../routes/userPreferenceRoutes.js';
+import { DocsRoutes } from '../routes/docsRoutes.js';
+import { HealthRoutes } from '../routes/healthRoutes.js';
+import { RouteManager } from '../routes/index.js';
 
 /**
  * 建立和配置 general 服務 IoC 容器
@@ -74,6 +77,19 @@ export function createContainer(): Container {
     // ===== Routes 層註冊 =====
     container.bind<UserPreferenceRoutes>(TYPES.UserPreferenceRoutes)
         .to(UserPreferenceRoutes)
+        .inSingletonScope();
+
+    container.bind<DocsRoutes>(TYPES.DocsRoutes)
+        .to(DocsRoutes)
+        .inSingletonScope();
+
+    container.bind<HealthRoutes>(TYPES.HealthRoutes)
+        .to(HealthRoutes)
+        .inSingletonScope();
+
+    // ===== Route Manager 註冊 =====
+    container.bind<RouteManager>(TYPES.RouteManager)
+        .to(RouteManager)
         .inSingletonScope();
 
     console.log('✅ general 服務 IoC Container 配置完成 - UserPreference + 動態文檔功能已註冊');

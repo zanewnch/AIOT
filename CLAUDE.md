@@ -16,6 +16,59 @@
 - **保持相同類型文件的結構一致性**
 - **遵循現有的命名慣例和組織模式**
 
+### 代碼風格規範
+- **優先使用 class with arrow function 模式**：
+  ```typescript
+  @injectable()
+  export class ExampleService {
+    constructor(private dependency: SomeDependency) {}
+    
+    // 使用 arrow function 避免 this 綁定問題
+    public processData = async (data: any): Promise<void> => {
+      // 實作邏輯
+    }
+    
+    private helperMethod = (param: string): string => {
+      return param.toUpperCase();
+    }
+  }
+  ```
+- **路由類別使用 arrow function**：
+  ```typescript
+  @injectable()
+  export class ExampleRoutes {
+    private setupRoutes = (): void => {
+      this.router.get('/endpoint', this.handleRequest);
+    }
+    
+    private handleRequest = (req: Request, res: Response): void => {
+      // 處理邏輯
+    }
+  }
+  ```
+- **控制器方法使用 arrow function**：
+  ```typescript
+  @injectable()
+  export class ExampleController {
+    public getData = async (req: Request, res: Response): Promise<void> => {
+      // 控制器邏輯
+    }
+  }
+  ```
+
+### 路由結構規範
+- **routes/index.ts 只負責註冊和組合路由，不包含具體實作**
+- **各功能路由放在獨立的路由文件中**：
+  ```
+  /routes/
+    ├── index.ts           # 路由註冊中心
+    ├── healthRoutes.ts    # 健康檢查路由
+    ├── userPreferenceRoutes.ts  # 用戶偏好設定路由
+    └── docsRoutes.ts      # 動態文檔路由
+  ```
+- **路由文件命名規範**：`{功能名稱}Routes.ts`
+- **每個路由文件都使用 class with arrow function 模式**
+
 ## IDE 診斷和測試策略
 - **使用 IDE 診斷功能檢查錯誤**：
   - 直接運行 `mcp__ide__getDiagnostics` 檢查語法和類型錯誤

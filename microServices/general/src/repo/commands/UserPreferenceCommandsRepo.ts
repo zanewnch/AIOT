@@ -12,7 +12,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { UserPreferenceModel, type UserPreferenceAttributes, type UserPreferenceCreationAttributes } from '../../models/UserPreferenceModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { Logger, LogRepository } from '../../decorators/LoggerDecorator.js';
 import { Op } from 'sequelize';
 
 /**
@@ -23,8 +23,8 @@ import { Op } from 'sequelize';
  * @class UserPreferenceCommandsRepository
  */
 @injectable()
+@Logger('UserPreferenceCommandsRepository')
 export class UserPreferenceCommandsRepository {
-    private readonly logger = createLogger('UserPreferenceCommandsRepository');
 
     /**
      * 建立新的用戶偏好設定資料
@@ -34,13 +34,10 @@ export class UserPreferenceCommandsRepository {
      */
     async create(data: UserPreferenceCreationAttributes): Promise<UserPreferenceAttributes> {
         try {
-            this.logger.info('Creating new user preference data', { data });
             const userPreference = await UserPreferenceModel.create(data);
 
-            this.logger.info('User preference data created successfully', { id: userPreference.id });
             return userPreference.toJSON() as UserPreferenceAttributes;
         } catch (error) {
-            this.logger.error('Error creating user preference data', { data, error });
             throw error;
         }
     }
@@ -53,13 +50,10 @@ export class UserPreferenceCommandsRepository {
      */
     async bulkCreate(dataList: UserPreferenceCreationAttributes[]): Promise<UserPreferenceAttributes[]> {
         try {
-            this.logger.info('Bulk creating user preference data', { count: dataList.length });
             const userPreferences = await UserPreferenceModel.bulkCreate(dataList);
 
-            this.logger.info('User preference data bulk created successfully', { count: userPreferences.length });
             return userPreferences.map(item => item.toJSON() as UserPreferenceAttributes);
         } catch (error) {
-            this.logger.error('Error bulk creating user preference data', { count: dataList.length, error });
             throw error;
         }
     }
@@ -73,28 +67,23 @@ export class UserPreferenceCommandsRepository {
      */
     async updateById(id: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes | null> {
         try {
-            this.logger.info('Updating user preference data by ID', { id, data });
 
             const [affectedCount] = await UserPreferenceModel.update(data, {
                 where: { id }
             });
 
             if (affectedCount === 0) {
-                this.logger.warn('No user preference found with given ID', { id });
                 return null;
             }
 
             // 取得更新後的資料
             const updatedUserPreference = await UserPreferenceModel.findByPk(id);
             if (!updatedUserPreference) {
-                this.logger.error('Failed to retrieve updated user preference data', { id });
                 return null;
             }
 
-            this.logger.info('User preference data updated successfully', { id });
             return updatedUserPreference.toJSON() as UserPreferenceAttributes;
         } catch (error) {
-            this.logger.error('Error updating user preference data by ID', { id, data, error });
             throw error;
         }
     }
@@ -108,14 +97,12 @@ export class UserPreferenceCommandsRepository {
      */
     async updateByUserId(userId: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes | null> {
         try {
-            this.logger.info('Updating user preference data by user ID', { userId, data });
 
             const [affectedCount] = await UserPreferenceModel.update(data, {
                 where: { userId: userId }
             });
 
             if (affectedCount === 0) {
-                this.logger.warn('No user preference found with given user ID', { userId });
                 return null;
             }
 
@@ -125,14 +112,11 @@ export class UserPreferenceCommandsRepository {
             });
 
             if (!updatedUserPreference) {
-                this.logger.error('Failed to retrieve updated user preference data', { userId });
                 return null;
             }
 
-            this.logger.info('User preference data updated successfully', { userId });
             return updatedUserPreference.toJSON() as UserPreferenceAttributes;
         } catch (error) {
-            this.logger.error('Error updating user preference data by user ID', { userId, data, error });
             throw error;
         }
     }
@@ -145,21 +129,17 @@ export class UserPreferenceCommandsRepository {
      */
     async deleteById(id: number): Promise<boolean> {
         try {
-            this.logger.info('Deleting user preference data by ID', { id });
 
             const deletedCount = await UserPreferenceModel.destroy({
                 where: { id }
             });
 
             if (deletedCount === 0) {
-                this.logger.warn('No user preference found with given ID', { id });
                 return false;
             }
 
-            this.logger.info('User preference data deleted successfully', { id, deletedCount });
             return true;
         } catch (error) {
-            this.logger.error('Error deleting user preference data by ID', { id, error });
             throw error;
         }
     }
@@ -172,21 +152,17 @@ export class UserPreferenceCommandsRepository {
      */
     async deleteByUserId(userId: number): Promise<boolean> {
         try {
-            this.logger.info('Deleting user preference data by user ID', { userId });
 
             const deletedCount = await UserPreferenceModel.destroy({
                 where: { userId: userId }
             });
 
             if (deletedCount === 0) {
-                this.logger.warn('No user preference found with given user ID', { userId });
                 return false;
             }
 
-            this.logger.info('User preference data deleted successfully', { userId, deletedCount });
             return true;
         } catch (error) {
-            this.logger.error('Error deleting user preference data by user ID', { userId, error });
             throw error;
         }
     }
@@ -200,7 +176,6 @@ export class UserPreferenceCommandsRepository {
      */
     async upsertByUserId(userId: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes> {
         try {
-            this.logger.info('Upserting user preference data by user ID', { userId, data });
 
             // 嘗試更新現有記錄
             const existingPreference = await UserPreferenceModel.findOne({
@@ -213,7 +188,6 @@ export class UserPreferenceCommandsRepository {
                 // 更新現有記錄
                 await existingPreference.update(data);
                 userPreference = existingPreference;
-                this.logger.info('User preference data updated via upsert', { userId });
             } else {
                 // 建立新記錄
                 const createData = {
@@ -222,12 +196,10 @@ export class UserPreferenceCommandsRepository {
                 } as UserPreferenceCreationAttributes;
 
                 userPreference = await UserPreferenceModel.create(createData);
-                this.logger.info('User preference data created via upsert', { userId });
             }
 
             return userPreference.toJSON() as UserPreferenceAttributes;
         } catch (error) {
-            this.logger.error('Error upserting user preference data by user ID', { userId, data, error });
             throw error;
         }
     }

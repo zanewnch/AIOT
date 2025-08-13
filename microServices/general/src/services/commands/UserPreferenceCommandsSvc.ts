@@ -17,9 +17,7 @@ import { TYPES } from '../../container/types.js';
 import { UserPreferenceCommandsRepository } from '../../repo/commands/UserPreferenceCommandsRepo.js';
 import { UserPreferenceQueriesRepository } from '../../repo/queries/UserPreferenceQueriesRepo.js';
 import type { UserPreferenceAttributes, UserPreferenceCreationAttributes } from '../../models/UserPreferenceModel.js';
-import { createLogger } from '../../configs/loggerConfig.js';
-
-const logger = createLogger('UserPreferenceCommandsSvc');
+import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 用戶偏好設定預設值
@@ -42,6 +40,7 @@ const DEFAULT_USER_PREFERENCES = {
  * @since 1.0.0
  */
 @injectable()
+@Logger('UserPreferenceCommandsSvc')
 export class UserPreferenceCommandsSvc {
     constructor(
         @inject(TYPES.UserPreferenceCommandsRepo) 
@@ -59,12 +58,10 @@ export class UserPreferenceCommandsSvc {
      */
     async createUserPreference(preferenceData: UserPreferenceCreationAttributes): Promise<UserPreferenceAttributes> {
         try {
-            logger.info('Creating user preference', { userId: preferenceData.userId });
 
             // 檢查是否已存在該用戶的偏好設定
             const existingPreference = await this.queriesRepository.selectByUserId(preferenceData.userId);
             if (existingPreference) {
-                logger.warn('User preference already exists', { userId: preferenceData.userId });
                 throw new Error('用戶偏好設定已存在');
             }
 
@@ -75,17 +72,9 @@ export class UserPreferenceCommandsSvc {
             };
 
             const createdPreference = await this.commandsRepository.create(dataWithDefaults);
-            logger.info('User preference created successfully', { 
-                userId: preferenceData.userId, 
-                preferenceId: createdPreference.id 
-            });
 
             return createdPreference;
         } catch (error) {
-            logger.error('Error creating user preference', { 
-                userId: preferenceData.userId, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -98,7 +87,6 @@ export class UserPreferenceCommandsSvc {
      */
     async bulkCreateUserPreferences(preferencesData: UserPreferenceCreationAttributes[]): Promise<UserPreferenceAttributes[]> {
         try {
-            logger.info('Bulk creating user preferences', { count: preferencesData.length });
 
             // 檢查重複的用戶 ID
             const userIds = preferencesData.map(pref => pref.userId);
@@ -125,14 +113,9 @@ export class UserPreferenceCommandsSvc {
             }));
 
             const createdPreferences = await this.commandsRepository.bulkCreate(dataWithDefaults);
-            logger.info('User preferences bulk created successfully', { count: createdPreferences.length });
 
             return createdPreferences;
         } catch (error) {
-            logger.error('Error bulk creating user preferences', { 
-                count: preferencesData.length,
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -146,7 +129,6 @@ export class UserPreferenceCommandsSvc {
      */
     async updateUserPreference(id: number, updateData: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes> {
         try {
-            logger.info('Updating user preference by ID', { id });
 
             // 驗證偏好設定是否存在
             const existingPreference = await this.queriesRepository.selectById(id);
@@ -162,13 +144,8 @@ export class UserPreferenceCommandsSvc {
                 throw new Error('更新用戶偏好設定失敗');
             }
 
-            logger.info('User preference updated successfully', { id });
             return updatedPreference;
         } catch (error) {
-            logger.error('Error updating user preference', { 
-                id, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -182,7 +159,6 @@ export class UserPreferenceCommandsSvc {
      */
     async updateUserPreferenceByUserId(userId: number, updateData: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes> {
         try {
-            logger.info('Updating user preference by user ID', { userId });
 
             // 驗證偏好設定是否存在
             const existingPreference = await this.queriesRepository.selectByUserId(userId);
@@ -198,13 +174,8 @@ export class UserPreferenceCommandsSvc {
                 throw new Error('更新用戶偏好設定失敗');
             }
 
-            logger.info('User preference updated successfully', { userId });
             return updatedPreference;
         } catch (error) {
-            logger.error('Error updating user preference by user ID', { 
-                userId, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -217,7 +188,6 @@ export class UserPreferenceCommandsSvc {
      */
     async deleteUserPreference(id: number): Promise<boolean> {
         try {
-            logger.info('Deleting user preference by ID', { id });
 
             // 驗證偏好設定是否存在
             const existingPreference = await this.queriesRepository.selectById(id);
@@ -226,14 +196,9 @@ export class UserPreferenceCommandsSvc {
             }
 
             const deleted = await this.commandsRepository.deleteById(id);
-            logger.info('User preference deleted successfully', { id, deleted });
 
             return deleted;
         } catch (error) {
-            logger.error('Error deleting user preference', { 
-                id, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -246,7 +211,6 @@ export class UserPreferenceCommandsSvc {
      */
     async deleteUserPreferenceByUserId(userId: number): Promise<boolean> {
         try {
-            logger.info('Deleting user preference by user ID', { userId });
 
             // 驗證偏好設定是否存在
             const existingPreference = await this.queriesRepository.selectByUserId(userId);
@@ -255,14 +219,9 @@ export class UserPreferenceCommandsSvc {
             }
 
             const deleted = await this.commandsRepository.deleteByUserId(userId);
-            logger.info('User preference deleted successfully', { userId, deleted });
 
             return deleted;
         } catch (error) {
-            logger.error('Error deleting user preference by user ID', { 
-                userId, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -276,7 +235,6 @@ export class UserPreferenceCommandsSvc {
      */
     async upsertUserPreference(userId: number, preferenceData: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes> {
         try {
-            logger.info('Upserting user preference', { userId });
 
             // 驗證偏好設定資料
             this.validatePreferenceData(preferenceData);
@@ -288,14 +246,9 @@ export class UserPreferenceCommandsSvc {
             };
 
             const upsertedPreference = await this.commandsRepository.upsertByUserId(userId, dataWithDefaults);
-            logger.info('User preference upserted successfully', { userId });
 
             return upsertedPreference;
         } catch (error) {
-            logger.error('Error upserting user preference', { 
-                userId, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }
@@ -308,17 +261,11 @@ export class UserPreferenceCommandsSvc {
      */
     async resetUserPreferenceToDefault(userId: number): Promise<UserPreferenceAttributes> {
         try {
-            logger.info('Resetting user preference to default', { userId });
 
             const resetPreference = await this.commandsRepository.upsertByUserId(userId, DEFAULT_USER_PREFERENCES);
-            logger.info('User preference reset to default successfully', { userId });
 
             return resetPreference;
         } catch (error) {
-            logger.error('Error resetting user preference to default', { 
-                userId, 
-                error: error instanceof Error ? error.message : error 
-            });
             throw error;
         }
     }

@@ -17,6 +17,7 @@ import { Router } from 'express';
 import { TYPES } from '../container/types.js';
 import { UserPreferenceCommands } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
 import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
+import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**
  * 用戶偏好設定路由類別
@@ -25,6 +26,7 @@ import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQuer
  * 避免 this 綁定問題並提供更清晰的代碼結構
  */
 @injectable()
+@Logger('UserPreferenceRoutes')
 export class UserPreferenceRoutes {
     private readonly router: Router;
 

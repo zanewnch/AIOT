@@ -22,7 +22,7 @@ import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
-import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
+import { RouteManager } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
@@ -191,19 +191,19 @@ export class App {
     /**
      * 設定應用程式路由
      *
-     * 使用統一的路由管理系統註冊所有 API 路由到 Express 應用程式中。
-     * 路由註冊邏輯已集中管理在 routes/index.ts 中，包括：
+     * 使用 RouteManager 類別註冊所有 API 路由到 Express 應用程式中。
+     * 路由註冊邏輯透過 IoC 容器管理，包括：
      *
      * **基礎路由：**
-     * - 首頁路由、初始化路由、身份驗證路由等
-     * - RTK 路由、Swagger API 文件路由等
+     * - 健康檢查路由
+     * - 服務資訊路由
      *
      * **功能路由：**
-     * - RBAC 角色權限管理 API
-     * - 進度追蹤路由、使用者管理路由等
+     * - 用戶偏好設定管理 API
+     * - 動態文檔展示 API
      *
-     * **開發工具路由：**
-     * - 僅在開發環境中註冊的開發工具路由
+     * **錯誤處理：**
+     * - 全域 404 處理
      *
      * @private
      * @async
@@ -211,8 +211,9 @@ export class App {
      * @returns {Promise<void>} 路由設定完成的 Promise
      */
     private async setRoutes(): Promise<void> {
-        // 使用統一的路由管理系統註冊所有路由
-        registerAllRoutes(this.app);
+        // 使用 RouteManager 註冊所有路由
+        const routeManager = container.get<RouteManager>(TYPES.RouteManager);
+        routeManager.registerAllRoutes(this.app);
     }
 
     /**

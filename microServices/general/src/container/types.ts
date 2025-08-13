@@ -478,7 +478,22 @@ export const TYPES = {
   /**
    * 動態文檔控制器類型
    */
-  DocsController: Symbol.for('DocsController')
+  DocsController: Symbol.for('DocsController'),
+
+  /**
+   * 動態文檔路由類型
+   */
+  DocsRoutes: Symbol.for('DocsRoutes'),
+
+  /**
+   * 健康檢查路由類型
+   */
+  HealthRoutes: Symbol.for('HealthRoutes'),
+
+  /**
+   * 路由管理器類型
+   */
+  RouteManager: Symbol.for('RouteManager')
 } as const;
 
 /**

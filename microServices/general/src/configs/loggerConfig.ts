@@ -174,13 +174,13 @@ const logger = winston.createLogger({
 const isProduction = process.env.NODE_ENV === 'production';
 const logLevel = process.env.LOG_LEVEL || (isProduction ? 'info' : 'debug');
 
-logger.info('🚀 GENERAL Winston Logger initialized', {
+const loggerConfig = {
   environment: isProduction ? 'production' : 'development',
   logLevel,
   consoleOutput: !isProduction,
   fileOutput: true,
   logDirectory: logDir
-});
+};
 
 /**
  * 創建子記錄器的工廠函數
@@ -189,7 +189,7 @@ logger.info('🚀 GENERAL Winston Logger initialized', {
  * @returns 具有特定服務標籤的子記錄器
  */
 export function createLogger(service: string): winston.Logger {
-  return logger.child({ service: `GENERAL-${service}` });
+  return logger.child({ service });
 }
 
 /**

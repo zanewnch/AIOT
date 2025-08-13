@@ -35,7 +35,7 @@ export class GeneralGrpcServer {
    * 載入 proto 文件並添加服務
    */
   private loadProtoAndAddService(): void {
-    const PROTO_PATH = path.join(__dirname, '../../proto/fesetting.proto');
+    const PROTO_PATH = path.join(__dirname, '../../proto/general.proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
       keepCase: true,
@@ -47,7 +47,7 @@ export class GeneralGrpcServer {
 
     const generalProto = grpc.loadPackageDefinition(packageDefinition) as any;
 
-    this.server.addService(generalProto.fesetting.GeneralService.service, {
+    this.server.addService(generalProto.general.GeneralService.service, {
       // 使用者偏好設定方法
       GetUserPreferences: this.getUserPreferences.bind(this),
       GetUserPreferenceById: this.getUserPreferenceById.bind(this),

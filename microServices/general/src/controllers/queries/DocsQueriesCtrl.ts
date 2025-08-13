@@ -14,14 +14,12 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import { TYPES } from '../../container/types.js';
+import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-
-const logger = createLogger('DocsQueries');
 
 /**
  * 動態文檔查詢控制器類別
@@ -36,6 +34,7 @@ const logger = createLogger('DocsQueries');
  * @since 1.0.0
  */
 @injectable()
+@Logger('DocsController')
 export class DocsController {
     
     private readonly microservices = [
@@ -60,7 +59,6 @@ export class DocsController {
      */
     async getMainDocs(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Rendering main documentation page');
 
             const servicesStatus = await this.checkAllServicesStatus();
             
@@ -78,7 +76,6 @@ export class DocsController {
             res.render('docs/index', data);
 
         } catch (error) {
-            logger.error('Error rendering main docs page', { error });
             next(error);
         }
     }
@@ -89,7 +86,6 @@ export class DocsController {
      */
     async getArchitectureDocs(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Rendering architecture documentation page');
 
             const architectureData = {
                 layers: [
@@ -126,7 +122,6 @@ export class DocsController {
             });
 
         } catch (error) {
-            logger.error('Error rendering architecture docs page', { error });
             next(error);
         }
     }
@@ -137,7 +132,6 @@ export class DocsController {
      */
     async getApiTestingDocs(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Rendering API testing documentation page');
 
             const apiEndpoints = await this.getApiEndpoints();
             
@@ -149,7 +143,6 @@ export class DocsController {
             });
 
         } catch (error) {
-            logger.error('Error rendering API testing docs page', { error });
             next(error);
         }
     }
@@ -160,7 +153,6 @@ export class DocsController {
      */
     async getMonitoringDocs(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Rendering monitoring documentation page');
 
             const servicesStatus = await this.checkAllServicesStatus();
             const systemMetrics = await this.getSystemMetrics();
@@ -175,7 +167,6 @@ export class DocsController {
             });
 
         } catch (error) {
-            logger.error('Error rendering monitoring docs page', { error });
             next(error);
         }
     }
@@ -186,18 +177,16 @@ export class DocsController {
      */
     async getServicesStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Fetching services status');
 
             const servicesStatus = await this.checkAllServicesStatus();
             
-            return ControllerResult.success(res, {
+            ControllerResult.success(res, {
                 services: servicesStatus,
                 timestamp: new Date().toISOString()
             }, '服務狀態獲取成功');
 
         } catch (error) {
-            logger.error('Error fetching services status', { error });
-            return ControllerResult.internalError(res, '服務狀態獲取失敗');
+            ControllerResult.internalError(res, '服務狀態獲取失敗');
         }
     }
 
@@ -209,18 +198,15 @@ export class DocsController {
         try {
             const { service, endpoint, method = 'GET', headers = {}, body } = req.body;
             
-            logRequest(req, `Testing API endpoint: ${method} ${service}${endpoint}`);
 
             if (!service || !endpoint) {
-                const result = ControllerResult.badRequest(res, '請提供服務名稱和端點路徑');
-                return result;
+                ControllerResult.badRequest(res, '請提供服務名稱和端點路徑');
                 return;
             }
 
             const serviceConfig = this.microservices.find(s => s.name === service);
             if (!serviceConfig) {
-                const result = ControllerResult.notFound(res, '未找到指定的服務');
-                return result;
+                ControllerResult.notFound(res, '未找到指定的服務');
                 return;
             }
 
@@ -232,13 +218,10 @@ export class DocsController {
                 body
             );
             
-            const result = ControllerResult.success(res,  testResult, 'API 測試完成');
-            return result;
+            ControllerResult.success(res, testResult, 'API 測試完成');
 
         } catch (error) {
-            logger.error('Error testing API endpoint', { error });
-            const result = ControllerResult.internalError('API 測試失敗');
-            return result;
+            ControllerResult.internalError(res, 'API 測試失敗');
         }
     }
 
@@ -277,7 +260,6 @@ export class DocsController {
             const response = await axios.get(healthUrl, { timeout: 5000 });
             return response.status === 200;
         } catch (error: any) {
-            logger.warn(`Service ${serviceName} health check failed`, { error: error.message });
             return false;
         }
     }
@@ -365,7 +347,6 @@ export class DocsController {
      */
     async getSourceCodeDocs(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            logRequest(req, 'Rendering source code documentation page');
 
             const fileName = req.query.file as string || 'docker-compose.yml';
             const sourceCodeData = await this.getSourceCodeContent(fileName);
@@ -378,7 +359,6 @@ export class DocsController {
             });
 
         } catch (error) {
-            logger.error('Error rendering source code docs page', { error });
             next(error);
         }
     }
@@ -410,7 +390,6 @@ export class DocsController {
             };
 
         } catch (error: any) {
-            logger.error('Error reading source code file', { fileName, error: error.message });
             throw error;
         }
     }
@@ -422,17 +401,13 @@ export class DocsController {
     async getSourceCodeApi(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const fileName = req.params.fileName;
-            logRequest(req, `Fetching source code for file: ${fileName}`);
 
             const sourceCodeData = await this.getSourceCodeContent(fileName);
             
-            const result = ControllerResult.success(res,  sourceCodeData, '源代碼獲取成功');
-            return result;
+            ControllerResult.success(res, sourceCodeData, '源代碼獲取成功');
 
         } catch (error: any) {
-            logger.error('Error fetching source code', { error: error.message });
-            const result = ControllerResult.badRequest(res, error.message);
-            return result;
+            ControllerResult.badRequest(res, error.message);
         }
     }
 

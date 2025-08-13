@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package fesetting;
+package general;
 
-// FeSetting gRPC 服務定義
-service FeSettingService {
+// General gRPC 服務定義
+service GeneralService {
   // 使用者偏好設定管理
   rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse);
   rpc GetUserPreferenceById(GetUserPreferenceByIdRequest) returns (GetUserPreferenceByIdResponse);
