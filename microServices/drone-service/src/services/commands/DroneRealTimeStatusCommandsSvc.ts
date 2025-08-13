@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { DroneRealTimeStatusCommandsRepository } from '../../repo/commands/DroneRealTimeStatusCommandsRepo.js';
 // 暫時註解掉不存在的類型導入，使用 any 作為臨時解決方案
 // import type { IDroneRealTimeStatusRepository } from '../../types/repositories/IDroneRealTimeStatusRepository.js';

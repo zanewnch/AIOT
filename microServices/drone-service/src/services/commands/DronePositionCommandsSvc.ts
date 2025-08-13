@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { DronePositionCommandsRepository } from '../../repo/commands/DronePositionCommandsRepo.js';
 import { DronePositionQueriesRepository } from '../../repo/queries/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/DronePositionModel.js';

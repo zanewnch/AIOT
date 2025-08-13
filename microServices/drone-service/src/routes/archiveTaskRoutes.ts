@@ -15,7 +15,7 @@ import { injectable, inject } from 'inversify';
 import { Router } from 'express';
 import type { IArchiveTaskQueries } from '../types/controllers/queries/IArchiveTaskQueries.js';
 import type { IArchiveTaskCommands } from '../types/controllers/commands/IArchiveTaskCommands.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**

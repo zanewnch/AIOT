@@ -19,7 +19,7 @@ import type { IDroneCommandQueueQueries } from '../types/controllers/queries/IDr
 import type { IDroneCommandQueueCommands } from '../types/controllers/commands/IDroneCommandQueueCommands.js';
 import type { IDroneCommandsArchiveQueries } from '../types/controllers/queries/IDroneCommandsArchiveQueries.js';
 import type { IDroneCommandsArchiveCommands } from '../types/controllers/commands/IDroneCommandsArchiveCommands.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**

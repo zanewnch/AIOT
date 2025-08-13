@@ -17,7 +17,7 @@ import { Request, Response } from 'express';
 import { UserToRoleQueriesSvc } from '../../services/queries/UserToRoleQueriesSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 
 const logger = createLogger('UserToRoleQueries');
 

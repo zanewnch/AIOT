@@ -14,6 +14,7 @@
 # • /api/drone → Drone 服務 (gRPC)
 # • /socket.io → Drone WebSocket 服務 (HTTP + WebSocket 升級)
 # • /api/general → General 服務 (gRPC)
+# • /api/llm → LLM 服務 (gRPC)
 # • /docs → 文檔服務 (HTTP)
 # • / → 重定向到文檔服務
 #
@@ -99,6 +100,22 @@ services:
       - documentation
       - typedoc
       - static
+      - http
+
+  # 🤖 LLM 微服務 - 使用 HTTP 協議提供 AI/LLM 功能 (Django)
+  - name: llm-service
+    protocol: http
+    host: llm-service
+    port: 8020
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - llm
+      - ai
+      - microservice
+      - django
       - http
 
 # ==============================================
@@ -226,6 +243,23 @@ routes:
       - typedoc
       - static
       - gateway-only
+
+  # 🤖 LLM API 路由 - 支援 HTTP/HTTPS，連接到 Django 服務
+  - name: llm-api-routes
+    service: llm-service
+    paths:
+      - /api/llm
+    strip_path: true   # 移除 /api/llm 前綴，轉發 /api/ 給 Django
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - llm
+      - ai
+      - api
+      - gateway-only
+      - django
 
   # 🏠 根路徑路由 - 重定向到文檔頁面
   - name: root-route

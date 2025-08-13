@@ -17,7 +17,7 @@ import type { IDronePositionQueries } from '../types/controllers/queries/IDroneP
 import type { IDronePositionCommands } from '../types/controllers/commands/IDronePositionCommands.js';
 import type { IDronePositionsArchiveQueries } from '../types/controllers/queries/IDronePositionsArchiveQueries.js';
 import type { IDronePositionsArchiveCommands } from '../types/controllers/commands/IDronePositionsArchiveCommands.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**

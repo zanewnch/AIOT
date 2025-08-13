@@ -19,7 +19,7 @@ import { DronePositionRoutes } from './dronePositionRoutes.js';
 import { DroneStatusRoutes } from './droneStatusRoutes.js';
 import { DroneCommandRoutes } from './droneCommandRoutes.js';
 import { DroneRealtimeRoutes } from './droneRealtimeRoutes.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 
 /**

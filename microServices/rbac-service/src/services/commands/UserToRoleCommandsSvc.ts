@@ -25,7 +25,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { UserRoleCommandsRepository } from '../../repo/commands/rbac/UserRoleCommandsRepo.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';

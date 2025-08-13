@@ -17,7 +17,7 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { container } from '../container/container.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { grpcServiceManager } from './clients/grpcServiceManager.js';
 import path from 'path';
 import { fileURLToPath } from 'url';

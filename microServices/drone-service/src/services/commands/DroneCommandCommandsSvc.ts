@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import type {
     CommandExecutionResult,
     BatchCommandResult

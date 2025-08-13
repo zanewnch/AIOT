@@ -16,7 +16,7 @@ import { injectable, inject } from 'inversify';
 import { Router } from 'express';
 import type { IDroneRealTimeStatusQueries } from '../types/controllers/queries/IDroneRealTimeStatusQueries.js';
 import type { IDroneRealTimeStatusCommands } from '../types/controllers/commands/IDroneRealTimeStatusCommands.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**

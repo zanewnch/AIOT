@@ -1,0 +1,59 @@
+{
+  "service": {
+    "id": "llm-service",
+    "name": "llm-service",
+    "tags": [
+      "llm",
+      "ai",
+      "api",
+      "microservice",
+      "django",
+      "http",
+      "transformers",
+      "langchain",
+      "rag"
+    ],
+    "address": "llm-service",
+    "port": 8020,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "http"
+    },
+    "check": {
+      "id": "llm-service-health",
+      "name": "LLM Service Health Check",
+      "http": "http://llm-service:8020/health/",
+      "interval": "10s",
+      "timeout": "3s",
+      "deregister_critical_service_after": "30s"
+    },
+    "checks": [
+      {
+        "id": "llm-service-api",
+        "name": "LLM API Check",
+        "http": "http://llm-service:8020/api/",
+        "interval": "30s",
+        "timeout": "5s"
+      },
+      {
+        "id": "llm-service-transformers",
+        "name": "LLM Transformers Service Check",
+        "http": "http://llm-service:8020/api/transformers/health/",
+        "interval": "30s",
+        "timeout": "5s"
+      },
+      {
+        "id": "llm-service-tcp",
+        "name": "LLM HTTP Service Check",
+        "tcp": "llm-service:8020",
+        "interval": "30s",
+        "timeout": "5s"
+      }
+    ],
+    "weights": {
+      "passing": 10,
+      "warning": 1
+    }
+  }
+}

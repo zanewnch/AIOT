@@ -17,7 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AuthCommandsSvc } from '../../services/commands/AuthCommandsSvc.js';
 import { createLogger, logRequest, logAuthEvent } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 
 const logger = createLogger('AuthCommands');
 

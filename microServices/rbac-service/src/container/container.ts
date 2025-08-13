@@ -11,7 +11,7 @@
 
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { TYPES, DroneEventType } from '../types/container/dependency-injection.js';
+import { TYPES, DroneEventType } from '../container/types.js';
 import type {
   IDroneEventHandler,
   IWebSocketService,

@@ -443,7 +443,79 @@ export const TYPES = {
   /**
    * 用戶角色查詢控制器類型
    */
-  UserToRoleQueriesCtrl: Symbol.for('UserToRoleQueriesCtrl')
+  UserToRoleQueriesCtrl: Symbol.for('UserToRoleQueriesCtrl'),
+
+  // ===== Repository Types =====
+  /**
+   * 無人機位置查詢儲存庫類型
+   */
+  DronePositionQueriesRepository: Symbol.for('DronePositionQueriesRepository'),
+
+  /**
+   * 無人機位置命令儲存庫類型
+   */
+  DronePositionCommandsRepository: Symbol.for('DronePositionCommandsRepository'),
+
+  /**
+   * 無人機狀態查詢儲存庫類型
+   */
+  DroneStatusQueriesRepository: Symbol.for('DroneStatusQueriesRepository'),
+
+  /**
+   * 無人機狀態命令儲存庫類型
+   */
+  DroneStatusCommandsRepository: Symbol.for('DroneStatusCommandsRepository'),
+
+  /**
+   * 無人機即時狀態查詢儲存庫類型
+   */
+  DroneRealTimeStatusQueriesRepository: Symbol.for('DroneRealTimeStatusQueriesRepository'),
+
+  /**
+   * 無人機即時狀態命令儲存庫類型
+   */
+  DroneRealTimeStatusCommandsRepository: Symbol.for('DroneRealTimeStatusCommandsRepository'),
+
+  /**
+   * 無人機命令查詢儲存庫類型
+   */
+  DroneCommandQueriesRepository: Symbol.for('DroneCommandQueriesRepository'),
+
+  /**
+   * 無人機命令命令儲存庫類型
+   */
+  DroneCommandCommandsRepository: Symbol.for('DroneCommandCommandsRepository'),
+
+  // ===== Route Types =====
+  /**
+   * 歸檔任務路由類型
+   */
+  ArchiveTaskRoutes: Symbol.for('ArchiveTaskRoutes'),
+
+  /**
+   * 無人機命令路由類型
+   */
+  DroneCommandRoutes: Symbol.for('DroneCommandRoutes'),
+
+  /**
+   * 無人機狀態路由類型
+   */
+  DroneStatusRoutes: Symbol.for('DroneStatusRoutes'),
+
+  /**
+   * 無人機位置路由類型
+   */
+  DronePositionRoutes: Symbol.for('DronePositionRoutes'),
+
+  /**
+   * 無人機即時狀態路由類型
+   */
+  DroneRealtimeRoutes: Symbol.for('DroneRealtimeRoutes'),
+
+  /**
+   * 路由管理器類型
+   */
+  RouteManager: Symbol.for('RouteManager')
 } as const;
 
 /**
@@ -459,6 +531,10 @@ export type ServiceTypes = typeof TYPES[keyof typeof TYPES];
 export enum DroneEventType {
   POSITION = 'position',
   STATUS = 'status',
-  COMMAND = 'command'
+  COMMAND = 'command',
+  POSITION_UPDATE = 'drone_position_update',
+  STATUS_UPDATE = 'drone_status_update', 
+  COMMAND_RECEIVED = 'drone_command_received',
+  COMMAND_EXECUTED = 'drone_command_executed'
 }
 

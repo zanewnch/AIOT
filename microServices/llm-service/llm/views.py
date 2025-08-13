@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.urls import reverse
 from django.conf import settings
+import datetime
 
 
 class APIHomepageView(APIView):
@@ -171,3 +172,63 @@ print(response.json())"""
         }
         
         return Response(api_info, status=status.HTTP_200_OK)
+
+
+class HealthCheckView(APIView):
+    """
+    微服務健康檢查視圖
+    
+    提供服務狀態、版本信息和系統健康資訊。
+    """
+    
+    def get(self, request):
+        """
+        獲取服務健康狀態
+        
+        Returns:
+            Response: 包含服務健康狀態的 JSON 回應
+        """
+        health_info = {
+            "status": "healthy",
+            "service": "llm-service",
+            "version": "1.0.0",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "django_version": settings.__dict__.get('DJANGO_VERSION', 'unknown'),
+            "debug": settings.DEBUG,
+            "components": {
+                "database": self._check_database_health(),
+                "transformers_service": self._check_transformers_health(),
+                "docs_service": "healthy"
+            }
+        }
+        
+        # 檢查整體健康狀態
+        overall_healthy = all(
+            component == "healthy" 
+            for component in health_info["components"].values()
+        )
+        
+        if not overall_healthy:
+            health_info["status"] = "degraded"
+            
+        response_status = status.HTTP_200_OK if overall_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+        return Response(health_info, status=response_status)
+    
+    def _check_database_health(self):
+        """檢查資料庫連接健康狀態"""
+        try:
+            from django.db import connection
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+            return "healthy"
+        except Exception as e:
+            return f"unhealthy: {str(e)}"
+    
+    def _check_transformers_health(self):
+        """檢查 transformers 服務健康狀態"""
+        try:
+            # 這裡可以添加更具體的 transformers 檢查
+            # 例如檢查模型是否可用等
+            return "healthy"
+        except Exception as e:
+            return f"unhealthy: {str(e)}"

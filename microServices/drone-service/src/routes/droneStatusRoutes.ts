@@ -19,7 +19,7 @@ import type { IDroneRealTimeStatusQueries } from '../types/controllers/queries/I
 import type { IDroneRealTimeStatusCommands } from '../types/controllers/commands/IDroneRealTimeStatusCommands.js';
 import type { IDroneStatusArchiveQueries } from '../types/controllers/queries/IDroneStatusArchiveQueries.js';
 import type { IDroneStatusArchiveCommands } from '../types/controllers/commands/IDroneStatusArchiveCommands.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**

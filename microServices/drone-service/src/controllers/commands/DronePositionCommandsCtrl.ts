@@ -17,7 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { DronePositionCommandsSvc } from '../../services/commands/DronePositionCommandsSvc.js';
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../types/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 import type { DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 

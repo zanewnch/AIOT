@@ -32,7 +32,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { UserCommandsRepository } from '../../repo/commands/rbac/UserCommandsRepo.js';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import bcrypt from 'bcrypt';

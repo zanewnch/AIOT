@@ -16,7 +16,7 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { container } from '../container/container.js';
-import { TYPES } from '../types/container/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
 import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
 import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';

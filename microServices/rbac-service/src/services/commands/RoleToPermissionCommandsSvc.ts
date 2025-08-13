@@ -30,7 +30,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 // 匯入角色權限命令資料存取層
 import { RolePermissionCommandsRepository } from '../../repo/commands/rbac/RolePermissionCommandsRepo.js';
 // 匯入角色查詢資料存取層，用於驗證

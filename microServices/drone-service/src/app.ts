@@ -24,7 +24,7 @@ import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證�
 import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
 import { container } from './container/container.js';
-import { TYPES } from './types/dependency-injection.js';
+import { TYPES } from './container/types.js';
 import type {
     IDroneEventHandler,
     IWebSocketService,

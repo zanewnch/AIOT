@@ -85,7 +85,7 @@ fi
 
 # 構建微服務鏡像
 MICROSERVICES_DIR="/home/user/GitHub/AIOT/microServices"
-SERVICES=("rbac-service" "drone-service" "drone-websocket-service" "general-service" "docs-service")
+SERVICES=("rbac-service" "drone-service" "drone-websocket-service" "general-service" "docs-service" "llm-service")
 
 for service in "${SERVICES[@]}"; do
     echo -e "${BLUE}🔨 構建 $service 鏡像...${NC}"

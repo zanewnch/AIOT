@@ -26,7 +26,7 @@ import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
-import { TYPES, DroneEventType } from './types/container/dependency-injection.js';
+import { TYPES, DroneEventType } from './container/types.js';
 import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
 import type {
     IDroneStatusService

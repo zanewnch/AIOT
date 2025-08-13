@@ -19,7 +19,7 @@ import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
 import { container } from '../container/container.js';
-import { TYPES } from '../types/container/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 
 /**
  * 認證路由類別

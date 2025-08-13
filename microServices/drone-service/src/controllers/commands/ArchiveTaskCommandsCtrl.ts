@@ -21,7 +21,7 @@ import { ArchiveTaskCommandsSvc } from '../../services/commands/ArchiveTaskComma
 import { ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../types/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 /**

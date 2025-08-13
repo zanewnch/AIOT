@@ -18,7 +18,7 @@ import { RoleCommandsSvc } from '../../services/commands/RoleCommandsSvc.js';
 import type { IRoleCommandsService, CreateRoleRequest, UpdateRoleRequest } from '../../services/commands/RoleCommandsSvc.js';
 import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 
 const logger = createLogger('RoleCommands');
 

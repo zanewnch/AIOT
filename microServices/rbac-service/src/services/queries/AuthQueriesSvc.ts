@@ -25,7 +25,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { UserQueriesRepository } from '../../repo/queries/rbac/UserQueriesRepo.js';
 import { UserModel } from '../../models/rbac/UserModel.js';
 import { SessionQueriesSvc } from './SessionQueriesSvc.js';

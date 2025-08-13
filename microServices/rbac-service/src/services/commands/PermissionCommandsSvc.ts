@@ -24,7 +24,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { PermissionCommandsRepository } from '../../repo/commands/rbac/PermissionCommandsRepo.js';
 import { PermissionQueriesRepository } from '../../repo/queries/rbac/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/rbac/PermissionModel.js';

@@ -27,7 +27,7 @@ import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCt
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import { container } from '../container/container.js';
-import { TYPES } from '../types/container/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 
 /**
  * RBAC 路由類別 - 集中式權限管理版本

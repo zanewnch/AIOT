@@ -25,7 +25,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../types/container/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { RoleCommandsRepository } from '../../repo/commands/rbac/RoleCommandsRepo.js';
 import { RoleQueriesRepository } from '../../repo/queries/rbac/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/rbac/RoleModel.js';

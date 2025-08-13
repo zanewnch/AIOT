@@ -16,7 +16,7 @@ import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { DroneCommandQueriesSvc } from '../../services/queries/DroneCommandQueriesSvc.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../types/dependency-injection.js';
+import { TYPES } from '../../container/types.js';
 import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 /**

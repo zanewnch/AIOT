@@ -16,7 +16,7 @@ import { Request, Response, NextFunction } from 'express';
 import { DroneCommandCommandsSvc } from '../services/commands/DroneCommandCommandsSvc.js';
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../models/DroneCommandModel.js';
 
 // 導入正確的 Decorator Pattern

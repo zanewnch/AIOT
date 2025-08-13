@@ -10,7 +10,7 @@
  */
 
 import { Container } from 'inversify';
-import { TYPES } from '../types/dependency-injection.js';
+import { TYPES } from '../container/types.js';
 
 // 導入原始類別（無裝飾器）
 import { DroneCommandCommandsBase } from './DroneCommandCommandsCtrl_Fixed.js';
