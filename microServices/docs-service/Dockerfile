@@ -11,12 +11,8 @@ RUN npm install
 # 複製源代碼
 COPY . .
 
-# 複製所有微服務的文檔到容器內
-COPY ../rbac/docs ./docs/rbac
-COPY ../drone/docs ./docs/drone
-COPY ../drone-websocket/docs ./docs/drone-websocket
-COPY ../general/docs ./docs/general
-COPY ../../fe/docs ./docs/frontend
+# 創建 docs 目錄結構（實際文檔通過 volume 掛載）
+RUN mkdir -p docs/rbac docs/drone docs/drone-websocket docs/general docs/frontend
 
 # 編譯 TypeScript
 RUN npm run build

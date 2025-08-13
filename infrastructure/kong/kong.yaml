@@ -1,10 +1,269 @@
-_format_version: "3.0"
-_transform: true
+# ==============================================
+# Kong Gateway 聲明式配置 - AIOT 微服務架構
+# ==============================================
+# 
+# 配置說明：
+# • 此文件整合了所有 Kong Gateway 配置
+# • 支援 AIOT 微服務架構的 API Gateway 需求
+# • 包含服務發現、路由、插件等完整配置
+# 
+# 架構概覽：
+# Kong Gateway → 各微服務
+# • /api/auth → RBAC 服務 (gRPC)
+# • /api/rbac → RBAC 服務 (gRPC) 
+# • /api/drone → Drone 服務 (gRPC)
+# • /socket.io → Drone WebSocket 服務 (HTTP + WebSocket 升級)
+# • /api/general → General 服務 (gRPC)
+# • /docs → 文檔服務 (HTTP)
+# • / → 重定向到文檔服務
+#
+# 網路配置：
+# • 使用 Docker Compose 服務名稱進行內部通訊
+# • 所有服務都在 aiot-network 網路中
+# • Kong 透過 Docker 內建 DNS 解析服務名稱
 
-# 包含其他配置文件
-_includes:
-  - services.yaml
-  - routes.yaml
-  - plugins.yaml
-  - upstreams.yaml
-  - consumers.yaml
+_format_version: "3.0"
+
+# ==============================================
+# 🔧 服務定義 (Services)
+# ==============================================
+
+services:
+  # 🔐 RBAC 微服務 - 使用 gRPC 協議進行內部通訊
+  - name: rbac-service
+    protocol: grpc
+    host: rbac-service
+    port: 50051
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - auth
+      - rbac
+      - microservice
+      - grpc
+
+  # 🚁 Drone API 微服務 - 使用 gRPC 協議處理 API 請求
+  - name: drone-grpc-service
+    protocol: grpc
+    host: drone-service
+    port: 50052
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - drone
+      - api
+      - grpc
+
+  # 📡 Drone WebSocket 微服務 - 專門處理 WebSocket 連線（透過 HTTP 升級機制）
+  - name: drone-websocket-service
+    protocol: http
+    host: drone-websocket-service
+    port: 3004
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - drone
+      - websocket
+      - realtime
+
+  # ⚙️ General 微服務 - 使用 gRPC 協議
+  - name: general-service
+    protocol: grpc
+    host: general-service
+    port: 50053
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - general
+      - documentation
+      - grpc
+
+  # 📚 文檔服務 - 統一管理所有微服務的 TypeDoc 文檔
+  - name: docs-service
+    protocol: http
+    host: docs-service
+    port: 3005
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - documentation
+      - typedoc
+      - static
+      - http
+
+# ==============================================
+# 🛣️ 路由定義 (Routes)
+# ==============================================
+
+routes:
+  # 🔐 RBAC 認證路由 - 支援 HTTP/HTTPS
+  - name: rbac-auth-routes
+    service: rbac-service
+    paths:
+      - /api/auth
+    strip_path: true  # 移除路徑前綴，轉發乾淨路徑給微服務
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - auth
+      - login
+      - gateway-only
+
+  # 🔐 RBAC 管理路由 - 支援 HTTP/HTTPS
+  - name: rbac-routes
+    service: rbac-service
+    paths:
+      - /api/rbac
+    strip_path: true   # 移除 /api/rbac 前綴
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - rbac
+      - permissions
+      - gateway-only
+
+  # 🚁 Drone API 路由 - 支援 HTTP/HTTPS，連接到 gRPC 服務
+  - name: drone-api-routes
+    service: drone-grpc-service
+    paths:
+      - /api/drone
+    strip_path: true   # 移除 /api/drone 前綴
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - drone
+      - api
+      - gateway-only
+      - grpc
+
+  # 📡 Drone WebSocket 路由 - 支援 HTTP/HTTPS（WebSocket 通過 HTTP 升級機制）
+  - name: drone-websocket-routes
+    service: drone-websocket-service
+    paths:
+      - /socket.io
+    strip_path: false   # 保持 /socket.io 路徑，WebSocket 需要完整路徑
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - drone
+      - websocket
+      - realtime
+      - gateway-only
+
+  # ⚙️ General 文檔路由 - 支援 HTTP/HTTPS
+  - name: general-docs-routes
+    service: general-service
+    paths:
+      - /api/docs
+    strip_path: true   # 移除 /api/docs 前綴，轉發 / 給微服務
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - general
+      - documentation
+      - gateway-only
+      
+  # ⚙️ General API 路由 - 支援 HTTP/HTTPS  
+  - name: general-api-routes
+    service: general-service
+    paths:
+      - /api/general
+    strip_path: true   # 移除 /api/general 前綴，轉發 / 給微服務
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - general
+      - documentation
+      - gateway-only
+
+  # 💊 健康檢查路由 - 內部使用，僅 HTTP
+  - name: health-check-routes
+    service: general-service
+    paths:
+      - /health
+    strip_path: true   # 移除 /health 前綴
+    preserve_host: false
+    protocols:
+      - http
+    tags:
+      - health
+      - internal
+
+  # 📚 文檔服務路由 - 統一的 TypeDoc 文檔入口
+  - name: docs-service-routes
+    service: docs-service
+    paths:
+      - /docs
+    strip_path: false  # 保持 /docs 路徑，讓文檔服務處理子路徑
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - documentation
+      - typedoc
+      - static
+      - gateway-only
+
+  # 🏠 根路徑路由 - 重定向到文檔頁面
+  - name: root-route
+    service: docs-service
+    paths:
+      - /
+    strip_path: false  # 保持根路徑
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - root
+      - documentation
+
+# ==============================================
+# 🔌 插件配置 (Plugins)
+# ==============================================
+# 
+# 目前使用預設插件配置
+# 如需啟用特定插件（如認證、限流等），在此處配置
+
+plugins: []
+
+# ==============================================
+# 🎯 上游服務配置 (Upstreams)
+# ==============================================
+# 
+# 目前使用直接服務連接
+# 如需負載平衡或服務發現，在此處配置
+
+upstreams: []
+
+# ==============================================
+# 👤 消費者配置 (Consumers)  
+# ==============================================
+#
+# 目前不需要認證消費者
+# 如需 API Key 或 JWT 認證，在此處配置
+
+consumers: []
