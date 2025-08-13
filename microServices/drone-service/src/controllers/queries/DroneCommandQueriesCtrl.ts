@@ -17,7 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { DroneCommandQueriesSvc } from '../../services/queries/DroneCommandQueriesSvc.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 /**
  * 無人機指令查詢控制器類別

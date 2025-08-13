@@ -1,162 +1,132 @@
-# Decorator Pattern 設計模式實現
+# 簡單的 Logger Decorator 實現
 
 ## 概述
 
-這個目錄包含了正確實作的 Decorator Pattern 設計模式，用於為 Controller、Service、Repository 提供日誌功能。
-
-**重要**：這不是 TypeScript 的 `@decorator` 語法糖，而是真正的設計模式實現。
+這是一個簡單易懂的 Logger Decorator 實現，接收兩個參數：
+1. `originalFunction` - 原始函數
+2. `methodName` - 方法名稱（用於日誌顯示）
 
 ## 特點
 
+- ✅ 簡單易懂，只有兩個參數
 - ✅ 與 arrow function 完全兼容
+- ✅ 自動記錄方法執行時間
+- ✅ 自動捕獲和記錄錯誤
 - ✅ 不會產生 TypeScript 編譯錯誤
-- ✅ 支援方法執行時間記錄
-- ✅ 支援錯誤自動記錄
-- ✅ 支援 HTTP 請求資訊記錄
-- ✅ 可組合和可擴展
 
 ## 使用方法
 
-### 1. Controller 裝飾
+### 基本用法
 
 ```typescript
-import { createLoggedController } from '../patterns/LoggerDecorator.js';
+import { loggerDecorator } from '../patterns/LoggerDecorator.js';
 
-@injectable()
-class DroneCommandCommands {
-    constructor(private service: DroneCommandCommandsSvc) {}
-    
-    createCommand = async (req: Request, res: Response): Promise<void> => {
-        // 控制器邏輯
-    }
+class SomeController {
+  // 直接包裝 arrow function
+  someMethod = loggerDecorator(async (req, res) => {
+    // 你的原始邏輯
+    const result = await this.service.doSomething();
+    res.json(result);
+  }, 'SomeController.someMethod');
+}
+```
+
+### 使用便捷方法
+
+```typescript
+import { logController, logService, logRepository } from '../patterns/LoggerDecorator.js';
+
+// 控制器
+class DroneController {
+  createDrone = logController(async (req, res) => {
+    // 控制器邏輯
+  }, 'createDrone');
 }
 
-// 使用裝飾器包裝
-export const createDroneCommandCommands = (service: DroneCommandCommandsSvc) => {
-    return createLoggedController(
-        new DroneCommandCommands(service), 
-        'DroneCommandCommands'
-    );
-};
-```
-
-### 2. Service 裝飾
-
-```typescript
-import { createLoggedService } from '../patterns/LoggerDecorator.js';
-
-@injectable()
-class DroneCommandCommandsSvc {
-    constructor(private repo: DroneCommandCommandsRepo) {}
-    
-    createCommand = async (data: any): Promise<any> => {
-        // 服務邏輯
-    }
+// 服務
+class DroneService {
+  saveDrone = logService(async (data) => {
+    // 服務邏輯
+  }, 'saveDrone');
 }
 
-// 使用裝飾器包裝
-export const createDroneCommandCommandsSvc = (repo: DroneCommandCommandsRepo) => {
-    return createLoggedService(
-        new DroneCommandCommandsSvc(repo), 
-        'DroneCommandCommandsSvc'
-    );
-};
-```
-
-### 3. Repository 裝飾
-
-```typescript
-import { createLoggedRepository } from '../patterns/LoggerDecorator.js';
-
-@injectable()
-class DroneCommandCommandsRepo {
-    constructor() {}
-    
-    create = async (data: any): Promise<any> => {
-        // 倉庫邏輯
-    }
+// 存儲庫
+class DroneRepository {
+  findById = logRepository(async (id) => {
+    // 存儲庫邏輯
+  }, 'findById');
 }
-
-// 使用裝飾器包裝
-export const createDroneCommandCommandsRepo = () => {
-    return createLoggedRepository(
-        new DroneCommandCommandsRepo(), 
-        'DroneCommandCommandsRepo'
-    );
-};
-```
-
-### 4. 裝飾器鏈（進階用法）
-
-```typescript
-import { decorateComponent } from '../patterns/LoggerDecorator.js';
-
-const decoratedController = decorateComponent(new DroneCommandCommands(service))
-    .withLogger('DroneCommandCommands', {
-        logExecutionTime: true,
-        logRequest: true,
-        logErrors: true
-    })
-    .build();
-```
-
-## 在 Container 中使用
-
-```typescript
-// container.ts
-import { Container } from 'inversify';
-import { createLoggedController, createLoggedService, createLoggedRepository } from '../patterns/LoggerDecorator.js';
-
-const container = new Container();
-
-// Repository
-container.bind(TYPES.DroneCommandCommandsRepo).toDynamicValue(() => {
-    return createLoggedRepository(
-        new DroneCommandCommandsRepo(),
-        'DroneCommandCommandsRepo'
-    );
-}).inSingletonScope();
-
-// Service
-container.bind(TYPES.DroneCommandCommandsSvc).toDynamicValue((context) => {
-    const repo = context.container.get(TYPES.DroneCommandCommandsRepo);
-    return createLoggedService(
-        new DroneCommandCommandsSvc(repo),
-        'DroneCommandCommandsSvc'
-    );
-}).inSingletonScope();
-
-// Controller
-container.bind(TYPES.DroneCommandCommandsCtrl).toDynamicValue((context) => {
-    const service = context.container.get(TYPES.DroneCommandCommandsSvc);
-    return createLoggedController(
-        new DroneCommandCommands(service),
-        'DroneCommandCommands'
-    );
-}).inSingletonScope();
 ```
 
 ## 日誌輸出範例
 
+### 成功執行
 ```
-[2025-08-13 10:30:15] [INFO] DroneCommandCommands: 開始執行 DroneCommandCommands.createCommand
-[2025-08-13 10:30:15] [INFO] DroneCommandCommands: POST /api/drone-commands/data 請求處理
-[2025-08-13 10:30:16] [INFO] DroneCommandCommands: DroneCommandCommands.createCommand 執行完成 {"executionTime":"1200ms"}
+[2025-08-13 10:30:15] [DECORATOR] INFO: 開始執行 Controller.createDrone
+[2025-08-13 10:30:16] [DECORATOR] INFO: Controller.createDrone 執行完成 {"executionTime":"800ms"}
 ```
 
-## 與傳統 @decorator 的差異
+### 錯誤執行
+```
+[2025-08-13 10:30:15] [DECORATOR] INFO: 開始執行 Service.saveDrone
+[2025-08-13 10:30:15] [DECORATOR] ERROR: Service.saveDrone 執行失敗 {"error":"Database connection failed","executionTime":"50ms"}
+```
 
-| 特性 | TypeScript @decorator | Decorator Pattern |
-|------|----------------------|------------------|
-| 與 arrow function 兼容 | ❌ 否 | ✅ 是 |
-| TypeScript 編譯錯誤 | ❌ 有錯誤 | ✅ 無錯誤 |
-| 運行時動態組合 | ❌ 編譯時固定 | ✅ 運行時可組合 |
-| 設計模式純度 | ❌ 語法糖 | ✅ 純設計模式 |
-| 可擴展性 | ❌ 受限 | ✅ 高度可擴展 |
+## 可用的便捷函數
 
-## 遷移步驟
+- `loggerDecorator(originalFunction, methodName)` - 基本裝飾器
+- `logController(originalFunction, methodName)` - 控制器專用
+- `logService(originalFunction, methodName)` - 服務專用
+- `logRepository(originalFunction, methodName)` - 存儲庫專用
 
-1. **移除所有 TypeScript `@decorator`**
-2. **使用新的工廠方法包裝實例**
-3. **在 Container 中註冊裝飾後的實例**
-4. **測試所有功能正常**
+## 完整範例
+
+```typescript
+import { logController } from '../patterns/LoggerDecorator.js';
+import { ControllerResult } from '../utils/ControllerResult.js';
+
+@injectable()
+export class DroneCommandCommands {
+    constructor(private readonly commandService: DroneCommandCommandsSvc) {}
+
+    createCommand = logController(async (req, res) => {
+        try {
+            const commandData = req.body;
+            
+            // 基本驗證
+            if (!commandData.drone_id) {
+                const result = ControllerResult.badRequest('無人機 ID 為必填項');
+                res.status(result.status).json(result);
+                return;
+            }
+
+            // 調用服務
+            const command = await this.commandService.createCommand(commandData);
+            
+            const result = ControllerResult.success(command, '無人機指令創建成功');
+            res.status(result.status).json(result);
+        } catch (error) {
+            const result = ControllerResult.internalServerError('創建無人機指令時發生錯誤');
+            res.status(result.status).json(result);
+        }
+    }, 'createCommand');
+}
+```
+
+## 對比舊版本
+
+| 特性 | 舊版本 (複雜) | 新版本 (簡單) |
+|------|-------------|-------------|
+| 參數數量 | 複雜的配置物件 | 只要 2 個參數 |
+| 理解難度 | 需要學習複雜的類別和介面 | 一眼就懂 |
+| 使用方式 | 工廠方法 + 泛型 + Proxy | 直接包裝函數 |
+| 程式碼行數 | 200+ 行 | 50 行左右 |
+| TypeScript 錯誤 | 複雜的類型問題 | 無類型問題 |
+
+## 為什麼選擇簡單版本？
+
+1. **可讀性高** - 任何開發者都能立即理解
+2. **易於維護** - 程式碼簡短，bug 少
+3. **實用性強** - 滿足 99% 的日誌需求
+4. **無學習成本** - 不需要記住複雜的 API
+5. **TypeScript 友好** - 無複雜的類型轉換問題

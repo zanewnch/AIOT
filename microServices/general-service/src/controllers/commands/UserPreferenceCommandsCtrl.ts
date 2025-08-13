@@ -17,7 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserPreferenceCommandsSvc } from '../../services/commands/UserPreferenceCommandsSvc.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import { TYPES } from '../../container/types.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from '../../models/UserPreferenceModel.js';
 
 /**
@@ -40,7 +40,7 @@ export class UserPreferenceCommands {
      * 創建新的用戶偏好設定
      * @route POST /api/user-preferences
      */
-    createUserPreference = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    createUserPreference = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const preferenceData: UserPreferenceCreationAttributes = req.body;
 
@@ -57,13 +57,13 @@ export class UserPreferenceCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'createUserPreference')
 
     /**
      * 批量創建用戶偏好設定
      * @route POST /api/user-preferences/bulk
      */
-    bulkCreateUserPreferences = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    bulkCreateUserPreferences = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const preferencesData: UserPreferenceCreationAttributes[] = req.body;
 
@@ -92,7 +92,7 @@ export class UserPreferenceCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'bulkCreateUserPreferences')
 
     /**
      * 根據 ID 更新用戶偏好設定

@@ -15,6 +15,7 @@ import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes, type Dr
 import { DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Op } from 'sequelize';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 // 創建 Repository 專用的日誌記錄器
 const logger = createLogger('DroneCommandsArchiveCommandsRepository');

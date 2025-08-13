@@ -18,7 +18,7 @@ import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRea
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 import type { DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes } from '../../types/services/IDroneRealTimeStatusService.js';
 
 const logger = createLogger('DroneRealTimeStatusCommands');

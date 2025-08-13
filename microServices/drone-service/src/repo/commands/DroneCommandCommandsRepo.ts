@@ -13,32 +13,33 @@ import { injectable } from 'inversify';
 import { DroneCommandModel, DroneCommandCreationAttributes, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import { Op } from 'sequelize';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 @injectable()
 export class DroneCommandCommandsRepository implements IDroneCommandRepository {
   
-  create = async (data: DroneCommandCreationAttributes): Promise<DroneCommandModel> => {
+  create = loggerDecorator(async (data: DroneCommandCreationAttributes): Promise<DroneCommandModel> => {
     return await DroneCommandModel.create(data);
-  }
+  }, 'create')
 
-  findById = async (id: number): Promise<DroneCommandModel | null> => {
+  findById = loggerDecorator(async (id: number): Promise<DroneCommandModel | null> => {
     return await DroneCommandModel.findByPk(id);
-  }
+  }, 'findById')
 
-  update = async (id: number, data: Partial<DroneCommandCreationAttributes>): Promise<DroneCommandModel | null> => {
+  update = loggerDecorator(async (id: number, data: Partial<DroneCommandCreationAttributes>): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);
     if (!command) return null;
     
     await command.update(data);
     return command;
-  }
+  }, 'update')
 
-  delete = async (id: number): Promise<void> => {
+  delete = loggerDecorator(async (id: number): Promise<void> => {
     const command = await this.findById(id);
     if (command) {
       await command.destroy();
     }
-  }
+  }, 'delete')
 
   markAsExecuting = async (id: number): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);

@@ -16,6 +16,7 @@ import type { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Op } from 'sequelize';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 /**
  * 無人機狀態歷史查詢 Repository 實現類別 - CQRS 查詢端

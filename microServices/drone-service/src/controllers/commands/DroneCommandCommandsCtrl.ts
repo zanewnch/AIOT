@@ -41,7 +41,7 @@ export class DroneCommandCommands {
      * 創建新的無人機指令
      * @route POST /api/drone-commands/data
      */
-    async createCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    createCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandData: DroneCommandCreationAttributes = req.body;
 
@@ -76,7 +76,7 @@ export class DroneCommandCommands {
      * 批量創建指令
      * @route POST /api/drone-commands/data/batch
      */
-    async createCommandsBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
+    createCommandsBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandsData: DroneCommandCreationAttributes[] = req.body;
 
@@ -120,7 +120,7 @@ export class DroneCommandCommands {
      * 更新指令
      * @route PUT /api/drone-commands/data/:id
      */
-    async updateCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    updateCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
             const updateData: Partial<DroneCommandCreationAttributes> = req.body;
@@ -149,7 +149,7 @@ export class DroneCommandCommands {
      * 刪除指令
      * @route DELETE /api/drone-commands/data/:id
      */
-    async deleteCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    deleteCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
@@ -179,7 +179,7 @@ export class DroneCommandCommands {
      * 發送起飛指令
      * @route POST /api/drone-commands/send/takeoff
      */
-    async sendTakeoffCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendTakeoffCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, altitude = 10, parameters } = req.body;
 
@@ -207,7 +207,7 @@ export class DroneCommandCommands {
      * 發送降落指令
      * @route POST /api/drone-commands/send/land
      */
-    async sendLandCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendLandCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, parameters } = req.body;
 
@@ -235,7 +235,7 @@ export class DroneCommandCommands {
      * 發送懸停指令
      * @route POST /api/drone-commands/send/hover
      */
-    async sendHoverCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendHoverCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, duration } = req.body;
 
@@ -263,7 +263,7 @@ export class DroneCommandCommands {
      * 發送飛行到指定位置指令
      * @route POST /api/drone-commands/send/flyTo
      */
-    async sendFlyToCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendFlyToCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, latitude, longitude, altitude, parameters } = req.body;
 
@@ -297,7 +297,7 @@ export class DroneCommandCommands {
      * 發送返航指令
      * @route POST /api/drone-commands/send/return
      */
-    async sendReturnCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendReturnCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, parameters } = req.body;
 
@@ -325,7 +325,7 @@ export class DroneCommandCommands {
      * 發送前進指令
      * @route POST /api/drone-commands/send/moveForward
      */
-    async sendMoveForwardCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendMoveForwardCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, distance = 1, parameters } = req.body;
 
@@ -353,7 +353,7 @@ export class DroneCommandCommands {
      * 發送後退指令
      * @route POST /api/drone-commands/send/moveBackward
      */
-    async sendMoveBackwardCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendMoveBackwardCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, distance = 1, parameters } = req.body;
 
@@ -381,7 +381,7 @@ export class DroneCommandCommands {
      * 發送左移指令
      * @route POST /api/drone-commands/send/moveLeft
      */
-    async sendMoveLeftCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendMoveLeftCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, distance = 1, parameters } = req.body;
 
@@ -409,7 +409,7 @@ export class DroneCommandCommands {
      * 發送右移指令
      * @route POST /api/drone-commands/send/moveRight
      */
-    async sendMoveRightCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendMoveRightCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, distance = 1, parameters } = req.body;
 
@@ -437,7 +437,7 @@ export class DroneCommandCommands {
      * 發送左轉指令
      * @route POST /api/drone-commands/send/rotateLeft
      */
-    async sendRotateLeftCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendRotateLeftCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, degrees = 90, parameters } = req.body;
 
@@ -465,7 +465,7 @@ export class DroneCommandCommands {
      * 發送右轉指令
      * @route POST /api/drone-commands/send/rotateRight
      */
-    async sendRotateRightCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendRotateRightCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, degrees = 90, parameters } = req.body;
 
@@ -493,7 +493,7 @@ export class DroneCommandCommands {
      * 發送緊急停止指令
      * @route POST /api/drone-commands/send/emergency
      */
-    async sendEmergencyCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendEmergencyCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, parameters } = req.body;
 
@@ -523,7 +523,7 @@ export class DroneCommandCommands {
      * 執行指令
      * @route PUT /api/drone-commands/:id/execute
      */
-    async executeCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    executeCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
@@ -551,7 +551,7 @@ export class DroneCommandCommands {
      * 完成指令
      * @route PUT /api/drone-commands/:id/complete
      */
-    async completeCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    completeCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
@@ -579,7 +579,7 @@ export class DroneCommandCommands {
      * 標記指令失敗
      * @route PUT /api/drone-commands/:id/fail
      */
-    async failCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    failCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
             const { reason } = req.body;
@@ -608,7 +608,7 @@ export class DroneCommandCommands {
      * 取消指令
      * @route PUT /api/drone-commands/:id/cancel
      */
-    async cancelCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    cancelCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
             const { reason } = req.body;
@@ -637,7 +637,7 @@ export class DroneCommandCommands {
      * 發送移動指令
      * @route POST /api/drone-commands/send/move
      */
-    async sendMoveCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    sendMoveCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, issuedBy, latitude, longitude, altitude, speed } = req.body;
 
@@ -678,7 +678,7 @@ export class DroneCommandCommands {
      * 重試失敗的指令
      * @route POST /api/drone-commands/:id/retry
      */
-    async retryFailedCommand(req: Request, res: Response, next: NextFunction): Promise<void> {
+    retryFailedCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandId = parseInt(req.params.id);
             const { issuedBy } = req.body;

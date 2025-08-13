@@ -35,7 +35,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色實例
    */
-  async create(roleData: RoleCreationAttributes, transaction?: Transaction): Promise<RoleModel> {
+  create = async (roleData: RoleCreationAttributes, transaction?: Transaction): Promise<RoleModel> => {
     try {
       logger.debug(`Creating role: ${roleData.name}`);
       
@@ -55,7 +55,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色實例陣列
    */
-  async bulkCreate(rolesData: RoleCreationAttributes[], transaction?: Transaction): Promise<RoleModel[]> {
+  bulkCreate = async (rolesData: RoleCreationAttributes[], transaction?: Transaction): Promise<RoleModel[]> => {
     try {
       logger.debug(`Bulk creating ${rolesData.length} roles`);
       
@@ -149,7 +149,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async delete(id: number, transaction?: Transaction): Promise<boolean> {
+  delete = async (id: number, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting role ID: ${id}`);
       
@@ -178,7 +178,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async bulkDelete(ids: number[], transaction?: Transaction): Promise<number> {
+  bulkDelete = async (ids: number[], transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Bulk deleting ${ids.length} roles`);
       
@@ -203,7 +203,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async deleteByName(name: string, transaction?: Transaction): Promise<boolean> {
+  deleteByName = async (name: string, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting role by name: ${name}`);
       
@@ -233,7 +233,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否更新成功
    */
-  async rename(oldName: string, newName: string, transaction?: Transaction): Promise<boolean> {
+  rename = async (oldName: string, newName: string, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Renaming role from ${oldName} to ${newName}`);
       
@@ -266,7 +266,7 @@ export class RoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否更新成功
    */
-  async updateDescription(id: number, description: string, transaction?: Transaction): Promise<boolean> {
+  updateDescription = async (id: number, description: string, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Updating description for role ID ${id}`);
       
@@ -296,12 +296,12 @@ export class RoleCommandsRepository {
   // 如需啟用/停用功能，請考慮在資料庫模型中添加對應字段
   
   /*
-  async activate(id: number, transaction?: Transaction): Promise<boolean> {
+  activate = async (id: number, transaction?: Transaction): Promise<boolean> => {
     // 此方法需要 Role 模型有 isActive 字段
     throw new Error('Role model does not have isActive field');
   }
 
-  async deactivate(id: number, transaction?: Transaction): Promise<boolean> {
+  deactivate = async (id: number, transaction?: Transaction): Promise<boolean> => {
     // 此方法需要 Role 模型有 isActive 字段  
     throw new Error('Role model does not have isActive field');
   }

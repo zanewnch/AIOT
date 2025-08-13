@@ -18,7 +18,7 @@ import { DroneStatusCommandsSvc } from '../../services/commands/DroneStatusComma
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 import type { DroneStatusCreationAttributes, DroneStatus } from '../../models/DroneStatusModel.js';
 
 const logger = createLogger('DroneStatusCommands');
@@ -42,7 +42,7 @@ export class DroneStatusCommands {
      * 創建新的無人機狀態資料
      * @route POST /api/drone-status/data
      */
-    createDroneStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    createDroneStatus = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneStatusData: DroneStatusCreationAttributes = req.body;
 
@@ -57,13 +57,13 @@ export class DroneStatusCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'createDroneStatus')
 
     /**
      * 更新指定無人機狀態資料
      * @route PUT /api/drone-status/data/:id
      */
-    updateDroneStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    updateDroneStatus = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
             const updateData: Partial<DroneStatusCreationAttributes> = req.body;
@@ -89,13 +89,13 @@ export class DroneStatusCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'updateDroneStatus')
 
     /**
      * 刪除指定無人機狀態資料
      * @route DELETE /api/drone-status/data/:id
      */
-    async deleteDroneStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    deleteDroneStatus = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
@@ -115,13 +115,13 @@ export class DroneStatusCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'deleteDroneStatus')
 
     /**
      * 更新無人機狀態
      * @route PATCH /api/drone-status/data/:id/status
      */
-    updateDroneStatusOnly = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    updateDroneStatusOnly = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
             const { status } = req.body;
@@ -154,5 +154,5 @@ export class DroneStatusCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'updateDroneStatusOnly')
 }

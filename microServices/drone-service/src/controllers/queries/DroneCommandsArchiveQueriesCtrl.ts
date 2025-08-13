@@ -18,7 +18,7 @@ import { DroneCommandsArchiveQueriesSvc } from '../../services/queries/DroneComm
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandsArchiveQueries');
 
@@ -41,7 +41,7 @@ export class DroneCommandsArchiveQueries {
      * 取得所有指令歷史歸檔資料
      * @route GET /api/drone-commands-archive/data
      */
-    getAllCommandsArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getAllCommandsArchive = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const archives = await this.queryService.getAllCommandsArchive(limit);
@@ -51,13 +51,13 @@ export class DroneCommandsArchiveQueries {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'getAllCommandsArchive')
 
     /**
      * 根據 ID 取得指令歷史歸檔資料
      * @route GET /api/drone-commands-archive/data/:id
      */
-    getCommandArchiveById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandArchiveById = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
@@ -80,13 +80,13 @@ export class DroneCommandsArchiveQueries {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'getCommandArchiveById')
 
     /**
      * 根據無人機 ID 查詢指令歷史歸檔
      * @route GET /api/drone-commands-archive/data/drone/:droneId
      */
-    getCommandArchivesByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandArchivesByDroneId = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
             const limit = parseInt(req.query.limit as string) || 50;
@@ -104,13 +104,13 @@ export class DroneCommandsArchiveQueries {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'getCommandArchivesByDroneId')
 
     /**
      * 根據時間範圍查詢指令歷史歸檔
      * @route GET /api/drone-commands-archive/data/time-range
      */
-    getCommandArchivesByTimeRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandArchivesByTimeRange = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const startTime = new Date(req.query.startTime as string);
             const endTime = new Date(req.query.endTime as string);
@@ -130,13 +130,13 @@ export class DroneCommandsArchiveQueries {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'getCommandArchivesByTimeRange')
 
     /**
      * 根據指令類型查詢歷史歸檔
      * @route GET /api/drone-commands-archive/data/command-type/:commandType
      */
-    getCommandArchivesByType = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandArchivesByType = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandType = req.params.commandType;
             const limit = parseInt(req.query.limit as string) || 50;
@@ -154,13 +154,13 @@ export class DroneCommandsArchiveQueries {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'getCommandArchivesByType')
 
     /**
      * 根據指令狀態查詢歷史歸檔
      * @route GET /api/drone-commands-archive/data/status/:status
      */
-    getCommandArchivesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandArchivesByStatus = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const status = req.params.status;
             const limit = parseInt(req.query.limit as string) || 50;
@@ -178,5 +178,5 @@ export class DroneCommandsArchiveQueries {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'getCommandArchivesByStatus')
 }

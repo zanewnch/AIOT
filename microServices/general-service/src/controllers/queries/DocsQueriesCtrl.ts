@@ -16,7 +16,7 @@ import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import { TYPES } from '../../container/types.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';

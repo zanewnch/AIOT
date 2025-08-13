@@ -35,7 +35,7 @@ export class PermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的權限實例
    */
-  async create(permissionData: PermissionCreationAttributes, transaction?: Transaction): Promise<PermissionModel> {
+  create = async (permissionData: PermissionCreationAttributes, transaction?: Transaction): Promise<PermissionModel> => {
     try {
       logger.debug(`Creating permission: ${permissionData.name}`);
       
@@ -55,7 +55,7 @@ export class PermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的權限實例陣列
    */
-  async bulkCreate(permissionsData: PermissionCreationAttributes[], transaction?: Transaction): Promise<PermissionModel[]> {
+  bulkCreate = async (permissionsData: PermissionCreationAttributes[], transaction?: Transaction): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Bulk creating ${permissionsData.length} permissions`);
       
@@ -149,7 +149,7 @@ export class PermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async delete(id: number, transaction?: Transaction): Promise<boolean> {
+  delete = async (id: number, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting permission ID: ${id}`);
       
@@ -178,7 +178,7 @@ export class PermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async bulkDelete(ids: number[], transaction?: Transaction): Promise<number> {
+  bulkDelete = async (ids: number[], transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Bulk deleting ${ids.length} permissions`);
       
@@ -203,7 +203,7 @@ export class PermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async deleteByName(name: string, transaction?: Transaction): Promise<boolean> {
+  deleteByName = async (name: string, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting permission by name: ${name}`);
       
@@ -233,7 +233,7 @@ export class PermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否更新成功
    */
-  async updateDescription(id: number, description: string, transaction?: Transaction): Promise<boolean> {
+  updateDescription = async (id: number, description: string, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Updating description for permission ID ${id}`);
       
@@ -265,12 +265,12 @@ export class PermissionCommandsRepository {
   // 如需啟用/停用功能，請考慮在資料庫模型中添加對應字段
   
   /*
-  async activate(id: number, transaction?: Transaction): Promise<boolean> {
+  activate = async (id: number, transaction?: Transaction): Promise<boolean> => {
     // 此方法需要 Permission 模型有 isActive 字段
     throw new Error('Permission model does not have isActive field');
   }
 
-  async deactivate(id: number, transaction?: Transaction): Promise<boolean> {
+  deactivate = async (id: number, transaction?: Transaction): Promise<boolean> => {
     // 此方法需要 Permission 模型有 isActive 字段  
     throw new Error('Permission model does not have isActive field');
   }

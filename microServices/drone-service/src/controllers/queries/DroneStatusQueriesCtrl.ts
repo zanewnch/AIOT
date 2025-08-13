@@ -18,7 +18,7 @@ import { DroneStatusQueriesSvc } from '../../services/queries/DroneStatusQueries
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 const logger = createLogger('DroneStatusQueries');
 

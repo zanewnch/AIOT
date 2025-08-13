@@ -12,6 +12,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { Op } from 'sequelize';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatusAttributes, 

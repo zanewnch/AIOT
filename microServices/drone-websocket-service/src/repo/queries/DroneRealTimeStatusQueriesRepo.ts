@@ -12,6 +12,7 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneRealTimeStatusModel } from '@/models/DroneRealTimeStatusModel.js';
 import type { DroneRealTimeStatusAttributes } from '@/models/DroneRealTimeStatusModel.js';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 /**
  * 無人機即時狀態查詢資料存取庫
@@ -24,46 +25,46 @@ export class DroneRealTimeStatusQueriesRepository {
     /**
      * 獲取所有無人機的即時狀態
      */
-    getAllRealTimeStatuses = async (limit: number = 100): Promise<DroneRealTimeStatusAttributes[]> => {
+    getAllRealTimeStatuses = loggerDecorator(async (limit: number = 100): Promise<DroneRealTimeStatusAttributes[]> => {
         return await DroneRealTimeStatusModel.findAll({
             limit,
             order: [['updatedAt', 'DESC']]
         });
-    }
+    }, 'getAllRealTimeStatuses')
 
     /**
      * 根據 ID 獲取無人機即時狀態
      */
-    getRealTimeStatusById = async (id: number): Promise<DroneRealTimeStatusAttributes | null> => {
+    getRealTimeStatusById = loggerDecorator(async (id: number): Promise<DroneRealTimeStatusAttributes | null> => {
         return await DroneRealTimeStatusModel.findByPk(id);
-    }
+    }, 'getRealTimeStatusById')
 
     /**
      * 根據無人機 ID 獲取即時狀態
      */
-    getRealTimeStatusByDroneId = async (droneId: number): Promise<DroneRealTimeStatusAttributes | null> => {
+    getRealTimeStatusByDroneId = loggerDecorator(async (droneId: number): Promise<DroneRealTimeStatusAttributes | null> => {
         return await DroneRealTimeStatusModel.findOne({
             where: { drone_id: droneId },
             order: [['updatedAt', 'DESC']]
         });
-    }
+    }, 'getRealTimeStatusByDroneId')
 
     /**
      * 獲取所有在線無人機的即時狀態
      */
-    getOnlineDroneStatuses = async (): Promise<DroneRealTimeStatusAttributes[]> => {
+    getOnlineDroneStatuses = loggerDecorator(async (): Promise<DroneRealTimeStatusAttributes[]> => {
         return await DroneRealTimeStatusModel.findAll({
             where: {
                 current_status: 'online'
             },
             order: [['updatedAt', 'DESC']]
         });
-    }
+    }, 'getOnlineDroneStatuses')
 
     /**
      * 獲取低電量的無人機
      */
-    getLowBatteryDrones = async (threshold: number = 20): Promise<DroneRealTimeStatusAttributes[]> => {
+    getLowBatteryDrones = loggerDecorator(async (threshold: number = 20): Promise<DroneRealTimeStatusAttributes[]> => {
         return await DroneRealTimeStatusModel.findAll({
             where: {
                 current_battery_level: {
@@ -72,12 +73,12 @@ export class DroneRealTimeStatusQueriesRepository {
             },
             order: [['current_battery_level', 'ASC']]
         });
-    }
+    }, 'getLowBatteryDrones')
 
     /**
      * 獲取即時狀態統計資料
      */
-    getRealTimeStatusStatistics = async (): Promise<any> => {
+    getRealTimeStatusStatistics = loggerDecorator(async (): Promise<any> => {
         const [totalStatuses] = await DroneRealTimeStatusModel.findAll({
             attributes: [
                 [DroneRealTimeStatusModel.sequelize!.fn('COUNT', '*'), 'total'],
@@ -92,5 +93,5 @@ export class DroneRealTimeStatusQueriesRepository {
             averageBatteryLevel: totalStatuses.avgBattery || 0,
             averageSignalStrength: totalStatuses.avgSignal || 0
         };
-    }
+    }, 'getRealTimeStatusStatistics')
 }

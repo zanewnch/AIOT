@@ -18,7 +18,7 @@ import { DronePositionCommandsSvc } from '../../services/commands/DronePositionC
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger } from '../../decorators/LoggerDecorator.js';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 import type { DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 
 const logger = createLogger('DronePositionCommands');
@@ -42,7 +42,7 @@ export class DronePositionCommands {
      * 創建新的無人機位置資料
      * @route POST /api/drone-position/data
      */
-    createDronePosition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    createDronePosition = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const dronePositionData: DronePositionCreationAttributes = req.body;
 
@@ -70,13 +70,13 @@ export class DronePositionCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'createDronePosition')
 
     /**
      * 更新指定無人機位置資料
      * @route PUT /api/drone-position/data/:id
      */
-    updateDronePosition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    updateDronePosition = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
             const updateData: Partial<DronePositionCreationAttributes> = req.body;
@@ -121,13 +121,13 @@ export class DronePositionCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'updateDronePosition')
 
     /**
      * 刪除指定無人機位置資料
      * @route DELETE /api/drone-position/data/:id
      */
-    async deleteDronePosition(req: Request, res: Response, next: NextFunction): Promise<void> {
+    deleteDronePosition = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
@@ -147,13 +147,13 @@ export class DronePositionCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'deleteDronePosition')
 
     /**
      * 批量創建無人機位置資料
      * @route POST /api/drone-position/data/batch
      */
-    createDronePositionsBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    createDronePositionsBatch = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const dronePositionsData: DronePositionCreationAttributes[] = req.body;
 
@@ -187,5 +187,5 @@ export class DronePositionCommands {
         } catch (error) {
             next(error);
         }
-    }
+    }, 'createDronePositionsBatch')
 }

@@ -14,6 +14,7 @@ import { injectable } from 'inversify';
 import { DronePositionModel, type DronePositionAttributes, type DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Op } from 'sequelize';
+import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 /**
  * 無人機位置命令 Repository 實現類別 - CQRS 命令端

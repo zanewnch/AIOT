@@ -33,7 +33,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的使用者角色關聯實例
    */
-  async create(userRoleData: UserRoleCreationAttributes, transaction?: Transaction): Promise<UserRoleModel> {
+  create = async (userRoleData: UserRoleCreationAttributes, transaction?: Transaction): Promise<UserRoleModel> => {
     try {
       logger.debug(`Creating user role: user ${userRoleData.userId} -> role ${userRoleData.roleId}`);
       
@@ -53,7 +53,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的使用者角色關聯實例陣列
    */
-  async bulkCreate(userRolesData: UserRoleCreationAttributes[], transaction?: Transaction): Promise<UserRoleModel[]> {
+  bulkCreate = async (userRolesData: UserRoleCreationAttributes[], transaction?: Transaction): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Bulk creating ${userRolesData.length} user roles`);
       
@@ -149,7 +149,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async delete(userId: number, roleId: number, transaction?: Transaction): Promise<boolean> {
+  delete = async (userId: number, roleId: number, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting user role: user ${userId} -> role ${roleId}`);
       
@@ -179,7 +179,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async deleteByUserAndRole(userId: number, roleId: number, transaction?: Transaction): Promise<boolean> {
+  deleteByUserAndRole = async (userId: number, roleId: number, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting user role: user ${userId} -> role ${roleId}`);
       
@@ -208,7 +208,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async deleteByUserId(userId: number, transaction?: Transaction): Promise<number> {
+  deleteByUserId = async (userId: number, transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Deleting all roles for user ${userId}`);
       
@@ -231,7 +231,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async deleteByRoleId(roleId: number, transaction?: Transaction): Promise<number> {
+  deleteByRoleId = async (roleId: number, transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Deleting all users for role ${roleId}`);
       
@@ -254,7 +254,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async bulkDelete(userRolePairs: Array<{userId: number, roleId: number}>, transaction?: Transaction): Promise<number> {
+  bulkDelete = async (userRolePairs: Array<{userId: number, roleId: number}>, transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Bulk deleting ${userRolePairs.length} user roles`);
       
@@ -290,7 +290,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的使用者角色關聯實例陣列
    */
-  async replaceUserRoles(userId: number, newRoleIds: number[], transaction?: Transaction): Promise<UserRoleModel[]> {
+  replaceUserRoles = async (userId: number, newRoleIds: number[], transaction?: Transaction): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Replacing roles for user ${userId} with [${newRoleIds.join(', ')}]`);
       
@@ -320,7 +320,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的使用者角色關聯實例陣列
    */
-  async assignRolesToUser(userId: number, roleIds: number[], transaction?: Transaction): Promise<UserRoleModel[]> {
+  assignRolesToUser = async (userId: number, roleIds: number[], transaction?: Transaction): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Assigning roles [${roleIds.join(', ')}] to user ${userId}`);
       
@@ -346,7 +346,7 @@ export class UserRoleCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的使用者角色關聯實例陣列
    */
-  async assignUsersToRole(roleId: number, userIds: number[], transaction?: Transaction): Promise<UserRoleModel[]> {
+  assignUsersToRole = async (roleId: number, userIds: number[], transaction?: Transaction): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Assigning users [${userIds.join(', ')}] to role ${roleId}`);
       

@@ -33,7 +33,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色權限關聯實例
    */
-  async create(rolePermissionData: RolePermissionCreationAttributes, transaction?: Transaction): Promise<RolePermissionModel> {
+  create = async (rolePermissionData: RolePermissionCreationAttributes, transaction?: Transaction): Promise<RolePermissionModel> => {
     try {
       logger.debug(`Creating role permission: role ${rolePermissionData.roleId} -> permission ${rolePermissionData.permissionId}`);
       
@@ -53,7 +53,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色權限關聯實例陣列
    */
-  async bulkCreate(rolePermissionsData: RolePermissionCreationAttributes[], transaction?: Transaction): Promise<RolePermissionModel[]> {
+  bulkCreate = async (rolePermissionsData: RolePermissionCreationAttributes[], transaction?: Transaction): Promise<RolePermissionModel[]> => {
     try {
       logger.debug(`Bulk creating ${rolePermissionsData.length} role permissions`);
       
@@ -151,7 +151,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async delete(roleId: number, permissionId: number, transaction?: Transaction): Promise<boolean> {
+  delete = async (roleId: number, permissionId: number, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting role permission: role ${roleId} -> permission ${permissionId}`);
       
@@ -181,7 +181,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 是否刪除成功
    */
-  async deleteByRoleAndPermission(roleId: number, permissionId: number, transaction?: Transaction): Promise<boolean> {
+  deleteByRoleAndPermission = async (roleId: number, permissionId: number, transaction?: Transaction): Promise<boolean> => {
     try {
       logger.debug(`Deleting role permission: role ${roleId} -> permission ${permissionId}`);
       
@@ -210,7 +210,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async deleteByRoleId(roleId: number, transaction?: Transaction): Promise<number> {
+  deleteByRoleId = async (roleId: number, transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Deleting all permissions for role ${roleId}`);
       
@@ -233,7 +233,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async deleteByPermissionId(permissionId: number, transaction?: Transaction): Promise<number> {
+  deleteByPermissionId = async (permissionId: number, transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Deleting all roles for permission ${permissionId}`);
       
@@ -256,7 +256,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 刪除的記錄數
    */
-  async bulkDelete(rolePermissionPairs: Array<{roleId: number, permissionId: number}>, transaction?: Transaction): Promise<number> {
+  bulkDelete = async (rolePermissionPairs: Array<{roleId: number, permissionId: number}>, transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Bulk deleting ${rolePermissionPairs.length} role permissions`);
       
@@ -292,7 +292,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色權限關聯實例陣列
    */
-  async replaceRolePermissions(roleId: number, newPermissionIds: number[], transaction?: Transaction): Promise<RolePermissionModel[]> {
+  replaceRolePermissions = async (roleId: number, newPermissionIds: number[], transaction?: Transaction): Promise<RolePermissionModel[]> => {
     try {
       logger.debug(`Replacing permissions for role ${roleId} with [${newPermissionIds.join(', ')}]`);
       
@@ -322,7 +322,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色權限關聯實例陣列
    */
-  async assignPermissionsToRole(roleId: number, permissionIds: number[], transaction?: Transaction): Promise<RolePermissionModel[]> {
+  assignPermissionsToRole = async (roleId: number, permissionIds: number[], transaction?: Transaction): Promise<RolePermissionModel[]> => {
     try {
       logger.debug(`Assigning permissions [${permissionIds.join(', ')}] to role ${roleId}`);
       
@@ -348,7 +348,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 建立的角色權限關聯實例陣列
    */
-  async assignRolesToPermission(permissionId: number, roleIds: number[], transaction?: Transaction): Promise<RolePermissionModel[]> {
+  assignRolesToPermission = async (permissionId: number, roleIds: number[], transaction?: Transaction): Promise<RolePermissionModel[]> => {
     try {
       logger.debug(`Assigning roles [${roleIds.join(', ')}] to permission ${permissionId}`);
       
@@ -374,7 +374,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 撤銷的記錄數
    */
-  async revokePermissionsFromRole(roleId: number, permissionIds: number[], transaction?: Transaction): Promise<number> {
+  revokePermissionsFromRole = async (roleId: number, permissionIds: number[], transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Revoking permissions [${permissionIds.join(', ')}] from role ${roleId}`);
       
@@ -401,7 +401,7 @@ export class RolePermissionCommandsRepository {
    * @param transaction 資料庫交易（可選）
    * @returns 撤銷的記錄數
    */
-  async revokeRolesFromPermission(permissionId: number, roleIds: number[], transaction?: Transaction): Promise<number> {
+  revokeRolesFromPermission = async (permissionId: number, roleIds: number[], transaction?: Transaction): Promise<number> => {
     try {
       logger.debug(`Revoking roles [${roleIds.join(', ')}] from permission ${permissionId}`);
       

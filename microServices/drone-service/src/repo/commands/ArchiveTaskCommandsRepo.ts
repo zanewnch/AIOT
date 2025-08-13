@@ -13,19 +13,20 @@ import { injectable } from 'inversify';
 import { ArchiveTaskModel, ArchiveTaskCreationAttributes, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import type { IArchiveTaskRepository, ArchiveTaskQueryOptions } from '../../types/repositories/IArchiveTaskRepository.js';
 import { Op } from 'sequelize';
+import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 @injectable()
 export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
   
-  create = async (data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> => {
+  create = loggerDecorator(async (data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> => {
     return await ArchiveTaskModel.create(data);
-  }
+  }, 'create')
 
-  findById = async (id: number): Promise<ArchiveTaskModel | null> => {
+  findById = loggerDecorator(async (id: number): Promise<ArchiveTaskModel | null> => {
     return await ArchiveTaskModel.findByPk(id);
-  }
+  }, 'findById')
 
-  findAll = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
+  findAll = loggerDecorator(async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
     const whereClause: any = {};
     
     if (options?.status) {
@@ -48,24 +49,24 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
       offset: options?.offset,
       order: [['createdAt', 'DESC']]
     });
-  }
+  }, 'findAll')
 
-  findByStatus = async (status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> => {
+  findByStatus = loggerDecorator(async (status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> => {
     return await ArchiveTaskModel.findAll({
       where: { status },
       limit,
       order: [['createdAt', 'DESC']]
     });
-  }
+  }, 'findByStatus')
 
-  findByBatchId = async (batchId: string): Promise<ArchiveTaskModel[]> => {
+  findByBatchId = loggerDecorator(async (batchId: string): Promise<ArchiveTaskModel[]> => {
     return await ArchiveTaskModel.findAll({
       where: { batch_id: batchId },
       order: [['createdAt', 'DESC']]
     });
-  }
+  }, 'findByBatchId')
 
-  count = async (options?: ArchiveTaskQueryOptions): Promise<number> => {
+  count = loggerDecorator(async (options?: ArchiveTaskQueryOptions): Promise<number> => {
     const whereClause: any = {};
     
     if (options?.status) {
@@ -85,24 +86,24 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
     return await ArchiveTaskModel.count({
       where: whereClause
     });
-  }
+  }, 'count')
 
-  update = async (id: number, data: Partial<ArchiveTaskCreationAttributes>): Promise<ArchiveTaskModel | null> => {
+  update = loggerDecorator(async (id: number, data: Partial<ArchiveTaskCreationAttributes>): Promise<ArchiveTaskModel | null> => {
     const task = await this.findById(id);
     if (!task) return null;
     
     await task.update(data);
     return task;
-  }
+  }, 'update')
 
-  delete = async (id: number): Promise<void> => {
+  delete = loggerDecorator(async (id: number): Promise<void> => {
     const task = await this.findById(id);
     if (task) {
       await task.destroy();
     }
-  }
+  }, 'delete')
 
-  cleanup = async (daysOld: number, status?: any): Promise<number> => {
+  cleanup = loggerDecorator(async (daysOld: number, status?: any): Promise<number> => {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
     
@@ -121,5 +122,5 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
     });
     
     return result;
-  }
+  }, 'cleanup')
 }
