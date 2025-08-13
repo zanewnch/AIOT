@@ -417,12 +417,16 @@ services:
     volumes:
       - ../../microServices/docs-service:/app
       - /app/node_modules
-      # 掛載所有微服務的文檔目錄
+      # 掛載所有微服務的完整目錄（包含源代碼和文檔）以支援智能緩存
+      - ../../microServices/rbac-service:/app/microservices/rbac-service:ro
+      - ../../microServices/drone-service:/app/microservices/drone-service:ro
+      - ../../microServices/drone-websocket-service:/app/microservices/drone-websocket-service:ro
+      - ../../microServices/general-service:/app/microservices/general-service:ro
+      # 保持文檔目錄掛載以便靜態文件服務
       - ../../microServices/rbac-service/docs:/app/docs/rbac:ro
       - ../../microServices/drone-service/docs:/app/docs/drone:ro
       - ../../microServices/drone-websocket-service/docs:/app/docs/drone-websocket:ro
       - ../../microServices/general-service/docs:/app/docs/general:ro
-      - ../../fe/docs:/app/docs/frontend:ro
     networks:
       - aiot-network
     restart: unless-stopped

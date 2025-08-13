@@ -18,7 +18,7 @@ import { DronePositionCommandsSvc } from '../../services/commands/DronePositionC
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import type { DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 
 const logger = createLogger('DronePositionCommands');
@@ -42,7 +42,6 @@ export class DronePositionCommands {
      * 創建新的無人機位置資料
      * @route POST /api/drone-position/data
      */
-    @LogController()
     createDronePosition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const dronePositionData: DronePositionCreationAttributes = req.body;
@@ -77,7 +76,6 @@ export class DronePositionCommands {
      * 更新指定無人機位置資料
      * @route PUT /api/drone-position/data/:id
      */
-    @LogController()
     updateDronePosition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -129,7 +127,6 @@ export class DronePositionCommands {
      * 刪除指定無人機位置資料
      * @route DELETE /api/drone-position/data/:id
      */
-    @LogController()
     async deleteDronePosition(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -156,7 +153,6 @@ export class DronePositionCommands {
      * 批量創建無人機位置資料
      * @route POST /api/drone-position/data/batch
      */
-    @LogController()
     createDronePositionsBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const dronePositionsData: DronePositionCreationAttributes[] = req.body;

@@ -19,7 +19,7 @@ import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js'
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { IDronePositionQueries } from '../../types/controllers/queries/IDronePositionQueries.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DronePositionQueries');
 
@@ -42,7 +42,6 @@ export class DronePositionQueries implements IDronePositionQueries {
      * 取得所有無人機位置資料
      * @route GET /api/drone-position/data
      */
-    @LogController()
     getAllDronePositions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -59,7 +58,6 @@ export class DronePositionQueries implements IDronePositionQueries {
      * 根據 ID 取得無人機位置資料
      * @route GET /api/drone-position/data/:id
      */
-    @LogController()
     getDronePositionById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -91,7 +89,6 @@ export class DronePositionQueries implements IDronePositionQueries {
      * 根據無人機 ID 取得位置資料
      * @route GET /api/drone-position/data/drone/:droneId
      */
-    @LogController()
     getDronePositionsByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -116,7 +113,6 @@ export class DronePositionQueries implements IDronePositionQueries {
      * 取得最新的無人機位置資料
      * @route GET /api/drone-position/data/latest/:droneId
      */
-    @LogController()
     getLatestDronePosition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -147,7 +143,6 @@ export class DronePositionQueries implements IDronePositionQueries {
      * 根據時間範圍取得無人機位置資料
      * @route GET /api/drone-position/data/timerange/:droneId
      */
-    @LogController()
     getDronePositionsByTimeRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);

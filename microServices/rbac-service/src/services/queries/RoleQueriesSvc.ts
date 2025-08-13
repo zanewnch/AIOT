@@ -129,7 +129,7 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * 從快取取得所有角色
      * @private
      */
-    private async getCachedAllRoles(): Promise<RoleDTO[] | null> {
+    private getCachedAllRoles = async (): Promise<RoleDTO[] | null> => {
         try {
             const redis = this.getRedisClient();
             logger.debug('Checking Redis cache for all roles');
@@ -149,7 +149,7 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * @param roleId 角色 ID
      * @private
      */
-    private async getCachedRole(roleId: number): Promise<RoleDTO | null> {
+    private getCachedRole = async (roleId: number): Promise<RoleDTO | null> => {
         try {
             const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for role ID: ${roleId}`);
@@ -170,7 +170,7 @@ export class RoleQueriesSvc implements IRoleQueriesService {
     /**
      * 取得所有角色列表
      */
-    public async getAllRoles(): Promise<RoleDTO[]> {
+    public getAllRoles = async (): Promise<RoleDTO[]> => {
         try {
             logger.debug('Getting all roles with cache support');
 
@@ -198,7 +198,7 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * 根據 ID 取得角色
      * @param roleId 角色 ID
      */
-    public async getRoleById(roleId: number): Promise<RoleDTO | null> {
+    public getRoleById = async (roleId: number): Promise<RoleDTO | null> => {
         try {
             logger.info(`Retrieving role by ID: ${roleId}`);
 
@@ -236,7 +236,7 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * 根據名稱查找角色
      * @param roleName 角色名稱
      */
-    public async getRoleByName(roleName: string): Promise<RoleDTO | null> {
+    public getRoleByName = async (roleName: string): Promise<RoleDTO | null> => {
         try {
             logger.info(`Retrieving role by name: ${roleName}`);
 
@@ -266,7 +266,7 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * 檢查角色是否存在
      * @param roleName 角色名稱
      */
-    public async roleExists(roleName: string): Promise<boolean> {
+    public roleExists = async (roleName: string): Promise<boolean> => {
         try {
             return await this.roleRepository.exists(roleName);
         } catch (error) {

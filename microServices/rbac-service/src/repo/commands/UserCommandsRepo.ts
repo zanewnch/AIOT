@@ -35,7 +35,7 @@ export class UserCommandsRepository {
      * @returns {Promise<UserModel>} 成功建立的使用者模型
      * @throws {Error} 當使用者名稱重複、資料格式錯誤或資料庫操作失敗時拋出異常
      */
-    async create(userData: { username: string; passwordHash: string; email?: string }): Promise<UserModel> {
+    create = async (userData: { username: string; passwordHash: string; email?: string }): Promise<UserModel> => {
         try {
             logger.info('Creating new user', { username: userData.username, hasEmail: !!userData.email });
             const user = await UserModel.create({
@@ -58,7 +58,7 @@ export class UserCommandsRepository {
      * @returns {Promise<UserModel[]>} 建立的使用者模型陣列
      * @throws {Error} 當資料格式錯誤或資料庫操作失敗時拋出異常
      */
-    async bulkCreate(usersData: { username: string; passwordHash: string; email?: string }[]): Promise<UserModel[]> {
+    bulkCreate = async (usersData: { username: string; passwordHash: string; email?: string }[]): Promise<UserModel[]> => {
         try {
             logger.info('Bulk creating users', { count: usersData.length });
             const usersWithDefaults = usersData.map(userData => ({
@@ -86,10 +86,10 @@ export class UserCommandsRepository {
      * @returns {Promise<[UserModel, boolean]>} [使用者模型, 是否為新建立的記錄]
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async findOrCreate(
+    findOrCreate = async (
         whereCondition: { username: string },
         defaults: { username: string; passwordHash: string; email?: string }
-    ): Promise<[UserModel, boolean]> {
+    ): Promise<[UserModel, boolean]> => {
         try {
             logger.info('Finding or creating user', { username: whereCondition.username });
             const result = await UserModel.findOrCreate({
@@ -122,7 +122,7 @@ export class UserCommandsRepository {
      * @returns {Promise<UserModel | null>} 更新後的使用者模型或 null（若找不到）
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async update(id: number, updateData: Partial<{username: string; email: string; passwordHash: string}>): Promise<UserModel | null> {
+    update = async (id: number, updateData: Partial<{username: string; email: string; passwordHash: string}>): Promise<UserModel | null> => {
         try {
             logger.info('Updating user', { id, updateFields: Object.keys(updateData) });
             const [affectedCount] = await UserModel.update(updateData, {
@@ -155,7 +155,7 @@ export class UserCommandsRepository {
      * @returns {Promise<boolean>} 是否成功刪除
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async delete(id: number): Promise<boolean> {
+    delete = async (id: number): Promise<boolean> => {
         try {
             logger.info('Deleting user', { id });
             const affectedCount = await UserModel.destroy({
@@ -183,7 +183,7 @@ export class UserCommandsRepository {
      * @returns {Promise<number>} 刪除的記錄數
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async bulkDelete(ids: number[]): Promise<number> {
+    bulkDelete = async (ids: number[]): Promise<number> => {
         try {
             logger.info('Bulk deleting users', { ids, count: ids.length });
             const affectedCount = await UserModel.destroy({
@@ -208,7 +208,7 @@ export class UserCommandsRepository {
      * @returns {Promise<boolean>} 是否成功更新
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async updatePassword(id: number, newPasswordHash: string): Promise<boolean> {
+    updatePassword = async (id: number, newPasswordHash: string): Promise<boolean> => {
         try {
             logger.info('Updating user password', { id });
             const [affectedCount] = await UserModel.update(
@@ -241,7 +241,7 @@ export class UserCommandsRepository {
      * @returns {Promise<boolean>} 是否成功更新
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async updateEmail(id: number, newEmail: string): Promise<boolean> {
+    updateEmail = async (id: number, newEmail: string): Promise<boolean> => {
         try {
             logger.info('Updating user email', { id, newEmail });
             const [affectedCount] = await UserModel.update(
@@ -273,7 +273,7 @@ export class UserCommandsRepository {
      * @returns {Promise<boolean>} 是否成功停用
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async deactivate(id: number): Promise<boolean> {
+    deactivate = async (id: number): Promise<boolean> => {
         try {
             logger.info('Deactivating user account', { id });
             const [affectedCount] = await UserModel.update(
@@ -305,7 +305,7 @@ export class UserCommandsRepository {
      * @returns {Promise<boolean>} 是否成功啟用
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async activate(id: number): Promise<boolean> {
+    activate = async (id: number): Promise<boolean> => {
         try {
             logger.info('Activating user account', { id });
             const [affectedCount] = await UserModel.update(
@@ -337,7 +337,7 @@ export class UserCommandsRepository {
      * @returns {Promise<boolean>} 是否成功更新
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async updateLastLogin(id: number): Promise<boolean> {
+    updateLastLogin = async (id: number): Promise<boolean> => {
         try {
             logger.debug('Updating user last login time', { id });
             const [affectedCount] = await UserModel.update(

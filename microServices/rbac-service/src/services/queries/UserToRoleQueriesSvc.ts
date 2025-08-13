@@ -174,7 +174,7 @@ export class UserToRoleQueriesSvc {
      * @param userId 使用者 ID
      * @private
      */
-    private async getCachedUserRoles(userId: number): Promise<RoleDTO[] | null> {
+    private getCachedUserRoles = async (userId: number): Promise<RoleDTO[] | null> => {
         try {
             const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for user roles: ${userId}`);
@@ -196,7 +196,7 @@ export class UserToRoleQueriesSvc {
      * @param roles 角色列表
      * @private
      */
-    private async cacheUserRoles(userId: number, roles: RoleDTO[]): Promise<void> {
+    private cacheUserRoles = async (userId: number, roles: RoleDTO[]): Promise<void> => {
         try {
             const redis = this.getRedisClient();
             logger.debug(`Caching user roles for ID: ${userId} in Redis`);
@@ -329,7 +329,7 @@ export class UserToRoleQueriesSvc {
      * @param roleId 角色 ID
      * @returns 使用者 DTO 陣列
      */
-    public async getRoleUsers(roleId: number): Promise<UserDTO[]> {
+    public getRoleUsers = async (roleId: number): Promise<UserDTO[]> => {
         try {
             logger.info(`Getting users for role ID: ${roleId}`);
 
@@ -368,7 +368,7 @@ export class UserToRoleQueriesSvc {
      * 只回傳基本的關聯信息，避免 Sequelize 模型關聯錯誤
      * @returns 使用者角色關聯基本 DTO 陣列
      */
-    public async getAllUserRoles(): Promise<UserRoleBasicDTO[]> {
+    public getAllUserRoles = async (): Promise<UserRoleBasicDTO[]> => {
         try {
             logger.info('Getting all user-role associations');
 
@@ -400,7 +400,7 @@ export class UserToRoleQueriesSvc {
      * @param roleId 角色 ID
      * @returns 使用者角色關聯是否存在
      */
-    public async findUserRoleAssociation(userId: number, roleId: number): Promise<boolean> {
+    public findUserRoleAssociation = async (userId: number, roleId: number): Promise<boolean> => {
         try {
             logger.debug(`Looking for user-role association: user ${userId}, role ${roleId}`);
 

@@ -32,7 +32,7 @@ export class DroneStatusCommandsRepository {
      * @returns {Promise<DroneStatusModel>} 成功建立的無人機狀態模型
      * @throws {Error} 當資料格式錯誤或資料庫操作失敗時拋出異常
      */
-    async create(data: DroneStatusCreationAttributes): Promise<DroneStatusModel> {
+    create = async (data: DroneStatusCreationAttributes): Promise<DroneStatusModel> => {
         try {
             logger.info('Creating new drone status', { droneSerial: data.drone_serial });
             const droneStatus = await DroneStatusModel.create(data);
@@ -56,7 +56,7 @@ export class DroneStatusCommandsRepository {
      * @returns {Promise<DroneStatusModel | null>} 更新後的無人機狀態模型或 null（若找不到）
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async update(id: number, data: Partial<DroneStatusCreationAttributes>): Promise<DroneStatusModel | null> {
+    update = async (id: number, data: Partial<DroneStatusCreationAttributes>): Promise<DroneStatusModel | null> => {
         try {
             logger.info('Updating drone status', { id, updateFields: Object.keys(data) });
             const [affectedCount] = await DroneStatusModel.update(data, {
@@ -88,7 +88,7 @@ export class DroneStatusCommandsRepository {
      * @returns {Promise<boolean>} 是否成功刪除
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async delete(id: number): Promise<boolean> {
+    delete = async (id: number): Promise<boolean> => {
         try {
             logger.info('Deleting drone status', { id });
             const affectedCount = await DroneStatusModel.destroy({
@@ -117,7 +117,7 @@ export class DroneStatusCommandsRepository {
      * @returns {Promise<boolean>} 是否成功更新
      * @throws {Error} 當資料庫操作失敗時拋出異常
      */
-    async updateStatusBySerial(droneSerial: string, status: any): Promise<boolean> {
+    updateStatusBySerial = async (droneSerial: string, status: any): Promise<boolean> => {
         try {
             logger.info('Updating drone status by serial', { droneSerial, status });
             const [affectedCount] = await DroneStatusModel.update(
@@ -145,7 +145,7 @@ export class DroneStatusCommandsRepository {
      * @param status 新狀態
      * @returns 更新後的無人機狀態實例
      */
-    async updateStatus(id: number, status: DroneStatus): Promise<DroneStatusModel | null> {
+    updateStatus = async (id: number, status: DroneStatus): Promise<DroneStatusModel | null> => {
         try {
             logger.debug('Updating drone status by ID', { id, status });
             

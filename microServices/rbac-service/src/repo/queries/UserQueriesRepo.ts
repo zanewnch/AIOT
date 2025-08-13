@@ -34,7 +34,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel | null>} 找到的使用者模型，若不存在則回傳 null
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findByUsername(username: string): Promise<UserModel | null> {
+    findByUsername = async (username: string): Promise<UserModel | null> => {
         try {
             logger.info('Finding user by username', { username });
             const user = await UserModel.findOne({ where: { username } });
@@ -59,7 +59,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel | null>} 找到的使用者模型，若不存在則回傳 null
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findById(id: number): Promise<UserModel | null> {
+    findById = async (id: number): Promise<UserModel | null> => {
         try {
             logger.info('Finding user by id', { id });
             const user = await UserModel.findByPk(id);
@@ -84,7 +84,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel | null>} 包含角色和權限的使用者模型，若不存在則回傳 null
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findByIdWithRolesAndPermissions(id: number): Promise<UserModel | null> {
+    findByIdWithRolesAndPermissions = async (id: number): Promise<UserModel | null> => {
         try {
             logger.info('Finding user with roles and permissions', { id });
             const user = await UserModel.findByPk(id, {
@@ -126,7 +126,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel[]>} 所有使用者模型的陣列
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findAll(): Promise<UserModel[]> {
+    findAll = async (): Promise<UserModel[]> => {
         try {
             logger.info('Finding all users');
             const users = await UserModel.findAll();
@@ -146,7 +146,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel | null>} 找到的使用者模型，若不存在則回傳 null
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findByEmail(email: string): Promise<UserModel | null> {
+    findByEmail = async (email: string): Promise<UserModel | null> => {
         try {
             logger.info('Finding user by email', { email });
             const user = await UserModel.findOne({ where: { email } });
@@ -170,7 +170,7 @@ export class UserQueriesRepository {
      * @returns {Promise<number>} 使用者總數
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async count(): Promise<number> {
+    count = async (): Promise<number> => {
         try {
             logger.info('Counting total users');
             const count = await UserModel.count();
@@ -190,7 +190,7 @@ export class UserQueriesRepository {
      * @returns {Promise<boolean>} 是否存在
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async existsByUsername(username: string): Promise<boolean> {
+    existsByUsername = async (username: string): Promise<boolean> => {
         try {
             logger.info('Checking if username exists', { username });
             const count = await UserModel.count({ where: { username } });
@@ -211,7 +211,7 @@ export class UserQueriesRepository {
      * @returns {Promise<boolean>} 是否存在
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async existsByEmail(email: string): Promise<boolean> {
+    existsByEmail = async (email: string): Promise<boolean> => {
         try {
             logger.info('Checking if email exists', { email });
             const count = await UserModel.count({ where: { email } });
@@ -232,7 +232,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel[]>} 具有指定角色的使用者陣列
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findByRole(roleName: string): Promise<UserModel[]> {
+    findByRole = async (roleName: string): Promise<UserModel[]> => {
         try {
             logger.info('Finding users by role', { roleName });
             const users = await UserModel.findAll({
@@ -261,7 +261,7 @@ export class UserQueriesRepository {
      * @returns {Promise<UserModel[]>} 具有指定權限的使用者陣列
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
-    async findByPermission(permissionName: string): Promise<UserModel[]> {
+    findByPermission = async (permissionName: string): Promise<UserModel[]> => {
         try {
             logger.info('Finding users by permission', { permissionName });
             const users = await UserModel.findAll({

@@ -18,7 +18,7 @@ import { DroneRealTimeStatusQueriesSvc } from '../../services/queries/DroneRealT
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneRealTimeStatusQueries');
 
@@ -41,7 +41,6 @@ export class DroneRealTimeStatusQueries {
      * 取得所有無人機即時狀態資料
      * @route GET /api/drone-realtime-status/data
      */
-    @LogController()
     getAllDroneRealTimeStatuses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -57,7 +56,6 @@ export class DroneRealTimeStatusQueries {
      * 根據 ID 取得無人機即時狀態資料
      * @route GET /api/drone-realtime-status/data/:id
      */
-    @LogController()
     getDroneRealTimeStatusById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -87,7 +85,6 @@ export class DroneRealTimeStatusQueries {
      * 根據無人機 ID 取得即時狀態資料
      * @route GET /api/drone-realtime-status/data/drone/:droneId
      */
-    @LogController()
     getDroneRealTimeStatusByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -117,7 +114,6 @@ export class DroneRealTimeStatusQueries {
      * 根據狀態查詢無人機即時狀態
      * @route GET /api/drone-realtime-status/data/status/:status
      */
-    @LogController()
     getDroneRealTimeStatusesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const status = req.params.status;
@@ -141,7 +137,6 @@ export class DroneRealTimeStatusQueries {
      * 取得活躍中的無人機即時狀態
      * @route GET /api/drone-realtime-status/data/active
      */
-    @LogController()
     getActiveDroneRealTimeStatuses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneStatuses = await this.droneRealTimeStatusQueriesService.getActiveDroneRealTimeStatuses();
@@ -156,7 +151,6 @@ export class DroneRealTimeStatusQueries {
      * 取得無人機即時狀態統計
      * @route GET /api/drone-realtime-status/statistics
      */
-    @LogController()
     getDroneRealTimeStatusStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statistics = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusStatistics();

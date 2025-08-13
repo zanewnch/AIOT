@@ -32,7 +32,7 @@ export class DronePositionCommandsRepository {
      * @param {DronePositionCreationAttributes} data - 無人機位置建立資料
      * @returns {Promise<DronePositionAttributes>} 建立的無人機位置資料
      */
-    async create(data: DronePositionCreationAttributes): Promise<DronePositionAttributes> {
+    create = async (data: DronePositionCreationAttributes): Promise<DronePositionAttributes> => {
         try {
             this.logger.info('Creating new drone position data', { data });
             const dronePosition = await DronePositionModel.create(data);
@@ -51,7 +51,7 @@ export class DronePositionCommandsRepository {
      * @param {DronePositionCreationAttributes[]} dataArray - 位置資料陣列
      * @returns {Promise<DronePositionAttributes[]>} 建立的位置資料陣列
      */
-    async bulkCreate(dataArray: DronePositionCreationAttributes[]): Promise<DronePositionAttributes[]> {
+    bulkCreate = async (dataArray: DronePositionCreationAttributes[]): Promise<DronePositionAttributes[]> => {
         try {
             this.logger.info('Bulk creating drone position data', { count: dataArray.length });
             const dronePositions = await DronePositionModel.bulkCreate(dataArray, {
@@ -73,7 +73,7 @@ export class DronePositionCommandsRepository {
      * @param {Partial<DronePositionCreationAttributes>} data - 更新資料
      * @returns {Promise<DronePositionAttributes | null>} 更新後的無人機位置資料或 null
      */
-    async update(id: number, data: Partial<DronePositionCreationAttributes>): Promise<DronePositionAttributes | null> {
+    update = async (id: number, data: Partial<DronePositionCreationAttributes>): Promise<DronePositionAttributes | null> => {
         try {
             this.logger.info('Updating drone position data', { id, data });
 
@@ -103,7 +103,7 @@ export class DronePositionCommandsRepository {
      * @param {number} id - 無人機位置資料 ID
      * @returns {Promise<boolean>} 是否刪除成功
      */
-    async delete(id: number): Promise<boolean> {
+    delete = async (id: number): Promise<boolean> => {
         try {
             this.logger.info('Deleting drone position data', { id });
 
@@ -131,7 +131,7 @@ export class DronePositionCommandsRepository {
      * @param {Date} beforeDate - 刪除此時間之前的記錄
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteBeforeDate(beforeDate: Date): Promise<number> {
+    deleteBeforeDate = async (beforeDate: Date): Promise<number> => {
         try {
             this.logger.info('Deleting drone position records before date', { beforeDate });
             const deletedCount = await DronePositionModel.destroy({
@@ -156,7 +156,7 @@ export class DronePositionCommandsRepository {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByDroneId(droneId: number): Promise<number> {
+    deleteByDroneId = async (droneId: number): Promise<number> => {
         try {
             this.logger.info('Deleting drone position records by drone ID', { droneId });
             const deletedCount = await DronePositionModel.destroy({

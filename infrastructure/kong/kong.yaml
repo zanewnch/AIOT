@@ -216,7 +216,7 @@ routes:
     service: docs-service
     paths:
       - /docs
-    strip_path: false  # 保持 /docs 路徑，讓文檔服務處理子路徑
+    strip_path: true   # 移除 /docs 前綴，轉發乾淨路徑給文檔服務
     preserve_host: false
     protocols:
       - http

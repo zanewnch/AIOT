@@ -24,7 +24,7 @@ export class DroneRealTimeStatusQueriesRepository {
     /**
      * 獲取所有無人機的即時狀態
      */
-    async getAllRealTimeStatuses(limit: number = 100): Promise<DroneRealTimeStatusAttributes[]> {
+    getAllRealTimeStatuses = async (limit: number = 100): Promise<DroneRealTimeStatusAttributes[]> => {
         return await DroneRealTimeStatusModel.findAll({
             limit,
             order: [['updatedAt', 'DESC']]
@@ -34,14 +34,14 @@ export class DroneRealTimeStatusQueriesRepository {
     /**
      * 根據 ID 獲取無人機即時狀態
      */
-    async getRealTimeStatusById(id: number): Promise<DroneRealTimeStatusAttributes | null> {
+    getRealTimeStatusById = async (id: number): Promise<DroneRealTimeStatusAttributes | null> => {
         return await DroneRealTimeStatusModel.findByPk(id);
     }
 
     /**
      * 根據無人機 ID 獲取即時狀態
      */
-    async getRealTimeStatusByDroneId(droneId: number): Promise<DroneRealTimeStatusAttributes | null> {
+    getRealTimeStatusByDroneId = async (droneId: number): Promise<DroneRealTimeStatusAttributes | null> => {
         return await DroneRealTimeStatusModel.findOne({
             where: { drone_id: droneId },
             order: [['updatedAt', 'DESC']]
@@ -51,7 +51,7 @@ export class DroneRealTimeStatusQueriesRepository {
     /**
      * 獲取所有在線無人機的即時狀態
      */
-    async getOnlineDroneStatuses(): Promise<DroneRealTimeStatusAttributes[]> {
+    getOnlineDroneStatuses = async (): Promise<DroneRealTimeStatusAttributes[]> => {
         return await DroneRealTimeStatusModel.findAll({
             where: {
                 current_status: 'online'
@@ -63,7 +63,7 @@ export class DroneRealTimeStatusQueriesRepository {
     /**
      * 獲取低電量的無人機
      */
-    async getLowBatteryDrones(threshold: number = 20): Promise<DroneRealTimeStatusAttributes[]> {
+    getLowBatteryDrones = async (threshold: number = 20): Promise<DroneRealTimeStatusAttributes[]> => {
         return await DroneRealTimeStatusModel.findAll({
             where: {
                 current_battery_level: {
@@ -77,7 +77,7 @@ export class DroneRealTimeStatusQueriesRepository {
     /**
      * 獲取即時狀態統計資料
      */
-    async getRealTimeStatusStatistics(): Promise<any> {
+    getRealTimeStatusStatistics = async (): Promise<any> => {
         const [totalStatuses] = await DroneRealTimeStatusModel.findAll({
             attributes: [
                 [DroneRealTimeStatusModel.sequelize!.fn('COUNT', '*'), 'total'],

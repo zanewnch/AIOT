@@ -32,7 +32,7 @@ export class DronePositionQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DronePositionAttributes[]>} 無人機位置資料陣列
      */
-    async selectAll(limit: number = 100): Promise<DronePositionAttributes[]> {
+    selectAll = async (limit: number = 100): Promise<DronePositionAttributes[]> => {
         try {
             this.logger.info('Fetching all drone position data');
             const dronePositions = await DronePositionModel.findAll({
@@ -54,7 +54,7 @@ export class DronePositionQueriesRepository {
      * @param {PaginationParams} params - 分頁參數
      * @returns {Promise<PaginatedResponse<DronePositionAttributes>>} 分頁無人機位置資料
      */
-    async selectPagination(params: PaginationParams): Promise<PaginatedResponse<DronePositionAttributes>> {
+    selectPagination = async (params: PaginationParams): Promise<PaginatedResponse<DronePositionAttributes>> => {
         try {
             const { page = 1, limit = 10, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
@@ -100,7 +100,7 @@ export class DronePositionQueriesRepository {
      * @param {number} id - 無人機位置資料 ID
      * @returns {Promise<DronePositionAttributes | null>} 無人機位置資料或 null
      */
-    async findById(id: number): Promise<DronePositionAttributes | null> {
+    findById = async (id: number): Promise<DronePositionAttributes | null> => {
         try {
             this.logger.info('Fetching drone position data by ID', { id });
             const dronePosition = await DronePositionModel.findByPk(id);
@@ -124,7 +124,7 @@ export class DronePositionQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 10
      * @returns {Promise<DronePositionAttributes[]>} 最新的無人機位置資料陣列
      */
-    async findLatest(limit: number = 10): Promise<DronePositionAttributes[]> {
+    findLatest = async (limit: number = 10): Promise<DronePositionAttributes[]> => {
         try {
             this.logger.info('Fetching latest drone position data', { limit });
 
@@ -148,7 +148,7 @@ export class DronePositionQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 10
      * @returns {Promise<DronePositionAttributes[]>} 特定無人機的位置資料陣列
      */
-    async findByDroneId(droneId: number, limit: number = 10): Promise<DronePositionAttributes[]> {
+    findByDroneId = async (droneId: number, limit: number = 10): Promise<DronePositionAttributes[]> => {
         try {
             this.logger.info('Fetching drone positions by drone ID', { droneId, limit });
 
@@ -171,7 +171,7 @@ export class DronePositionQueriesRepository {
      * 
      * @returns {Promise<number>} 總記錄數
      */
-    async count(): Promise<number> {
+    count = async (): Promise<number> => {
         try {
             this.logger.info('Counting total drone position records');
             const count = await DronePositionModel.count();
@@ -190,7 +190,7 @@ export class DronePositionQueriesRepository {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 指定無人機的記錄數
      */
-    async countByDroneId(droneId: number): Promise<number> {
+    countByDroneId = async (droneId: number): Promise<number> => {
         try {
             this.logger.info('Counting drone position records by drone ID', { droneId });
             const count = await DronePositionModel.count({

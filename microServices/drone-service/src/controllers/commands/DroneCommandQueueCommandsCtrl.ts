@@ -18,7 +18,7 @@ import { DroneCommandQueueCommandsSvc } from '../../services/commands/DroneComma
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 import type { DroneCommandQueueCreationAttributes } from '../../types/services/IDroneCommandQueueService.js';
 
@@ -43,7 +43,6 @@ export class DroneCommandQueueCommands {
      * 創建新的無人機指令佇列
      * @route POST /api/drone-command-queue/data
      */
-    @LogController()
     createDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const queueData: DroneCommandQueueCreationAttributes = req.body;
@@ -74,7 +73,6 @@ export class DroneCommandQueueCommands {
      * 更新指定無人機指令佇列
      * @route PUT /api/drone-command-queue/data/:id
      */
-    @LogController()
     updateDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -104,7 +102,6 @@ const updatedData = await this.commandService.updateDroneCommandQueue(id, update
      * 刪除指定無人機指令佇列
      * @route DELETE /api/drone-command-queue/data/:id
      */
-    @LogController()
     deleteDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -133,7 +130,6 @@ const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
      * 將指令加入佇列
      * @route POST /api/drone-command-queue/enqueue
      */
-    @LogController()
     enqueueDroneCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { droneId, commandType, commandData, priority = 1 } = req.body;
@@ -168,7 +164,6 @@ const enqueuedCommand = await this.commandService.enqueueDroneCommand(
      * 從佇列中移除並執行下一個指令
      * @route POST /api/drone-command-queue/dequeue/:droneId
      */
-    @LogController()
     dequeueDroneCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -197,7 +192,6 @@ const dequeuedCommand = await this.commandService.dequeueDroneCommand(droneId);
      * 清空指定無人機的指令佇列
      * @route DELETE /api/drone-command-queue/clear/:droneId
      */
-    @LogController()
     clearDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -220,7 +214,6 @@ const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
      * 更新指令佇列狀態
      * @route PATCH /api/drone-command-queue/:id/status
      */
-    @LogController()
     updateDroneCommandQueueStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -264,7 +257,6 @@ const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, 
      * 開始執行佇列
      * @route POST /api/drone-command-queues/:id/start
      */
-    @LogController()
     startDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -285,7 +277,6 @@ const result = ControllerResult.success('無人機指令佇列已開始執行');
      * 暫停佇列執行
      * @route POST /api/drone-command-queues/:id/pause
      */
-    @LogController()
     pauseDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -306,7 +297,6 @@ const result = ControllerResult.success('無人機指令佇列已暫停執行');
      * 重置佇列
      * @route POST /api/drone-command-queues/:id/reset
      */
-    @LogController()
     resetDroneCommandQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -327,7 +317,6 @@ const result = ControllerResult.success('無人機指令佇列已重置');
      * 向佇列添加指令
      * @route POST /api/drone-command-queues/:id/commands
      */
-    @LogController()
     addCommandToQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);

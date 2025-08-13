@@ -33,7 +33,7 @@ export class UserPreferenceQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<UserPreferenceAttributes[]>} 用戶偏好設定資料陣列
      */
-    async selectAll(limit: number = 100): Promise<UserPreferenceAttributes[]> {
+    selectAll = async (limit: number = 100): Promise<UserPreferenceAttributes[]> => {
         try {
             const userPreferences = await UserPreferenceModel.findAll({
                 order: [['updatedAt', 'DESC']],
@@ -52,7 +52,7 @@ export class UserPreferenceQueriesRepository {
      * @param {number} id - 用戶偏好設定 ID
      * @returns {Promise<UserPreferenceAttributes | null>} 用戶偏好設定資料或 null
      */
-    async selectById(id: number): Promise<UserPreferenceAttributes | null> {
+    selectById = async (id: number): Promise<UserPreferenceAttributes | null> => {
         try {
             const userPreference = await UserPreferenceModel.findByPk(id);
 
@@ -72,7 +72,7 @@ export class UserPreferenceQueriesRepository {
      * @param {number} userId - 用戶 ID
      * @returns {Promise<UserPreferenceAttributes | null>} 用戶偏好設定資料或 null
      */
-    async selectByUserId(userId: number): Promise<UserPreferenceAttributes | null> {
+    selectByUserId = async (userId: number): Promise<UserPreferenceAttributes | null> => {
         try {
             const userPreference = await UserPreferenceModel.findOne({
                 where: { userId: userId }
@@ -95,10 +95,10 @@ export class UserPreferenceQueriesRepository {
      * @param {PaginationParams} pagination - 分頁參數
      * @returns {Promise<PaginatedData<UserPreferenceAttributes>>} 分頁的用戶偏好設定資料
      */
-    async selectByTheme(
+    selectByTheme = async (
         theme: string, 
         pagination: PaginationParams = { page: 1, limit: 10 }
-    ): Promise<PaginatedData<UserPreferenceAttributes>> {
+    ): Promise<PaginatedData<UserPreferenceAttributes>> => {
         try {
 
             const page = pagination.page || 1;
@@ -134,10 +134,10 @@ export class UserPreferenceQueriesRepository {
      * @param {PaginationParams} pagination - 分頁參數
      * @returns {Promise<PaginatedData<UserPreferenceAttributes>>} 分頁的用戶偏好設定資料
      */
-    async selectByLanguage(
+    selectByLanguage = async (
         language: string, 
         pagination: PaginationParams = { page: 1, limit: 10 }
-    ): Promise<PaginatedData<UserPreferenceAttributes>> {
+    ): Promise<PaginatedData<UserPreferenceAttributes>> => {
         try {
 
             const page = pagination.page || 1;
@@ -173,10 +173,10 @@ export class UserPreferenceQueriesRepository {
      * @param {PaginationParams} pagination - 分頁參數
      * @returns {Promise<PaginatedData<UserPreferenceAttributes>>} 分頁的用戶偏好設定資料
      */
-    async selectByTimezone(
+    selectByTimezone = async (
         timezone: string, 
         pagination: PaginationParams = { page: 1, limit: 10 }
-    ): Promise<PaginatedData<UserPreferenceAttributes>> {
+    ): Promise<PaginatedData<UserPreferenceAttributes>> => {
         try {
 
             const page = pagination.page || 1;
@@ -211,9 +211,9 @@ export class UserPreferenceQueriesRepository {
      * @param {PaginationParams} pagination - 分頁參數
      * @returns {Promise<PaginatedData<UserPreferenceAttributes>>} 分頁的用戶偏好設定資料
      */
-    async selectWithPagination(
+    selectWithPagination = async (
         pagination: PaginationParams = { page: 1, limit: 10 }
-    ): Promise<PaginatedData<UserPreferenceAttributes>> {
+    ): Promise<PaginatedData<UserPreferenceAttributes>> => {
         try {
 
             const page = pagination.page || 1;
@@ -246,7 +246,7 @@ export class UserPreferenceQueriesRepository {
      *
      * @returns {Promise<number>} 用戶偏好設定資料總數
      */
-    async count(): Promise<number> {
+    count = async (): Promise<number> => {
         try {
             const count = await UserPreferenceModel.count();
 
@@ -262,7 +262,7 @@ export class UserPreferenceQueriesRepository {
      * @param {number} userId - 用戶 ID
      * @returns {Promise<boolean>} 是否存在用戶偏好設定
      */
-    async existsByUserId(userId: number): Promise<boolean> {
+    existsByUserId = async (userId: number): Promise<boolean> => {
         try {
             const count = await UserPreferenceModel.count({
                 where: { userId: userId }
@@ -282,7 +282,7 @@ export class UserPreferenceQueriesRepository {
      * @param {PaginationParams} pagination - 分頁參數
      * @returns {Promise<PaginatedData<UserPreferenceAttributes>>} 分頁的用戶偏好設定資料
      */
-    async search(
+    search = async (
         searchCriteria: {
             userId?: number;
             theme?: string;
@@ -292,7 +292,7 @@ export class UserPreferenceQueriesRepository {
             notifications?: boolean;
         },
         pagination: PaginationParams = { page: 1, limit: 10 }
-    ): Promise<PaginatedData<UserPreferenceAttributes>> {
+    ): Promise<PaginatedData<UserPreferenceAttributes>> => {
         try {
 
             const whereClause: any = {};

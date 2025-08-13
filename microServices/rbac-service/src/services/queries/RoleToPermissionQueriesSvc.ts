@@ -187,7 +187,7 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * 從快取取得角色權限
      * @param roleId 角色 ID
      */
-    private async getCachedRolePermissions(roleId: number): Promise<PermissionDTO[] | null> { // 私有異步方法：從 Redis 快取取得角色權限
+    private getCachedRolePermissions = async (roleId: number): Promise<PermissionDTO[] | null> => { // 私有異步方法：從 Redis 快取取得角色權限
         try { // 嘗試從 Redis 取得快取資料
             const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
             logger.debug(`Checking Redis cache for role permissions: ${roleId}`); // 記錄檢查角色權限快取的除錯日誌
@@ -208,7 +208,7 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * @param roleId 角色 ID
      * @param permissions 權限列表
      */
-    private async cacheRolePermissions(roleId: number, permissions: PermissionDTO[]): Promise<void> { // 私有異步方法：將角色權限資料快取到 Redis
+    private cacheRolePermissions = async (roleId: number, permissions: PermissionDTO[]): Promise<void> => { // 私有異步方法：將角色權限資料快取到 Redis
         try { // 嘗試執行快取操作
             const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
             logger.debug(`Caching role permissions for ID: ${roleId} in Redis`); // 記錄快取角色權限的除錯日誌
@@ -223,7 +223,7 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * 取得角色的所有權限
      * @param roleId 角色 ID
      */
-    public async getRolePermissions(roleId: number): Promise<PermissionDTO[]> { // 公開異步方法：取得角色的所有權限
+    public getRolePermissions = async (roleId: number): Promise<PermissionDTO[]> => { // 公開異步方法：取得角色的所有權限
         try { // 嘗試執行角色權限取得操作
             logger.info(`Getting permissions for role ID: ${roleId}`); // 記錄開始取得角色權限的資訊日誌
 
@@ -285,7 +285,7 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * @param roleId 角色 ID
      * @param permissionId 權限 ID
      */
-    public async roleHasPermission(roleId: number, permissionId: number): Promise<boolean> { // 公開異步方法：檢查角色是否具有特定權限
+    public roleHasPermission = async (roleId: number, permissionId: number): Promise<boolean> => { // 公開異步方法：檢查角色是否具有特定權限
         try { // 嘗試執行角色權限檢查操作
             logger.debug(`Checking if role ${roleId} has permission ${permissionId}`); // 記錄檢查角色權限的除錯日誌
 
@@ -310,7 +310,7 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * 取得權限的所有角色
      * @param permissionId 權限 ID
      */
-    public async getPermissionRoles(permissionId: number): Promise<RoleDTO[]> { // 公開異步方法：取得權限的所有角色
+    public getPermissionRoles = async (permissionId: number): Promise<RoleDTO[]> => { // 公開異步方法：取得權限的所有角色
         try { // 嘗試執行權限角色取得操作
             logger.info(`Getting roles for permission ID: ${permissionId}`); // 記錄開始取得權限角色的資訊日誌
 
@@ -361,7 +361,7 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * 取得所有角色權限關聯數據
      * 只回傳基本的關聯信息，避免 Sequelize 模型關聯錯誤
      */
-    public async getAllRolePermissions(): Promise<Array<{ id: string, roleId: number, permissionId: number, assignedAt: string }>> { // 公開異步方法：取得所有角色權限關聯數據
+    public getAllRolePermissions = async (): Promise<Array<{ id: string, roleId: number, permissionId: number, assignedAt: string }>> => { // 公開異步方法：取得所有角色權限關聯數據
         try { // 嘗試執行取得所有角色權限關聯操作
             logger.info('Getting all role-permission associations'); // 記錄開始取得所有角色權限關聯的資訊日誌
 

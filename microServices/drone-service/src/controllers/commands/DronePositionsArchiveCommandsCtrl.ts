@@ -18,7 +18,7 @@ import { DronePositionsArchiveCommandsSvc } from '../../services/commands/DroneP
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import type { DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 
 const logger = createLogger('DronePositionsArchiveCommands');
@@ -42,7 +42,6 @@ export class DronePositionsArchiveCommands {
      * 創建位置歷史歸檔記錄
      * @route POST /api/drone-positions-archive/data
      */
-    @LogController()
     createPositionArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const archiveData: DronePositionsArchiveCreationAttributes = req.body;
@@ -73,7 +72,6 @@ export class DronePositionsArchiveCommands {
      * 批量創建位置歷史歸檔記錄
      * @route POST /api/drone-positions-archive/data/bulk
      */
-    @LogController()
     bulkCreatePositionArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const archivesData: DronePositionsArchiveCreationAttributes[] = req.body;
@@ -111,7 +109,6 @@ export class DronePositionsArchiveCommands {
      * 更新位置歷史歸檔資料
      * @route PUT /api/drone-positions-archive/data/:id
      */
-    @LogController()
     updatePositionArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -148,7 +145,6 @@ export class DronePositionsArchiveCommands {
      * 刪除位置歷史歸檔資料
      * @route DELETE /api/drone-positions-archive/data/:id
      */
-    @LogController()
     deletePositionArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -178,7 +174,6 @@ export class DronePositionsArchiveCommands {
      * 刪除指定時間之前的歸檔資料
      * @route DELETE /api/drone-positions-archive/data/before/:beforeDate
      */
-    @LogController()
     deleteArchivesBeforeDate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const beforeDate = new Date(req.params.beforeDate);
@@ -202,7 +197,6 @@ export class DronePositionsArchiveCommands {
      * 刪除指定批次的歸檔資料
      * @route DELETE /api/drone-positions-archive/data/batch/:batchId
      */
-    @LogController()
     deleteArchiveBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const batchId = req.params.batchId;

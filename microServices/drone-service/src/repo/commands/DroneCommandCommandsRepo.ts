@@ -17,15 +17,15 @@ import { Op } from 'sequelize';
 @injectable()
 export class DroneCommandCommandsRepository implements IDroneCommandRepository {
   
-  async create(data: DroneCommandCreationAttributes): Promise<DroneCommandModel> {
+  create = async (data: DroneCommandCreationAttributes): Promise<DroneCommandModel> => {
     return await DroneCommandModel.create(data);
   }
 
-  async findById(id: number): Promise<DroneCommandModel | null> {
+  findById = async (id: number): Promise<DroneCommandModel | null> => {
     return await DroneCommandModel.findByPk(id);
   }
 
-  async update(id: number, data: Partial<DroneCommandCreationAttributes>): Promise<DroneCommandModel | null> {
+  update = async (id: number, data: Partial<DroneCommandCreationAttributes>): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);
     if (!command) return null;
     
@@ -33,14 +33,14 @@ export class DroneCommandCommandsRepository implements IDroneCommandRepository {
     return command;
   }
 
-  async delete(id: number): Promise<void> {
+  delete = async (id: number): Promise<void> => {
     const command = await this.findById(id);
     if (command) {
       await command.destroy();
     }
   }
 
-  async markAsExecuting(id: number): Promise<DroneCommandModel | null> {
+  markAsExecuting = async (id: number): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);
     if (!command) return null;
     
@@ -51,7 +51,7 @@ export class DroneCommandCommandsRepository implements IDroneCommandRepository {
     return command;
   }
 
-  async markAsCompleted(id: number): Promise<DroneCommandModel | null> {
+  markAsCompleted = async (id: number): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);
     if (!command) return null;
     
@@ -62,7 +62,7 @@ export class DroneCommandCommandsRepository implements IDroneCommandRepository {
     return command;
   }
 
-  async markAsFailed(id: number, errorMessage?: string): Promise<DroneCommandModel | null> {
+  markAsFailed = async (id: number, errorMessage?: string): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);
     if (!command) return null;
     
@@ -74,7 +74,7 @@ export class DroneCommandCommandsRepository implements IDroneCommandRepository {
     return command;
   }
 
-  async deleteCompletedBefore(date: Date): Promise<number> {
+  deleteCompletedBefore = async (date: Date): Promise<number> => {
     const result = await DroneCommandModel.destroy({
       where: {
         status: DroneCommandStatus.COMPLETED,
@@ -86,7 +86,7 @@ export class DroneCommandCommandsRepository implements IDroneCommandRepository {
     return result;
   }
 
-  async deleteBeforeDate(date: Date): Promise<number> {
+  deleteBeforeDate = async (date: Date): Promise<number> => {
     const result = await DroneCommandModel.destroy({
       where: {
         createdAt: {
@@ -97,7 +97,7 @@ export class DroneCommandCommandsRepository implements IDroneCommandRepository {
     return result;
   }
 
-  async updateStatus(id: number, status: any, errorMessage?: string): Promise<DroneCommandModel | null> {
+  updateStatus = async (id: number, status: any, errorMessage?: string): Promise<DroneCommandModel | null> => {
     const command = await this.findById(id);
     if (!command) return null;
     

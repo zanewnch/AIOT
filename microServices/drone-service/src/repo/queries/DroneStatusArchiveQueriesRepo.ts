@@ -34,7 +34,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 狀態歷史資料陣列
      */
-    async selectAll(limit: number = 100): Promise<DroneStatusArchiveAttributes[]> {
+    selectAll = async (limit: number = 100): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching all drone status archive data', { limit });
             const archives = await DroneStatusArchiveModel.findAll({
@@ -56,7 +56,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {PaginationParams} params - 分頁參數
      * @returns {Promise<PaginatedResponse<DroneStatusArchiveAttributes>>} 分頁狀態歷史資料
      */
-    async selectPagination(params: PaginationParams): Promise<PaginatedResponse<DroneStatusArchiveAttributes>> {
+    selectPagination = async (params: PaginationParams): Promise<PaginatedResponse<DroneStatusArchiveAttributes>> => {
         try {
             const { page = 1, limit = 10, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
@@ -102,7 +102,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} id - 狀態歷史資料 ID
      * @returns {Promise<DroneStatusArchiveAttributes | null>} 狀態歷史資料或 null
      */
-    async findById(id: number): Promise<DroneStatusArchiveAttributes | null> {
+    findById = async (id: number): Promise<DroneStatusArchiveAttributes | null> => {
         try {
             this.logger.info('Fetching drone status archive by ID', { id });
             const archive = await DroneStatusArchiveModel.findByPk(id);
@@ -127,7 +127,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 50
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定無人機的狀態歷史陣列
      */
-    async findByDroneId(droneId: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
+    findByDroneId = async (droneId: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching drone status archive by drone ID', { droneId, limit });
 
@@ -152,7 +152,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 50
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定狀態的歷史記錄陣列
      */
-    async findByStatus(status: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
+    findByStatus = async (status: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching drone status archive by status', { status, limit });
 
@@ -177,7 +177,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 50
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定操作者的歷史記錄陣列
      */
-    async findByCreatedBy(createdBy: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
+    findByCreatedBy = async (createdBy: number, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching drone status archive by created by', { createdBy, limit });
 
@@ -203,7 +203,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 100
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 指定時間範圍的歷史記錄陣列
      */
-    async findByDateRange(startDate: Date, endDate: Date, limit: number = 100): Promise<DroneStatusArchiveAttributes[]> {
+    findByDateRange = async (startDate: Date, endDate: Date, limit: number = 100): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching drone status archive by date range', { startDate, endDate, limit });
 
@@ -232,7 +232,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 50
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 包含指定原因的歷史記錄陣列
      */
-    async findByReason(reason: string, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
+    findByReason = async (reason: string, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching drone status archive by reason', { reason, limit });
 
@@ -260,7 +260,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 20
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 最新的狀態變更記錄陣列
      */
-    async findLatest(limit: number = 20): Promise<DroneStatusArchiveAttributes[]> {
+    findLatest = async (limit: number = 20): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching latest drone status archive records', { limit });
 
@@ -283,7 +283,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<DroneStatusArchiveAttributes | null>} 最新的狀態變更記錄或 null
      */
-    async findLatestByDroneId(droneId: number): Promise<DroneStatusArchiveAttributes | null> {
+    findLatestByDroneId = async (droneId: number): Promise<DroneStatusArchiveAttributes | null> => {
         try {
             this.logger.info('Fetching latest drone status archive by drone ID', { droneId });
 
@@ -313,7 +313,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} limit - 限制筆數，預設為 50
      * @returns {Promise<DroneStatusArchiveAttributes[]>} 符合狀態轉換的歷史記錄陣列
      */
-    async findByStatusTransition(fromStatus: DroneStatus | null, toStatus: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> {
+    findByStatusTransition = async (fromStatus: DroneStatus | null, toStatus: DroneStatus, limit: number = 50): Promise<DroneStatusArchiveAttributes[]> => {
         try {
             this.logger.info('Fetching drone status archive by status transition', { fromStatus, toStatus, limit });
 
@@ -341,7 +341,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {Date} endDate - 結束時間（可選）
      * @returns {Promise<{[key: string]: number}>} 狀態變更統計資料
      */
-    async getStatusChangeStatistics(startDate?: Date, endDate?: Date): Promise<{ [key: string]: number }> {
+    getStatusChangeStatistics = async (startDate?: Date, endDate?: Date): Promise<{ [key: string]: number }> => {
         try {
             this.logger.info('Getting status change statistics', { startDate, endDate });
 
@@ -381,7 +381,7 @@ export class DroneStatusArchiveQueriesRepository {
      * 
      * @returns {Promise<number>} 總記錄數
      */
-    async count(): Promise<number> {
+    count = async (): Promise<number> => {
         try {
             this.logger.info('Counting total drone status archive records');
             const count = await DroneStatusArchiveModel.count();
@@ -400,7 +400,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 指定無人機的記錄數
      */
-    async countByDroneId(droneId: number): Promise<number> {
+    countByDroneId = async (droneId: number): Promise<number> => {
         try {
             this.logger.info('Counting drone status archive records by drone ID', { droneId });
             const count = await DroneStatusArchiveModel.count({
@@ -422,7 +422,7 @@ export class DroneStatusArchiveQueriesRepository {
      * @param {Date} endDate - 結束時間
      * @returns {Promise<number>} 指定時間範圍的記錄數
      */
-    async countByDateRange(startDate: Date, endDate: Date): Promise<number> {
+    countByDateRange = async (startDate: Date, endDate: Date): Promise<number> => {
         try {
             this.logger.info('Counting drone status archive records by date range', { startDate, endDate });
             const count = await DroneStatusArchiveModel.count({

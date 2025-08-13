@@ -18,7 +18,7 @@ import { DronePositionsArchiveQueriesSvc } from '../../services/queries/DronePos
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DronePositionsArchiveQueries');
 
@@ -41,7 +41,6 @@ export class DronePositionsArchiveQueries {
      * 取得所有位置歷史歸檔
      * @route GET /api/drone-positions-archive/data
      */
-    @LogController()
     getAllPositionArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -58,7 +57,6 @@ export class DronePositionsArchiveQueries {
      * 根據 ID 取得位置歷史歸檔
      * @route GET /api/drone-positions-archive/data/:id
      */
-    @LogController()
     getPositionArchiveById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -88,7 +86,6 @@ export class DronePositionsArchiveQueries {
      * 根據原始 ID 取得歸檔
      * @route GET /api/drone-positions-archive/data/original/:originalId
      */
-    @LogController()
     getPositionArchiveByOriginalId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const originalId = parseInt(req.params.originalId);
@@ -118,7 +115,6 @@ export class DronePositionsArchiveQueries {
      * 根據無人機 ID 查詢位置歷史歸檔
      * @route GET /api/drone-positions-archive/data/drone/:droneId
      */
-    @LogController()
     getPositionArchivesByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -143,7 +139,6 @@ export class DronePositionsArchiveQueries {
      * 根據時間範圍查詢位置歷史歸檔
      * @route GET /api/drone-positions-archive/data/time-range
      */
-    @LogController()
     getPositionArchivesByTimeRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const startTime = new Date(req.query.startTime as string);
@@ -170,7 +165,6 @@ export class DronePositionsArchiveQueries {
      * 根據歸檔批次 ID 查詢資料
      * @route GET /api/drone-positions-archive/data/batch/:batchId
      */
-    @LogController()
     getPositionArchivesByBatchId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const batchId = req.params.batchId;
@@ -195,7 +189,6 @@ export class DronePositionsArchiveQueries {
      * 根據地理邊界查詢位置歷史歸檔
      * @route GET /api/drone-positions-archive/data/geo-bounds
      */
-    @LogController()
     getPositionArchivesByGeoBounds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { minLat, maxLat, minLon, maxLon, limit = 100 } = req.query;
@@ -229,7 +222,6 @@ export class DronePositionsArchiveQueries {
      * 根據無人機和時間範圍查詢軌跡
      * @route GET /api/drone-positions-archive/trajectory/:droneId
      */
-    @LogController()
     getTrajectoryByDroneAndTime = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -255,7 +247,6 @@ export class DronePositionsArchiveQueries {
      * 取得最新的歷史歸檔記錄
      * @route GET /api/drone-positions-archive/data/latest
      */
-    @LogController()
     getLatestPositionArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
@@ -272,7 +263,6 @@ export class DronePositionsArchiveQueries {
      * 取得特定無人機的最新歷史歸檔記錄
      * @route GET /api/drone-positions-archive/data/drone/:droneId/latest
      */
-    @LogController()
     getLatestPositionArchiveByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -296,7 +286,6 @@ export class DronePositionsArchiveQueries {
      * 統計總記錄數
      * @route GET /api/drone-positions-archive/statistics/count
      */
-    @LogController()
     getTotalArchiveCount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const count = await this.archiveService.getTotalArchiveCount();
@@ -311,7 +300,6 @@ export class DronePositionsArchiveQueries {
      * 計算軌跡統計資料
      * @route GET /api/drone-positions-archive/statistics/trajectory/:droneId
      */
-    @LogController()
     calculateTrajectoryStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -337,7 +325,6 @@ export class DronePositionsArchiveQueries {
      * 計算電池使用統計資料
      * @route GET /api/drone-positions-archive/statistics/battery/:droneId
      */
-    @LogController()
     calculateBatteryUsageStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -363,7 +350,6 @@ export class DronePositionsArchiveQueries {
      * 計算位置分佈統計資料
      * @route GET /api/drone-positions-archive/statistics/position/:droneId
      */
-    @LogController()
     calculatePositionDistributionStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -389,7 +375,6 @@ export class DronePositionsArchiveQueries {
      * 取得歸檔批次統計資料
      * @route GET /api/drone-positions-archive/statistics/batch/:batchId
      */
-    @LogController()
     getArchiveBatchStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const batchId = req.params.batchId;
@@ -413,7 +398,6 @@ export class DronePositionsArchiveQueries {
      * 分析飛行模式
      * @route GET /api/drone-positions-archive/analysis/patterns/:droneId
      */
-    @LogController()
     analyzeFlightPatterns = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -439,7 +423,6 @@ export class DronePositionsArchiveQueries {
      * 檢測異常位置資料
      * @route GET /api/drone-positions-archive/analysis/anomalies/:droneId
      */
-    @LogController()
     detectAnomalousPositions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -465,7 +448,6 @@ export class DronePositionsArchiveQueries {
      * 產生軌跡摘要報告
      * @route GET /api/drone-positions-archive/reports/summary/:droneId
      */
-    @LogController()
     generateTrajectorySummaryReport = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);

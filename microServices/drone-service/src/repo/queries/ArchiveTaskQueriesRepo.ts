@@ -15,14 +15,14 @@ import { ArchiveTaskModel } from '../../models/ArchiveTaskModel.js';
 @injectable()
 export class ArchiveTaskQueriesRepository {
   
-  async findAll(limit = 100): Promise<ArchiveTaskModel[]> {
+  findAll = async (limit = 100): Promise<ArchiveTaskModel[]> => {
     return await ArchiveTaskModel.findAll({
       order: [['createdAt', 'DESC']],
       limit
     });
   }
 
-  async findById(id: number): Promise<ArchiveTaskModel | null> {
+  findById = async (id: number): Promise<ArchiveTaskModel | null> => {
     return await ArchiveTaskModel.findByPk(id);
   }
 }

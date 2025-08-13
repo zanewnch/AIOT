@@ -37,7 +37,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * @param id - 記錄 ID
      * @returns Promise<DroneRealTimeStatusModel | null>
      */
-    async findById(id: number): Promise<DroneRealTimeStatusModel | null> {
+    findById = async (id: number): Promise<DroneRealTimeStatusModel | null> => {
         try {
             this.logger.info('Finding real-time status by ID', { id });
             const status = await DroneRealTimeStatusModel.findByPk(id, {
@@ -63,7 +63,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * @param droneId - 無人機 ID
      * @returns Promise<DroneRealTimeStatusModel | null>
      */
-    async findByDroneId(droneId: number): Promise<DroneRealTimeStatusModel | null> {
+    findByDroneId = async (droneId: number): Promise<DroneRealTimeStatusModel | null> => {
         try {
             this.logger.info('Finding real-time status by drone ID', { droneId });
             const status = await DroneRealTimeStatusModel.findOne({
@@ -89,7 +89,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * 
      * @returns Promise<DroneRealTimeStatusModel[]>
      */
-    async findAll(): Promise<DroneRealTimeStatusModel[]> {
+    findAll = async (): Promise<DroneRealTimeStatusModel[]> => {
         try {
             this.logger.info('Finding all real-time status records');
             const statuses = await DroneRealTimeStatusModel.findAll({
@@ -111,7 +111,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * @param status - 即時狀態
      * @returns Promise<DroneRealTimeStatusModel[]>
      */
-    async findByStatus(status: DroneRealTimeStatus): Promise<DroneRealTimeStatusModel[]> {
+    findByStatus = async (status: DroneRealTimeStatus): Promise<DroneRealTimeStatusModel[]> => {
         try {
             this.logger.info('Finding real-time status records by status', { status });
             const statuses = await DroneRealTimeStatusModel.findAll({
@@ -133,7 +133,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * 
      * @returns Promise<DroneRealTimeStatusModel[]>
      */
-    async findOnlineDrones(): Promise<DroneRealTimeStatusModel[]> {
+    findOnlineDrones = async (): Promise<DroneRealTimeStatusModel[]> => {
         try {
             this.logger.info('Finding online drones');
             const statuses = await DroneRealTimeStatusModel.findAll({
@@ -156,7 +156,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * @param thresholdMinutes - 離線判定時間閾值（分鐘），預設 5 分鐘
      * @returns Promise<DroneRealTimeStatusModel[]>
      */
-    async findOfflineDrones(thresholdMinutes: number = 5): Promise<DroneRealTimeStatusModel[]> {
+    findOfflineDrones = async (thresholdMinutes: number = 5): Promise<DroneRealTimeStatusModel[]> => {
         try {
             this.logger.info('Finding offline drones', { thresholdMinutes });
             const thresholdTime = new Date(Date.now() - thresholdMinutes * 60 * 1000);
@@ -185,7 +185,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * 
      * @returns Promise<any>
      */
-    async getBatteryStatistics(): Promise<any> {
+    getBatteryStatistics = async (): Promise<any> => {
         try {
             this.logger.info('Getting battery statistics');
             const stats = await DroneRealTimeStatusModel.findAll({
@@ -211,7 +211,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * 
      * @returns Promise<any>
      */
-    async getStatusStatistics(): Promise<any> {
+    getStatusStatistics = async (): Promise<any> => {
         try {
             this.logger.info('Getting status statistics');
             const stats = await DroneRealTimeStatusModel.findAll({
@@ -238,7 +238,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * @param thresholdMinutes - 線上判定時間閾值（分鐘），預設 5 分鐘
      * @returns Promise<boolean>
      */
-    async isDroneOnline(droneId: number, thresholdMinutes: number = 5): Promise<boolean> {
+    isDroneOnline = async (droneId: number, thresholdMinutes: number = 5): Promise<boolean> => {
         try {
             this.logger.debug('Checking if drone is online', { droneId, thresholdMinutes });
             const thresholdTime = new Date(Date.now() - thresholdMinutes * 60 * 1000);
@@ -265,7 +265,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * 
      * @returns Promise<number>
      */
-    async countConnectedDrones(): Promise<number> {
+    countConnectedDrones = async (): Promise<number> => {
         try {
             this.logger.info('Counting connected drones');
             const count = await DroneRealTimeStatusModel.count({
@@ -285,7 +285,7 @@ export class DroneRealTimeStatusQueriesRepository {
      * 
      * @returns Promise<number>
      */
-    async count(): Promise<number> {
+    count = async (): Promise<number> => {
         try {
             this.logger.info('Counting total real-time status records');
             const count = await DroneRealTimeStatusModel.count();

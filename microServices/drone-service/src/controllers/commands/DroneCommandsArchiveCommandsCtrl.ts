@@ -18,7 +18,7 @@ import { DroneCommandsArchiveCommandsSvc } from '../../services/commands/DroneCo
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import type { DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
 
 const logger = createLogger('DroneCommandsArchiveCommands');
@@ -42,7 +42,6 @@ export class DroneCommandsArchiveCommands {
      * 創建指令歷史歸檔記錄
      * @route POST /api/drone-commands-archive/data
      */
-    @LogController()
     createCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const archiveData: DroneCommandsArchiveCreationAttributes = req.body;
@@ -73,7 +72,6 @@ export class DroneCommandsArchiveCommands {
      * 更新指令歷史歸檔資料
      * @route PUT /api/drone-commands-archive/data/:id
      */
-    @LogController()
     updateCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -110,7 +108,6 @@ export class DroneCommandsArchiveCommands {
      * 刪除指令歷史歸檔資料
      * @route DELETE /api/drone-commands-archive/data/:id
      */
-    @LogController()
     deleteCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);

@@ -22,7 +22,7 @@ import { ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 歸檔任務命令 Controller 類別

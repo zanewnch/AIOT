@@ -17,7 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { DroneCommandQueriesSvc } from '../../services/queries/DroneCommandQueriesSvc.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 無人機指令查詢控制器類別
@@ -39,7 +39,6 @@ export class DroneCommandQueries {
      * 取得所有無人機指令
      * @route GET /api/drone-commands/data
      */
-    @LogController()
     getAllCommands = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -55,7 +54,6 @@ export class DroneCommandQueries {
      * 根據 ID 取得無人機指令
      * @route GET /api/drone-commands/data/:id
      */
-    @LogController()
     getCommandById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -85,7 +83,6 @@ export class DroneCommandQueries {
      * 根據無人機查詢指令
      * @route GET /api/drone-commands/data/drone/:droneId
      */
-    @LogController()
     getCommandsByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -109,7 +106,6 @@ export class DroneCommandQueries {
      * 根據狀態查詢指令
      * @route GET /api/drone-commands/data/status/:status
      */
-    @LogController()
     getCommandsByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const status = req.params.status;
@@ -133,7 +129,6 @@ export class DroneCommandQueries {
      * 根據類型查詢指令
      * @route GET /api/drone-commands/data/type/:type
      */
-    @LogController()
     getCommandsByType = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const type = req.params.type;
@@ -158,7 +153,6 @@ export class DroneCommandQueries {
      * 取得指令統計
      * @route GET /api/drone-commands/statistics
      */
-    @LogController()
     getCommandStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statistics = await this.queryService.getCommandStatistics();
@@ -174,7 +168,6 @@ export class DroneCommandQueries {
      * 取得指令類型統計
      * @route GET /api/drone-commands/statistics/types
      */
-    @LogController()
     getCommandTypeStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const typeStats = await this.queryService.getCommandTypeStatistics();
@@ -190,7 +183,6 @@ export class DroneCommandQueries {
      * 取得無人機指令摘要
      * @route GET /api/drone-commands/summary/:droneId
      */
-    @LogController()
     getCommandSummary = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -214,7 +206,6 @@ export class DroneCommandQueries {
      * 取得待執行的指令
      * @route GET /api/drone-commands/data/pending
      */
-    @LogController()
     getPendingCommands = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
@@ -231,7 +222,6 @@ export class DroneCommandQueries {
      * 取得執行中的指令
      * @route GET /api/drone-commands/data/executing
      */
-    @LogController()
     getExecutingCommands = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
@@ -248,7 +238,6 @@ export class DroneCommandQueries {
      * 取得最新的指令記錄
      * @route GET /api/drone-commands/data/latest
      */
-    @LogController()
     getLatestCommands = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
@@ -265,7 +254,6 @@ export class DroneCommandQueries {
      * 取得失敗的指令
      * @route GET /api/drone-commands/data/failed
      */
-    @LogController()
     getFailedCommands = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
@@ -282,7 +270,6 @@ export class DroneCommandQueries {
      * 根據發送者查詢指令
      * @route GET /api/drone-commands/data/issued-by/:userId
      */
-    @LogController()
     getCommandsByIssuedBy = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const issuedBy = parseInt(req.params.userId);
@@ -308,7 +295,6 @@ export class DroneCommandQueries {
      * 根據時間範圍查詢指令
      * @route GET /api/drone-commands/data/date-range
      */
-    @LogController()
     getCommandsByDateRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const startDate = new Date(req.query.startDate as string);
@@ -335,7 +321,6 @@ export class DroneCommandQueries {
      * 取得無人機的待執行指令
      * @route GET /api/drone-commands/data/drone/:droneId/pending
      */
-    @LogController()
     getPendingCommandsByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -360,7 +345,6 @@ export class DroneCommandQueries {
      * 取得正在執行的指令
      * @route GET /api/drone-commands/data/drone/:droneId/executing
      */
-    @LogController()
     getExecutingCommandByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -385,7 +369,6 @@ export class DroneCommandQueries {
      * 取得無人機指令執行摘要
      * @route GET /api/drone-commands/summary/:droneId
      */
-    @LogController()
     getDroneCommandSummary = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);

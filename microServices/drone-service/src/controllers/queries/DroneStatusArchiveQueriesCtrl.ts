@@ -18,7 +18,7 @@ import { DroneStatusArchiveQueriesSvc } from '../../services/queries/DroneStatus
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusArchiveQueries');
 
@@ -41,7 +41,6 @@ export class DroneStatusArchiveQueries {
      * 取得所有狀態歷史歸檔
      * @route GET /api/drone-status-archive/data
      */
-    @LogController()
     getAllStatusArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -58,7 +57,6 @@ export class DroneStatusArchiveQueries {
      * 根據 ID 取得狀態歷史歸檔
      * @route GET /api/drone-status-archive/data/:id
      */
-    @LogController()
     getStatusArchiveById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -88,7 +86,6 @@ export class DroneStatusArchiveQueries {
      * 根據無人機 ID 獲取狀態歷史
      * @route GET /api/drone-status-archive/data/drone/:droneId
      */
-    @LogController()
     getStatusArchivesByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -113,7 +110,6 @@ export class DroneStatusArchiveQueries {
      * 根據狀態獲取歷史記錄
      * @route GET /api/drone-status-archive/data/status/:status
      */
-    @LogController()
     getStatusArchivesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const status = req.params.status;
@@ -138,7 +134,6 @@ export class DroneStatusArchiveQueries {
      * 根據創建者獲取歷史記錄
      * @route GET /api/drone-status-archive/data/created-by/:userId
      */
-    @LogController()
     getStatusArchivesByCreatedBy = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const createdBy = parseInt(req.params.userId);
@@ -163,7 +158,6 @@ export class DroneStatusArchiveQueries {
      * 根據時間範圍獲取歷史記錄
      * @route GET /api/drone-status-archive/data/date-range
      */
-    @LogController()
     getStatusArchivesByDateRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const startDate = new Date(req.query.startDate as string);
@@ -190,7 +184,6 @@ export class DroneStatusArchiveQueries {
      * 根據變更原因獲取歷史記錄
      * @route GET /api/drone-status-archive/data/reason/:reason
      */
-    @LogController()
     getStatusArchivesByReason = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const reason = req.params.reason;
@@ -215,7 +208,6 @@ export class DroneStatusArchiveQueries {
      * 獲取最新狀態歷史記錄
      * @route GET /api/drone-status-archive/data/latest
      */
-    @LogController()
     getLatestStatusArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
@@ -232,7 +224,6 @@ export class DroneStatusArchiveQueries {
      * 獲取特定無人機的最新狀態歷史
      * @route GET /api/drone-status-archive/data/drone/:droneId/latest
      */
-    @LogController()
     getLatestStatusArchiveByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -256,7 +247,6 @@ export class DroneStatusArchiveQueries {
      * 獲取狀態轉換歷史記錄
      * @route GET /api/drone-status-archive/data/transition
      */
-    @LogController()
     getStatusArchivesByTransition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const fromStatus = req.query.fromStatus as string;
@@ -282,7 +272,6 @@ export class DroneStatusArchiveQueries {
      * 獲取狀態變更統計資料
      * @route GET /api/drone-status-archive/statistics
      */
-    @LogController()
     getStatusChangeStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = req.query.droneId ? parseInt(req.query.droneId as string) : undefined;

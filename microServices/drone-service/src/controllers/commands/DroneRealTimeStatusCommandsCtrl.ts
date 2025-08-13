@@ -18,7 +18,7 @@ import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRea
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import type { DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes } from '../../types/services/IDroneRealTimeStatusService.js';
 
 const logger = createLogger('DroneRealTimeStatusCommands');
@@ -42,7 +42,6 @@ export class DroneRealTimeStatusCommands {
      * 創建新的無人機即時狀態資料
      * @route POST /api/drone-realtime-status/data
      */
-    @LogController()
     createDroneRealTimeStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statusData: ExternalCreationAttributes = req.body;
@@ -67,7 +66,6 @@ export class DroneRealTimeStatusCommands {
      * 更新指定無人機即時狀態資料
      * @route PUT /api/drone-realtime-status/data/:id
      */
-    @LogController()
     updateDroneRealTimeStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -98,7 +96,6 @@ export class DroneRealTimeStatusCommands {
      * 刪除指定無人機即時狀態資料
      * @route DELETE /api/drone-realtime-status/data/:id
      */
-    @LogController()
     deleteDroneRealTimeStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -128,7 +125,6 @@ export class DroneRealTimeStatusCommands {
      * 更新無人機即時狀態
      * @route PATCH /api/drone-realtime-status/data/:droneId/status
      */
-    @LogController()
     updateDroneRealTimeStatusByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -159,7 +155,6 @@ export class DroneRealTimeStatusCommands {
      * 批量更新無人機即時狀態
      * @route PUT /api/drone-realtime-status/data/batch
      */
-    @LogController()
     updateDroneRealTimeStatusesBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statusUpdates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributes> }> = req.body;

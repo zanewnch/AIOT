@@ -36,7 +36,7 @@ export class PermissionQueriesRepository {
    * @param includeRoles 是否包含關聯的角色資料
    * @returns 權限實例或 null
    */
-  async findById(id: number, includeRoles: boolean = false): Promise<PermissionModel | null> {
+  findById = async (id: number, includeRoles: boolean = false): Promise<PermissionModel | null> => {
     try {
       logger.debug(`Finding permission by ID: ${id}, includeRoles: ${includeRoles}`);
       
@@ -67,7 +67,7 @@ export class PermissionQueriesRepository {
    * @param includeRoles 是否包含關聯的角色資料
    * @returns 權限實例或 null
    */
-  async findByName(name: string, includeRoles: boolean = false): Promise<PermissionModel | null> {
+  findByName = async (name: string, includeRoles: boolean = false): Promise<PermissionModel | null> => {
     try {
       logger.debug(`Finding permission by name: ${name}, includeRoles: ${includeRoles}`);
       
@@ -100,7 +100,7 @@ export class PermissionQueriesRepository {
    * @param includeRoles 是否包含關聯的角色資料
    * @returns 權限列表
    */
-  async findAll(includeRoles: boolean = false): Promise<PermissionModel[]> {
+  findAll = async (includeRoles: boolean = false): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Finding all permissions, includeRoles: ${includeRoles}`);
       
@@ -128,7 +128,7 @@ export class PermissionQueriesRepository {
    * @param name 權限名稱
    * @returns 是否存在
    */
-  async exists(name: string): Promise<boolean> {
+  exists = async (name: string): Promise<boolean> => {
     try {
       logger.debug(`Checking if permission exists: ${name}`);
       
@@ -150,7 +150,7 @@ export class PermissionQueriesRepository {
    * 計算權限總數
    * @returns 權限總數
    */
-  async count(): Promise<number> {
+  count = async (): Promise<number> => {
     try {
       logger.debug('Counting total permissions');
       
@@ -169,7 +169,7 @@ export class PermissionQueriesRepository {
    * @param names 權限名稱陣列
    * @returns 權限列表
    */
-  async findByNames(names: string[]): Promise<PermissionModel[]> {
+  findByNames = async (names: string[]): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Finding permissions by names: [${names.join(', ')}]`);
       
@@ -193,7 +193,7 @@ export class PermissionQueriesRepository {
    * @param roleId 角色 ID
    * @returns 指定角色的權限列表
    */
-  async findByRoleId(roleId: number): Promise<PermissionModel[]> {
+  findByRoleId = async (roleId: number): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Finding permissions by role ID: ${roleId}`);
       
@@ -222,7 +222,7 @@ export class PermissionQueriesRepository {
    * @param roleName 角色名稱
    * @returns 指定角色的權限列表
    */
-  async findByRoleName(roleName: string): Promise<PermissionModel[]> {
+  findByRoleName = async (roleName: string): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Finding permissions by role name: ${roleName}`);
       
@@ -251,7 +251,7 @@ export class PermissionQueriesRepository {
    * @param type 權限類型
    * @returns 指定類型的權限列表
    */
-  async findByType(type: string): Promise<PermissionModel[]> {
+  findByType = async (type: string): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Finding permissions by type: ${type}`);
       
@@ -277,7 +277,7 @@ export class PermissionQueriesRepository {
    * @param searchTerm 搜尋關鍵字
    * @returns 匹配的權限列表
    */
-  async search(searchTerm: string): Promise<PermissionModel[]> {
+  search = async (searchTerm: string): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Searching permissions with term: ${searchTerm}`);
       

@@ -15,14 +15,14 @@ import { DroneCommandModel } from '../../models/DroneCommandModel.js';
 @injectable()
 export class DroneCommandQueriesRepository {
   
-  async findAll(limit = 100): Promise<DroneCommandModel[]> {
+  findAll = async (limit = 100): Promise<DroneCommandModel[]> => {
     return await DroneCommandModel.findAll({
       order: [['createdAt', 'DESC']],
       limit
     });
   }
 
-  async findById(id: number): Promise<DroneCommandModel | null> {
+  findById = async (id: number): Promise<DroneCommandModel | null> => {
     return await DroneCommandModel.findByPk(id);
   }
 }

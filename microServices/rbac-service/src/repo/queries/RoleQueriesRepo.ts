@@ -35,7 +35,7 @@ export class RoleQueriesRepository {
    * @param id 角色 ID
    * @returns 角色實例或 null
    */
-  async findById(id: number): Promise<RoleModel | null> {
+  findById = async (id: number): Promise<RoleModel | null> => {
     try {
       logger.debug(`Finding role by ID: ${id}`);
       const role = await RoleModel.findByPk(id);
@@ -60,11 +60,11 @@ export class RoleQueriesRepository {
    * @param includeUsers 是否包含關聯的使用者資料
    * @returns 角色實例或 null
    */
-  async findByName(
+  findByName = async (
     name: string, 
     includePermissions: boolean = false, 
     includeUsers: boolean = false
-  ): Promise<RoleModel | null> {
+  ): Promise<RoleModel | null> => {
     try {
       logger.debug(`Finding role by name: ${name}, includePermissions: ${includePermissions}, includeUsers: ${includeUsers}`);
       
@@ -108,10 +108,10 @@ export class RoleQueriesRepository {
    * @param includeUsers 是否包含關聯的使用者資料
    * @returns 角色列表
    */
-  async findAll(
+  findAll = async (
     includePermissions: boolean = false, 
     includeUsers: boolean = false
-  ): Promise<RoleModel[]> {
+  ): Promise<RoleModel[]> => {
     try {
       logger.debug(`Finding all roles, includePermissions: ${includePermissions}, includeUsers: ${includeUsers}`);
       
@@ -149,7 +149,7 @@ export class RoleQueriesRepository {
    * @param name 角色名稱
    * @returns 是否存在
    */
-  async exists(name: string): Promise<boolean> {
+  exists = async (name: string): Promise<boolean> => {
     try {
       logger.debug(`Checking if role exists: ${name}`);
       
@@ -171,7 +171,7 @@ export class RoleQueriesRepository {
    * 計算角色總數
    * @returns 角色總數
    */
-  async count(): Promise<number> {
+  count = async (): Promise<number> => {
     try {
       logger.debug('Counting total roles');
       
@@ -190,7 +190,7 @@ export class RoleQueriesRepository {
    * @param names 角色名稱陣列
    * @returns 角色列表
    */
-  async findByNames(names: string[]): Promise<RoleModel[]> {
+  findByNames = async (names: string[]): Promise<RoleModel[]> => {
     try {
       logger.debug(`Finding roles by names: [${names.join(', ')}]`);
       
@@ -214,7 +214,7 @@ export class RoleQueriesRepository {
    * @param permissionName 權限名稱
    * @returns 具有指定權限的角色列表
    */
-  async findByPermission(permissionName: string): Promise<RoleModel[]> {
+  findByPermission = async (permissionName: string): Promise<RoleModel[]> => {
     try {
       logger.debug(`Finding roles by permission: ${permissionName}`);
       
@@ -243,7 +243,7 @@ export class RoleQueriesRepository {
    * @param userId 使用者 ID
    * @returns 指定使用者的角色列表
    */
-  async findByUserId(userId: number): Promise<RoleModel[]> {
+  findByUserId = async (userId: number): Promise<RoleModel[]> => {
     try {
       logger.debug(`Finding roles by user ID: ${userId}`);
       
@@ -273,7 +273,7 @@ export class RoleQueriesRepository {
    * @param permissionName 權限名稱
    * @returns 是否有權限
    */
-  async hasPermission(roleId: number, permissionName: string): Promise<boolean> {
+  hasPermission = async (roleId: number, permissionName: string): Promise<boolean> => {
     try {
       logger.debug(`Checking if role ${roleId} has permission ${permissionName}`);
       
@@ -303,7 +303,7 @@ export class RoleQueriesRepository {
    * @param roleId 角色 ID
    * @returns 權限列表
    */
-  async getPermissions(roleId: number): Promise<PermissionModel[]> {
+  getPermissions = async (roleId: number): Promise<PermissionModel[]> => {
     try {
       logger.debug(`Getting permissions for role ${roleId}`);
       
@@ -332,7 +332,7 @@ export class RoleQueriesRepository {
    * @param roleId 角色 ID
    * @returns 使用者列表
    */
-  async getUsers(roleId: number): Promise<UserModel[]> {
+  getUsers = async (roleId: number): Promise<UserModel[]> => {
     try {
       logger.debug(`Getting users for role ${roleId}`);
       

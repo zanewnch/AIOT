@@ -86,7 +86,7 @@ export class UserQueriesSvc {
      * @throws Error 當 Redis 連線不可用時拋出錯誤
      * @private
      */
-    private getRedisClient(): RedisClientType {
+    private getRedisClient = (): RedisClientType => {
         try {
             return getRedisClient();
         } catch (error) {
@@ -100,7 +100,7 @@ export class UserQueriesSvc {
      * @param userId 使用者 ID
      * @private
      */
-    private getUserCacheKey(userId: number): string {
+    private getUserCacheKey = (userId: number): string => {
         return `${UserQueriesSvc.USER_CACHE_PREFIX}${userId}`;
     }
 
@@ -109,7 +109,7 @@ export class UserQueriesSvc {
      * @param model 使用者模型
      * @private
      */
-    private modelToDTO(model: UserModel): UserDTO {
+    private modelToDTO = (model: UserModel): UserDTO => {
         return {
             id: model.id,
             username: model.username,
@@ -123,7 +123,7 @@ export class UserQueriesSvc {
      * 從快取取得所有使用者
      * @private
      */
-    private async getCachedAllUsers(): Promise<UserDTO[] | null> {
+    private getCachedAllUsers = async (): Promise<UserDTO[] | null> => {
         try {
             const redis = this.getRedisClient();
             logger.debug('Checking Redis cache for all users');
@@ -143,7 +143,7 @@ export class UserQueriesSvc {
      * @param users 使用者列表
      * @private
      */
-    private async cacheAllUsers(users: UserDTO[]): Promise<void> {
+    private cacheAllUsers = async (users: UserDTO[]): Promise<void> => {
         try {
             const redis = this.getRedisClient();
             logger.debug('Caching all users in Redis');
@@ -169,7 +169,7 @@ export class UserQueriesSvc {
      * @param userId 使用者 ID
      * @private
      */
-    private async getCachedUser(userId: number): Promise<UserDTO | null> {
+    private getCachedUser = async (userId: number): Promise<UserDTO | null> => {
         try {
             const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for user ID: ${userId}`);
@@ -190,7 +190,7 @@ export class UserQueriesSvc {
      * @param user 使用者資料
      * @private
      */
-    private async cacheUser(user: UserDTO): Promise<void> {
+    private cacheUser = async (user: UserDTO): Promise<void> => {
         try {
             const redis = this.getRedisClient();
             logger.debug(`Caching user ID: ${user.id} in Redis`);
@@ -205,7 +205,7 @@ export class UserQueriesSvc {
      * 取得所有使用者列表
      * @param options 快取選項
      */
-    public async getAllUsers(options: CacheOptions = {}): Promise<UserDTO[]> {
+    public getAllUsers = async (options: CacheOptions = {}): Promise<UserDTO[]> => {
         try {
             logger.debug('Getting all users with cache support');
 
@@ -239,7 +239,7 @@ export class UserQueriesSvc {
      * @param userId 使用者 ID
      * @param options 快取選項
      */
-    public async getUserById(userId: number, options: CacheOptions = {}): Promise<UserDTO | null> {
+    public getUserById = async (userId: number, options: CacheOptions = {}): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by ID: ${userId}`);
 
@@ -282,7 +282,7 @@ export class UserQueriesSvc {
      * 根據使用者名稱查找使用者
      * @param username 使用者名稱
      */
-    public async getUserByUsername(username: string): Promise<UserDTO | null> {
+    public getUserByUsername = async (username: string): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by username: ${username}`);
 
@@ -312,7 +312,7 @@ export class UserQueriesSvc {
      * 根據電子郵件查找使用者
      * @param email 電子郵件
      */
-    public async getUserByEmail(email: string): Promise<UserDTO | null> {
+    public getUserByEmail = async (email: string): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by email: ${email}`);
 
@@ -343,7 +343,7 @@ export class UserQueriesSvc {
      * @param password 明文密碼
      * @param hash 密碼雜湊
      */
-    public async verifyPassword(password: string, hash: string): Promise<boolean> {
+    public verifyPassword = async (password: string, hash: string): Promise<boolean> => {
         return bcrypt.compare(password, hash);
     }
 
@@ -352,7 +352,7 @@ export class UserQueriesSvc {
      * @param username 使用者名稱
      * @internal 此方法僅供內部使用，不暴露密碼雜湊給外部
      */
-    public async getUserWithPasswordByUsername(username: string): Promise<UserModel | null> {
+    public getUserWithPasswordByUsername = async (username: string): Promise<UserModel | null> => {
         try {
             logger.debug(`Getting user with password for username: ${username}`);
 
@@ -381,7 +381,7 @@ export class UserQueriesSvc {
      * 檢查使用者是否存在
      * @param userId 使用者 ID
      */
-    public async userExists(userId: number): Promise<boolean> {
+    public userExists = async (userId: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if user exists: ${userId}`);
 
@@ -405,7 +405,7 @@ export class UserQueriesSvc {
      * @param username 使用者名稱
      * @param excludeUserId 排除的使用者 ID（用於更新時檢查重複）
      */
-    public async usernameExists(username: string, excludeUserId?: number): Promise<boolean> {
+    public usernameExists = async (username: string, excludeUserId?: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if username exists: ${username}`);
 
@@ -428,7 +428,7 @@ export class UserQueriesSvc {
      * @param email 電子郵件
      * @param excludeUserId 排除的使用者 ID（用於更新時檢查重複）
      */
-    public async emailExists(email: string, excludeUserId?: number): Promise<boolean> {
+    public emailExists = async (email: string, excludeUserId?: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if email exists: ${email}`);
 

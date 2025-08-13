@@ -32,7 +32,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {DronePositionsArchiveCreationAttributes} data - 位置歷史歸檔建立資料
      * @returns {Promise<DronePositionsArchiveAttributes>} 建立的位置歷史歸檔資料
      */
-    async create(data: DronePositionsArchiveCreationAttributes): Promise<DronePositionsArchiveAttributes> {
+    create = async (data: DronePositionsArchiveCreationAttributes): Promise<DronePositionsArchiveAttributes> => {
         try {
             this.logger.info('Creating new drone positions archive', { data });
             const archive = await DronePositionsArchiveModel.create(data);
@@ -51,7 +51,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {DronePositionsArchiveCreationAttributes[]} dataArray - 位置歷史歸檔建立資料陣列
      * @returns {Promise<DronePositionsArchiveAttributes[]>} 建立的位置歷史歸檔資料陣列
      */
-    async bulkCreate(dataArray: DronePositionsArchiveCreationAttributes[]): Promise<DronePositionsArchiveAttributes[]> {
+    bulkCreate = async (dataArray: DronePositionsArchiveCreationAttributes[]): Promise<DronePositionsArchiveAttributes[]> => {
         try {
             this.logger.info('Bulk creating drone positions archive', { count: dataArray.length });
             const archives = await DronePositionsArchiveModel.bulkCreate(dataArray, {
@@ -73,7 +73,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {Partial<DronePositionsArchiveCreationAttributes>} data - 更新資料
      * @returns {Promise<DronePositionsArchiveAttributes | null>} 更新後的位置歷史歸檔資料或 null
      */
-    async update(id: number, data: Partial<DronePositionsArchiveCreationAttributes>): Promise<DronePositionsArchiveAttributes | null> {
+    update = async (id: number, data: Partial<DronePositionsArchiveCreationAttributes>): Promise<DronePositionsArchiveAttributes | null> => {
         try {
             this.logger.info('Updating drone positions archive', { id, data });
             
@@ -103,7 +103,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {number} id - 位置歷史歸檔資料 ID
      * @returns {Promise<boolean>} 是否刪除成功
      */
-    async delete(id: number): Promise<boolean> {
+    delete = async (id: number): Promise<boolean> => {
         try {
             this.logger.info('Deleting drone positions archive', { id });
             
@@ -131,7 +131,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {Date} beforeDate - 刪除此時間之前的資料
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteBeforeDate(beforeDate: Date): Promise<number> {
+    deleteBeforeDate = async (beforeDate: Date): Promise<number> => {
         try {
             this.logger.info('Deleting drone positions archive records before date', { beforeDate });
             const deletedCount = await DronePositionsArchiveModel.destroy({
@@ -156,7 +156,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {string} batchId - 歸檔批次 ID
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteBatch(batchId: string): Promise<number> {
+    deleteBatch = async (batchId: string): Promise<number> => {
         try {
             this.logger.info('Deleting drone positions archive records by batch ID', { batchId });
             const deletedCount = await DronePositionsArchiveModel.destroy({
@@ -177,7 +177,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByDroneId(droneId: number): Promise<number> {
+    deleteByDroneId = async (droneId: number): Promise<number> => {
         try {
             this.logger.info('Deleting drone positions archive records by drone ID', { droneId });
             const deletedCount = await DronePositionsArchiveModel.destroy({
@@ -199,7 +199,7 @@ export class DronePositionsArchiveCommandsRepository {
      * @param {Date} endTime - 結束時間
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByTimeRange(startTime: Date, endTime: Date): Promise<number> {
+    deleteByTimeRange = async (startTime: Date, endTime: Date): Promise<number> => {
         try {
             this.logger.info('Deleting drone positions archive records by time range', { startTime, endTime });
             const deletedCount = await DronePositionsArchiveModel.destroy({

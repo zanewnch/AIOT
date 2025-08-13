@@ -24,14 +24,14 @@ export class DroneRealTimeStatusCommandsRepository {
     /**
      * 創建無人機即時狀態記錄
      */
-    async createRealTimeStatus(statusData: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusAttributes> {
+    createRealTimeStatus = async (statusData: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusAttributes> => {
         return await DroneRealTimeStatusModel.create(statusData);
     }
 
     /**
      * 更新無人機即時狀態
      */
-    async updateRealTimeStatus(id: number, updates: Partial<DroneRealTimeStatusCreationAttributes>): Promise<DroneRealTimeStatusAttributes | null> {
+    updateRealTimeStatus = async (id: number, updates: Partial<DroneRealTimeStatusCreationAttributes>): Promise<DroneRealTimeStatusAttributes | null> => {
         const [affectedRows] = await DroneRealTimeStatusModel.update(updates, {
             where: { id },
             returning: true
@@ -47,7 +47,7 @@ export class DroneRealTimeStatusCommandsRepository {
     /**
      * 根據無人機 ID 更新即時狀態
      */
-    async updateRealTimeStatusByDroneId(droneId: number, updates: Partial<DroneRealTimeStatusCreationAttributes>): Promise<DroneRealTimeStatusAttributes | null> {
+    updateRealTimeStatusByDroneId = async (droneId: number, updates: Partial<DroneRealTimeStatusCreationAttributes>): Promise<DroneRealTimeStatusAttributes | null> => {
         const [affectedRows] = await DroneRealTimeStatusModel.update(updates, {
             where: { drone_id: droneId },
             returning: true
@@ -66,7 +66,7 @@ export class DroneRealTimeStatusCommandsRepository {
     /**
      * 刪除即時狀態記錄
      */
-    async deleteRealTimeStatus(id: number): Promise<number> {
+    deleteRealTimeStatus = async (id: number): Promise<number> => {
         return await DroneRealTimeStatusModel.destroy({
             where: { id }
         });
@@ -75,7 +75,7 @@ export class DroneRealTimeStatusCommandsRepository {
     /**
      * 批量更新無人機狀態
      */
-    async bulkUpdateRealTimeStatus(updates: Array<{ droneId: number; data: Partial<DroneRealTimeStatusCreationAttributes> }>): Promise<void> {
+    bulkUpdateRealTimeStatus = async (updates: Array<{ droneId: number; data: Partial<DroneRealTimeStatusCreationAttributes> }>): Promise<void> => {
         const promises = updates.map(({ droneId, data }) =>
             this.updateRealTimeStatusByDroneId(droneId, data)
         );
@@ -86,7 +86,7 @@ export class DroneRealTimeStatusCommandsRepository {
     /**
      * Upsert 操作 - 如果存在則更新，否則創建
      */
-    async upsertRealTimeStatus(droneId: number, statusData: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusAttributes> {
+    upsertRealTimeStatus = async (droneId: number, statusData: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusAttributes> => {
         const existingStatus = await DroneRealTimeStatusModel.findOne({
             where: { drone_id: droneId }
         });

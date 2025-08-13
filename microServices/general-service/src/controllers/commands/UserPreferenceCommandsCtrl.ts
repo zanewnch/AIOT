@@ -17,7 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserPreferenceCommandsSvc } from '../../services/commands/UserPreferenceCommandsSvc.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import { TYPES } from '../../container/types.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from '../../models/UserPreferenceModel.js';
 
 /**

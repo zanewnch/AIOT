@@ -18,7 +18,7 @@ import { DroneCommandQueueQueriesSvc } from '../../services/queries/DroneCommand
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 
 const logger = createLogger('DroneCommandQueueQueries');
@@ -42,7 +42,6 @@ export class DroneCommandQueueQueries {
      * 取得所有無人機指令佇列資料
      * @route GET /api/drone-command-queue/data
      */
-    @LogController()
     getAllDroneCommandQueues = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -58,7 +57,6 @@ export class DroneCommandQueueQueries {
      * 根據 ID 取得無人機指令佇列資料
      * @route GET /api/drone-command-queue/data/:id
      */
-    @LogController()
     getDroneCommandQueueById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -88,7 +86,6 @@ export class DroneCommandQueueQueries {
      * 根據無人機 ID 取得指令佇列
      * @route GET /api/drone-command-queue/data/drone/:droneId
      */
-    @LogController()
     getDroneCommandQueueByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -112,7 +109,6 @@ export class DroneCommandQueueQueries {
      * 根據狀態取得指令佇列
      * @route GET /api/drone-command-queue/data/status/:status
      */
-    @LogController()
     getDroneCommandQueuesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const status = req.params.status;
@@ -136,7 +132,6 @@ export class DroneCommandQueueQueries {
      * 根據優先級取得指令佇列
      * @route GET /api/drone-command-queue/data/priority/:priority
      */
-    @LogController()
     getDroneCommandQueuesByPriority = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const priority = parseInt(req.params.priority);
@@ -160,7 +155,6 @@ export class DroneCommandQueueQueries {
      * 取得待執行的指令佇列
      * @route GET /api/drone-command-queue/data/pending
      */
-    @LogController()
     getPendingDroneCommandQueues = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
@@ -177,7 +171,6 @@ export class DroneCommandQueueQueries {
      * 取得指令佇列統計資料
      * @route GET /api/drone-command-queue/statistics
      */
-    @LogController()
     getDroneCommandQueueStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statistics = await this.queryService.getDroneCommandQueueStatistics();
@@ -193,7 +186,6 @@ export class DroneCommandQueueQueries {
      * 取得無人機的下一個指令
      * @route GET /api/drone-command-queue/next/:droneId
      */
-    @LogController()
     getNextDroneCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
@@ -223,7 +215,6 @@ export class DroneCommandQueueQueries {
      * 取得佇列統計
      * @route GET /api/drone-command-queues/statistics
      */
-    @LogController()
     getQueueStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statistics = await this.queryService.getDroneCommandQueueStatistics();

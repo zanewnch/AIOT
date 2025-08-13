@@ -32,7 +32,7 @@ export class UserRoleQueriesRepository {
    * @param id 關聯 ID
    * @returns 使用者角色關聯實例或 null
    */
-  async findById(id: number): Promise<UserRoleModel | null> {
+  findById = async (id: number): Promise<UserRoleModel | null> => {
     try {
       logger.debug(`Finding user role by ID: ${id}`);
       
@@ -60,7 +60,7 @@ export class UserRoleQueriesRepository {
    * 查詢所有使用者角色關聯
    * @returns 使用者角色關聯列表
    */
-  async findAll(): Promise<UserRoleModel[]> {
+  findAll = async (): Promise<UserRoleModel[]> => {
     try {
       logger.debug('Finding all user roles');
       
@@ -85,7 +85,7 @@ export class UserRoleQueriesRepository {
    * @param userId 使用者 ID
    * @returns 使用者的角色關聯列表
    */
-  async findByUserId(userId: number): Promise<UserRoleModel[]> {
+  findByUserId = async (userId: number): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Finding user roles by user ID: ${userId}`);
       
@@ -111,7 +111,7 @@ export class UserRoleQueriesRepository {
    * @param roleId 角色 ID
    * @returns 角色的使用者關聯列表
    */
-  async findByRoleId(roleId: number): Promise<UserRoleModel[]> {
+  findByRoleId = async (roleId: number): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Finding user roles by role ID: ${roleId}`);
       
@@ -138,7 +138,7 @@ export class UserRoleQueriesRepository {
    * @param roleId 角色 ID
    * @returns 使用者角色關聯實例或 null
    */
-  async findByUserAndRole(userId: number, roleId: number): Promise<UserRoleModel | null> {
+  findByUserAndRole = async (userId: number, roleId: number): Promise<UserRoleModel | null> => {
     try {
       logger.debug(`Finding user role by user ID ${userId} and role ID ${roleId}`);
       
@@ -169,7 +169,7 @@ export class UserRoleQueriesRepository {
    * @param roleId 角色 ID
    * @returns 是否有角色
    */
-  async hasRole(userId: number, roleId: number): Promise<boolean> {
+  hasRole = async (userId: number, roleId: number): Promise<boolean> => {
     try {
       logger.debug(`Checking if user ${userId} has role ${roleId}`);
       
@@ -192,7 +192,7 @@ export class UserRoleQueriesRepository {
    * @param username 使用者名稱
    * @returns 使用者的角色關聯列表
    */
-  async findByUsername(username: string): Promise<UserRoleModel[]> {
+  findByUsername = async (username: string): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Finding user roles by username: ${username}`);
       
@@ -221,7 +221,7 @@ export class UserRoleQueriesRepository {
    * @param roleName 角色名稱
    * @returns 角色的使用者關聯列表
    */
-  async findByRoleName(roleName: string): Promise<UserRoleModel[]> {
+  findByRoleName = async (roleName: string): Promise<UserRoleModel[]> => {
     try {
       logger.debug(`Finding user roles by role name: ${roleName}`);
       
@@ -250,7 +250,7 @@ export class UserRoleQueriesRepository {
    * @param userId 使用者 ID
    * @returns 使用者的角色數量
    */
-  async countByUserId(userId: number): Promise<number> {
+  countByUserId = async (userId: number): Promise<number> => {
     try {
       logger.debug(`Counting roles for user ${userId}`);
       
@@ -271,7 +271,7 @@ export class UserRoleQueriesRepository {
    * @param roleId 角色 ID
    * @returns 角色的使用者數量
    */
-  async countByRoleId(roleId: number): Promise<number> {
+  countByRoleId = async (roleId: number): Promise<number> => {
     try {
       logger.debug(`Counting users for role ${roleId}`);
       
@@ -291,7 +291,7 @@ export class UserRoleQueriesRepository {
    * 統計所有使用者角色關聯數
    * @returns 總關聯數
    */
-  async count(): Promise<number> {
+  count = async (): Promise<number> => {
     try {
       logger.debug('Counting total user roles');
       

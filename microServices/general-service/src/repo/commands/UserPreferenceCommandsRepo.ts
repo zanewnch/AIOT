@@ -32,7 +32,7 @@ export class UserPreferenceCommandsRepository {
      * @param {UserPreferenceCreationAttributes} data - 用戶偏好設定建立資料
      * @returns {Promise<UserPreferenceAttributes>} 建立的用戶偏好設定資料
      */
-    async create(data: UserPreferenceCreationAttributes): Promise<UserPreferenceAttributes> {
+    create = async (data: UserPreferenceCreationAttributes): Promise<UserPreferenceAttributes> => {
         try {
             const userPreference = await UserPreferenceModel.create(data);
 
@@ -48,7 +48,7 @@ export class UserPreferenceCommandsRepository {
      * @param {UserPreferenceCreationAttributes[]} dataList - 用戶偏好設定資料列表
      * @returns {Promise<UserPreferenceAttributes[]>} 建立的用戶偏好設定資料列表
      */
-    async bulkCreate(dataList: UserPreferenceCreationAttributes[]): Promise<UserPreferenceAttributes[]> {
+    bulkCreate = async (dataList: UserPreferenceCreationAttributes[]): Promise<UserPreferenceAttributes[]> => {
         try {
             const userPreferences = await UserPreferenceModel.bulkCreate(dataList);
 
@@ -65,7 +65,7 @@ export class UserPreferenceCommandsRepository {
      * @param {Partial<UserPreferenceAttributes>} data - 要更新的資料
      * @returns {Promise<UserPreferenceAttributes | null>} 更新後的用戶偏好設定資料
      */
-    async updateById(id: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes | null> {
+    updateById = async (id: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes | null> => {
         try {
 
             const [affectedCount] = await UserPreferenceModel.update(data, {
@@ -95,7 +95,7 @@ export class UserPreferenceCommandsRepository {
      * @param {Partial<UserPreferenceAttributes>} data - 要更新的資料
      * @returns {Promise<UserPreferenceAttributes | null>} 更新後的用戶偏好設定資料
      */
-    async updateByUserId(userId: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes | null> {
+    updateByUserId = async (userId: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes | null> => {
         try {
 
             const [affectedCount] = await UserPreferenceModel.update(data, {
@@ -127,7 +127,7 @@ export class UserPreferenceCommandsRepository {
      * @param {number} id - 用戶偏好設定 ID
      * @returns {Promise<boolean>} 是否成功刪除
      */
-    async deleteById(id: number): Promise<boolean> {
+    deleteById = async (id: number): Promise<boolean> => {
         try {
 
             const deletedCount = await UserPreferenceModel.destroy({
@@ -150,7 +150,7 @@ export class UserPreferenceCommandsRepository {
      * @param {number} userId - 用戶 ID
      * @returns {Promise<boolean>} 是否成功刪除
      */
-    async deleteByUserId(userId: number): Promise<boolean> {
+    deleteByUserId = async (userId: number): Promise<boolean> => {
         try {
 
             const deletedCount = await UserPreferenceModel.destroy({
@@ -174,7 +174,7 @@ export class UserPreferenceCommandsRepository {
      * @param {Partial<UserPreferenceAttributes>} data - 用戶偏好設定資料
      * @returns {Promise<UserPreferenceAttributes>} 建立或更新的用戶偏好設定資料
      */
-    async upsertByUserId(userId: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes> {
+    upsertByUserId = async (userId: number, data: Partial<UserPreferenceAttributes>): Promise<UserPreferenceAttributes> => {
         try {
 
             // 嘗試更新現有記錄

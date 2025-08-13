@@ -17,15 +17,15 @@ import { Op } from 'sequelize';
 @injectable()
 export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
   
-  async create(data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> {
+  create = async (data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> => {
     return await ArchiveTaskModel.create(data);
   }
 
-  async findById(id: number): Promise<ArchiveTaskModel | null> {
+  findById = async (id: number): Promise<ArchiveTaskModel | null> => {
     return await ArchiveTaskModel.findByPk(id);
   }
 
-  async findAll(options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> {
+  findAll = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
     const whereClause: any = {};
     
     if (options?.status) {
@@ -50,7 +50,7 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
     });
   }
 
-  async findByStatus(status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> {
+  findByStatus = async (status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> => {
     return await ArchiveTaskModel.findAll({
       where: { status },
       limit,
@@ -58,14 +58,14 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
     });
   }
 
-  async findByBatchId(batchId: string): Promise<ArchiveTaskModel[]> {
+  findByBatchId = async (batchId: string): Promise<ArchiveTaskModel[]> => {
     return await ArchiveTaskModel.findAll({
       where: { batch_id: batchId },
       order: [['createdAt', 'DESC']]
     });
   }
 
-  async count(options?: ArchiveTaskQueryOptions): Promise<number> {
+  count = async (options?: ArchiveTaskQueryOptions): Promise<number> => {
     const whereClause: any = {};
     
     if (options?.status) {
@@ -87,7 +87,7 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
     });
   }
 
-  async update(id: number, data: Partial<ArchiveTaskCreationAttributes>): Promise<ArchiveTaskModel | null> {
+  update = async (id: number, data: Partial<ArchiveTaskCreationAttributes>): Promise<ArchiveTaskModel | null> => {
     const task = await this.findById(id);
     if (!task) return null;
     
@@ -95,14 +95,14 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
     return task;
   }
 
-  async delete(id: number): Promise<void> {
+  delete = async (id: number): Promise<void> => {
     const task = await this.findById(id);
     if (task) {
       await task.destroy();
     }
   }
 
-  async cleanup(daysOld: number, status?: any): Promise<number> {
+  cleanup = async (daysOld: number, status?: any): Promise<number> => {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
     

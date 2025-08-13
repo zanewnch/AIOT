@@ -32,7 +32,7 @@ export class DroneStatusQueriesRepository {
      * @param {number} limit 限制筆數，預設為 100
      * @returns {Promise<DroneStatusAttributes[]>} 無人機狀態資料陣列
      */
-    async findAll(limit: number = 100): Promise<DroneStatusAttributes[]> {
+    findAll = async (limit: number = 100): Promise<DroneStatusAttributes[]> => {
         try {
             logger.info('Fetching all drone status data');
             const droneStatuses = await DroneStatusModel.findAll({
@@ -54,7 +54,7 @@ export class DroneStatusQueriesRepository {
      * @param {PaginationParams} params 分頁參數
      * @returns {Promise<PaginatedResponse<DroneStatusAttributes>>} 分頁無人機狀態資料
      */
-    async findPaginated(params: PaginationParams): Promise<PaginatedResponse<DroneStatusAttributes>> {
+    findPaginated = async (params: PaginationParams): Promise<PaginatedResponse<DroneStatusAttributes>> => {
         try {
             const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
@@ -98,7 +98,7 @@ export class DroneStatusQueriesRepository {
      * @param {number} id 無人機狀態資料 ID
      * @returns {Promise<DroneStatusAttributes | null>} 無人機狀態資料或 null
      */
-    async findById(id: number): Promise<DroneStatusAttributes | null> {
+    findById = async (id: number): Promise<DroneStatusAttributes | null> => {
         try {
             logger.info('Fetching drone status data by ID', { id });
             const droneStatus = await DroneStatusModel.findByPk(id);
@@ -122,7 +122,7 @@ export class DroneStatusQueriesRepository {
      * @param {string} droneSerial 無人機序號
      * @returns {Promise<DroneStatusAttributes | null>} 無人機狀態資料或 null
      */
-    async findByDroneSerial(droneSerial: string): Promise<DroneStatusAttributes | null> {
+    findByDroneSerial = async (droneSerial: string): Promise<DroneStatusAttributes | null> => {
         try {
             logger.info('Fetching drone status data by serial', { droneSerial });
             const droneStatus = await DroneStatusModel.findOne({
@@ -148,7 +148,7 @@ export class DroneStatusQueriesRepository {
      * @param {DroneStatus} status 無人機狀態
      * @returns {Promise<DroneStatusAttributes[]>} 指定狀態的無人機陣列
      */
-    async findByStatus(status: DroneStatus): Promise<DroneStatusAttributes[]> {
+    findByStatus = async (status: DroneStatus): Promise<DroneStatusAttributes[]> => {
         try {
             logger.info('Fetching drone status data by status', { status });
 
@@ -171,7 +171,7 @@ export class DroneStatusQueriesRepository {
      * @param {number} ownerUserId 擁有者用戶 ID
      * @returns {Promise<DroneStatusAttributes[]>} 指定擁有者的無人機陣列
      */
-    async findByOwner(ownerUserId: number): Promise<DroneStatusAttributes[]> {
+    findByOwner = async (ownerUserId: number): Promise<DroneStatusAttributes[]> => {
         try {
             logger.info('Fetching drone status data by owner', { ownerUserId });
 
@@ -194,7 +194,7 @@ export class DroneStatusQueriesRepository {
      * @param {string} manufacturer 製造商名稱
      * @returns {Promise<DroneStatusAttributes[]>} 指定製造商的無人機陣列
      */
-    async findByManufacturer(manufacturer: string): Promise<DroneStatusAttributes[]> {
+    findByManufacturer = async (manufacturer: string): Promise<DroneStatusAttributes[]> => {
         try {
             logger.info('Fetching drone status data by manufacturer', { manufacturer });
 
@@ -216,7 +216,7 @@ export class DroneStatusQueriesRepository {
      * 
      * @returns {Promise<number>} 無人機狀態總數
      */
-    async count(): Promise<number> {
+    count = async (): Promise<number> => {
         try {
             logger.info('Counting total drone status records');
             const count = await DroneStatusModel.count();
@@ -235,7 +235,7 @@ export class DroneStatusQueriesRepository {
      * @param {string} droneSerial 要檢查的無人機序號
      * @returns {Promise<boolean>} 是否存在
      */
-    async existsBySerial(droneSerial: string): Promise<boolean> {
+    existsBySerial = async (droneSerial: string): Promise<boolean> => {
         try {
             logger.info('Checking if drone serial exists', { droneSerial });
             const count = await DroneStatusModel.count({ where: { drone_serial: droneSerial } });

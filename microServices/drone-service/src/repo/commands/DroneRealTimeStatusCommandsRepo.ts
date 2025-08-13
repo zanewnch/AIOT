@@ -36,7 +36,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param data - 即時狀態資料
      * @returns Promise<DroneRealTimeStatusModel>
      */
-    async create(data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> {
+    create = async (data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> => {
         try {
             this.logger.info('Creating new real-time status record', { droneId: data.drone_id });
             const status = await DroneRealTimeStatusModel.create(data);
@@ -56,7 +56,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param data - 更新資料
      * @returns Promise<DroneRealTimeStatusModel | null>
      */
-    async updateById(id: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel | null> {
+    updateById = async (id: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel | null> => {
         try {
             this.logger.info('Updating real-time status by ID', { id, data });
             
@@ -87,7 +87,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param data - 更新資料
      * @returns Promise<DroneRealTimeStatusModel | null>
      */
-    async updateByDroneId(droneId: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel | null> {
+    updateByDroneId = async (droneId: number, data: Partial<DroneRealTimeStatusAttributes>): Promise<DroneRealTimeStatusModel | null> => {
         try {
             this.logger.info('Updating real-time status by drone ID', { droneId, data });
             
@@ -119,7 +119,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param id - 記錄 ID
      * @returns Promise<boolean>
      */
-    async deleteById(id: number): Promise<boolean> {
+    deleteById = async (id: number): Promise<boolean> => {
         try {
             this.logger.info('Deleting real-time status by ID', { id });
             
@@ -147,7 +147,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param droneId - 無人機 ID
      * @returns Promise<boolean>
      */
-    async deleteByDroneId(droneId: number): Promise<boolean> {
+    deleteByDroneId = async (droneId: number): Promise<boolean> => {
         try {
             this.logger.info('Deleting real-time status by drone ID', { droneId });
             
@@ -176,7 +176,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param data - 即時狀態資料
      * @returns Promise<DroneRealTimeStatusModel>
      */
-    async upsertByDroneId(droneId: number, data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> {
+    upsertByDroneId = async (droneId: number, data: DroneRealTimeStatusCreationAttributes): Promise<DroneRealTimeStatusModel> => {
         try {
             this.logger.info('Upserting real-time status for drone', { droneId });
             
@@ -212,7 +212,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param droneId - 無人機 ID
      * @returns Promise<boolean>
      */
-    async updateLastSeen(droneId: number): Promise<boolean> {
+    updateLastSeen = async (droneId: number): Promise<boolean> => {
         try {
             this.logger.debug('Updating last seen time for drone', { droneId });
             
@@ -243,7 +243,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param droneId - 無人機 ID
      * @returns Promise<boolean>
      */
-    async markAsOffline(droneId: number): Promise<boolean> {
+    markAsOffline = async (droneId: number): Promise<boolean> => {
         try {
             this.logger.info('Marking drone as offline', { droneId });
             
@@ -274,7 +274,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param droneId - 無人機 ID
      * @returns Promise<boolean>
      */
-    async markAsOnline(droneId: number): Promise<boolean> {
+    markAsOnline = async (droneId: number): Promise<boolean> => {
         try {
             this.logger.info('Marking drone as online', { droneId });
             
@@ -305,7 +305,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param thresholdMinutes - 離線判定時間閾值（分鐘）
      * @returns Promise<number> 更新的記錄數
      */
-    async markOfflineDrones(thresholdMinutes: number = 5): Promise<number> {
+    markOfflineDrones = async (thresholdMinutes: number = 5): Promise<number> => {
         try {
             this.logger.info('Marking offline drones based on threshold', { thresholdMinutes });
             const thresholdTime = new Date(Date.now() - thresholdMinutes * 60 * 1000);
@@ -333,7 +333,7 @@ export class DroneRealTimeStatusCommandsRepository {
      * @param daysOld - 保留天數
      * @returns Promise<number> 清理的記錄數
      */
-    async cleanup(daysOld: number): Promise<number> {
+    cleanup = async (daysOld: number): Promise<number> => {
         try {
             this.logger.info('Cleaning up old real-time status records', { daysOld });
             const cutoffDate = new Date();

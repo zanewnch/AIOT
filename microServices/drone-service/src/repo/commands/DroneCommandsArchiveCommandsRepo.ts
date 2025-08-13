@@ -34,7 +34,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {DroneCommandsArchiveCreationAttributes} data - 要創建的歸檔資料
      * @returns {Promise<DroneCommandsArchiveAttributes>} 創建後的歸檔資料
      */
-    async insert(data: DroneCommandsArchiveCreationAttributes): Promise<DroneCommandsArchiveAttributes> {
+    insert = async (data: DroneCommandsArchiveCreationAttributes): Promise<DroneCommandsArchiveAttributes> => {
         try {
             logger.info('Creating new drone command archive', { droneId: data.drone_id, commandType: data.command_type });
             const archive = await DroneCommandsArchiveModel.create(data);
@@ -53,7 +53,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {DroneCommandsArchiveCreationAttributes[]} dataArray - 要創建的歸檔資料陣列
      * @returns {Promise<DroneCommandsArchiveAttributes[]>} 創建後的歸檔資料陣列
      */
-    async bulkInsert(dataArray: DroneCommandsArchiveCreationAttributes[]): Promise<DroneCommandsArchiveAttributes[]> {
+    bulkInsert = async (dataArray: DroneCommandsArchiveCreationAttributes[]): Promise<DroneCommandsArchiveAttributes[]> => {
         try {
             logger.info('Bulk creating drone command archives', { count: dataArray.length });
             const archives = await DroneCommandsArchiveModel.bulkCreate(dataArray, {
@@ -75,7 +75,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {Partial<DroneCommandsArchiveAttributes>} data - 要更新的資料
      * @returns {Promise<DroneCommandsArchiveAttributes | null>} 更新後的歸檔資料或 null
      */
-    async update(id: number, data: Partial<DroneCommandsArchiveAttributes>): Promise<DroneCommandsArchiveAttributes | null> {
+    update = async (id: number, data: Partial<DroneCommandsArchiveAttributes>): Promise<DroneCommandsArchiveAttributes | null> => {
         try {
             logger.info('Updating drone command archive', { id, data });
             const [affectedRows] = await DroneCommandsArchiveModel.update(data, {
@@ -108,7 +108,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {Partial<DroneCommandsArchiveAttributes>} data - 要更新的資料
      * @returns {Promise<number>} 更新的記錄數
      */
-    async bulkUpdate(ids: number[], data: Partial<DroneCommandsArchiveAttributes>): Promise<number> {
+    bulkUpdate = async (ids: number[], data: Partial<DroneCommandsArchiveAttributes>): Promise<number> => {
         try {
             logger.info('Bulk updating drone command archives', { ids, data, count: ids.length });
             const [affectedRows] = await DroneCommandsArchiveModel.update(data, {
@@ -133,7 +133,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {number} id - 歸檔資料 ID
      * @returns {Promise<boolean>} 是否成功刪除
      */
-    async delete(id: number): Promise<boolean> {
+    delete = async (id: number): Promise<boolean> => {
         try {
             logger.info('Deleting drone command archive', { id });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -160,7 +160,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {number[]} ids - 歸檔資料 ID 陣列
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async bulkDelete(ids: number[]): Promise<number> {
+    bulkDelete = async (ids: number[]): Promise<number> => {
         try {
             logger.info('Bulk deleting drone command archives', { ids, count: ids.length });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -185,7 +185,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {number} droneId - 無人機 ID
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByDroneId(droneId: number): Promise<number> {
+    deleteByDroneId = async (droneId: number): Promise<number> => {
         try {
             logger.info('Deleting command archives by drone ID', { droneId });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -206,7 +206,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {Date} beforeDate - 刪除此日期之前的資料
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteBeforeDate(beforeDate: Date): Promise<number> {
+    deleteBeforeDate = async (beforeDate: Date): Promise<number> => {
         try {
             logger.info('Deleting command archives before date', { beforeDate });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -232,7 +232,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {Date} endDate - 結束時間
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByTimeRange(startDate: Date, endDate: Date): Promise<number> {
+    deleteByTimeRange = async (startDate: Date, endDate: Date): Promise<number> => {
         try {
             logger.info('Deleting command archives by time range', { startDate, endDate });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -257,7 +257,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {string} commandType - 指令類型
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByCommandType(commandType: string): Promise<number> {
+    deleteByCommandType = async (commandType: string): Promise<number> => {
         try {
             logger.info('Deleting command archives by command type', { commandType });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -278,7 +278,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {string} status - 指令狀態
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async deleteByStatus(status: string): Promise<number> {
+    deleteByStatus = async (status: string): Promise<number> => {
         try {
             logger.info('Deleting command archives by status', { status });
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -298,7 +298,7 @@ export class DroneCommandsArchiveCommandsRepository {
      *
      * @returns {Promise<number>} 刪除的記錄數
      */
-    async truncate(): Promise<number> {
+    truncate = async (): Promise<number> => {
         try {
             logger.info('Truncating all command archives');
             const deletedRows = await DroneCommandsArchiveModel.destroy({
@@ -321,7 +321,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {string} status - 新狀態
      * @returns {Promise<boolean>} 是否更新成功
      */
-    async updateStatus(id: number, status: DroneCommandStatus): Promise<boolean> {
+    updateStatus = async (id: number, status: DroneCommandStatus): Promise<boolean> => {
         try {
             logger.info('Updating command archive status', { id, status });
             const [affectedRows] = await DroneCommandsArchiveModel.update(
@@ -352,7 +352,7 @@ export class DroneCommandsArchiveCommandsRepository {
      * @param {string} status - 新狀態
      * @returns {Promise<number>} 更新的記錄數
      */
-    async bulkUpdateStatus(ids: number[], status: DroneCommandStatus): Promise<number> {
+    bulkUpdateStatus = async (ids: number[], status: DroneCommandStatus): Promise<number> => {
         try {
             logger.info('Bulk updating command archives status', { ids, status, count: ids.length });
             const [affectedRows] = await DroneCommandsArchiveModel.update(

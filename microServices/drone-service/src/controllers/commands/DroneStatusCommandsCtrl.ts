@@ -18,7 +18,7 @@ import { DroneStatusCommandsSvc } from '../../services/commands/DroneStatusComma
 import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
 import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
 import { TYPES } from '../../types/dependency-injection.js';
-import { Logger, LogController } from '../../decorators/LoggerDecorator.js';
+import { Logger } from '../../decorators/LoggerDecorator.js';
 import type { DroneStatusCreationAttributes, DroneStatus } from '../../models/DroneStatusModel.js';
 
 const logger = createLogger('DroneStatusCommands');
@@ -42,7 +42,6 @@ export class DroneStatusCommands {
      * 創建新的無人機狀態資料
      * @route POST /api/drone-status/data
      */
-    @LogController()
     createDroneStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneStatusData: DroneStatusCreationAttributes = req.body;
@@ -64,7 +63,6 @@ export class DroneStatusCommands {
      * 更新指定無人機狀態資料
      * @route PUT /api/drone-status/data/:id
      */
-    @LogController()
     updateDroneStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
@@ -97,7 +95,6 @@ export class DroneStatusCommands {
      * 刪除指定無人機狀態資料
      * @route DELETE /api/drone-status/data/:id
      */
-    @LogController()
     async deleteDroneStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = parseInt(req.params.id);
@@ -124,7 +121,6 @@ export class DroneStatusCommands {
      * 更新無人機狀態
      * @route PATCH /api/drone-status/data/:id/status
      */
-    @LogController()
     updateDroneStatusOnly = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
