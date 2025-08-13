@@ -1,0 +1,28 @@
+{
+  "name": "docs-service",
+  "version": "1.0.0",
+  "description": "AIOT Documentation Service - Serves TypeDoc documentation for all microservices",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx/esm src/server.ts",
+    "dev": "npx nodemon --exec \"node --import tsx/esm\" src/server.ts",
+    "build": "npx tsc",
+    "build:watch": "tsc --watch",
+    "serve": "node ./dist/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "serve-static": "^1.15.0",
+    "tsx": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^20.19.9",
+    "@types/serve-static": "^1.15.7",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  }
+}

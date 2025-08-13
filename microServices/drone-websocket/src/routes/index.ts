@@ -71,7 +71,7 @@ export class RouteManager {
     private getWebSocketStatus = (req: any, res: any) => {
         res.json({
             status: 'active',
-            service: 'drone-realtime-websocket',
+            service: 'drone-websocket-service',
             timestamp: new Date().toISOString(),
             namespaces: {
                 droneStatus: '/drone-status',
@@ -92,7 +92,7 @@ export class RouteManager {
      */
     private getWebSocketInfo = (req: any, res: any) => {
         res.json({
-            service: 'Drone Real-time WebSocket Service',
+            service: 'Drone WebSocket Service',
             version: '1.0.0',
             protocol: 'Socket.IO',
             features: [

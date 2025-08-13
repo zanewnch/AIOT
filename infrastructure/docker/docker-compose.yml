@@ -258,20 +258,19 @@ services:
   # 微服務 (Microservices)
   # ==========================================================================
 
-  # RBAC 微服務
+  # RBAC 微服務 - 純 gRPC 服務
   rbac-service:
     build:
       context: ../../microServices/rbac
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-rbac-service
-    ports:
-      - "3001:3001"   # HTTP API
-      - "50051:50051" # gRPC
+    # 只暴露 gRPC 端口到內網，外部訪問必須通過 Kong Gateway
+    expose:
+      - "50051"  # gRPC (內網)
     environment:
       <<: *common-env
       SERVICE_NAME: rbac-service
-      SERVICE_PORT: 3001
       GRPC_PORT: 50051
       DB_NAME: rbac_db
     volumes:
@@ -287,26 +286,21 @@ services:
       aiot-redis:
         condition: service_started
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    # gRPC 健康檢查將由 Consul 管理
 
-  # Drone API 微服務 (僅 gRPC API，移除 WebSocket)
+  # Drone API 微服務 - 純 gRPC 服務
   drone-service:
     build:
       context: ../../microServices/drone
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-service
-    ports:
-      - "3002:3002"   # HTTP API (development/debug)
-      - "50052:50052" # gRPC
+    # 只暴露 gRPC 端口到內網，外部訪問必須通過 Kong Gateway
+    expose:
+      - "50052"  # gRPC (內網)
     environment:
       <<: *common-env
       SERVICE_NAME: drone-service
-      SERVICE_PORT: 3002
       GRPC_PORT: 50052
       DB_NAME: drone_db
     volumes:
@@ -324,24 +318,21 @@ services:
       aiot-rabbitmq:
         condition: service_healthy
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    # gRPC 健康檢查將由 Consul 管理
 
-  # Drone 即時通訊微服務 (專門處理 WebSocket)
-  drone-realtime-service:
+  # Drone WebSocket 微服務 (專門處理 WebSocket)
+  drone-websocket-service:
     build:
-      context: ../../microServices/drone-realtime
+      context: ../../microServices/drone-websocket
       dockerfile: Dockerfile
     logging: *default-logging
-    container_name: aiot-drone-realtime-service
-    ports:
-      - "3004:3004"   # WebSocket 服務
+    container_name: aiot-drone-websocket-service
+    # 端口僅供內網使用，外部訪問必須通過 Kong Gateway
+    expose:
+      - "3004"   # WebSocket 服務 (內網)
     environment:
       NODE_ENV: development
-      SERVICE_NAME: drone-realtime-service
+      SERVICE_NAME: drone-websocket-service
       SERVICE_PORT: 3004
       # MySQL 配置 (需要訪問無人機資料)
       DB_HOST: aiot-mysqldb
@@ -377,20 +368,19 @@ services:
       timeout: 10s
       retries: 3
 
-  # General 微服務
+  # General 微服務 - 純 gRPC 服務
   general-service:
     build:
       context: ../../microServices/general
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-general-service
-    ports:
-      - "3003:3003"   # HTTP API
-      - "50053:50053" # gRPC
+    # 只暴露 gRPC 端口到內網，外部訪問必須通過 Kong Gateway
+    expose:
+      - "50053"  # gRPC (內網)
     environment:
       <<: *common-env
       SERVICE_NAME: general-service
-      SERVICE_PORT: 3003
       GRPC_PORT: 50053
       DB_NAME: general_db
     volumes:
@@ -408,8 +398,36 @@ services:
       aiot-opa:
         condition: service_healthy
     restart: unless-stopped
+    # gRPC 健康檢查將由 Consul 管理
+
+  # 文檔服務 - 統一管理所有微服務的 TypeDoc 文檔
+  docs-service:
+    build:
+      context: ../../microServices/docs-service
+      dockerfile: Dockerfile
+    logging: *default-logging
+    container_name: aiot-docs-service
+    # 端口僅供內網使用，外部訪問必須通過 Kong Gateway
+    expose:
+      - "3005"   # 文檔服務 (內網)
+    environment:
+      NODE_ENV: development
+      SERVICE_NAME: docs-service
+      SERVICE_PORT: 3005
+    volumes:
+      - ../../microServices/docs-service:/app
+      - /app/node_modules
+      # 掛載所有微服務的文檔目錄
+      - ../../microServices/rbac/docs:/app/docs/rbac:ro
+      - ../../microServices/drone/docs:/app/docs/drone:ro
+      - ../../microServices/drone-websocket/docs:/app/docs/drone-websocket:ro
+      - ../../microServices/general/docs:/app/docs/general:ro
+      - ../../fe/docs:/app/docs/frontend:ro
+    networks:
+      - aiot-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
       interval: 30s
       timeout: 10s
       retries: 3

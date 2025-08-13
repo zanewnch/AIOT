@@ -1,14 +1,13 @@
 {
   "entryPoints": [
-    "./src/controller",
-    "./src/models",
+    "./src/controllers",
+    "./src/models", 
     "./src/types",
     "./src/utils",
-    "./src/middleware",
-    "./src/service",
+    "./src/middlewares",
+    "./src/services",
     "./src/repo",
-    "./src/infrastructure",
-    "./src/config"
+    "./src/configs"
   ],
   "entryPointStrategy": "expand",
   "out": "./docs",
@@ -23,7 +22,7 @@
     "protected": true,
     "inherited": true
   },
-  "readme": "./README.md",
+  "readme": "none",
   "name": "AIOT Backend API Documentation",
   "categorizeByGroup": true,
   "categoryOrder": [

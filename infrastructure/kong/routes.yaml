@@ -1,76 +1,139 @@
 _format_version: "3.0"
 
 routes:
-  # RBAC 認證路由 - 僅允許 HTTPS 訪問
+  # RBAC 認證路由 - 支援 HTTP/HTTPS
   - name: rbac-auth-routes
     service: rbac-service
     paths:
       - /api/auth
-    strip_path: false
+    strip_path: true  # 移除路徑前綴，轉發乾淨路徑給微服務
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - auth
       - login
-      - secure
+      - gateway-only
 
-  # RBAC 管理路由 - 僅允許 HTTPS 訪問
+  # RBAC 管理路由 - 支援 HTTP/HTTPS
   - name: rbac-routes
     service: rbac-service
     paths:
       - /api/rbac
-    strip_path: false
+    strip_path: true   # 移除 /api/rbac 前綴
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - rbac
       - permissions
-      - secure
+      - gateway-only
 
-  # Drone API 路由 - 僅允許 HTTPS 訪問，連接到 gRPC 服務
+  # Drone API 路由 - 支援 HTTP/HTTPS，連接到 gRPC 服務
   - name: drone-api-routes
     service: drone-grpc-service
     paths:
       - /api/drone
-    strip_path: false
+    strip_path: true   # 移除 /api/drone 前綴
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - drone
       - api
-      - secure
+      - gateway-only
       - grpc
 
-  # Drone WebSocket 路由 - 連接到獨立的即時通訊服務
+  # Drone WebSocket 路由 - 支援 HTTP/HTTPS 和 WebSocket
   - name: drone-websocket-routes
-    service: drone-realtime-service
+    service: drone-websocket-service
     paths:
       - /socket.io
-    strip_path: false
+    strip_path: true   # 移除 /socket.io 前綴
     preserve_host: false
     protocols:
+      - http
       - https
+      - ws
       - wss
     tags:
       - drone
       - websocket
       - realtime
-      - secure
+      - gateway-only
 
-  # General 路由 - 僅允許 HTTPS 訪問
-  - name: general-routes
+  # General 文檔路由 - 支援 HTTP/HTTPS
+  - name: general-docs-routes
     service: general-service
     paths:
       - /api/docs
-      - /api/general
-    strip_path: false
+    strip_path: true   # 移除 /api/docs 前綴，轉發 / 給微服務
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - general
       - documentation
-      - secure
+      - gateway-only
+      
+  # General API 路由 - 支援 HTTP/HTTPS  
+  - name: general-api-routes
+    service: general-service
+    paths:
+      - /api/general
+    strip_path: true   # 移除 /api/general 前綴，轉發 / 給微服務
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - general
+      - documentation
+      - gateway-only
+
+  # 健康檢查路由 - 內部使用，僅 HTTP
+  - name: health-check-routes
+    service: general-service
+    paths:
+      - /health
+    strip_path: true   # 移除 /health 前綴
+    preserve_host: false
+    protocols:
+      - http
+    tags:
+      - health
+      - internal
+
+  # 文檔服務路由 - 統一的 TypeDoc 文檔入口
+  - name: docs-service-routes
+    service: docs-service
+    paths:
+      - /docs
+    strip_path: false  # 保持 /docs 路徑，讓文檔服務處理子路徑
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - documentation
+      - typedoc
+      - static
+      - gateway-only
+
+  # 根路徑路由 - 重定向到文檔頁面
+  - name: root-route
+    service: docs-service
+    paths:
+      - /
+    strip_path: false  # 保持根路徑
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - root
+      - documentation

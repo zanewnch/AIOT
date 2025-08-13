@@ -1,13 +1,12 @@
 {
   "entryPoints": [
     "./src/controllers",
-    "./src/models",
+    "./src/models", 
     "./src/types",
     "./src/utils",
     "./src/middlewares",
     "./src/services",
-    "./src/repo",
-    "./src/configs"
+    "./src/routes"
   ],
   "entryPointStrategy": "expand",
   "out": "./docs",
@@ -22,14 +21,14 @@
     "inherited": true
   },
   "readme": "none",
-  "name": "AIOT Drone Service API Documentation",
+  "name": "AIOT Drone WebSocket Service API Documentation",
   "categorizeByGroup": true,
   "categoryOrder": [
     "Controllers",
-    "Services",
+    "Services", 
     "Models",
     "Types",
-    "Repositories",
+    "Routes",
     "Middleware",
     "Infrastructure",
     "Config",
@@ -39,9 +38,9 @@
   "groupOrder": [
     "Controllers",
     "Services",
-    "Models",
+    "Models", 
     "Types",
-    "Repositories",
+    "Routes",
     "Middleware",
     "Infrastructure",
     "Config",
@@ -76,7 +75,6 @@
     "GitHub": "https://github.com/zanewnch/AIOT",
     "API Docs": "/api-docs"
   },
-  // "customCss": "./public/typedoc-custom.css",
   "skipErrorChecking": true,
   "exclude": [
     "**/node_modules/**",

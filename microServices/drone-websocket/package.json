@@ -1,7 +1,7 @@
 {
-  "name": "drone-realtime-service",
+  "name": "drone-websocket-service",
   "version": "1.0.0",
-  "description": "AIOT Drone Real-time WebSocket Service",
+  "description": "AIOT Drone WebSocket Service",
   "private": true,
   "type": "module",
   "scripts": {

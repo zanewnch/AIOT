@@ -1,19 +1,13 @@
 {
   "entryPoints": [
-    "./src/controller",
     "./src/models",
     "./src/types",
     "./src/utils",
-    "./src/middleware",
-    "./src/service",
-    "./src/repo",
-    "./src/infrastructure",
-    "./src/config"
+    "./src/repo"
   ],
   "entryPointStrategy": "expand",
   "out": "./docs",
-  "theme": "hierarchy",
-  "plugin": ["typedoc-theme-hierarchy"],
+  "theme": "default",
   "includeVersion": true,
   "excludePrivate": false,
   "excludeProtected": false,
@@ -23,8 +17,8 @@
     "protected": true,
     "inherited": true
   },
-  "readme": "./README.md",
-  "name": "AIOT Backend API Documentation",
+  "readme": "none",
+  "name": "AIOT General Service API Documentation",
   "categorizeByGroup": true,
   "categoryOrder": [
     "Controllers",
