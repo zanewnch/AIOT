@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIOT 系統文檔</title>
     <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --container-bg: white;
+            --text-color: #333;
+            --text-secondary: #666;
+            --card-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --info-bg: #e3f2fd;
+            --info-border: #2196f3;
+            --header-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-color: #667eea;
+        }
+        
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --container-bg: #2d3748;
+            --text-color: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --card-bg: #374151;
+            --border-color: #4a5568;
+            --info-bg: #2d3748;
+            --info-border: #4299e1;
+            --header-gradient: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+            --accent-color: #63b3ed;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,26 +40,48 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-color);
+            background: var(--bg-gradient);
             min-height: 100vh;
             padding: 20px;
+            transition: all 0.3s ease;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: var(--container-bg);
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
+            transition: all 0.3s ease;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--header-gradient);
             color: white;
             text-align: center;
             padding: 40px 20px;
+            position: relative;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
         }
         
         .header h1 {
@@ -55,35 +103,35 @@
         }
         
         .service-card {
-            background: #f8f9fa;
+            background: var(--card-bg);
             border-radius: 10px;
             padding: 25px;
             text-decoration: none;
-            color: inherit;
+            color: var(--text-color);
             transition: all 0.3s ease;
             border: 2px solid transparent;
         }
         
         .service-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            border-color: #667eea;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: var(--accent-color);
         }
         
         .service-card h3 {
-            color: #667eea;
+            color: var(--accent-color);
             margin-bottom: 15px;
             font-size: 1.4em;
         }
         
         .service-card p {
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 15px;
         }
         
         .service-type {
             display: inline-block;
-            background: #667eea;
+            background: var(--accent-color);
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -93,19 +141,30 @@
         }
         
         .footer {
-            background: #f8f9fa;
+            background: var(--card-bg);
             text-align: center;
             padding: 20px;
-            color: #666;
-            border-top: 1px solid #e9ecef;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer a:hover {
+            opacity: 0.8;
         }
         
         .status-info {
             margin: 20px 40px;
             padding: 20px;
-            background: #e3f2fd;
+            background: var(--info-bg);
             border-radius: 8px;
-            border-left: 4px solid #2196f3;
+            border-left: 4px solid var(--info-border);
+            color: var(--text-color);
         }
         
         @media (max-width: 768px) {
@@ -123,6 +182,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 深色模式</button>
             <h1>AIOT 系統文檔</h1>
             <p>統一的微服務架構技術文檔中心</p>
         </div>
@@ -145,11 +205,56 @@
         
         <div class="footer">
             <p>&copy; 2025 AIOT Team. All rights reserved. | 
-               <a href="/health" style="color: #667eea;">健康檢查</a> | 
-               <a href="/info" style="color: #667eea;">服務資訊</a> | 
-               <a href="/api/services" style="color: #667eea;">API</a>
+               <a href="/health">健康檢查</a> | 
+               <a href="/info">服務資訊</a> | 
+               <a href="/api/services">API</a>
             </p>
         </div>
     </div>
+    
+    <script>
+        // 檢查用戶的主題偏好
+        function getPreferredTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                return savedTheme;
+            }
+            // 檢查系統偏好
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        // 設置主題
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            const button = document.querySelector('.theme-toggle');
+            if (theme === 'dark') {
+                button.textContent = '☀️ 淺色模式';
+            } else {
+                button.textContent = '🌙 深色模式';
+            }
+        }
+        
+        // 切換主題
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        }
+        
+        // 初始化主題
+        document.addEventListener('DOMContentLoaded', function() {
+            const preferredTheme = getPreferredTheme();
+            setTheme(preferredTheme);
+        });
+        
+        // 監聽系統主題變化
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (!localStorage.getItem('theme')) {
+                setTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    </script>
 </body>
 </html>
