@@ -2,26 +2,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docs-service-deployment
-  namespace: aiot
+  name: aiot-prod-docs-service-deployment
+  namespace: aiot-prod
   labels:
-    app: docs-service
-    app.kubernetes.io/name: docs-service
+    app: aiot-prod-docs-service
+    app.kubernetes.io/name: aiot-prod-docs-service
     app.kubernetes.io/component: microservice
     app.kubernetes.io/part-of: aiot-microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: docs-service
+      app: aiot-prod-docs-service
   template:
     metadata:
       labels:
-        app: docs-service
+        app: aiot-prod-docs-service
     spec:
       containers:
-      - name: docs-service
-        image: node:18-bullseye  # 使用基礎鏡像
+      - name: aiot-prod-docs-service
+        image: node:18-bullseye  # 使用基礎映像檔進行測試
         ports:
         - containerPort: 3005
           name: http
@@ -41,25 +41,16 @@ spec:
         - configMapRef:
             name: aiot-common-config
         - configMapRef:
-            name: dev-environment-config
-        # 開發模式：使用 ConfigMap 和 emptyDir
+            name: prod-environment-config
+        # 生產環境：僅掛載配置文件
         volumeMounts:
-        - name: app-workspace
-          mountPath: /app
-        - name: source-files
-          mountPath: /app/package.json
-          subPath: package.json
-        - name: source-files
-          mountPath: /app/nodemon.json
-          subPath: nodemon.json
-        - name: source-files
-          mountPath: /app/tsconfig.json
-          subPath: tsconfig.json
         - name: route-configs
           mountPath: /app/configs
           readOnly: true
-        # 開發模式啟動命令
-        command: ['sh', '-c', 'mkdir -p src && echo "console.log(\"Docs Service starting in development mode\"); process.exit(0);" > src/server.ts && npm install && npm run dev']
+        - name: app-logs
+          mountPath: /app/logs
+        # 測試用啟動命令 - 保持容器運行
+        command: ['sh', '-c', 'echo "Docs Service starting..." && tail -f /dev/null']
         livenessProbe:
           httpGet:
             path: /health
@@ -84,29 +75,26 @@ spec:
             memory: "512Mi"
             cpu: "400m"
       volumes:
-      - name: app-workspace
-        emptyDir: {}
-      - name: source-files
-        configMap:
-          name: docs-service-template
       - name: route-configs
         configMap:
           name: route-configs
+      - name: app-logs
+        emptyDir: {}
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: docs-service
-  namespace: aiot
+  name: aiot-prod-docs-service
+  namespace: aiot-prod
   labels:
-    app: docs-service
-    app.kubernetes.io/name: docs-service
+    app: aiot-prod-docs-service
+    app.kubernetes.io/name: aiot-prod-docs-service
     app.kubernetes.io/component: microservice
 spec:
   selector:
-    app: docs-service
+    app: aiot-prod-docs-service
   ports:
   - port: 3005
     targetPort: 3005

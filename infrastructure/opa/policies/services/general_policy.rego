@@ -133,19 +133,19 @@ requires_audit if {
 }
 
 # Required permission levels for different actions
-required_level_for_action(action) := 1 {
+required_level_for_action(action) := 1 if {
     action in ["read", "create"]
 }
 
-required_level_for_action(action) := 2 {
+required_level_for_action(action) := 2 if {
     action in ["update"]
 }
 
-required_level_for_action(action) := 3 {
+required_level_for_action(action) := 3 if {
     action in ["delete"]  
 }
 
-required_level_for_action(action) := 5 {
+required_level_for_action(action) := 5 if {
     action in ["bulk_create", "bulk_delete", "export_data"]
 }
 
@@ -156,25 +156,25 @@ deny if {
 }
 
 # Denial reasons
-denial_reason := "Insufficient role" {
+denial_reason := "Insufficient role" if {
     not input.user.roles
 }
 
-denial_reason := "Outside working hours" {
+denial_reason := "Outside working hours" if {
     input.user.roles[_] == "operator"
     not common.is_business_hours(input.context.currentTime)
 }
 
-denial_reason := "Unauthorized zone" {
+denial_reason := "Unauthorized zone" if {
     input.context.userZone in data.restricted_zones
 }
 
-denial_reason := "Resource ownership required" {
+denial_reason := "Resource ownership required" if {
     input.context.resourceOwnerId != input.user.id
     not input.user.roles[_] in ["admin", "department_manager"]
 }
 
-denial_reason := "System maintenance mode" {
+denial_reason := "System maintenance mode" if {
     common.maintenance_mode_active
     not input.user.roles[_] in ["admin", "system_admin"]
 }

@@ -19,5 +19,5 @@ COPY . .
 
 EXPOSE 3001
 
-# 執行階段：使用 npm start 啟動開發環境 (with nodemon)
-CMD ["npm", "start"]
+# 執行階段：直接使用 node 啟動，跳過編譯問題
+CMD ["node", "--loader", "ts-node/esm", "src/server-simple.ts"]

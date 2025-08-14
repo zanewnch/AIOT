@@ -2,31 +2,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-deployment
-  namespace: aiot
+  name: aiot-prod-redis-deployment
+  namespace: aiot-prod
   labels:
-    app: redis
-    app.kubernetes.io/name: redis
+    app: aiot-prod-redis
+    app.kubernetes.io/name: aiot-prod-redis
     app.kubernetes.io/component: cache
     app.kubernetes.io/part-of: aiot-microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app: aiot-prod-redis
   template:
     metadata:
       labels:
-        app: redis
+        app: aiot-prod-redis
     spec:
       containers:
-      - name: redis
+      - name: aiot-prod-redis
         image: redis:7-alpine
         ports:
         - containerPort: 6379
           name: redis
         volumeMounts:
-        - name: redis-storage
+        - name: aiot-prod-redis-storage
           mountPath: /data
         livenessProbe:
           tcpSocket:
@@ -52,24 +52,24 @@ spec:
             memory: "256Mi"
             cpu: "200m"
       volumes:
-      - name: redis-storage
+      - name: aiot-prod-redis-storage
         persistentVolumeClaim:
-          claimName: redis-pvc
+          claimName: aiot-prod-redis-pvc
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-service
-  namespace: aiot
+  name: aiot-prod-redis-service
+  namespace: aiot-prod
   labels:
-    app: redis
-    app.kubernetes.io/name: redis
+    app: aiot-prod-redis
+    app.kubernetes.io/name: aiot-prod-redis
     app.kubernetes.io/component: cache
 spec:
   selector:
-    app: redis
+    app: aiot-prod-redis
   ports:
   - port: 6379
     targetPort: 6379

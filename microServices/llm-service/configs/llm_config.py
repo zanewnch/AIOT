@@ -5,14 +5,14 @@ from typing import Optional
 
 @dataclass
 class ModelConfig:
-    model_name: str = "google/gemma-3n-E2B-it"
-    task: str = "image-text-to-text"
+    model_name: str = "microsoft/DialoGPT-medium"  # 使用公開可用的模型
+    task: str = "text-generation"
     max_new_tokens: int = 512
     temperature: float = 0.7
     top_p: float = 0.8
     repetition_penalty: float = 1.1
     do_sample: bool = True
-    trust_remote_code: bool = True
+    trust_remote_code: bool = False
 
 
 @dataclass

@@ -2,25 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq-deployment
-  namespace: aiot
+  name: aiot-prod-rabbitmq-deployment
+  namespace: aiot-prod
   labels:
-    app: rabbitmq
-    app.kubernetes.io/name: rabbitmq
+    app: aiot-prod-rabbitmq
+    app.kubernetes.io/name: aiot-prod-rabbitmq
     app.kubernetes.io/component: message-queue
     app.kubernetes.io/part-of: aiot-microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rabbitmq
+      app: aiot-prod-rabbitmq
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: aiot-prod-rabbitmq
     spec:
       containers:
-      - name: rabbitmq
+      - name: aiot-prod-rabbitmq
         image: rabbitmq:3-management-alpine
         ports:
         - containerPort: 5672
@@ -39,13 +39,13 @@ spec:
               name: aiot-database-secrets
               key: rabbitmq-password
         volumeMounts:
-        - name: rabbitmq-storage
+        - name: aiot-prod-rabbitmq-storage
           mountPath: /var/lib/rabbitmq
-        - name: rabbitmq-config
+        - name: aiot-prod-rabbitmq-config
           mountPath: /etc/rabbitmq/rabbitmq.conf
           subPath: rabbitmq.conf
           readOnly: true
-        - name: rabbitmq-definitions
+        - name: aiot-prod-rabbitmq-definitions
           mountPath: /etc/rabbitmq/definitions.json
           subPath: definitions.json
           readOnly: true
@@ -75,14 +75,14 @@ spec:
             memory: "1Gi"
             cpu: "400m"
       volumes:
-      - name: rabbitmq-storage
+      - name: aiot-prod-rabbitmq-storage
         persistentVolumeClaim:
-          claimName: rabbitmq-pvc
-      - name: rabbitmq-config
+          claimName: aiot-prod-rabbitmq-pvc
+      - name: aiot-prod-rabbitmq-config
         hostPath:
           path: /home/user/GitHub/AIOT/infrastructure/rabbitmq/rabbitmq.conf
           type: File
-      - name: rabbitmq-definitions
+      - name: aiot-prod-rabbitmq-definitions
         hostPath:
           path: /home/user/GitHub/AIOT/infrastructure/rabbitmq/definitions.json
           type: File
@@ -92,15 +92,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-service
-  namespace: aiot
+  name: aiot-prod-rabbitmq-service
+  namespace: aiot-prod
   labels:
-    app: rabbitmq
-    app.kubernetes.io/name: rabbitmq
+    app: aiot-prod-rabbitmq
+    app.kubernetes.io/name: aiot-prod-rabbitmq
     app.kubernetes.io/component: message-queue
 spec:
   selector:
-    app: rabbitmq
+    app: aiot-prod-rabbitmq
   ports:
   - port: 5672
     targetPort: 5672

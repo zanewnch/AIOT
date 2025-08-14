@@ -166,15 +166,15 @@ requires_audit if {
 }
 
 # Denial reasons for better debugging
-denial_reason := reason {
+denial_reason := reason if {
     input.context.weatherCondition in ["storm", "heavy_rain", "strong_wind"]
     not input.context.emergency
     reason := "Flight not allowed due to weather conditions"
-} else := reason {
+} else := reason if {
     input.context.batteryLevel < 20
     not input.context.emergency
     reason := "Insufficient battery level for flight operations"
-} else := reason {
+} else := reason if {
     input.context.droneMaintenanceMode == true
     not input.user.roles[_] in ["maintenance_technician", "superadmin"]
     reason := "Drone is in maintenance mode"

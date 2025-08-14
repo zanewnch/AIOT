@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: aiot-common-config
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     app.kubernetes.io/name: aiot-microservices
     app.kubernetes.io/component: configuration
@@ -68,7 +68,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: aiot-microservice-config
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     app.kubernetes.io/name: aiot-microservices
     app.kubernetes.io/component: microservice-configuration

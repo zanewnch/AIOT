@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opa-deployment
-  namespace: aiot
+  name: aiot-prod-opa-deployment
+  namespace: aiot-prod
   labels:
-    app: opa
+    app: aiot-prod-opa
     app.kubernetes.io/name: opa
     app.kubernetes.io/component: policy-engine
     app.kubernetes.io/part-of: aiot-microservices
@@ -13,14 +13,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: opa
+      app: aiot-prod-opa
   template:
     metadata:
       labels:
-        app: opa
+        app: aiot-prod-opa
     spec:
       containers:
-      - name: opa
+      - name: aiot-prod-opa
         image: openpolicyagent/opa:latest-envoy
         ports:
         - containerPort: 8181
@@ -40,14 +40,14 @@ spec:
         - "--config-file=/etc/opa/config.yaml"
         - "/etc/opa/policies"
         volumeMounts:
-        - name: opa-config
+        - name: aiot-prod-opa-config
           mountPath: /etc/opa/config.yaml
           subPath: config.yaml
           readOnly: true
-        - name: opa-policies
+        - name: aiot-prod-opa-policies
           mountPath: /etc/opa/policies
           readOnly: true
-        - name: opa-data
+        - name: aiot-prod-opa-data
           mountPath: /etc/opa/data
           readOnly: true
         livenessProbe:
@@ -74,30 +74,30 @@ spec:
             memory: "512Mi"
             cpu: "400m"
       volumes:
-      - name: opa-config
+      - name: aiot-prod-opa-config
         configMap:
-          name: opa-config
-      - name: opa-policies
+          name: aiot-prod-opa-config
+      - name: aiot-prod-opa-policies
         configMap:
-          name: opa-policies
-      - name: opa-data
+          name: aiot-prod-opa-policies
+      - name: aiot-prod-opa-data
         configMap:
-          name: opa-data
+          name: aiot-prod-opa-data
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: opa-service
-  namespace: aiot
+  name: aiot-prod-opa-service
+  namespace: aiot-prod
   labels:
-    app: opa
+    app: aiot-prod-opa
     app.kubernetes.io/name: opa
     app.kubernetes.io/component: policy-engine
 spec:
   selector:
-    app: opa
+    app: aiot-prod-opa
   ports:
   - port: 8181
     targetPort: 8181
@@ -114,10 +114,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opa-bundle-server-deployment
-  namespace: aiot
+  name: aiot-prod-opa-bundle-server-deployment
+  namespace: aiot-prod
   labels:
-    app: opa-bundle-server
+    app: aiot-prod-opa-bundle-server
     app.kubernetes.io/name: opa-bundle-server
     app.kubernetes.io/component: policy-distribution
     app.kubernetes.io/part-of: aiot-microservices
@@ -125,23 +125,23 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: opa-bundle-server
+      app: aiot-prod-opa-bundle-server
   template:
     metadata:
       labels:
-        app: opa-bundle-server
+        app: aiot-prod-opa-bundle-server
     spec:
       containers:
-      - name: nginx
+      - name: aiot-prod-nginx
         image: nginx:alpine
         ports:
         - containerPort: 80
           name: http
         volumeMounts:
-        - name: opa-bundles
+        - name: aiot-prod-opa-bundles
           mountPath: /usr/share/nginx/html
           readOnly: true
-        - name: nginx-config
+        - name: aiot-prod-nginx-config
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
           readOnly: true
@@ -169,27 +169,27 @@ spec:
             memory: "128Mi"
             cpu: "100m"
       volumes:
-      - name: opa-bundles
+      - name: aiot-prod-opa-bundles
         configMap:
-          name: opa-bundles
-      - name: nginx-config
+          name: aiot-prod-opa-bundles
+      - name: aiot-prod-nginx-config
         configMap:
-          name: nginx-config
+          name: aiot-prod-nginx-config
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: opa-bundle-server-service
-  namespace: aiot
+  name: aiot-prod-opa-bundle-server-service
+  namespace: aiot-prod
   labels:
-    app: opa-bundle-server
+    app: aiot-prod-opa-bundle-server
     app.kubernetes.io/name: opa-bundle-server
     app.kubernetes.io/component: policy-distribution
 spec:
   selector:
-    app: opa-bundle-server
+    app: aiot-prod-opa-bundle-server
   ports:
   - port: 80
     targetPort: 80

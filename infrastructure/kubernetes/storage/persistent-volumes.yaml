@@ -7,7 +7,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: mysql-pv
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     type: local
     app: mysql
@@ -26,7 +26,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
-  namespace: aiot
+  namespace: aiot-prod
 spec:
   storageClassName: manual
   accessModes:
@@ -41,7 +41,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: mongodb-pv
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     type: local
     app: mongodb
@@ -60,7 +60,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongodb-pvc
-  namespace: aiot
+  namespace: aiot-prod
 spec:
   storageClassName: manual
   accessModes:
@@ -75,7 +75,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: redis-pv
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     type: local
     app: redis
@@ -94,7 +94,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: redis-pvc
-  namespace: aiot
+  namespace: aiot-prod
 spec:
   storageClassName: manual
   accessModes:
@@ -109,7 +109,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: rabbitmq-pv
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     type: local
     app: rabbitmq
@@ -128,7 +128,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: rabbitmq-pvc
-  namespace: aiot
+  namespace: aiot-prod
 spec:
   storageClassName: manual
   accessModes:
@@ -143,7 +143,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: consul-pv
-  namespace: aiot
+  namespace: aiot-prod
   labels:
     type: local
     app: consul
@@ -162,7 +162,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: consul-pvc
-  namespace: aiot
+  namespace: aiot-prod
 spec:
   storageClassName: manual
   accessModes:

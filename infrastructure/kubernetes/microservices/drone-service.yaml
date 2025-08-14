@@ -2,27 +2,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: drone-service-deployment
-  namespace: aiot
+  name: aiot-prod-drone-service-deployment
+  namespace: aiot-prod
   labels:
-    app: drone-service
-    app.kubernetes.io/name: drone-service
+    app: aiot-prod-drone-service
+    app.kubernetes.io/name: aiot-prod-drone-service
     app.kubernetes.io/component: microservice
     app.kubernetes.io/part-of: aiot-microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: drone-service
+      app: aiot-prod-drone-service
   template:
     metadata:
       labels:
-        app: drone-service
+        app: aiot-prod-drone-service
     spec:
       containers:
-      - name: drone-service
-        image: node:18-bullseye  # 使用基礎鏡像
-        command: ['sh', '-c', 'mkdir -p src && echo "console.log(\"Drone Service starting in development mode\"); process.exit(0);" > src/server.ts && npm install && npm run dev']
+      - name: aiot-prod-drone-service
+        image: node:18-bullseye  # 使用基礎映像檔進行測試
+        # 測試用啟動命令 - 保持容器運行
+        command: ['sh', '-c', 'echo "Drone Service starting..." && tail -f /dev/null']
         ports:
         - containerPort: 50052
           name: grpc
@@ -47,24 +48,15 @@ spec:
         - configMapRef:
             name: aiot-common-config
         - configMapRef:
-            name: dev-environment-config
+            name: prod-environment-config
         - secretRef:
             name: aiot-database-secrets
         - secretRef:
             name: aiot-app-secrets
-        # 開發模式：ConfigMap + emptyDir 實現 hot-reload
+        # 生產環境：僅掛載日誌儲存
         volumeMounts:
-        - name: app-workspace
-          mountPath: /app
-        - name: source-files
-          mountPath: /app/package.json
-          subPath: package.json
-        - name: source-files
-          mountPath: /app/nodemon.json
-          subPath: nodemon.json
-        - name: source-files
-          mountPath: /app/tsconfig.json
-          subPath: tsconfig.json
+        - name: app-logs
+          mountPath: /app/logs
         livenessProbe:
           tcpSocket:
             port: 50052
@@ -87,26 +79,23 @@ spec:
             memory: "512Mi"
             cpu: "400m"
       volumes:
-      - name: app-workspace
+      - name: app-logs
         emptyDir: {}
-      - name: source-files
-        configMap:
-          name: nodejs-service-template
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: drone-service
-  namespace: aiot
+  name: aiot-prod-drone-service
+  namespace: aiot-prod
   labels:
-    app: drone-service
-    app.kubernetes.io/name: drone-service
+    app: aiot-prod-drone-service
+    app.kubernetes.io/name: aiot-prod-drone-service
     app.kubernetes.io/component: microservice
 spec:
   selector:
-    app: drone-service
+    app: aiot-prod-drone-service
   ports:
   - port: 50052
     targetPort: 50052

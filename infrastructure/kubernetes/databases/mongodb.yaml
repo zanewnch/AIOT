@@ -5,22 +5,22 @@ metadata:
   name: aiot-prod-mongodb-deployment
   namespace: aiot-prod
   labels:
-    app: mongodb
-    app.kubernetes.io/name: mongodb
+    app: aiot-prod-mongodb
+    app.kubernetes.io/name: aiot-prod-mongodb
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: aiot-microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: aiot-prod-mongodb
   template:
     metadata:
       labels:
-        app: mongodb
+        app: aiot-prod-mongodb
     spec:
       containers:
-      - name: mongodb
+      - name: aiot-prod-mongodb
         image: mongo:7.0
         ports:
         - containerPort: 27017
@@ -39,7 +39,7 @@ spec:
         - name: MONGO_INITDB_DATABASE
           value: "main_db"
         volumeMounts:
-        - name: mongodb-storage
+        - name: aiot-prod-mongodb-storage
           mountPath: /data/db
         livenessProbe:
           exec:
@@ -81,24 +81,24 @@ spec:
             memory: "1Gi"
             cpu: "500m"
       volumes:
-      - name: mongodb-storage
+      - name: aiot-prod-mongodb-storage
         persistentVolumeClaim:
-          claimName: mongodb-pvc
+          claimName: aiot-prod-mongodb-pvc
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-service
-  namespace: aiot
+  name: aiot-prod-mongodb-service
+  namespace: aiot-prod
   labels:
-    app: mongodb
-    app.kubernetes.io/name: mongodb
+    app: aiot-prod-mongodb
+    app.kubernetes.io/name: aiot-prod-mongodb
     app.kubernetes.io/component: database
 spec:
   selector:
-    app: mongodb
+    app: aiot-prod-mongodb
   ports:
   - port: 27017
     targetPort: 27017

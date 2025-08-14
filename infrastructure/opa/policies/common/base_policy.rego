@@ -22,25 +22,25 @@ role_hierarchy := {
 # Common utility functions
 
 # Check if user has minimum role level
-has_minimum_role_level(user_roles, required_level) {
+has_minimum_role_level(user_roles, required_level) if {
     some role in user_roles
     role_hierarchy[role] >= required_level
 }
 
 # Check if user has any of the required roles
-has_any_role(user_roles, required_roles) {
+has_any_role(user_roles, required_roles) if {
     some role in user_roles
     role in required_roles
 }
 
 # Check if user has all required roles
-has_all_roles(user_roles, required_roles) {
+has_all_roles(user_roles, required_roles) if {
     count(required_roles) > 0
     count(required_roles - user_roles) == 0
 }
 
 # Check if current time is within business hours
-is_business_hours(current_time) {
+is_business_hours(current_time) if {
     time_parts := time.parse_rfc3339_ns(current_time)
     hour := time_parts[3]
     hour >= 8
@@ -48,7 +48,7 @@ is_business_hours(current_time) {
 }
 
 # Check if current day is a weekday
-is_weekday(current_time) {
+is_weekday(current_time) if {
     time_parts := time.parse_rfc3339_ns(current_time)
     weekday := time.weekday(time_parts)
     weekday >= 1
@@ -56,17 +56,17 @@ is_weekday(current_time) {
 }
 
 # Check if user is in allowed zone
-is_allowed_zone(user_zone, allowed_zones) {
+is_allowed_zone(user_zone, allowed_zones) if {
     user_zone in allowed_zones
 }
 
 # Check if operation requires emergency override
-is_emergency_operation(context) {
+is_emergency_operation(context) if {
     context.emergency == true
 }
 
 # Check if user has emergency privileges
-has_emergency_privileges(user_roles) {
+has_emergency_privileges(user_roles) if {
     some role in user_roles
     role in ["superadmin", "emergency_responder", "admin"]
 }

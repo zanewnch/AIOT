@@ -2,33 +2,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: llm-service-deployment
-  namespace: aiot
+  name: aiot-prod-llm-service-deployment
+  namespace: aiot-prod
   labels:
-    app: llm-service
-    app.kubernetes.io/name: llm-service
+    app: aiot-prod-llm-service
+    app.kubernetes.io/name: aiot-prod-llm-service
     app.kubernetes.io/component: microservice
     app.kubernetes.io/part-of: aiot-microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: llm-service
+      app: aiot-prod-llm-service
   template:
     metadata:
       labels:
-        app: llm-service
+        app: aiot-prod-llm-service
     spec:
       containers:
-      - name: llm-service
-        image: python:3.11-bullseye  # 使用Python基礎鏡像
-        command: ['sh', '-c', 'mkdir -p llm && echo "print(\"LLM Service Django starting in development mode\")" > llm/__init__.py && cp django_settings.py llm/settings.py && pip install -r requirements.txt && python manage.py runserver 0.0.0.0:8020']
+      - name: aiot-prod-llm-service
+        image: python:3.11-slim  # 使用基礎 Python 映像檔進行測試
+        # 測試用啟動命令 - 保持容器運行
+        command: ['sh', '-c', 'echo "Django LLM service starting..." && tail -f /dev/null']
         ports:
         - containerPort: 8020
           name: http
         env:
         - name: SERVICE_NAME
-          value: "llm-service"
+          value: "aiot-prod-llm-service"
         - name: DJANGO_PORT
           value: "8020"
         - name: DJANGO_SETTINGS_MODULE
@@ -36,30 +37,25 @@ spec:
         - name: PYTHONUNBUFFERED
           value: "1"
         - name: DJANGO_DEBUG
-          value: "True"
+          value: "False"
         # 從公共配置引入環境變數
         envFrom:
         - configMapRef:
             name: aiot-common-config
         - configMapRef:
-            name: dev-environment-config
+            name: prod-environment-config
         - secretRef:
             name: aiot-database-secrets
         - secretRef:
             name: aiot-app-secrets
-        # 開發模式：ConfigMap + emptyDir 實現 Django hot-reload
+        # 生產環境：掛載日誌和靜態文件
         volumeMounts:
-        - name: app-workspace
-          mountPath: /app
-        - name: source-files
-          mountPath: /app/requirements.txt
-          subPath: requirements.txt
-        - name: source-files
-          mountPath: /app/manage.py
-          subPath: manage.py
-        - name: source-files
-          mountPath: /app/django_settings.py
-          subPath: settings.py
+        - name: app-logs
+          mountPath: /app/logs
+        - name: static-files
+          mountPath: /app/staticfiles
+        - name: media-files
+          mountPath: /app/media
         livenessProbe:
           httpGet:
             path: /health/
@@ -84,26 +80,27 @@ spec:
             memory: "2Gi"
             cpu: "1000m"
       volumes:
-      - name: app-workspace
+      - name: app-logs
         emptyDir: {}
-      - name: source-files
-        configMap:
-          name: django-service-template
+      - name: static-files
+        emptyDir: {}
+      - name: media-files
+        emptyDir: {}
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: llm-service
-  namespace: aiot
+  name: aiot-prod-llm-service
+  namespace: aiot-prod
   labels:
-    app: llm-service
-    app.kubernetes.io/name: llm-service
+    app: aiot-prod-llm-service
+    app.kubernetes.io/name: aiot-prod-llm-service
     app.kubernetes.io/component: microservice
 spec:
   selector:
-    app: llm-service
+    app: aiot-prod-llm-service
   ports:
   - port: 8020
     targetPort: 8020

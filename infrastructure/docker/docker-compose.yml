@@ -127,10 +127,9 @@ services:
     command:
       - "run"
       - "--server"
-      - "--config-file=/etc/opa/config.yaml"
+      - "--addr=0.0.0.0:8181"
       - "/etc/opa/policies"
     volumes:
-      - ../opa/server/config.yaml:/etc/opa/config.yaml:ro
       - ../opa/policies:/etc/opa/policies:ro
       - ../opa/data:/etc/opa/data:ro
     networks:
@@ -260,7 +259,7 @@ services:
   # RBAC 微服務
   rbac-service:
     build:
-      context: ../../microServices/rbac
+      context: ../../microServices/rbac-service
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-rbac-service
@@ -274,7 +273,7 @@ services:
       GRPC_PORT: 50051
       DB_NAME: rbac_db
     volumes:
-      - ../../microServices/rbac:/app
+      - ../../microServices/rbac-service:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -295,7 +294,7 @@ services:
   # Drone API 微服務 (僅 gRPC API，移除 WebSocket)
   drone-service:
     build:
-      context: ../../microServices/drone
+      context: ../../microServices/drone-service
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-service
@@ -309,7 +308,7 @@ services:
       GRPC_PORT: 50052
       DB_NAME: drone_db
     volumes:
-      - ../../microServices/drone:/app
+      - ../../microServices/drone-service:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -332,7 +331,7 @@ services:
   # Drone 即時通訊微服務 (專門處理 WebSocket)
   drone-realtime-service:
     build:
-      context: ../../microServices/drone-realtime
+      context: ../../microServices/drone-websocket-service
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-realtime-service
@@ -376,24 +375,24 @@ services:
       timeout: 10s
       retries: 3
 
-  # User Preference 微服務
-  fesetting-service:
+  # General Service 微服務 (替代 feSetting)
+  general-service:
     build:
-      context: ../../microServices/feSetting
+      context: ../../microServices/general-service
       dockerfile: Dockerfile
     logging: *default-logging
-    container_name: aiot-fesetting-service
+    container_name: aiot-general-service
     ports:
       - "3003:3003"   # HTTP API
       - "50053:50053" # gRPC
     environment:
       <<: *common-env
-      SERVICE_NAME: fesetting-service
+      SERVICE_NAME: general-service
       SERVICE_PORT: 3003
       GRPC_PORT: 50053
-      DB_NAME: user_preference_db
+      DB_NAME: general_db
     volumes:
-      - ../../microServices/feSetting:/app
+      - ../../microServices/general-service:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -409,6 +408,39 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Docs Service 微服務
+  docs-service:
+    build:
+      context: ../../microServices/docs-service
+      dockerfile: Dockerfile
+    logging: *default-logging
+    container_name: aiot-docs-service
+    ports:
+      - "3005:3005"   # HTTP API
+    environment:
+      <<: *common-env
+      SERVICE_NAME: docs-service
+      SERVICE_PORT: 3005
+      DB_NAME: docs_db
+    volumes:
+      - ../../microServices/docs-service:/app
+      - /app/node_modules
+    networks:
+      - aiot-network
+    depends_on:
+      consul:
+        condition: service_healthy
+      aiot-mysqldb:
+        condition: service_healthy
+      aiot-redis:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
       interval: 30s
       timeout: 10s
       retries: 3

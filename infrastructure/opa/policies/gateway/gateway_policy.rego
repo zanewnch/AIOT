@@ -125,18 +125,18 @@ requires_audit if {
 }
 
 # Reason for denial (debugging)
-deny_reason := reason {
+deny_reason := reason if {
     not allow
     user_roles
     reason := sprintf("Access denied for user %v with roles %v to %v %v on service %v", [user_id, user_roles, request_method, route_path, service_name])
 }
 
-deny_reason := "User not found or no roles assigned" {
+deny_reason := "User not found or no roles assigned" if {
     not allow
     not user_data
 }
 
-deny_reason := "Authentication required" {
+deny_reason := "Authentication required" if {
     not allow
     not user_id
 }
