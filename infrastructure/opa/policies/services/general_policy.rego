@@ -93,7 +93,7 @@ allow if {
 # System maintenance restrictions
 deny if {
     common.maintenance_mode_active
-    not input.user.roles[_] in ["admin", "system_admin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "system_admin"]]) == 0
 }
 
 # Night-time restrictions for non-emergency operations
@@ -101,21 +101,21 @@ deny if {
     input.action in ["bulk_create", "bulk_delete", "export_data"]
     not common.is_business_hours(input.context.currentTime) 
     not input.context.emergency
-    not input.user.roles[_] == "superadmin"
+    count([role | role := input.user.roles[_]; role == "superadmin"]) == 0
 }
 
 # Zone-based restrictions
 deny if {
     input.context.userZone in data.restricted_zones
     input.action in ["create", "update", "delete"]
-    not input.user.roles[_] in ["admin", "superadmin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "superadmin"]]) == 0
 }
 
 # Resource ownership validation
 deny if {
     input.resource == "user_preferences"
     input.context.resourceOwnerId != input.user.id
-    not input.user.roles[_] in ["admin", "department_manager", "superadmin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "department_manager", "superadmin"]]) == 0
     input.action in ["update", "delete"]
 }
 
@@ -152,7 +152,7 @@ required_level_for_action(action) := 5 if {
 # Deny if user level is insufficient
 deny if {
     input.user.level < required_level_for_action(input.action)
-    not input.user.roles[_] in ["admin", "superadmin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "superadmin"]]) == 0
 }
 
 # Denial reasons
@@ -161,7 +161,8 @@ denial_reason := "Insufficient role" if {
 }
 
 denial_reason := "Outside working hours" if {
-    input.user.roles[_] == "operator"
+    some role in input.user.roles
+    role == "operator"
     not common.is_business_hours(input.context.currentTime)
 }
 
@@ -171,10 +172,10 @@ denial_reason := "Unauthorized zone" if {
 
 denial_reason := "Resource ownership required" if {
     input.context.resourceOwnerId != input.user.id
-    not input.user.roles[_] in ["admin", "department_manager"]
+    count([role | role := input.user.roles[_]; role in ["admin", "department_manager"]]) == 0
 }
 
 denial_reason := "System maintenance mode" if {
     common.maintenance_mode_active
-    not input.user.roles[_] in ["admin", "system_admin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "system_admin"]]) == 0
 }

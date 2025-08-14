@@ -19,5 +19,5 @@ COPY . .
 
 EXPOSE 3002
 
-# 執行階段：直接使用 node 啟動，跳過編譯問題  
-CMD ["node", "--loader", "ts-node/esm", "src/server-grpc.ts"]
+# 執行階段：使用 gRPC server
+CMD ["node", "--import", "tsx/esm", "src/server-grpc.ts"]

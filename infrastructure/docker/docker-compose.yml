@@ -357,7 +357,7 @@ services:
       # OPA 配置 (透過 Kong Gateway)
       OPA_URL: http://aiot-opa:8181
     volumes:
-      - ../../microServices/drone-realtime:/app
+      - ../../microServices/drone-websocket-service:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -367,7 +367,7 @@ services:
       aiot-redis:
         condition: service_started
       aiot-opa:
-        condition: service_healthy
+        condition: service_started
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3004/health"]

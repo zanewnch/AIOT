@@ -69,7 +69,7 @@ allow if {
 # System maintenance restrictions
 deny if {
     common.maintenance_mode_active
-    not input.user.roles[_] in ["superadmin", "system_maintainer"]
+    count([role | role := input.user.roles[_]; role in ["superadmin", "system_maintainer"]]) == 0
 }
 
 # Audit requirements

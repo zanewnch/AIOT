@@ -19,5 +19,5 @@ COPY . .
 
 EXPOSE 3001
 
-# 執行階段：直接使用 node 啟動，跳過編譯問題
-CMD ["node", "--loader", "ts-node/esm", "src/server-simple.ts"]
+# 執行階段：使用 tsx 啟動  
+CMD ["node", "--import", "tsx/esm", "src/server-simple.ts"]
