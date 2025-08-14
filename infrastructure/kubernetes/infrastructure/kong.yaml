@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kong-deployment
-  namespace: aiot
+  name: aiot-prod-kong-deployment
+  namespace: aiot-prod
   labels:
-    app: kong
+    app: aiot-prod-kong
     app.kubernetes.io/name: kong
     app.kubernetes.io/component: api-gateway
     app.kubernetes.io/part-of: aiot-microservices
@@ -13,14 +13,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kong
+      app: aiot-prod-kong
   template:
     metadata:
       labels:
-        app: kong
+        app: aiot-prod-kong
     spec:
       containers:
-      - name: kong
+      - name: aiot-prod-kong
         image: kong:3.4
         ports:
         - containerPort: 8000
@@ -101,22 +101,22 @@ spec:
       volumes:
       - name: kong-config
         configMap:
-          name: kong-declarative-config
+          name: aiot-prod-kong-config
       restartPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kong-service
-  namespace: aiot
+  name: aiot-prod-kong-service
+  namespace: aiot-prod
   labels:
-    app: kong
+    app: aiot-prod-kong
     app.kubernetes.io/name: kong
     app.kubernetes.io/component: api-gateway
 spec:
   selector:
-    app: kong
+    app: aiot-prod-kong
   ports:
   - port: 8000
     targetPort: 8000
@@ -137,28 +137,33 @@ spec:
   type: ClusterIP
 
 ---
-# Kong 對外暴露服務 (LoadBalancer 或 NodePort)
-apiVersion: v1
-kind: Service
+# Kong Ingress Controller - 生產環境透過 Ingress 對外暴露
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: kong-external-service
-  namespace: aiot
+  name: aiot-prod-kong-ingress
+  namespace: aiot-prod
   labels:
-    app: kong
-    app.kubernetes.io/name: kong
-    app.kubernetes.io/component: api-gateway-external
+    app: aiot-prod-kong
+    app.kubernetes.io/name: aiot-prod-kong
+    app.kubernetes.io/component: api-gateway-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  selector:
-    app: kong
-  ports:
-  - port: 8000
-    targetPort: 8000
-    protocol: TCP
-    name: proxy
-    nodePort: 30000
-  - port: 8001
-    targetPort: 8001
-    protocol: TCP
-    name: admin
-    nodePort: 30001
-  type: NodePort
+  tls:
+  - hosts:
+    - api.aiot-prod.local
+    secretName: aiot-prod-tls-secret
+  rules:
+  - host: api.aiot-prod.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aiot-prod-kong-service
+            port:
+              number: 8000

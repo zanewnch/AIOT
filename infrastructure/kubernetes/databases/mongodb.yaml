@@ -2,8 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb-deployment
-  namespace: aiot
+  name: aiot-prod-mongodb-deployment
+  namespace: aiot-prod
   labels:
     app: mongodb
     app.kubernetes.io/name: mongodb

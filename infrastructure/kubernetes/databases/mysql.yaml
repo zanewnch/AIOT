@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-deployment
-  namespace: aiot
+  name: aiot-prod-mysql-deployment
+  namespace: aiot-prod
   labels:
-    app: mysql
+    app: aiot-prod-mysql
     app.kubernetes.io/name: mysql
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: aiot-microservices
@@ -13,14 +13,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: aiot-prod-mysql
   template:
     metadata:
       labels:
-        app: mysql
+        app: aiot-prod-mysql
     spec:
       containers:
-      - name: mysql
+      - name: aiot-prod-mysql
         image: mysql:8.0
         ports:
         - containerPort: 3306
@@ -101,15 +101,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-service
-  namespace: aiot
+  name: aiot-prod-mysql-service
+  namespace: aiot-prod
   labels:
-    app: mysql
+    app: aiot-prod-mysql
     app.kubernetes.io/name: mysql
     app.kubernetes.io/component: database
 spec:
   selector:
-    app: mysql
+    app: aiot-prod-mysql
   ports:
   - port: 3306
     targetPort: 3306
