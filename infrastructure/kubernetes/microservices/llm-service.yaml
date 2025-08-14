@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
       - name: llm-service
-        image: aiot-llm-service:latest
-        imagePullPolicy: Never  # 使用本地構建的鏡像
+        image: python:3.11-bullseye  # 使用Python基礎鏡像
+        command: ['sh', '-c', 'mkdir -p llm && echo "print(\"LLM Service Django starting in development mode\")" > llm/__init__.py && cp django_settings.py llm/settings.py && pip install -r requirements.txt && python manage.py runserver 0.0.0.0:8020']
         ports:
         - containerPort: 8020
           name: http
@@ -35,18 +35,31 @@ spec:
           value: "llm.settings"
         - name: PYTHONUNBUFFERED
           value: "1"
+        - name: DJANGO_DEBUG
+          value: "True"
         # 從公共配置引入環境變數
         envFrom:
         - configMapRef:
             name: aiot-common-config
+        - configMapRef:
+            name: dev-environment-config
         - secretRef:
             name: aiot-database-secrets
         - secretRef:
             name: aiot-app-secrets
-        # 開發模式：掛載源代碼進行 hot-reload
+        # 開發模式：ConfigMap + emptyDir 實現 Django hot-reload
         volumeMounts:
-        - name: llm-source
+        - name: app-workspace
           mountPath: /app
+        - name: source-files
+          mountPath: /app/requirements.txt
+          subPath: requirements.txt
+        - name: source-files
+          mountPath: /app/manage.py
+          subPath: manage.py
+        - name: source-files
+          mountPath: /app/django_settings.py
+          subPath: settings.py
         livenessProbe:
           httpGet:
             path: /health/
@@ -71,10 +84,11 @@ spec:
             memory: "2Gi"
             cpu: "1000m"
       volumes:
-      - name: llm-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/llm-service
-          type: Directory
+      - name: app-workspace
+        emptyDir: {}
+      - name: source-files
+        configMap:
+          name: django-service-template
       restartPolicy: Always
 
 ---

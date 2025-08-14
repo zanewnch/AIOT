@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --loader tsx/esm src/server.ts",
+    "start": "node --import tsx/esm src/server-simple.ts",
     "dev": "npx nodemon ./src/server.ts",
     "build": "npx tsc",
     "build:watch": "tsc --watch",

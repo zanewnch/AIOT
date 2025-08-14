@@ -44,11 +44,27 @@ export class DocsRoutes {
     // 也支援 /docs 路徑 (如果沒有通過Kong直接訪問)
     this.router.get('/docs', DocsController.getHomepage);
     
+    // RBAC 路由重定向到實際的 API 端點
+    this.router.get('/rbac', (req, res) => {
+      res.redirect(301, '/api/rbac/');
+    });
+    
+    this.router.get('/rbac/*', (req, res) => {
+      const path = req.path.replace('/rbac', '');
+      res.redirect(301, `/api/rbac${path}`);
+    });
+    
+    // 路由配置分析頁面
+    this.router.get('/notepage', DocsController.getNotePage);
+    
     // 手動生成文檔端點
     this.router.post('/generate', DocsController.generateDocs);
     
     // 獲取生成狀態端點
     this.router.get('/status', DocsController.getGenerationStatus);
+    
+    // AJAX 載入首頁內容端點
+    this.router.get('/load-content', DocsController.loadHomepageContent);
 
     // 服務名稱映射 - 將顯示名稱映射到實際資料夾名稱
     const serviceNameMapping: Record<string, string> = {

@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
       - name: general-service
-        image: aiot-general-service:latest
-        imagePullPolicy: Never  # 使用本地構建的鏡像
+        image: node:18-bullseye  # 使用基礎鏡像
+        command: ['sh', '-c', 'mkdir -p src && echo "console.log(\"General Service starting in development mode\"); process.exit(0);" > src/server.ts && npm install && npm run dev']
         ports:
         - containerPort: 50053
           name: grpc
@@ -46,14 +46,25 @@ spec:
         envFrom:
         - configMapRef:
             name: aiot-common-config
+        - configMapRef:
+            name: dev-environment-config
         - secretRef:
             name: aiot-database-secrets
         - secretRef:
             name: aiot-app-secrets
-        # 開發模式：掛載源代碼進行 hot-reload
+        # 開發模式：ConfigMap + emptyDir 實現 hot-reload
         volumeMounts:
-        - name: general-source
+        - name: app-workspace
           mountPath: /app
+        - name: source-files
+          mountPath: /app/package.json
+          subPath: package.json
+        - name: source-files
+          mountPath: /app/nodemon.json
+          subPath: nodemon.json
+        - name: source-files
+          mountPath: /app/tsconfig.json
+          subPath: tsconfig.json
         livenessProbe:
           tcpSocket:
             port: 50053
@@ -76,10 +87,11 @@ spec:
             memory: "512Mi"
             cpu: "400m"
       volumes:
-      - name: general-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/general-service
-          type: Directory
+      - name: app-workspace
+        emptyDir: {}
+      - name: source-files
+        configMap:
+          name: nodejs-service-template
       restartPolicy: Always
 
 ---

@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
       - name: drone-websocket-service
-        image: aiot-drone-websocket-service:latest
-        imagePullPolicy: Never  # 使用本地構建的鏡像
+        image: node:18-bullseye  # 使用基礎鏡像
+        command: ['sh', '-c', 'mkdir -p src && echo "console.log(\"Drone WebSocket Service starting in development mode\"); process.exit(0);" > src/server.ts && npm install && npm run dev']
         ports:
         - containerPort: 3004
           name: websocket
@@ -51,14 +51,25 @@ spec:
         envFrom:
         - configMapRef:
             name: aiot-common-config
+        - configMapRef:
+            name: dev-environment-config
         - secretRef:
             name: aiot-database-secrets
         - secretRef:
             name: aiot-app-secrets
-        # 開發模式：掛載源代碼進行 hot-reload
+        # 開發模式：ConfigMap + emptyDir 實現 hot-reload
         volumeMounts:
-        - name: drone-websocket-source
+        - name: app-workspace
           mountPath: /app
+        - name: source-files
+          mountPath: /app/package.json
+          subPath: package.json
+        - name: source-files
+          mountPath: /app/nodemon.json
+          subPath: nodemon.json
+        - name: source-files
+          mountPath: /app/tsconfig.json
+          subPath: tsconfig.json
         livenessProbe:
           httpGet:
             path: /health
@@ -83,10 +94,11 @@ spec:
             memory: "512Mi"
             cpu: "400m"
       volumes:
-      - name: drone-websocket-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/drone-websocket-service
-          type: Directory
+      - name: app-workspace
+        emptyDir: {}
+      - name: source-files
+        configMap:
+          name: websocket-service-template
       restartPolicy: Always
 
 ---

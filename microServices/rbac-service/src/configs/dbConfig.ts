@@ -7,35 +7,16 @@
 // 匯入 Sequelize TypeScript 版本用於 ORM 操作
 import { Sequelize } from 'sequelize-typescript';
 // 匯入使用者模型用於使用者資料管理
-import { UserModel } from '../models/rbac/UserModel.js';
+import { UserModel } from '../models/UserModel.js';
 // 匯入角色模型用於角色管理
-import { RoleModel } from '../models/rbac/RoleModel.js';
+import { RoleModel } from '../models/RoleModel.js';
 // 匯入權限模型用於權限管理
-import { PermissionModel } from '../models/rbac/PermissionModel.js';
+import { PermissionModel } from '../models/PermissionModel.js';
 // 匯入使用者角色關聯模型用於使用者和角色的多對多關係
-import { UserRoleModel } from '../models/rbac/UserToRoleModel.js';
+import { UserRoleModel } from '../models/UserToRoleModel.js';
 // 匯入角色權限關聯模型用於角色和權限的多對多關係
-import { RolePermissionModel } from '../models/rbac/RoleToPermissionModel.js';
-// 匯入無人機位置模型用於位置資料管理
-import { DronePositionModel } from '../models/drone/DronePositionModel.js';
-// 匯入無人機狀態模型用於基本狀態管理
-import { DroneStatusModel } from '../models/drone/DroneStatusModel.js';
-// 匯入無人機即時狀態模型用於即時狀態追蹤
-import { DroneRealTimeStatusModel } from '../models/drone/DroneRealTimeStatusModel.js';
-// 匯入無人機指令模型用於指令管理
-import { DroneCommandModel } from '../models/drone/DroneCommandModel.js';
-// 匯入無人機指令佇列模型用於佇列管理
-import { DroneCommandQueueModel } from '../models/drone/DroneCommandQueueModel.js';
-// 匯入無人機指令歷史模型用於指令歷史管理
-import { DroneCommandsArchiveModel } from '../models/drone/DroneCommandsArchiveModel.js';
-// 匯入無人機位置歷史模型用於位置歷史管理
-import { DronePositionsArchiveModel } from '../models/drone/DronePositionsArchiveModel.js';
-// 匯入無人機狀態歷史模型用於狀態歷史管理
-import { DroneStatusArchiveModel } from '../models/drone/DroneStatusArchiveModel.js';
-// 匯入歷史任務模型用於歷史任務管理
-import { ArchiveTaskModel } from '../models/drone/ArchiveTaskModel.js';
-// 匯入使用者偏好設定模型用於個人化設定
-import { UserPreferenceModel } from '../models/UserPreferenceModel.js';
+import { RolePermissionModel } from '../models/RoleToPermissionModel.js';
+// RBAC 服務只包含 RBAC 相關模型，無人機和用戶偏好模型由其他服務管理
 
 /**
  * 資料庫配置介面
@@ -168,8 +149,8 @@ export const createSequelizeInstance = (): Sequelize => {
   const sequelize = new Sequelize({
     // 展開資料庫配置物件的所有屬性
     ...config,
-    // 註冊所有需要的模型到 Sequelize 實例中，包含 RBAC 模型、無人機相關模型和使用者偏好模型
-    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel, DronePositionModel, DroneStatusModel, DroneRealTimeStatusModel, DroneCommandModel, DroneCommandQueueModel, DroneCommandsArchiveModel, DronePositionsArchiveModel, DroneStatusArchiveModel, ArchiveTaskModel, UserPreferenceModel],
+    // 註冊 RBAC 相關模型到 Sequelize 實例中
+    models: [UserModel, RoleModel, PermissionModel, UserRoleModel, RolePermissionModel],
     
     // === 其他 Sequelize 優化配置 ===
     // 啟用查詢效能基準測試（僅開發環境）

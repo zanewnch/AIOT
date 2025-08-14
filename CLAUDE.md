@@ -93,20 +93,90 @@
 
 ### Kubernetes 部署管理
 
-#### 初次部署
-```bash
-# 進入 Kubernetes 目錄
-cd infrastructure/kubernetes
+#### 環境區分策略
+**AIOT 項目支援開發和生產兩套環境配置**
 
-# 執行自動部署腳本
-./deploy.sh
+##### 🔧 開發環境 (Development)
+- **命名空間**：`aiot` (開發專用)
+- **ConfigMaps**：使用 `dev-environment-config` + 服務專用 ConfigMaps
+- **Volume 策略**：ConfigMap + emptyDir 實現 hot-reload
+- **鏡像策略**：`imagePullPolicy: Never` (本地鏡像)
+- **資源限制**：較低的 CPU/Memory 限制
+- **日誌等級**：debug
+- **Hot-reload**：啟用 nodemon/Django runserver
+
+##### 🚀 生產環境 (Production)
+- **命名空間**：`aiot-prod` (生產專用)
+- **ConfigMaps**：使用 `prod-environment-config` + 服務專用 ConfigMaps
+- **Volume 策略**：PersistentVolumes 用於持久化數據
+- **鏡像策略**：`imagePullPolicy: Always` (從 Registry 拉取)
+- **資源限制**：較高的 CPU/Memory 限制
+- **日誌等級**：info/warn
+- **Hot-reload**：禁用
+
+#### 開發環境 Hot-reload 配置
+
+##### ConfigMap 結構
+```
+configmaps/
+├── dev-environment.yaml          # 開發環境變數
+├── <service-name>-source.yaml    # 服務源代碼配置
+└── common-config.yaml            # 共同配置
 ```
 
-#### 日常操作
-- **重新部署服務**：`kubectl apply -f microservices/<service-name>.yaml`
-- **重新構建鏡像**：先構建 Docker 鏡像，再重新應用配置
-- **配置更新**：使用 ConfigMap 和 Secret，更新後需重啟相關 Pod
-- **查看部署狀態**：`kubectl get pods,services -n aiot`
+##### 微服務 Volume Mount 模式
+```yaml
+# 每個微服務使用此模式
+spec:
+  containers:
+  - name: service-name
+    image: node:18-bullseye  # 使用基礎鏡像
+    command: ['sh', '-c', 'npm install && npm run dev']
+    volumeMounts:
+    - name: app-workspace
+      mountPath: /app
+    - name: source-files
+      mountPath: /app/package.json
+      subPath: package.json
+    - name: source-files
+      mountPath: /app/src
+      subPath: src-code
+    envFrom:
+    - configMapRef:
+        name: dev-environment-config
+  volumes:
+  - name: app-workspace
+    emptyDir: {}
+  - name: source-files
+    configMap:
+      name: service-name-source
+```
+
+##### Hot-reload 實現原理
+1. **ConfigMap** 包含 package.json、源代碼文件
+2. **emptyDir** 作為工作目錄，支援文件修改
+3. **nodemon** 監控文件變化自動重啟
+4. **環境變數** `CHOKIDAR_USEPOLLING=true` 確保文件監控正常
+
+#### 部署命令
+
+##### 開發環境部署
+```bash
+# 部署開發環境 ConfigMaps
+kubectl apply -f infrastructure/kubernetes/configmaps/
+
+# 部署開發環境微服務
+kubectl apply -f infrastructure/kubernetes/microservices/
+
+# 檢查狀態
+kubectl get pods -n aiot
+```
+
+##### 切換到生產環境
+```bash
+# 使用生產環境配置（未來實現）
+kubectl apply -f infrastructure/kubernetes/production/
+```
 
 #### 重要端點
 - **API Gateway (Kong)**：http://localhost:30000
@@ -117,6 +187,8 @@ cd infrastructure/kubernetes
 - **查看 Pod 詳情**：`kubectl describe pod <pod-name> -n aiot`
 - **查看容器日誌**：`kubectl logs <pod-name> -n aiot`
 - **進入容器調試**：`kubectl exec -it <pod-name> -n aiot -- /bin/bash`
+- **ConfigMap 檢查**：`kubectl get configmap -n aiot`
+- **Volume 檢查**：`kubectl describe pod <pod-name> -n aiot | grep -A 10 Volumes`
 
 ## API 開發規範
 
@@ -161,3 +233,4 @@ kubectl logs -n aiot <pod-name> --tail=20
 kubectl logs -n aiot -l app=rbac-service --tail=20
 kubectl logs -n aiot -l app=drone-service --tail=20
 ```
+- 很好 現在k8s 就是採用 ConfigMap + emptyDir

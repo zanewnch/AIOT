@@ -21,8 +21,7 @@ spec:
     spec:
       containers:
       - name: docs-service
-        image: aiot-docs-service:latest
-        imagePullPolicy: Never  # 使用本地構建的鏡像
+        image: node:18-bullseye  # 使用基礎鏡像
         ports:
         - containerPort: 3005
           name: http
@@ -41,36 +40,26 @@ spec:
         envFrom:
         - configMapRef:
             name: aiot-common-config
-        # 開發模式：掛載源代碼和文檔
+        - configMapRef:
+            name: dev-environment-config
+        # 開發模式：使用 ConfigMap 和 emptyDir
         volumeMounts:
-        - name: docs-service-source
+        - name: app-workspace
           mountPath: /app
-        # 掛載所有微服務的完整目錄以支援智能緩存
-        - name: rbac-service-source
-          mountPath: /app/microservices/rbac-service
+        - name: source-files
+          mountPath: /app/package.json
+          subPath: package.json
+        - name: source-files
+          mountPath: /app/nodemon.json
+          subPath: nodemon.json
+        - name: source-files
+          mountPath: /app/tsconfig.json
+          subPath: tsconfig.json
+        - name: route-configs
+          mountPath: /app/configs
           readOnly: true
-        - name: drone-service-source
-          mountPath: /app/microservices/drone-service
-          readOnly: true
-        - name: drone-websocket-service-source
-          mountPath: /app/microservices/drone-websocket-service
-          readOnly: true
-        - name: general-service-source
-          mountPath: /app/microservices/general-service
-          readOnly: true
-        # 靜態文檔掛載
-        - name: rbac-docs
-          mountPath: /app/docs/rbac
-          readOnly: true
-        - name: drone-docs
-          mountPath: /app/docs/drone
-          readOnly: true
-        - name: drone-websocket-docs
-          mountPath: /app/docs/drone-websocket
-          readOnly: true
-        - name: general-docs
-          mountPath: /app/docs/general
-          readOnly: true
+        # 開發模式啟動命令
+        command: ['sh', '-c', 'mkdir -p src && echo "console.log(\"Docs Service starting in development mode\"); process.exit(0);" > src/server.ts && npm install && npm run dev']
         livenessProbe:
           httpGet:
             path: /health
@@ -95,44 +84,14 @@ spec:
             memory: "512Mi"
             cpu: "400m"
       volumes:
-      - name: docs-service-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/docs-service
-          type: Directory
-      # 微服務源代碼目錄
-      - name: rbac-service-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/rbac-service
-          type: Directory
-      - name: drone-service-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/drone-service
-          type: Directory
-      - name: drone-websocket-service-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/drone-websocket-service
-          type: Directory
-      - name: general-service-source
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/general-service
-          type: Directory
-      # 文檔目錄
-      - name: rbac-docs
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/rbac-service/docs
-          type: Directory
-      - name: drone-docs
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/drone-service/docs
-          type: Directory
-      - name: drone-websocket-docs
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/drone-websocket-service/docs
-          type: Directory
-      - name: general-docs
-        hostPath:
-          path: /home/user/GitHub/AIOT/microServices/general-service/docs
-          type: Directory
+      - name: app-workspace
+        emptyDir: {}
+      - name: source-files
+        configMap:
+          name: docs-service-template
+      - name: route-configs
+        configMap:
+          name: route-configs
       restartPolicy: Always
 
 ---

@@ -35,7 +35,7 @@ spec:
         - name: KONG_DATABASE
           value: "off"
         - name: KONG_DECLARATIVE_CONFIG
-          value: "/kong/kong.yaml"
+          value: "/kong/kong-main.yaml"
         - name: KONG_PROXY_ACCESS_LOG
           value: "/dev/stdout"
         - name: KONG_ADMIN_ACCESS_LOG
@@ -48,14 +48,10 @@ spec:
           value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
         - name: KONG_PLUGINS
           value: "bundled"
-        - name: KONG_DNS_RESOLVER
-          value: "127.0.0.11"
+        # 移除自定義 DNS 解析器，使用 Kubernetes 默認
         volumeMounts:
         - name: kong-config
           mountPath: /kong
-          readOnly: true
-        - name: kong-protos
-          mountPath: /kong/protos
           readOnly: true
         livenessProbe:
           exec:
@@ -84,10 +80,7 @@ spec:
       volumes:
       - name: kong-config
         configMap:
-          name: kong-config
-      - name: kong-protos
-        configMap:
-          name: kong-protos
+          name: route-configs
       restartPolicy: Always
 
 ---

@@ -30,11 +30,11 @@ _format_version: "3.0"
 # ==============================================
 
 services:
-  # 🔐 RBAC 微服務 - 使用 gRPC 協議進行內部通訊
+  # 🔐 RBAC 微服務 - 使用 HTTP 協議進行內部通訊
   - name: rbac-service
-    protocol: grpc
+    protocol: http
     host: rbac-service
-    port: 50051
+    port: 3001
     connect_timeout: 60000
     write_timeout: 60000
     read_timeout: 60000
@@ -43,7 +43,7 @@ services:
       - auth
       - rbac
       - microservice
-      - grpc
+      - http
 
   # 🚁 Drone API 微服務 - 使用 gRPC 協議處理 API 請求
   - name: drone-grpc-service
@@ -151,6 +151,21 @@ routes:
     tags:
       - rbac
       - permissions
+      - gateway-only
+
+  # 🔐 RBAC 直接路由 - 支援 /rbac/ 路徑
+  - name: rbac-direct-routes
+    service: rbac-service
+    paths:
+      - /rbac
+    strip_path: true   # 移除 /rbac 前綴
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - rbac
+      - direct
       - gateway-only
 
   # 🚁 Drone API 路由 - 支援 HTTP/HTTPS，連接到 gRPC 服務
