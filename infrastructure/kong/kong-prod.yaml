@@ -1,39 +1,39 @@
 # ==============================================
-# Kong Gateway 聲明式配置 - AIOT 開發環境
+# Kong Gateway 聲明式配置 - AIOT 生產環境
 # ==============================================
 # 
-# 🐳 Development Environment Only
-# • 此文件專用於 Docker Compose 開發環境
-# • 使用 Docker Compose 服務名稱進行內部通訊
-# • 調試友好配置，快速啟動
+# ☸️ Production Environment Only
+# • 使用 Kubernetes 服務發現
+# • 生產級性能優化
+# • 高可用配置
 # 
 # 架構概覽：
-# Kong Gateway → Docker Compose 服務
-# • /api/auth → RBAC 服務 (HTTP)
-# • /api/rbac → RBAC 服務 (HTTP) 
-# • /api/drone → Drone 服務 (gRPC)
+# Kong Gateway → Kubernetes Services
+# • /api/auth → RBAC 服務 (HTTP + gRPC)
+# • /api/rbac → RBAC 服務 (HTTP + gRPC) 
+# • /api/drone → Drone 服務 (HTTP + gRPC)
 # • /socket.io → Drone WebSocket 服務 (WebSocket)
-# • /api/general → General 服務 (gRPC)
-# • /api/llm → LLM 服務 (Django HTTP)
+# • /api/general → General 服務 (HTTP + gRPC)
+# • /api/llm → LLM 服務 (HTTP - Django)
 # • /docs → 文檔服務 (HTTP)
 # • / → 重定向到文檔服務
 #
 # 網路配置：
-# • 使用 Docker Compose 服務名稱進行內部通訊
-# • 所有服務都在 aiot-dev-network 網路中
-# • Kong 透過 Docker 內建 DNS 解析服務名稱
+# • 使用 Kubernetes 服務名稱進行內部通訊
+# • 所有服務都在 aiot-prod 命名空間中
+# • Kong 透過 Kubernetes DNS 解析服務名稱
 
 _format_version: "3.0"
 
 # ==============================================
-# 🔧 服務定義 (Services)
+# 🔧 服務定義 (Services) - Production
 # ==============================================
 
 services:
-  # 🔐 RBAC 微服務 - 開發環境使用 Docker Compose 服務名稱
+  # 🔐 RBAC 微服務 - 生產環境使用 Kubernetes 服務名稱
   - name: rbac-service
     protocol: http
-    host: rbac-service-dev
+    host: rbac-service.aiot-prod.svc.cluster.local
     port: 3001
     connect_timeout: 5000
     write_timeout: 10000
@@ -44,12 +44,12 @@ services:
       - rbac
       - microservice
       - http
-      - development
+      - production
 
-  # 🚁 Drone API 微服務 - 開發環境使用 Docker Compose 服務名稱
+  # 🚁 Drone API 微服務 - 生產環境 gRPC 服務
   - name: drone-grpc-service
     protocol: grpc
-    host: drone-service-dev
+    host: drone-service.aiot-prod.svc.cluster.local
     port: 50052
     connect_timeout: 5000
     write_timeout: 10000
@@ -59,11 +59,12 @@ services:
       - drone
       - api
       - grpc
+      - production
 
-  # 📡 Drone WebSocket 微服務 - 開發環境使用 Docker Compose 服務名稱
+  # 📡 Drone WebSocket 微服務 - 生產環境 WebSocket 服務
   - name: drone-websocket-service
     protocol: http
-    host: drone-websocket-dev
+    host: drone-websocket-service.aiot-prod.svc.cluster.local
     port: 3004
     connect_timeout: 5000
     write_timeout: 10000
@@ -73,11 +74,12 @@ services:
       - drone
       - websocket
       - realtime
+      - production
 
-  # ⚙️ General 微服務 - 開發環境使用 Docker Compose 服務名稱
+  # ⚙️ General 微服務 - 生產環境 gRPC 服務
   - name: general-service
     protocol: grpc
-    host: general-service-dev
+    host: general-service.aiot-prod.svc.cluster.local
     port: 50053
     connect_timeout: 5000
     write_timeout: 10000
@@ -87,29 +89,31 @@ services:
       - general
       - documentation
       - grpc
+      - production
 
-  # 📚 文檔服務 - 統一管理所有微服務的 TypeDoc 文檔
+  # 📚 文檔服務 - 生產環境使用 upstream 負載平衡
   - name: docs-service
     protocol: http
-    host: docs-upstream
-    connect_timeout: 5000
-    write_timeout: 10000
-    read_timeout: 10000
+    host: docs-upstream-prod
+    connect_timeout: 3000
+    write_timeout: 8000
+    read_timeout: 8000
     retries: 2
     tags:
       - documentation
       - typedoc
       - static
       - http
+      - production
 
-  # 🤖 LLM 微服務 - 開發環境使用 Docker Compose 服務名稱 (Django)
+  # 🤖 LLM 微服務 - 生產環境 Django 服務
   - name: llm-service
     protocol: http
-    host: llm-service-dev
+    host: llm-service.aiot-prod.svc.cluster.local
     port: 8020
-    connect_timeout: 5000
-    write_timeout: 10000
-    read_timeout: 10000
+    connect_timeout: 10000
+    write_timeout: 30000
+    read_timeout: 30000
     retries: 2
     tags:
       - llm
@@ -117,79 +121,88 @@ services:
       - microservice
       - django
       - http
+      - production
 
 # ==============================================
-# 🛣️ 路由定義 (Routes)
+# 🛣️ 路由定義 (Routes) - Production
 # ==============================================
 
 routes:
-  # 🔐 RBAC 認證路由 - 支援 HTTP/HTTPS
+  # 🔐 RBAC 認證路由 - 生產環境
   - name: rbac-auth-routes
     service: rbac-service
     paths:
       - /api/auth
-    strip_path: true  # 移除路徑前綴，轉發乾淨路徑給微服務
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - auth
       - login
       - gateway-only
+      - production
 
-  # 🔐 RBAC 管理路由 - 支援 HTTP/HTTPS
+  # 🔐 RBAC 管理路由 - 生產環境
   - name: rbac-routes
     service: rbac-service
     paths:
       - /api/rbac
-    strip_path: true   # 移除 /api/rbac 前綴
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - rbac
       - permissions
       - gateway-only
+      - production
 
-  # 🔐 RBAC 直接路由 - 支援 /rbac/ 路徑
+  # 🔐 RBAC 直接路由 - 生產環境
   - name: rbac-direct-routes
     service: rbac-service
     paths:
       - /rbac
-    strip_path: true   # 移除 /rbac 前綴
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - rbac
       - direct
       - gateway-only
+      - production
 
-  # 🚁 Drone API 路由 - 支援 HTTP/HTTPS，連接到 gRPC 服務
+  # 🚁 Drone API 路由 - 生產環境 gRPC
   - name: drone-api-routes
     service: drone-grpc-service
     paths:
       - /api/drone
-    strip_path: true   # 移除 /api/drone 前綴
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - drone
       - api
       - gateway-only
       - grpc
+      - production
 
-  # 📡 Drone WebSocket 路由 - 支援 HTTP/HTTPS（WebSocket 通過 HTTP 升級機制）
+  # 📡 Drone WebSocket 路由 - 生產環境
   - name: drone-websocket-routes
     service: drone-websocket-service
     paths:
       - /socket.io
-    strip_path: false   # 保持 /socket.io 路徑，WebSocket 需要完整路徑
+    strip_path: false
     preserve_host: false
     protocols:
       - http
@@ -199,112 +212,105 @@ routes:
       - websocket
       - realtime
       - gateway-only
+      - production
 
-  # ⚙️ General 文檔路由 - 支援 HTTP/HTTPS
-  - name: general-docs-routes
-    service: general-service
-    paths:
-      - /api/docs
-    strip_path: true   # 移除 /api/docs 前綴，轉發 / 給微服務
-    preserve_host: false
-    protocols:
-      - http
-      - https
-    tags:
-      - general
-      - documentation
-      - gateway-only
-      
-  # ⚙️ General API 路由 - 支援 HTTP/HTTPS  
+  # ⚙️ General API 路由 - 生產環境 gRPC
   - name: general-api-routes
     service: general-service
     paths:
       - /api/general
-    strip_path: true   # 移除 /api/general 前綴，轉發 / 給微服務
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - general
       - documentation
       - gateway-only
+      - production
 
-  # 💊 健康檢查路由 - 內部使用，僅 HTTP
+  # 💊 健康檢查路由 - 生產環境內部使用
   - name: health-check-routes
     service: general-service
     paths:
       - /health
-    strip_path: true   # 移除 /health 前綴
+    strip_path: true
     preserve_host: false
     protocols:
       - http
     tags:
       - health
       - internal
+      - production
 
-  # 📚 文檔服務路由 - 統一的 TypeDoc 文檔入口
+  # 📚 文檔服務路由 - 生產環境
   - name: docs-service-routes
     service: docs-service
     paths:
       - /docs
-    strip_path: true   # 移除 /docs 前綴，轉發乾淨路徑給文檔服務
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - documentation
       - typedoc
       - static
       - gateway-only
+      - production
 
-  # 🤖 LLM API 路由 - 支援 HTTP/HTTPS，連接到 Django 服務
+  # 🤖 LLM API 路由 - 生產環境 Django
   - name: llm-api-routes
     service: llm-service
     paths:
       - /api/llm
-    strip_path: true   # 移除 /api/llm 前綴，轉發 /api/ 給 Django
+    strip_path: true
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - llm
       - ai
       - api
       - gateway-only
       - django
+      - production
 
-  # 🏠 根路徑路由 - 重定向到文檔頁面
+  # 🏠 根路徑路由 - 生產環境重定向
   - name: root-route
     service: docs-service
     paths:
       - /
-    strip_path: false  # 保持根路徑
+    strip_path: false
     preserve_host: false
     protocols:
       - http
       - https
+    https_redirect_status_code: 301
     tags:
       - root
       - documentation
+      - production
 
 # ==============================================
-# 🔌 插件配置 (Plugins)
+# 🔌 插件配置 (Plugins) - Production
 # ==============================================
-# 
-# 性能優化插件配置
 
 plugins:
-  # 📚 文檔服務代理緩存 - 緩存靜態內容
+  # 📚 文檔服務代理緩存 - 生產環境優化
   - name: proxy-cache
     service: docs-service
     config:
       request_method: ["GET", "HEAD"]
       response_code: [200, 301, 302, 404]
       content_type: ["text/html", "text/css", "application/javascript", "text/javascript", "image/png", "image/jpg", "image/jpeg", "image/gif", "image/svg+xml"]
-      cache_ttl: 3600
+      cache_ttl: 7200  # 生產環境較長快取時間
       strategy: memory
       memory:
         dictionary_name: "kong_db_cache"
@@ -312,16 +318,54 @@ plugins:
       - caching
       - performance
       - docs
+      - production
+
+  # 🛡️ 速率限制插件 - 生產環境安全
+  - name: rate-limiting
+    config:
+      minute: 100
+      hour: 1000
+      policy: local
+      hide_client_headers: true
+    tags:
+      - security
+      - rate-limiting
+      - production
+
+  # 📊 Prometheus 監控插件 - 生產環境監控
+  - name: prometheus
+    config:
+      per_consumer: true
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+    tags:
+      - monitoring
+      - metrics
+      - production
+
+  # 🔐 CORS 插件 - 生產環境跨域配置
+  - name: cors
+    config:
+      origins: ["https://aiot.production.domain.com"]
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+      headers: ["Accept", "Accept-Version", "Content-Length", "Content-MD5", "Content-Type", "Date", "X-Auth-Token", "Authorization"]
+      exposed_headers: ["X-Auth-Token"]
+      credentials: true
+      max_age: 3600
+      preflight_continue: false
+    tags:
+      - security
+      - cors
+      - production
 
 # ==============================================
-# 🎯 上游服務配置 (Upstreams)
+# 🎯 上游服務配置 (Upstreams) - Production
 # ==============================================
-# 
-# 配置負載平衡器和健康檢查
 
 upstreams:
-  # 📚 文檔服務上游配置
-  - name: docs-upstream
+  # 📚 文檔服務上游配置 - 生產環境負載平衡
+  - name: docs-upstream-prod
     algorithm: round-robin
     hash_on: none
     hash_fallback: none
@@ -335,40 +379,44 @@ upstreams:
         type: http
         healthy:
           http_statuses: [200, 302]
-          successes: 3
+          successes: 5
         unhealthy:
           http_statuses: [429, 500, 503, 504]
           tcp_failures: 3
           timeouts: 3
-          http_failures: 3
+          http_failures: 5
       active:
         type: http
-        timeout: 2
-        concurrency: 1
+        timeout: 1
+        concurrency: 10
         http_path: "/health"
         https_verify_certificate: false
         healthy:
-          interval: 30
-          http_statuses: [200]
-          successes: 1
-        unhealthy:
           interval: 10
+          http_statuses: [200]
+          successes: 2
+        unhealthy:
+          interval: 5
           http_statuses: [429, 500, 502, 503, 504]
-          tcp_failures: 1
-          timeouts: 1
-          http_failures: 3
+          tcp_failures: 2
+          timeouts: 3
+          http_failures: 5
     targets:
-      - target: docs-service-dev:3005
+      - target: docs-service.aiot-prod.svc.cluster.local:3005
         weight: 100
     tags:
       - docs
       - upstream
+      - production
 
 # ==============================================
-# 👤 消費者配置 (Consumers)  
+# 👤 消費者配置 (Consumers) - Production
 # ==============================================
-#
-# 目前不需要認證消費者
-# 如需 API Key 或 JWT 認證，在此處配置
 
-consumers: []
+consumers:
+  # 生產環境 API 金鑰認證消費者 (可選)
+  - username: aiot-prod-api-client
+    custom_id: "aiot-prod-001"
+    tags:
+      - production
+      - api-client

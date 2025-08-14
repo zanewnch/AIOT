@@ -1,0 +1,374 @@
+# AIOT Microservices - Development Environment
+# 🐳 Docker Compose for Development Only
+#
+# 特性：
+# • Hot-Reload 支援
+# • 除錯端口開放
+# • Volume 掛載即時同步
+# • 資源無限制
+# • 開發者友好配置
+
+version: '3.8'
+
+networks:
+  aiot-dev-network:
+    driver: bridge
+    name: aiot-dev-network
+
+volumes:
+  # Node.js 微服務 node_modules 快取
+  node_modules_rbac:
+  node_modules_drone:
+  node_modules_drone_websocket:
+  node_modules_general:
+  node_modules_docs:
+  
+  # 資料庫持久化 Volume
+  mysql_dev_data:
+  mongodb_dev_data:
+  redis_dev_data:
+  
+  # 監控與日誌
+  prometheus_dev_data:
+
+services:
+  # ==============================================
+  # 🗄️ 資料庫服務 (Development)
+  # ==============================================
+  
+  # MySQL 主要資料庫
+  mysql-dev:
+    image: mysql:8.0
+    container_name: aiot-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: aiot_dev_root_2024
+      MYSQL_DATABASE: aiot_development
+      MYSQL_USER: aiot_dev_user
+      MYSQL_PASSWORD: aiot_dev_password
+    ports:
+      - "3306:3306"  # 開發環境開放端口
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+      - ./infrastructure/database/mysql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - aiot-dev-network
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # MongoDB 檔案資料庫
+  mongodb-dev:
+    image: mongo:7.0
+    container_name: aiot-mongodb-dev
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: aiot_dev_admin
+      MONGO_INITDB_ROOT_PASSWORD: aiot_dev_mongo_2024
+      MONGO_INITDB_DATABASE: aiot_development
+    ports:
+      - "27017:27017"  # 開發環境開放端口
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - aiot-dev-network
+
+  # Redis 快取服務
+  redis-dev:
+    image: redis:7.2-alpine
+    container_name: aiot-redis-dev
+    ports:
+      - "6379:6379"  # 開發環境開放端口
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - aiot-dev-network
+    command: redis-server --appendonly yes --requirepass aiot_dev_redis_2024
+
+  # ==============================================
+  # 🐳 微服務 (Development with Hot-Reload)
+  # ==============================================
+
+  # 🔐 RBAC 認證與權限服務 (Express.js + nodemon)
+  rbac-service-dev:
+    build:
+      context: ./microServices/rbac-service
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: aiot-rbac-dev
+    ports:
+      - "3001:3001"     # HTTP API 端口
+      - "9229:9229"     # Node.js Debug 端口
+    volumes:
+      - ./microServices/rbac-service/src:/app/src:rw
+      - ./microServices/rbac-service/package.json:/app/package.json:ro
+      - ./microServices/rbac-service/tsconfig.json:/app/tsconfig.json:ro
+      - ./shared:/app/shared:ro
+      - node_modules_rbac:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DB_HOST=mysql-dev
+      - DB_PORT=3306
+      - DB_NAME=aiot_development
+      - DB_USER=aiot_dev_user
+      - DB_PASSWORD=aiot_dev_password
+      - JWT_SECRET=aiot_dev_jwt_secret_2024
+      - REDIS_HOST=redis-dev
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=aiot_dev_redis_2024
+    networks:
+      - aiot-dev-network
+    depends_on:
+      - mysql-dev
+      - redis-dev
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🚁 Drone 服務 (Express.js + gRPC + nodemon)
+  drone-service-dev:
+    build:
+      context: ./microServices/drone-service
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: aiot-drone-dev
+    ports:
+      - "3002:3002"     # HTTP API 端口
+      - "50052:50052"   # gRPC 端口
+      - "9230:9229"     # Node.js Debug 端口
+    volumes:
+      - ./microServices/drone-service/src:/app/src:rw
+      - ./microServices/drone-service/package.json:/app/package.json:ro
+      - ./microServices/drone-service/tsconfig.json:/app/tsconfig.json:ro
+      - ./shared:/app/shared:ro
+      - node_modules_drone:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - HTTP_PORT=3002
+      - GRPC_PORT=50052
+      - DB_HOST=mysql-dev
+      - DB_PORT=3306
+      - DB_NAME=aiot_development
+      - DB_USER=aiot_dev_user
+      - DB_PASSWORD=aiot_dev_password
+      - MONGO_HOST=mongodb-dev
+      - MONGO_PORT=27017
+      - MONGO_DB=aiot_development
+      - MONGO_USER=aiot_dev_admin
+      - MONGO_PASSWORD=aiot_dev_mongo_2024
+    networks:
+      - aiot-dev-network
+    depends_on:
+      - mysql-dev
+      - mongodb-dev
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 📡 Drone WebSocket 服務 (Socket.IO + nodemon)
+  drone-websocket-dev:
+    build:
+      context: ./microServices/drone-websocket-service
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: aiot-drone-websocket-dev
+    ports:
+      - "3004:3004"     # WebSocket 端口
+      - "9231:9229"     # Node.js Debug 端口
+    volumes:
+      - ./microServices/drone-websocket-service/src:/app/src:rw
+      - ./microServices/drone-websocket-service/package.json:/app/package.json:ro
+      - ./microServices/drone-websocket-service/tsconfig.json:/app/tsconfig.json:ro
+      - ./shared:/app/shared:ro
+      - node_modules_drone_websocket:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - REDIS_HOST=redis-dev
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=aiot_dev_redis_2024
+    networks:
+      - aiot-dev-network
+    depends_on:
+      - redis-dev
+    command: npm run dev
+
+  # ⚙️ General 服務 (Express.js + gRPC + nodemon)
+  general-service-dev:
+    build:
+      context: ./microServices/general-service
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: aiot-general-dev
+    ports:
+      - "3003:3003"     # HTTP API 端口
+      - "50053:50053"   # gRPC 端口
+      - "9232:9229"     # Node.js Debug 端口
+    volumes:
+      - ./microServices/general-service/src:/app/src:rw
+      - ./microServices/general-service/package.json:/app/package.json:ro
+      - ./microServices/general-service/tsconfig.json:/app/tsconfig.json:ro
+      - ./shared:/app/shared:ro
+      - node_modules_general:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - HTTP_PORT=3003
+      - GRPC_PORT=50053
+      - DB_HOST=mysql-dev
+      - DB_PORT=3306
+      - DB_NAME=aiot_development
+      - DB_USER=aiot_dev_user
+      - DB_PASSWORD=aiot_dev_password
+    networks:
+      - aiot-dev-network
+    depends_on:
+      - mysql-dev
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 📚 Docs 服務 (Express.js + nodemon)
+  docs-service-dev:
+    build:
+      context: ./microServices/docs-service
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: aiot-docs-dev
+    ports:
+      - "3005:3005"     # HTTP 端口
+      - "9233:9229"     # Node.js Debug 端口
+    volumes:
+      - ./microServices/docs-service/src:/app/src:rw
+      - ./microServices/docs-service/package.json:/app/package.json:ro
+      - ./microServices/docs-service/tsconfig.json:/app/tsconfig.json:ro
+      - ./microServices/docs-service/docs:/app/docs:rw
+      - node_modules_docs:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3005
+    networks:
+      - aiot-dev-network
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🤖 LLM 服務 (Django + runserver)
+  llm-service-dev:
+    build:
+      context: ./microServices/llm-service
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: aiot-llm-dev
+    ports:
+      - "8020:8020"     # Django 開發伺服器
+      - "5678:5678"     # Python Debug 端口
+    volumes:
+      - ./microServices/llm-service:/app:rw
+      - /app/venv        # 排除虛擬環境
+    environment:
+      - DJANGO_ENV=development
+      - DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1,llm-service-dev
+      - DATABASE_URL=sqlite:///app/db.sqlite3
+      - CHROMA_PERSIST_DIRECTORY=/app/chroma_db
+    networks:
+      - aiot-dev-network
+    command: python manage.py runserver 0.0.0.0:8020
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8020/api/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==============================================
+  # 🌐 API Gateway (Development)
+  # ==============================================
+
+  # Kong Gateway 開發配置
+  kong-dev:
+    image: kong:3.4
+    container_name: aiot-kong-dev
+    ports:
+      - "8000:8000"     # Proxy 端口
+      - "8001:8001"     # Admin API 端口
+    volumes:
+      - ./infrastructure/kong/kong.yaml:/kong/declarative/kong.yaml:ro
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yaml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_PLUGINS: bundled
+      # 開發環境調試設定
+      KONG_LOG_LEVEL: debug
+      KONG_NGINX_WORKER_PROCESSES: 1
+      KONG_MEM_CACHE_SIZE: 32m
+    networks:
+      - aiot-dev-network
+    depends_on:
+      - rbac-service-dev
+      - drone-service-dev
+      - drone-websocket-dev
+      - general-service-dev
+      - llm-service-dev
+      - docs-service-dev
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==============================================
+  # 📊 監控 & 開發工具 (Optional)
+  # ==============================================
+
+  # Prometheus (輕量開發監控)
+  prometheus-dev:
+    image: prom/prometheus:latest
+    container_name: aiot-prometheus-dev
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_dev_data:/prometheus
+    networks:
+      - aiot-dev-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    profiles:
+      - monitoring
+
+  # Grafana (開發環境監控面板)
+  grafana-dev:
+    image: grafana/grafana:latest
+    container_name: aiot-grafana-dev
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: aiot_dev_grafana_2024
+    volumes:
+      - grafana_dev_data:/var/lib/grafana
+    networks:
+      - aiot-dev-network
+    profiles:
+      - monitoring
