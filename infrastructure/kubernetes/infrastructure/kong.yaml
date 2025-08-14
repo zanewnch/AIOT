@@ -35,7 +35,7 @@ spec:
         - name: KONG_DATABASE
           value: "off"
         - name: KONG_DECLARATIVE_CONFIG
-          value: "/kong/kong-main.yaml"
+          value: "/kong/kong.yaml"
         - name: KONG_PROXY_ACCESS_LOG
           value: "/dev/stdout"
         - name: KONG_ADMIN_ACCESS_LOG
@@ -48,6 +48,27 @@ spec:
           value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
         - name: KONG_PLUGINS
           value: "bundled"
+        # 性能優化配置
+        - name: KONG_NGINX_WORKER_PROCESSES
+          value: "2"
+        - name: KONG_NGINX_WORKER_CONNECTIONS
+          value: "4096"
+        - name: KONG_MEM_CACHE_SIZE
+          value: "64m"
+        - name: KONG_UPSTREAM_KEEPALIVE_POOL_SIZE
+          value: "1024"
+        - name: KONG_UPSTREAM_KEEPALIVE_MAX_REQUESTS
+          value: "10000"
+        - name: KONG_UPSTREAM_KEEPALIVE_IDLE_TIMEOUT
+          value: "30"
+        - name: KONG_DB_CACHE_TTL
+          value: "3600"
+        - name: KONG_NGINX_HTTP_KEEPALIVE_REQUESTS
+          value: "10000"
+        - name: KONG_NGINX_HTTP_CLIENT_BODY_BUFFER_SIZE
+          value: "16k"
+        - name: KONG_NGINX_HTTP_CLIENT_MAX_BODY_SIZE
+          value: "1m"
         # 移除自定義 DNS 解析器，使用 Kubernetes 默認
         volumeMounts:
         - name: kong-config
@@ -72,15 +93,15 @@ spec:
           failureThreshold: 3
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "300m"
+            memory: "256Mi"
+            cpu: "200m"
           limits:
-            memory: "1Gi"
-            cpu: "600m"
+            memory: "512Mi"
+            cpu: "400m"
       volumes:
       - name: kong-config
         configMap:
-          name: route-configs
+          name: kong-declarative-config
       restartPolicy: Always
 
 ---

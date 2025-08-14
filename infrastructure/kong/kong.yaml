@@ -35,10 +35,10 @@ services:
     protocol: http
     host: rbac-service
     port: 3001
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
-    retries: 5
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 2
     tags:
       - auth
       - rbac
@@ -50,10 +50,10 @@ services:
     protocol: grpc
     host: drone-service
     port: 50052
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
-    retries: 5
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 2
     tags:
       - drone
       - api
@@ -64,10 +64,10 @@ services:
     protocol: http
     host: drone-websocket-service
     port: 3004
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
-    retries: 5
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 2
     tags:
       - drone
       - websocket
@@ -78,10 +78,10 @@ services:
     protocol: grpc
     host: general-service
     port: 50053
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
-    retries: 5
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 2
     tags:
       - general
       - documentation
@@ -90,12 +90,11 @@ services:
   # 📚 文檔服務 - 統一管理所有微服務的 TypeDoc 文檔
   - name: docs-service
     protocol: http
-    host: docs-service
-    port: 3005
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
-    retries: 5
+    host: docs-upstream
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 2
     tags:
       - documentation
       - typedoc
@@ -107,10 +106,10 @@ services:
     protocol: http
     host: llm-service
     port: 8020
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
-    retries: 5
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 2
     tags:
       - llm
       - ai
@@ -294,19 +293,75 @@ routes:
 # 🔌 插件配置 (Plugins)
 # ==============================================
 # 
-# 目前使用預設插件配置
-# 如需啟用特定插件（如認證、限流等），在此處配置
+# 性能優化插件配置
 
-plugins: []
+plugins:
+  # 📚 文檔服務代理緩存 - 緩存靜態內容
+  - name: proxy-cache
+    service: docs-service
+    config:
+      request_method: ["GET", "HEAD"]
+      response_code: [200, 301, 302, 404]
+      content_type: ["text/html", "text/css", "application/javascript", "text/javascript", "image/png", "image/jpg", "image/jpeg", "image/gif", "image/svg+xml"]
+      cache_ttl: 3600
+      strategy: memory
+      memory:
+        dictionary_name: "kong_db_cache"
+    tags:
+      - caching
+      - performance
+      - docs
 
 # ==============================================
 # 🎯 上游服務配置 (Upstreams)
 # ==============================================
 # 
-# 目前使用直接服務連接
-# 如需負載平衡或服務發現，在此處配置
+# 配置負載平衡器和健康檢查
 
-upstreams: []
+upstreams:
+  # 📚 文檔服務上游配置
+  - name: docs-upstream
+    algorithm: round-robin
+    hash_on: none
+    hash_fallback: none
+    hash_on_header: null
+    hash_fallback_header: null
+    hash_on_cookie: null
+    hash_on_query_arg: null
+    slots: 10000
+    healthchecks:
+      passive:
+        type: http
+        healthy:
+          http_statuses: [200, 302]
+          successes: 3
+        unhealthy:
+          http_statuses: [429, 500, 503, 504]
+          tcp_failures: 3
+          timeouts: 3
+          http_failures: 3
+      active:
+        type: http
+        timeout: 2
+        concurrency: 1
+        http_path: "/health"
+        https_verify_certificate: false
+        healthy:
+          interval: 30
+          http_statuses: [200]
+          successes: 1
+        unhealthy:
+          interval: 10
+          http_statuses: [429, 500, 502, 503, 504]
+          tcp_failures: 1
+          timeouts: 1
+          http_failures: 3
+    targets:
+      - target: docs-service:3005
+        weight: 100
+    tags:
+      - docs
+      - upstream
 
 # ==============================================
 # 👤 消費者配置 (Consumers)  
