@@ -15,11 +15,11 @@
  */
 
 import { Router } from 'express';
-import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl';
-import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl';
-import { AuthMiddleware } from '../middlewares/AuthMiddleware';
-import { container } from '../container/container';
-import { TYPES } from '../container/types';
+import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthMiddleware } from '@aiot/shared-packages/AuthMiddleware.js';
+import { container } from '../container/container.js';
+import { TYPES } from '../container/types.js';
 
 /**
  * 認證路由類別
@@ -83,4 +83,4 @@ class AuthRoutes {
 /**
  * 匯出認證路由實例
  */
-export const authRoutes = new AuthRoutes().getRouter();
+export const router = new AuthRoutes().getRouter();

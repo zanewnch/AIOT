@@ -32,15 +32,15 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../container/types';
-import { UserCommandsRepository } from '../../repo/commands/UserCommandsRepo';
-import { UserModel } from '../../models/UserModel';
+import { TYPES } from '../../container/types.js';
+import { UserCommandsRepository } from '../../repo/commands/UserCommandsRepo.js';
+import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
-import { getRedisClient } from '../../configs/redisConfig';
+import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig';
-import { UserQueriesSvc } from '../queries/UserQueriesSvc';
-import type { UserDTO } from '../queries/UserQueriesSvc';
+import { createLogger } from '../../configs/loggerConfig.js';
+import { UserQueriesSvc } from '../queries/UserQueriesSvc.js';
+import type { UserDTO } from '../queries/UserQueriesSvc.js';
 
 const logger = createLogger('UserCommandsSvc');
 

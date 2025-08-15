@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class LangChainRepository:
-    def __init__(self):
+    def __init__(self) -> None:
         self.client = ai_engine_client
         self.model_name = "AI-Engine"  # 從 AI Engine 取得實際模型名稱
         self.host = "ai-engine"  # AI Engine 服務

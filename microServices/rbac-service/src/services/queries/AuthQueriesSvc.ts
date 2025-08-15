@@ -25,11 +25,11 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../container/types';
-import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo';
-import { UserModel } from '../../models/UserModel';
-import { SessionQueriesSvc } from './SessionQueriesSvc';
-import { createLogger } from '../../configs/loggerConfig';
+import { TYPES } from '../../container/types.js';
+import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo.js';
+import { UserModel } from '../../models/UserModel.js';
+import { SessionQueriesSvc } from './SessionQueriesSvc.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('AuthQueriesSvc');
 

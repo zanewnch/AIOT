@@ -14,10 +14,10 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { UserQueriesSvc } from '../../services/queries/UserQueriesSvc';
-import { createLogger, logRequest } from '../../configs/loggerConfig';
-import { ControllerResult } from '../../utils/ControllerResult';
-import { TYPES } from '../../container/types';
+import { UserQueriesSvc } from '../../services/queries/UserQueriesSvc.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../container/types.js';
 
 const logger = createLogger('UserQueries');
 

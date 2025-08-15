@@ -22,8 +22,8 @@ import {
 } from 'sequelize-typescript';
 
 // 導入相關的模型類別
-import { UserModel } from './UserModel';  // 使用者模型，用於建立外鍵關聯
-import { RoleModel } from './RoleModel';  // 角色模型，用於建立外鍵關聯
+import { UserModel } from './UserModel.js';  // 使用者模型，用於建立外鍵關聯
+import { RoleModel } from './RoleModel.js';  // 角色模型，用於建立外鍵關聯
 
 /**
  * 使用者角色關聯屬性介面

@@ -25,15 +25,15 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../container/types';
-import { RoleCommandsRepository } from '../../repo/commands/RoleCommandsRepo';
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo';
-import type { RoleModel } from '../../models/RoleModel';
-import { getRedisClient } from '../../configs/redisConfig';
+import { TYPES } from '../../container/types.js';
+import { RoleCommandsRepository } from '../../repo/commands/RoleCommandsRepo.js';
+import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo.js';
+import type { RoleModel } from '../../models/RoleModel.js';
+import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig';
-import { RoleQueriesSvc } from '../queries/RoleQueriesSvc';
-import type { RoleDTO, CacheOptions } from '../queries/RoleQueriesSvc';
+import { createLogger } from '../../configs/loggerConfig.js';
+import { RoleQueriesSvc } from '../queries/RoleQueriesSvc.js';
+import type { RoleDTO, CacheOptions } from '../queries/RoleQueriesSvc.js';
 
 const logger = createLogger('RoleCommandsSvc');
 

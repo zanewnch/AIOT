@@ -8,9 +8,9 @@ class ModelConfig:
     model_name: str = "HuggingFaceTB/SmolLM2-135M-Instruct"
     task: str = "text-generation"
     trust_remote_code: bool = True
-    max_new_tokens: int = 512
-    max_length: int = 1024
-    temperature: float = 0.2
+    max_new_tokens: int = 50  # 減少生成長度以提高速度
+    max_length: int = 512     # 減少輸入長度限制
+    temperature: float = 0.7
     top_p: float = 0.9
     do_sample: bool = True
     pad_token_id: int = None  # 會在初始化時設定

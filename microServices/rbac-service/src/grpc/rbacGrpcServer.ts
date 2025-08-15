@@ -15,18 +15,18 @@
 
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
-import { container } from '../container/container';
-import { TYPES } from '../container/types';
-import { UserQueries } from '../controllers/queries/UserQueriesCtrl';
-import { UserCommands } from '../controllers/commands/UserCommandsCtrl';
-import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl';
-import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl';
-import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl';
-import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl';
-import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl';
-import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl';
-import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl';
-import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl';
+import { container } from '../container/container.js';
+import { TYPES } from '../container/types.js';
+import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
+import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
+import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
+import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
+import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
+import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
+import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 

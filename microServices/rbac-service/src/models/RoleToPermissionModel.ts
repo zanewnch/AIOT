@@ -22,8 +22,8 @@ import {
 } from 'sequelize-typescript';
 
 // 導入相關的模型類別
-import { RoleModel } from './RoleModel';           // 角色模型，用於建立外鍵關聯
-import { PermissionModel } from './PermissionModel'; // 權限模型，用於建立外鍵關聯
+import { RoleModel } from './RoleModel.js';           // 角色模型，用於建立外鍵關聯
+import { PermissionModel } from './PermissionModel.js'; // 權限模型，用於建立外鍵關聯
 import type { Optional } from 'sequelize';             // Sequelize 的選擇性類型定義
 
 /**

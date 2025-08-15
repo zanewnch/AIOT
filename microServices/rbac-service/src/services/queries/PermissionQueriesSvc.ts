@@ -27,20 +27,20 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo';
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo';
-import type { PermissionModel } from '../../models/PermissionModel';
-import { getRedisClient } from '../../configs/redisConfig';
+import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo.js';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo.js';
+import type { PermissionModel } from '../../models/PermissionModel.js';
+import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
-import { createLogger, logPermissionCheck } from '../../configs/loggerConfig';
+import { createLogger, logPermissionCheck } from '../../configs/loggerConfig.js';
 import type {
     IPermissionQueriesService
-} from '../../types/services/IPermissionQueriesService';
+} from '../../types/services/IPermissionQueriesService.js';
 import type {
     UserPermissions,
     CacheOptions,
     PermissionDTO
-} from '../../types/services/IPermissionService';
+} from '../../types/services/IPermissionService.js';
 
 const logger = createLogger('PermissionQueriesSvc');
 
@@ -78,7 +78,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      *
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
+    private getRedisClient(): RedisClientType {
         try {
             return getRedisClient();
         } catch (error) {
@@ -93,7 +93,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @returns 權限快取鍵值
      * @private
      */
-    private getPermissionsCacheKey = (userId: number): string => {
+    private getPermissionsCacheKey(userId: number): string {
         return `${PermissionQueriesSvc.PERMISSIONS_CACHE_PREFIX}${userId}`;
     }
 
@@ -103,7 +103,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @returns 角色快取鍵值
      * @private
      */
-    private getRolesCacheKey = (userId: number): string => {
+    private getRolesCacheKey(userId: number): string {
         return `${PermissionQueriesSvc.ROLES_CACHE_PREFIX}${userId}`;
     }
 
@@ -112,7 +112,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param permissionId 權限 ID
      * @private
      */
-    private getPermissionCacheKey = (permissionId: number): string => {
+    private getPermissionCacheKey(permissionId: number): string {
         return `${PermissionQueriesSvc.PERMISSION_CACHE_PREFIX}${permissionId}`;
     }
 
@@ -122,7 +122,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @returns 使用者權限資料或 null（當快取不存在或發生錯誤時）
      * @private
      */
-    private getCachedUserPermissions = async (userId: number): Promise<UserPermissions | null> => {
+    private async getCachedUserPermissions(userId: number): Promise<UserPermissions | null> {
         try {
             const redis = this.getRedisClient();
             const cacheKey = this.getPermissionsCacheKey(userId);
@@ -145,7 +145,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @returns 使用者權限資料或 null
      * @private
      */
-    private fetchUserPermissionsFromDB = async (userId: number): Promise<UserPermissions | null> => {
+    private async fetchUserPermissionsFromDB(userId: number): Promise<UserPermissions | null> {
         try {
             logger.debug(`Querying database for user ${userId} with roles and permissions`);
             const user = await this.userRepository.findByIdWithRolesAndPermissions(userId);
@@ -199,7 +199,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param model 權限模型
      * @private
      */
-    private modelToDTO = (model: PermissionModel): PermissionDTO => {
+    private modelToDTO(model: PermissionModel): PermissionDTO {
         return {
             id: model.id,
             name: model.name,
@@ -213,7 +213,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * 從快取取得所有權限
      * @private
      */
-    private getCachedAllPermissions = async (): Promise<PermissionDTO[] | null> => {
+    private async getCachedAllPermissions(): Promise<PermissionDTO[] | null> {
         try {
             const redis = this.getRedisClient();
             logger.debug('Checking Redis cache for all permissions');
@@ -233,7 +233,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param permissionId 權限 ID
      * @private
      */
-    private getCachedPermission = async (permissionId: number): Promise<PermissionDTO | null> => {
+    private async getCachedPermission(permissionId: number): Promise<PermissionDTO | null> {
         try {
             const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for permission ID: ${permissionId}`);
@@ -257,10 +257,10 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 使用者權限資料或 null
      */
-    public getUserPermissions = async (
+    public async getUserPermissions(
         userId: number,
         options: CacheOptions = {}
-    ): Promise<UserPermissions | null> => {
+    ): Promise<UserPermissions | null> {
         const { forceRefresh = false } = options;
 
         logger.debug(`Getting permissions for user ${userId} (forceRefresh: ${forceRefresh})`);
@@ -294,11 +294,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 是否具有權限
      */
-    public userHasPermission = async (
+    public async userHasPermission(
         userId: number,
         permissionName: string,
         options: CacheOptions = {}
-    ): Promise<boolean> => {
+    ): Promise<boolean> {
         logger.debug(`Checking permission '${permissionName}' for user ${userId}`);
 
         const userPermissions = await this.getUserPermissions(userId, options);
@@ -329,11 +329,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 是否具有任一權限
      */
-    public userHasAnyPermission = async (
+    public async userHasAnyPermission(
         userId: number,
         permissions: string[],
         options: CacheOptions = {}
-    ): Promise<boolean> => {
+    ): Promise<boolean> {
         const userPermissions = await this.getUserPermissions(userId, options);
 
         if (!userPermissions) {
@@ -439,7 +439,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param permissionName 權限名稱
      * @returns 權限是否存在
      */
-    public permissionExists = async (permissionName: string): Promise<boolean> => {
+    public async permissionExists(permissionName: string): Promise<boolean> {
         try {
             return await this.permissionRepository.exists(permissionName);
         } catch (error) {
@@ -453,7 +453,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
     /**
      * 取得所有權限列表
      */
-    public getAllPermissions = async (): Promise<PermissionDTO[]> => {
+    public async getAllPermissions(): Promise<PermissionDTO[]> {
         try {
             logger.debug('Getting all permissions with cache support');
 
@@ -481,7 +481,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * 根據 ID 取得權限
      * @param permissionId 權限 ID
      */
-    public getPermissionById = async (permissionId: number): Promise<PermissionDTO | null> => {
+    public async getPermissionById(permissionId: number): Promise<PermissionDTO | null> {
         try {
             logger.info(`Retrieving permission by ID: ${permissionId}`);
 

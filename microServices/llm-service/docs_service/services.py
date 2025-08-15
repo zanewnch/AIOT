@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class DocsService:
     """文檔服務，處理 Sphinx 生成的 HTML 文檔"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.docs_root = Path(__file__).parent.parent / 'docs' / '_build' / 'html'
         self.static_root = self.docs_root / '_static'
     

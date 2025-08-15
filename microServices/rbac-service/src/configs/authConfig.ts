@@ -9,9 +9,9 @@ import passport from 'passport';
 // 從 passport-jwt 匯入 JWT 策略、JWT 提取工具和回調類型
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 // 匯入用戶模型進行資料庫操作
-import { UserModel } from '../models/UserModel';
+import { UserModel } from '../models/UserModel.js';
 // 匯入 JWT 負載類型定義
-import { JwtPayload } from '../middlewares/AuthMiddleware';
+import { JwtPayload } from '@aiot/shared-packages/AuthMiddleware.js';
 
 /**
  * 身份驗證設定的配置介面

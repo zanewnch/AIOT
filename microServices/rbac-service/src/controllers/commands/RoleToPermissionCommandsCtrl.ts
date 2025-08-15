@@ -14,11 +14,11 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { RoleToPermissionCommandsSvc } from '../../services/commands/RoleToPermissionCommandsSvc';
-import type { IRoleToPermissionCommandsService } from '../../types/services/IRoleToPermissionCommandsService';
-import { createLogger, logRequest } from '../../configs/loggerConfig';
-import { ControllerResult } from '../../utils/ControllerResult';
-import { TYPES } from '../../container/types';
+import { RoleToPermissionCommandsSvc } from '../../services/commands/RoleToPermissionCommandsSvc.js';
+import type { IRoleToPermissionCommandsService } from '../../types/services/IRoleToPermissionCommandsService.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { ControllerResult } from '../../utils/ControllerResult.js';
+import { TYPES } from '../../container/types.js';
 
 const logger = createLogger('RoleToPermissionCommands');
 

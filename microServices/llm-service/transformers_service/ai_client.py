@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class AIEngineClient:
     """AI Engine HTTP 客戶端"""
     
-    def __init__(self, base_url: str = None):
+    def __init__(self, base_url: Optional[str] = None) -> None:
         self.base_url = base_url or os.getenv("AI_ENGINE_URL", "http://localhost:8021")
         self.session = requests.Session()
         # 設置預設 timeout

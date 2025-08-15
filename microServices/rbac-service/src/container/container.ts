@@ -10,30 +10,30 @@
 
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { TYPES } from '../container/types';
+import { TYPES } from '../container/types.js';
 
 // RBAC 認證服務
-import { UserCommandsSvc } from '../services/commands/UserCommandsSvc';
-import { UserQueriesSvc } from '../services/queries/UserQueriesSvc';
-import { RoleCommandsSvc } from '../services/commands/RoleCommandsSvc';
-import { RoleQueriesSvc } from '../services/queries/RoleQueriesSvc';
-import { PermissionCommandsSvc } from '../services/commands/PermissionCommandsSvc';
-import { PermissionQueriesSvc } from '../services/queries/PermissionQueriesSvc';
-import { UserToRoleCommandsSvc } from '../services/commands/UserToRoleCommandsSvc';
-import { UserToRoleQueriesSvc } from '../services/queries/UserToRoleQueriesSvc';
-import { RoleToPermissionCommandsSvc } from '../services/commands/RoleToPermissionCommandsSvc';
-import { RoleToPermissionQueriesSvc } from '../services/queries/RoleToPermissionQueriesSvc';
+import { UserCommandsSvc } from '../services/commands/UserCommandsSvc.js';
+import { UserQueriesSvc } from '../services/queries/UserQueriesSvc.js';
+import { RoleCommandsSvc } from '../services/commands/RoleCommandsSvc.js';
+import { RoleQueriesSvc } from '../services/queries/RoleQueriesSvc.js';
+import { PermissionCommandsSvc } from '../services/commands/PermissionCommandsSvc.js';
+import { PermissionQueriesSvc } from '../services/queries/PermissionQueriesSvc.js';
+import { UserToRoleCommandsSvc } from '../services/commands/UserToRoleCommandsSvc.js';
+import { UserToRoleQueriesSvc } from '../services/queries/UserToRoleQueriesSvc.js';
+import { RoleToPermissionCommandsSvc } from '../services/commands/RoleToPermissionCommandsSvc.js';
+import { RoleToPermissionQueriesSvc } from '../services/queries/RoleToPermissionQueriesSvc.js';
 
 // RBAC 控制器
-import { UserCommands } from '../controllers/commands/UserCommandsCtrl';
-import { UserQueries } from '../controllers/queries/UserQueriesCtrl';
-import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl';
-import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl';
-import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl';
-import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl';
-import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl';
-import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl';
-import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl';
+import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
+import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
+import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
+import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
+import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
+import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 
 /**
  * 創建並配置 RBAC 服務的 IoC 容器

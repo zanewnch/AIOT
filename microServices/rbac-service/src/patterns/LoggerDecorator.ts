@@ -3,12 +3,12 @@
  * 只有兩個參數：originalFunction 和 methodName
  */
 
-import { createLogger } from '../configs/loggerConfig';
+import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('DECORATOR');
 
 export function loggerDecorator(originalFunction: Function, methodName: string) {
-  return async (...args: any[]) => {
+  return async function(...args: any[]) {
     const startTime = Date.now();
     
     try {

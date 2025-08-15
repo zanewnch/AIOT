@@ -32,20 +32,20 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 // 匯入角色權限查詢資料存取層
-import { RolePermissionQueriesRepository } from '../../repo/queries/RolePermissionQueriesRepo';
+import { RolePermissionQueriesRepository } from '../../repo/queries/RolePermissionQueriesRepo.js';
 // 匯入角色查詢資料存取層
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo';
+import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo.js';
 // 匯入權限查詢資料存取層
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo.js';
 // 匯入模型類型
-import { RoleModel } from '../../models/RoleModel';
-import { PermissionModel } from '../../models/PermissionModel';
+import { RoleModel } from '../../models/RoleModel.js';
+import { PermissionModel } from '../../models/PermissionModel.js';
 // 匯入 Redis 客戶端配置，用於快取管理
-import { getRedisClient } from '../../configs/redisConfig';
+import { getRedisClient } from '../../configs/redisConfig.js';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
-import { createLogger } from '../../configs/loggerConfig';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('RoleToPermissionQueriesSvc');

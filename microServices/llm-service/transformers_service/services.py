@@ -1,4 +1,4 @@
-from typing import Dict, Any, Generator
+from typing import Dict, Any, Generator, Optional, List
 from .repositories import langchain_repository
 import logging
 
@@ -6,10 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 class LangChainService:
-    def __init__(self):
+    def __init__(self) -> None:
         self.repository = langchain_repository
     
-    def generate_response(self, prompt: str, use_rag: bool = False, image_url: str = None, **kwargs) -> Dict[str, Any]:
+    def generate_response(self, prompt: str, use_rag: bool = False, image_url: Optional[str] = None, **kwargs) -> Dict[str, Any]:
         if not prompt or not prompt.strip():
             return {
                 "success": False,
@@ -29,7 +29,7 @@ class LangChainService:
         else:
             return result
     
-    def generate_conversational_response(self, prompt: str, use_rag: bool = False, image_url: str = None, **kwargs) -> Dict[str, Any]:
+    def generate_conversational_response(self, prompt: str, use_rag: bool = False, image_url: Optional[str] = None, **kwargs) -> Dict[str, Any]:
         """Generate response with conversation memory"""
         if not prompt or not prompt.strip():
             return {
@@ -50,7 +50,7 @@ class LangChainService:
         else:
             return result
     
-    def add_documents(self, documents: list) -> Dict[str, Any]:
+    def add_documents(self, documents: List[str]) -> Dict[str, Any]:
         """Add documents to RAG system"""
         try:
             success = self.repository.add_documents_to_rag(documents)
@@ -64,7 +64,7 @@ class LangChainService:
                 "error": str(e)
             }
     
-    def stream_generate(self, prompt: str, image_url: str = None, **kwargs) -> Generator[str, None, None]:
+    def stream_generate(self, prompt: str, image_url: Optional[str] = None, **kwargs) -> Generator[str, None, None]:
         if not prompt or not prompt.strip():
             yield "Error: Prompt cannot be empty"
             return

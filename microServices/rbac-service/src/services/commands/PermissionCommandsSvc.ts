@@ -24,24 +24,24 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../container/types';
-import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepo';
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo';
-import type { PermissionModel } from '../../models/PermissionModel';
-import { getRedisClient } from '../../configs/redisConfig';
+import { TYPES } from '../../container/types.js';
+import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepo.js';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo.js';
+import type { PermissionModel } from '../../models/PermissionModel.js';
+import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig';
+import { createLogger } from '../../configs/loggerConfig.js';
 import type {
     IPermissionCommandsService
-} from '../../types/services/IPermissionCommandsService';
+} from '../../types/services/IPermissionCommandsService.js';
 import type {
     UserPermissions,
     CacheOptions,
     PermissionDTO,
     CreatePermissionRequest,
     UpdatePermissionRequest
-} from '../../types/services/IPermissionService';
-import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc';
+} from '../../types/services/IPermissionService.js';
+import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc.js';
 
 const logger = createLogger('PermissionCommandsSvc');
 

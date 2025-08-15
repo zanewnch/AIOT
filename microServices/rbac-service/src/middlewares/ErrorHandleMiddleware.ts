@@ -27,7 +27,7 @@ import createError from 'http-errors'; // 引入 HTTP 錯誤建立工具
  * @example
  * ```typescript
  * import express from 'express';
- * import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware';
+ * import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js';
  * 
  * const app = express();
  * 
@@ -55,7 +55,7 @@ export class ErrorHandleMiddleware {
    * @example
    * ```typescript
    * import express from 'express';
-   * import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware';
+   * import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js';
    * 
    * const app = express();
    * 
@@ -97,7 +97,7 @@ export class ErrorHandleMiddleware {
    * @example
    * ```typescript
    * import express from 'express';
-   * import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware';
+   * import { ErrorHandleMiddleware } from './middleware/errorHandleMiddleware.js';
    * 
    * const app = express();
    * 

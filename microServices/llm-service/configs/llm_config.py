@@ -30,12 +30,12 @@ class VectorStoreConfig:
 
 @dataclass
 class LLMConfig:
-    model: ModelConfig = None
-    embedding: EmbeddingConfig = None
-    vector_store: VectorStoreConfig = None
+    model: Optional[ModelConfig] = None
+    embedding: Optional[EmbeddingConfig] = None
+    vector_store: Optional[VectorStoreConfig] = None
     device: Optional[str] = None
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.model is None:
             self.model = ModelConfig()
         if self.embedding is None:

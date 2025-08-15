@@ -1,37 +1,23 @@
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.memory import ConversationBufferMemory
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from typing import Dict, Any, Optional, Generator, List
 import logging
-import requests
-from PIL import Image
-import io
 import json
 
 from config.llm_config import LLMConfig
 
 logger = logging.getLogger(__name__)
 
-class AIService:
+class SimpleAIService:
     def __init__(self, config: LLMConfig) -> None:
         self.config = config
         self.device = self.config.device
         self.model = None
         self.tokenizer = None
-        self.embeddings = None
-        self.vector_store = None
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True
-        )
+        self.conversation_history = []
         
-        logger.info(f"Initializing AI Service on device: {self.device}")
+        logger.info(f"Initializing Simple AI Service on device: {self.device}")
         self._load_model()
-        self._setup_embeddings()
-        self._setup_vector_store()
     
     def _load_model(self) -> None:
         """載入 SmolLM2 模型"""
@@ -67,41 +53,6 @@ class AIService:
             logger.error(f"Failed to load model: {str(e)}")
             raise e
     
-    def _setup_embeddings(self) -> None:
-        """設置 Embedding 模型"""
-        try:
-            self.embeddings = HuggingFaceEmbeddings(
-                model_name=self.config.embedding.model_name,
-                model_kwargs={'device': self.device}
-            )
-            logger.info("Embeddings model loaded successfully")
-        except Exception as e:
-            logger.error(f"Failed to load embeddings: {str(e)}")
-            raise e
-    
-    def _setup_vector_store(self) -> None:
-        """設置向量資料庫"""
-        try:
-            self.vector_store = Chroma(
-                embedding_function=self.embeddings,
-                persist_directory=self.config.vector_store.persist_directory
-            )
-            logger.info("Vector store initialized")
-        except Exception as e:
-            logger.error(f"Failed to setup vector store: {str(e)}")
-            self.vector_store = None
-    
-    def _process_image_url(self, url: str) -> Image.Image:
-        """處理圖像 URL"""
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            image = Image.open(io.BytesIO(response.content))
-            return image
-        except Exception as e:
-            logger.error(f"Failed to process image from URL {url}: {str(e)}")
-            raise e
-    
     def _format_messages(self, prompt: str, system_prompt: str = None) -> List[Dict]:
         """格式化訊息給 SmolLM2 模型"""
         messages = []
@@ -124,18 +75,24 @@ class AIService:
             )
             
             # Tokenize
-            inputs = self.tokenizer.encode(
+            inputs = self.tokenizer(
                 input_text, 
                 return_tensors="pt", 
                 padding=True, 
-                truncation=True
-            ).to(self.device)
+                truncation=True,
+                max_length=self.config.model.max_length
+            )
+            
+            # 移動到設備
+            input_ids = inputs['input_ids'].to(self.device)
+            attention_mask = inputs['attention_mask'].to(self.device)
             
             # 生成
             max_tokens = max_new_tokens or self.config.model.max_new_tokens
             with torch.no_grad():
                 outputs = self.model.generate(
-                    inputs,
+                    input_ids,
+                    attention_mask=attention_mask,
                     max_new_tokens=max_tokens,
                     temperature=self.config.model.temperature,
                     top_p=self.config.model.top_p,
@@ -145,7 +102,7 @@ class AIService:
                 )
             
             # 解碼，只返回新生成的部分
-            generated_tokens = outputs[0][inputs.shape[-1]:]
+            generated_tokens = outputs[0][input_ids.shape[-1]:]
             response = self.tokenizer.decode(generated_tokens, skip_special_tokens=True)
             
             return response.strip()
@@ -156,35 +113,20 @@ class AIService:
     def generate_response(self, prompt: str, use_rag: bool = False, image_url: Optional[str] = None, **kwargs) -> Dict[str, Any]:
         """產生單輪回應"""
         try:
-            sources = []
+            if image_url:
+                logger.warning("SmolLM2-135M-Instruct 不支援圖像處理，忽略 image_url")
             
-            if use_rag and self.vector_store:
-                # RAG 模式 - 檢索相關文件
-                retriever = self.vector_store.as_retriever(
-                    search_kwargs={"k": self.config.vector_store.retrieval_k}
-                )
-                docs = retriever.get_relevant_documents(prompt)
-                context = "\n".join([doc.page_content for doc in docs])
-                sources = [doc.page_content[:200] for doc in docs]
-                
-                # 使用 RAG 上下文
-                system_prompt = f"你是一個有用的助手。使用以下上下文資訊來回答用戶的問題：\n\n{context}"
-                messages = self._format_messages(prompt, system_prompt)
-            else:
-                # 直接生成
-                if image_url:
-                    # SmolLM2-135M-Instruct 不支援圖像，忽略圖像 URL
-                    logger.warning("SmolLM2-135M-Instruct 不支援圖像處理，忽略 image_url")
-                
-                messages = self._format_messages(prompt)
+            if use_rag:
+                logger.warning("簡化版本暫不支援 RAG 功能")
             
-            # 生成回應
+            # 直接生成
+            messages = self._format_messages(prompt)
             response_text = self._generate_text(messages)
             
             return {
                 "success": True,
                 "response": response_text,
-                "sources": sources,
+                "sources": [],
                 "model": self.config.model.model_name
             }
         except Exception as e:
@@ -198,31 +140,18 @@ class AIService:
     def generate_conversational_response(self, prompt: str, use_rag: bool = False, image_url: Optional[str] = None, **kwargs) -> Dict[str, Any]:
         """產生具記憶功能的對話回應"""
         try:
-            sources = []
+            if image_url:
+                logger.warning("SmolLM2-135M-Instruct 不支援圖像處理，忽略 image_url")
             
-            # 建立對話歷史
+            if use_rag:
+                logger.warning("簡化版本暫不支援 RAG 功能")
+            
+            # 建立對話歷史（簡化版，使用列表）
             messages = []
             
             # 添加歷史對話（最近 5 輪）
-            chat_history = self.memory.chat_memory.messages
-            for msg in chat_history[-10:]:  # 最近 10 條訊息（5輪對話）
-                if hasattr(msg, 'type'):
-                    role = "user" if msg.type == "human" else "assistant"
-                    messages.append({"role": role, "content": msg.content})
-            
-            if use_rag and self.vector_store:
-                # RAG + 對話記憶
-                retriever = self.vector_store.as_retriever(
-                    search_kwargs={"k": self.config.vector_store.retrieval_k}
-                )
-                docs = retriever.get_relevant_documents(prompt)
-                context = "\n".join([doc.page_content for doc in docs])
-                sources = [doc.page_content[:200] for doc in docs]
-                
-                # 在對話開頭添加系統提示
-                if not messages or messages[0]["role"] != "system":
-                    system_prompt = f"你是一個有用的助手。使用以下上下文資訊來回答用戶的問題：\n\n{context}"
-                    messages.insert(0, {"role": "system", "content": system_prompt})
+            for item in self.conversation_history[-10:]:  # 最近 10 條訊息
+                messages.append(item)
             
             # 添加當前用戶輸入
             messages.append({"role": "user", "content": prompt})
@@ -230,14 +159,14 @@ class AIService:
             # 生成回應
             response_text = self._generate_text(messages)
             
-            # 更新記憶
-            self.memory.chat_memory.add_user_message(prompt)
-            self.memory.chat_memory.add_ai_message(response_text)
+            # 更新對話歷史
+            self.conversation_history.append({"role": "user", "content": prompt})
+            self.conversation_history.append({"role": "assistant", "content": response_text})
             
             return {
                 "success": True,
                 "response": response_text,
-                "sources": sources,
+                "sources": [],
                 "model": self.config.model.model_name
             }
         except Exception as e:
@@ -249,25 +178,9 @@ class AIService:
             }
     
     def add_documents(self, texts: List[str]) -> Dict[str, Any]:
-        """新增文件到 RAG 系統"""
-        try:
-            if not self.vector_store:
-                return {"success": False, "error": "Vector store not available"}
-            
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=self.config.vector_store.chunk_size,
-                chunk_overlap=self.config.vector_store.chunk_overlap
-            )
-            
-            docs = text_splitter.create_documents(texts)
-            self.vector_store.add_documents(docs)
-            self.vector_store.persist()
-            
-            logger.info(f"Added {len(docs)} documents to vector store")
-            return {"success": True, "documents_added": len(docs)}
-        except Exception as e:
-            logger.error(f"Failed to add documents: {str(e)}")
-            return {"success": False, "error": str(e)}
+        """新增文件到 RAG 系統（簡化版暫不支援）"""
+        logger.warning("簡化版本暫不支援 RAG 功能")
+        return {"success": False, "error": "簡化版本暫不支援 RAG 功能"}
     
     def stream_generate(self, prompt: str, image_url: Optional[str] = None, **kwargs) -> Generator[str, None, None]:
         """串流生成文字"""
@@ -308,7 +221,7 @@ class AIService:
     
     def cleanup(self) -> None:
         """清理資源"""
-        logger.info("Cleaning up AI Service resources...")
+        logger.info("Cleaning up Simple AI Service resources...")
         # 清理 GPU 記憶體等資源
         if torch.cuda.is_available():
             torch.cuda.empty_cache()

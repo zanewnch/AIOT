@@ -11,8 +11,8 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { RolePermissionModel, RolePermissionCreationAttributes, RolePermissionAttributes } from '../../../models/RoleToPermissionModel';
-import { createLogger } from '../../../configs/loggerConfig';
+import { RolePermissionModel, RolePermissionCreationAttributes, RolePermissionAttributes } from '../../../models/RoleToPermissionModel.js';
+import { createLogger } from '../../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
 import { Op } from 'sequelize';
 

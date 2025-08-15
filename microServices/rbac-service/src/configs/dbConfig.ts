@@ -7,15 +7,15 @@
 // 匯入 Sequelize TypeScript 版本用於 ORM 操作
 import { Sequelize } from 'sequelize-typescript';
 // 匯入使用者模型用於使用者資料管理
-import { UserModel } from '../models/UserModel';
+import { UserModel } from '../models/UserModel.js';
 // 匯入角色模型用於角色管理
-import { RoleModel } from '../models/RoleModel';
+import { RoleModel } from '../models/RoleModel.js';
 // 匯入權限模型用於權限管理
-import { PermissionModel } from '../models/PermissionModel';
+import { PermissionModel } from '../models/PermissionModel.js';
 // 匯入使用者角色關聯模型用於使用者和角色的多對多關係
-import { UserRoleModel } from '../models/UserToRoleModel';
+import { UserRoleModel } from '../models/UserToRoleModel.js';
 // 匯入角色權限關聯模型用於角色和權限的多對多關係
-import { RolePermissionModel } from '../models/RoleToPermissionModel';
+import { RolePermissionModel } from '../models/RoleToPermissionModel.js';
 // RBAC 服務只包含 RBAC 相關模型，無人機和用戶偏好模型由其他服務管理
 
 /**
