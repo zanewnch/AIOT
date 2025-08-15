@@ -1,11 +1,11 @@
 /**
- * @fileoverview AIOT 系統應用程式主體配置檔案
+ * @fileoverview RBAC 微服務應用程式配置檔案
  *
- * 此檔案定義了 AIOT 系統的核心應用程式類別 App，負責：
+ * 此檔案定義了 RBAC 微服務的核心應用程式類別 App，負責：
  * - Express 應用程式的建立和配置
  * - 中間件的設定和管理
- * - 路由的註冊和配置
- * - 外部服務的連線管理（資料庫、Redis、RabbitMQ）
+ * - RBAC 路由的註冊和配置
+ * - 外部服務的連線管理（資料庫、Redis）
  * - 應用程式的生命週期管理（初始化、關閉）
  * - 錯誤處理機制的設定
  *
@@ -26,18 +26,7 @@ import { registerRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
-import { TYPES, DroneEventType } from './container/types.js';
-import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
-import type {
-    IDroneStatusService
-} from './types/services/IDroneStatusService.js';
-import type {
-    IDroneEventHandler,
-    IWebSocketService,
-    IWebSocketAuthMiddleware
-} from './types/container/websocket-interfaces.js';
-import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
-import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
+import { TYPES } from './container/types.js';
 
 /**
  * Express 應用程式配置類別
