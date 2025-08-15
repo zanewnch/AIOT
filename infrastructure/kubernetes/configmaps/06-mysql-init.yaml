@@ -1,0 +1,67 @@
+# MySQL 初始化腳本 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-scripts
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-mysql
+    app.kubernetes.io/name: mysql
+    app.kubernetes.io/component: init-scripts
+data:
+  01_create_databases.sql: |
+    -- 創建 RBAC 資料庫
+    CREATE DATABASE IF NOT EXISTS rbac_db;
+    
+    -- 創建 Drone 資料庫  
+    CREATE DATABASE IF NOT EXISTS drone_db;
+    
+    -- 創建 General 資料庫
+    CREATE DATABASE IF NOT EXISTS general_db;
+    
+    -- 創建 User Preference 資料庫
+    CREATE DATABASE IF NOT EXISTS user_preference_db;
+    
+    -- 授權給應用用戶
+    GRANT ALL PRIVILEGES ON rbac_db.* TO 'admin'@'%';
+    GRANT ALL PRIVILEGES ON drone_db.* TO 'admin'@'%';
+    GRANT ALL PRIVILEGES ON general_db.* TO 'admin'@'%';
+    GRANT ALL PRIVILEGES ON user_preference_db.* TO 'admin'@'%';
+    
+    FLUSH PRIVILEGES;
+  
+  02_basic_users.sql: |
+    -- 使用 RBAC 資料庫
+    USE rbac_db;
+    
+    -- 創建基本用戶表
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        email VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+    
+    -- 插入預設管理員用戶 (密碼: admin)
+    INSERT IGNORE INTO users (username, password_hash, email) VALUES 
+    ('admin', '$2b$10$rOq4.PtDN1mAO0/jmH0xeODKS.PzxJzV8jGLFHTJbNpGYhK7JnqGi', 'admin@aiot.local');
+  
+  03_basic_roles.sql: |
+    -- 使用 RBAC 資料庫
+    USE rbac_db;
+    
+    -- 創建角色表
+    CREATE TABLE IF NOT EXISTS roles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(50) UNIQUE NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- 插入基本角色
+    INSERT IGNORE INTO roles (name, description) VALUES 
+    ('admin', 'System Administrator'),
+    ('user', 'Regular User'),
+    ('viewer', 'Read-only User');

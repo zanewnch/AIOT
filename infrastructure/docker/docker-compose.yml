@@ -48,10 +48,10 @@ x-common-env: &common-env
   FESETTING_SERVICE_PORT: 50053
   FESETTING_SERVICE_URL: aiot-fesetting-service:50053
   
-  # Drone Realtime 服務
-  DRONE_REALTIME_SERVICE_HOST: aiot-drone-realtime-service
-  DRONE_REALTIME_SERVICE_PORT: 3004
-  DRONE_REALTIME_SERVICE_URL: http://aiot-drone-realtime-service:3004
+  # Drone WebSocket 服務
+  DRONE_WEBSOCKET_SERVICE_HOST: aiot-drone-websocket-service
+  DRONE_WEBSOCKET_SERVICE_PORT: 3004
+  DRONE_WEBSOCKET_SERVICE_URL: http://aiot-drone-websocket-service:3004
 
 services:
   # ==========================================================================
@@ -260,7 +260,7 @@ services:
   # RBAC 微服務
   rbac-service:
     build:
-      context: ../../microServices/rbac
+      context: ../../microServices/rbac-service
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-rbac-service
@@ -274,7 +274,7 @@ services:
       GRPC_PORT: 50051
       DB_NAME: rbac_db
     volumes:
-      - ../../microServices/rbac:/app
+      - ../../microServices/rbac-service:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -295,7 +295,7 @@ services:
   # Drone API 微服務 (僅 gRPC API，移除 WebSocket)
   drone-service:
     build:
-      context: ../../microServices/drone
+      context: ../../microServices/drone-service
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-service
@@ -309,7 +309,7 @@ services:
       GRPC_PORT: 50052
       DB_NAME: drone_db
     volumes:
-      - ../../microServices/drone:/app
+      - ../../microServices/drone-service:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -329,40 +329,30 @@ services:
       timeout: 10s
       retries: 3
 
-  # Drone 即時通訊微服務 (專門處理 WebSocket)
-  drone-realtime-service:
+  # Drone WebSocket 微服務 (專門處理 WebSocket)
+  drone-websocket-service:
     build:
-      context: ../../microServices/drone-realtime
+      context: ../../microServices/drone-websocket-service
       dockerfile: Dockerfile
     logging: *default-logging
-    container_name: aiot-drone-realtime-service
+    container_name: aiot-drone-websocket-service
     ports:
       - "3004:3004"   # WebSocket 服務
     environment:
-      NODE_ENV: development
-      SERVICE_NAME: drone-realtime-service
+      <<: *common-env
+      SERVICE_NAME: drone-websocket-service
       SERVICE_PORT: 3004
-      # MySQL 配置 (需要訪問無人機資料)
-      DB_HOST: aiot-mysqldb
-      DB_PORT: 3306
-      DB_USER: admin
-      DB_PASSWORD: admin
       DB_NAME: drone_db
-      # Redis 配置 (用於 WebSocket 連線狀態管理)
-      REDIS_HOST: aiot-redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      REDIS_URL: redis://aiot-redis:6379/0
       # CORS 配置
       CORS_ORIGIN: "*"
-      # OPA 配置 (透過 Kong Gateway)
-      OPA_URL: http://aiot-opa:8181
     volumes:
-      - ../../microServices/drone-realtime:/app
+      - ../../microServices/drone-websocket-service:/app
       - /app/node_modules
     networks:
       - aiot-network
     depends_on:
+      consul:
+        condition: service_healthy
       aiot-mysqldb:
         condition: service_healthy
       aiot-redis:
@@ -379,7 +369,7 @@ services:
   # User Preference 微服務
   fesetting-service:
     build:
-      context: ../../microServices/feSetting
+      context: ../../microServices/general-service
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-fesetting-service
@@ -393,7 +383,7 @@ services:
       GRPC_PORT: 50053
       DB_NAME: user_preference_db
     volumes:
-      - ../../microServices/feSetting:/app
+      - ../../microServices/general-service:/app
       - /app/node_modules
     networks:
       - aiot-network
