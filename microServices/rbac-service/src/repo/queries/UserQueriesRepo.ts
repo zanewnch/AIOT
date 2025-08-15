@@ -11,10 +11,10 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserModel } from '../../../models/rbac/UserModel.js';
-import { RoleModel } from '../../../models/rbac/RoleModel.js';
-import { PermissionModel } from '../../../models/rbac/PermissionModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+import { UserModel } from '../../../models/UserModel';
+import { RoleModel } from '../../../models/RoleModel';
+import { PermissionModel } from '../../../models/PermissionModel';
+import { createLogger } from '../../../configs/loggerConfig';
 
 const logger = createLogger('UserQueriesRepository');
 

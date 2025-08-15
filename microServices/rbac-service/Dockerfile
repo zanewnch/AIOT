@@ -26,4 +26,4 @@ COPY . .
 EXPOSE 3001
 
 # 執行階段：使用 tsx 啟動  
-CMD ["node", "--import", "tsx/esm", "src/server-simple.ts"]
+CMD ["node", "--import", "tsx/esm", "src/server.ts"]

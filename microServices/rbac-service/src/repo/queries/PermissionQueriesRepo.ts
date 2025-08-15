@@ -14,9 +14,9 @@ import { injectable } from 'inversify';
 import { 
   PermissionModel, 
   PermissionAttributes 
-} from '../../../models/rbac/PermissionModel.js';
-import { RoleModel } from '../../../models/rbac/RoleModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+} from '../../../models/PermissionModel';
+import { RoleModel } from '../../../models/RoleModel';
+import { createLogger } from '../../../configs/loggerConfig';
 import { Op } from 'sequelize';
 
 const logger = createLogger('PermissionQueriesRepository');

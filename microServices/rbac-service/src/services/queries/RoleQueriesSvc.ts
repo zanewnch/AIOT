@@ -25,11 +25,11 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { RoleQueriesRepository } from '../../repo/queries/rbac/RoleQueriesRepo.js';
-import type { RoleModel } from '../../models/rbac/RoleModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo';
+import type { RoleModel } from '../../models/RoleModel';
+import { getRedisClient } from '../../configs/redisConfig';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig';
 
 const logger = createLogger('RoleQueriesSvc');
 

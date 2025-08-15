@@ -24,24 +24,24 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../container/types.js';
-import { PermissionCommandsRepository } from '../../repo/commands/rbac/PermissionCommandsRepo.js';
-import { PermissionQueriesRepository } from '../../repo/queries/rbac/PermissionQueriesRepo.js';
-import type { PermissionModel } from '../../models/rbac/PermissionModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { TYPES } from '../../container/types';
+import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepo';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo';
+import type { PermissionModel } from '../../models/PermissionModel';
+import { getRedisClient } from '../../configs/redisConfig';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig';
 import type {
     IPermissionCommandsService
-} from '../../types/services/IPermissionCommandsService.js';
+} from '../../types/services/IPermissionCommandsService';
 import type {
     UserPermissions,
     CacheOptions,
     PermissionDTO,
     CreatePermissionRequest,
     UpdatePermissionRequest
-} from '../../types/services/IPermissionService.js';
-import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc.js';
+} from '../../types/services/IPermissionService';
+import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc';
 
 const logger = createLogger('PermissionCommandsSvc');
 
@@ -129,10 +129,10 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @param ttl 快取時間（秒）
      * @private
      */
-    private setCachedUserPermissions = async (
+    private async setCachedUserPermissions(
         userId: number,
         permissions: UserPermissions,
-        ttl: number = PermissionCommandsSvc.DEFAULT_CACHE_TTL
+        ttl = PermissionCommandsSvc.DEFAULT_CACHE_TTL
     ): Promise<void> {
         try {
             const redis = this.getRedisClient();
@@ -252,9 +252,9 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @param userId 使用者 ID
      * @param options 快取選項
      */
-    public refreshUserPermissionsCache = async (
+    public async refreshUserPermissionsCache(
         userId: number,
-        options: CacheOptions = { ttl: PermissionCommandsSvc.DEFAULT_CACHE_TTL, forceRefresh: true }
+        options = { ttl: PermissionCommandsSvc.DEFAULT_CACHE_TTL, forceRefresh: true }
     ): Promise<UserPermissions | null> {
         const permissions = await this.queryService.getUserPermissions(userId, { ...options, forceRefresh: true });
         

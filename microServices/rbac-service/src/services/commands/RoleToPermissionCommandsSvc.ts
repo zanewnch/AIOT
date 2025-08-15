@@ -30,22 +30,22 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../container/types.js';
+import { TYPES } from '../../container/types';
 // 匯入角色權限命令資料存取層
-import { RolePermissionCommandsRepository } from '../../repo/commands/rbac/RolePermissionCommandsRepo.js';
+import { RolePermissionCommandsRepository } from '../../repo/commands/RolePermissionCommandsRepo';
 // 匯入角色查詢資料存取層，用於驗證
-import { RoleQueriesRepository } from '../../repo/queries/rbac/RoleQueriesRepo.js';
+import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo';
 // 匯入權限查詢資料存取層，用於驗證
-import { PermissionQueriesRepository } from '../../repo/queries/rbac/PermissionQueriesRepo.js';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo';
 // 匯入 Redis 客戶端配置，用於快取管理
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { getRedisClient } from '../../configs/redisConfig';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig';
 // 匯入查詢服務，用於驗證操作
-import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
-import type { IRoleToPermissionQueriesService } from '../queries/RoleToPermissionQueriesSvc.js';
+import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc';
+import type { IRoleToPermissionQueriesService } from '../queries/RoleToPermissionQueriesSvc';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('RoleToPermissionCommandsSvc');

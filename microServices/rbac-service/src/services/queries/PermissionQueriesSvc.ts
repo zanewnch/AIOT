@@ -27,20 +27,20 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserQueriesRepository } from '../../repo/queries/rbac/UserQueriesRepo.js';
-import { PermissionQueriesRepository } from '../../repo/queries/rbac/PermissionQueriesRepo.js';
-import type { PermissionModel } from '../../models/rbac/PermissionModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo';
+import type { PermissionModel } from '../../models/PermissionModel';
+import { getRedisClient } from '../../configs/redisConfig';
 import type { RedisClientType } from 'redis';
-import { createLogger, logPermissionCheck } from '../../configs/loggerConfig.js';
+import { createLogger, logPermissionCheck } from '../../configs/loggerConfig';
 import type {
     IPermissionQueriesService
-} from '../../types/services/IPermissionQueriesService.js';
+} from '../../types/services/IPermissionQueriesService';
 import type {
     UserPermissions,
     CacheOptions,
     PermissionDTO
-} from '../../types/services/IPermissionService.js';
+} from '../../types/services/IPermissionService';
 
 const logger = createLogger('PermissionQueriesSvc');
 
@@ -352,10 +352,10 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 是否具有所有權限
      */
-    public userHasAllPermissions = async (
+    public async userHasAllPermissions(
         userId: number,
         permissions: string[],
-        options: CacheOptions = {}
+        options = {}
     ): Promise<boolean> {
         const userPermissions = await this.getUserPermissions(userId, options);
 
@@ -375,10 +375,10 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 是否具有角色
      */
-    public userHasRole = async (
+    public async userHasRole(
         userId: number,
         roleName: string,
-        options: CacheOptions = {}
+        options = {}
     ): Promise<boolean> {
         const userPermissions = await this.getUserPermissions(userId, options);
 
@@ -395,9 +395,9 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 權限名稱陣列
      */
-    public getUserPermissionsList = async (
+    public async getUserPermissionsList(
         userId: number,
-        options: CacheOptions = {}
+        options = {}
     ): Promise<string[]> {
         const userPermissions = await this.getUserPermissions(userId, options);
         return userPermissions ? userPermissions.permissions : [];
@@ -409,9 +409,9 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 角色名稱陣列
      */
-    public getUserRolesList = async (
+    public async getUserRolesList(
         userId: number,
-        options: CacheOptions = {}
+        options = {}
     ): Promise<string[]> {
         const userPermissions = await this.getUserPermissions(userId, options);
         return userPermissions ? userPermissions.roles : [];
@@ -423,9 +423,9 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @param options 快取選項
      * @returns 使用者權限資料陣列
      */
-    public getBatchUserPermissions = async (
+    public async getBatchUserPermissions(
         userIds: number[],
-        options: CacheOptions = {}
+        options = {}
     ): Promise<(UserPermissions | null)[]> {
         const promises = userIds.map(userId =>
             this.getUserPermissions(userId, options)

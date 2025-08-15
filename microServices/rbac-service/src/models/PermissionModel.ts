@@ -47,8 +47,8 @@ import {
 } from 'sequelize-typescript';
 
 // 導入相關的模型類別
-import { RoleModel } from './RoleModel.js';                           // 角色模型，用於建立多對多關聯
-import { RolePermissionModel } from './RoleToPermissionModel.js';     // 角色權限關聯表模型
+import { RoleModel } from './RoleModel';                           // 角色模型，用於建立多對多關聯
+import { RolePermissionModel } from './RoleToPermissionModel';     // 角色權限關聯表模型
 import type { Optional } from 'sequelize';                           // Sequelize 的選擇性類型定義
 
 /**

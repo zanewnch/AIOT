@@ -17,27 +17,27 @@
 import 'reflect-metadata'; // InversifyJS 需要的元數據反射
 import express from 'express'; // Express 框架，用於建立 HTTP 伺服器應用程式
 import { Server as HTTPServer } from 'http'; // HTTP 伺服器
-import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
-import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
-import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
-import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
-import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
-import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
+import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware'; // 錯誤處理中間件
+import { createSequelizeInstance } from './configs/dbConfig'; // 資料庫連線配置
+import { RabbitMQManager } from './configs/rabbitmqConfig'; // RabbitMQ 訊息佇列管理器
+import { setupPassportJWT } from './configs/authConfig'; // JWT 身份驗證配置
+import { redisConfig } from './configs/redisConfig'; // Redis 快取配置
+import { registerAllRoutes } from './routes/index'; // 統一路由管理
+import { setupExpressMiddleware } from './configs/serverConfig'; // Express 中間件設定
 // InversifyJS 容器和類型
-import { container, ContainerUtils } from './container/container.js';
-import { TYPES, DroneEventType } from './container/types.js';
-import { DroneEventSetup } from './websocket/DroneEventSetup.js'; // 無人機事件設置器
+import { container, ContainerUtils } from './container/container';
+import { TYPES, DroneEventType } from './container/types';
+import { DroneEventSetup } from './websocket/DroneEventSetup'; // 無人機事件設置器
 import type {
     IDroneStatusService
-} from './types/services/IDroneStatusService.js';
+} from './types/services/IDroneStatusService';
 import type {
     IDroneEventHandler,
     IWebSocketService,
     IWebSocketAuthMiddleware
-} from './types/container/websocket-interfaces.js';
-import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
-import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
+} from './types/container/websocket-interfaces';
+import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc';
+import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc';
 
 /**
  * Express 應用程式配置類別

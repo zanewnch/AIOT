@@ -14,8 +14,8 @@ import { injectable } from 'inversify';
 import { 
   RoleModel, 
   RoleCreationAttributes 
-} from '../../../models/rbac/RoleModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+} from '../../../models/RoleModel';
+import { createLogger } from '../../../configs/loggerConfig';
 import type { Transaction } from 'sequelize';
 
 const logger = createLogger('RoleCommandsRepository');

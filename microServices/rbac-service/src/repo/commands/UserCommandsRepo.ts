@@ -11,9 +11,9 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserModel } from '../../../models/rbac/UserModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
-import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
+import { UserModel } from '../../../models/UserModel';
+import { createLogger } from '../../../configs/loggerConfig';
+import { loggerDecorator } from '../../patterns/LoggerDecorator';
 
 const logger = createLogger('UserCommandsRepository');
 

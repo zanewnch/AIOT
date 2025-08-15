@@ -3,7 +3,7 @@
  * 只有兩個參數：originalFunction 和 methodName
  */
 
-import { createLogger } from '../configs/loggerConfig.js';
+import { createLogger } from '../configs/loggerConfig';
 
 const logger = createLogger('DECORATOR');
 

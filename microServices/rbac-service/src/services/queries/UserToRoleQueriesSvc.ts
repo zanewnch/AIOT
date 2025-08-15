@@ -25,14 +25,14 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserRoleQueriesRepository } from '../../repo/queries/rbac/UserRoleQueriesRepo.js';
-import { UserQueriesRepository } from '../../repo/queries/rbac/UserQueriesRepo.js';
-import { RoleQueriesRepository } from '../../repo/queries/rbac/RoleQueriesRepo.js';
-import { UserModel } from '../../models/rbac/UserModel.js';
-import { RoleModel } from '../../models/rbac/RoleModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { UserRoleQueriesRepository } from '../../repo/queries/UserRoleQueriesRepo';
+import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo';
+import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo';
+import { UserModel } from '../../models/UserModel';
+import { RoleModel } from '../../models/RoleModel';
+import { getRedisClient } from '../../configs/redisConfig';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig';
 
 const logger = createLogger('UserToRoleQueriesSvc');
 

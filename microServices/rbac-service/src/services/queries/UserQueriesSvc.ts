@@ -31,12 +31,12 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserQueriesRepository } from '../../repo/queries/rbac/UserQueriesRepo.js';
-import { UserModel } from '../../models/rbac/UserModel.js';
+import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo';
+import { UserModel } from '../../models/UserModel';
 import bcrypt from 'bcrypt';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { getRedisClient } from '../../configs/redisConfig';
 import type { RedisClientType } from 'redis';
-import { createLogger } from '../../configs/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig';
 
 const logger = createLogger('UserQueriesSvc');
 

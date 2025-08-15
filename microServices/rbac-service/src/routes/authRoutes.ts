@@ -15,11 +15,11 @@
  */
 
 import { Router } from 'express';
-import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
-import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
-import { AuthMiddleware } from '../middlewares/AuthMiddleware.js';
-import { container } from '../container/container.js';
-import { TYPES } from '../container/types.js';
+import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl';
+import { AuthMiddleware } from '../middlewares/AuthMiddleware';
+import { container } from '../container/container';
+import { TYPES } from '../container/types';
 
 /**
  * 認證路由類別
