@@ -8,6 +8,5 @@
     "mysqldb",
     "rabbitmq"
   ],
-  "dotnet.preferCSharpExtension": true,
-  "workbench.activityBar.orientation": "vertical"
+  "dotnet.preferCSharpExtension": true
 }

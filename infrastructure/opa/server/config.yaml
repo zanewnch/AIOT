@@ -39,9 +39,9 @@ caching:
   inter_query_builtin_cache:
     max_size_bytes: 104857600  # 100MB
 
-# Distributed tracing - using HTTP instead of deprecated jaeger type
+# Distributed tracing
 distributed_tracing:
-  type: http
+  type: jaeger
   address: http://jaeger:14268/api/traces
   service_name: opa-server
 

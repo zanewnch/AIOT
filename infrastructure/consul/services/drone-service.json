@@ -10,8 +10,8 @@
       "nodejs",
       "grpc"
     ],
-    "address": "drone-service",
-    "port": 50052,
+    "address": "aiot-drone-service",
+    "port": 3002,
     "meta": {
       "version": "1.0.0",
       "env": "development",
@@ -20,7 +20,7 @@
     "check": {
       "id": "drone-service-grpc",
       "name": "Drone gRPC Health Check",
-      "grpc": "drone-service:50052",
+      "grpc": "aiot-drone-service:50052",
       "interval": "10s",
       "timeout": "3s",
       "deregister_critical_service_after": "30s"
@@ -29,7 +29,7 @@
       {
         "id": "drone-service-grpc-health",
         "name": "Drone gRPC Health Check",
-        "grpc": "drone-service:50052",
+        "grpc": "aiot-drone-service:50052",
         "interval": "30s",
         "timeout": "5s"
       }

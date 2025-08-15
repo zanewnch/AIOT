@@ -91,7 +91,7 @@ export const useOptimisticCommand = () => {
         logger.info('Sending drone command', { command });
         
         // 發送到後端 API
-        const response = await apiClient.post('/api/drone/commands/send', {
+        const response = await apiClient.post('/api/drone-command/send', {
           command: command.type,
           droneId: command.droneId || 'default',
           parameters: command.parameters || {},

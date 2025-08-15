@@ -46,7 +46,7 @@ export class RequestUtils {
    * const requestUtils = new RequestUtils('https://api.example.com', 5000);
    * ```
    */
-  constructor(baseURL: string = 'http://localhost:30000/', timeout: number = 10000) {
+  constructor(baseURL: string = 'http://localhost:8000/', timeout: number = 10000) {
     // 建立 axios 實例並設定基本配置
     this.apiClient = axios.create({
       baseURL, // 設定 API 基礎 URL

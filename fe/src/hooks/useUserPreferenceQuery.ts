@@ -46,7 +46,7 @@ export class UserPreferenceQuery {
       queryKey: this.USER_PREFERENCE_QUERY_KEYS.USER_PREFERENCES,
       queryFn: async (): Promise<UserPreferences> => {
         try {
-          const response = await apiClient.get('/api/general/user-preferences');
+          const response = await apiClient.get('/api/user/preferences');
           const result = RequestResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
@@ -80,7 +80,7 @@ export class UserPreferenceQuery {
     return useMutation({
       mutationFn: async (data: CreateUserPreferencesRequest): Promise<UserPreferences> => {
         try {
-          const response = await apiClient.post('/api/general/user-preferences', data);
+          const response = await apiClient.post('/api/user/preferences', data);
           const result = RequestResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
@@ -118,7 +118,7 @@ export class UserPreferenceQuery {
     return useMutation({
       mutationFn: async (data: UpdateUserPreferencesRequest): Promise<UserPreferences> => {
         try {
-          const response = await apiClient.put('/api/general/user-preferences', data);
+          const response = await apiClient.put('/api/user/preferences', data);
           const result = RequestResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {

@@ -50,7 +50,7 @@ interface DroneStatus {
  * API 函數：獲取無人機狀態數據
  */
 const fetchDroneStatus = async (): Promise<DroneStatus[]> => {
-  const response = await apiClient.get('/api/drone/statuses/data');
+  const response = await apiClient.get('/api/drone-status/data');
   const result = RequestResult.fromResponse<DroneStatus[]>(response);
   
   if (result.isError()) {

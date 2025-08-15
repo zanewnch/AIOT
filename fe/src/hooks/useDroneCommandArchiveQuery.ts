@@ -111,7 +111,7 @@ export class DroneCommandArchiveQuery {
           if (options.sortBy) params.append('sortBy', options.sortBy);
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
-          const url = `/api/drone/commands/archive/data?${params.toString()}`;
+          const url = `/api/drone-commands-archive/data?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -157,7 +157,7 @@ export class DroneCommandArchiveQuery {
           if (options.sortBy) params.append('sortBy', options.sortBy);
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
-          const url = `/api/drone/commands/archive/data/drone/${droneId}?${params.toString()}`;
+          const url = `/api/drone-commands-archive/data/drone/${droneId}?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -204,7 +204,7 @@ export class DroneCommandArchiveQuery {
           if (query.status) params.append('status', query.status);
           if (query.commandType) params.append('commandType', query.commandType);
           
-          const url = `/api/drone/commands/archive/data/time-range?${params.toString()}`;
+          const url = `/api/drone-commands-archive/data/time-range?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -249,7 +249,7 @@ export class DroneCommandArchiveQuery {
           if (options.limit) params.append('limit', options.limit.toString());
           if (options.page) params.append('page', options.page.toString());
           
-          const url = `/api/drone/commands/archive/data/status/${status}?${params.toString()}`;
+          const url = `/api/drone-commands-archive/data/status/${status}?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -294,7 +294,7 @@ export class DroneCommandArchiveQuery {
           if (options.limit) params.append('limit', options.limit.toString());
           if (options.page) params.append('page', options.page.toString());
           
-          const url = `/api/drone/commands/archive/data/command-type/${commandType}?${params.toString()}`;
+          const url = `/api/drone-commands-archive/data/command-type/${commandType}?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -334,7 +334,7 @@ export class DroneCommandArchiveQuery {
         try {
           logger.debug('Fetching latest commands archive', { limit });
           
-          const url = `/api/drone/commands/archive/data?limit=${limit}&sortBy=issued_at&sortOrder=DESC`;
+          const url = `/api/drone-commands-archive/data?limit=${limit}&sortBy=issued_at&sortOrder=DESC`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {

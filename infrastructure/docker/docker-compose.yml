@@ -127,9 +127,10 @@ services:
     command:
       - "run"
       - "--server"
-      - "--addr=0.0.0.0:8181"
+      - "--config-file=/etc/opa/config.yaml"
       - "/etc/opa/policies"
     volumes:
+      - ../opa/server/config.yaml:/etc/opa/config.yaml:ro
       - ../opa/policies:/etc/opa/policies:ro
       - ../opa/data:/etc/opa/data:ro
     networks:
@@ -259,7 +260,7 @@ services:
   # RBAC 微服務
   rbac-service:
     build:
-      context: ../../microServices/rbac-service
+      context: ../../microServices/rbac
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-rbac-service
@@ -273,7 +274,7 @@ services:
       GRPC_PORT: 50051
       DB_NAME: rbac_db
     volumes:
-      - ../../microServices/rbac-service:/app
+      - ../../microServices/rbac:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -294,7 +295,7 @@ services:
   # Drone API 微服務 (僅 gRPC API，移除 WebSocket)
   drone-service:
     build:
-      context: ../../microServices/drone-service
+      context: ../../microServices/drone
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-service
@@ -308,7 +309,7 @@ services:
       GRPC_PORT: 50052
       DB_NAME: drone_db
     volumes:
-      - ../../microServices/drone-service:/app
+      - ../../microServices/drone:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -331,7 +332,7 @@ services:
   # Drone 即時通訊微服務 (專門處理 WebSocket)
   drone-realtime-service:
     build:
-      context: ../../microServices/drone-websocket-service
+      context: ../../microServices/drone-realtime
       dockerfile: Dockerfile
     logging: *default-logging
     container_name: aiot-drone-realtime-service
@@ -357,7 +358,7 @@ services:
       # OPA 配置 (透過 Kong Gateway)
       OPA_URL: http://aiot-opa:8181
     volumes:
-      - ../../microServices/drone-websocket-service:/app
+      - ../../microServices/drone-realtime:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -367,7 +368,7 @@ services:
       aiot-redis:
         condition: service_started
       aiot-opa:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
@@ -375,24 +376,24 @@ services:
       timeout: 10s
       retries: 3
 
-  # General Service 微服務 (替代 feSetting)
-  general-service:
+  # User Preference 微服務
+  fesetting-service:
     build:
-      context: ../../microServices/general-service
+      context: ../../microServices/feSetting
       dockerfile: Dockerfile
     logging: *default-logging
-    container_name: aiot-general-service
+    container_name: aiot-fesetting-service
     ports:
       - "3003:3003"   # HTTP API
       - "50053:50053" # gRPC
     environment:
       <<: *common-env
-      SERVICE_NAME: general-service
+      SERVICE_NAME: fesetting-service
       SERVICE_PORT: 3003
       GRPC_PORT: 50053
-      DB_NAME: general_db
+      DB_NAME: user_preference_db
     volumes:
-      - ../../microServices/general-service:/app
+      - ../../microServices/feSetting:/app
       - /app/node_modules
     networks:
       - aiot-network
@@ -408,78 +409,6 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Docs Service 微服務
-  docs-service:
-    build:
-      context: ../../microServices/docs-service
-      dockerfile: Dockerfile
-    logging: *default-logging
-    container_name: aiot-docs-service
-    ports:
-      - "3005:3005"   # HTTP API
-    environment:
-      <<: *common-env
-      SERVICE_NAME: docs-service
-      SERVICE_PORT: 3005
-      DB_NAME: docs_db
-    volumes:
-      - ../../microServices/docs-service:/app
-      - /app/node_modules
-    networks:
-      - aiot-network
-    depends_on:
-      consul:
-        condition: service_healthy
-      aiot-mysqldb:
-        condition: service_healthy
-      aiot-redis:
-        condition: service_started
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # LLM 微服務 (Django)
-  llm-service:
-    build:
-      context: ../../microServices/llm-service
-      dockerfile: Dockerfile
-    logging: *default-logging
-    container_name: aiot-llm-service
-    ports:
-      - "8020:8020"   # Django HTTP API
-    environment:
-      <<: *common-env
-      SERVICE_NAME: llm-service
-      SERVICE_PORT: 8020
-      DJANGO_SETTINGS_MODULE: llm.settings
-      DB_NAME: llm_db
-      # Django specific environment variables
-      DJANGO_DEBUG: "True"
-      DJANGO_SECRET_KEY: aiot-django-secret-key-2024
-      PYTHONDONTWRITEBYTECODE: 1
-      PYTHONUNBUFFERED: 1
-    volumes:
-      - ../../microServices/llm-service:/app
-      - llm_chroma_db:/app/chroma_db
-    networks:
-      - aiot-network
-    depends_on:
-      consul:
-        condition: service_healthy
-      aiot-mysqldb:
-        condition: service_healthy
-      aiot-redis:
-        condition: service_started
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8020/health/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -542,8 +471,6 @@ volumes:
   grafana_data:
     driver: local
   kong_logs:
-    driver: local
-  llm_chroma_db:
     driver: local
 
 # ==========================================================================
