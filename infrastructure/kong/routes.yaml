@@ -60,11 +60,13 @@ routes:
       - realtime
       - secure
 
-  # FeSetting 路由 - 僅允許 HTTPS 訪問
-  - name: fesetting-routes
-    service: fesetting-service
+  # General 路由 - 僅允許 HTTPS 訪問 (原 FeSetting 服務)
+  - name: general-routes
+    service: general-service
     paths:
       - /api/user-preferences
+      - /api/health
+      - /api/info
     strip_path: false
     preserve_host: false
     protocols:
@@ -72,4 +74,6 @@ routes:
     tags:
       - user-preferences
       - settings
+      - health
+      - general
       - secure

@@ -45,10 +45,10 @@ services:
       - websocket
       - realtime
 
-  # FeSetting 微服務 - 使用 gRPC 協議
-  - name: fesetting-service
+  # General 微服務 - 使用 gRPC 協議 (原 FeSetting 服務)
+  - name: general-service
     protocol: grpc
-    host: aiot-fesetting-service
+    host: aiot-general-service
     port: 50053
     connect_timeout: 60000
     write_timeout: 60000
@@ -57,4 +57,5 @@ services:
     tags:
       - user-preferences
       - settings
+      - general
       - grpc

@@ -24,8 +24,8 @@ export class FeSettingGrpcClient {
   private serviceUrl: string;
 
   constructor() {
-    // 從環境變數獲取 FeSetting 服務地址
-    this.serviceUrl = process.env.FESETTING_SERVICE_URL || 'aiot-fesetting-service:50053';
+    // 從環境變數獲取 General 服務地址（原 FeSetting 服務已重構為 General 服務）
+    this.serviceUrl = process.env.GENERAL_SERVICE_URL || 'aiot-general-service:50053';
     this.initializeClient();
   }
 
@@ -33,8 +33,8 @@ export class FeSettingGrpcClient {
    * 初始化 gRPC 客戶端
    */
   private initializeClient(): void {
-    // 載入 FeSetting proto 文件
-    const PROTO_PATH = path.join(__dirname, '../../../proto/fesetting.proto');
+    // 載入 General proto 文件（原 FeSetting 服務已重構為 General 服務）
+    const PROTO_PATH = path.join(__dirname, '../../../proto/general.proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
       keepCase: true,
@@ -44,15 +44,15 @@ export class FeSettingGrpcClient {
       oneofs: true,
     });
 
-    const feSettingProto = grpc.loadPackageDefinition(packageDefinition) as any;
+    const generalProto = grpc.loadPackageDefinition(packageDefinition) as any;
     
     // 創建 gRPC 客戶端
-    this.client = new feSettingProto.fesetting.FeSettingService(
+    this.client = new generalProto.general.GeneralService(
       this.serviceUrl,
       grpc.credentials.createInsecure()
     );
 
-    console.log(`🔗 FeSetting gRPC Client initialized: ${this.serviceUrl}`);
+    console.log(`🔗 General gRPC Client initialized: ${this.serviceUrl}`);
   }
 
   /**
@@ -63,12 +63,19 @@ export class FeSettingGrpcClient {
     category?: string;
   }): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.client.GetUserPreferences(request, (error: any, response: any) => {
+      const req = {
+        user_id: request.user_id,
+        category: request.category || '',
+        page: 1,
+        limit: 100
+      };
+      
+      this.client.GetUserPreferences(req, (error: any, response: any) => {
         if (error) {
-          console.error('❌ FeSetting GetUserPreferences error:', error);
+          console.error('❌ General GetUserPreferences error:', error);
           reject(error);
         } else {
-          console.log(`✅ FeSetting GetUserPreferences success for user ${request.user_id}`);
+          console.log(`✅ General GetUserPreferences success for user ${request.user_id}`);
           resolve(response);
         }
       });
@@ -85,12 +92,20 @@ export class FeSettingGrpcClient {
     category?: string;
   }): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.client.CreateUserPreference(preferenceData, (error: any, response: any) => {
+      const req = {
+        user_id: preferenceData.user_id,
+        preference_key: preferenceData.preference_key,
+        preference_value: preferenceData.preference_value,
+        category: preferenceData.category || 'drone',
+        description: ''
+      };
+      
+      this.client.CreateUserPreference(req, (error: any, response: any) => {
         if (error) {
-          console.error('❌ FeSetting CreateUserPreference error:', error);
+          console.error('❌ General CreateUserPreference error:', error);
           reject(error);
         } else {
-          console.log(`✅ FeSetting CreateUserPreference success for user ${preferenceData.user_id}`);
+          console.log(`✅ General CreateUserPreference success for user ${preferenceData.user_id}`);
           resolve(response);
         }
       });
@@ -106,12 +121,19 @@ export class FeSettingGrpcClient {
     category?: string;
   }): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.client.UpdateUserPreference(request, (error: any, response: any) => {
+      const req = {
+        preference_id: request.preference_id,
+        preference_value: request.preference_value,
+        category: request.category || 'drone',
+        description: ''
+      };
+      
+      this.client.UpdateUserPreference(req, (error: any, response: any) => {
         if (error) {
-          console.error('❌ FeSetting UpdateUserPreference error:', error);
+          console.error('❌ General UpdateUserPreference error:', error);
           reject(error);
         } else {
-          console.log(`✅ FeSetting UpdateUserPreference success for preference ${request.preference_id}`);
+          console.log(`✅ General UpdateUserPreference success for preference ${request.preference_id}`);
           resolve(response);
         }
       });
@@ -161,7 +183,7 @@ export class FeSettingGrpcClient {
   close(): void {
     if (this.client) {
       this.client.close();
-      console.log('🔌 FeSetting gRPC Client connection closed');
+      console.log('🔌 General gRPC Client connection closed');
     }
   }
 }

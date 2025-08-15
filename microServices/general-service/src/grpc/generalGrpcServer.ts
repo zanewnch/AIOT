@@ -48,6 +48,10 @@ export class GeneralGrpcServer {
     const generalProto = grpc.loadPackageDefinition(packageDefinition) as any;
 
     this.server.addService(generalProto.general.GeneralService.service, {
+      // 健康檢查和服務資訊方法
+      HealthCheck: this.healthCheck.bind(this),
+      GetServiceInfo: this.getServiceInfo.bind(this),
+
       // 使用者偏好設定方法
       GetUserPreferences: this.getUserPreferences.bind(this),
       GetUserPreferenceById: this.getUserPreferenceById.bind(this),
@@ -226,6 +230,49 @@ export class GeneralGrpcServer {
       success: true,
       message: 'Language settings updated successfully'
     });
+  }
+
+  // ========== 健康檢查和服務資訊方法 ==========
+  private async healthCheck(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
+    try {
+      callback(null, {
+        status: 'ok',
+        service: 'general',
+        message: 'general service is running',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+      });
+    } catch (error) {
+      callback(null, {
+        status: 'error',
+        service: 'general',
+        message: 'general service health check failed',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+      });
+    }
+  }
+
+  private async getServiceInfo(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
+    try {
+      callback(null, {
+        service: 'general',
+        description: 'General Setting Management Service',
+        version: '1.0.0',
+        author: 'AIOT Team',
+        features: [
+          'User Preference Management',
+          'Dynamic Documentation System',
+          'CQRS Architecture',
+          'JWT-based Role Authorization',
+          'RESTful API',
+          'gRPC API'
+        ]
+      });
+    } catch (error) {
+      console.error('Service info error:', error);
+      callback(error as grpc.ServiceError, null);
+    }
   }
 
   /**

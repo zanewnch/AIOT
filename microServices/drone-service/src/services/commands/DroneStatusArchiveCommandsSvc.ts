@@ -12,9 +12,10 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/DroneStatusArchiveCommandsRepo.js';
 import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/DroneStatusArchiveQueriesRepo.js';
+import { TYPES } from '../../container/types.js';
 import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusArchiveRepository } from '../../types/repositories/IDroneStatusArchiveRepository.js';
@@ -40,18 +41,22 @@ export class DroneStatusArchiveCommandsSvc {
     private archiveRepository: IDroneStatusArchiveRepository; // 組合介面
     private queryService: DroneStatusArchiveQueriesSvc;
 
-    constructor(archiveRepository?: IDroneStatusArchiveRepository) {
-        this.commandsRepository = new DroneStatusArchiveCommandsRepository();
-        this.queriesRepository = new DroneStatusArchiveQueriesRepository();
+    constructor(
+        @inject(TYPES.DroneStatusArchiveCommandsRepository) commandsRepository: DroneStatusArchiveCommandsRepository,
+        @inject(TYPES.DroneStatusArchiveQueriesRepository) queriesRepository: DroneStatusArchiveQueriesRepository,
+        @inject(TYPES.DroneStatusArchiveQueriesSvc) queryService: DroneStatusArchiveQueriesSvc
+    ) {
+        this.commandsRepository = commandsRepository;
+        this.queriesRepository = queriesRepository;
         
         // 創建組合repository
-        this.archiveRepository = archiveRepository || Object.assign(
+        this.archiveRepository = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
         ) as IDroneStatusArchiveRepository;
         
-        this.queryService = new DroneStatusArchiveQueriesSvc();
+        this.queryService = queryService;
     }
 
     /**

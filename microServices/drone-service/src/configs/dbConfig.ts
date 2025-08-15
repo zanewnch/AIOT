@@ -200,37 +200,43 @@ export const createSequelizeInstance = (): Sequelize => {
  * @param sequelize Sequelize 實例
  */
 const setupPoolEventListeners = (sequelize: Sequelize): void => {
-  const connectionManager = sequelize.connectionManager as any;
-  
-  if (connectionManager && connectionManager.pool) {
-    // 連接獲取事件
-    connectionManager.pool.on('acquire', (connection: any) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🔗 Connection acquired: ${connection.threadId || connection.processID}`);
-      }
-    });
+  try {
+    const connectionManager = sequelize.connectionManager as any;
+    
+    if (connectionManager && connectionManager.pool && typeof connectionManager.pool.on === 'function') {
+      // 連接獲取事件
+      connectionManager.pool.on('acquire', (connection: any) => {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔗 Connection acquired: ${connection.threadId || connection.processID}`);
+        }
+      });
 
-    // 連接釋放事件
-    connectionManager.pool.on('release', (connection: any) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🔓 Connection released: ${connection.threadId || connection.processID}`);
-      }
-    });
+      // 連接釋放事件
+      connectionManager.pool.on('release', (connection: any) => {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔓 Connection released: ${connection.threadId || connection.processID}`);
+        }
+      });
 
-    // 連接創建事件
-    connectionManager.pool.on('create', (connection: any) => {
-      console.log(`✨ New connection created: ${connection.threadId || connection.processID}`);
-    });
+      // 連接創建事件
+      connectionManager.pool.on('create', (connection: any) => {
+        console.log(`✨ New connection created: ${connection.threadId || connection.processID}`);
+      });
 
-    // 連接銷毀事件
-    connectionManager.pool.on('destroy', (connection: any) => {
-      console.log(`💀 Connection destroyed: ${connection.threadId || connection.processID}`);
-    });
+      // 連接銷毀事件
+      connectionManager.pool.on('destroy', (connection: any) => {
+        console.log(`💀 Connection destroyed: ${connection.threadId || connection.processID}`);
+      });
 
-    // 連接池錯誤事件
-    connectionManager.pool.on('error', (error: any) => {
-      console.error('❌ Connection pool error:', error);
-    });
+      // 連接池錯誤事件
+      connectionManager.pool.on('error', (error: any) => {
+        console.error('❌ Connection pool error:', error);
+      });
+    } else {
+      console.log('⚠️ Connection pool not available for event listeners');
+    }
+  } catch (error) {
+    console.warn('⚠️ Could not setup pool event listeners:', error);
   }
 };
 

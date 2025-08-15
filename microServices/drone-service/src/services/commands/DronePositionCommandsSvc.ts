@@ -38,10 +38,10 @@ export class DronePositionCommandsSvc {
     private dronePositionRepository: IDronePositionRepository; // 組合介面
 
     constructor(
-        @inject(TYPES.DronePositionCommandsSvc) 
+        @inject(TYPES.DronePositionCommandsRepository) 
         private readonly commandsRepository: DronePositionCommandsRepository,
         
-        @inject(TYPES.DronePositionQueriesSvc) 
+        @inject(TYPES.DronePositionQueriesRepository) 
         private readonly queriesRepository: DronePositionQueriesRepository,
         
         @inject(TYPES.DronePositionQueriesSvc) 

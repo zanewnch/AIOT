@@ -257,7 +257,7 @@ services:
   # 微服務 (Microservices)
   # ==========================================================================
 
-  # RBAC 微服務
+  # RBAC 微服務 (純 gRPC)
   rbac-service:
     build:
       context: ../../microServices/rbac-service
@@ -265,12 +265,10 @@ services:
     logging: *default-logging
     container_name: aiot-rbac-service
     ports:
-      - "3001:3001"   # HTTP API
-      - "50051:50051" # gRPC
+      - "50051:50051" # gRPC only
     environment:
       <<: *common-env
       SERVICE_NAME: rbac-service
-      SERVICE_PORT: 3001
       GRPC_PORT: 50051
       DB_NAME: rbac_db
     volumes:
@@ -287,12 +285,12 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      test: ["CMD", "grpc_health_probe", "-addr=localhost:50051"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Drone API 微服務 (僅 gRPC API，移除 WebSocket)
+  # Drone API 微服務 (純 gRPC)
   drone-service:
     build:
       context: ../../microServices/drone-service
@@ -300,12 +298,10 @@ services:
     logging: *default-logging
     container_name: aiot-drone-service
     ports:
-      - "3002:3002"   # HTTP API (development/debug)
-      - "50052:50052" # gRPC
+      - "50052:50052" # gRPC only
     environment:
       <<: *common-env
       SERVICE_NAME: drone-service
-      SERVICE_PORT: 3002
       GRPC_PORT: 50052
       DB_NAME: drone_db
     volumes:
@@ -324,7 +320,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      test: ["CMD", "grpc_health_probe", "-addr=localhost:50052"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -366,7 +362,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # General 微服務
+  # General 微服務 (純 gRPC)
   general-service:
     build:
       context: ../../microServices/general-service
@@ -374,12 +370,10 @@ services:
     logging: *default-logging
     container_name: aiot-general-service
     ports:
-      - "3003:3003"   # HTTP API
-      - "50053:50053" # gRPC
+      - "50053:50053" # gRPC only
     environment:
       <<: *common-env
       SERVICE_NAME: general-service
-      SERVICE_PORT: 3003
       GRPC_PORT: 50053
       DB_NAME: user_preference_db
     volumes:
@@ -396,7 +390,7 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      test: ["CMD", "grpc_health_probe", "-addr=localhost:50053"]
       interval: 30s
       timeout: 10s
       retries: 3

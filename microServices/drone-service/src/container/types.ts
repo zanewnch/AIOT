@@ -486,6 +486,26 @@ export const TYPES = {
    */
   DroneCommandCommandsRepository: Symbol.for('DroneCommandCommandsRepository'),
 
+  /**
+   * 歸檔任務查詢儲存庫類型
+   */
+  ArchiveTaskQueriesRepository: Symbol.for('ArchiveTaskQueriesRepository'),
+
+  /**
+   * 歸檔任務命令儲存庫類型
+   */
+  ArchiveTaskCommandsRepository: Symbol.for('ArchiveTaskCommandsRepository'),
+
+  /**
+   * 無人機狀態歷史查詢儲存庫類型
+   */
+  DroneStatusArchiveQueriesRepository: Symbol.for('DroneStatusArchiveQueriesRepository'),
+
+  /**
+   * 無人機狀態歷史命令儲存庫類型
+   */
+  DroneStatusArchiveCommandsRepository: Symbol.for('DroneStatusArchiveCommandsRepository'),
+
   // ===== Route Types =====
   /**
    * 歸檔任務路由類型

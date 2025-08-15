@@ -45,10 +45,10 @@ export class ArchiveTaskCommandsSvc {
     private readonly repository: IArchiveTaskRepository; // 組合介面
 
     constructor(
-        @inject(TYPES.ArchiveTaskCommandsSvc) 
+        @inject(TYPES.ArchiveTaskCommandsRepository) 
         private readonly commandsRepository: ArchiveTaskCommandsRepository,
         
-        @inject(TYPES.ArchiveTaskQueriesSvc) 
+        @inject(TYPES.ArchiveTaskQueriesRepository) 
         private readonly queriesRepository: ArchiveTaskQueriesRepository,
         
         @inject(TYPES.ArchiveTaskQueriesSvc) 
