@@ -22,7 +22,7 @@ import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
-import { registerAllRoutes } from './routes/index.js'; // 統一路由管理
+import { registerRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
@@ -267,7 +267,7 @@ export class App {
      */
     private async setRoutes(): Promise<void> {
         // 使用統一的路由管理系統註冊所有路由
-        registerAllRoutes(this.app);
+        registerRoutes(this.app);
     }
 
     /**

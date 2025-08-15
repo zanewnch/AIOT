@@ -241,6 +241,63 @@ docker exec -it CONTAINER_NAME bash -c "npm install" # 或 pip install
   - ✅ Docker 網路問題 → 檢查網路配置、端口映射、服務發現
   - ✅ K8s 部署失敗 → 檢查 YAML 配置、資源限制、健康檢查
 
+### 文檔註解規範
+**強制要求：所有語言都必須有完整的文檔註解**
+
+- **Python**：
+  - 必須使用 **docstring** 格式
+  - 所有函數、類別、模組都必須有文檔字串
+  - 格式：Google Style 或 NumPy Style
+  ```python
+  def function_name(param1: str, param2: int) -> bool:
+      """
+      函數的簡短描述。
+      
+      Args:
+          param1: 參數1的描述
+          param2: 參數2的描述
+          
+      Returns:
+          返回值的描述
+          
+      Raises:
+          ValueError: 異常情況的描述
+      """
+  ```
+
+- **TypeScript/JavaScript**：
+  - 必須使用 **TSDoc** 格式（JSDoc 兼容）
+  - 所有函數、類別、介面都必須有文檔註解
+  ```typescript
+  /**
+   * 函數的簡短描述。
+   * 
+   * @param param1 - 參數1的描述
+   * @param param2 - 參數2的描述
+   * @returns 返回值的描述
+   * @throws 異常情況的描述
+   * 
+   * @example
+   * ```typescript
+   * const result = functionName('test', 123);
+   * ```
+   */
+  function functionName(param1: string, param2: number): boolean {
+      // 實現
+  }
+  ```
+
+- **Go**：
+  - 必須使用 **Go doc comments** 格式
+  - 所有公開的函數、類型、常數都必須有註解
+  ```go
+  // FunctionName 函數的簡短描述。
+  // 詳細描述功能和使用方式。
+  func FunctionName(param1 string, param2 int) bool {
+      // 實現
+  }
+  ```
+
 ### Python 類型註解規範
 - **強制要求**：所有 Python 文件必須包含完整的 type hints
 - **函數註解**：所有函數和方法都必須有參數類型和返回類型註解

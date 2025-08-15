@@ -158,4 +158,4 @@ class RbacRoutes {
 /**
  * 匯出 RBAC 路由實例
  */
-export const rbacRoutes = new RbacRoutes().getRouter();
+export const router = new RbacRoutes().getRouter();
