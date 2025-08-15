@@ -12,7 +12,7 @@
 
 ### 與其他服務的關係
 ```
-前端 WebSocket 連線 → Kong Gateway → drone-realtime-service
+前端 WebSocket 連線 → Kong Gateway → drone-websocket-service
 ```
 
 ## 🚀 快速開始
@@ -32,7 +32,7 @@ npm run dev
 ### Docker 部署
 ```bash
 # 使用 Docker Compose 啟動
-docker-compose up drone-realtime-service
+docker-compose up drone-websocket-service
 ```
 
 ## 📡 WebSocket API
@@ -98,7 +98,7 @@ curl http://localhost:3004/health
 ```json
 {
   "status": "healthy",
-  "service": "drone-realtime-service",
+  "service": "drone-websocket-service",
   "timestamp": "2024-01-01T00:00:00.000Z",
   "websocket": {
     "enabled": true,

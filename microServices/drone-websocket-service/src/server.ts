@@ -20,7 +20,7 @@ import http from 'http';
 import debug from 'debug';
 import { App } from './app.js';
 
-const debugLogger = debug('aiot:drone-realtime-server');
+const debugLogger = debug('aiot:drone-websocket-server');
 
 /**
  * 無人機即時通訊服務伺服器類別

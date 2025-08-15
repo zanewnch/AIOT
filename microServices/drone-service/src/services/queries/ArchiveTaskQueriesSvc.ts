@@ -12,7 +12,7 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import {
     ArchiveTaskModel,
     ArchiveTaskStatus,
@@ -27,6 +27,7 @@ import type {
 } from '../../types/repositories/IArchiveTaskRepository.js';
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
+import { TYPES } from '../../container/types.js';
 import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
@@ -46,9 +47,12 @@ export class ArchiveTaskQueriesSvc {
     private readonly commandsRepository: ArchiveTaskCommandsRepository;
     private readonly repository: IArchiveTaskRepository; // 組合介面
 
-    constructor(repository?: ArchiveTaskQueriesRepository) {
-        this.queriesRepository = repository || new ArchiveTaskQueriesRepository();
-        this.commandsRepository = new ArchiveTaskCommandsRepository();
+    constructor(
+        @inject(TYPES.ArchiveTaskQueriesRepository) queriesRepository: ArchiveTaskQueriesRepository,
+        @inject(TYPES.ArchiveTaskCommandsRepository) commandsRepository: ArchiveTaskCommandsRepository
+    ) {
+        this.queriesRepository = queriesRepository;
+        this.commandsRepository = commandsRepository;
         
         // 創建組合repository
         this.repository = Object.assign(

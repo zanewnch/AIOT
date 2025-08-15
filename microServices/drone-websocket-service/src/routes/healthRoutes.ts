@@ -56,7 +56,7 @@ export class HealthRoutes {
     private getHealth = (req: any, res: any) => {
         res.status(200).json({
             status: 'healthy',
-            service: 'drone-realtime-service',
+            service: 'drone-websocket-service',
             timestamp: new Date().toISOString(),
             version: '1.0.0',
             uptime: process.uptime(),
@@ -77,7 +77,7 @@ export class HealthRoutes {
         try {
             const healthData = {
                 status: 'healthy',
-                service: 'drone-realtime-service',
+                service: 'drone-websocket-service',
                 timestamp: new Date().toISOString(),
                 version: '1.0.0',
                 uptime: process.uptime(),
@@ -118,7 +118,7 @@ export class HealthRoutes {
         } catch (error) {
             res.status(503).json({
                 status: 'unhealthy',
-                service: 'drone-realtime-service',
+                service: 'drone-websocket-service',
                 timestamp: new Date().toISOString(),
                 error: 'Health check failed',
                 details: error instanceof Error ? error.message : 'Unknown error'
@@ -136,14 +136,14 @@ export class HealthRoutes {
         try {
             res.status(200).json({
                 status: 'ready',
-                service: 'drone-realtime-service',
+                service: 'drone-websocket-service',
                 timestamp: new Date().toISOString(),
                 message: 'Service is ready to accept traffic'
             });
         } catch (error) {
             res.status(503).json({
                 status: 'not ready',
-                service: 'drone-realtime-service',
+                service: 'drone-websocket-service',
                 timestamp: new Date().toISOString(),
                 error: 'Service not ready'
             });
@@ -156,7 +156,7 @@ export class HealthRoutes {
     private getLiveness = (req: any, res: any) => {
         res.status(200).json({
             status: 'alive',
-            service: 'drone-realtime-service',
+            service: 'drone-websocket-service',
             timestamp: new Date().toISOString(),
             uptime: process.uptime(),
             pid: process.pid

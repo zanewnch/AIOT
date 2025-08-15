@@ -30,10 +30,10 @@ services:
       - api
       - grpc
 
-  # Drone 即時通訊微服務 - 專門處理 WebSocket 連線
-  - name: drone-realtime-service
+  # Drone WebSocket 微服務 - 專門處理 WebSocket 連線
+  - name: drone-websocket-service
     protocol: ws
-    host: aiot-drone-realtime-service
+    host: aiot-drone-websocket-service
     port: 3004
     path: /socket.io
     connect_timeout: 60000

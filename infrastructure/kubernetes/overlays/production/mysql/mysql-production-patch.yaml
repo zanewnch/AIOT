@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: mysql
+        # 生產環境的資源配置
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        # 生產環境的持久化配置
+        env:
+        - name: MYSQL_INNODB_BUFFER_POOL_SIZE
+          value: "512M"
+        - name: MYSQL_MAX_CONNECTIONS
+          value: "200"

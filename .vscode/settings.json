@@ -8,5 +8,6 @@
     "mysqldb",
     "rabbitmq"
   ],
-  "dotnet.preferCSharpExtension": true
+  "dotnet.preferCSharpExtension": true,
+  "editor.fontFamily": "monospace"
 }

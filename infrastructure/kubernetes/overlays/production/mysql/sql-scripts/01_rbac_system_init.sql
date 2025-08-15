@@ -1,9 +1,6 @@
 -- RBAC 初始化 SQL Script
 -- 這個腳本會確保 admin 用戶有所有權限，並新增 user 用戶有所有 read 權限
 
--- 使用 RBAC 微服務專用數據庫
-USE rbac_db;
-
 -- 開始交易
 START TRANSACTION;
 

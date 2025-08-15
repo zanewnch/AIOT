@@ -128,7 +128,7 @@ export class App {
         this.app.get('/health', (req, res) => {
             res.json({
                 status: 'degraded',
-                service: 'drone-realtime-service',
+                service: 'drone-websocket-service',
                 message: 'Service running in fallback mode',
                 timestamp: new Date().toISOString()
             });

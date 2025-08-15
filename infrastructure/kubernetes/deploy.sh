@@ -55,11 +55,26 @@ kubectl apply -f secrets/
 
 # 階段 4: 部署資料庫服務
 echo -e "${BLUE}🗄️  階段 4: 部署資料庫服務...${NC}"
-kubectl apply -f databases/
+
+# 使用 Kustomize 部署 MySQL（包含初始化腳本）
+echo -e "${YELLOW}📦 使用 Kustomize 部署 MySQL...${NC}"
+cd overlays/production/mysql
+if [ -f "generate-configmap.sh" ]; then
+    echo -e "${YELLOW}🔄 更新 MySQL 初始化腳本...${NC}"
+    ./generate-configmap.sh
+fi
+kubectl apply -k .
+cd ../../..
+
+# 部署其他資料庫（MongoDB, Redis, RabbitMQ）
+echo -e "${YELLOW}📦 部署其他資料庫服務...${NC}"
+kubectl apply -f databases/mongodb.yaml
+kubectl apply -f databases/redis.yaml
+kubectl apply -f databases/rabbitmq.yaml
 
 # 等待資料庫服務就緒
 echo -e "${YELLOW}⏳ 等待資料庫服務就緒...${NC}"
-kubectl wait --for=condition=Ready pod -l app=mysql -n aiot --timeout=300s
+kubectl wait --for=condition=Ready pod -l app=mysql -n aiot-prod --timeout=300s
 kubectl wait --for=condition=Ready pod -l app=mongodb -n aiot --timeout=300s
 kubectl wait --for=condition=Ready pod -l app=redis -n aiot --timeout=180s
 kubectl wait --for=condition=Ready pod -l app=rabbitmq -n aiot --timeout=300s

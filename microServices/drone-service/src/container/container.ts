@@ -35,6 +35,12 @@ import { DronePositionQueriesRepository } from '../repo/queries/DronePositionQue
 import { DronePositionCommandsRepository } from '../repo/commands/DronePositionCommandsRepo.js';
 import { DroneStatusQueriesRepository } from '../repo/queries/DroneStatusQueriesRepo.js';
 import { DroneStatusCommandsRepository } from '../repo/commands/DroneStatusCommandsRepo.js';
+import { DroneRealTimeStatusQueriesRepository } from '../repo/queries/DroneRealTimeStatusQueriesRepo.js';
+import { DroneRealTimeStatusCommandsRepository } from '../repo/commands/DroneRealTimeStatusCommandsRepo.js';
+import { ArchiveTaskQueriesRepository } from '../repo/queries/ArchiveTaskQueriesRepo.js';
+import { ArchiveTaskCommandsRepository } from '../repo/commands/ArchiveTaskCommandsRepo.js';
+import { DroneStatusArchiveQueriesRepository } from '../repo/queries/DroneStatusArchiveQueriesRepo.js';
+import { DroneStatusArchiveCommandsRepository } from '../repo/commands/DroneStatusArchiveCommandsRepo.js';
 
 // 歷史歸檔服務
 import { ArchiveTaskQueriesSvc } from '../services/queries/ArchiveTaskQueriesSvc.js';
@@ -93,6 +99,12 @@ export function createContainer(): Container {
     container.bind(TYPES.DronePositionCommandsRepository).to(DronePositionCommandsRepository).inSingletonScope();
     container.bind(TYPES.DroneStatusQueriesRepository).to(DroneStatusQueriesRepository).inSingletonScope();
     container.bind(TYPES.DroneStatusCommandsRepository).to(DroneStatusCommandsRepository).inSingletonScope();
+    container.bind(TYPES.DroneRealTimeStatusQueriesRepository).to(DroneRealTimeStatusQueriesRepository).inSingletonScope();
+    container.bind(TYPES.DroneRealTimeStatusCommandsRepository).to(DroneRealTimeStatusCommandsRepository).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskQueriesRepository).to(ArchiveTaskQueriesRepository).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskCommandsRepository).to(ArchiveTaskCommandsRepository).inSingletonScope();
+    container.bind(TYPES.DroneStatusArchiveQueriesRepository).to(DroneStatusArchiveQueriesRepository).inSingletonScope();
+    container.bind(TYPES.DroneStatusArchiveCommandsRepository).to(DroneStatusArchiveCommandsRepository).inSingletonScope();
 
     // === 無人機位置服務 ===
     container.bind(TYPES.DronePositionQueriesSvc).to(DronePositionQueriesSvc).inSingletonScope();

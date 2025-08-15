@@ -12,8 +12,9 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { DroneStatusQueriesRepository } from '../../repo/queries/DroneStatusQueriesRepo.js';
+import { TYPES } from '../../container/types.js';
 import type { DroneStatusAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
@@ -35,7 +36,9 @@ const logger = createLogger('DroneStatusQueriesSvc');
 export class DroneStatusQueriesSvc {
     private droneStatusRepository: DroneStatusQueriesRepository;
 
-    constructor(droneStatusRepository: DroneStatusQueriesRepository = new DroneStatusQueriesRepository()) {
+    constructor(
+        @inject(TYPES.DroneStatusQueriesRepository) droneStatusRepository: DroneStatusQueriesRepository
+    ) {
         this.droneStatusRepository = droneStatusRepository;
     }
 

@@ -46,7 +46,7 @@ routes:
 
   # Drone WebSocket 路由 - 連接到獨立的即時通訊服務
   - name: drone-websocket-routes
-    service: drone-realtime-service
+    service: drone-websocket-service
     paths:
       - /socket.io
     strip_path: false

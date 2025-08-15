@@ -12,7 +12,8 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
 import { DroneRealTimeStatusQueriesRepository } from '../../repo/queries/DroneRealTimeStatusQueriesRepo.js';
 import { 
     DroneRealTimeStatusModel, 
@@ -62,8 +63,10 @@ interface ExternalAttributesLocal {
 export class DroneRealTimeStatusQueriesSvc {
     private repository: DroneRealTimeStatusQueriesRepository;
 
-    constructor(repository?: DroneRealTimeStatusQueriesRepository) {
-        this.repository = repository || new DroneRealTimeStatusQueriesRepository();
+    constructor(
+        @inject(TYPES.DroneRealTimeStatusQueriesRepository) repository: DroneRealTimeStatusQueriesRepository
+    ) {
+        this.repository = repository;
     }
 
     /**

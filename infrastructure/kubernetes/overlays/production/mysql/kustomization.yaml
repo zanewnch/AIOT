@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# MySQL 生產環境配置 Kustomization
+namespace: aiot-prod
+
+# 引用基礎配置
+resources:
+- ../../../bases/mysql
+
+# 從本地文件生成 ConfigMap
+configMapGenerator:
+- name: mysql-init-scripts
+  files:
+  - sql-scripts/00_database_init.sql
+  - sql-scripts/01_rbac_system_init.sql
+  - sql-scripts/02_users_test_data.sql
+  - sql-scripts/03_drone_flight_positions.sql
+  - sql-scripts/04_drone_basic_info.sql
+  - sql-scripts/05_drone_realtime_status_table.sql
+  - sql-scripts/06_drone_commands_test_data.sql
+  - sql-scripts/07_command_queues_test_data.sql
+  - sql-scripts/08_user_preferences_init.sql
+  options:
+    labels:
+      app: mysql
+      app.kubernetes.io/name: mysql
+      app.kubernetes.io/component: init-scripts
+
+# 生產環境特定的配置
+patchesStrategicMerge:
+- mysql-production-patch.yaml
+
+# 標籤
+labels:
+- pairs:
+    environment: production
+    tier: database
+
+# 名稱前綴
+namePrefix: aiot-prod-

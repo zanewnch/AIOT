@@ -59,14 +59,16 @@ interface ExternalCreationAttributesLocalLocal {
  */
 @injectable()
 export class DroneRealTimeStatusCommandsSvc {
-    constructor() {
-        // Initialize repository and queryService directly for now since they're not in DI container yet
-        this.repository = new DroneRealTimeStatusCommandsRepository();
-        this.queryService = new DroneRealTimeStatusQueriesSvc(this.repository);
-    }
-
-    private readonly repository: any; // 暫時使用 any，待類型定義完善
+    private readonly repository: DroneRealTimeStatusCommandsRepository;
     private readonly queryService: DroneRealTimeStatusQueriesSvc;
+
+    constructor(
+        @inject(TYPES.DroneRealTimeStatusCommandsRepository) repository: DroneRealTimeStatusCommandsRepository,
+        @inject(TYPES.DroneRealTimeStatusQueriesSvc) queryService: DroneRealTimeStatusQueriesSvc
+    ) {
+        this.repository = repository;
+        this.queryService = queryService;
+    }
 
     /**
      * 創建新的無人機即時狀態記錄

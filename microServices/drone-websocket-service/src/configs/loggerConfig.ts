@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 日誌輸出目錄
-const logDir = path.join(__dirname, '../../../logs/drone-realtime');
+const logDir = path.join(__dirname, '../../../logs/drone-websocket');
 
 /**
  * 自訂日誌格式
@@ -67,7 +67,7 @@ const consoleFormat = winston.format.combine(
  * 檔案輪轉傳輸配置 - 一般日誌
  */
 const fileRotateTransport = new DailyRotateFile({
-  filename: path.join(logDir, 'drone-realtime-app-%DATE%.log'),
+  filename: path.join(logDir, 'drone-websocket-app-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '20m',
   maxFiles: '14d',
@@ -79,7 +79,7 @@ const fileRotateTransport = new DailyRotateFile({
  * 檔案輪轉傳輸配置 - 錯誤日誌
  */
 const errorFileRotateTransport = new DailyRotateFile({
-  filename: path.join(logDir, 'drone-realtime-error-%DATE%.log'),
+  filename: path.join(logDir, 'drone-websocket-error-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '20m',
   maxFiles: '30d',
@@ -116,7 +116,7 @@ const getTransports = (): winston.transport[] => {
 const getExceptionHandlers = (): winston.transport[] => {
   const handlers: winston.transport[] = [
     new winston.transports.File({ 
-      filename: path.join(logDir, 'drone-realtime-exceptions.log'),
+      filename: path.join(logDir, 'drone-websocket-exceptions.log'),
       format: customFormat 
     })
   ];
@@ -139,7 +139,7 @@ const getExceptionHandlers = (): winston.transport[] => {
 const getRejectionHandlers = (): winston.transport[] => {
   const handlers: winston.transport[] = [
     new winston.transports.File({ 
-      filename: path.join(logDir, 'drone-realtime-rejections.log'),
+      filename: path.join(logDir, 'drone-websocket-rejections.log'),
       format: customFormat 
     })
   ];

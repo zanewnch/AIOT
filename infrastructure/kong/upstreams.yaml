@@ -196,8 +196,8 @@ upstreams:
       - target: aiot-fesetting-service:3003
         weight: 100
 
-  # Drone 即時通訊微服務 Upstream
-  - name: drone-realtime-upstream
+  # Drone WebSocket 微服務 Upstream
+  - name: drone-websocket-upstream
     algorithm: round-robin
     hash_on: none
     hash_fallback: none
@@ -260,5 +260,5 @@ upstreams:
       - realtime
       - websocket
     targets:
-      - target: aiot-drone-realtime-service:3004
+      - target: aiot-drone-websocket-service:3004
         weight: 100

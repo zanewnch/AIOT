@@ -9,7 +9,22 @@ metadata:
     app.kubernetes.io/name: mysql
     app.kubernetes.io/component: init-scripts
 data:
-  01_create_databases.sql: |
+  00_database_init.sql: |
+    -- 數據庫初始化 SQL Script
+    -- 創建 AIOT 系統所需的數據庫
+    
+    -- 創建主要數據庫 main_db（如果不存在）
+    CREATE DATABASE IF NOT EXISTS `main_db` 
+    CHARACTER SET utf8mb4 
+    COLLATE utf8mb4_unicode_ci
+    COMMENT 'AIOT 主要數據庫';
+    
+    -- 創建使用者偏好數據庫 user_preference_db（如果不存在）
+    CREATE DATABASE IF NOT EXISTS `user_preference_db` 
+    CHARACTER SET utf8mb4 
+    COLLATE utf8mb4_unicode_ci
+    COMMENT 'AIOT 使用者偏好設定數據庫';
+    
     -- 創建 RBAC 資料庫
     CREATE DATABASE IF NOT EXISTS rbac_db;
     
@@ -19,16 +34,17 @@ data:
     -- 創建 General 資料庫
     CREATE DATABASE IF NOT EXISTS general_db;
     
-    -- 創建 User Preference 資料庫
-    CREATE DATABASE IF NOT EXISTS user_preference_db;
-    
     -- 授權給應用用戶
+    GRANT ALL PRIVILEGES ON main_db.* TO 'admin'@'%';
+    GRANT ALL PRIVILEGES ON user_preference_db.* TO 'admin'@'%';
     GRANT ALL PRIVILEGES ON rbac_db.* TO 'admin'@'%';
     GRANT ALL PRIVILEGES ON drone_db.* TO 'admin'@'%';
     GRANT ALL PRIVILEGES ON general_db.* TO 'admin'@'%';
-    GRANT ALL PRIVILEGES ON user_preference_db.* TO 'admin'@'%';
     
     FLUSH PRIVILEGES;
+    
+    -- 切換到 main_db 作為預設數據庫
+    USE `main_db`;
   
   02_basic_users.sql: |
     -- 使用 RBAC 資料庫
@@ -65,3 +81,64 @@ data:
     ('admin', 'System Administrator'),
     ('user', 'Regular User'),
     ('viewer', 'Read-only User');
+  
+  08_user_preferences_init.sql: |
+    -- User Preferences 使用者偏好設定初始化 SQL Script
+    -- 為 general-service 微服務創建使用者偏好設定相關資料表和初始資料
+    
+    -- 切換到 user_preference_db 數據庫
+    USE `user_preference_db`;
+    
+    -- 創建 user_preferences 資料表
+    CREATE TABLE IF NOT EXISTS user_preferences (
+        `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主鍵識別碼',
+        `userId` BIGINT NOT NULL COMMENT '使用者識別碼（外鍵）',
+        `theme` ENUM('light', 'dark', 'auto') NOT NULL DEFAULT 'light' COMMENT '主題設定',
+        `language` VARCHAR(10) NOT NULL DEFAULT 'en' COMMENT '語言設定',
+        `timezone` VARCHAR(50) NOT NULL DEFAULT 'UTC' COMMENT '時區設定',
+        `autoSave` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '自動儲存設定',
+        `notifications` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '通知設定',
+        `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '建立時間',
+        `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
+        
+        PRIMARY KEY (`id`),
+        INDEX `idx_userId` (`userId`),
+        UNIQUE KEY `uk_user_preferences_userId` (`userId`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='使用者偏好設定資料表';
+    
+    -- 為 admin 使用者（假設 userId = 1）創建預設偏好設定
+    INSERT IGNORE INTO user_preferences (userId, theme, language, timezone, autoSave, notifications, createdAt, updatedAt)
+    VALUES (1, 'dark', 'zh-TW', 'Asia/Taipei', TRUE, TRUE, NOW(), NOW());
+    
+    -- 為 user 使用者（假設 userId = 2）創建預設偏好設定
+    INSERT IGNORE INTO user_preferences (userId, theme, language, timezone, autoSave, notifications, createdAt, updatedAt)
+    VALUES (2, 'light', 'en', 'UTC', TRUE, TRUE, NOW(), NOW());
+    
+    -- 創建系統設定資料表（用於存放全局設定）
+    CREATE TABLE IF NOT EXISTS system_settings (
+        `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主鍵識別碼',
+        `settingKey` VARCHAR(100) NOT NULL COMMENT '設定鍵名',
+        `settingValue` TEXT COMMENT '設定值',
+        `description` VARCHAR(255) COMMENT '設定描述',
+        `category` VARCHAR(50) DEFAULT 'general' COMMENT '設定分類',
+        `isActive` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '是否啟用',
+        `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '建立時間',
+        `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
+        
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `uk_system_settings_key` (`settingKey`),
+        INDEX `idx_category` (`category`),
+        INDEX `idx_isActive` (`isActive`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系統設定資料表';
+    
+    -- 插入一些預設系統設定
+    INSERT IGNORE INTO system_settings (settingKey, settingValue, description, category, isActive, createdAt, updatedAt)
+    VALUES 
+        ('app.name', 'AIOT Management System', '應用程式名稱', 'general', TRUE, NOW(), NOW()),
+        ('app.version', '1.0.0', '應用程式版本', 'general', TRUE, NOW(), NOW()),
+        ('maintenance.enabled', 'false', '維護模式開關', 'system', TRUE, NOW(), NOW()),
+        ('default.theme', 'light', '預設主題', 'ui', TRUE, NOW(), NOW()),
+        ('default.language', 'en', '預設語言', 'ui', TRUE, NOW(), NOW()),
+        ('session.timeout', '3600', '會話逾時時間（秒）', 'security', TRUE, NOW(), NOW()),
+        ('notification.email.enabled', 'true', '電子郵件通知開關', 'notification', TRUE, NOW(), NOW()),
+        ('notification.sms.enabled', 'false', '簡訊通知開關', 'notification', TRUE, NOW(), NOW());
