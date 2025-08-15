@@ -8,7 +8,7 @@
  * @since 2024-01-01
  */
 
-import { Express } from 'express';
+import { Application } from 'express';
 import { router as authRoutes } from './authRoutes.js';
 import { router as rbacRoutes } from './rbacRoutes.js';
 
@@ -17,7 +17,7 @@ import { router as rbacRoutes } from './rbacRoutes.js';
  * 
  * @param app Express 應用程式實例
  */
-export function registerRoutes(app: Express): void {
+export function registerRoutes(app: Application): void {
     console.log('🛣️  Registering RBAC API routes...');
 
     try {

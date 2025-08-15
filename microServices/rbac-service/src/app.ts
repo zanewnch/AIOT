@@ -16,22 +16,19 @@
 
 import 'reflect-metadata'; // InversifyJS 需要的元數據反射
 import express from 'express'; // Express 框架，用於建立 HTTP 伺服器應用程式
-import { Server as HTTPServer } from 'http'; // HTTP 伺服器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
 import { registerRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
-import { container, ContainerUtils } from './container/container.js';
-import { TYPES } from './container/types.js';
+import { container } from './container/container.js';
 
 /**
  * Express 應用程式配置類別
  *
- * 此類別是 AIOT 系統的核心應用程式類別，負責管理整個 Express 應用程式的生命週期，包括：
+ * 此類別是 RBAC 微服務的核心應用程式類別，負責管理整個 Express 應用程式的生命週期，包括：
  *
  * **核心功能：**
  * - Express 應用程式實例的建立和配置
@@ -43,7 +40,6 @@ import { TYPES } from './container/types.js';
  * **外部服務整合：**
  * - 資料庫連線管理（Sequelize ORM）
  * - Redis 快取服務連線
- * - RabbitMQ 訊息佇列服務連線
  *
  * **生命週期管理：**
  * - 應用程式初始化流程
@@ -71,275 +67,52 @@ export class App {
     public app: express.Application;
 
     /**
-     * Sequelize 資料庫 ORM 實例
-     * 用於管理資料庫連線和資料模型操作
+     * 資料庫連線實例（Sequelize）
+     * 負責 ORM 操作和資料庫連線管理
      * @private
      * @type {any}
      */
     private sequelize: any;
 
     /**
-     * RabbitMQ 訊息佇列管理器實例
-     * 用於處理非同步訊息和任務佇列
+     * Redis 連線實例
+     * 用於快取和會話管理
      * @private
-     * @type {RabbitMQManager}
+     * @type {any}
      */
-    private rabbitMQManager: RabbitMQManager;
+    private redis: any;
 
     /**
-     * WebSocket 服務實例（透過 IoC 容器取得）
-     * 用於處理 Socket.IO 連線和即時通訊
+     * 應用程式是否已初始化的標記
+     * 避免重複初始化造成的資源浪費和錯誤
      * @private
-     * @type {IWebSocketService | null}
+     * @type {boolean}
      */
-    private webSocketService: IWebSocketService | null = null;
+    private initialized: boolean = false;
 
     /**
-     * 無人機事件處理器工廠函數（透過 IoC 容器取得）
-     * 用於根據事件類型獲取對應的處理器
-     * @private
-     * @type {(type: DroneEventType) => IDroneEventHandler | null}
-     */
-    private droneEventHandlerFactory: ((type: DroneEventType) => IDroneEventHandler) | null = null;
-
-    /**
-     * 建構函式 - 初始化 Express 應用程式
-     *
-     * 執行以下初始化步驟：
-     * 1. 建立 Express 應用程式實例
-     * 2. 初始化 RabbitMQ 管理器
-     * 3. 設定 Sequelize 資料庫連線
-     * 4. 配置 Passport JWT 身份驗證
-     * 5. 設定基本的 Express 中間件
-     *
-     * @constructor
-     * @throws {Error} 當任何初始化步驟失敗時拋出錯誤
+     * App 類別建構函數
+     * 建立 Express 應用程式實例，但不進行初始化
+     * 實際的服務初始化需要呼叫 initialize() 方法
      */
     constructor() {
-        this.app = express(); // 建立 Express 應用程式實例
-        this.rabbitMQManager = new RabbitMQManager(); // 初始化 RabbitMQ 管理器
-
-        // 執行基本配置設定
-        this.setupSequelize(); // 設定 Sequelize 資料庫連線
-        this.setupPassport(); // 配置 Passport JWT 身份驗證
-        this.setupMiddleware(); // 設定基本中間件
-        this.initializeBusinessServices(); // 初始化業務服務實例
+        // 建立基本的 Express 應用程式實例
+        this.app = express();
+        console.log('🏗️  Express application instance created');
     }
 
     /**
-     * 初始化業務服務實例（使用 InversifyJS IoC 容器）
+     * 應用程式初始化方法
      *
-     * 透過 IoC 容器取得服務實例，確保依賴注入和單例管理，
-     * 供 HTTP 和 WebSocket 共用，避免業務邏輯重複和資料不一致問題
+     * **執行順序：**
+     * 1. 檢查重複初始化
+     * 2. 初始化外部服務連線（資料庫、Redis）
+     * 3. 設定 Express 中間件
+     * 4. 設定身份驗證（Passport JWT）
+     * 5. 註冊 API 路由
+     * 6. 設定錯誤處理中間件
+     * 7. 標記初始化完成
      *
-     * @private
-     */
-    private initializeBusinessServices(): void {
-        console.log('🔧 Initializing business services via IoC container...');
-
-        try {
-            // 透過 IoC 容器取得服務實例
-            // 所有依賴都會自動注入，確保單例和一致性
-            const wsService = ContainerUtils.get<IWebSocketService>(TYPES.WebSocketService);
-            const eventHandlerFactory = ContainerUtils.get<(type: DroneEventType) => IDroneEventHandler>(TYPES.DroneEventHandlerFactory);
-
-            // 保存實例供其他方法使用
-            this.webSocketService = wsService;
-            this.droneEventHandlerFactory = eventHandlerFactory;
-
-            console.log('✅ Business services initialized via IoC container');
-            console.log('📊 Container stats:', ContainerUtils.getContainerStats());
-        } catch (error) {
-            console.error('❌ Failed to initialize business services:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * 初始化 Sequelize 資料庫連線
-     *
-     * 建立 Sequelize ORM 實例，用於管理資料庫連線和資料模型操作。
-     * 此方法在建構函式中同步執行，實際的資料庫連線會在 initialize() 方法中建立。
-     *
-     * @private
-     * @method setupSequelize
-     * @returns {void}
-     */
-    private setupSequelize(): void {
-        this.sequelize = createSequelizeInstance(); // 建立 Sequelize 實例
-    }
-
-    /**
-     * 初始化 RabbitMQ 連線
-     *
-     * 連線到 RabbitMQ 伺服器並建立訊息佇列通道。
-     * 此方法會在應用程式初始化過程中執行。
-     *
-     * @private
-     * @async
-     * @method setupRabbitMQ
-     * @returns {Promise<void>} 連線完成的 Promise
-     * @throws {Error} 當連線失敗時拋出錯誤
-     */
-    private async setupRabbitMQ(): Promise<void> {
-        await this.rabbitMQManager.connect(); // 連線到 RabbitMQ 伺服器
-    }
-
-    /**
-     * 初始化 Redis 連線
-     *
-     * 連線到 Redis 伺服器，用於快取和 session 管理。
-     * 此方法會在應用程式初始化過程中執行。
-     *
-     * @private
-     * @async
-     * @method setupRedis
-     * @returns {Promise<void>} 連線完成的 Promise
-     * @throws {Error} 當連線失敗時拋出錯誤
-     */
-    private async setupRedis(): Promise<void> {
-        await redisConfig.connect(); // 連線到 Redis 伺服器
-    }
-
-    /**
-     * 設定 Passport JWT 驗證
-     *
-     * 配置 Passport.js 的 JWT 策略，用於處理 API 的身份驗證。
-     * 此方法在建構函式中執行，設定全域的驗證策略。
-     *
-     * @private
-     * @method setupPassport
-     * @returns {void}
-     */
-    private setupPassport(): void {
-        setupPassportJWT(); // 配置 Passport JWT 驗證策略
-    }
-
-    /**
-     * 設定 Express 中間件
-     *
-     * 配置 Express 應用程式的基本中間件，包括：
-     * - CORS 設定
-     * - 請求解析器（JSON、URL-encoded）
-     * - 日誌記錄
-     * - 安全性中間件
-     *
-     * @private
-     * @method setupMiddleware
-     * @returns {void}
-     */
-    private setupMiddleware(): void {
-        setupExpressMiddleware(this.app); // 設定 Express 中間件
-    }
-
-    /**
-     * 設定應用程式路由
-     *
-     * 使用統一的路由管理系統註冊所有 API 路由到 Express 應用程式中。
-     * 路由註冊邏輯已集中管理在 routes/index.ts 中，包括：
-     *
-     * **基礎路由：**
-     * - 首頁路由、初始化路由、身份驗證路由等
-     * - RTK 路由、Swagger API 文件路由等
-     *
-     * **功能路由：**
-     * - RBAC 角色權限管理 API
-     * - 進度追蹤路由、使用者管理路由等
-     *
-     * **開發工具路由：**
-     * - 僅在開發環境中註冊的開發工具路由
-     *
-     * @private
-     * @async
-     * @method setRoutes
-     * @returns {Promise<void>} 路由設定完成的 Promise
-     */
-    private async setRoutes(): Promise<void> {
-        // 使用統一的路由管理系統註冊所有路由
-        registerRoutes(this.app);
-    }
-
-    /**
-     * 設定錯誤處理中間件
-     *
-     * 註冊全域錯誤處理中間件，必須在所有路由註冊之後執行。
-     * 包括：
-     * - 404 錯誤處理：處理找不到路由的請求
-     * - 全域錯誤處理：處理應用程式中的所有錯誤
-     *
-     * @private
-     * @method setupErrorHandling
-     * @returns {void}
-     */
-    private setupErrorHandling(): void {
-        this.app.use(ErrorHandleMiddleware.notFound); // 註冊 404 錯誤處理中間件
-        this.app.use(ErrorHandleMiddleware.handle); // 註冊全域錯誤處理中間件
-    }
-
-    /**
-     * 初始化 WebSocket 服務（使用 IoC 容器）
-     *
-     * 此方法需要在 HTTP 伺服器建立後呼叫，用於初始化 WebSocket 管理器和事件處理器
-     * WebSocket 服務和事件處理器已透過 IoC 容器管理，只需要傳入 HTTP 伺服器
-     *
-     * @param {HTTPServer} httpServer - HTTP 伺服器實例
-     * @returns {Promise<void>} 初始化完成的 Promise
-     */
-    async initializeWebSocket(httpServer: HTTPServer): Promise<void> {
-        try {
-            console.log('🔧 Initializing WebSocket services with IoC container...');
-
-            // WebSocket 服務已透過容器取得，只需要初始化 HTTP 伺服器
-            if (!this.webSocketService) {
-                throw new Error('WebSocket service not initialized from IoC container');
-            }
-
-            // 注意: WebSocket 服務的 HTTP 伺服器初始化需要在服務實現中處理
-            // 這個方法呼叫將在接口中定義 initialize 方法後使用
-
-            // 取得認證中間件
-            const authMiddleware = ContainerUtils.get<IWebSocketAuthMiddleware>(TYPES.WebSocketAuthMiddleware);
-            this.webSocketService.setupMiddleware(authMiddleware.createMiddleware());
-
-            // 使用 Factory Provider 設定事件處理
-            if (!this.droneEventHandlerFactory) {
-                throw new Error('Drone event handler factory not initialized from IoC container');
-            }
-
-            // 創建事件設置器並設定處理邏輯
-            const eventSetup = new DroneEventSetup(this.droneEventHandlerFactory);
-            this.webSocketService.setupEventHandlers((socket: any, namespace: string) => {
-                eventSetup.setupSocketHandlers(socket, namespace);
-            });
-
-            console.log('✅ WebSocket services initialized via IoC container');
-        } catch (error) {
-            console.error('❌ WebSocket initialization failed:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * 初始化應用程式
-     *
-     * 執行完整的應用程式初始化流程，此方法會依序執行以下步驟：
-     *
-     * **1. 資料庫初始化：**
-     * - 同步 Sequelize 資料庫結構
-     * - 建立必要的資料表和關聯
-     *
-     * **2. 外部服務連線：**
-     * - 連線到 Redis 快取服務
-     * - 連線到 RabbitMQ 訊息佇列服務
-     * - 將 RabbitMQ 通道設定為應用程式全域變數
-     *
-     * **3. 應用程式配置：**
-     * - 註冊所有 API 路由
-     * - 設定錯誤處理中間件
-     *
-     * **注意：** WebSocket 初始化需要在 HTTP 伺服器建立後單獨呼叫 initializeWebSocket()
-     *
-     * @public
      * @async
      * @method initialize
      * @returns {Promise<void>} 初始化完成的 Promise
@@ -349,218 +122,238 @@ export class App {
      * ```typescript
      * const app = new App();
      * await app.initialize();
-     * const httpServer = http.createServer(app.app);
-     * await app.initializeWebSocket(httpServer);
-     * console.log('Application ready to serve requests');
+     * console.log('✅ Application ready to serve requests');
      * ```
      */
     async initialize(): Promise<void> {
-        try {
-            // 步驟 1：同步資料庫結構
-            await this.sequelize.sync(); // 同步 Sequelize 資料庫模型到實際資料庫
-            console.log('✅ Database synced'); // 輸出資料庫同步完成訊息
-
-            // 步驟 2：連線 Redis 快取服務
-            await this.setupRedis(); // 建立 Redis 連線
-            console.log('✅ Redis connected'); // 輸出 Redis 連線成功訊息
-
-            // 步驟 3：連線 RabbitMQ 訊息佇列服務
-            await this.setupRabbitMQ(); // 建立 RabbitMQ 連線
-            console.log('✅ RabbitMQ ready'); // 輸出 RabbitMQ 準備就緒訊息
-            this.app.locals.rabbitMQChannel = this.rabbitMQManager.getChannel(); // 將 RabbitMQ 通道設為全域變數
-
-            // 步驟 4：設定應用程式路由
-            await this.setRoutes(); // 註冊所有 API 路由
-
-            // 步驟 5：設定錯誤處理（必須在所有路由之後）
-            this.setupErrorHandling(); // 註冊錯誤處理中間件
-
-            console.log('✅ App initialized successfully'); // 輸出應用程式初始化完成訊息
-        } catch (err) {
-            console.error('❌ App initialization failed', err); // 輸出初始化失敗錯誤
-            throw err; // 重新拋出錯誤供上層處理
+        if (this.initialized) {
+            console.log('⚠️  Application already initialized, skipping...');
+            return;
         }
+
+        try {
+            console.log('🚀 Initializing RBAC application...');
+
+            // 步驟 1：初始化外部服務連線
+            await this.initializeServices();
+
+            // 步驟 2：設定 Express 中間件
+            await this.setMiddleware();
+
+            // 步驟 3：設定身份驗證
+            await this.setAuthentication();
+
+            // 步驟 4：註冊 API 路由
+            await this.setRoutes();
+
+            // 步驟 5：設定錯誤處理中間件
+            await this.setErrorHandling();
+
+            // 標記初始化完成
+            this.initialized = true;
+
+            console.log('✅ RBAC application initialization completed successfully');
+        } catch (error) {
+            console.error('❌ Application initialization failed:', error);
+            throw error; // 重新拋出錯誤，讓呼叫者知道初始化失敗
+        }
+    }
+
+    /**
+     * 初始化外部服務連線
+     *
+     * 建立和配置所有外部服務的連線，包括：
+     * - 資料庫連線（Sequelize ORM）
+     * - Redis 快取連線
+     *
+     * @private
+     * @async
+     * @method initializeServices
+     * @returns {Promise<void>} 服務初始化完成的 Promise
+     * @throws {Error} 當任何服務連線失敗時拋出錯誤
+     */
+    private async initializeServices(): Promise<void> {
+        console.log('🔧 Initializing external services...');
+
+        try {
+            // 初始化資料庫連線
+            console.log('📊 Connecting to database...');
+            this.sequelize = createSequelizeInstance();
+            await this.sequelize.authenticate();
+            console.log('✅ Database connection established');
+
+            // 初始化 Redis 連線
+            console.log('💾 Connecting to Redis...');
+            await redisConfig.connect();
+            this.redis = redisConfig;
+            console.log('✅ Redis connection established');
+
+            console.log('✅ All external services initialized');
+        } catch (error) {
+            console.error('❌ Service initialization failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 設定 Express 中間件
+     *
+     * 配置所有必要的 Express 中間件，包括：
+     * - CORS 設定
+     * - JSON 和 URL 編碼解析器
+     * - Cookie 解析器
+     * - 請求記錄
+     * - 靜態檔案服務（如需要）
+     *
+     * @private
+     * @async
+     * @method setMiddleware
+     * @returns {Promise<void>} 中間件設定完成的 Promise
+     */
+    private async setMiddleware(): Promise<void> {
+        console.log('⚙️  Setting up Express middleware...');
+        setupExpressMiddleware(this.app);
+        console.log('✅ Express middleware configured');
+    }
+
+    /**
+     * 設定身份驗證機制
+     *
+     * 初始化和配置身份驗證相關組件：
+     * - Passport JWT 策略設定
+     * - 身份驗證中間件註冊
+     *
+     * @private
+     * @async
+     * @method setAuthentication
+     * @returns {Promise<void>} 身份驗證設定完成的 Promise
+     */
+    private async setAuthentication(): Promise<void> {
+        console.log('🔐 Setting up authentication...');
+        setupPassportJWT();
+        console.log('✅ Authentication configured');
+    }
+
+    /**
+     * 設定 API 路由
+     *
+     * 註冊所有 RBAC 相關的 API 路由端點：
+     * - 使用者管理路由
+     * - 角色管理路由
+     * - 權限管理路由
+     * - 認證路由
+     *
+     * @private
+     * @async
+     * @method setRoutes
+     * @returns {Promise<void>} 路由設定完成的 Promise
+     */
+    private async setRoutes(): Promise<void> {
+        console.log('🛣️  Setting up API routes...');
+        registerRoutes(this.app);
+        console.log('✅ API routes configured');
+    }
+
+    /**
+     * 設定錯誤處理中間件
+     *
+     * 配置全域錯誤處理機制，確保所有未捕獲的錯誤都能被適當處理和記錄
+     *
+     * @private
+     * @async
+     * @method setErrorHandling
+     * @returns {Promise<void>} 錯誤處理設定完成的 Promise
+     */
+    private async setErrorHandling(): Promise<void> {
+        console.log('🛡️  Setting up error handling...');
+        this.app.use(ErrorHandleMiddleware.handle);
+        console.log('✅ Error handling configured');
     }
 
     /**
      * 優雅關閉應用程式
      *
-     * 執行有序的應用程式關閉程序，確保所有外部連線和資源都被正確清理。
-     * 關閉順序很重要，通常遵循以下原則：
-     * 1. 先關閉訊息佇列服務（停止處理新任務）
-     * 2. 再關閉快取服務
-     * 3. 最後關閉資料庫連線
+     * 依序關閉所有服務連線和清理資源：
+     * 1. 關閉 Redis 連線
+     * 2. 關閉資料庫連線
+     * 3. 清理其他資源
      *
-     * 此方法確保系統能夠安全地終止，避免資料遺失或資源洩漏。
+     * **注意：** 此方法會等待所有進行中的操作完成後才關閉連線
      *
-     * @public
      * @async
      * @method shutdown
      * @returns {Promise<void>} 關閉完成的 Promise
-     * @throws {Error} 當關閉過程發生錯誤時拋出
      *
      * @example
      * ```typescript
-     * // 在伺服器關閉時呼叫
-     * await app.shutdown();
-     * ```
-     */
-    async shutdown(): Promise<void> {
-        try {
-            // 步驟 0：關閉 WebSocket 服務（先關閉即時連線）
-            if (this.webSocketService) {
-                console.log('📡 Closing WebSocket connections...');
-                await this.webSocketService.shutdown();
-            }
-
-            // 步驟 1：關閉 RabbitMQ 連線
-            console.log('🔌 Closing RabbitMQ connection...');
-            await this.rabbitMQManager.close(); // 關閉 RabbitMQ 連線和通道
-
-            // 步驟 2：關閉 Redis 連線
-            console.log('🔴 Closing Redis connection...');
-            await redisConfig.disconnect(); // 斷開 Redis 連線
-
-            // 步驟 3：關閉資料庫連線
-            console.log('🗃️ Closing database connection...');
-            await this.sequelize.close(); // 關閉 Sequelize 資料庫連線
-
-            console.log('✅ App shutdown successfully'); // 輸出成功關閉訊息
-        } catch (error) {
-            console.error('❌ Error during app shutdown:', error); // 輸出關閉錯誤訊息
-            throw error; // 重新拋出錯誤供上層處理
-        }
-    }
-
-    /**
-     * 獲取 RabbitMQ 管理器實例
-     *
-     * 提供對 RabbitMQ 管理器的外部存取，用於訊息佇列操作。
-     *
-     * @public
-     * @method getRabbitMQManager
-     * @returns {RabbitMQManager} RabbitMQ 管理器實例
-     *
-     * @example
-     * ```typescript
-     * const rabbitmq = app.getRabbitMQManager();
-     * const channel = rabbitmq.getChannel();
-     * ```
-     */
-    getRabbitMQManager(): RabbitMQManager {
-        return this.rabbitMQManager; // 返回 RabbitMQ 管理器實例
-    }
-
-    /**
-     * 獲取 Sequelize 實例
-     *
-     * 提供對 Sequelize ORM 實例的外部存取，用於資料庫操作。
-     *
-     * @public
-     * @method getSequelize
-     * @returns {any} Sequelize 實例
-     *
-     * @example
-     * ```typescript
-     * const sequelize = app.getSequelize();
-     * await sequelize.transaction(async (t) => {
-     *   // 執行資料庫交易
+     * process.on('SIGTERM', async () => {
+     *   await app.shutdown();
+     *   process.exit(0);
      * });
      * ```
      */
-    getSequelize(): any {
-        return this.sequelize; // 返回 Sequelize 實例
-    }
+    async shutdown(): Promise<void> {
+        console.log('🛑 Gracefully shutting down application...');
 
-    /**
-     * 獲取 WebSocket 服務實例
-     *
-     * 提供對 WebSocket 服務的外部存取，用於即時通訊操作。
-     *
-     * @public
-     * @method getWebSocketService
-     * @returns {WebSocketService | null} WebSocket 服務實例或 null
-     *
-     * @example
-     * ```typescript
-     * const wsService = app.getWebSocketService();
-     * if (wsService) {
-     *   wsService.broadcastDronePosition('drone1', positionData);
-     * }
-     * ```
-     */
-    getWebSocketService(): IWebSocketService | null {
-        return this.webSocketService; // 返回 WebSocket 服務實例
-    }
-
-    /**
-     * 獲取無人機事件處理器工廠函數
-     *
-     * 提供對無人機事件處理器工廠的外部存取。
-     *
-     * @public
-     * @method getDroneEventHandlerFactory
-     * @returns {(type: DroneEventType) => IDroneEventHandler | null} 無人機事件處理器工廠函數或 null
-     */
-    getDroneEventHandlerFactory(): ((type: DroneEventType) => IDroneEventHandler) | null {
-        return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠函數
-    }
-
-    /**
-     * 根據事件類型獲取無人機事件處理器 (Factory Provider 輔助方法)
-     *
-     * @public
-     * @method getDroneEventHandler
-     * @param {DroneEventType} eventType - 事件類型
-     * @returns {IDroneEventHandler | null} 無人機事件處理器實例或 null
-     */
-    getDroneEventHandler(eventType: DroneEventType): IDroneEventHandler | null {
-        if (!this.droneEventHandlerFactory) {
-            return null;
-        }
         try {
-            return this.droneEventHandlerFactory(eventType);
+            // 步驟 1：關閉 Redis 連線
+            if (this.redis) {
+                console.log('💾 Closing Redis connection...');
+                await this.redis.quit();
+                console.log('✅ Redis connection closed');
+            }
+
+            // 步驟 2：關閉資料庫連線
+            if (this.sequelize) {
+                console.log('📊 Closing database connection...');
+                await this.sequelize.close();
+                console.log('✅ Database connection closed');
+            }
+
+            // 標記應用程式為未初始化狀態
+            this.initialized = false;
+
+            console.log('✅ Application shutdown completed');
         } catch (error) {
-            console.error(`Failed to get handler for event type: ${eventType}`, error);
-            return null;
+            console.error('❌ Error during application shutdown:', error);
+            throw error;
         }
     }
 
     /**
-     * 無人機命令服務已重構為 CQRS 模式
-     * 請使用 DroneCommandQueriesSvc 和 DroneCommandCommandsSvc
-     */
-
-    /**
-     * 獲取無人機位置查詢服務實例（透過 IoC 容器）
+     * 檢查應用程式是否已初始化
      *
-     * @public
-     * @method getDronePositionQueriesSvc
-     * @returns {DronePositionQueriesSvc} 無人機位置查詢服務實例
+     * @method isInitialized
+     * @returns {boolean} true 如果應用程式已初始化，否則為 false
      */
-    getDronePositionQueriesSvc(): DronePositionQueriesSvc {
-        return ContainerUtils.get<DronePositionQueriesSvc>(TYPES.DronePositionQueriesSvc);
+    isInitialized(): boolean {
+        return this.initialized;
     }
 
     /**
-     * 獲取無人機位置命令服務實例（透過 IoC 容器）
+     * 獲取容器實例
      *
-     * @public
-     * @method getDronePositionCommandsSvc
-     * @returns {DronePositionCommandsSvc} 無人機位置命令服務實例
+     * 提供對 IoC 容器的存取，用於獲取已註冊的服務實例
+     *
+     * @method getContainer
+     * @returns {Container} InversifyJS 容器實例
      */
-    getDronePositionCommandsSvc(): DronePositionCommandsSvc {
-        return ContainerUtils.get<DronePositionCommandsSvc>(TYPES.DronePositionCommandsSvc);
+    getContainer() {
+        return container;
     }
 
     /**
-     * 獲取無人機狀態服務實例（透過 IoC 容器）
+     * 獲取容器統計資訊
      *
-     * @public
-     * @method getDroneStatusService
-     * @returns {IDroneStatusService} 無人機狀態服務實例
+     * 提供容器中已註冊服務的統計資訊，用於監控和除錯
+     *
+     * @method getContainerStats
+     * @returns {object} 容器統計資訊
      */
-    getDroneStatusService(): IDroneStatusService {
-        return ContainerUtils.get<IDroneStatusService>(TYPES.DroneStatusService);
+    getContainerStats() {
+        return {
+            registeredServices: container.isBound.length || 0,
+            timestamp: new Date().toISOString()
+        };
     }
 }

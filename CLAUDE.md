@@ -206,6 +206,51 @@ docker exec -it CONTAINER_NAME bash -c "npm install" # 或 pip install
 - **保持相同類型文件的結構一致性**
 - **遵循現有的命名慣例和組織模式**
 
+### 模組導出規範
+**對於有多個文件的資料夾，必須使用統一導出文件**
+
+- **Python**：使用 `__init__.py`
+  ```python
+  # models/__init__.py
+  from .user import User
+  from .role import Role
+  from .permission import Permission
+  
+  __all__ = ['User', 'Role', 'Permission']
+  ```
+
+- **TypeScript/JavaScript**：使用 `index.ts` 或 `index.js`
+  ```typescript
+  // services/index.ts
+  export { UserService } from './userService';
+  export { RoleService } from './roleService';
+  export { AuthService } from './authService';
+  
+  // 或者使用 re-export
+  export * from './userService';
+  export * from './roleService';
+  ```
+
+- **Go**：使用主要的 package 文件或遵循 Go modules 慣例
+  ```go
+  // main.go 或 package 主文件
+  package services
+  
+  // 統一導出所有服務
+  ```
+
+- **其他語言**：遵循該語言/框架的 convention
+  - **React**：`index.ts/js` 導出組件
+  - **Vue**：`index.ts/js` 導出組件和 composables
+  - **Node.js**：`index.js` 作為模組入口點
+  - **Django**：`__init__.py` 導出模型和視圖
+
+### 導出文件的好處
+- **簡化導入**：`from models import User` 而不是 `from models.user import User`
+- **統一介面**：單一入口點管理所有導出
+- **重構友善**：內部文件重組不影響外部導入
+- **IDE 支援**：更好的自動完成和類型檢查
+
 ### 技術堅持與調試原則
 **核心原則：堅持既定技術棧，優先修復而非替換**
 
