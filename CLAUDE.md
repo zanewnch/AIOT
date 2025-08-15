@@ -488,14 +488,25 @@ docker restart AIOT-be AIOT-drone AIOT-rbac
 ### LLM 服務管理
 ```bash
 # 啟動 AI Engine（在 llm-ai-engine 目錄）
-source venv/bin/activate && python simple_main.py
+source venv/bin/activate && python main.py
+
+# 使用 LangChain 版本（預設，支援記憶和 RAG）
+USE_LANGCHAIN=true python main.py
+
+# 使用 Simple 版本（輕量級，快速啟動）
+USE_LANGCHAIN=false python main.py
 
 # 啟動 Django LLM Service（在 llm-service 目錄）  
 source venv/bin/activate && python manage.py runserver 0.0.0.0:8022
 
-# 檢查虛擬環境
+# 檢查虛擬環境和依賴
 which python  # 確認使用正確的 Python 環境
 pip list | grep torch  # 檢查模型依賴
+pip list | grep langchain  # 檢查 LangChain 依賴
+
+# LangChain 專用測試
+curl -X POST http://localhost:8021/memory/reset  # 重置對話記憶
+curl -X GET http://localhost:8021/memory/history  # 查看對話歷史
 ```
 
 ### 環境管理命令

@@ -37,6 +37,7 @@ export class GeneralGrpcServer {
    */
   private loadProtoAndAddService(): void {
     const PROTO_PATH = path.join(__dirname, '../../proto/general.proto');
+    const PROTO_DIR = path.join(__dirname, '../../proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
       keepCase: true,
@@ -44,6 +45,7 @@ export class GeneralGrpcServer {
       enums: String,
       defaults: true,
       oneofs: true,
+      includeDirs: [PROTO_DIR],
     });
 
     const generalProto = grpc.loadPackageDefinition(packageDefinition) as any;

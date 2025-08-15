@@ -2,27 +2,82 @@ syntax = "proto3";
 
 package general;
 
+import "google/api/annotations.proto";
+
 // General gRPC 服務定義
 service GeneralService {
   // 使用者偏好設定管理
-  rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse);
-  rpc GetUserPreferenceById(GetUserPreferenceByIdRequest) returns (GetUserPreferenceByIdResponse);
-  rpc CreateUserPreference(CreateUserPreferenceRequest) returns (CreateUserPreferenceResponse);
-  rpc UpdateUserPreference(UpdateUserPreferenceRequest) returns (UpdateUserPreferenceResponse);
-  rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse);
+  rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse) {
+    option (google.api.http) = {
+      get: "/api/general/user-preferences"
+    };
+  }
+  rpc GetUserPreferenceById(GetUserPreferenceByIdRequest) returns (GetUserPreferenceByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/general/user-preferences/{preference_id}"
+    };
+  }
+  rpc CreateUserPreference(CreateUserPreferenceRequest) returns (CreateUserPreferenceResponse) {
+    option (google.api.http) = {
+      post: "/api/general/user-preferences"
+      body: "*"
+    };
+  }
+  rpc UpdateUserPreference(UpdateUserPreferenceRequest) returns (UpdateUserPreferenceResponse) {
+    option (google.api.http) = {
+      put: "/api/general/user-preferences/{preference_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse) {
+    option (google.api.http) = {
+      delete: "/api/general/user-preferences/{preference_id}"
+    };
+  }
 
   // 系統設定管理
-  rpc GetSystemSettings(GetSystemSettingsRequest) returns (GetSystemSettingsResponse);
-  rpc GetSystemSettingByKey(GetSystemSettingByKeyRequest) returns (GetSystemSettingByKeyResponse);
-  rpc UpdateSystemSetting(UpdateSystemSettingRequest) returns (UpdateSystemSettingResponse);
+  rpc GetSystemSettings(GetSystemSettingsRequest) returns (GetSystemSettingsResponse) {
+    option (google.api.http) = {
+      get: "/api/general/system-settings"
+    };
+  }
+  rpc GetSystemSettingByKey(GetSystemSettingByKeyRequest) returns (GetSystemSettingByKeyResponse) {
+    option (google.api.http) = {
+      get: "/api/general/system-settings/{setting_key}"
+    };
+  }
+  rpc UpdateSystemSetting(UpdateSystemSettingRequest) returns (UpdateSystemSettingResponse) {
+    option (google.api.http) = {
+      put: "/api/general/system-settings/{setting_key}"
+      body: "*"
+    };
+  }
 
   // 主題設定
-  rpc GetThemeSettings(GetThemeSettingsRequest) returns (GetThemeSettingsResponse);
-  rpc UpdateThemeSettings(UpdateThemeSettingsRequest) returns (UpdateThemeSettingsResponse);
+  rpc GetThemeSettings(GetThemeSettingsRequest) returns (GetThemeSettingsResponse) {
+    option (google.api.http) = {
+      get: "/api/general/theme-settings"
+    };
+  }
+  rpc UpdateThemeSettings(UpdateThemeSettingsRequest) returns (UpdateThemeSettingsResponse) {
+    option (google.api.http) = {
+      put: "/api/general/theme-settings"
+      body: "*"
+    };
+  }
 
   // 語言設定
-  rpc GetLanguageSettings(GetLanguageSettingsRequest) returns (GetLanguageSettingsResponse);
-  rpc UpdateLanguageSettings(UpdateLanguageSettingsRequest) returns (UpdateLanguageSettingsResponse);
+  rpc GetLanguageSettings(GetLanguageSettingsRequest) returns (GetLanguageSettingsResponse) {
+    option (google.api.http) = {
+      get: "/api/general/language-settings"
+    };
+  }
+  rpc UpdateLanguageSettings(UpdateLanguageSettingsRequest) returns (UpdateLanguageSettingsResponse) {
+    option (google.api.http) = {
+      put: "/api/general/language-settings"
+      body: "*"
+    };
+  }
 }
 
 // 共用訊息類型

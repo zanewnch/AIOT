@@ -107,6 +107,7 @@ export class DroneGrpcServer {
    */
   private loadProtoAndAddService(): void {
     const PROTO_PATH = path.join(__dirname, '../../proto/drone.proto');
+    const PROTO_DIR = path.join(__dirname, '../../proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
       keepCase: true,
@@ -114,6 +115,7 @@ export class DroneGrpcServer {
       enums: String,
       defaults: true,
       oneofs: true,
+      includeDirs: [PROTO_DIR],
     });
 
     const droneProto = grpc.loadPackageDefinition(packageDefinition) as any;

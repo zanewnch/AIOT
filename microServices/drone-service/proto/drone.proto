@@ -2,41 +2,140 @@ syntax = "proto3";
 
 package drone;
 
+import "google/api/annotations.proto";
+
 // Drone gRPC 服務定義
 service DroneService {
   // 無人機狀態管理
-  rpc GetDroneStatuses(GetDroneStatusesRequest) returns (GetDroneStatusesResponse);
-  rpc GetDroneStatusById(GetDroneStatusByIdRequest) returns (GetDroneStatusByIdResponse);
-  rpc CreateDroneStatus(CreateDroneStatusRequest) returns (CreateDroneStatusResponse);
-  rpc UpdateDroneStatus(UpdateDroneStatusRequest) returns (UpdateDroneStatusResponse);
-  rpc DeleteDroneStatus(DeleteDroneStatusRequest) returns (DeleteDroneStatusResponse);
+  rpc GetDroneStatuses(GetDroneStatusesRequest) returns (GetDroneStatusesResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/statuses"
+    };
+  }
+  rpc GetDroneStatusById(GetDroneStatusByIdRequest) returns (GetDroneStatusByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/statuses/{drone_status_id}"
+    };
+  }
+  rpc CreateDroneStatus(CreateDroneStatusRequest) returns (CreateDroneStatusResponse) {
+    option (google.api.http) = {
+      post: "/api/drone/statuses"
+      body: "*"
+    };
+  }
+  rpc UpdateDroneStatus(UpdateDroneStatusRequest) returns (UpdateDroneStatusResponse) {
+    option (google.api.http) = {
+      put: "/api/drone/statuses/{drone_status_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteDroneStatus(DeleteDroneStatusRequest) returns (DeleteDroneStatusResponse) {
+    option (google.api.http) = {
+      delete: "/api/drone/statuses/{drone_status_id}"
+    };
+  }
 
   // 無人機位置管理
-  rpc GetDronePositions(GetDronePositionsRequest) returns (GetDronePositionsResponse);
-  rpc GetDronePositionById(GetDronePositionByIdRequest) returns (GetDronePositionByIdResponse);
-  rpc CreateDronePosition(CreateDronePositionRequest) returns (CreateDronePositionResponse);
-  rpc UpdateDronePosition(UpdateDronePositionRequest) returns (UpdateDronePositionResponse);
-  rpc DeleteDronePosition(DeleteDronePositionRequest) returns (DeleteDronePositionResponse);
+  rpc GetDronePositions(GetDronePositionsRequest) returns (GetDronePositionsResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/positions"
+    };
+  }
+  rpc GetDronePositionById(GetDronePositionByIdRequest) returns (GetDronePositionByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/positions/{drone_position_id}"
+    };
+  }
+  rpc CreateDronePosition(CreateDronePositionRequest) returns (CreateDronePositionResponse) {
+    option (google.api.http) = {
+      post: "/api/drone/positions"
+      body: "*"
+    };
+  }
+  rpc UpdateDronePosition(UpdateDronePositionRequest) returns (UpdateDronePositionResponse) {
+    option (google.api.http) = {
+      put: "/api/drone/positions/{drone_position_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteDronePosition(DeleteDronePositionRequest) returns (DeleteDronePositionResponse) {
+    option (google.api.http) = {
+      delete: "/api/drone/positions/{drone_position_id}"
+    };
+  }
 
   // 無人機命令管理
-  rpc GetDroneCommands(GetDroneCommandsRequest) returns (GetDroneCommandsResponse);
-  rpc GetDroneCommandById(GetDroneCommandByIdRequest) returns (GetDroneCommandByIdResponse);
-  rpc CreateDroneCommand(CreateDroneCommandRequest) returns (CreateDroneCommandResponse);
-  rpc UpdateDroneCommand(UpdateDroneCommandRequest) returns (UpdateDroneCommandResponse);
-  rpc DeleteDroneCommand(DeleteDroneCommandRequest) returns (DeleteDroneCommandResponse);
+  rpc GetDroneCommands(GetDroneCommandsRequest) returns (GetDroneCommandsResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/commands"
+    };
+  }
+  rpc GetDroneCommandById(GetDroneCommandByIdRequest) returns (GetDroneCommandByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/commands/{drone_command_id}"
+    };
+  }
+  rpc CreateDroneCommand(CreateDroneCommandRequest) returns (CreateDroneCommandResponse) {
+    option (google.api.http) = {
+      post: "/api/drone/commands"
+      body: "*"
+    };
+  }
+  rpc UpdateDroneCommand(UpdateDroneCommandRequest) returns (UpdateDroneCommandResponse) {
+    option (google.api.http) = {
+      put: "/api/drone/commands/{drone_command_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteDroneCommand(DeleteDroneCommandRequest) returns (DeleteDroneCommandResponse) {
+    option (google.api.http) = {
+      delete: "/api/drone/commands/{drone_command_id}"
+    };
+  }
 
   // 無人機命令佇列管理
-  rpc GetDroneCommandQueue(GetDroneCommandQueueRequest) returns (GetDroneCommandQueueResponse);
-  rpc AddToCommandQueue(AddToCommandQueueRequest) returns (AddToCommandQueueResponse);
-  rpc RemoveFromCommandQueue(RemoveFromCommandQueueRequest) returns (RemoveFromCommandQueueResponse);
+  rpc GetDroneCommandQueue(GetDroneCommandQueueRequest) returns (GetDroneCommandQueueResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/command-queue"
+    };
+  }
+  rpc AddToCommandQueue(AddToCommandQueueRequest) returns (AddToCommandQueueResponse) {
+    option (google.api.http) = {
+      post: "/api/drone/command-queue"
+      body: "*"
+    };
+  }
+  rpc RemoveFromCommandQueue(RemoveFromCommandQueueRequest) returns (RemoveFromCommandQueueResponse) {
+    option (google.api.http) = {
+      delete: "/api/drone/command-queue/{queue_id}"
+    };
+  }
 
   // 無人機即時狀態
-  rpc GetDroneRealTimeStatus(GetDroneRealTimeStatusRequest) returns (GetDroneRealTimeStatusResponse);
-  rpc UpdateDroneRealTimeStatus(UpdateDroneRealTimeStatusRequest) returns (UpdateDroneRealTimeStatusResponse);
+  rpc GetDroneRealTimeStatus(GetDroneRealTimeStatusRequest) returns (GetDroneRealTimeStatusResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/realtime/{drone_id}"
+    };
+  }
+  rpc UpdateDroneRealTimeStatus(UpdateDroneRealTimeStatusRequest) returns (UpdateDroneRealTimeStatusResponse) {
+    option (google.api.http) = {
+      put: "/api/drone/realtime/{drone_id}"
+      body: "*"
+    };
+  }
 
   // 封存任務管理
-  rpc GetArchiveTasks(GetArchiveTasksRequest) returns (GetArchiveTasksResponse);
-  rpc CreateArchiveTask(CreateArchiveTaskRequest) returns (CreateArchiveTaskResponse);
+  rpc GetArchiveTasks(GetArchiveTasksRequest) returns (GetArchiveTasksResponse) {
+    option (google.api.http) = {
+      get: "/api/drone/archive-tasks"
+    };
+  }
+  rpc CreateArchiveTask(CreateArchiveTaskRequest) returns (CreateArchiveTaskResponse) {
+    option (google.api.http) = {
+      post: "/api/drone/archive-tasks"
+      body: "*"
+    };
+  }
 }
 
 // 共用訊息類型

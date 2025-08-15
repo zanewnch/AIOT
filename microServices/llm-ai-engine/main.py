@@ -7,7 +7,8 @@ import os
 from contextlib import asynccontextmanager
 
 from config.llm_config import LLMConfig, DEFAULT_LLM_CONFIG
-from services.ai_service import AIService
+from services.simple_ai_service import SimpleAIService
+from services.langchain_ai_service import LangChainAIService
 from models.requests import (
     GenerateRequest, 
     ConversationalRequest, 
@@ -31,27 +32,49 @@ async def lifespan(app: FastAPI):
     """Handle startup and shutdown events"""
     global ai_service
     
+    # 選擇服務類型
+    use_langchain = os.getenv("USE_LANGCHAIN", "true").lower() == "true"
+    
     # Startup
-    logger.info("Starting LLM AI Engine...")
-    try:
-        ai_service = AIService(DEFAULT_LLM_CONFIG)
-        logger.info("AI Service initialized successfully")
-    except Exception as e:
-        logger.error(f"Failed to initialize AI Service: {e}")
-        raise e
+    if use_langchain:
+        logger.info("Starting SmolLM2 AI Engine with LangChain...")
+        try:
+            ai_service = LangChainAIService(DEFAULT_LLM_CONFIG)
+            logger.info("LangChain AI Service initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize LangChain AI Service: {e}")
+            logger.info("Falling back to Simple AI Service...")
+            ai_service = SimpleAIService(DEFAULT_LLM_CONFIG)
+            logger.info("Simple AI Service initialized successfully")
+    else:
+        logger.info("Starting SmolLM2 AI Engine with Simple Service...")
+        try:
+            ai_service = SimpleAIService(DEFAULT_LLM_CONFIG)
+            logger.info("Simple AI Service initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize AI Service: {e}")
+            raise e
     
     yield
     
     # Shutdown
-    logger.info("Shutting down LLM AI Engine...")
+    logger.info("Shutting down SmolLM2 AI Engine...")
     if ai_service:
         ai_service.cleanup()
 
 # Create FastAPI app
+use_langchain_desc = os.getenv("USE_LANGCHAIN", "true").lower() == "true"
+service_description = (
+    "基於 SmolLM2-135M-Instruct 的 AI 推理服務\n\n"
+    + ("🦜 **LangChain 版本**: 支援對話記憶、RAG 檢索增強生成、文檔管理" 
+       if use_langchain_desc 
+       else "⚡ **Simple 版本**: 輕量級基礎推理服務")
+)
+
 app = FastAPI(
-    title="AIOT LLM AI Engine",
-    description="獨立的 AI 推理服務，支援 Vision 模型、RAG 和對話功能",
-    version="1.0.0",
+    title="AIOT SmolLM2 AI Engine",
+    description=service_description,
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -78,7 +101,7 @@ async def health_check():
                 status="healthy",
                 model=health_status["model"],
                 available=True,
-                message="AI Service is running normally"
+                message="SmolLM2 AI Service is running normally"
             )
         else:
             raise HTTPException(
@@ -206,6 +229,43 @@ async def upload_documents(request: DocumentUploadRequest):
         raise
     except Exception as e:
         logger.error(f"Document upload failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/memory/reset")
+async def reset_memory():
+    """重置對話記憶（僅 LangChain 版本支援）"""
+    try:
+        if not ai_service:
+            raise HTTPException(status_code=503, detail="AI Service not available")
+        
+        # 檢查是否是 LangChain 服務
+        if hasattr(ai_service, 'reset_memory'):
+            ai_service.reset_memory()
+            return {"success": True, "message": "Conversation memory reset successfully"}
+        else:
+            return {"success": False, "message": "Memory reset not supported in current service"}
+    except Exception as e:
+        logger.error(f"Memory reset failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/memory/history")
+async def get_conversation_history():
+    """獲取對話歷史（僅 LangChain 版本支援）"""
+    try:
+        if not ai_service:
+            raise HTTPException(status_code=503, detail="AI Service not available")
+        
+        # 檢查是否是 LangChain 服務
+        if hasattr(ai_service, 'get_conversation_history'):
+            history = ai_service.get_conversation_history()
+            return {
+                "success": True, 
+                "history": [{"role": msg.type, "content": msg.content} for msg in history]
+            }
+        else:
+            return {"success": False, "message": "Conversation history not supported in current service"}
+    except Exception as e:
+        logger.error(f"Get conversation history failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
