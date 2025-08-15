@@ -1,7 +1,7 @@
-# Frontend Settings Service Policy
-# Authorization rules for user preferences and settings management
+# General Service Policy
+# Authorization rules for user preferences and general service management
 
-package aiot.fesetting
+package aiot.general
 
 import future.keywords.in
 import data.aiot.common
@@ -10,19 +10,19 @@ import data.aiot.common
 default allow = false
 
 # Superadmin has all permissions  
-allow {
+allow if {
     input.user.roles[_] == "superadmin"
 }
 
 # Admin can manage all user preferences
-allow {
+allow if {
     input.user.roles[_] == "admin" 
     input.resource == "user_preferences"
     input.action in ["create", "read", "update", "delete"]
 }
 
 # Users can manage their own preferences
-allow {
+allow if {
     input.user.roles[_] == "user"
     input.resource == "user_preferences"
     input.action in ["read", "create", "update"]
@@ -30,7 +30,7 @@ allow {
 }
 
 # Users can create their initial preferences
-allow {
+allow if {
     input.user.roles[_] == "user"
     input.resource == "user_preferences" 
     input.action == "create"
@@ -38,7 +38,7 @@ allow {
 }
 
 # Department managers can view preferences of their department users
-allow {
+allow if {
     input.user.roles[_] == "department_manager"
     input.resource == "user_preferences"
     input.action == "read"
@@ -46,7 +46,7 @@ allow {
 }
 
 # Operators can view user preferences during business hours
-allow {
+allow if {
     input.user.roles[_] == "operator"
     input.resource == "user_preferences"
     input.action == "read"
@@ -54,14 +54,14 @@ allow {
 }
 
 # System settings management - admin only
-allow {
+allow if {
     input.user.roles[_] in ["admin", "system_admin"]
     input.resource == "system_settings"
     input.action in ["read", "update"]
 }
 
 # Theme and UI preferences - any authenticated user
-allow {
+allow if {
     input.user.roles[_] in ["user", "operator", "admin"]
     input.resource == "ui_preferences"
     input.action in ["read", "update"]
@@ -69,7 +69,7 @@ allow {
 }
 
 # Emergency access for emergency responders
-allow {
+allow if {
     input.context.emergency == true
     input.user.roles[_] == "emergency_responder"
     input.resource == "user_preferences"
@@ -77,7 +77,7 @@ allow {
 }
 
 # Time-based restrictions for bulk operations
-allow {
+allow if {
     input.user.roles[_] == "admin"
     input.action in ["bulk_create", "bulk_delete", "bulk_update"]
     common.is_business_hours(input.context.currentTime)
@@ -85,97 +85,97 @@ allow {
 }
 
 # Location-based restrictions for sensitive operations
-allow {
+allow if {
     input.action in ["export_data", "bulk_delete"]
     input.context.userZone in ["secure_office", "admin_zone"]
     input.user.roles[_] == "admin"
 }
 
 # System maintenance restrictions
-deny {
+deny if {
     common.maintenance_mode_active
-    not input.user.roles[_] in ["admin", "system_admin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "system_admin"]]) == 0
 }
 
 # Night-time restrictions for non-emergency operations
-deny {
+deny if {
     input.action in ["bulk_create", "bulk_delete", "export_data"]
     not common.is_business_hours(input.context.currentTime) 
     not input.context.emergency
-    not input.user.roles[_] == "superadmin"
+    count([role | role := input.user.roles[_]; role == "superadmin"]) == 0
 }
 
 # Zone-based restrictions
-deny {
+deny if {
     input.context.userZone in data.restricted_zones
     input.action in ["create", "update", "delete"]
-    not input.user.roles[_] in ["admin", "superadmin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "superadmin"]]) == 0
 }
 
 # Resource ownership validation
-deny {
+deny if {
     input.resource == "user_preferences"
     input.context.resourceOwnerId != input.user.id
-    not input.user.roles[_] in ["admin", "department_manager", "superadmin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "department_manager", "superadmin"]]) == 0
     input.action in ["update", "delete"]
 }
 
 # Audit requirements
-requires_audit {
+requires_audit if {
     input.action in ["delete", "bulk_create", "bulk_delete", "export_data"]
 }
 
-requires_audit {
+requires_audit if {
     input.context.emergency == true
 }
 
-requires_audit {
+requires_audit if {
     input.user.roles[_] == "guest" 
 }
 
 # Required permission levels for different actions
-required_level_for_action(action) := 1 {
+required_level_for_action(action) := 1 if {
     action in ["read", "create"]
 }
 
-required_level_for_action(action) := 2 {
+required_level_for_action(action) := 2 if {
     action in ["update"]
 }
 
-required_level_for_action(action) := 3 {
+required_level_for_action(action) := 3 if {
     action in ["delete"]  
 }
 
-required_level_for_action(action) := 5 {
+required_level_for_action(action) := 5 if {
     action in ["bulk_create", "bulk_delete", "export_data"]
 }
 
 # Deny if user level is insufficient
-deny {
+deny if {
     input.user.level < required_level_for_action(input.action)
-    not input.user.roles[_] in ["admin", "superadmin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "superadmin"]]) == 0
 }
 
 # Denial reasons
-denial_reason := "Insufficient role" {
+denial_reason := "Insufficient role" if {
     not input.user.roles
 }
 
-denial_reason := "Outside working hours" {
+denial_reason := "Outside working hours" if {
     input.user.roles[_] == "operator"
     not common.is_business_hours(input.context.currentTime)
 }
 
-denial_reason := "Unauthorized zone" {
+denial_reason := "Unauthorized zone" if {
     input.context.userZone in data.restricted_zones
 }
 
-denial_reason := "Resource ownership required" {
+denial_reason := "Resource ownership required" if {
     input.context.resourceOwnerId != input.user.id
-    not input.user.roles[_] in ["admin", "department_manager"]
+    count([role | role := input.user.roles[_]; role in ["admin", "department_manager"]]) == 0
 }
 
-denial_reason := "System maintenance mode" {
+denial_reason := "System maintenance mode" if {
     common.maintenance_mode_active
-    not input.user.roles[_] in ["admin", "system_admin"]
+    count([role | role := input.user.roles[_]; role in ["admin", "system_admin"]]) == 0
 }

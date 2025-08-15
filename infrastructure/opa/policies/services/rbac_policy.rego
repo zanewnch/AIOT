@@ -10,19 +10,19 @@ import data.aiot.common
 default allow = false
 
 # RBAC Management - Superadmin only
-allow {
+allow if {
     input.user.roles[_] == "superadmin"
 }
 
 # Admin permissions for user and role management
-allow {
+allow if {
     input.user.roles[_] == "admin"
     input.resource in ["users", "roles", "permissions"]
     input.action in ["create", "read", "update", "delete"]
 }
 
 # Department managers can manage users in their department
-allow {
+allow if {
     input.user.roles[_] == "department_manager"
     input.resource == "users"
     input.action in ["read", "update"]
@@ -30,7 +30,7 @@ allow {
 }
 
 # Users can read their own information
-allow {
+allow if {
     input.user.roles[_] == "user"
     input.resource == "users"
     input.action == "read"
@@ -38,7 +38,7 @@ allow {
 }
 
 # Users can update their own profile
-allow {
+allow if {
     input.user.roles[_] == "user"
     input.resource == "users"
     input.action == "update"
@@ -47,13 +47,13 @@ allow {
 }
 
 # Auditor can read all data
-allow {
+allow if {
     input.user.roles[_] == "auditor"
     input.action == "read"
 }
 
 # Business hours restriction for sensitive operations
-allow {
+allow if {
     input.user.roles[_] in ["admin", "department_manager"]
     input.resource in ["roles", "permissions"]
     input.action in ["create", "update", "delete"]
@@ -61,24 +61,24 @@ allow {
 }
 
 # Emergency operations override
-allow {
+allow if {
     input.context.emergency == true
     input.user.roles[_] == "emergency_admin"
 }
 
 # System maintenance restrictions
-deny {
+deny if {
     common.maintenance_mode_active
-    not input.user.roles[_] in ["superadmin", "system_maintainer"]
+    count([role | role := input.user.roles[_]; role in ["superadmin", "system_maintainer"]]) == 0
 }
 
 # Audit requirements
-requires_audit {
+requires_audit if {
     input.action in ["create", "delete"]
     input.resource in ["users", "roles", "permissions"]
 }
 
-requires_audit {
+requires_audit if {
     input.user.roles[_] == "superadmin"
     input.action in ["delete", "update"]
 }

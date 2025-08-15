@@ -40,10 +40,10 @@ caching:
     max_size_bytes: 104857600  # 100MB
 
 # Distributed tracing
-distributed_tracing:
-  type: jaeger
-  address: http://jaeger:14268/api/traces
-  service_name: opa-server
+# distributed_tracing:
+#   type: jaeger
+#   address: http://jaeger:14268/api/traces
+#   service_name: opa-server
 
 # Plugin configuration
 plugins:
