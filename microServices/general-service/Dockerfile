@@ -11,6 +11,12 @@ RUN npm install
 # 建置階段：安裝必要的全域套件
 RUN npm install -g nodemon tsx
 
+# 安裝 gRPC 健康檢查工具
+RUN GRPC_HEALTH_PROBE_VERSION=v0.4.19 && \
+    wget -qO /usr/local/bin/grpc_health_probe \
+    https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+    chmod +x /usr/local/bin/grpc_health_probe
+
 # 複製 .env 檔案（如果存在）
 COPY .env* ./
 

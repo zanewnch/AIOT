@@ -29,6 +29,7 @@ export class GeneralGrpcServer {
   constructor() {
     this.server = new grpc.Server();
     this.loadProtoAndAddService();
+    this.addHealthService();
   }
 
   /**
@@ -272,6 +273,36 @@ export class GeneralGrpcServer {
     } catch (error) {
       console.error('Service info error:', error);
       callback(error as grpc.ServiceError, null);
+    }
+  }
+
+  /**
+   * 添加標準的 gRPC 健康檢查服務
+   */
+  private addHealthService(): void {
+    // 載入標準的健康檢查 proto
+    const healthProtoPath = path.join(__dirname, '../../proto/health.proto');
+    
+    // 先嘗試創建簡單的健康檢查 proto 文件
+    try {
+      const packageDefinition = protoLoader.loadSync(healthProtoPath, {
+        keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true,
+      });
+      
+      const healthProto = grpc.loadPackageDefinition(packageDefinition) as any;
+      
+      this.server.addService(healthProto.grpc.health.v1.Health.service, {
+        check: (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>) => {
+          callback(null, { status: 1 }); // SERVING = 1
+        }
+      });
+    } catch (error) {
+      console.log('Health check proto not found, using simple implementation');
+      // 如果 proto 文件不存在，先跳過健康檢查服務
     }
   }
 
