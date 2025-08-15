@@ -1,0 +1,78 @@
+# Redis 快取服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiot-prod-redis-deployment
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-redis
+    app.kubernetes.io/name: aiot-prod-redis
+    app.kubernetes.io/component: cache
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiot-prod-redis
+  template:
+    metadata:
+      labels:
+        app: aiot-prod-redis
+    spec:
+      containers:
+      - name: aiot-prod-redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+          name: redis
+        volumeMounts:
+        - name: aiot-prod-redis-storage
+          mountPath: /data
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      volumes:
+      - name: aiot-prod-redis-storage
+        persistentVolumeClaim:
+          claimName: aiot-prod-redis-pvc
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiot-prod-redis-service
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-redis
+    app.kubernetes.io/name: aiot-prod-redis
+    app.kubernetes.io/component: cache
+spec:
+  selector:
+    app: aiot-prod-redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+    name: redis
+  type: ClusterIP

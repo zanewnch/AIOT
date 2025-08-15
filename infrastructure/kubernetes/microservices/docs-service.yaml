@@ -1,0 +1,103 @@
+# Docs 文檔服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiot-prod-docs-service-deployment
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-docs-service
+    app.kubernetes.io/name: aiot-prod-docs-service
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiot-prod-docs-service
+  template:
+    metadata:
+      labels:
+        app: aiot-prod-docs-service
+    spec:
+      containers:
+      - name: aiot-prod-docs-service
+        image: node:18-bullseye  # 使用基礎映像檔進行測試
+        ports:
+        - containerPort: 3005
+          name: http
+        env:
+        - name: SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DOCS_SERVICE_NAME
+        - name: SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DOCS_SERVICE_PORT
+        # 從公共配置引入環境變數
+        envFrom:
+        - configMapRef:
+            name: aiot-common-config
+        - configMapRef:
+            name: prod-environment-config
+        # 生產環境：僅掛載配置文件
+        volumeMounts:
+        - name: route-configs
+          mountPath: /app/configs
+          readOnly: true
+        - name: app-logs
+          mountPath: /app/logs
+        # 測試用啟動命令 - 保持容器運行
+        command: ['sh', '-c', 'echo "Docs Service starting..." && tail -f /dev/null']
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: route-configs
+        configMap:
+          name: route-configs
+      - name: app-logs
+        emptyDir: {}
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiot-prod-docs-service
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-docs-service
+    app.kubernetes.io/name: aiot-prod-docs-service
+    app.kubernetes.io/component: microservice
+spec:
+  selector:
+    app: aiot-prod-docs-service
+  ports:
+  - port: 3005
+    targetPort: 3005
+    protocol: TCP
+    name: http
+  type: ClusterIP
