@@ -68,7 +68,7 @@ spec:
       volumes:
       - name: aiot-prod-consul-storage
         persistentVolumeClaim:
-          claimName: aiot-prod-consul-pvc
+          claimName: consul-pvc
       - name: aiot-prod-consul-config
         configMap:
           name: aiot-prod-consul-config

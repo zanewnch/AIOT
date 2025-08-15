@@ -83,7 +83,7 @@ spec:
       volumes:
       - name: aiot-prod-mongodb-storage
         persistentVolumeClaim:
-          claimName: aiot-prod-mongodb-pvc
+          claimName: mongodb-pvc
       restartPolicy: Always
 
 ---

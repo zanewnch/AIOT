@@ -21,9 +21,9 @@ spec:
     spec:
       containers:
       - name: aiot-prod-general-service
-        image: node:18-bullseye  # 使用基礎映像檔進行測試
+        image: aiot-general-service:latest
         # 測試用啟動命令 - 保持容器運行
-        command: ['sh', '-c', 'echo "General Service starting..." && tail -f /dev/null']
+        command: ['npm', 'run', 'dev']
         ports:
         - containerPort: 50053
           name: grpc

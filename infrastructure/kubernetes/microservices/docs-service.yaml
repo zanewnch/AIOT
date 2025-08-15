@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: aiot-prod-docs-service
-        image: node:18-bullseye  # 使用基礎映像檔進行測試
+        image: aiot-docs-service:latest
         ports:
         - containerPort: 3005
           name: http
@@ -49,8 +49,8 @@ spec:
           readOnly: true
         - name: app-logs
           mountPath: /app/logs
-        # 測試用啟動命令 - 保持容器運行
-        command: ['sh', '-c', 'echo "Docs Service starting..." && tail -f /dev/null']
+        # 啟動 docs 服務
+        command: ['npm', 'run', 'dev']
         livenessProbe:
           httpGet:
             path: /health

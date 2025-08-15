@@ -1,109 +1,109 @@
-# LLM 微服務 Kubernetes 配置 (Django)
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: aiot-prod-llm-service-deployment
-  namespace: aiot-prod
-  labels:
-    app: aiot-prod-llm-service
-    app.kubernetes.io/name: aiot-prod-llm-service
-    app.kubernetes.io/component: microservice
-    app.kubernetes.io/part-of: aiot-microservices
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: aiot-prod-llm-service
-  template:
-    metadata:
-      labels:
-        app: aiot-prod-llm-service
-    spec:
-      containers:
-      - name: aiot-prod-llm-service
-        image: python:3.11-slim  # 使用基礎 Python 映像檔進行測試
-        # 測試用啟動命令 - 保持容器運行
-        command: ['sh', '-c', 'echo "Django LLM service starting..." && tail -f /dev/null']
-        ports:
-        - containerPort: 8020
-          name: http
-        env:
-        - name: SERVICE_NAME
-          value: "aiot-prod-llm-service"
-        - name: DJANGO_PORT
-          value: "8020"
-        - name: DJANGO_SETTINGS_MODULE
-          value: "llm.settings"
-        - name: PYTHONUNBUFFERED
-          value: "1"
-        - name: DJANGO_DEBUG
-          value: "False"
-        # 從公共配置引入環境變數
-        envFrom:
-        - configMapRef:
-            name: aiot-common-config
-        - configMapRef:
-            name: prod-environment-config
-        - secretRef:
-            name: aiot-database-secrets
-        - secretRef:
-            name: aiot-app-secrets
-        # 生產環境：掛載日誌和靜態文件
-        volumeMounts:
-        - name: app-logs
-          mountPath: /app/logs
-        - name: static-files
-          mountPath: /app/staticfiles
-        - name: media-files
-          mountPath: /app/media
-        livenessProbe:
-          httpGet:
-            path: /health/
-            port: 8020
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health/
-            port: 8020
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "1000m"
-      volumes:
-      - name: app-logs
-        emptyDir: {}
-      - name: static-files
-        emptyDir: {}
-      - name: media-files
-        emptyDir: {}
-      restartPolicy: Always
+# LLM 微服務 Kubernetes 配置 (Django) - 暫時註解，使用本地開發
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: aiot-prod-llm-service-deployment
+#   namespace: aiot-prod
+#   labels:
+#     app: aiot-prod-llm-service
+#     app.kubernetes.io/name: aiot-prod-llm-service
+#     app.kubernetes.io/component: microservice
+#     app.kubernetes.io/part-of: aiot-microservices
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: aiot-prod-llm-service
+#   template:
+#     metadata:
+#       labels:
+#         app: aiot-prod-llm-service
+#     spec:
+#       containers:
+#       - name: aiot-prod-llm-service
+#         image: python:3.11-slim  # 使用基礎 Python 映像檔進行測試
+#         # 測試用啟動命令 - 保持容器運行
+#         command: ['tail', '-f', '/dev/null']
+#         ports:
+#         - containerPort: 8020
+#           name: http
+#         env:
+#         - name: SERVICE_NAME
+#           value: "aiot-prod-llm-service"
+#         - name: DJANGO_PORT
+#           value: "8020"
+#         - name: DJANGO_SETTINGS_MODULE
+#           value: "llm.settings"
+#         - name: PYTHONUNBUFFERED
+#           value: "1"
+#         - name: DJANGO_DEBUG
+#           value: "False"
+#         # 從公共配置引入環境變數
+#         envFrom:
+#         - configMapRef:
+#             name: aiot-common-config
+#         - configMapRef:
+#             name: prod-environment-config
+#         - secretRef:
+#             name: aiot-database-secrets
+#         - secretRef:
+#             name: aiot-app-secrets
+#         # 生產環境：掛載日誌和靜態文件
+#         volumeMounts:
+#         - name: app-logs
+#           mountPath: /app/logs
+#         - name: static-files
+#           mountPath: /app/staticfiles
+#         - name: media-files
+#           mountPath: /app/media
+#         livenessProbe:
+#           httpGet:
+#             path: /health/
+#             port: 8020
+#           initialDelaySeconds: 60
+#           periodSeconds: 30
+#           timeoutSeconds: 10
+#           failureThreshold: 3
+#         readinessProbe:
+#           httpGet:
+#             path: /health/
+#             port: 8020
+#           initialDelaySeconds: 30
+#           periodSeconds: 10
+#           timeoutSeconds: 5
+#           failureThreshold: 3
+#         resources:
+#           requests:
+#             memory: "1Gi"
+#             cpu: "500m"
+#           limits:
+#             memory: "2Gi"
+#             cpu: "1000m"
+#       volumes:
+#       - name: app-logs
+#         emptyDir: {}
+#       - name: static-files
+#         emptyDir: {}
+#       - name: media-files
+#         emptyDir: {}
+#       restartPolicy: Always
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: aiot-prod-llm-service
-  namespace: aiot-prod
-  labels:
-    app: aiot-prod-llm-service
-    app.kubernetes.io/name: aiot-prod-llm-service
-    app.kubernetes.io/component: microservice
-spec:
-  selector:
-    app: aiot-prod-llm-service
-  ports:
-  - port: 8020
-    targetPort: 8020
-    protocol: TCP
-    name: http
-  type: ClusterIP
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: aiot-prod-llm-service
+#   namespace: aiot-prod
+#   labels:
+#     app: aiot-prod-llm-service
+#     app.kubernetes.io/name: aiot-prod-llm-service
+#     app.kubernetes.io/component: microservice
+# spec:
+#   selector:
+#     app: aiot-prod-llm-service
+#   ports:
+#   - port: 8020
+#     targetPort: 8020
+#     protocol: TCP
+#     name: http
+#   type: ClusterIP

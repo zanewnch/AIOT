@@ -46,8 +46,8 @@ spec:
       containers:
       - name: rbac-service
         # 生產環境使用預構建映像檔
-        image: aiot/rbac-service:latest
-        imagePullPolicy: Always
+        image: aiot-rbac-service:latest
+        imagePullPolicy: Never
         
         ports:
         - containerPort: 3001

@@ -21,9 +21,9 @@ spec:
     spec:
       containers:
       - name: aiot-prod-drone-websocket-service
-        image: node:18-bullseye  # 使用基礎映像檔進行測試
-        # 測試用啟動命令 - 保持容器運行
-        command: ['sh', '-c', 'echo "Drone WebSocket Service starting..." && tail -f /dev/null']
+        image: aiot-drone-websocket-service:latest
+        # 啟動 drone-websocket 服務
+        command: ['npm', 'run', 'dev']
         ports:
         - containerPort: 3004
           name: websocket

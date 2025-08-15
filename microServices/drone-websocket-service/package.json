@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --import tsx/esm src/server.ts",
-    "dev": "npx nodemon ./src/server.ts",
+    "dev": "npx nodemon --exec \"node --import tsx/esm\" src/server.ts",
     "build": "npx tsc",
     "build:watch": "tsc --watch",
     "serve": "node ./dist/server.js",

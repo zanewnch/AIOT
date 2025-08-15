@@ -54,7 +54,7 @@ spec:
       volumes:
       - name: aiot-prod-redis-storage
         persistentVolumeClaim:
-          claimName: aiot-prod-redis-pvc
+          claimName: redis-pvc
       restartPolicy: Always
 
 ---
