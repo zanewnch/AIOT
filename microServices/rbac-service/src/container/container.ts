@@ -31,7 +31,9 @@ import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
 import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
 import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
 import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
 import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 
@@ -117,6 +119,15 @@ export function createContainer(): Container {
 
   container.bind<PermissionQueries>(TYPES.PermissionQueriesCtrl)
     .to(PermissionQueries)
+    .inSingletonScope();
+
+  // 關聯命令控制器
+  container.bind<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl)
+    .to(UserToRoleCommands)
+    .inSingletonScope();
+
+  container.bind<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl)
+    .to(RoleToPermissionCommands)
     .inSingletonScope();
 
   // 關聯查詢控制器

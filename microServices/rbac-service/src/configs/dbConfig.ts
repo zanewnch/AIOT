@@ -185,7 +185,7 @@ export const createSequelizeInstance = (): Sequelize => {
 const setupPoolEventListeners = (sequelize: Sequelize): void => {
   const connectionManager = sequelize.connectionManager as any;
   
-  if (connectionManager && connectionManager.pool) {
+  if (connectionManager && connectionManager.pool && typeof connectionManager.pool.on === 'function') {
     // 連接獲取事件
     connectionManager.pool.on('acquire', (connection: any) => {
       if (process.env.NODE_ENV === 'development') {

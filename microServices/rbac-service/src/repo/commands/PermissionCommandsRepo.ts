@@ -14,8 +14,8 @@ import { injectable } from 'inversify';
 import { 
   PermissionModel, 
   PermissionCreationAttributes 
-} from '../../../models/PermissionModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+} from '../../models/PermissionModel.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
 
 const logger = createLogger('PermissionCommandsRepository');

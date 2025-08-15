@@ -14,10 +14,10 @@ import { injectable } from 'inversify';
 import { 
   RoleModel, 
   RoleAttributes 
-} from '../../../models/RoleModel.js';
-import { PermissionModel } from '../../../models/PermissionModel.js';
-import { UserModel } from '../../../models/UserModel.js';
-import { createLogger } from '../../../configs/loggerConfig.js';
+} from '../../models/RoleModel.js';
+import { PermissionModel } from '../../models/PermissionModel.js';
+import { UserModel } from '../../models/UserModel.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('RoleQueriesRepository');
 

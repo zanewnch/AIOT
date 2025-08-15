@@ -72,6 +72,7 @@ export class RbacGrpcServer {
    */
   private loadProtoAndAddService(): void {
     const PROTO_PATH = path.join(__dirname, '../../proto/rbac.proto');
+    const PROTO_DIR = path.join(__dirname, '../../proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
       keepCase: true,
@@ -79,6 +80,7 @@ export class RbacGrpcServer {
       enums: String,
       defaults: true,
       oneofs: true,
+      includeDirs: [PROTO_DIR],
     });
 
     const rbacProto = grpc.loadPackageDefinition(packageDefinition) as any;
