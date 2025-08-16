@@ -1,0 +1,44 @@
+{
+  "service": {
+    "id": "docs-service",
+    "name": "docs-service",
+    "tags": [
+      "docs",
+      "documentation",
+      "api-docs",
+      "microservice",
+      "nodejs",
+      "express",
+      "grpc"
+    ],
+    "address": "aiot-docs-service",
+    "port": 50054,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "grpc",
+      "description": "Documentation aggregation and API documentation service"
+    },
+    "check": {
+      "id": "docs-service-health",
+      "name": "Docs Service Health Check",
+      "grpc": "aiot-docs-service:50054",
+      "interval": "30s",
+      "timeout": "5s",
+      "deregister_critical_service_after": "90s"
+    },
+    "checks": [
+      {
+        "id": "docs-service-grpc",
+        "name": "Docs gRPC Check",
+        "grpc": "aiot-docs-service:50054",
+        "interval": "30s",
+        "timeout": "5s"
+      }
+    ],
+    "weights": {
+      "passing": 10,
+      "warning": 1
+    }
+  }
+}

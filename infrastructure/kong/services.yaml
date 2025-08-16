@@ -6,9 +6,9 @@ services:
     protocol: grpc
     host: aiot-rbac-service
     port: 50051
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 15000
     retries: 5
     tags:
       - auth
@@ -21,9 +21,9 @@ services:
     protocol: grpc
     host: aiot-drone-service
     port: 50052
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 15000
     retries: 5
     tags:
       - drone
@@ -36,9 +36,9 @@ services:
     host: aiot-drone-websocket-service
     port: 3004
     path: /socket.io
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 15000
     retries: 5
     tags:
       - drone
@@ -50,12 +50,27 @@ services:
     protocol: grpc
     host: aiot-general-service
     port: 50053
-    connect_timeout: 60000
-    write_timeout: 60000
-    read_timeout: 60000
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 15000
     retries: 5
     tags:
       - user-preferences
       - settings
       - general
+      - grpc
+
+  # Docs 微服務 - 使用 gRPC 協議處理文檔管理
+  - name: docs-grpc-service
+    protocol: grpc
+    host: aiot-docs-service
+    port: 50054
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 15000
+    retries: 5
+    tags:
+      - docs
+      - documentation
+      - api-docs
       - grpc

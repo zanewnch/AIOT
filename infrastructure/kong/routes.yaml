@@ -77,3 +77,19 @@ routes:
       - health
       - general
       - secure
+
+  # Docs API 路由 - 僅允許 HTTPS 訪問，連接到 gRPC 服務
+  - name: docs-api-routes
+    service: docs-grpc-service
+    paths:
+      - /api/docs
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - https
+    tags:
+      - docs
+      - documentation
+      - api-docs
+      - secure
+      - grpc

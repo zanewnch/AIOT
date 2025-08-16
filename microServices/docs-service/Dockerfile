@@ -1,8 +1,10 @@
 # 使用 Node.js 官方映像
 FROM node:20-alpine
 
-# 安裝 curl 和 wget 用於健康檢查
-RUN apk add --no-cache curl wget
+# 安裝 curl、wget 和 grpc_health_probe 用於健康檢查
+RUN apk add --no-cache curl wget && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.19/grpc_health_probe-linux-amd64 && \
+    chmod +x /bin/grpc_health_probe
 
 # 設置工作目錄
 WORKDIR /app
@@ -21,12 +23,12 @@ RUN mkdir -p docs/rbac docs/drone docs/drone-websocket docs/general docs/fronten
 # RUN npm run build
 
 # 暴露端口
-EXPOSE 3005
+EXPOSE 50054
 
 # 設置環境變數
 ENV NODE_ENV=production
 ENV SERVICE_NAME=docs-service
-ENV SERVICE_PORT=3005
+ENV GRPC_PORT=50054
 
-# 啟動服務（使用開發模式，因為沒有編譯）
-CMD ["npm", "run", "dev"]
+# 啟動服務（使用 gRPC 開發模式）
+CMD ["npm", "run", "dev:grpc"]

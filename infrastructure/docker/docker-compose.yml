@@ -97,6 +97,20 @@ services:
       - KONG_ADMIN_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_LISTEN=0.0.0.0:8001
       - KONG_PLUGINS=bundled
+      # 性能優化設定
+      - KONG_WORKER_PROCESSES=auto
+      - KONG_WORKER_CONNECTIONS=1024
+      - KONG_NGINX_WORKER_PROCESSES=auto
+      - KONG_NGINX_HTTP_PROXY_BUFFERING=on
+      - KONG_NGINX_HTTP_PROXY_BUFFER_SIZE=128k
+      - KONG_NGINX_HTTP_PROXY_BUFFERS=8 128k
+      - KONG_NGINX_HTTP_PROXY_BUSY_BUFFERS_SIZE=256k
+      # gRPC 連線優化
+      - KONG_NGINX_HTTP_GRPC_READ_TIMEOUT=30s
+      - KONG_NGINX_HTTP_GRPC_SEND_TIMEOUT=30s
+      # 快取優化
+      - KONG_PROXY_CACHE_LOCK=on
+      - KONG_MEM_CACHE_SIZE=128m
     volumes:
       - ../kong:/kong:ro
       - ../kong/protos:/kong/protos:ro
@@ -493,7 +507,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # Docs 微服務 (純 HTTP - 文檔聚合服務)
+  # Docs 微服務 (純 gRPC - 文檔聚合服務)
   docs-service:
     build:
       context: ../../microServices/docs-service
@@ -501,11 +515,11 @@ services:
     logging: *default-logging
     container_name: aiot-docs-service
     ports:
-      - "3002:3002" # HTTP only
+      - "50054:50054" # gRPC only
     environment:
       <<: *common-env
       SERVICE_NAME: docs-service
-      SERVICE_PORT: 3002
+      GRPC_PORT: 50054
       NODE_ENV: development
       # 文檔服務無需資料庫配置
     volumes:
@@ -523,7 +537,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      test: ["CMD", "grpc_health_probe", "-addr=localhost:50054"]
       interval: 30s
       timeout: 10s
       retries: 3

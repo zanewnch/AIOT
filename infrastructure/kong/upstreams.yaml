@@ -11,13 +11,13 @@ upstreams:
         http_path: /health
         https_verify_certificate: false
         healthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 200
             - 302
           successes: 2
         unhealthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 429
             - 404
@@ -76,13 +76,13 @@ upstreams:
         http_path: /health
         https_verify_certificate: false
         healthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 200
             - 302
           successes: 2
         unhealthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 429
             - 404
@@ -141,13 +141,13 @@ upstreams:
         http_path: /health
         https_verify_certificate: false
         healthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 200
             - 302
           successes: 2
         unhealthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 429
             - 404
@@ -207,13 +207,13 @@ upstreams:
         http_path: /health
         https_verify_certificate: false
         healthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 200
             - 302
           successes: 2
         unhealthy:
-          interval: 10
+          interval: 30
           http_statuses:
             - 429
             - 404
