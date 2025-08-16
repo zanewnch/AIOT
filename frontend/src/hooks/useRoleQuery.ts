@@ -58,7 +58,7 @@ export class RoleQuery {
         try {
           logger.debug('Fetching roles from API');
           
-          const result = await apiClient.getWithResult<Role[]>('/api/rbac/roles');
+          const result = await apiClient.getWithResult<Role[]>('/rbac/roles');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -129,7 +129,7 @@ export class RoleQuery {
         try {
           logger.debug('Fetching role permissions from API');
           
-          const result = await apiClient.getWithResult<RolePermission[]>('/api/rbac/role-permissions');
+          const result = await apiClient.getWithResult<RolePermission[]>('/rbac/role-permissions');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

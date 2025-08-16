@@ -115,8 +115,8 @@ export class ChatQuery {
 
           // 根據是否使用對話模式選擇不同的端點
           const endpoint = request.useConversation 
-            ? '/api/transformers/conversation/'
-            : '/api/transformers/generate/';
+            ? '/transformers/conversation/'
+            : '/transformers/generate/';
           
           const result = await apiClient.postWithResult<ChatResponse>(
             `${this.LLM_SERVICE_URL}${endpoint}`,

@@ -50,7 +50,7 @@ export class RTKQuery {
         try {
           logger.debug('Fetching RTK data from API');
           
-          const result = await apiClient.getWithResult<RTKData[]>('/api/rtk/data');
+          const result = await apiClient.getWithResult<RTKData[]>('/rtk/data');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

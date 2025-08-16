@@ -94,7 +94,7 @@ export class ArchiveTaskQuery {
           }
           
           const queryString = params.toString();
-          const url = queryString ? `/api/archive-tasks?${queryString}` : '/api/archive-tasks';
+          const url = queryString ? `/archive-tasks?${queryString}` : '/archive-tasks';
           
           const response = await apiClient.get(url);
           const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
@@ -134,7 +134,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_DATA,
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get('/api/archive-tasks/data');
+          const response = await apiClient.get('/archive-tasks/data');
           const result = RequestResult.fromResponse<ArchiveTask[]>(response);
           
           if (result.isError()) {
@@ -319,7 +319,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASK_STATISTICS,
       queryFn: async (): Promise<ArchiveTaskStatistics> => {
         try {
-          const response = await apiClient.get('/api/archive-tasks/statistics');
+          const response = await apiClient.get('/archive-tasks/statistics');
           const result = RequestResult.fromResponse<ApiResponse<ArchiveTaskStatistics>>(response);
           
           if (result.isError()) {
@@ -359,7 +359,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (data: CreateArchiveTaskRequest): Promise<ArchiveTask> => {
         try {
-          const response = await apiClient.post('/api/archive-tasks', data);
+          const response = await apiClient.post('/archive-tasks', data);
           const result = RequestResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
@@ -409,7 +409,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (data: CreateArchiveTaskRequest[]): Promise<BatchArchiveResult> => {
         try {
-          const response = await apiClient.post('/api/archive-tasks/batch', data);
+          const response = await apiClient.post('/archive-tasks/batch', data);
           const result = RequestResult.fromResponse<ApiResponse<BatchArchiveResult>>(response);
           
           if (result.isError()) {

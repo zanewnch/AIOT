@@ -161,7 +161,7 @@ export class UserQuery {
         try {
           logger.debug('Fetching RBAC users from API');
           
-          const result = await apiClient.getWithResult<User[]>('/api/rbac/users');
+          const result = await apiClient.getWithResult<User[]>('/rbac/users');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -196,7 +196,7 @@ export class UserQuery {
         try {
           logger.debug('Fetching user roles from API');
           
-          const result = await apiClient.getWithResult<UserRole[]>('/api/rbac/user-roles');
+          const result = await apiClient.getWithResult<UserRole[]>('/rbac/user-roles');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

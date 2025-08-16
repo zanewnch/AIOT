@@ -46,7 +46,7 @@ export class DronePositionQuery {
       queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS,
       queryFn: async (): Promise<DronePosition[]> => {
         try {
-          const response = await apiClient.get('/api/drone-position/data');
+          const response = await apiClient.get('/drone-position/data');
           const result = RequestResult.fromResponse<DronePosition[]>(response);
           
           if (result.isError()) {
@@ -79,7 +79,7 @@ export class DronePositionQuery {
       queryKey: this.DRONE_POSITION_QUERY_KEYS.LATEST_DRONE_POSITIONS,
       queryFn: async (): Promise<DronePosition[]> => {
         try {
-          const response = await apiClient.get('/api/drone-position/data/latest');
+          const response = await apiClient.get('/drone-position/data/latest');
           const result = RequestResult.fromResponse<DronePosition[]>(response);
           
           if (result.isError()) {
@@ -180,7 +180,7 @@ export class DronePositionQuery {
     return useMutation({
       mutationFn: async (data: CreateDronePositionRequest): Promise<DronePosition> => {
         try {
-          const response = await apiClient.post('/api/drone-position/data', data);
+          const response = await apiClient.post('/drone-position/data', data);
           const result = RequestResult.fromResponse<DronePosition>(response);
           
           if (result.isError()) {

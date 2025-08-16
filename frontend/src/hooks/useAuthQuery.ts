@@ -43,7 +43,7 @@ export class AuthQuery {
       mutationKey: this.AUTH_QUERY_KEYS.LOGIN,
       mutationFn: async (loginData: LoginRequest): Promise<ExtendedLoginResponse> => {
         try {
-          const response = await apiClient.post('/api/auth', loginData);
+          const response = await apiClient.post('/auth', loginData);
           const result = RequestResult.fromResponse<ExtendedLoginResponse>(response);
           
           if (result.isError()) {
@@ -82,7 +82,7 @@ export class AuthQuery {
       mutationKey: this.AUTH_QUERY_KEYS.LOGOUT,
       mutationFn: async (): Promise<LogoutResponse> => {
         try {
-          const response = await apiClient.delete('/api/auth');
+          const response = await apiClient.delete('/auth');
           const result = RequestResult.fromResponse<LogoutResponse>(response);
           
           if (result.isError()) {

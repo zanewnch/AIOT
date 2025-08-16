@@ -61,7 +61,7 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVES,
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const response = await apiClient.get('/api/drone-positions-archive/data');
+          const response = await apiClient.get('/drone-positions-archive/data');
           const result = RequestResult.fromResponse<DronePositionArchive[]>(response);
           
           if (result.isError()) {
@@ -94,7 +94,7 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.LATEST_POSITION_ARCHIVES,
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const response = await apiClient.get('/api/drone-positions-archive/data/latest');
+          const response = await apiClient.get('/drone-positions-archive/data/latest');
           const result = RequestResult.fromResponse<DronePositionArchive[]>(response);
           
           if (result.isError()) {
@@ -195,7 +195,7 @@ export class DronePositionsArchiveQuery {
     return useMutation({
       mutationFn: async (data: CreatePositionArchiveRequest): Promise<DronePositionArchive> => {
         try {
-          const response = await apiClient.post('/api/drone-positions-archive/data', data);
+          const response = await apiClient.post('/drone-positions-archive/data', data);
           const result = RequestResult.fromResponse<DronePositionArchive>(response);
           
           if (result.isError()) {

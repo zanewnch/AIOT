@@ -49,7 +49,7 @@ interface DroneStatusArchive {
  * API 函數：獲取無人機狀態歷史歸檔數據
  */
 const fetchDroneStatusArchive = async (): Promise<DroneStatusArchive[]> => {
-  const response = await apiClient.get('/api/drone-status-archive/data');
+  const response = await apiClient.get('/drone-status-archive/data');
   const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
   
   if (result.isError()) {

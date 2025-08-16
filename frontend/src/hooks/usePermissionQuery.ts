@@ -52,7 +52,7 @@ export class PermissionQuery {
         try {
           logger.debug('Fetching permissions from API');
           
-          const result = await apiClient.getWithResult<Permission[]>('/api/rbac/permissions');
+          const result = await apiClient.getWithResult<Permission[]>('/rbac/permissions');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

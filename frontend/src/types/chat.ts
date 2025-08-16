@@ -186,11 +186,11 @@ export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
  * API 端點常數
  */
 export const CHAT_API_ENDPOINTS = {
-  GENERATE: '/api/transformers/generate/',
-  CONVERSATION: '/api/transformers/conversation/',
-  STREAM: '/api/transformers/stream/',
-  DOCUMENTS: '/api/transformers/documents/',
-  HEALTH: '/api/transformers/health/'
+  GENERATE: '/transformers/generate/',
+  CONVERSATION: '/transformers/conversation/',
+  STREAM: '/transformers/stream/',
+  DOCUMENTS: '/transformers/documents/',
+  HEALTH: '/transformers/health/'
 } as const;
 
 /**

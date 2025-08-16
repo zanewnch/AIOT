@@ -46,7 +46,7 @@ interface DronePositionsArchive {
  * API 函數：獲取無人機位置歷史歸檔數據
  */
 const fetchDronePositionsArchive = async (): Promise<DronePositionsArchive[]> => {
-  const response = await apiClient.get('/api/drone-positions-archive/data');
+  const response = await apiClient.get('/drone-positions-archive/data');
   const result = RequestResult.fromResponse<DronePositionsArchive[]>(response);
   
   if (result.isError()) {

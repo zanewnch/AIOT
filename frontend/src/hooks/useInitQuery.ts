@@ -54,7 +54,7 @@ export class InitQuery {
       mutationKey: this.INIT_QUERY_KEYS.RBAC_DEMO,
       mutationFn: async (): Promise<InitResponse> => {
         try {
-          const response = await apiClient.post('/api/init/rbac-demo');
+          const response = await apiClient.post('/init/rbac-demo');
           const result = RequestResult.fromResponse<InitResponse>(response);
           
           if (result.isSuccess() && result.data) {
@@ -99,7 +99,7 @@ export class InitQuery {
       mutationKey: this.INIT_QUERY_KEYS.RTK_DEMO,
       mutationFn: async (): Promise<InitResponse> => {
         try {
-          const response = await apiClient.post('/api/init/rtk-demo');
+          const response = await apiClient.post('/init/rtk-demo');
           const result = RequestResult.fromResponse<InitResponse>(response);
           
           if (result.isSuccess() && result.data) {
@@ -144,7 +144,7 @@ export class InitQuery {
       mutationKey: this.INIT_QUERY_KEYS.ADMIN_USER,
       mutationFn: async (): Promise<InitResponse> => {
         try {
-          const response = await apiClient.post('/api/init/admin-user');
+          const response = await apiClient.post('/init/admin-user');
           const result = RequestResult.fromResponse<InitResponse>(response);
           
           if (result.isSuccess() && result.data) {
@@ -186,7 +186,7 @@ export class InitQuery {
       mutationKey: this.INIT_QUERY_KEYS.STRESS_TEST,
       mutationFn: async (): Promise<StressTestResponse> => {
         try {
-          const response = await apiClient.post('/api/init/stress-test-data');
+          const response = await apiClient.post('/init/stress-test-data');
           const result = RequestResult.fromResponse<StressTestResponse>(response);
           
           if (result.isSuccess() && result.data) {
@@ -233,7 +233,7 @@ export class InitQuery {
           
           // Helper function for RBAC initialization
           const initRbacDemo = async (): Promise<InitResponse> => {
-            const response = await apiClient.post('/api/init/rbac-demo');
+            const response = await apiClient.post('/init/rbac-demo');
             const result = RequestResult.fromResponse<InitResponse>(response);
             
             if (result.isSuccess() && result.data) {
@@ -246,7 +246,7 @@ export class InitQuery {
           
           // Helper function for RTK initialization
           const initRtkDemo = async (): Promise<InitResponse> => {
-            const response = await apiClient.post('/api/init/rtk-demo');
+            const response = await apiClient.post('/init/rtk-demo');
             const result = RequestResult.fromResponse<InitResponse>(response);
             
             if (result.isSuccess() && result.data) {

@@ -73,7 +73,7 @@ export class DroneCommandQuery {
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS,
       queryFn: async (): Promise<DroneCommand[]> => {
         try {
-          const response = await apiClient.get('/api/drone-commands/data');
+          const response = await apiClient.get('/drone-commands/data');
           const result = RequestResult.fromResponse<DroneCommand[]>(response);
           
           if (result.isError()) {
@@ -271,7 +271,7 @@ export class DroneCommandQuery {
       queryKey: ['droneCommands', 'dateRange', dateRange],
       queryFn: async (): Promise<DroneCommand[]> => {
         try {
-          const response = await apiClient.get('/api/drone-commands/data/date-range', { params: dateRange! });
+          const response = await apiClient.get('/drone-commands/data/date-range', { params: dateRange! });
           const result = RequestResult.fromResponse<DroneCommand[]>(response);
           
           if (result.isError()) {
@@ -374,7 +374,7 @@ export class DroneCommandQuery {
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS,
       queryFn: async (): Promise<DroneCommand[]> => {
         try {
-          const response = await apiClient.get('/api/drone-commands/data/latest');
+          const response = await apiClient.get('/drone-commands/data/latest');
           const result = RequestResult.fromResponse<DroneCommand[]>(response);
           
           if (result.isError()) {
@@ -408,7 +408,7 @@ export class DroneCommandQuery {
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.FAILED_COMMANDS,
       queryFn: async (): Promise<DroneCommand[]> => {
         try {
-          const response = await apiClient.get('/api/drone-commands/data/failed');
+          const response = await apiClient.get('/drone-commands/data/failed');
           const result = RequestResult.fromResponse<DroneCommand[]>(response);
           
           if (result.isError()) {
@@ -440,7 +440,7 @@ export class DroneCommandQuery {
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.COMMAND_STATISTICS,
       queryFn: async (): Promise<CommandStatistics> => {
         try {
-          const response = await apiClient.get('/api/drone-commands/statistics');
+          const response = await apiClient.get('/drone-commands/statistics');
           const result = RequestResult.fromResponse<CommandStatistics>(response);
           
           if (result.isError()) {
@@ -473,7 +473,7 @@ export class DroneCommandQuery {
       queryKey: this.DRONE_COMMAND_QUERY_KEYS.COMMAND_TYPE_STATISTICS,
       queryFn: async (): Promise<CommandTypeStatistics> => {
         try {
-          const response = await apiClient.get('/api/drone-commands/statistics/types');
+          const response = await apiClient.get('/drone-commands/statistics/types');
           const result = RequestResult.fromResponse<CommandTypeStatistics>(response);
           
           if (result.isError()) {
@@ -539,7 +539,7 @@ export class DroneCommandQuery {
     return useMutation({
       mutationFn: async (commandData: Partial<DroneCommand>): Promise<DroneCommand> => {
         try {
-          const response = await apiClient.post('/api/drone-commands/data', commandData);
+          const response = await apiClient.post('/drone-commands/data', commandData);
           const result = RequestResult.fromResponse<DroneCommand>(response);
           
           if (result.isError()) {
@@ -574,7 +574,7 @@ export class DroneCommandQuery {
     return useMutation({
       mutationFn: async (commands: Partial<DroneCommand>[]): Promise<DroneCommand[]> => {
         try {
-          const response = await apiClient.post('/api/drone-commands/data/batch', { commands });
+          const response = await apiClient.post('/drone-commands/data/batch', { commands });
           const result = RequestResult.fromResponse<DroneCommand[]>(response);
           
           if (result.isError()) {

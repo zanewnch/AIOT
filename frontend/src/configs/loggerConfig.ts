@@ -72,7 +72,7 @@ const defaultConfig: LoggerConfig = {
   enableConsole: true,
   enableLocalStorage: isDevelopment, // 只在開發環境啟用本地存儲
   enableRemoteLogging: isProduction, // 只在生產環境啟用遠程日誌
-  remoteEndpoint: '/api/logs', // 遠程日誌端點
+  remoteEndpoint: '/logs', // 遠程日誌端點
   maxLocalStorageSize: 1000 // 最大本地存儲條目數
 };
 
@@ -171,7 +171,7 @@ class RemoteLogger {
   private queue: LogEntry[] = [];
   private sending = false;
 
-  constructor(endpoint: string = '/api/logs') {
+  constructor(endpoint: string = '/logs') {
     this.endpoint = endpoint;
     
     // 定期發送日誌

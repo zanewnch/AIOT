@@ -185,7 +185,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Fetching queue statistics');
           
-          const url = '/api/drone-command-queues/statistics';
+          const url = '/drone-command-queues/statistics';
           const result = await apiClient.getWithResult<QueueStatistics>(url);
           
           if (!result.isSuccess()) {
@@ -222,7 +222,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Creating command queue', { queueData });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>('/api/drone-command-queues/data', queueData);
+          const result = await apiClient.postWithResult<DroneCommandQueue>('/drone-command-queues/data', queueData);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
