@@ -1,11 +1,11 @@
 _format_version: "3.0"
 
 services:
-  # RBAC 微服務 - 使用 gRPC 協議進行內部通訊
+  # RBAC 微服務 - 使用 HTTP 協議進行 Kong 通訊
   - name: rbac-service
-    protocol: grpc
+    protocol: http
     host: aiot-rbac-service
-    port: 50051
+    port: 3051
     connect_timeout: 5000
     write_timeout: 10000
     read_timeout: 15000
@@ -14,13 +14,13 @@ services:
       - auth
       - rbac
       - microservice
-      - grpc
+      - http
 
-  # Drone API 微服務 - 使用 gRPC 協議處理 API 請求
-  - name: drone-grpc-service
-    protocol: grpc
+  # Drone API 微服務 - 使用 HTTP 協議處理 API 請求
+  - name: drone-http-service
+    protocol: http
     host: aiot-drone-service
-    port: 50052
+    port: 3052
     connect_timeout: 5000
     write_timeout: 10000
     read_timeout: 15000
@@ -28,7 +28,7 @@ services:
     tags:
       - drone
       - api
-      - grpc
+      - http
 
   # Drone WebSocket 微服務 - 專門處理 WebSocket 連線
   - name: drone-websocket-service
@@ -45,11 +45,11 @@ services:
       - websocket
       - realtime
 
-  # General 微服務 - 使用 gRPC 協議 (原 FeSetting 服務)
+  # General 微服務 - 使用 HTTP 協議 (原 FeSetting 服務)
   - name: general-service
-    protocol: grpc
+    protocol: http
     host: aiot-general-service
-    port: 50053
+    port: 3053
     connect_timeout: 5000
     write_timeout: 10000
     read_timeout: 15000
@@ -58,13 +58,13 @@ services:
       - user-preferences
       - settings
       - general
-      - grpc
+      - http
 
-  # Docs 微服務 - 使用 gRPC 協議處理文檔管理
-  - name: docs-grpc-service
-    protocol: grpc
+  # Docs 微服務 - 使用 HTTP 協議處理文檔管理
+  - name: docs-http-service
+    protocol: http
     host: aiot-docs-service
-    port: 50054
+    port: 3054
     connect_timeout: 5000
     write_timeout: 10000
     read_timeout: 15000
@@ -73,4 +73,4 @@ services:
       - docs
       - documentation
       - api-docs
-      - grpc
+      - http

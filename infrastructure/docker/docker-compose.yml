@@ -360,7 +360,7 @@ services:
   # 微服務 (Microservices)
   # ==========================================================================
 
-  # RBAC 微服務 (純 gRPC)
+  # RBAC 微服務 (gRPC + HTTP)
   rbac-service:
     build:
       context: ../../microServices/rbac-service
@@ -368,12 +368,13 @@ services:
     logging: *default-logging
     container_name: aiot-rbac-service
     ports:
-      - "50051:50051" # gRPC
-      - "3001:3001"   # HTTP for health check
+      - "50051:50051" # gRPC for inter-service communication
+      - "3051:3051"   # HTTP for Kong communication
     environment:
       <<: *common-env
       SERVICE_NAME: rbac-service
       GRPC_PORT: 50051
+      HTTP_PORT: 3051
       # RBAC 專用資料庫配置
       DB_HOST: aiot-rbac-mysql
       DB_NAME: rbac_db
@@ -391,12 +392,12 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "grpc_health_probe", "-addr=localhost:50051"]
+      test: ["CMD", "curl", "-f", "http://localhost:3051/health"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Drone API 微服務 (純 gRPC)
+  # Drone API 微服務 (gRPC + HTTP)
   drone-service:
     build:
       context: ../../microServices/drone-service
@@ -404,11 +405,13 @@ services:
     logging: *default-logging
     container_name: aiot-drone-service
     ports:
-      - "50052:50052" # gRPC only
+      - "50052:50052" # gRPC for inter-service communication
+      - "3052:3052"   # HTTP for Kong communication
     environment:
       <<: *common-env
       SERVICE_NAME: drone-service
       GRPC_PORT: 50052
+      HTTP_PORT: 3052
       # Drone 專用資料庫配置
       DB_HOST: aiot-drone-mysql
       DB_NAME: drone_db
@@ -428,7 +431,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "grpc_health_probe", "-addr=localhost:50052"]
+      test: ["CMD", "curl", "-f", "http://localhost:3052/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -472,7 +475,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # General 微服務 (純 gRPC)
+  # General 微服務 (gRPC + HTTP)
   general-service:
     build:
       context: ../../microServices/general-service
@@ -480,11 +483,13 @@ services:
     logging: *default-logging
     container_name: aiot-general-service
     ports:
-      - "50053:50053" # gRPC only
+      - "50053:50053" # gRPC for inter-service communication
+      - "3053:3053"   # HTTP for Kong communication
     environment:
       <<: *common-env
       SERVICE_NAME: general-service
       GRPC_PORT: 50053
+      HTTP_PORT: 3053
       # General 專用資料庫配置
       DB_HOST: aiot-general-mysql
       DB_NAME: user_preference_db
@@ -502,12 +507,12 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "grpc_health_probe", "-addr=localhost:50053"]
+      test: ["CMD", "curl", "-f", "http://localhost:3053/health"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Docs 微服務 (純 gRPC - 文檔聚合服務)
+  # Docs 微服務 (gRPC + HTTP - 文檔聚合服務)
   docs-service:
     build:
       context: ../../microServices/docs-service
@@ -515,11 +520,13 @@ services:
     logging: *default-logging
     container_name: aiot-docs-service
     ports:
-      - "50054:50054" # gRPC only
+      - "50054:50054" # gRPC for inter-service communication
+      - "3054:3054"   # HTTP for Kong communication
     environment:
       <<: *common-env
       SERVICE_NAME: docs-service
       GRPC_PORT: 50054
+      HTTP_PORT: 3054
       NODE_ENV: development
       # 文檔服務無需資料庫配置
     volumes:
@@ -537,7 +544,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "grpc_health_probe", "-addr=localhost:50054"]
+      test: ["CMD", "curl", "-f", "http://localhost:3054/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -573,7 +580,7 @@ services:
     # 前端不依賴後端服務，獨立啟動
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3010"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3

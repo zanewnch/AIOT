@@ -21,6 +21,17 @@ export function registerRoutes(app: Application): void {
     console.log('🛣️  Registering RBAC API routes...');
 
     try {
+        // 註冊健康檢查路由
+        app.get('/health', (req, res) => {
+            res.status(200).json({
+                status: 'healthy',
+                service: 'rbac-service',
+                timestamp: new Date().toISOString(),
+                version: '1.0.0'
+            });
+        });
+        console.log('✅ Health check route registered at /health');
+
         // 註冊認證路由
         app.use('/api/auth', authRoutes);
         console.log('✅ Auth routes registered at /api/auth');

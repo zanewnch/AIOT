@@ -29,9 +29,9 @@ routes:
       - permissions
       - secure
 
-  # Drone API 路由 - 僅允許 HTTPS 訪問，連接到 gRPC 服務
+  # Drone API 路由 - 僅允許 HTTPS 訪問，連接到 HTTP 服務
   - name: drone-api-routes
-    service: drone-grpc-service
+    service: drone-http-service
     paths:
       - /api/drone
     strip_path: false
@@ -42,7 +42,7 @@ routes:
       - drone
       - api
       - secure
-      - grpc
+      - http
 
   # Drone WebSocket 路由 - 連接到獨立的即時通訊服務
   - name: drone-websocket-routes
@@ -78,9 +78,9 @@ routes:
       - general
       - secure
 
-  # Docs API 路由 - 僅允許 HTTPS 訪問，連接到 gRPC 服務
+  # Docs API 路由 - 僅允許 HTTPS 訪問，連接到 HTTP 服務
   - name: docs-api-routes
-    service: docs-grpc-service
+    service: docs-http-service
     paths:
       - /api/docs
     strip_path: false
@@ -92,4 +92,4 @@ routes:
       - documentation
       - api-docs
       - secure
-      - grpc
+      - http
