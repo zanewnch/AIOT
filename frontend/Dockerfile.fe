@@ -21,7 +21,7 @@ COPY src/.env* ./src/
 # 複製程式碼
 COPY . .
 
-EXPOSE 3010
+EXPOSE 3000
 
 # 執行階段：啟動開發服務器
 CMD ["npm", "run", "dev"]

@@ -12,3 +12,12 @@ sentence-transformers>=2.6.0
 Pillow>=10.0.0
 requests==2.31.0
 python-multipart==0.0.6
+
+# Intel NPU 支援 - 主要使用 OpenVINO
+openvino>=2025.0.0
+optimum[openvino]>=1.17.0
+
+# Intel NPU 支援 - 備用方案 IPEX-LLM
+--pre
+--upgrade
+ipex-llm[npu]

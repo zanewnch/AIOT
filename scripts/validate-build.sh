@@ -21,7 +21,7 @@ declare -a PROJECTS=(
     "microServices/rbac"
     "microServices/drone" 
     "microServices/feSetting"
-    "fe"
+    "frontend"
 )
 
 # 記錄結果
@@ -182,7 +182,7 @@ show_help() {
     echo "示例:"
     echo "  $0                    # 構建所有項目"
     echo "  $0 -s rbac           # 只構建 RBAC 微服務"
-    echo "  $0 -s fe             # 只構建前端項目"
+    echo "  $0 -s frontend       # 只構建前端項目"
 }
 
 # 構建指定項目

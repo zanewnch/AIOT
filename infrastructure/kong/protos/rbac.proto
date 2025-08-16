@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package rbac;
+
+import "google/api/annotations.proto";
+
+service RbacService {
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+    option (google.api.http) = {
+      get: "/api/rbac/users"
+    };
+  }
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/api/rbac/users"
+      body: "*"
+    };
+  }
+  rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse) {
+    option (google.api.http) = {
+      get: "/api/auth/me"
+    };
+  }
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/login"
+      body: "*"
+    };
+  }
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/logout"
+      body: "*"
+    };
+  }
+}
+
+message GetUsersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message CreateUserResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CheckAuthRequest {}
+
+message CheckAuthResponse {
+  User user = 1;
+  bool authenticated = 2;
+  string message = 3;
+  repeated string roles = 4;
+  repeated string permissions = 5;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+  string token = 4;
+}
+
+message LogoutRequest {}
+
+message LogoutResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  bool is_active = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}

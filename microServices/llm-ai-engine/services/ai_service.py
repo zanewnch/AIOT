@@ -11,6 +11,20 @@ from PIL import Image
 import io
 import json
 
+# Intel NPU support imports (conditional)
+try:
+    import openvino as ov
+    from optimum.intel import OVModelForCausalLM
+    OPENVINO_AVAILABLE = True
+except ImportError:
+    OPENVINO_AVAILABLE = False
+
+try:
+    from ipex_llm.transformers import AutoModelForCausalLM as IPEXAutoModelForCausalLM
+    IPEX_AVAILABLE = True
+except ImportError:
+    IPEX_AVAILABLE = False
+
 from config.llm_config import LLMConfig
 
 logger = logging.getLogger(__name__)
@@ -49,18 +63,36 @@ class AIService:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
                 self.config.model.pad_token_id = self.tokenizer.eos_token_id
             
-            # 載入模型
-            torch_dtype = torch.float16 if self.device == "cuda" else torch.float32
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.config.model.model_name,
-                torch_dtype=torch_dtype,
-                device_map="auto" if self.device == "cuda" else None,
-                trust_remote_code=self.config.model.trust_remote_code
-            )
-            
-            # 如果不是使用 device_map，手動移動到指定設備
-            if self.device != "cuda" or not torch.cuda.is_available():
-                self.model = self.model.to(self.device)
+            # 根據設備類型載入模型
+            if self.device == "npu" and OPENVINO_AVAILABLE:
+                # 使用 OpenVINO 進行 NPU 推理
+                logger.info("Loading model with OpenVINO for NPU inference")
+                self.model = OVModelForCausalLM.from_pretrained(
+                    self.config.model.model_name,
+                    device="NPU",
+                    trust_remote_code=self.config.model.trust_remote_code
+                )
+            elif self.device == "npu" and IPEX_AVAILABLE:
+                # 使用 IPEX-LLM 進行 NPU 推理 (Windows only)
+                logger.info("Loading model with IPEX-LLM for NPU inference")
+                self.model = IPEXAutoModelForCausalLM.from_pretrained(
+                    self.config.model.model_name,
+                    load_in_low_bit="nf4",
+                    trust_remote_code=self.config.model.trust_remote_code
+                )
+            else:
+                # 標準 transformers 載入
+                torch_dtype = torch.float16 if self.device == "cuda" else torch.float32
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.config.model.model_name,
+                    torch_dtype=torch_dtype,
+                    device_map="auto" if self.device == "cuda" else None,
+                    trust_remote_code=self.config.model.trust_remote_code
+                )
+                
+                # 如果不是使用 device_map，手動移動到指定設備
+                if self.device not in ["cuda", "npu"] or not torch.cuda.is_available():
+                    self.model = self.model.to(self.device)
             
             logger.info(f"SmolLM2 model loaded successfully on {self.device}")
         except Exception as e:

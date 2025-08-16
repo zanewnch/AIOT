@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 import torch
 import os
+import platform
 
 @dataclass
 class ModelConfig:
@@ -47,7 +48,10 @@ class LLMConfig:
         
         # Auto-detect device
         if device is None:
-            if torch.cuda.is_available():
+            # Check for Intel NPU support (Windows only for now)
+            if self._is_npu_available():
+                self.device = "npu"
+            elif torch.cuda.is_available():
                 self.device = "cuda"
             elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
                 self.device = "mps"
@@ -55,6 +59,30 @@ class LLMConfig:
                 self.device = "cpu"
         else:
             self.device = device
+    
+    def _is_npu_available(self) -> bool:
+        """檢測 Intel NPU 是否可用"""
+        try:
+            # Check for OpenVINO NPU support (recommended approach)
+            try:
+                import openvino as ov
+                core = ov.Core()
+                available_devices = core.available_devices
+                return "NPU" in available_devices
+            except ImportError:
+                pass
+            
+            # Fallback: Check for IPEX-LLM NPU support (Windows only)
+            if platform.system() == "Windows":
+                try:
+                    import ipex_llm
+                    return True
+                except ImportError:
+                    pass
+            
+            return False
+        except Exception:
+            return False
 
 # Default configuration
 DEFAULT_LLM_CONFIG = LLMConfig()

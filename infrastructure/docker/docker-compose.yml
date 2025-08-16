@@ -543,6 +543,43 @@ services:
       retries: 3
 
   # ==========================================================================
+  # 前端應用 (Frontend Application)
+  # ==========================================================================
+
+  # 前端 React 應用
+  frontend-app:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile.fe
+    logging: *default-logging
+    container_name: aiot-frontend
+    ports:
+      - "3000:3000"   # Vite 開發服務器
+    environment:
+      # 前端專用環境變數（不繼承微服務配置）
+      NODE_ENV: development
+      # API 端點配置 - 前端直接連接到 Kong Gateway
+      VITE_API_BASE_URL: http://localhost:8000/api
+      VITE_WS_URL: ws://localhost:3004
+      VITE_KONG_GATEWAY_URL: http://localhost:8000
+      # 開發模式配置
+      CHOKIDAR_USEPOLLING: true  # 支援容器內 hot-reload
+    volumes:
+      - ../../frontend:/app/fe
+      - /app/fe/node_modules
+      # 快取 node_modules 以提升效能
+    networks:
+      - aiot-network
+    # 前端不依賴後端服務，獨立啟動
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3010"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s  # Vite 需要較長啟動時間
+
+  # ==========================================================================
   # 監控服務 (Monitoring Services) - 可選
   # ==========================================================================
 

@@ -80,6 +80,25 @@ service RbacService {
   rpc GetRolePermissions(GetRolePermissionsRequest) returns (GetRolePermissionsResponse);
   rpc CreateRolePermission(CreateRolePermissionRequest) returns (CreateRolePermissionResponse);
   rpc DeleteRolePermission(DeleteRolePermissionRequest) returns (DeleteRolePermissionResponse);
+
+  // 認證相關
+  rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse) {
+    option (google.api.http) = {
+      get: "/api/auth/me"
+    };
+  }
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/login"
+      body: "*"
+    };
+  }
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/logout"
+      body: "*"
+    };
+  }
 }
 
 // 共用訊息類型
@@ -353,6 +372,36 @@ message DeleteRolePermissionRequest {
 }
 
 message DeleteRolePermissionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 認證相關請求/回應
+message CheckAuthRequest {}
+
+message CheckAuthResponse {
+  User user = 1;
+  bool authenticated = 2;
+  string message = 3;
+  repeated string roles = 4;
+  repeated string permissions = 5;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+  string token = 4;
+}
+
+message LogoutRequest {}
+
+message LogoutResponse {
   bool success = 1;
   string message = 2;
 }

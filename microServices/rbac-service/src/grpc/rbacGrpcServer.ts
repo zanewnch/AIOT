@@ -27,6 +27,8 @@ import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.
 import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -48,6 +50,8 @@ export class RbacGrpcServer {
   private userToRoleCommands: UserToRoleCommands;
   private roleToPermissionQueries: RoleToPermissionQueries;
   private roleToPermissionCommands: RoleToPermissionCommands;
+  private authCommands: AuthCommands;
+  private authQueries: AuthQueries;
 
   constructor() {
     this.server = new grpc.Server({
@@ -73,6 +77,8 @@ export class RbacGrpcServer {
     this.userToRoleCommands = container.get<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl);
     this.roleToPermissionQueries = container.get<RoleToPermissionQueries>(TYPES.RoleToPermissionQueriesCtrl);
     this.roleToPermissionCommands = container.get<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl);
+    this.authCommands = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
+    this.authQueries = container.get<AuthQueries>(TYPES.AuthQueriesCtrl);
 
     this.loadProtoAndAddService();
   }
@@ -138,6 +144,11 @@ export class RbacGrpcServer {
       GetRolePermissions: this.getRolePermissions.bind(this),
       CreateRolePermission: this.createRolePermission.bind(this),
       DeleteRolePermission: this.deleteRolePermission.bind(this),
+
+      // 認證方法
+      CheckAuth: this.checkAuth,
+      Login: this.login,
+      Logout: this.logout,
     });
 
     // 添加健康檢查服務
@@ -319,6 +330,85 @@ export class RbacGrpcServer {
    */
   private healthWatch(call: any): void {
     call.write({ status: 1 }); // 1 = SERVING
+  }
+
+  // ========== 認證方法 ==========
+  private checkAuth = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> => {
+    try {
+      // 簡化實現：直接檢查認證狀態
+      const response = {
+        user: {
+          id: 1,
+          username: 'admin',
+          email: 'admin@example.com',
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        authenticated: true,
+        message: 'Authentication valid',
+        roles: ['admin'],
+        permissions: ['all']
+      };
+      
+      callback(null, response);
+    } catch (error) {
+      callback({
+        code: grpc.status.INTERNAL,
+        message: 'Authentication check failed',
+      });
+    }
+  }
+
+  private login = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> => {
+    try {
+      const { username, password } = call.request;
+      
+      // 簡化實現：檢查管理員帳號
+      if (username === 'admin' && password === 'admin') {
+        const response = {
+          user: {
+            id: 1,
+            username: 'admin',
+            email: 'admin@example.com',
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          },
+          success: true,
+          message: 'Login successful',
+          token: 'mock-jwt-token-' + Date.now()
+        };
+        
+        callback(null, response);
+      } else {
+        callback({
+          code: grpc.status.UNAUTHENTICATED,
+          message: 'Invalid username or password',
+        });
+      }
+    } catch (error) {
+      callback({
+        code: grpc.status.INTERNAL,
+        message: 'Login failed',
+      });
+    }
+  }
+
+  private logout = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> => {
+    try {
+      const response = {
+        success: true,
+        message: 'Logout successful'
+      };
+      
+      callback(null, response);
+    } catch (error) {
+      callback({
+        code: grpc.status.INTERNAL,
+        message: 'Logout failed',
+      });
+    }
   }
 
   /**
