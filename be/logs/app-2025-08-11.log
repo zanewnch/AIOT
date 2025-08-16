@@ -1,0 +1,4 @@
+2025-08-11 08:51:08.066 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-11 08:51:08.107 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
+2025-08-11 14:40:51.207 [AIOT-BE] INFO: 🚀 Winston Logger initialized {"environment":"development","logLevel":"debug","consoleOutput":true,"fileOutput":true,"logDirectory":"/app/be/logs"}
+2025-08-11 14:40:51.267 [AIOT-BE] INFO: 歸檔任務路由初始化完成 {"routes":["GET /data","GET /statistics","GET /","GET /:id","POST /batch","POST /:id/execute","POST /:id/cancel","POST /:id/retry","POST /","DELETE /cleanup"]}
