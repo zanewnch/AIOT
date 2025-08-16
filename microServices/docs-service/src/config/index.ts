@@ -13,7 +13,7 @@ const environment = process.env.NODE_ENV || 'development';
 
 export const config = {
   server: {
-    port: process.env.SERVICE_PORT || 3005,
+    port: process.env.HTTP_PORT || process.env.SERVICE_PORT || 3054,
     environment,
   },
   
