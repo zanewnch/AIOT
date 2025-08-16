@@ -1,0 +1,53 @@
+# AIOT General Service - Production Dockerfile
+# ⚙️ 生產環境專用，支援 HTTP + gRPC，優化性能和安全性
+
+FROM node:18-bullseye as builder
+
+# 設定工作目錄
+WORKDIR /app
+
+# 複製 package 檔案並安裝依賴
+COPY package*.json ./
+RUN npm ci --only=production
+
+# 複製源代碼並建置
+COPY . .
+RUN npm run build
+
+# ================ 生產階段 ================
+FROM node:18-bullseye-slim as production
+
+# 安裝必要的系統依賴
+RUN apt-get update && apt-get install -y \
+    curl \
+    netcat \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安裝健康檢查工具 (僅 curl)
+
+# 創建非 root 用戶 (安全最佳實踐)
+RUN groupadd -g 1001 nodeuser && useradd -r -u 1001 -g nodeuser nodeuser
+
+# 設定工作目錄
+WORKDIR /app
+
+# 從 builder 階段複製建置結果和依賴
+COPY --from=builder --chown=nodeuser:nodeuser /app/dist ./dist
+COPY --from=builder --chown=nodeuser:nodeuser /app/node_modules ./node_modules
+COPY --from=builder --chown=nodeuser:nodeuser /app/package*.json ./
+
+# 複製 proto 檔案 (gRPC 服務需要)
+COPY --chown=nodeuser:nodeuser proto/ ./proto/
+
+# 切換到非 root 用戶
+USER nodeuser
+
+# 生產端口 (HTTP + gRPC)
+EXPOSE 3053 50053
+
+# 健康檢查 - 統一使用 HTTP
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:3053/health || exit 1
+
+# 生產環境啟動命令 (使用 server-simple.ts 的編譯版本)
+CMD ["node", "dist/server-simple.js"]

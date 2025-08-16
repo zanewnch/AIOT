@@ -1,5 +1,5 @@
 # AIOT Docs Service - Development Dockerfile
-# 📚 開發環境專用，支援 Hot-Reload 和除錯
+# 📚 開發環境專用，文檔聚合服務，支援 HTTP + gRPC + Hot-Reload
 
 FROM node:18-bullseye as development
 
@@ -11,22 +11,28 @@ RUN apt-get update && apt-get install -y curl netcat && rm -rf /var/lib/apt/list
 
 # 複製 package 檔案並安裝依賴
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # 安裝開發必要的全域套件
 RUN npm install -g nodemon tsx ts-node
 
-# 創建非 root 用戶 (安全最佳實踐)
-RUN groupadd -g 1001 nodeuser && useradd -r -u 1001 -g nodeuser nodeuser
-RUN chown -R nodeuser:nodeuser /app
-USER nodeuser
+# 創建 docs 目錄結構（實際文檔通過 volume 掛載）
+RUN mkdir -p docs/rbac docs/drone docs/drone-websocket docs/general docs/frontend
 
-# 開發端口
-EXPOSE 3005 9229
+# 開發環境使用 root 用戶以避免 volume mount 權限問題
 
-# 健康檢查
+# 開發端口 (HTTP + gRPC + Debug)
+EXPOSE 3054 50054 9229
+
+# 設置環境變數
+ENV NODE_ENV=development
+ENV SERVICE_NAME=docs-service
+ENV GRPC_PORT=50054
+ENV HTTP_PORT=3054
+
+# 健康檢查 - 統一使用 HTTP
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3005/health || exit 1
+  CMD curl -f http://localhost:3054/health || exit 1
 
-# 開發環境啟動命令 (nodemon 監控檔案變化)
+# 開發環境啟動命令 - 使用 HTTP server 與 Kong 通訊
 CMD ["npm", "run", "dev"]

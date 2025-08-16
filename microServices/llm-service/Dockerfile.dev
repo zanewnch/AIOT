@@ -28,11 +28,11 @@ RUN chown -R djangouser:djangouser /app
 USER djangouser
 
 # 開發端口 (Django + Debug)
-EXPOSE 8020 5678
+EXPOSE 8022 5678
 
 # 健康檢查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:8020/api/health/ || exit 1
+  CMD curl -f http://localhost:8022/api/transformers/health/ || exit 1
 
 # 開發環境啟動命令 (Django runserver 自帶 auto-reload)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8020"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8022"]

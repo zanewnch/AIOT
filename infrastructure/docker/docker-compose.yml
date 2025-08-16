@@ -364,7 +364,7 @@ services:
   rbac-service:
     build:
       context: ../../microServices/rbac-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-rbac-service
     ports:
@@ -401,7 +401,7 @@ services:
   drone-service:
     build:
       context: ../../microServices/drone-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-drone-service
     ports:
@@ -440,7 +440,7 @@ services:
   drone-websocket-service:
     build:
       context: ../../microServices/drone-websocket-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-drone-websocket-service
     ports:
@@ -479,7 +479,7 @@ services:
   general-service:
     build:
       context: ../../microServices/general-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-general-service
     ports:
@@ -516,7 +516,7 @@ services:
   docs-service:
     build:
       context: ../../microServices/docs-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-docs-service
     ports:

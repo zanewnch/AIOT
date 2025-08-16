@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * @fileoverview General 服務啟動程式（簡化版）
+ * @fileoverview Drone 服務 HTTP 伺服器啟動程式
  *
- * 專注於 HTTP API 和動態文檔功能
+ * 此檔案負責啟動 Drone 服務的 HTTP 伺服器，用於與 Kong Gateway 通訊
+ * 包括：
+ * - 載入環境變數配置
+ * - 創建 HTTP 伺服器實例
+ * - 設定優雅關閉機制
+ * - 處理伺服器啟動過程中的錯誤
  *
- * @version 1.0.0
+ * @version 2.0.0
  * @author AIOT Team
- * @since 2025-08-08
+ * @since 2024-01-01
  */
 
 import 'dotenv/config';
@@ -15,11 +20,11 @@ import { App } from './app.js';
 import http from 'http';
 
 /**
- * 主要啟動邏輯
+ * HTTP 伺服器啟動邏輯
  */
 async function main() {
   try {
-    console.log('🚀 Starting general Service...');
+    console.log('🚀 Starting Drone Service HTTP server...');
     
     // 建立應用程式實例
     const app = new App();
@@ -28,24 +33,24 @@ async function main() {
     await app.initialize();
     
     // 建立 HTTP 伺服器
-    const port = process.env.SERVICE_PORT || 3053;
+    const port = process.env.HTTP_PORT || 3052;
     const httpServer = http.createServer(app.app);
     
     // 啟動伺服器
     httpServer.listen(port, () => {
-      console.log(`✅ general Service is running on port ${port}`);
+      console.log(`✅ Drone Service HTTP server is running on port ${port}`);
       console.log(`📚 Docs available at: http://localhost:${port}/api/docs`);
-      console.log(`🏥 Health check at: http://localhost:${port}/api/health`);
+      console.log(`🏥 Health check at: http://localhost:${port}/health`);
     });
 
     // 優雅關閉處理
     const gracefulShutdown = async (signal: string) => {
-      console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+      console.log(`\n🛑 Received ${signal}, shutting down HTTP server gracefully...`);
       
       httpServer.close(async () => {
         try {
           await app.shutdown();
-          console.log('✅ Graceful shutdown completed');
+          console.log('✅ HTTP server graceful shutdown completed');
           process.exit(0);
         } catch (error) {
           console.error('❌ Error during shutdown:', error);
@@ -54,18 +59,18 @@ async function main() {
       });
     };
 
-    // 註冊信號處理器
+    // 註冊關閉事件處理器
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
+    
   } catch (error) {
-    console.error('❌ Failed to start general Service:', error);
+    console.error('❌ Failed to start Drone Service HTTP server:', error);
     process.exit(1);
   }
 }
 
-// 啟動服務
+// 啟動伺服器
 main().catch((error) => {
-  console.error('❌ Unhandled error:', error);
+  console.error('❌ Unhandled error in main:', error);
   process.exit(1);
 });

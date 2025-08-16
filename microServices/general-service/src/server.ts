@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * @fileoverview General gRPC 伺服器啟動程式
+ * @fileoverview General 服務 HTTP 伺服器啟動程式
  *
- * 此檔案負責啟動 General 服務的 gRPC 伺服器，包括：
+ * 此檔案負責啟動 General 服務的 HTTP 伺服器，用於與 Kong Gateway 通訊
+ * 包括：
  * - 載入環境變數配置
- * - 創建 gRPC 伺服器實例
+ * - 創建 HTTP 伺服器實例
  * - 設定優雅關閉機制
  * - 處理伺服器啟動過程中的錯誤
  *
@@ -14,89 +15,62 @@
  * @since 2024-01-01
  */
 
-import 'dotenv/config'; // 載入環境變數配置檔案（.env）
-import { GeneralGrpcServer } from './grpc/generalGrpcServer.js'; // 導入 gRPC 服務器
+import 'dotenv/config';
+import { App } from './app.js';
+import http from 'http';
 
 /**
- * gRPC 伺服器類別
- *
- * 此類別負責管理 General 服務的 gRPC 伺服器生命週期，包括：
- * - gRPC 伺服器的啟動和關閉
- * - 優雅關閉機制的實現
- *
- * @class Server
- * @since 2.0.0
+ * HTTP 伺服器啟動邏輯
  */
-class Server {
-    /**
-     * gRPC 服務器實例
-     * @private
-     * @type {GeneralGrpcServer}
-     */
-    private grpcServer: GeneralGrpcServer;
+async function main() {
+  try {
+    console.log('🚀 Starting General Service HTTP server...');
+    
+    // 建立應用程式實例
+    const app = new App();
+    
+    // 初始化應用程式
+    await app.initialize();
+    
+    // 建立 HTTP 伺服器
+    const port = process.env.HTTP_PORT || 3053;
+    const httpServer = http.createServer(app.app);
+    
+    // 啟動伺服器
+    httpServer.listen(port, () => {
+      console.log(`✅ General Service HTTP server is running on port ${port}`);
+      console.log(`📚 Docs available at: http://localhost:${port}/api/docs`);
+      console.log(`🏥 Health check at: http://localhost:${port}/health`);
+    });
 
-    /**
-     * 建構函式 - 初始化 gRPC 伺服器實例
-     */
-    constructor() {
-        this.grpcServer = new GeneralGrpcServer();
-        this.setupShutdownHandlers();
-    }
-
-    /**
-     * 設定優雅關閉處理器
-     */
-    private setupShutdownHandlers(): void {
-        process.on('SIGTERM', async () => {
-            console.log('🔄 SIGTERM received, shutting down gracefully...');
-            await this.gracefulShutdown();
-        });
-
-        process.on('SIGINT', async () => {
-            console.log('🔄 SIGINT received, shutting down gracefully...');
-            await this.gracefulShutdown();
-        });
-    }
-
-    /**
-     * 啟動伺服器
-     */
-    async start(): Promise<void> {
+    // 優雅關閉處理
+    const gracefulShutdown = async (signal: string) => {
+      console.log(`\n🛑 Received ${signal}, shutting down HTTP server gracefully...`);
+      
+      httpServer.close(async () => {
         try {
-            // 啟動 gRPC 服務器
-            this.grpcServer.start(50053);
-            console.log('🚀 General gRPC server ready on port 50053');
-
-        } catch (err) {
-            console.error('❌ Server startup failed', err);
-            process.exit(1);
-        }
-    }
-
-    /**
-     * 優雅關閉伺服器
-     */
-    private async gracefulShutdown(): Promise<void> {
-        try {
-            // 關閉 gRPC 服務器
-            console.log('🖥️ Closing gRPC server...');
-            this.grpcServer.stop();
-
-            console.log('✅ Server shut down successfully');
-            process.exit(0);
+          await app.shutdown();
+          console.log('✅ HTTP server graceful shutdown completed');
+          process.exit(0);
         } catch (error) {
-            console.error('❌ Error during shutdown:', error);
-            process.exit(1);
+          console.error('❌ Error during shutdown:', error);
+          process.exit(1);
         }
-    }
+      });
+    };
+
+    // 註冊關閉事件處理器
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    
+  } catch (error) {
+    console.error('❌ Failed to start General Service HTTP server:', error);
+    process.exit(1);
+  }
 }
 
-// ============================================================================
-// 應用程式進入點
-// ============================================================================
-
-/**
- * 建立並啟動 General gRPC 伺服器
- */
-const server = new Server();
-server.start();
+// 啟動伺服器
+main().catch((error) => {
+  console.error('❌ Unhandled error in main:', error);
+  process.exit(1);
+});

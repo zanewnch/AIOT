@@ -5,9 +5,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --import tsx/esm src/server.ts",
+    "start": "concurrently \"node --import tsx/esm src/server.ts\" \"node --import tsx/esm src/server-grpc.ts\"",
+    "start:http": "node --import tsx/esm src/server.ts",
     "start:grpc": "node --import tsx/esm src/server-grpc.ts",
-    "dev": "npx nodemon --exec \"node --import tsx/esm\" src/server.ts",
+    "dev": "concurrently \"npx nodemon --exec 'node --import tsx/esm' src/server.ts\" \"npx nodemon --exec 'node --import tsx/esm' src/server-grpc.ts\"",
+    "dev:http": "npx nodemon --exec \"node --import tsx/esm\" src/server.ts",
     "dev:grpc": "npx nodemon --exec \"node --import tsx/esm\" src/server-grpc.ts",
     "build": "npx tsc",
     "build:watch": "tsc --watch",
@@ -23,7 +25,8 @@
     "express": "^4.21.2",
     "serve-static": "^1.15.0",
     "tsx": "^4.0.0",
-    "typedoc": "^0.25.13"
+    "typedoc": "^0.25.13",
+    "concurrently": "^8.2.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

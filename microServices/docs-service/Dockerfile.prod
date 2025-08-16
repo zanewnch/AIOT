@@ -1,0 +1,52 @@
+# AIOT Docs Service - Production Dockerfile
+# 📚 生產環境專用，文檔聚合服務，支援 HTTP + gRPC
+
+FROM node:20-alpine as builder
+
+# 設定工作目錄
+WORKDIR /app
+
+# 複製 package 檔案並安裝依賴
+COPY package*.json ./
+RUN npm ci --only=production
+
+# 複製源代碼並建置
+COPY . .
+RUN npm run build
+
+# ================ 生產階段 ================
+FROM node:20-alpine as production
+
+# 安裝必要的系統依賴
+RUN apk add --no-cache curl netcat-openbsd
+
+# 創建非 root 用戶 (安全最佳實踐)
+RUN addgroup -g 1001 nodeuser && adduser -D -u 1001 -G nodeuser nodeuser
+
+# 設定工作目錄
+WORKDIR /app
+
+# 從 builder 階段複製建置結果和依賴
+COPY --from=builder --chown=nodeuser:nodeuser /app/dist ./dist
+COPY --from=builder --chown=nodeuser:nodeuser /app/node_modules ./node_modules
+COPY --from=builder --chown=nodeuser:nodeuser /app/package*.json ./
+
+# 複製 proto 檔案 (gRPC 服務需要)
+COPY --chown=nodeuser:nodeuser proto/ ./proto/
+
+# 創建 docs 目錄結構（實際文檔通過 volume 掛載）
+RUN mkdir -p docs/rbac docs/drone docs/drone-websocket docs/general docs/frontend && \
+    chown -R nodeuser:nodeuser docs/
+
+# 切換到非 root 用戶
+USER nodeuser
+
+# 生產端口 (HTTP + gRPC)
+EXPOSE 3054 50054
+
+# 健康檢查 - 統一使用 HTTP
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:3054/health || exit 1
+
+# 生產環境啟動命令
+CMD ["node", "dist/server-grpc.js"]

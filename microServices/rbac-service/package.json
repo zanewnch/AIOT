@@ -4,8 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --import tsx/esm src/server.ts",
-    "dev": "npx nodemon --exec \"node --import tsx/esm\" src/server.ts",
+    "start": "concurrently \"node --import tsx/esm src/server.ts\" \"node --import tsx/esm src/server-grpc.ts\"",
+    "start:http": "node --import tsx/esm src/server.ts",
+    "start:grpc": "node --import tsx/esm src/server-grpc.ts",
+    "dev": "concurrently \"npx nodemon --exec 'node --import tsx/esm' src/server.ts\" \"npx nodemon --exec 'node --import tsx/esm' src/server-grpc.ts\"",
+    "dev:http": "npx nodemon --exec \"node --import tsx/esm\" src/server.ts",
+    "dev:grpc": "npx nodemon --exec \"node --import tsx/esm\" src/server-grpc.ts",
     "build": "npx tsc",
     "build:watch": "tsc --watch",
     "serve": "node ./dist/server.js",
@@ -59,7 +63,8 @@
     "tsx": "^4.0.0",
     "uuid": "^11.1.0",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "concurrently": "^8.2.2"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.9",
