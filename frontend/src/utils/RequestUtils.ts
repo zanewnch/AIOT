@@ -94,8 +94,8 @@ export class RequestUtils {
         // 檢查是否為 401 未授權錯誤
         if (error.response?.status === 401) {
           // 只有在非認證初始化請求時才重定向到登入頁面
-          // 避免在 /api/auth/me 初始化檢查時重定向
-          const isAuthCheck = error.config?.url?.includes('/api/auth/me');
+          // 避免在 /api/auth 初始化檢查時重定向
+          const isAuthCheck = error.config?.url?.includes('/api/auth');
           
           if (!isAuthCheck) {
             // 重定向到登入頁面（cookie 會由後端自動處理）

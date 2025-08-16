@@ -105,7 +105,7 @@ export const useAuthStore = create<AuthState>()(
           
           try {
             // 嘗試使用 cookie 向後端發送驗證請求
-            const response = await apiClient.get('/api/auth/me');
+            const response = await apiClient.get('/api/auth');
             const result = RequestResult.fromResponse(response);
             
             if (result.isSuccess()) {
