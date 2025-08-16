@@ -1,6 +1,9 @@
 # AIOT Drone Real-time WebSocket Service Dockerfile
 FROM node:20-alpine
 
+# 安裝 curl 和 wget 用於健康檢查
+RUN apk add --no-cache curl wget
+
 # 設定工作目錄
 WORKDIR /app
 

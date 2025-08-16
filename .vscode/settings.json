@@ -9,5 +9,6 @@
     "rabbitmq"
   ],
   "dotnet.preferCSharpExtension": true,
-  "editor.fontFamily": "monospace"
+  "editor.fontFamily": "monospace",
+  "editor.fontSize": 16
 }

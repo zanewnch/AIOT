@@ -17,7 +17,7 @@ bundles:
 # Services configuration
 services:
   bundle:
-    url: http://opa-bundle-server:80
+    url: http://aiot-opa-bundle-server:80
     credentials:
       bearer:
         token: ""

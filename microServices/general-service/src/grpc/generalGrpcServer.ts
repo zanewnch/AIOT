@@ -37,6 +37,7 @@ export class GeneralGrpcServer {
    */
   private loadProtoAndAddService(): void {
     const PROTO_PATH = path.join(__dirname, '../../proto/general.proto');
+    const HEALTH_PROTO_PATH = path.join(__dirname, '../../proto/health.proto');
     const PROTO_DIR = path.join(__dirname, '../../proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
@@ -48,7 +49,18 @@ export class GeneralGrpcServer {
       includeDirs: [PROTO_DIR],
     });
 
+    // 載入健康檢查 proto
+    const healthPackageDefinition = protoLoader.loadSync(HEALTH_PROTO_PATH, {
+      keepCase: true,
+      longs: String,
+      enums: String,
+      defaults: true,
+      oneofs: true,
+      includeDirs: [PROTO_DIR],
+    });
+
     const generalProto = grpc.loadPackageDefinition(packageDefinition) as any;
+    const healthProto = grpc.loadPackageDefinition(healthPackageDefinition) as any;
 
     this.server.addService(generalProto.general.GeneralService.service, {
       // 健康檢查和服務資訊方法
@@ -74,6 +86,12 @@ export class GeneralGrpcServer {
       // 語言設定方法
       GetLanguageSettings: this.getLanguageSettings.bind(this),
       UpdateLanguageSettings: this.updateLanguageSettings.bind(this),
+    });
+
+    // 添加標準健康檢查服務
+    this.server.addService(healthProto.grpc.health.v1.Health.service, {
+      Check: this.standardHealthCheck.bind(this),
+      Watch: this.standardHealthWatch.bind(this),
     });
   }
 
@@ -325,6 +343,20 @@ export class GeneralGrpcServer {
         this.server.start();
       }
     );
+  }
+
+  /**
+   * 標準健康檢查方法 (gRPC 健康協議)
+   */
+  private standardHealthCheck(call: any, callback: grpc.sendUnaryData<any>): void {
+    callback(null, { status: 1 }); // 1 = SERVING
+  }
+
+  /**
+   * 標準健康檢查監聽方法 (gRPC 健康協議)
+   */
+  private standardHealthWatch(call: any): void {
+    call.write({ status: 1 }); // 1 = SERVING
   }
 
   /**

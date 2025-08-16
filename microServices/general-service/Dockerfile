@@ -1,5 +1,8 @@
 FROM node:18-bullseye
 
+# 安裝 curl 和 wget 用於健康檢查
+RUN apt-get update && apt-get install -y curl wget && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # 複製 package 檔案

@@ -559,6 +559,50 @@ curl -X POST http://localhost:8021/memory/reset  # 重置對話記憶
 curl -X GET http://localhost:8021/memory/history  # 查看對話歷史
 ```
 
+### 微服務健康檢查規範
+**重要規則：健康檢查必須依照服務類型進行配置**
+
+#### 健康檢查類型優先級
+1. **gRPC 服務**：優先使用 `grpc_health_probe`
+   ```bash
+   # gRPC 健康檢查（首選）
+   test: ["CMD", "grpc_health_probe", "-addr=localhost:PORT"]
+   
+   # 備用方案：TCP 端口檢查
+   test: ["CMD", "nc", "-z", "localhost", "PORT"]
+   ```
+
+2. **WebSocket 服務**：使用 WebSocket 特定檢查
+   ```bash
+   # WebSocket 健康檢查
+   test: ["CMD", "curl", "-f", "http://localhost:PORT/health"]
+   # 或使用 WebSocket 專用工具檢查
+   test: ["CMD", "wscat", "-c", "ws://localhost:PORT"]
+   ```
+
+3. **HTTP 服務**：標準 HTTP 健康檢查
+   ```bash
+   # HTTP 健康檢查
+   test: ["CMD", "curl", "-f", "http://localhost:PORT/health"]
+   ```
+
+#### 服務類型對應
+- **RBAC Service (gRPC)**: `grpc_health_probe -addr=localhost:50051`
+- **Drone Service (gRPC)**: `grpc_health_probe -addr=localhost:50052`  
+- **General Service (gRPC)**: `grpc_health_probe -addr=localhost:50053`
+- **Drone WebSocket Service**: `curl -f http://localhost:3004/health`
+- **Docs Service (HTTP)**: `curl -f http://localhost:3002/health`
+- **LLM Service (HTTP)**: `curl -f http://localhost:8022/health`
+
+#### 健康檢查配置標準
+```yaml
+healthcheck:
+  interval: 30s      # 檢查間隔
+  timeout: 10s       # 超時時間
+  retries: 3         # 重試次數
+  start_period: 40s  # 服務啟動寬限期（適用於需要初始化的服務）
+```
+
 ### 環境管理命令
 ```bash
 # === 開發環境 (Docker Compose) ===
@@ -590,4 +634,10 @@ kubectl get pods --namespace=default    # 檢查 K8s 是否運行
 # 清理命令
 docker-compose down --volumes           # 完全清理開發環境
 kubectl delete -f infrastructure/kubernetes/ # 清理 K8s 部署
+
+# 健康檢查測試命令
+curl http://localhost:8000/api/health           # Kong Gateway 健康檢查
+grpc_health_probe -addr=localhost:50051        # RBAC Service 健康檢查
+grpc_health_probe -addr=localhost:50052        # Drone Service 健康檢查
+curl http://localhost:3004/health              # Drone WebSocket 健康檢查
 ```

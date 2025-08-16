@@ -107,6 +107,7 @@ export class DroneGrpcServer {
    */
   private loadProtoAndAddService(): void {
     const PROTO_PATH = path.join(__dirname, '../../proto/drone.proto');
+    const HEALTH_PROTO_PATH = path.join(__dirname, '../../proto/health.proto');
     const PROTO_DIR = path.join(__dirname, '../../proto');
     
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
@@ -118,7 +119,18 @@ export class DroneGrpcServer {
       includeDirs: [PROTO_DIR],
     });
 
+    // 載入健康檢查 proto
+    const healthPackageDefinition = protoLoader.loadSync(HEALTH_PROTO_PATH, {
+      keepCase: true,
+      longs: String,
+      enums: String,
+      defaults: true,
+      oneofs: true,
+      includeDirs: [PROTO_DIR],
+    });
+
     const droneProto = grpc.loadPackageDefinition(packageDefinition) as any;
+    const healthProto = grpc.loadPackageDefinition(healthPackageDefinition) as any;
 
     this.server.addService(droneProto.drone.DroneService.service, {
       // 無人機狀態管理方法
@@ -154,6 +166,12 @@ export class DroneGrpcServer {
       // 封存任務管理方法
       GetArchiveTasks: this.getArchiveTasks.bind(this),
       CreateArchiveTask: this.createArchiveTask.bind(this),
+    });
+
+    // 添加健康檢查服務
+    this.server.addService(healthProto.grpc.health.v1.Health.service, {
+      Check: this.healthCheck.bind(this),
+      Watch: this.healthWatch.bind(this),
     });
   }
 
@@ -397,6 +415,20 @@ export class DroneGrpcServer {
         this.server.start();
       }
     );
+  }
+
+  /**
+   * 健康檢查方法
+   */
+  private healthCheck(call: any, callback: grpc.sendUnaryData<any>): void {
+    callback(null, { status: 1 }); // 1 = SERVING
+  }
+
+  /**
+   * 健康檢查監聽方法
+   */
+  private healthWatch(call: any): void {
+    call.write({ status: 1 }); // 1 = SERVING
   }
 
   /**

@@ -1,6 +1,9 @@
 # 使用 Node.js 官方映像
 FROM node:20-alpine
 
+# 安裝 curl 和 wget 用於健康檢查
+RUN apk add --no-cache curl wget
+
 # 設置工作目錄
 WORKDIR /app
 
