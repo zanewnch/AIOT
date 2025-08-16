@@ -32,13 +32,13 @@ export function registerRoutes(app: Application): void {
         });
         console.log('✅ Health check route registered at /health');
 
-        // 註冊認證路由
-        app.use('/api/auth', authRoutes);
-        console.log('✅ Auth routes registered at /api/auth');
+        // 註冊認證路由（Kong strip_path=true 會移除 /api/auth，直接收到 /login）
+        app.use('/', authRoutes);
+        console.log('✅ Auth routes registered at /');
 
-        // 註冊 RBAC 路由
-        app.use('/api/rbac', rbacRoutes);
-        console.log('✅ RBAC routes registered at /api/rbac');
+        // 註冊 RBAC 路由（Kong strip_path=true 會移除 /api/rbac，直接收到 /users）
+        app.use('/', rbacRoutes);
+        console.log('✅ RBAC routes registered at /');
 
         console.log('🚀 All RBAC routes registered successfully');
     } catch (error) {

@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --import tsx/esm src/server-grpc.ts",
-    "dev": "npx nodemon --exec \"node --import tsx/esm\" src/server-grpc.ts",
+    "start": "node --import tsx/esm src/server-simple.ts",
+    "dev": "npx nodemon --exec \"node --import tsx/esm\" src/server-simple.ts",
     "build": "npx tsc",
     "build:watch": "tsc --watch",
     "serve": "node ./dist/server-simple.js",

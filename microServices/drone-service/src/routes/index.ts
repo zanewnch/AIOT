@@ -52,25 +52,22 @@ export class RouteManager {
             this.registerHealthRoutes(app);
             console.log('✅ Health routes registered');
 
-            // 註冊歸檔任務路由
+            // 註冊路由，符合 Kong strip_path 配置
+            // Kong: /api/drone → strip_path=true → 轉發到 / (去掉 /api/drone)
             app.use('/archive-tasks', this.archiveTaskRoutes.getRouter());
-            console.log('✅ Archive task routes registered');
+            console.log('✅ Archive task routes registered at /archive-tasks');
 
-            // 註冊無人機位置路由
             app.use('/positions', this.dronePositionRoutes.getRouter());
-            console.log('✅ Drone position routes registered');
+            console.log('✅ Drone position routes registered at /positions');
 
-            // 註冊無人機狀態路由
             app.use('/statuses', this.droneStatusRoutes.getRouter());
-            console.log('✅ Drone status routes registered');
+            console.log('✅ Drone status routes registered at /statuses');
 
-            // 註冊無人機命令路由
             app.use('/commands', this.droneCommandRoutes.getRouter());
-            console.log('✅ Drone command routes registered');
+            console.log('✅ Drone command routes registered at /commands');
 
-            // 註冊無人機即時狀態路由
             app.use('/realtime', this.droneRealtimeRoutes.getRouter());
-            console.log('✅ Drone realtime routes registered');
+            console.log('✅ Drone realtime routes registered at /realtime');
 
             console.log('🚀 All routes registered successfully');
         } catch (error) {

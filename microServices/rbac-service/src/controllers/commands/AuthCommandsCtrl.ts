@@ -18,6 +18,7 @@ import { AuthCommandsSvc } from '../../services/commands/AuthCommandsSvc.js';
 import { createLogger, logRequest, logAuthEvent } from '../../configs/loggerConfig.js';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import { TYPES } from '../../container/types.js';
+import { JwtBlacklistMiddleware } from '../../middleware/JwtBlacklistMiddleware.js';
 
 const logger = createLogger('AuthCommands');
 
@@ -69,7 +70,8 @@ export class AuthCommands {
                 username,
                 password,
                 userAgent,
-                ipAddress
+                ipAddress,
+                rememberMe
             });
 
             // 檢查登入結果
@@ -83,14 +85,15 @@ export class AuthCommands {
             }
 
             // 根據「記住我」選項設定不同的過期時間
-            const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000; // 30天 or 30天（預設改為1個月）
+            const cookieMaxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000; // 7天 or 1小時
 
             // 設置 httpOnly cookie 來儲存 JWT，提升安全性
-            res.cookie('jwt', result.token, {
+            res.cookie('auth_token', result.token, {
                 httpOnly: true, // 防止 JavaScript 存取，避免 XSS 攻擊
                 secure: process.env.NODE_ENV === 'production', // 只在 HTTPS 時設為 true
                 sameSite: 'strict', // 防止 CSRF 攻擊
-                maxAge: cookieMaxAge // 設定 cookie 過期時間
+                maxAge: cookieMaxAge, // 設定 cookie 過期時間
+                path: '/' // 確保 cookie 在整個網站可用
             });
 
             // 設置記住我狀態的 cookie（供前端顯示使用）
@@ -111,13 +114,16 @@ export class AuthCommands {
                 userAgent
             });
 
-            // 回傳登入成功的回應
+            // 回傳登入成功的回應 (不返回 token，安全存儲在 httpOnly cookie 中)
             const response = ControllerResult.success(result.message, {
-                token: result.token, // JWT token（也存在 httpOnly cookie 中）
                 rememberMe: rememberMe || false, // 記住我狀態
                 user: {
                     id: result.user?.id, // 使用者 ID
-                    username: result.user?.username // 使用者名稱
+                    username: result.user?.username, // 使用者名稱
+                    roles: result.user?.roles, // 使用者角色
+                    permissions: result.user?.permissions?.slice(0, 10), // 權限預覽（前10個）
+                    departmentId: result.user?.departmentId,
+                    level: result.user?.level
                 }
             });
             res.status(response.status).json(response.toJSON());
@@ -137,28 +143,39 @@ export class AuthCommands {
             logRequest(req, 'Logout request', 'info');
 
             // 取得 JWT token，優先從 cookie 取得，其次從 Authorization header 取得
-            const token = req.cookies?.jwt || req.headers.authorization?.replace('Bearer ', '');
+            const token = req.cookies?.auth_token || req.headers.authorization?.replace('Bearer ', '');
 
             const username = req.user?.username || 'unknown';
             logger.info(`Processing logout request for user: ${username}, IP: ${req.ip}`);
 
-            // 如果存在 token，則從 Redis 清除會話
+            // 如果存在 token，則從 Redis 清除會話並加入黑名單
             if (token) {
-                logger.debug('Clearing user session from Redis cache');
-                // 從 Redis 清除會話資料，確保 token 無法再被使用
+                logger.debug('Processing logout - clearing session and blacklisting token');
+                
+                // 1. 從 Redis 清除會話資料
                 await this.authCommandsSvc.logout({
                     token,
                     userId: req.user?.id
                 });
+
+                // 2. 將 JWT token 加入黑名單，防止重複使用
+                const blacklisted = await JwtBlacklistMiddleware.addCurrentTokenToBlacklist(req, 'logout');
+                
+                if (blacklisted) {
+                    logger.info(`JWT token successfully added to blacklist for user: ${username}`);
+                } else {
+                    logger.warn(`Failed to add JWT token to blacklist for user: ${username}`);
+                }
             } else {
                 logger.warn(`Logout attempted without valid token for user: ${username}`);
             }
 
             // 清除 JWT cookie，使用與設定時相同的選項
-            res.clearCookie('jwt', {
+            res.clearCookie('auth_token', {
                 httpOnly: true, // 與設定時一致
                 secure: process.env.NODE_ENV === 'production', // 生產環境使用 HTTPS
-                sameSite: 'strict' // 防止 CSRF 攻擊
+                sameSite: 'strict', // 防止 CSRF 攻擊
+                path: '/' // 確保清除正確的 cookie
             });
 
             // 清除記住我 cookie

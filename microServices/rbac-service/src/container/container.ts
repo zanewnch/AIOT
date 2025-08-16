@@ -41,6 +41,9 @@ import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermission
 import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 
+// JWT 安全服務
+import { JwtBlacklistService } from '../services/shared/JwtBlacklistService.js';
+
 /**
  * 創建並配置 RBAC 服務的 IoC 容器
  * 
@@ -107,6 +110,11 @@ export function createContainer(): Container {
     
   container.bind<SessionQueriesSvc>(TYPES.SessionQueriesSvc)
     .to(SessionQueriesSvc)
+    .inSingletonScope();
+
+  // JWT 安全服務
+  container.bind<JwtBlacklistService>(TYPES.JwtBlacklistService)
+    .to(JwtBlacklistService)
     .inSingletonScope();
 
   // ===== RBAC 控制器註冊 =====

@@ -11,7 +11,17 @@ import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-
 // 匯入用戶模型進行資料庫操作
 import { UserModel } from '../models/UserModel.js';
 // 匯入 JWT 負載類型定義
-import { JwtPayload } from '@aiot/shared-packages/AuthMiddleware.js';
+// import { JwtPayload } from '@aiot/shared-packages/AuthMiddleware.js';
+
+// 臨時定義 JwtPayload 介面
+export interface JwtPayload {
+    userId: number;
+    username: string;
+    roles?: string[];
+    permissions?: string[];
+    iat?: number;
+    exp?: number;
+}
 
 /**
  * 身份驗證設定的配置介面

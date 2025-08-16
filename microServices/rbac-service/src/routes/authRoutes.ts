@@ -17,7 +17,8 @@
 import { Router } from 'express';
 import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
-import { AuthMiddleware } from '@aiot/shared-packages/AuthMiddleware.js';
+import { KongHeadersMiddleware } from '../middleware/KongHeadersMiddleware.js';
+import { JwtBlacklistMiddleware } from '../middleware/JwtBlacklistMiddleware.js';
 import { container } from '../container/container.js';
 import { TYPES } from '../container/types.js';
 
@@ -25,48 +26,110 @@ import { TYPES } from '../container/types.js';
  * 認證路由類別
  * 
  * 負責配置和管理所有認證相關的路由端點
+ * 使用 Kong Headers 中間件來獲取用戶信息，由 OPA 在 Kong 層進行認證和授權
  */
 class AuthRoutes {
   private router: Router;
   private authQueries: AuthQueries;
   private authCommands: AuthCommands;
-  private authMiddleware: AuthMiddleware;
+  // private authMiddleware: AuthMiddleware;
 
-  // 路由端點常數 - Kong strip_path 後的內部路徑
+  // RESTful 路由設計 - 使用 HTTP 方法區分功能
   private readonly ROUTES = {
-    LOGIN: '/login',
-    LOGOUT: '/logout', 
-    ME: '/me'
+    AUTH: '/'  // /api/auth 被 Kong strip_path 後變成 /
   } as const;
 
   constructor() {
     this.router = Router();
     this.authQueries = container.get<AuthQueries>(TYPES.AuthQueriesCtrl);
     this.authCommands = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
-    this.authMiddleware = new AuthMiddleware();
+    // this.authMiddleware = new AuthMiddleware();
     
     this.setupAuthRoutes();
   }
 
   /**
-   * 設定認證路由
+   * 設定認證路由 - RESTful 設計
    */
   private setupAuthRoutes = (): void => {
-    // POST /api/auth/login - 使用者登入 (Command)
-    this.router.post(this.ROUTES.LOGIN, 
+    // 在開發環境中啟用 Kong headers 調試
+    if (process.env.NODE_ENV === 'development') {
+      this.router.use(KongHeadersMiddleware.debugHeaders);
+    }
+    
+    // POST /api/auth - 使用者登入 (不需要認證)
+    this.router.post(this.ROUTES.AUTH, 
       (req, res, next) => this.authCommands.login(req, res, next)
     );
     
-    // POST /api/auth/logout - 使用者登出 (Command)
-    this.router.post(this.ROUTES.LOGOUT,
-      this.authMiddleware.authenticate,
+    // GET /api/auth - 獲取當前使用者資訊 (需要 JWT 認證)
+    this.router.get(this.ROUTES.AUTH,
+      JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
+      (req, res, next) => {
+        // 從 Cookie 中獲取 JWT 並解析用戶信息
+        try {
+          const authToken = req.cookies?.auth_token;
+          if (!authToken) {
+            return res.status(401).json({
+              status: 401,
+              message: 'Authentication token not found',
+              data: null
+            });
+          }
+
+          // 解析 JWT (不驗證簽名，因為 Kong 已經驗證過了)
+          const base64Payload = authToken.split('.')[1];
+          const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString());
+          
+          // 提取用戶信息
+          const userInfo = {
+            id: payload.user.id,
+            username: payload.user.username,
+            roles: payload.permissions.roles,
+            permissions: payload.permissions.permissions,
+            departmentId: 1, // 從 payload 中獲取或設定預設值
+            level: 8,        // 從 payload 中獲取或設定預設值
+            sessionId: payload.session.session_id,
+            isAuthenticated: true,
+            authMethod: 'kong-jwt'
+          };
+
+          res.json({
+            status: 200,
+            message: 'User information retrieved successfully',
+            data: {
+              isAuthenticated: true,
+              user: userInfo
+            }
+          });
+        } catch (error) {
+          res.status(401).json({
+            status: 401,
+            message: 'Invalid authentication token',
+            data: null
+          });
+        }
+      }
+    );
+    
+    // DELETE /api/auth - 使用者登出 (需要 JWT 認證)
+    this.router.delete(this.ROUTES.AUTH,
+      JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
       (req, res, next) => this.authCommands.logout(req, res, next)
     );
 
-    // GET /api/auth/me - 獲取當前使用者資訊 (Query)
-    this.router.get(this.ROUTES.ME,
-      this.authMiddleware.authenticate,
-      (req, res, next) => this.authQueries.me(req, res, next)
+    // PUT /api/auth - 更新認證信息 (預留，需要 JWT 認證)
+    this.router.put(this.ROUTES.AUTH,
+      JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
+      KongHeadersMiddleware.extractUserInfo,
+      (req, res, next) => {
+        // TODO: 實現密碼變更等功能
+        res.status(501).json({
+          status: 501,
+          message: 'Password change functionality not implemented yet',
+          data: null
+        });
+      }
     );
   };
 

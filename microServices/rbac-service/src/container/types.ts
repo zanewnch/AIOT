@@ -443,7 +443,13 @@ export const TYPES = {
   /**
    * 用戶角色查詢控制器類型
    */
-  UserToRoleQueriesCtrl: Symbol.for('UserToRoleQueriesCtrl')
+  UserToRoleQueriesCtrl: Symbol.for('UserToRoleQueriesCtrl'),
+
+  // ===== JWT 和安全服務 =====
+  /**
+   * JWT 黑名單服務類型
+   */
+  JwtBlacklistService: Symbol.for('JwtBlacklistService')
 } as const;
 
 /**

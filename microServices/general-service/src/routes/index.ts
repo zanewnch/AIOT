@@ -47,17 +47,17 @@ export class RouteManager {
         logger.info('🛣️  Registering all API routes...');
 
         try {
-            // 註冊健康檢查路由 (Kong: /health → / → 內部 /health)
+            // 註冊健康檢查路由 (Kong: /api/health → strip_path=true → 轉發到 /health)
             app.use('/', this.healthRoutes.getRouter());
             logger.info('✅ Health routes registered');
 
-            // 註冊用戶偏好設定路由 (Kong: /api/general → / → 內部 /user-preferences)  
+            // 註冊用戶偏好設定路由 (Kong: /api/user-preferences → strip_path=true → 轉發到 /user-preferences)  
             app.use('/user-preferences', this.userPreferenceRoutes.getRouter());
             logger.info('✅ User preference routes registered');
 
-            // 註冊動態文檔路由 (Kong: /api/docs → / → 直接根路徑)
+            // 註冊資訊端點路由 (Kong: /api/info → strip_path=true → 轉發到 /info)
             app.use('/', this.docsRoutes.getRouter());
-            logger.info('✅ Docs routes registered');
+            logger.info('✅ Info routes registered');
 
             // 註冊全域錯誤處理
             this.registerGlobalErrorHandling(app);

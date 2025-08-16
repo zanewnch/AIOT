@@ -131,3 +131,15 @@ Kong → 微服務 ：HTTP (簡單、成熟)
 Microservice ↔ Microservice: gRPC (高效、類型安全)
 Microservice ↔ Microservice : gRPC (高效能、類型安全)
 這是經過大量生產環境驗證的最佳實踐！
+
+
+
+
+ 現在的請求流程：
+
+  1. 前端請求：http://localhost:8000/api/auth/login
+  2. Kong 收到請求，匹配到 rbac-auth-routes
+  3. Kong strip_path: true 移除 /api/auth，轉發
+  /login 到 RBAC 服務
+  4. RBAC 服務收到 /login，路由到
+  /auth/login（因為註冊的是 /auth）

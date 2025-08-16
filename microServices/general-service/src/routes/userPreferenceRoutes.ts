@@ -18,6 +18,7 @@ import { TYPES } from '../container/types.js';
 import { UserPreferenceCommands } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
 import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
+import { KongHeadersMiddleware } from '../middleware/KongHeadersMiddleware.js';
 
 /**
  * 用戶偏好設定路由類別
@@ -49,6 +50,7 @@ export class UserPreferenceRoutes {
 
     /**
      * 設定查詢路由 (GET 操作)
+     * 使用 Kong Headers 中間件獲取用戶信息，由 OPA 處理權限驗證
      */
     private setupQueryRoutes = (): void => {
         // ==============================================
@@ -60,7 +62,11 @@ export class UserPreferenceRoutes {
          * @route GET /api/user-preferences
          * @access Controlled by Kong Gateway + OPA
          */
-        this.router.get('/', this.getAllUserPreferences);
+        this.router.get('/', 
+            KongHeadersMiddleware.extractUserInfo,
+            KongHeadersMiddleware.requirePermission('preference.read'),
+            this.getAllUserPreferences
+        );
 
         /**
          * 根據 ID 取得用戶偏好設定

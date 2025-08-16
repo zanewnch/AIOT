@@ -20,10 +20,12 @@ import { Server as HTTPServer } from 'http'; // HTTP 伺服器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
-import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
+// import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置 - 移除，改用 Kong + OPA
+import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件配置
+import { redisConfig } from './configs/redisConfig.js'; // Redis 連線配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
-import { container } from './container/container.js';
+import { container, ContainerUtils } from './container/container.js';
 import { TYPES } from './container/types.js';
 import type {
     IDroneEventHandler,
@@ -126,34 +128,28 @@ export class App {
 
         // 執行基本配置設定
         this.setupSequelize(); // 設定 Sequelize 資料庫連線
-        this.setupPassport(); // 配置 Passport JWT 身份驗證
+        // this.setupPassport(); // 配置 Passport JWT 身份驗證 - 移除，改用 Kong + OPA
         this.setupMiddleware(); // 設定基本中間件
         this.initializeBusinessServices(); // 初始化業務服務實例
     }
 
     /**
-     * 初始化業務服務實例（使用 InversifyJS IoC 容器）
-     *
-     * 透過 IoC 容器取得服務實例，確保依賴注入和單例管理，
-     * 供 HTTP 和 WebSocket 共用，避免業務邏輯重複和資料不一致問題
+     * 初始化業務服務實例（簡化版）
+     * 
+     * 暫時移除 WebSocket 相關的複雜初始化，專注於 HTTP API
      *
      * @private
      */
     private initializeBusinessServices(): void {
-        console.log('🔧 Initializing business services via IoC container...');
+        console.log('🔧 Initializing business services (simplified)...');
 
         try {
-            // 透過 IoC 容器取得服務實例
-            // 所有依賴都會自動注入，確保單例和一致性
-            const wsService = ContainerUtils.get<IWebSocketService>(TYPES.WebSocketService);
-            const eventHandlerFactory = ContainerUtils.get<(type: DroneEventType) => IDroneEventHandler>(TYPES.DroneEventHandlerFactory);
+            // 暫時跳過 WebSocket 服務初始化
+            // 專注於 HTTP API 功能
+            this.webSocketService = null;
+            this.droneEventHandlerFactory = null;
 
-            // 保存實例供其他方法使用
-            this.webSocketService = wsService;
-            this.droneEventHandlerFactory = eventHandlerFactory;
-
-            console.log('✅ Business services initialized via IoC container');
-            console.log('📊 Container stats:', ContainerUtils.getContainerStats());
+            console.log('✅ Business services initialized (simplified)');
         } catch (error) {
             console.error('❌ Failed to initialize business services:', error);
             throw error;
@@ -207,18 +203,16 @@ export class App {
     }
 
     /**
-     * 設定 Passport JWT 驗證
+     * 設定 Passport JWT 驗證 - 已移除
      *
-     * 配置 Passport.js 的 JWT 策略，用於處理 API 的身份驗證。
-     * 此方法在建構函式中執行，設定全域的驗證策略。
+     * JWT 驗證和權限檢查已移至 Kong + OPA 處理
+     * 微服務僅需要從 Kong headers 中獲取用戶信息
      *
-     * @private
-     * @method setupPassport
-     * @returns {void}
+     * @deprecated 改用 Kong Headers 中間件
      */
-    private setupPassport(): void {
-        setupPassportJWT(); // 配置 Passport JWT 驗證策略
-    }
+    // private setupPassport(): void {
+    //     setupPassportJWT(); // 配置 Passport JWT 驗證策略
+    // }
 
     /**
      * 設定 Express 中間件

@@ -178,3 +178,32 @@ export function createContainer(): Container {
 
 // 匯出容器實例
 export const container = createContainer();
+
+/**
+ * 簡化的容器工具函數
+ */
+export class ContainerUtils {
+  /**
+   * 獲取服務實例
+   */
+  static get<T>(serviceId: symbol): T {
+    return container.get<T>(serviceId);
+  }
+
+  /**
+   * 檢查服務是否已註冊
+   */
+  static isBound(serviceId: symbol): boolean {
+    return container.isBound(serviceId);
+  }
+
+  /**
+   * 獲取容器統計資訊
+   */
+  static getContainerStats() {
+    return {
+      registeredServices: container.isBound.length || 0,
+      timestamp: new Date().toISOString()
+    };
+  }
+}

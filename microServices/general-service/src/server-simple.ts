@@ -28,7 +28,7 @@ async function main() {
     await app.initialize();
     
     // 建立 HTTP 伺服器
-    const port = process.env.SERVICE_PORT || 3003;
+    const port = process.env.SERVICE_PORT || 3053;
     const httpServer = http.createServer(app.app);
     
     // 啟動伺服器

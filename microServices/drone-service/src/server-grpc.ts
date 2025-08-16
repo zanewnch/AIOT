@@ -117,7 +117,7 @@ class Server {
             // 啟動 HTTP 服務器（Kong 通訊）
             const httpPort = process.env.HTTP_PORT || 3052;
             this.httpServer = http.createServer(this.httpApp.app);
-            this.httpServer.listen(httpPort, () => {
+            this.httpServer.listen(httpPort, '0.0.0.0', () => {
                 console.log(`🌐 Drone HTTP server ready on port ${httpPort} (Kong communication)`);
             });
 

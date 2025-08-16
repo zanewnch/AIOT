@@ -59,7 +59,7 @@ services:
 
   # Drone WebSocket 微服務 - 專門處理 WebSocket 連線
   - name: drone-websocket-service
-    protocol: http
+    protocol: ws
     host: aiot-drone-websocket-service
     port: 3004
     path: /socket.io
@@ -106,14 +106,11 @@ services:
 # 路由配置
 # ================================
 routes:
-  # RBAC 登入路由 - POST /api/auth (不需要認證)
-  - name: rbac-login-routes
+  # RBAC 認證路由 - 支援 HTTP/HTTPS 訪問 (不需要認證)
+  - name: rbac-auth-routes
     service: rbac-service
     paths:
       - /api/auth
-    methods:
-      - POST
-      - OPTIONS  # CORS preflight
     strip_path: true
     preserve_host: false
     protocols:
@@ -123,24 +120,6 @@ routes:
       - auth
       - login
       - public
-  
-  # RBAC 認證保護路由 - GET/PUT/DELETE /api/auth (需要 JWT 認證)
-  - name: rbac-auth-protected-routes
-    service: rbac-service
-    paths:
-      - /api/auth
-    methods:
-      - GET     # 獲取用戶信息
-      - PUT     # 更新認證信息
-      - DELETE  # 登出
-    strip_path: true
-    preserve_host: false
-    protocols:
-      - http
-      - https
-    tags:
-      - auth
-      - protected
 
   # RBAC 管理路由 - 支援 HTTP/HTTPS 訪問 (需要認證)
   - name: rbac-routes
@@ -183,6 +162,8 @@ routes:
     protocols:
       - http
       - https
+      - ws
+      - wss
     tags:
       - drone
       - websocket
@@ -230,26 +211,6 @@ plugins:
   # JWT 認證插件 (按路由配置)
   # ===============================
   
-  # JWT 插件 - RBAC 認證保護路由 (GET/PUT/DELETE /api/auth 需要 JWT 驗證)
-  - name: jwt
-    route: rbac-auth-protected-routes
-    config:
-      secret_is_base64: false
-      key_claim_name: iss
-      claims_to_verify:
-        - exp
-      header_names:
-        - authorization
-      cookie_names:
-        - auth_token  # 從 auth_token cookie 提取 JWT
-      uri_param_names: []
-      anonymous: null
-      run_on_preflight: true
-    tags:
-      - jwt
-      - authentication
-      - rbac-auth
-
   # JWT 插件 - RBAC 路由 (需要 JWT 驗證)
   - name: jwt
     route: rbac-routes
@@ -258,6 +219,7 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+        - iat
       header_names:
         - authorization
       cookie_names:
@@ -278,6 +240,7 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+        - iat
       header_names:
         - authorization
       cookie_names:
@@ -298,6 +261,7 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+        - iat
       header_names:
         - authorization
       cookie_names:
@@ -319,6 +283,7 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+        - iat
       header_names:
         - authorization
       cookie_names:
@@ -339,6 +304,7 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+        - iat
       header_names:
         - authorization
       cookie_names:
@@ -351,41 +317,133 @@ plugins:
       - authentication
       - docs
 
+  # ===============================
+  # Request Transformer 插件 - 將 JWT 信息傳遞給下游服務
+  # ===============================
+  
+  # RBAC 服務 - 添加用戶信息到 headers
+  - name: request-transformer
+    route: rbac-routes
+    config:
+      add:
+        headers:
+          - "X-User-ID:$(headers.x-consumer-custom-id)"
+          - "X-Username:$(headers.x-consumer-username)"
+          - "X-Consumer-ID:$(headers.x-consumer-id)"
+          - "X-Auth-Method:kong-jwt"
+    tags:
+      - jwt
+      - headers
+      - rbac
 
+  # Drone 服務 - 添加用戶信息到 headers
+  - name: request-transformer
+    route: drone-api-routes
+    config:
+      add:
+        headers:
+          - "X-User-ID:$(headers.x-consumer-custom-id)"
+          - "X-Username:$(headers.x-consumer-username)"
+          - "X-Consumer-ID:$(headers.x-consumer-id)"
+          - "X-Auth-Method:kong-jwt"
+    tags:
+      - jwt
+      - headers
+      - drone
+
+  # General 服務 - 添加用戶信息到 headers
+  - name: request-transformer
+    route: user-preferences-routes
+    config:
+      add:
+        headers:
+          - "X-User-ID:$(headers.x-consumer-custom-id)"
+          - "X-Username:$(headers.x-consumer-username)"
+          - "X-Consumer-ID:$(headers.x-consumer-id)"
+          - "X-Auth-Method:kong-jwt"
+    tags:
+      - jwt
+      - headers
+      - general
+
+  # Docs 服務 - 添加用戶信息到 headers
+  - name: request-transformer
+    route: docs-api-routes
+    config:
+      add:
+        headers:
+          - "X-User-ID:$(headers.x-consumer-custom-id)"
+          - "X-Username:$(headers.x-consumer-username)"
+          - "X-Consumer-ID:$(headers.x-consumer-id)"
+          - "X-Auth-Method:kong-jwt"
+    tags:
+      - jwt
+      - headers
+      - docs
+
+  # ===============================
+  # OPA 授權插件 (可選，如果需要細粒度權限控制)
+  # ===============================
+  
+  # Kong 官方 OPA 插件 - RBAC 路由
+  - name: opa
+    route: rbac-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - Drone 路由
+  - name: opa
+    route: drone-api-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - General 路由
+  - name: opa
+    route: user-preferences-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - Docs 路由
+  - name: opa
+    route: docs-api-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
 
   # ===============================
   # CORS 插件 - 跨來源請求支援
   # ===============================
   
-  # CORS - 登入路由 (POST /api/auth - 不需要認證)
+  # CORS - Auth 路由
   - name: cors
-    route: rbac-login-routes
-    config:
-      origins:
-        - "*"
-      methods:
-        - GET
-        - POST
-        - PUT
-        - DELETE
-        - PATCH
-        - OPTIONS
-      headers:
-        - Accept
-        - Accept-Version
-        - Content-Length
-        - Content-MD5
-        - Content-Type
-        - Date
-        - Authorization
-      exposed_headers:
-        - X-Auth-Token
-      credentials: true
-      max_age: 3600
-
-  # CORS - 認證保護路由 (GET/PUT/DELETE /api/auth - 需要認證)
-  - name: cors
-    route: rbac-auth-protected-routes
+    route: rbac-auth-routes
     config:
       origins:
         - "*"
@@ -507,3 +565,45 @@ plugins:
       credentials: true
       max_age: 3600
 
+  # ===============================
+  # 性能優化插件
+  # ===============================
+  
+  # Gzip 插件 - 回應壓縮（性能提升）
+  - name: gzip
+    config:
+      types:
+        - text/plain
+        - text/html
+        - text/css
+        - text/xml
+        - text/javascript
+        - application/javascript
+        - application/xml+rss
+        - application/atom+xml
+        - image/svg+xml
+        - application/json
+        - application/grpc
+    tags:
+      - performance
+      - compression
+
+  # Response Caching 插件 - API 回應快取（優化設定）
+  - name: proxy-cache
+    config:
+      response_code:
+        - 200
+        - 301
+        - 404
+      request_method:
+        - GET
+        - HEAD
+      content_type:
+        - application/json
+        - application/grpc
+      cache_ttl: 60
+      storage_ttl: 300
+      strategy: memory
+    tags:
+      - performance
+      - caching

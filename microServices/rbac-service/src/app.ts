@@ -22,6 +22,7 @@ import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證�
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
 import { registerRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
+import { JwtBlacklistMiddleware } from './middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
 // InversifyJS 容器和類型
 import { container } from './container/container.js';
 
@@ -187,6 +188,11 @@ export class App {
             await redisConfig.connect();
             this.redis = redisConfig;
             console.log('✅ Redis connection established');
+
+            // 初始化 JWT 黑名單服務
+            console.log('🔐 Initializing JWT blacklist service...');
+            JwtBlacklistMiddleware.initialize();
+            console.log('✅ JWT blacklist service initialized');
 
             console.log('✅ All external services initialized');
         } catch (error) {

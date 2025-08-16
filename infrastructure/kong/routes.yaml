@@ -1,42 +1,45 @@
 _format_version: "3.0"
 
 routes:
-  # RBAC 認證路由 - 僅允許 HTTPS 訪問
+  # RBAC 認證路由 - 支援 HTTP/HTTPS 訪問
   - name: rbac-auth-routes
     service: rbac-service
     paths:
       - /api/auth
-    strip_path: false
+    strip_path: true
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - auth
       - login
       - secure
 
-  # RBAC 管理路由 - 僅允許 HTTPS 訪問
+  # RBAC 管理路由 - 支援 HTTP/HTTPS 訪問
   - name: rbac-routes
     service: rbac-service
     paths:
       - /api/rbac
-    strip_path: false
+    strip_path: true
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - rbac
       - permissions
       - secure
 
-  # Drone API 路由 - 僅允許 HTTPS 訪問，連接到 HTTP 服務
+  # Drone API 路由 - 支援 HTTP/HTTPS 訪問
   - name: drone-api-routes
     service: drone-http-service
     paths:
       - /api/drone
-    strip_path: false
+    strip_path: true
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - drone
@@ -44,15 +47,17 @@ routes:
       - secure
       - http
 
-  # Drone WebSocket 路由 - 連接到獨立的即時通訊服務
+  # Drone WebSocket 路由 - 支援 WebSocket 連接
   - name: drone-websocket-routes
     service: drone-websocket-service
     paths:
       - /socket.io
-    strip_path: false
+    strip_path: true
     preserve_host: false
     protocols:
+      - http
       - https
+      - ws
       - wss
     tags:
       - drone
@@ -60,32 +65,62 @@ routes:
       - realtime
       - secure
 
-  # General 路由 - 僅允許 HTTPS 訪問 (原 FeSetting 服務)
-  - name: general-routes
+  # User Preferences 路由 - 支援 HTTP/HTTPS 訪問
+  - name: user-preferences-routes
     service: general-service
     paths:
       - /api/user-preferences
-      - /api/health
-      - /api/info
-    strip_path: false
+    strip_path: true
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - user-preferences
       - settings
-      - health
       - general
       - secure
 
-  # Docs API 路由 - 僅允許 HTTPS 訪問，連接到 HTTP 服務
+  # Health Check 路由 - 支援 HTTP/HTTPS 訪問
+  - name: health-routes
+    service: general-service
+    paths:
+      - /api/health
+    strip_path: true
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - health
+      - monitoring
+      - general
+      - secure
+
+  # Service Info 路由 - 支援 HTTP/HTTPS 訪問
+  - name: info-routes
+    service: general-service
+    paths:
+      - /api/info
+    strip_path: true
+    preserve_host: false
+    protocols:
+      - http
+      - https
+    tags:
+      - info
+      - general
+      - secure
+
+  # Docs API 路由 - 支援 HTTP/HTTPS 訪問
   - name: docs-api-routes
     service: docs-http-service
     paths:
       - /api/docs
-    strip_path: false
+    strip_path: true
     preserve_host: false
     protocols:
+      - http
       - https
     tags:
       - docs
