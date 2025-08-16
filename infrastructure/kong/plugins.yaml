@@ -1,0 +1,679 @@
+_format_version: "3.0"
+
+plugins:
+  # 全局插件
+  - name: prometheus
+    config:
+      per_consumer: true
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+
+  # gRPC-Gateway 插件 - RBAC 服務
+  - name: grpc-gateway
+    service: rbac-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package rbac;
+        
+        import "google/api/annotations.proto";
+        
+        service RbacService {
+          rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+            option (google.api.http) = {
+              get: "/api/rbac/users"
+            };
+          }
+          rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+            option (google.api.http) = {
+              post: "/api/rbac/users"
+              body: "*"
+            };
+          }
+        }
+        
+        message GetUsersRequest {
+          int32 page = 1;
+          int32 limit = 2;
+        }
+        
+        message GetUsersResponse {
+          repeated User users = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateUserRequest {
+          string username = 1;
+          string email = 2;
+          string password = 3;
+        }
+        
+        message CreateUserResponse {
+          User user = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message User {
+          int32 id = 1;
+          string username = 2;
+          string email = 3;
+          bool is_active = 4;
+          string created_at = 5;
+          string updated_at = 6;
+        }
+    tags:
+      - grpc-gateway
+      - rbac
+
+  # gRPC-Gateway 插件 - Drone 服務
+  - name: grpc-gateway
+    service: drone-grpc-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package drone;
+        
+        import "google/api/annotations.proto";
+        
+        service DroneService {
+          rpc GetDroneStatuses(GetDroneStatusesRequest) returns (GetDroneStatusesResponse) {
+            option (google.api.http) = {
+              get: "/api/drone/statuses"
+            };
+          }
+          rpc CreateDroneStatus(CreateDroneStatusRequest) returns (CreateDroneStatusResponse) {
+            option (google.api.http) = {
+              post: "/api/drone/statuses"
+              body: "*"
+            };
+          }
+          rpc GetDronePositions(GetDronePositionsRequest) returns (GetDronePositionsResponse) {
+            option (google.api.http) = {
+              get: "/api/drone/positions"
+            };
+          }
+          rpc CreateDroneCommand(CreateDroneCommandRequest) returns (CreateDroneCommandResponse) {
+            option (google.api.http) = {
+              post: "/api/drone/commands"
+              body: "*"
+            };
+          }
+        }
+        
+        message GetDroneStatusesRequest {
+          int32 page = 1;
+          int32 limit = 2;
+          string drone_id = 3;
+        }
+        
+        message GetDroneStatusesResponse {
+          repeated DroneStatus statuses = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateDroneStatusRequest {
+          string drone_id = 1;
+          string status = 2;
+          string battery_level = 3;
+        }
+        
+        message CreateDroneStatusResponse {
+          DroneStatus status = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message GetDronePositionsRequest {
+          int32 page = 1;
+          int32 limit = 2;
+          string drone_id = 3;
+        }
+        
+        message GetDronePositionsResponse {
+          repeated DronePosition positions = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateDroneCommandRequest {
+          string drone_id = 1;
+          string command_type = 2;
+          string parameters = 3;
+        }
+        
+        message CreateDroneCommandResponse {
+          DroneCommand command = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message DroneStatus {
+          int32 id = 1;
+          string drone_id = 2;
+          string status = 3;
+          string battery_level = 4;
+          string created_at = 5;
+        }
+        
+        message DronePosition {
+          int32 id = 1;
+          string drone_id = 2;
+          double latitude = 3;
+          double longitude = 4;
+          double altitude = 5;
+          string timestamp = 6;
+        }
+        
+        message DroneCommand {
+          int32 id = 1;
+          string drone_id = 2;
+          string command_type = 3;
+          string parameters = 4;
+          string status = 5;
+          string created_at = 6;
+        }
+    tags:
+      - grpc-gateway
+      - drone
+
+  # gRPC-Gateway 插件 - General 服務 (原 FeSetting 服務)
+  - name: grpc-gateway
+    service: general-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package general;
+        
+        import "google/api/annotations.proto";
+        
+        service GeneralService {
+          // 健康檢查端點
+          rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {
+            option (google.api.http) = {
+              get: "/api/health"
+            };
+          }
+          
+          // 服務資訊端點
+          rpc GetServiceInfo(ServiceInfoRequest) returns (ServiceInfoResponse) {
+            option (google.api.http) = {
+              get: "/api/info"
+            };
+          }
+          
+          // 使用者偏好設定管理
+          rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse) {
+            option (google.api.http) = {
+              get: "/api/user-preferences"
+            };
+          }
+          rpc CreateUserPreference(CreateUserPreferenceRequest) returns (CreateUserPreferenceResponse) {
+            option (google.api.http) = {
+              post: "/api/user-preferences"
+              body: "*"
+            };
+          }
+          rpc UpdateUserPreference(UpdateUserPreferenceRequest) returns (UpdateUserPreferenceResponse) {
+            option (google.api.http) = {
+              put: "/api/user-preferences/{preference_id}"
+              body: "*"
+            };
+          }
+          rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse) {
+            option (google.api.http) = {
+              delete: "/api/user-preferences/{preference_id}"
+            };
+          }
+        }
+        
+        // 健康檢查相關訊息
+        message HealthCheckRequest {}
+        
+        message HealthCheckResponse {
+          string status = 1;
+          string service = 2;
+          string message = 3;
+          string timestamp = 4;
+          string version = 5;
+        }
+        
+        message ServiceInfoRequest {}
+        
+        message ServiceInfoResponse {
+          string service = 1;
+          string description = 2;
+          string version = 3;
+          string author = 4;
+          repeated string features = 5;
+        }
+        
+        // 使用者偏好設定相關訊息
+        message GetUserPreferencesRequest {
+          int32 user_id = 1;
+          string category = 2;
+          int32 page = 3;
+          int32 limit = 4;
+        }
+        
+        message GetUserPreferencesResponse {
+          repeated UserPreference preferences = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateUserPreferenceRequest {
+          int32 user_id = 1;
+          string preference_key = 2;
+          string preference_value = 3;
+          string category = 4;
+          string description = 5;
+        }
+        
+        message CreateUserPreferenceResponse {
+          UserPreference preference = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message UpdateUserPreferenceRequest {
+          int32 preference_id = 1;
+          string preference_value = 2;
+          string category = 3;
+          string description = 4;
+        }
+        
+        message UpdateUserPreferenceResponse {
+          UserPreference preference = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message DeleteUserPreferenceRequest {
+          int32 preference_id = 1;
+        }
+        
+        message DeleteUserPreferenceResponse {
+          bool success = 1;
+          string message = 2;
+        }
+        
+        message UserPreference {
+          int32 id = 1;
+          int32 user_id = 2;
+          string preference_key = 3;
+          string preference_value = 4;
+          string category = 5;
+          string description = 6;
+          string created_at = 7;
+          string updated_at = 8;
+        }
+    tags:
+      - grpc-gateway
+      - general
+
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      echo_downstream: true
+
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 10
+
+  # File Log 插件 - 訪問日誌記錄
+  - name: file-log
+    config:
+      path: /tmp/kong-access.log
+      reopen: true
+    tags:
+      - logging
+      - monitoring
+
+  # Gzip 插件 - 回應壓縮
+  - name: gzip
+    config:
+      types:
+        - text/plain
+        - text/html
+        - text/css
+        - text/xml
+        - text/javascript
+        - application/javascript
+        - application/xml+rss
+        - application/atom+xml
+        - image/svg+xml
+        - application/json
+        - application/grpc
+    tags:
+      - performance
+      - compression
+
+  # Response Caching 插件 - API 回應快取
+  - name: proxy-cache
+    config:
+      response_code:
+        - 200
+        - 301
+        - 404
+      request_method:
+        - GET
+        - HEAD
+      content_type:
+        - application/json
+        - application/grpc
+      cache_ttl: 300
+      storage_ttl: 3600
+      strategy: memory
+    tags:
+      - performance
+      - caching
+
+  # Bot Detection 插件 - 防護機器人
+  - name: bot-detection
+    config:
+      allow:
+        - googlebot
+        - bingbot
+        - slackbot
+      deny:
+        - BadBot
+        - MaliciousBot
+    tags:
+      - security
+      - bot-protection
+
+  # Request Transformer Advanced - 添加追蹤標頭
+  - name: request-transformer-advanced
+    config:
+      add:
+        headers:
+          - "X-Service-Name:AIOT"
+          - "X-Version:v1.0"
+          - "X-Request-ID:$(uuid)"
+          - "X-Timestamp:$(timestamp)"
+          - "X-Client-IP:$(client_ip)"
+        querystring: []
+        body: []
+      remove:
+        headers:
+          - "X-Internal-Secret"
+        querystring: []
+        body: []
+      replace:
+        headers: []
+        querystring: []
+        body: []
+    tags:
+      - transformation
+      - tracing
+
+  # Response Transformer - 統一回應格式
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - "X-Powered-By:AIOT-Kong-Gateway"
+          - "X-Response-Time:$(latency)"
+          - "X-Kong-Upstream-Latency:$(upstream_response_time)"
+          - "X-Kong-Proxy-Latency:$(kong_proxy_latency)"
+        json: []
+        json_types: []
+      remove:
+        headers:
+          - "X-Internal-Info"
+          - "Server"
+        json: []
+      replace:
+        headers: []
+        json: []
+      rename:
+        headers: []
+    tags:
+      - transformation
+      - response-headers
+
+
+
+  # Request Transformer - 添加 OPA 需要的標頭
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - "X-Original-URI:$(uri)"
+          - "X-Original-Method:$(method)"
+        querystring: []
+        body: []
+      remove:
+        headers: []
+        querystring: []
+        body: []
+      replace:
+        headers: []
+        querystring: []
+        body: []
+    tags:
+      - transformation
+
+  # Kong 官方 OPA 插件 - RBAC Auth 路由
+  - name: opa
+    route: rbac-auth-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - RBAC 路由
+  - name: opa
+    route: rbac-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - Drone 路由
+  - name: opa
+    route: drone-api-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - WebSocket 路由
+  - name: opa
+    route: drone-websocket-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # Kong 官方 OPA 插件 - General 路由 (原 FE Setting 服務)
+  - name: opa
+    route: general-routes
+    config:
+      opa_host: http://aiot-opa:8181
+      opa_path: /v1/data/aiot/gateway/allow
+      include_service_in_opa_input: true
+      include_route_in_opa_input: true
+      include_consumer_in_opa_input: true
+    tags:
+      - authorization
+      - opa
+
+  # CORS 插件 - 應用到所有路由
+  - name: cors
+    route: rbac-auth-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
+
+  - name: cors
+    route: rbac-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
+
+  - name: cors
+    route: drone-api-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      credentials: true
+      max_age: 3600
+
+  - name: cors
+    route: drone-websocket-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      credentials: true
+
+  - name: cors
+    route: general-routes
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      credentials: true
+      max_age: 3600
+
+  # 限流插件
+  - name: rate-limiting
+    route: rbac-auth-routes
+    config:
+      minute: 100
+      hour: 1000
+      policy: local
+      hide_client_headers: false
+
+  - name: rate-limiting
+    route: rbac-routes
+    config:
+      minute: 100
+      hour: 1000
+      policy: local
+      hide_client_headers: false
+
+  - name: rate-limiting
+    route: drone-api-routes
+    config:
+      minute: 200
+      hour: 2000
+      policy: local
+      hide_client_headers: false
+
+  - name: rate-limiting
+    route: general-routes
+    config:
+      minute: 50
+      hour: 500
+      policy: local
+      hide_client_headers: false

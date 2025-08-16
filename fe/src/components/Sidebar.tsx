@@ -41,6 +41,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/', label: '首頁', icon: '🏠', matchPath: '/' },
   { path: '/content/tableviewer', label: 'Table Viewer', icon: '📊', matchPath: '/tableviewer' },
   { path: '/content/api-docs', label: 'API 文檔', icon: '📚', matchPath: '/api-docs' },
+  { path: '/content/docpage', label: 'Doc Page', icon: '📄', matchPath: '/docpage' },
   { path: '/content/mappage', label: '地圖頁面', icon: '🗺️', matchPath: '/mappage' },
   { path: '/content/flyingpage', label: '飛行頁面', icon: '✈️', matchPath: '/flyingpage' },
   { path: '/content/command-history', label: '指令歷史', icon: '📋', matchPath: '/command-history' },

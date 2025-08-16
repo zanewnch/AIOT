@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIOT 路由配置分析</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #252526;
+            border-radius: 8px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #3c3c3c;
+            border: none;
+            color: #d4d4d4;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .tab:hover {
+            background: #404040;
+        }
+        .tab.active {
+            background: #007acc;
+        }
+        .config-section {
+            display: none;
+            background: #252526;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .config-section.active {
+            display: block;
+        }
+        .config-title {
+            color: #4ec9b0;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3c3c3c;
+            padding-bottom: 10px;
+        }
+        .config-content {
+            background: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+        .explanation-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2d2d30;
+            border-radius: 4px;
+            border-left: 4px solid #007acc;
+        }
+        .explanation-title {
+            color: #dcdcaa;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007acc;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #007acc;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: #007acc;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 返回首頁</a>
+        
+        <div class="header">
+            <h1>🛣️ AIOT 路由配置分析</h1>
+            <p>Kong Gateway & Consul 服務發現配置檔案解析</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showConfig('kong-main')">Kong 主要配置</button>
+            <button class="tab" onclick="showConfig('kong-k8s')">Kong Kubernetes</button>
+            <button class="tab" onclick="showConfig('consul-main')">Consul 主要配置</button>
+            <button class="tab" onclick="showConfig('consul-k8s')">Consul Kubernetes</button>
+            <button class="tab" onclick="showConfig('consul-rbac')">Consul RBAC 服務</button>
+            <button class="tab" onclick="showConfig('consul-drone')">Consul Drone 服務</button>
+        </div>
+
+        <!-- Kong 主要配置 -->
+        <div class="config-section active" id="kong-main">
+            <div class="config-title">Kong Gateway 聲明式配置 (kong.yaml)</div>
+            <div class="config-content" id="kong-main-content">載入中...</div>
+            <div class="explanation-area">
+                <div class="explanation-title">📝 配置說明區域</div>
+                <p>這裡可以加入你對 Kong 路由邏輯的解釋...</p>
+            </div>
+        </div>
+
+        <!-- Kong Kubernetes 配置 -->
+        <div class="config-section" id="kong-k8s">
+            <div class="config-title">Kong Kubernetes 部署配置</div>
+            <div class="config-content" id="kong-k8s-content">載入中...</div>
+            <div class="explanation-area">
+                <div class="explanation-title">📝 配置說明區域</div>
+                <p>這裡可以加入你對 Kong Kubernetes 部署的解釋...</p>
+            </div>
+        </div>
+
+        <!-- Consul 主要配置 -->
+        <div class="config-section" id="consul-main">
+            <div class="config-title">Consul 主要配置 (consul.json)</div>
+            <div class="config-content" id="consul-main-content">載入中...</div>
+            <div class="explanation-area">
+                <div class="explanation-title">📝 配置說明區域</div>
+                <p>這裡可以加入你對 Consul 服務發現的解釋...</p>
+            </div>
+        </div>
+
+        <!-- Consul Kubernetes 配置 -->
+        <div class="config-section" id="consul-k8s">
+            <div class="config-title">Consul Kubernetes 部署配置</div>
+            <div class="config-content" id="consul-k8s-content">載入中...</div>
+            <div class="explanation-area">
+                <div class="explanation-title">📝 配置說明區域</div>
+                <p>這裡可以加入你對 Consul Kubernetes 部署的解釋...</p>
+            </div>
+        </div>
+
+        <!-- Consul RBAC 服務配置 -->
+        <div class="config-section" id="consul-rbac">
+            <div class="config-title">Consul RBAC 服務註冊配置</div>
+            <div class="config-content" id="consul-rbac-content">載入中...</div>
+            <div class="explanation-area">
+                <div class="explanation-title">📝 配置說明區域</div>
+                <p>這裡可以加入你對 RBAC 服務註冊的解釋...</p>
+            </div>
+        </div>
+
+        <!-- Consul Drone 服務配置 -->
+        <div class="config-section" id="consul-drone">
+            <div class="config-title">Consul Drone 服務註冊配置</div>
+            <div class="config-content" id="consul-drone-content">載入中...</div>
+            <div class="explanation-area">
+                <div class="explanation-title">📝 配置說明區域</div>
+                <p>這裡可以加入你對 Drone 服務註冊的解釋...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置檔案內容
+        const configs = {
+            'kong-main': `<%- JSON.stringify(kongMainConfig, null, 2) %>`,
+            'kong-k8s': `<%- JSON.stringify(kongK8sConfig, null, 2) %>`,
+            'consul-main': `<%- JSON.stringify(consulMainConfig, null, 2) %>`,
+            'consul-k8s': `<%- JSON.stringify(consulK8sConfig, null, 2) %>`,
+            'consul-rbac': `<%- JSON.stringify(consulRbacConfig, null, 2) %>`,
+            'consul-drone': `<%- JSON.stringify(consulDroneConfig, null, 2) %>`
+        };
+
+        function showConfig(configName) {
+            // 隱藏所有配置區域
+            document.querySelectorAll('.config-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // 移除所有 tab 的 active 狀態
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 顯示選中的配置區域
+            document.getElementById(configName).classList.add('active');
+            
+            // 設置對應 tab 為 active
+            event.target.classList.add('active');
+            
+            // 載入配置內容
+            const contentElement = document.getElementById(configName + '-content');
+            if (contentElement && configs[configName]) {
+                try {
+                    const parsedConfig = JSON.parse(configs[configName]);
+                    contentElement.textContent = parsedConfig;
+                } catch (e) {
+                    contentElement.textContent = configs[configName];
+                }
+            }
+        }
+
+        // 頁面載入時初始化第一個配置
+        document.addEventListener('DOMContentLoaded', function() {
+            showConfig('kong-main');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus 本身的監控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # AIOT 微服務監控
+  - job_name: 'rbac-service'
+    static_configs:
+      - targets: ['rbac-service:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'drone-service'
+    static_configs:
+      - targets: ['drone-service:3002']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'fesetting-service'
+    static_configs:
+      - targets: ['fesetting-service:3003']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # 基礎設施監控
+  - job_name: 'consul'
+    static_configs:
+      - targets: ['consul:8500']
+    metrics_path: '/v1/agent/metrics'
+    params:
+      format: ['prometheus']
+    scrape_interval: 30s
+
+  - job_name: 'kong'
+    static_configs:
+      - targets: ['kong:8001']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # 資料庫監控 (如果有 exporter 的話)
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['aiot-mysqldb:3306']
+    scrape_interval: 30s
+    # 需要安裝 mysql_exporter
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['aiot-redis:6379']
+    scrape_interval: 30s
+    # 需要安裝 redis_exporter
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['aiot-rabbitmq:15692']
+    scrape_interval: 30s
+    # RabbitMQ management plugin 提供 metrics

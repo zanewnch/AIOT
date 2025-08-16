@@ -1,0 +1,102 @@
+# Consul 服務發現 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiot-prod-consul-deployment
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-consul
+    app.kubernetes.io/name: consul
+    app.kubernetes.io/component: service-discovery
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiot-prod-consul
+  template:
+    metadata:
+      labels:
+        app: aiot-prod-consul
+    spec:
+      containers:
+      - name: aiot-prod-consul
+        image: consul:1.15
+        ports:
+        - containerPort: 8500
+          name: http-api
+        - containerPort: 8600
+          name: dns
+          protocol: UDP
+        env:
+        - name: CONSUL_BIND_INTERFACE
+          value: "eth0"
+        volumeMounts:
+        - name: aiot-prod-consul-storage
+          mountPath: /consul/data
+        - name: aiot-prod-consul-config
+          mountPath: /consul/config/consul.json
+          subPath: consul.json
+          readOnly: true
+        - name: aiot-prod-consul-services
+          mountPath: /consul/config/services
+          readOnly: true
+        livenessProbe:
+          exec:
+            command:
+            - consul
+            - members
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /v1/status/leader
+            port: 8500
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: aiot-prod-consul-storage
+        persistentVolumeClaim:
+          claimName: consul-pvc
+      - name: aiot-prod-consul-config
+        configMap:
+          name: aiot-prod-consul-config
+      - name: aiot-prod-consul-services
+        configMap:
+          name: aiot-prod-consul-services
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiot-prod-consul-service
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-consul
+    app.kubernetes.io/name: consul
+    app.kubernetes.io/component: service-discovery
+spec:
+  selector:
+    app: aiot-prod-consul
+  ports:
+  - port: 8500
+    targetPort: 8500
+    protocol: TCP
+    name: http-api
+  - port: 8600
+    targetPort: 8600
+    protocol: UDP
+    name: dns
+  type: ClusterIP

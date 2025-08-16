@@ -1,0 +1,112 @@
+# RabbitMQ 消息隊列服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiot-prod-rabbitmq-deployment
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-rabbitmq
+    app.kubernetes.io/name: aiot-prod-rabbitmq
+    app.kubernetes.io/component: message-queue
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiot-prod-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: aiot-prod-rabbitmq
+    spec:
+      containers:
+      - name: aiot-prod-rabbitmq
+        image: rabbitmq:3-management-alpine
+        ports:
+        - containerPort: 5672
+          name: amqp
+        - containerPort: 15672
+          name: management
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: aiot-database-secrets
+              key: rabbitmq-username
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: aiot-database-secrets
+              key: rabbitmq-password
+        volumeMounts:
+        - name: aiot-prod-rabbitmq-storage
+          mountPath: /var/lib/rabbitmq
+        - name: aiot-prod-rabbitmq-config
+          mountPath: /etc/rabbitmq/rabbitmq.conf
+          subPath: rabbitmq.conf
+          readOnly: true
+        - name: aiot-prod-rabbitmq-definitions
+          mountPath: /etc/rabbitmq/definitions.json
+          subPath: definitions.json
+          readOnly: true
+        # 暫時禁用健康檢查以減少資源消耗
+        # livenessProbe:
+        #   exec:
+        #     command:
+        #     - rabbitmq-diagnostics
+        #     - ping
+        #   initialDelaySeconds: 60
+        #   periodSeconds: 30
+        #   timeoutSeconds: 10
+        #   failureThreshold: 5
+        # readinessProbe:
+        #   exec:
+        #     command:
+        #     - rabbitmq-diagnostics
+        #     - ping
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   failureThreshold: 3
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "400m"
+      volumes:
+      - name: aiot-prod-rabbitmq-storage
+        persistentVolumeClaim:
+          claimName: rabbitmq-pvc
+      - name: aiot-prod-rabbitmq-config
+        configMap:
+          name: aiot-prod-rabbitmq-config
+      - name: aiot-prod-rabbitmq-definitions
+        configMap:
+          name: aiot-prod-rabbitmq-definitions
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiot-prod-rabbitmq-service
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-rabbitmq
+    app.kubernetes.io/name: aiot-prod-rabbitmq
+    app.kubernetes.io/component: message-queue
+spec:
+  selector:
+    app: aiot-prod-rabbitmq
+  ports:
+  - port: 5672
+    targetPort: 5672
+    protocol: TCP
+    name: amqp
+  - port: 15672
+    targetPort: 15672
+    protocol: TCP
+    name: management
+  type: ClusterIP

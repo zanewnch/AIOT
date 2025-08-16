@@ -18,7 +18,7 @@ import { DronePositionQuery } from "../hooks/useDronePositionQuery";
 import { DroneCommandQuery } from "../hooks/useDroneCommandQuery";
 import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
 import FlyingPageHeader from "../components/flying/FlyingPageHeader";
-import MapContainer from "../components/flying/MapContainer";
+import ConditionalMapContainer from "../components/flying/ConditionalMapContainer";
 import DroneStatusPanel from "../components/flying/DroneStatusPanel";
 import FlightControlPanel from "../components/flying/FlightControlPanel";
 
@@ -110,8 +110,8 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
         <div className="space-y-6">
           {/* 第一行：地圖 + 無人機狀態 */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* 地圖容器 - 占3/5寬度 */}
-            <MapContainer
+            {/* 🚀 智能條件載入地圖容器 - 占3/5寬度 */}
+            <ConditionalMapContainer
               mapRef={mapRef}
               isLoading={currentLogic.isLoading}
               error={currentLogic.error}

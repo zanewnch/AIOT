@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | AIOT Microservices</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Axios for API calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .content-area {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .service-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-healthy { background-color: #28a745; }
+        .status-unhealthy { background-color: #dc3545; }
+        .status-unknown { background-color: #ffc107; }
+        
+        .architecture-diagram {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .api-test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .monitoring-metrics {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .json-output {
+            background-color: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar p-3">
+                <div class="mb-4">
+                    <h4 class="text-white">
+                        <i class="bi bi-diagram-3"></i>
+                        AIOT Docs
+                    </h4>
+                    <p class="mb-0 opacity-75">Microservices Architecture</p>
+                </div>
+                
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link <%= currentPage === 'overview' ? 'active' : '' %>" href="/docs">
+                            <i class="bi bi-house"></i>
+                            系統概覽
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link <%= currentPage === 'architecture' ? 'active' : '' %>" href="/docs/architecture">
+                            <i class="bi bi-diagram-2"></i>
+                            架構設計
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link <%= currentPage === 'api-testing' ? 'active' : '' %>" href="/docs/api-testing">
+                            <i class="bi bi-code-slash"></i>
+                            API 測試
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link <%= currentPage === 'monitoring' ? 'active' : '' %>" href="/docs/monitoring">
+                            <i class="bi bi-graph-up"></i>
+                            服務監控
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link <%= currentPage === 'source-code' ? 'active' : '' %>" href="/docs/source-code">
+                            <i class="bi bi-file-earmark-code"></i>
+                            源代碼查看
+                        </a>
+                    </li>
+                </ul>
+                
+                <hr class="my-4 opacity-50">
+                
+                <div class="small opacity-75">
+                    <p class="mb-1">服務狀態快覽</p>
+                    <div id="sidebar-status">
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="status-indicator status-healthy"></span>
+                            <span class="small">feSetting</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="status-indicator status-unknown"></span>
+                            <span class="small">rbac</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="status-indicator status-unknown"></span>
+                            <span class="small">drone</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 content-area p-4">
+                <%- body %>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Global JavaScript -->
+    <script>
+        // 全域狀態管理
+        window.AIOT = {
+            currentPage: '<%= currentPage %>',
+            timestamp: '<%= typeof timestamp !== "undefined" ? timestamp : new Date().toISOString() %>',
+            
+            // 狀態更新
+            updateServiceStatus: function(statusData) {
+                const sidebarStatus = document.getElementById('sidebar-status');
+                if (sidebarStatus && statusData) {
+                    // 更新側邊欄狀態指示器
+                    const indicators = sidebarStatus.querySelectorAll('.status-indicator');
+                    indicators.forEach(indicator => {
+                        const serviceName = indicator.nextElementSibling.textContent;
+                        const status = statusData[serviceName] || 'unknown';
+                        indicator.className = `status-indicator status-${status}`;
+                    });
+                }
+            },
+            
+            // API 調用幫助函數
+            async fetchServiceStatus() {
+                try {
+                    const response = await axios.get('/docs/api/services-status');
+                    if (response.data && response.data.data) {
+                        this.updateServiceStatus(response.data.data.services);
+                    }
+                } catch (error) {
+                    console.warn('Failed to fetch service status:', error);
+                }
+            },
+            
+            // 格式化時間戳
+            formatTimestamp: function(timestamp) {
+                return new Date(timestamp).toLocaleString('zh-TW', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+        };
+        
+        // 頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 定期更新服務狀態
+            AIOT.fetchServiceStatus();
+            setInterval(() => AIOT.fetchServiceStatus(), 30000); // 每 30 秒更新
+            
+            // 更新所有時間戳顯示
+            document.querySelectorAll('.timestamp').forEach(element => {
+                if (element.dataset.timestamp) {
+                    element.textContent = AIOT.formatTimestamp(element.dataset.timestamp);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

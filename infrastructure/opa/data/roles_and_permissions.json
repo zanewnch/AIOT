@@ -1,0 +1,197 @@
+{
+  "roles": {
+    "superadmin": {
+      "name": "Super Administrator",
+      "description": "Full system access with no restrictions",
+      "level": 10,
+      "permissions": ["*"]
+    },
+    "admin": {
+      "name": "Administrator", 
+      "description": "System administration with most privileges",
+      "level": 8,
+      "permissions": [
+        "user.create", "user.read", "user.update", "user.delete",
+        "role.create", "role.read", "role.update", "role.delete",
+        "permission.create", "permission.read", "permission.update", "permission.delete",
+        "drone.read", "drone.update", 
+        "system.configure", "audit.read"
+      ]
+    },
+    "drone_admin": {
+      "name": "Drone Administrator",
+      "description": "Full drone system management",
+      "level": 8,
+      "permissions": [
+        "drone.create", "drone.read", "drone.update", "drone.delete",
+        "drone.command.all", "drone.status.all", "drone.archive.all"
+      ]
+    },
+    "department_manager": {
+      "name": "Department Manager",
+      "description": "Manages users within their department",
+      "level": 6,
+      "permissions": [
+        "user.read.department", "user.update.department",
+        "report.generate.department", "audit.read.department"
+      ]
+    },
+    "flight_controller": {
+      "name": "Flight Controller",
+      "description": "Controls drone flight operations",
+      "level": 5,
+      "permissions": [
+        "drone.command.create", "drone.command.read", "drone.command.update",
+        "drone.status.read", "drone.realtime.read"
+      ]
+    },
+    "drone_operator": {
+      "name": "Drone Operator",
+      "description": "Operates assigned drones",
+      "level": 4,
+      "permissions": [
+        "drone.command.assigned", "drone.status.assigned", 
+        "drone.position.assigned"
+      ]
+    },
+    "mission_commander": {
+      "name": "Mission Commander",
+      "description": "Manages mission tasks and archives",
+      "level": 7,
+      "permissions": [
+        "mission.create", "mission.read", "mission.update", "mission.delete",
+        "archive.create", "archive.read", "archive.update", "archive.delete"
+      ]
+    },
+    "maintenance_technician": {
+      "name": "Maintenance Technician",
+      "description": "Maintains drone systems",
+      "level": 4,
+      "permissions": [
+        "drone.status.update", "drone.maintenance.all",
+        "archive.read", "diagnostic.run"
+      ]
+    },
+    "monitor_operator": {
+      "name": "Monitor Operator",
+      "description": "Monitors system status and operations",
+      "level": 2,
+      "permissions": [
+        "drone.status.read", "drone.position.read", 
+        "system.monitor", "alert.read"
+      ]
+    },
+    "emergency_responder": {
+      "name": "Emergency Responder",
+      "description": "Emergency operations access",
+      "level": 6,
+      "permissions": [
+        "emergency.override", "drone.command.emergency",
+        "system.emergency", "alert.create"
+      ]
+    },
+    "user": {
+      "name": "Regular User",
+      "description": "Basic user with limited access",
+      "level": 1,
+      "permissions": [
+        "profile.read", "profile.update",
+        "preference.read", "preference.update", "preference.create"
+      ]
+    },
+    "auditor": {
+      "name": "System Auditor",
+      "description": "Read-only access for auditing",
+      "level": 4,
+      "permissions": [
+        "audit.read", "log.read", "report.read",
+        "user.read", "role.read", "permission.read"
+      ]
+    }
+  },
+  
+  "permissions": {
+    "user.create": "Create new users",
+    "user.read": "Read user information", 
+    "user.update": "Update user information",
+    "user.delete": "Delete users",
+    "user.read.department": "Read users in same department",
+    "user.update.department": "Update users in same department",
+    
+    "role.create": "Create new roles",
+    "role.read": "Read role information",
+    "role.update": "Update role information", 
+    "role.delete": "Delete roles",
+    
+    "permission.create": "Create new permissions",
+    "permission.read": "Read permission information",
+    "permission.update": "Update permission information",
+    "permission.delete": "Delete permissions",
+    
+    "drone.create": "Create drone records",
+    "drone.read": "Read drone information",
+    "drone.update": "Update drone information", 
+    "drone.delete": "Delete drone records",
+    
+    "drone.command.create": "Create drone commands",
+    "drone.command.read": "Read drone commands",
+    "drone.command.update": "Update drone commands", 
+    "drone.command.all": "Full drone command access",
+    "drone.command.assigned": "Control assigned drones",
+    "drone.command.emergency": "Emergency drone commands",
+    
+    "drone.status.read": "Read drone status",
+    "drone.status.update": "Update drone status",
+    "drone.status.all": "Full drone status access",
+    "drone.status.assigned": "Status of assigned drones",
+    
+    "drone.position.assigned": "Position of assigned drones",
+    "drone.realtime.read": "Read real-time drone data",
+    
+    "mission.create": "Create missions",
+    "mission.read": "Read mission information",
+    "mission.update": "Update missions",
+    "mission.delete": "Delete missions",
+    
+    "archive.create": "Create archive entries",
+    "archive.read": "Read archived data",
+    "archive.update": "Update archived data", 
+    "archive.delete": "Delete archived data",
+    
+    "preference.create": "Create user preferences",
+    "preference.read": "Read user preferences",
+    "preference.update": "Update user preferences",
+    
+    "profile.read": "Read own profile",
+    "profile.update": "Update own profile",
+    
+    "system.configure": "Configure system settings",
+    "system.monitor": "Monitor system status",
+    "system.emergency": "Emergency system access",
+    
+    "audit.read": "Read audit logs",
+    "audit.read.department": "Read department audit logs",
+    
+    "emergency.override": "Emergency access override",
+    
+    "diagnostic.run": "Run system diagnostics",
+    
+    "alert.create": "Create system alerts",
+    "alert.read": "Read system alerts"
+  },
+  
+  "role_hierarchies": {
+    "superadmin": ["admin", "drone_admin", "department_manager", "mission_commander", "emergency_responder", "auditor", "flight_controller", "drone_operator", "maintenance_technician", "monitor_operator", "user"],
+    "admin": ["department_manager", "auditor", "flight_controller", "drone_operator", "maintenance_technician", "monitor_operator", "user"],
+    "drone_admin": ["mission_commander", "flight_controller", "drone_operator", "maintenance_technician", "monitor_operator"],
+    "department_manager": ["user"],
+    "mission_commander": ["flight_controller", "drone_operator"],
+    "emergency_responder": [],
+    "flight_controller": ["drone_operator", "monitor_operator"],
+    "auditor": [],
+    "drone_operator": ["monitor_operator"],
+    "maintenance_technician": [],
+    "monitor_operator": [],
+    "user": []
+  }
+}

@@ -1,0 +1,7 @@
+[submodule "aiot-shared-packages"]
+	path = aiot-shared-packages
+	url = https://github.com/zanewnch/aiot-shared-packages.git
+
+[submodule "VercelBlog"]
+	path = VercelBlog
+	url = https://github.com/zanewnch/VercelBlog.git

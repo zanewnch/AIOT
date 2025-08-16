@@ -1,0 +1,358 @@
+syntax = "proto3";
+
+package rbac;
+
+import "google/api/annotations.proto";
+
+// RBAC gRPC 服務定義
+service RbacService {
+  // 使用者管理
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+    option (google.api.http) = {
+      get: "/api/rbac/users"
+    };
+  }
+  rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/rbac/users/{user_id}"
+    };
+  }
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/api/rbac/users"
+      body: "*"
+    };
+  }
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/api/rbac/users/{user_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/api/rbac/users/{user_id}"
+    };
+  }
+
+  // 角色管理
+  rpc GetRoles(GetRolesRequest) returns (GetRolesResponse) {
+    option (google.api.http) = {
+      get: "/api/rbac/roles"
+    };
+  }
+  rpc GetRoleById(GetRoleByIdRequest) returns (GetRoleByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/rbac/roles/{role_id}"
+    };
+  }
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/rbac/roles"
+      body: "*"
+    };
+  }
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (google.api.http) = {
+      put: "/api/rbac/roles/{role_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (google.api.http) = {
+      delete: "/api/rbac/roles/{role_id}"
+    };
+  }
+
+  // 權限管理
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+  rpc GetPermissionById(GetPermissionByIdRequest) returns (GetPermissionByIdResponse);
+  rpc CreatePermission(CreatePermissionRequest) returns (CreatePermissionResponse);
+  rpc UpdatePermission(UpdatePermissionRequest) returns (UpdatePermissionResponse);
+  rpc DeletePermission(DeletePermissionRequest) returns (DeletePermissionResponse);
+
+  // 使用者角色關聯
+  rpc GetUserRoles(GetUserRolesRequest) returns (GetUserRolesResponse);
+  rpc CreateUserRole(CreateUserRoleRequest) returns (CreateUserRoleResponse);
+  rpc DeleteUserRole(DeleteUserRoleRequest) returns (DeleteUserRoleResponse);
+
+  // 角色權限關聯
+  rpc GetRolePermissions(GetRolePermissionsRequest) returns (GetRolePermissionsResponse);
+  rpc CreateRolePermission(CreateRolePermissionRequest) returns (CreateRolePermissionResponse);
+  rpc DeleteRolePermission(DeleteRolePermissionRequest) returns (DeleteRolePermissionResponse);
+}
+
+// 共用訊息類型
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  bool is_active = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+message Role {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string created_at = 4;
+  string updated_at = 5;
+}
+
+message Permission {
+  int32 id = 1;
+  string name = 2;
+  string resource = 3;
+  string action = 4;
+  string description = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message UserRole {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 role_id = 3;
+  string created_at = 4;
+}
+
+message RolePermission {
+  int32 id = 1;
+  int32 role_id = 2;
+  int32 permission_id = 3;
+  string created_at = 4;
+}
+
+// 使用者相關請求/回應
+message GetUsersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetUserByIdRequest {
+  int32 user_id = 1;
+}
+
+message GetUserByIdResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message CreateUserResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateUserRequest {
+  int32 user_id = 1;
+  string username = 2;
+  string email = 3;
+  bool is_active = 4;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteUserRequest {
+  int32 user_id = 1;
+}
+
+message DeleteUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 角色相關請求/回應
+message GetRolesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetRolesResponse {
+  repeated Role roles = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetRoleByIdRequest {
+  int32 role_id = 1;
+}
+
+message GetRoleByIdResponse {
+  Role role = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateRoleRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message CreateRoleResponse {
+  Role role = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateRoleRequest {
+  int32 role_id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message UpdateRoleResponse {
+  Role role = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteRoleRequest {
+  int32 role_id = 1;
+}
+
+message DeleteRoleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 權限相關請求/回應
+message GetPermissionsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetPermissionsResponse {
+  repeated Permission permissions = 1;
+  int32 total = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetPermissionByIdRequest {
+  int32 permission_id = 1;
+}
+
+message GetPermissionByIdResponse {
+  Permission permission = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreatePermissionRequest {
+  string name = 1;
+  string resource = 2;
+  string action = 3;
+  string description = 4;
+}
+
+message CreatePermissionResponse {
+  Permission permission = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdatePermissionRequest {
+  int32 permission_id = 1;
+  string name = 2;
+  string resource = 3;
+  string action = 4;
+  string description = 5;
+}
+
+message UpdatePermissionResponse {
+  Permission permission = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeletePermissionRequest {
+  int32 permission_id = 1;
+}
+
+message DeletePermissionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 使用者角色關聯請求/回應
+message GetUserRolesRequest {
+  int32 user_id = 1;
+}
+
+message GetUserRolesResponse {
+  repeated UserRole user_roles = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateUserRoleRequest {
+  int32 user_id = 1;
+  int32 role_id = 2;
+}
+
+message CreateUserRoleResponse {
+  UserRole user_role = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteUserRoleRequest {
+  int32 user_role_id = 1;
+}
+
+message DeleteUserRoleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 角色權限關聯請求/回應
+message GetRolePermissionsRequest {
+  int32 role_id = 1;
+}
+
+message GetRolePermissionsResponse {
+  repeated RolePermission role_permissions = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateRolePermissionRequest {
+  int32 role_id = 1;
+  int32 permission_id = 2;
+}
+
+message CreateRolePermissionResponse {
+  RolePermission role_permission = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteRolePermissionRequest {
+  int32 role_permission_id = 1;
+}
+
+message DeleteRolePermissionResponse {
+  bool success = 1;
+  string message = 2;
+}

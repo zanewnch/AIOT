@@ -1,0 +1,268 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  # RBAC 微服務 - 使用 gRPC 協議進行內部通訊
+  - name: rbac-service
+    protocol: grpc
+    host: aiot-rbac-service
+    port: 50051
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - auth
+      - rbac
+      - microservice
+      - grpc
+
+  # Drone API 微服務 - 使用 gRPC 協議處理 API 請求
+  - name: drone-grpc-service
+    protocol: grpc
+    host: aiot-drone-service
+    port: 50052
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - drone
+      - api
+      - grpc
+
+  # General 微服務 - 使用 gRPC 協議 (原 FeSetting 服務)
+  - name: general-service
+    protocol: grpc
+    host: aiot-general-service
+    port: 50053
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
+    tags:
+      - user-preferences
+      - settings
+      - general
+      - grpc
+
+routes:
+  # RBAC 認證路由 - 僅允許 HTTP 訪問
+  - name: rbac-auth-routes
+    service: rbac-service
+    paths:
+      - /api/auth
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+    tags:
+      - auth
+      - login
+
+  # RBAC 管理路由 - 僅允許 HTTP 訪問
+  - name: rbac-routes
+    service: rbac-service
+    paths:
+      - /api/rbac
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+    tags:
+      - rbac
+      - permissions
+
+  # Drone API 路由 - 僅允許 HTTP 訪問，連接到 gRPC 服務
+  - name: drone-api-routes
+    service: drone-grpc-service
+    paths:
+      - /api/drone
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+    tags:
+      - drone
+      - api
+      - grpc
+
+  # General 路由 - 僅允許 HTTP 訪問 (原 FeSetting 服務)
+  - name: general-routes
+    service: general-service
+    paths:
+      - /api/user-preferences
+      - /api/health
+      - /api/info
+    strip_path: false
+    preserve_host: false
+    protocols:
+      - http
+    tags:
+      - user-preferences
+      - settings
+      - health
+      - general
+
+plugins:
+  # gRPC-Gateway 插件 - RBAC 服務
+  - name: grpc-gateway
+    service: rbac-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package rbac;
+        
+        import "google/api/annotations.proto";
+        
+        service RbacService {
+          rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+            option (google.api.http) = {
+              get: "/api/rbac/users"
+            };
+          }
+          rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+            option (google.api.http) = {
+              post: "/api/rbac/users"
+              body: "*"
+            };
+          }
+        }
+        
+        message GetUsersRequest {
+          int32 page = 1;
+          int32 limit = 2;
+        }
+        
+        message GetUsersResponse {
+          repeated User users = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateUserRequest {
+          string username = 1;
+          string email = 2;
+          string password = 3;
+        }
+        
+        message CreateUserResponse {
+          User user = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message User {
+          int32 id = 1;
+          string username = 2;
+          string email = 3;
+          bool is_active = 4;
+          string created_at = 5;
+          string updated_at = 6;
+        }
+    tags:
+      - grpc-gateway
+      - rbac
+
+  # gRPC-Gateway 插件 - General 服務 (原 FeSetting 服務)
+  - name: grpc-gateway
+    service: general-service
+    config:
+      proto: |
+        syntax = "proto3";
+        
+        package general;
+        
+        service GeneralService {
+          rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+          rpc GetServiceInfo(ServiceInfoRequest) returns (ServiceInfoResponse);
+          rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse);
+        }
+        
+        // 健康檢查相關訊息
+        message HealthCheckRequest {}
+        
+        message HealthCheckResponse {
+          string status = 1;
+          string service = 2;
+          string message = 3;
+          string timestamp = 4;
+          string version = 5;
+        }
+        
+        message ServiceInfoRequest {}
+        
+        message ServiceInfoResponse {
+          string service = 1;
+          string description = 2;
+          string version = 3;
+          string author = 4;
+          repeated string features = 5;
+        }
+        
+        // 使用者偏好設定相關訊息
+        message GetUserPreferencesRequest {
+          int32 user_id = 1;
+          string category = 2;
+          int32 page = 3;
+          int32 limit = 4;
+        }
+        
+        message GetUserPreferencesResponse {
+          repeated UserPreference preferences = 1;
+          int32 total = 2;
+          bool success = 3;
+          string message = 4;
+        }
+        
+        message CreateUserPreferenceRequest {
+          int32 user_id = 1;
+          string preference_key = 2;
+          string preference_value = 3;
+          string category = 4;
+          string description = 5;
+        }
+        
+        message CreateUserPreferenceResponse {
+          UserPreference preference = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message UpdateUserPreferenceRequest {
+          int32 preference_id = 1;
+          string preference_value = 2;
+          string category = 3;
+          string description = 4;
+        }
+        
+        message UpdateUserPreferenceResponse {
+          UserPreference preference = 1;
+          bool success = 2;
+          string message = 3;
+        }
+        
+        message DeleteUserPreferenceRequest {
+          int32 preference_id = 1;
+        }
+        
+        message DeleteUserPreferenceResponse {
+          bool success = 1;
+          string message = 2;
+        }
+        
+        message UserPreference {
+          int32 id = 1;
+          int32 user_id = 2;
+          string preference_key = 3;
+          string preference_value = 4;
+          string category = 5;
+          string description = 6;
+          string created_at = 7;
+          string updated_at = 8;
+        }
+    tags:
+      - grpc-gateway
+      - general

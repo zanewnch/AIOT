@@ -1,0 +1,111 @@
+# Drone WebSocket 微服務 Kubernetes 配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiot-prod-drone-websocket-service-deployment
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-drone-websocket-service
+    app.kubernetes.io/name: aiot-prod-drone-websocket-service
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: aiot-microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiot-prod-drone-websocket-service
+  template:
+    metadata:
+      labels:
+        app: aiot-prod-drone-websocket-service
+    spec:
+      containers:
+      - name: aiot-prod-drone-websocket-service
+        image: aiot-drone-websocket-service:latest
+        # 啟動 drone-websocket 服務
+        command: ['npm', 'run', 'dev']
+        ports:
+        - containerPort: 3004
+          name: websocket
+        env:
+        - name: SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DRONE_WEBSOCKET_SERVICE_NAME
+        - name: SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DRONE_WEBSOCKET_SERVICE_PORT
+        - name: CORS_ORIGIN
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: CORS_ORIGIN
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aiot-microservice-config
+              key: DRONE_DB_NAME
+        # 從公共配置引入環境變數
+        envFrom:
+        - configMapRef:
+            name: aiot-common-config
+        - configMapRef:
+            name: prod-environment-config
+        - secretRef:
+            name: aiot-database-secrets
+        - secretRef:
+            name: aiot-app-secrets
+        # 生產環境：僅掛載日誌儲存
+        volumeMounts:
+        - name: app-logs
+          mountPath: /app/logs
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: app-logs
+        emptyDir: {}
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiot-prod-drone-websocket-service
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-drone-websocket-service
+    app.kubernetes.io/name: aiot-prod-drone-websocket-service
+    app.kubernetes.io/component: microservice
+spec:
+  selector:
+    app: aiot-prod-drone-websocket-service
+  ports:
+  - port: 3004
+    targetPort: 3004
+    protocol: TCP
+    name: websocket
+  type: ClusterIP

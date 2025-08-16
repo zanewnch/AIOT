@@ -1,0 +1,42 @@
+{
+  "service": {
+    "id": "drone-service",
+    "name": "drone-service",
+    "tags": [
+      "drone",
+      "iot",
+      "api",
+      "microservice",
+      "nodejs",
+      "grpc"
+    ],
+    "address": "aiot-drone-service",
+    "port": 3002,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "grpc"
+    },
+    "check": {
+      "id": "drone-service-grpc",
+      "name": "Drone gRPC Health Check",
+      "grpc": "aiot-drone-service:50052",
+      "interval": "10s",
+      "timeout": "3s",
+      "deregister_critical_service_after": "30s"
+    },
+    "checks": [
+      {
+        "id": "drone-service-grpc-health",
+        "name": "Drone gRPC Health Check",
+        "grpc": "aiot-drone-service:50052",
+        "interval": "30s",
+        "timeout": "5s"
+      }
+    ],
+    "weights": {
+      "passing": 10,
+      "warning": 1
+    }
+  }
+}

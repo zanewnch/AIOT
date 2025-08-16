@@ -13,6 +13,7 @@
 
 import React from 'react';
 import { UserQuery } from '../../../hooks/useUserQuery';
+import { useOptimisticUser, useQuickUserActions } from '../../../hooks/useOptimisticUser';
 import { useTableUIStore } from '../../../stores/tableStore';
 import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
@@ -31,7 +32,10 @@ export const UserTableView: React.FC = () => {
   // React Query hooks for data
   const userQuery = new UserQuery();
   const { data: userData, isLoading, error, refetch } = userQuery.useRbacUsers();
-  const updateUserMutation = userQuery.useUpdateUser();
+  
+  // 🚀 樂觀更新 hooks
+  const { updateUser, isUserUpdating, getUserOptimisticData } = useOptimisticUser();
+  const { toggleUserStatus, updateProfile, isUpdating } = useQuickUserActions();
   
   // Zustand stores for UI state
   const { 
@@ -55,7 +59,7 @@ export const UserTableView: React.FC = () => {
   };
 
   /**
-   * 處理用戶保存操作
+   * 處理用戶保存操作 - 🚀 使用樂觀更新
    */
   const handleSave = async () => {
     if (!editModal.editingItem) return;
@@ -63,21 +67,42 @@ export const UserTableView: React.FC = () => {
     const userId = editModal.editingItem.id;
     const username = editModal.editingItem.username || editModal.editingItem.name;
     
-    logger.info('開始保存用戶', { userId, username, operation: 'save' });
+    logger.info('開始保存用戶（樂觀更新）', { userId, username, operation: 'optimistic_save' });
 
     try {
-      await updateUserMutation.mutateAsync({
-        id: editModal.editingItem.id,
-        data: editModal.editingItem
-      });
-      
-      logger.info('用戶保存成功', { userId, username, operation: 'save_success' });
-      addSuccess('用戶更新成功');
+      // 🚀 使用樂觀更新，立即關閉模態框並顯示更新
       closeEditModal();
-      refetch();
+      
+      // 執行樂觀更新
+      await updateProfile(userId, editModal.editingItem);
+      
+      logger.info('用戶樂觀更新成功', { userId, username, operation: 'optimistic_save_success' });
     } catch (error) {
-      logger.error('用戶保存失敗', { userId, username, error: (error as Error).message, operation: 'save_error' });
-      addError('用戶更新失敗: ' + (error as Error).message);
+      // 錯誤處理已在 useOptimisticUser hook 中處理
+      logger.error('用戶樂觀更新失敗', { userId, username, error: (error as Error).message, operation: 'optimistic_save_error' });
+      // 重新打開模態框讓用戶再次嘗試
+      openEditModal('user', editModal.editingItem);
+    }
+  };
+
+  /**
+   * 🚀 處理用戶狀態快速切換（樂觀更新）
+   */
+  const handleStatusToggle = async (user: any) => {
+    const userId = user.id;
+    const currentStatus = user.is_active || user.active || false;
+    
+    logger.info('切換用戶狀態（樂觀更新）', { 
+      userId, 
+      currentStatus, 
+      newStatus: !currentStatus,
+      operation: 'optimistic_status_toggle' 
+    });
+
+    try {
+      await toggleUserStatus(userId, currentStatus);
+    } catch (error) {
+      logger.error('用戶狀態切換失敗', { userId, error: (error as Error).message });
     }
   };
 
@@ -103,12 +128,25 @@ export const UserTableView: React.FC = () => {
   };
 
   /**
-   * 排序數據
+   * 排序數據 - 🚀 包含樂觀更新數據
    */
   const sortedData = React.useMemo(() => {
     if (!userData) return [];
     
-    const sorted = [...userData];
+    // 合併樂觀更新的數據
+    const dataWithOptimisticUpdates = userData.map(user => {
+      const optimisticData = getUserOptimisticData(user.id);
+      const isUpdating = isUserUpdating(user.id);
+      
+      return {
+        ...user,
+        ...optimisticData,
+        _isUpdating: isUpdating, // 添加更新狀態標記
+        _optimisticData: optimisticData, // 添加樂觀數據標記
+      };
+    });
+    
+    const sorted = [...dataWithOptimisticUpdates];
     sorted.sort((a, b) => {
       const field = sorting.field as keyof typeof a;
       const aValue = a[field];
@@ -120,7 +158,7 @@ export const UserTableView: React.FC = () => {
     });
     
     return sorted;
-  }, [userData, sorting]);
+  }, [userData, sorting, getUserOptimisticData, isUserUpdating]);
 
   // 載入狀態檢查
   if (isLoading) {
@@ -190,20 +228,94 @@ export const UserTableView: React.FC = () => {
         </thead>
         <tbody>
           {sortedData.map((item: any, index: number) => (
-            <tr key={item.id || index} className={styles.tableRow}>
+            <tr 
+              key={item.id || index} 
+              className={`${styles.tableRow} ${
+                item._isUpdating ? styles.updating : ''
+              } ${
+                item._optimisticData ? styles.optimistic : ''
+              }`}
+            >
               {columns.map((column) => (
                 <td key={column} className={styles.tableCell}>
-                  {/* 隱藏密碼欄位 */}
-                  {column.toLowerCase().includes('password') ? '••••••••' : item[column]}
+                  {/* 特殊處理不同類型的欄位 */}
+                  {column.toLowerCase().includes('password') ? (
+                    '••••••••'
+                  ) : column === 'is_active' || column === 'active' ? (
+                    <div className="flex items-center gap-2">
+                      {/* 🚀 狀態快速切換按鈕 */}
+                      <button
+                        onClick={() => handleStatusToggle(item)}
+                        disabled={item._isUpdating}
+                        className={`px-2 py-1 rounded text-xs font-medium transition-all duration-200 ${
+                          item[column]
+                            ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                            : 'bg-red-100 text-red-800 hover:bg-red-200'
+                        } ${
+                          item._isUpdating 
+                            ? 'opacity-60 cursor-not-allowed animate-pulse' 
+                            : 'hover:scale-105 cursor-pointer'
+                        }`}
+                        title={`點擊切換到 ${item[column] ? '停用' : '啟用'} 狀態`}
+                      >
+                        {item._isUpdating ? (
+                          <>
+                            <div className="inline-block w-3 h-3 mr-1 border border-current border-t-transparent rounded-full animate-spin"></div>
+                            更新中
+                          </>
+                        ) : item[column] ? (
+                          '✅ 啟用'
+                        ) : (
+                          '❌ 停用'
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={`${item._optimisticData && item._optimisticData[column] ? 'bg-blue-50 px-2 py-1 rounded' : ''}`}>
+                      {item[column]}
+                      {/* 樂觀更新指示器 */}
+                      {item._optimisticData && item._optimisticData[column] && (
+                        <span className="ml-2 text-xs text-blue-600" title="樂觀更新中">
+                          ⚡
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </td>
               ))}
               <td className={styles.tableCell}>
-                <button 
-                  onClick={() => handleEdit(item)}
-                  className={styles.editButton}
-                >
-                  編輯
-                </button>
+                <div className="flex gap-2">
+                  {/* 編輯按鈕 */}
+                  <button 
+                    onClick={() => handleEdit(item)}
+                    disabled={item._isUpdating}
+                    className={`${styles.editButton} ${
+                      item._isUpdating 
+                        ? 'opacity-50 cursor-not-allowed' 
+                        : 'hover:bg-blue-600 hover:scale-105'
+                    } transition-all duration-200`}
+                  >
+                    {item._isUpdating ? '更新中...' : '編輯'}
+                  </button>
+
+                  {/* 🚀 快速操作按鈕組 */}
+                  {!item._isUpdating && (
+                    <>
+                      {/* 快速啟用/停用按鈕 */}
+                      <button
+                        onClick={() => handleStatusToggle(item)}
+                        className={`px-2 py-1 text-xs rounded font-medium transition-all duration-200 ${
+                          item.is_active || item.active
+                            ? 'bg-orange-100 text-orange-800 hover:bg-orange-200'
+                            : 'bg-green-100 text-green-800 hover:bg-green-200'
+                        } hover:scale-105`}
+                        title={`快速${item.is_active || item.active ? '停用' : '啟用'}用戶`}
+                      >
+                        {item.is_active || item.active ? '停用' : '啟用'}
+                      </button>
+                    </>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
@@ -249,10 +361,21 @@ export const UserTableView: React.FC = () => {
               </button>
               <button 
                 onClick={handleSave}
-                className={styles.saveButton}
-                disabled={updateUserMutation.isPending}
+                className={`${styles.saveButton} ${
+                  isUserUpdating(editModal.editingItem?.id) 
+                    ? 'opacity-75 transform scale-95' 
+                    : 'hover:scale-105'
+                } transition-all duration-200`}
+                disabled={isUserUpdating(editModal.editingItem?.id)}
               >
-                {updateUserMutation.isPending ? '保存中...' : '保存'}
+                {isUserUpdating(editModal.editingItem?.id) ? (
+                  <>
+                    <div className="inline-block w-4 h-4 mr-2 border border-current border-t-transparent rounded-full animate-spin"></div>
+                    🚀 樂觀更新中...
+                  </>
+                ) : (
+                  '💾 立即保存'
+                )}
               </button>
             </div>
           </div>

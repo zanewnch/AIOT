@@ -1,0 +1,66 @@
+# OPA Bundles 配置 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiot-prod-opa-bundles
+  namespace: aiot-prod
+  labels:
+    app: aiot-prod-opa
+    app.kubernetes.io/name: opa
+    app.kubernetes.io/component: policy-bundles
+data:
+  # 基本權限政策
+  authz.rego: |
+    package authz
+    
+    import rego.v1
+    
+    # 預設拒絕
+    default allow = false
+    
+    # 允許健康檢查
+    allow if {
+        input.path == "/health"
+    }
+    
+    # 允許登入端點
+    allow if {
+        input.path == "/api/auth/login"
+        input.method == "POST"
+    }
+    
+    # 檢查 JWT token
+    allow if {
+        valid_jwt
+        allowed_path
+    }
+    
+    # 驗證 JWT token
+    valid_jwt if {
+        [_, encoded] := split(get_token, ".")
+        payload := json.unmarshal(base64url.decode(encoded))
+        payload.exp > time.now_ns() / 1000000000
+    }
+    
+    # 獲取 token
+    get_token := token if {
+        [_, token] := split(input.headers.authorization, " ")
+    }
+    
+    # 允許的路徑
+    allowed_path if {
+        startswith(input.path, "/api/")
+    }
+  
+  # 資料定義
+  data.json: |
+    {
+      "roles": {
+        "admin": {
+          "permissions": ["*"]
+        },
+        "user": {
+          "permissions": ["read", "write"]
+        }
+      }
+    }
