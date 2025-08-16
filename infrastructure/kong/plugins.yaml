@@ -5,7 +5,7 @@ plugins:
   - name: grpc-gateway
     service: rbac-service
     config:
-      proto: /kong/protos/rbac.proto
+      proto: protos/rbac.proto
     tags:
       - grpc-gateway
       - rbac

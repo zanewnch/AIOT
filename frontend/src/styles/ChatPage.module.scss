@@ -1,0 +1,538 @@
+/**
+ * ChatPage 聊天頁面樣式
+ * 
+ * 提供完整的聊天介面樣式，包含：
+ * - 響應式布局設計
+ * - 聊天訊息顯示
+ * - 輸入區域和按鈕
+ * - 設定面板
+ * - 載入和狀態指示器
+ */
+
+.chatPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+/* 聊天標題區域 */
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.chatTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chatActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.clearButton {
+  padding: 0.5rem 1rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* 聊天設定面板 */
+.chatSettings {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.settingsGroup {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #555;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #2c3e50;
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #3498db;
+  }
+}
+
+/* 聊天訊息區域 */
+.chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-behavior: smooth;
+
+  /* 自定義滾動條 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+/* 聊天訊息樣式 */
+.message {
+  max-width: 80%;
+  margin-bottom: 0.5rem;
+  animation: messageSlideIn 0.3s ease-out;
+
+  &--user {
+    align-self: flex-end;
+    margin-left: auto;
+
+    .messageContent {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+    }
+  }
+
+  &--assistant {
+    align-self: flex-start;
+
+    .messageContent {
+      background: white;
+      color: #2c3e50;
+      border-radius: 18px 18px 18px 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &--system {
+    align-self: center;
+    max-width: 60%;
+
+    .messageContent {
+      background: rgba(52, 152, 219, 0.1);
+      color: #2980b9;
+      border-radius: 12px;
+      text-align: center;
+      font-style: italic;
+    }
+  }
+
+  &--error {
+    align-self: center;
+    max-width: 70%;
+
+    .messageContent {
+      background: rgba(231, 76, 60, 0.1);
+      color: #e74c3c;
+      border-radius: 12px;
+      text-align: center;
+      font-style: italic;
+      border: 1px solid rgba(231, 76, 60, 0.2);
+    }
+  }
+}
+
+.messageContent {
+  padding: 0.75rem 1rem;
+  position: relative;
+}
+
+.messageText {
+  line-height: 1.4;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.messageTime {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+/* 載入指示器 */
+.loadingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.loadingDots {
+  display: flex;
+  gap: 2px;
+
+  span {
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+    animation: loadingBounce 1.4s infinite ease-in-out both;
+
+    &:nth-child(1) { animation-delay: -0.32s; }
+    &:nth-child(2) { animation-delay: -0.16s; }
+    &:nth-child(3) { animation-delay: 0s; }
+  }
+}
+
+/* 輸入區域 */
+.chatInput {
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.inputContainer {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.inputField {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e8f4fd;
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.4;
+  resize: none;
+  font-family: inherit;
+  background: white;
+  transition: all 0.2s ease;
+  min-height: 48px;
+  max-height: 120px;
+
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  &::placeholder {
+    color: #95a5a6;
+  }
+
+  &:disabled {
+    background: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.sendButton {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  min-width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2980b9, #1f4e79);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.inputHint {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* 狀態列 */
+.statusBar {
+  padding: 0.5rem 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  
+  &--connected {
+    background: #27ae60;
+    animation: statusPulse 2s infinite;
+  }
+  
+  &--disconnected {
+    background: #e74c3c;
+    animation: statusError 1s infinite;
+  }
+}
+
+/* 動畫效果 */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loadingBounce {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 
+  40% { 
+    transform: scale(1);
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes statusError {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .chatPage {
+    height: 100vh;
+  }
+
+  .chatHeader {
+    padding: 0.75rem 1rem;
+  }
+
+  .chatTitle {
+    font-size: 1.25rem;
+  }
+
+  .chatSettings {
+    padding: 0.5rem 1rem;
+  }
+
+  .settingsGroup {
+    gap: 1rem;
+  }
+
+  .chatMessages {
+    padding: 0.75rem;
+  }
+
+  .message {
+    max-width: 90%;
+  }
+
+  .chatInput {
+    padding: 0.75rem 1rem;
+  }
+
+  .inputContainer {
+    gap: 0.5rem;
+  }
+
+  .statusBar {
+    padding: 0.375rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatTitle {
+    font-size: 1.1rem;
+  }
+
+  .clearButton {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .settingsGroup {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .message {
+    max-width: 95%;
+  }
+
+  .messageContent {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .inputField {
+    font-size: 0.9rem;
+  }
+
+  .sendButton {
+    min-width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
+
+/* 深色主題支援 */
+@media (prefers-color-scheme: dark) {
+  .chatPage {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+
+  .chatHeader,
+  .chatSettings,
+  .chatInput {
+    background: rgba(44, 62, 80, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .chatTitle {
+    color: #ecf0f1;
+  }
+
+  .settingItem {
+    color: #bdc3c7;
+
+    &:hover {
+      color: #ecf0f1;
+    }
+  }
+
+  .message--assistant .messageContent {
+    background: rgba(52, 73, 94, 0.8);
+    color: #ecf0f1;
+  }
+
+  .message--system .messageContent {
+    background: rgba(52, 152, 219, 0.2);
+    color: #85c1e9;
+  }
+
+  .message--error .messageContent {
+    background: rgba(231, 76, 60, 0.2);
+    color: #ec7063;
+    border-color: rgba(231, 76, 60, 0.3);
+  }
+
+  .inputField {
+    background: rgba(44, 62, 80, 0.6);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ecf0f1;
+
+    &::placeholder {
+      color: #7f8c8d;
+    }
+
+    &:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+  }
+
+  .statusBar {
+    background: rgba(44, 62, 80, 0.9);
+    color: #95a5a6;
+  }
+
+  .inputHint {
+    color: #95a5a6;
+  }
+}

@@ -29,6 +29,7 @@ const CommandHistoryPage = lazy(() => import("./pages/CommandHistoryPage"));
 const DroneFleetPage = lazy(() => import("./pages/DroneFleetPage"));
 const CommandQueuePage = lazy(() => import("./pages/CommandQueuePage"));
 const DataAnalyticsPage = lazy(() => import("./pages/DataAnalyticsPage"));
+const ChatPage = lazy(() => import("./pages/ChatPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 /**
@@ -130,6 +131,8 @@ function App() {
             <Route index element={<HomeContent />} /> {/* 首頁預設內容 */}
             <Route path="tableviewer" element={<TableViewer />} /> 
             {/* 資料表檢視器頁面 */}
+            <Route path="chat" element={<ChatPage />} /> 
+            {/* AI 聊天頁面 */}
             <Route path="api-docs" element={<SwaggerDocPage />} /> 
             {/* API 文檔頁面 */}
             <Route path="mappage" element={<MapPage />} /> 
