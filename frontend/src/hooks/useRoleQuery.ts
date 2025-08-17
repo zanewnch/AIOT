@@ -19,7 +19,7 @@ import type {
   UpdateResponse, 
   TableError,
   RoleUpdateRequest,
-  RolePermission
+  RoleToPermission
 } from '../types/table';
 
 // 創建服務專用的日誌記錄器
@@ -125,11 +125,11 @@ export class RoleQuery {
   useAllRolePermissions() {
     return useQuery({
       queryKey: this.ROLE_QUERY_KEYS.ROLE_PERMISSIONS,
-      queryFn: async (): Promise<RolePermission[]> => {
+      queryFn: async (): Promise<RoleToPermission[]> => {
         try {
           logger.debug('Fetching role permissions from API');
           
-          const result = await apiClient.getWithResult<RolePermission[]>('/rbac/role-permissions');
+          const result = await apiClient.getWithResult<RoleToPermission[]>('/rbac/role-permissions');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

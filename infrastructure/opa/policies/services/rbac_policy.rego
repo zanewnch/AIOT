@@ -6,8 +6,8 @@ package aiot.rbac
 import future.keywords.in
 import data.aiot.common
 
-# Default deny
-default allow = false
+# Default deny - commented out to avoid conflicts with gateway policy
+# default allow = false
 
 # RBAC Management - Superadmin only
 allow if {

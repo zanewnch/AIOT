@@ -63,9 +63,10 @@ export function setupSocketIONamespaces(io: SocketIOServer): void {
  * 設定 Socket.IO 中間件
  * 
  * 為指定的 Socket.IO 伺服器註冊認證中間件
+ * 中間件從 Kong 傳遞的 headers 中提取用戶信息
  * 
  * @param {SocketIOServer} io - Socket.IO 伺服器實例
- * @param {Function} authMiddleware - JWT 認證中間件
+ * @param {Function} authMiddleware - Kong Headers 解析中間件
  */
 export function setupSocketIOMiddleware(
   io: SocketIOServer, 

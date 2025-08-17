@@ -64,7 +64,6 @@ export class UserPreferenceRoutes {
          */
         this.router.get('/', 
             KongHeadersMiddleware.extractUserInfo,
-            KongHeadersMiddleware.requirePermission('preference.read'),
             this.getAllUserPreferences
         );
 

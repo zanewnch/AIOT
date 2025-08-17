@@ -6,8 +6,8 @@ package aiot.general
 import future.keywords.in
 import data.aiot.common
 
-# Default deny
-default allow = false
+# Default deny - commented out to avoid conflicts with gateway policy
+# default allow = false
 
 # Superadmin has all permissions  
 allow if {

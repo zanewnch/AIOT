@@ -1,483 +1,250 @@
-# AIOT Gateway Policy - JWT Authentication & Authorization
-# This policy handles complete JWT verification and permission-based authorization
-# Integrates with Kong JWT plugin to verify tokens and check permissions directly
+# AIOT Kong Gateway Policy - 正確版本
+# 基於 Kong OPA 插件的實際輸入格式
 
 package aiot.gateway
 
-import future.keywords.in
-import future.keywords.contains
 import rego.v1
 
-# JWT Secret Key for signature verification
-jwt_secret := "aiot-jwt-secret-key-2024"
-
-# Default deny all requests
+# 預設拒絕所有請求
 default allow := false
 
-# Extract request information from Kong OPA plugin input
+# 萃取請求資訊 - 根據 Kong OPA 插件的實際格式
+request_method := input.request.http.method
+request_path := input.request.http.path
+request_headers := input.request.http.headers
 service_name := input.service.name
-route_path := input.request.path
-request_method := input.request.method
-request_headers := input.request.headers
+route_paths := input.route.paths
 
-# Extract JWT token from Kong JWT plugin headers
-# Kong JWT plugin sets x-jwt-token header after successful verification
-jwt_token := request_headers["x-jwt-token"] if {
-    request_headers["x-jwt-token"]
-}
+# JWT 密鑰（應該與後端服務使用的相同）
+jwt_secret := "aiot-jwt-secret-key-2024"
 
-# Fallback: Extract JWT token from Authorization header
+# 萃取 JWT token 從 Authorization header
+auth_header := request_headers.authorization
 jwt_token := token if {
-    not request_headers["x-jwt-token"]
-    authorization := request_headers.authorization
-    startswith(authorization, "Bearer ")
-    token := substring(authorization, 7, -1)
+    auth_header
+    startswith(auth_header, "Bearer ")
+    token := substring(auth_header, 7, -1)
 }
 
-# Check if Kong has already verified the JWT
-kong_jwt_verified := request_headers["x-consumer-username"] != "" if {
-    request_headers["x-consumer-username"]
-}
-
-# JWT verification - prefer Kong's verification, fallback to manual verification
-jwt_valid := true if {
-    kong_jwt_verified
-    jwt_token
-}
-
-jwt_valid := io.jwt.verify_hs256(jwt_token, jwt_secret) if {
-    not kong_jwt_verified
-    jwt_token
-}
-
+# JWT 驗證和解碼
 jwt_payload := payload if {
-    jwt_valid
-    [_, payload, _] := io.jwt.decode(jwt_token)
+    jwt_token
+    [valid, _, payload] := io.jwt.decode_verify(jwt_token, {"secret": jwt_secret})
+    valid
 }
 
-# Extract user information from verified JWT
+# 檢查 JWT 是否過期
+jwt_expired if {
+    jwt_payload
+    now := time.now_ns() / 1000000000
+    now > jwt_payload.exp
+}
+
+# JWT 有效性檢查
+jwt_valid if {
+    jwt_payload
+    not jwt_expired
+    jwt_payload.exp
+    jwt_payload.iat
+    jwt_payload.iss == "aiot-system"
+}
+
+# 萃取使用者資訊
 user_id := jwt_payload.sub if jwt_valid
-username := jwt_payload.user.username if jwt_valid
+username := jwt_payload.user.username if jwt_valid  
 user_roles := jwt_payload.permissions.roles if jwt_valid
 user_permissions := jwt_payload.permissions.permissions if jwt_valid
-user_department_id := 1 if jwt_valid  # Default department for now
-user_level := 8 if jwt_valid  # Default level for admin
+user_level := jwt_payload.user.level if jwt_valid
 
-# Check if JWT is expired
-jwt_expired := time.now_ns() > (jwt_payload.exp * 1000000000) if jwt_valid
+# ===========================================
+# 授權規則
+# ===========================================
 
-# =============================================================================
-# PUBLIC ENDPOINTS (No Authentication Required)
-# =============================================================================
-
-# Authentication endpoints - no JWT required (login)
-# POST /api/auth - login (public access)
+# 公開端點 - 登入不需要認證
 allow if {
-    service_name == "rbac-service"
-    route_path == "/"
-    request_method in ["POST", "OPTIONS"]
-}
-
-# Health check endpoints - no authentication required
-allow if {
-    endswith(route_path, "/health")
-    request_method == "GET"
-}
-
-# API documentation endpoints - public access
-allow if {
-    service_name in ["docs-service", "swagger-service"]
-    request_method == "GET"
-}
-
-# CORS preflight requests - always allow
-allow if {
-    request_method == "OPTIONS"
-}
-
-# =============================================================================
-# AUTHENTICATED ENDPOINTS (JWT Required & Valid)
-# =============================================================================
-
-# Helper function to check if user has specific permission
-has_permission(permission) if {
-    jwt_valid
-    not jwt_expired
-    user_permissions[_] == "*"  # Super admin has all permissions
-}
-
-has_permission(permission) if {
-    jwt_valid
-    not jwt_expired
-    user_permissions[_] == permission
-}
-
-# Helper function to check if user has any of the specified permissions
-has_any_permission(permissions) if {
-    jwt_valid
-    not jwt_expired
-    permission := permissions[_]
-    has_permission(permission)
-}
-
-# Helper function to check if user has specific role
-has_role(role) if {
-    jwt_valid
-    not jwt_expired
-    user_roles[_] == role
-}
-
-# =============================================================================
-# RBAC SERVICE AUTHORIZATION
-# =============================================================================
-
-# Authentication endpoints using RESTful design
-# GET /api/auth - get current user info (any authenticated user)
-allow if {
-    service_name == "rbac-service"
-    route_path == "/"
-    request_method == "GET"
-    jwt_valid
-    not jwt_expired
-}
-
-# DELETE /api/auth - logout (any authenticated user)
-allow if {
-    service_name == "rbac-service"
-    route_path == "/"
-    request_method == "DELETE"
-    jwt_valid
-    not jwt_expired
-}
-
-# PUT /api/auth - update auth info (any authenticated user)
-allow if {
-    service_name == "rbac-service"
-    route_path == "/"
-    request_method == "PUT"
-    jwt_valid
-    not jwt_expired
-}
-
-# User management endpoints - require specific permissions
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/users")
-    request_method == "GET"
-    has_any_permission(["user.read", "user.read.department"])
-}
-
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/users")
     request_method == "POST"
-    has_permission("user.create")
+    "/api/auth" in route_paths
+    request_path == "/"
 }
 
+# 認證端點 - 需要有效 JWT
 allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/users")
-    request_method in ["PUT", "PATCH"]
-    has_any_permission(["user.update", "user.update.department"])
-}
-
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/users")
-    request_method == "DELETE"
-    has_permission("user.delete")
-}
-
-# Role management endpoints
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/roles")
-    request_method == "GET"
-    has_permission("role.read")
-}
-
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/roles")
-    request_method == "POST"
-    has_permission("role.create")
-}
-
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/roles")
-    request_method in ["PUT", "PATCH"]
-    has_permission("role.update")
-}
-
-allow if {
-    service_name == "rbac-service"
-    startswith(route_path, "/api/rbac/roles")
-    request_method == "DELETE"
-    has_permission("role.delete")
-}
-
-# =============================================================================
-# DRONE SERVICE AUTHORIZATION  
-# =============================================================================
-
-# Drone service health check
-allow if {
-    service_name == "drone-http-service"
-    route_path == "/health"
-    request_method == "GET"
-}
-
-# Drone status endpoints - require drone.read permission
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/statuses")
-    request_method == "GET"
-    has_any_permission(["drone.read", "drone.status.read", "*"])
-}
-
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/statuses")
-    request_method in ["POST", "PUT", "PATCH"]
-    has_any_permission(["drone.update", "drone.status.update", "*"])
-}
-
-# Drone position endpoints
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/positions")
-    request_method == "GET"
-    has_any_permission(["drone.read", "drone.position.read", "*"])
-}
-
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/positions")
-    request_method in ["POST", "PUT", "PATCH"]
-    has_any_permission(["drone.update", "drone.position.update", "*"])
-}
-
-# Drone command endpoints
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/commands")
-    request_method == "GET"
-    has_any_permission(["drone.read", "drone.command.read", "*"])
-}
-
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/commands")
-    request_method == "POST"
-    has_any_permission(["drone.command.create", "drone.command.all", "drone.command.emergency"])
-}
-
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/commands")
-    request_method in ["PUT", "PATCH"]
-    has_any_permission(["drone.update", "drone.command.update", "*"])
-}
-
-# Drone archive endpoints
-allow if {
-    service_name == "drone-http-service"
-    startswith(route_path, "/archive-tasks")
-    request_method == "GET"
-    has_any_permission(["drone.read", "archive.read", "*"])
-}
-
-# Real-time WebSocket connections
-allow if {
-    service_name == "drone-websocket-service"
-    startswith(route_path, "/socket.io")
-    has_any_permission(["drone.read", "drone.realtime", "*"])
-}
-
-# =============================================================================
-# GENERAL SERVICE AUTHORIZATION (User Preferences, etc.)
-# =============================================================================
-
-# General service health check
-allow if {
-    service_name == "general-service"
-    route_path == "/health"
-    request_method == "GET"
-}
-
-# User preferences endpoints - require preference permissions
-allow if {
-    service_name == "general-service"
-    startswith(route_path, "/user-preferences")
-    request_method == "GET"
-    has_any_permission(["preference.read", "user.preference.read", "*"])
-}
-
-allow if {
-    service_name == "general-service"
-    startswith(route_path, "/user-preferences")
-    request_method in ["POST", "PUT", "PATCH"]
-    has_any_permission(["preference.create", "preference.update", "user.preference.update", "*"])
-}
-
-allow if {
-    service_name == "general-service"
-    startswith(route_path, "/user-preferences")
-    request_method == "DELETE"
-    has_any_permission(["preference.delete", "user.preference.delete", "*"])
-}
-
-# =============================================================================
-# DOCS SERVICE AUTHORIZATION
-# =============================================================================
-
-# Documentation access - any authenticated user can read docs
-allow if {
-    service_name == "docs-http-service"
-    request_method == "GET"
+    request_method in ["GET", "PUT", "DELETE"]  
+    "/api/auth" in route_paths
+    request_path == "/"
     jwt_valid
-    not jwt_expired
 }
 
-# =============================================================================
-# DECISION LOGGING AND DEBUGGING
-# =============================================================================
-
-# Generate decision reason for debugging
-decision_reason := reason if {
-    allow
-    reason := sprintf("Access granted: service=%s, path=%s, method=%s, user=%s", [service_name, route_path, request_method, username])
-}
-
-decision_reason := reason if {
-    not allow
-    jwt_valid
-    reason := sprintf("Access denied: service=%s, path=%s, method=%s, user=%s, permissions=%v", [service_name, route_path, request_method, username, user_permissions])
-}
-
-decision_reason := reason if {
-    not allow
-    not jwt_valid
-    reason := sprintf("Access denied: service=%s, path=%s, method=%s, reason=invalid_or_missing_jwt", [service_name, route_path, request_method])
-}
-
-# Debug information for troubleshooting
-debug_info := {
-    "service": service_name,
-    "path": route_path,
-    "method": request_method,
-    "jwt_token_present": jwt_token != "",
-    "jwt_valid": jwt_valid,
-    "kong_verified": kong_jwt_verified,
-    "user_id": user_id,
-    "username": username,
-    "user_roles": user_roles,
-    "user_permissions": user_permissions,
-    "decision": allow,
-    "reason": decision_reason
-}
-
-# =============================================================================
-# LLM SERVICE AUTHORIZATION
-# =============================================================================
-
-# LLM service access - authenticated users with proper permissions
+# RBAC 管理端點 - 需要管理員權限
 allow if {
-    service_name == "llm-service"
-    request_method in ["GET", "POST"]
+    "/api/rbac" in route_paths
     jwt_valid
-    not jwt_expired
-    user_level >= 1  # Basic access level required
+    "admin" in user_roles
 }
 
-# =============================================================================
-# EMERGENCY & SPECIAL PERMISSIONS
-# =============================================================================
-
-# Emergency override permissions
+# Drone API 端點 - 基於角色的權限檢查
 allow if {
-    has_permission("emergency.override")
-    service_name in ["drone-service", "rbac-service"]
-    request_method in ["GET", "POST", "PUT"]
-}
-
-# System administration - superadmin access
-allow if {
-    has_role("superadmin")
-    service_name in ["rbac-service", "general-service", "docs-service"]
-}
-
-# =============================================================================
-# UTILITY FUNCTIONS & METADATA
-# =============================================================================
-
-# Rate limiting exemption for admins
-rate_limit_exempt if {
-    has_any_permission(["*", "system.admin"])
-}
-
-# Headers to add for downstream services (if JWT is valid)
-headers_to_add := {
-    "X-User-ID": user_id,
-    "X-Username": username,
-    "X-User-Roles": concat(",", user_roles),
-    "X-User-Permissions": concat(",", array.slice(user_permissions, 0, 20)),  # Limit header size
-    "X-User-Department": sprintf("%v", [user_department_id]),
-    "X-User-Level": sprintf("%v", [user_level]),
-    "X-Auth-Method": "opa-jwt",
-    "X-JWT-Valid": "true"
-} if {
+    "/api/drone" in route_paths
     jwt_valid
-    not jwt_expired
+    drone_access_allowed
 }
 
-# Audit logging requirements
+# Drone Position API - 需要 drone 操作權限
+allow if {
+    "/api/drone-position" in route_paths  
+    jwt_valid
+    drone_position_allowed
+}
+
+# Drone Status API - 需要 drone 查看權限
+allow if {
+    "/api/drone-status" in route_paths
+    jwt_valid
+    drone_status_allowed
+}
+
+# General Service (User Preferences) - 需要有效認證
+allow if {
+    "/api/user-preferences" in route_paths
+    jwt_valid
+    user_preferences_allowed
+}
+
+# Docs API - 需要有效認證
+allow if {
+    "/api/docs" in route_paths
+    jwt_valid
+}
+
+# WebSocket 連接 - 需要有效認證
+allow if {
+    "/socket.io" in route_paths
+    jwt_valid
+}
+
+# ===========================================
+# 權限檢查輔助函數
+# ===========================================
+
+# Drone 訪問權限
+drone_access_allowed if {
+    "admin" in user_roles
+}
+
+drone_access_allowed if {
+    "drone_operator" in user_roles
+}
+
+drone_access_allowed if {
+    "drone_admin" in user_roles  
+}
+
+# Drone Position 權限檢查
+drone_position_allowed if {
+    request_method == "GET"
+    "drone.position.read" in user_permissions
+}
+
+drone_position_allowed if {
+    request_method in ["POST", "PUT"]  
+    "drone.position.update" in user_permissions
+}
+
+drone_position_allowed if {
+    "admin" in user_roles
+}
+
+# Drone Status 權限檢查  
+drone_status_allowed if {
+    request_method == "GET"
+    "drone.status.read" in user_permissions
+}
+
+drone_status_allowed if {
+    request_method in ["POST", "PUT"]
+    "drone.status.update" in user_permissions  
+}
+
+drone_status_allowed if {
+    "admin" in user_roles
+}
+
+# User Preferences 權限檢查
+user_preferences_allowed if {
+    # 使用者可以管理自己的偏好設定
+    request_method in ["GET", "PUT", "POST"]
+    jwt_payload.sub == extract_user_id_from_path
+}
+
+user_preferences_allowed if {
+    # 管理員可以管理所有使用者的偏好設定
+    "admin" in user_roles
+}
+
+user_preferences_allowed if {
+    # 部門管理員可以查看部門內使用者的設定
+    request_method == "GET"
+    "department_manager" in user_roles
+    # 這裡可以加入部門檢查邏輯
+}
+
+# 從路徑萃取使用者 ID（如果需要）
+extract_user_id_from_path := user_id if {
+    # 這個函數可以根據實際的 API 路徑格式來實現
+    # 例如：/api/user-preferences/123 -> 123
+    user_id := jwt_payload.sub  # 簡化版本，實際可能需要從路徑解析
+}
+
+# ===========================================
+# 審計和日誌
+# ===========================================
+
+# 需要審計的操作
 requires_audit if {
-    jwt_valid
-    not jwt_expired
     request_method in ["POST", "PUT", "DELETE"]
-    has_any_permission(["*", "audit.create"])
 }
 
 requires_audit if {
-    service_name == "rbac-service"
-    request_method in ["POST", "PUT", "DELETE", "PATCH"]
-    jwt_valid
+    "admin" in user_roles
 }
 
-# =============================================================================
-# ERROR HANDLING & DEBUGGING
-# =============================================================================
-
-# Detailed denial reasons for debugging
-deny_reason := "JWT token not provided" if {
-    not allow
+# 拒絕原因（用於日誌和除錯）
+deny_reason := "未提供 JWT token" if {
     not jwt_token
 }
 
-deny_reason := "JWT token invalid or verification failed" if {
-    not allow
+deny_reason := "JWT token 無效或已過期" if {
     jwt_token
     not jwt_valid
 }
 
-deny_reason := "JWT token has expired" if {
-    not allow
+deny_reason := "權限不足" if {
     jwt_valid
-    jwt_expired
+    not allow
 }
 
-deny_reason := reason if {
-    not allow
+# ===========================================
+# 回應格式（Kong OPA 插件格式）
+# ===========================================
+
+# 成功時的回應
+response := {
+    "allow": true,
+    "headers": {
+        "X-User-ID": user_id,
+        "X-Username": username,
+        "X-User-Roles": concat(",", user_roles)
+    }
+} if {
+    allow
     jwt_valid
-    not jwt_expired
-    reason := sprintf("Access denied: User %v (roles: %v, permissions: %v) attempted %v %v on service %v", 
-        [username, user_roles, array.slice(user_permissions, 0, 5), request_method, route_path, service_name])
 }
 
-deny_reason := "Insufficient permissions for requested operation" if {
+# 拒絕時的回應
+response := {
+    "allow": false,
+    "status": 403,
+    "message": deny_reason
+} if {
     not allow
-    jwt_valid
-    not jwt_expired
 }

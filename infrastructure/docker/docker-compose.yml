@@ -100,7 +100,7 @@ services:
       - KONG_PROXY_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_LISTEN=0.0.0.0:8001
-      - KONG_PLUGINS=bundled
+      - KONG_PLUGINS=bundled,opa
       # 性能優化設定
       - KONG_WORKER_PROCESSES=auto
       - KONG_WORKER_CONNECTIONS=1024
@@ -133,7 +133,7 @@ services:
 
   # OPA 集中式權限管理服務
   aiot-opa:
-    image: openpolicyagent/opa:latest-envoy
+    image: openpolicyagent/opa:latest
     logging: *default-logging
     container_name: aiot-opa
     ports:
@@ -142,6 +142,7 @@ services:
     command:
       - "run"
       - "--server"
+      - "--addr=0.0.0.0:8181"
       - "--config-file=/etc/opa/config.yaml"
       - "/etc/opa/policies"
     volumes:

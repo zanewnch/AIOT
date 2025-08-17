@@ -111,32 +111,6 @@ export class KongHeadersMiddleware {
         }
     };
 
-    /**
-     * 檢查是否具有特定權限
-     */
-    public static requirePermission = (requiredPermission: string) => {
-        return (req: Request, res: Response, next: NextFunction): void => {
-            const userInfo = req.kongUser;
-
-            if (!userInfo) {
-                return res.status(401).json({
-                    status: 401,
-                    message: 'Authentication required'
-                });
-            }
-
-            if (userInfo.permissions.includes('*') || userInfo.permissions.includes(requiredPermission)) {
-                return next();
-            }
-
-            logger.warn(`Permission denied for user ${userInfo.username}: required ${requiredPermission}`);
-            return res.status(403).json({
-                status: 403,
-                message: 'Insufficient permissions',
-                required: requiredPermission
-            });
-        };
-    };
 
     /**
      * 檢查是否具有特定角色

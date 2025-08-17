@@ -56,38 +56,33 @@ export class DronePositionRoutes {
      * 使用 Kong Headers 中間件獲取用戶信息，由 OPA 處理權限驗證
      */
     private setupQueryRoutes(): void {
-        // 獲取所有無人機位置 - 需要 drone.position.read 權限
+        // 獲取所有無人機位置 - 權限由 Kong + OPA 處理
         this.router.get('/', 
             KongHeadersMiddleware.extractUserInfo,
-            KongHeadersMiddleware.requirePermission('drone.position.read'),
             (req, res, next) => this.dronePositionQueries.getAllDronePositions(req, res, next)
         );
 
-        // 根據無人機 ID 獲取最新位置 - 需要 drone.position.read 權限
+        // 根據無人機 ID 獲取最新位置 - 權限由 Kong + JWT 處理
         this.router.get('/latest/:droneId', 
             KongHeadersMiddleware.extractUserInfo,
-            KongHeadersMiddleware.requirePermission('drone.position.read'),
             (req, res, next) => this.dronePositionQueries.getLatestDronePosition(req, res, next)
         );
 
-        // 根據無人機 ID 獲取位置資料 - 需要 drone.position.read 權限
+        // 根據無人機 ID 獲取位置資料 - 權限由 Kong + JWT 處理
         this.router.get('/drone/:droneId', 
             KongHeadersMiddleware.extractUserInfo,
-            KongHeadersMiddleware.requirePermission('drone.position.read'),
             (req, res, next) => this.dronePositionQueries.getDronePositionsByDroneId(req, res, next)
         );
 
-        // 根據時間範圍獲取位置資料 - 需要 drone.position.read 權限
+        // 根據時間範圍獲取位置資料 - 權限由 Kong + JWT 處理
         this.router.get('/time-range', 
             KongHeadersMiddleware.extractUserInfo,
-            KongHeadersMiddleware.requirePermission('drone.position.read'),
             (req, res, next) => this.dronePositionQueries.getDronePositionsByTimeRange(req, res, next)
         );
 
-        // 根據 ID 獲取無人機位置 - 需要 drone.position.read 權限
+        // 根據 ID 獲取無人機位置 - 權限由 Kong + JWT 處理
         this.router.get('/:id', 
             KongHeadersMiddleware.extractUserInfo,
-            KongHeadersMiddleware.requirePermission('drone.position.read'),
             (req, res, next) => this.dronePositionQueries.getDronePositionById(req, res, next)
         );
     }

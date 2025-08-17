@@ -20,7 +20,6 @@ import { Server as HTTPServer } from 'http'; // HTTP 伺服器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
-// import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置 - 移除，改用 Kong + OPA
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 連線配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
@@ -128,7 +127,6 @@ export class App {
 
         // 執行基本配置設定
         this.setupSequelize(); // 設定 Sequelize 資料庫連線
-        // this.setupPassport(); // 配置 Passport JWT 身份驗證 - 移除，改用 Kong + OPA
         this.setupMiddleware(); // 設定基本中間件
         this.initializeBusinessServices(); // 初始化業務服務實例
     }
@@ -202,17 +200,6 @@ export class App {
         await redisConfig.connect(); // 連線到 Redis 伺服器
     }
 
-    /**
-     * 設定 Passport JWT 驗證 - 已移除
-     *
-     * JWT 驗證和權限檢查已移至 Kong + OPA 處理
-     * 微服務僅需要從 Kong headers 中獲取用戶信息
-     *
-     * @deprecated 改用 Kong Headers 中間件
-     */
-    // private setupPassport(): void {
-    //     setupPassportJWT(); // 配置 Passport JWT 驗證策略
-    // }
 
     /**
      * 設定 Express 中間件

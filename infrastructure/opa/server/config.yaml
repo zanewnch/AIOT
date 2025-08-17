@@ -46,10 +46,11 @@ caching:
 #   service_name: opa-server
 
 # Plugin configuration
-plugins:
-  envoy_ext_authz_grpc:
-    addr: :9191
-    query: data.aiot.gateway.allow
-    enable_reflection: true
-    dry_run: false
-    enable_stats: true
+# Envoy integration disabled for standard OPA image
+# plugins:
+#   envoy_ext_authz_grpc:
+#     addr: :9191
+#     query: data.aiot.gateway.allow
+#     enable_reflection: true
+#     dry_run: false
+#     enable_stats: true

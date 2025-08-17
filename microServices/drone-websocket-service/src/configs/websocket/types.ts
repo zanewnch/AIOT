@@ -46,26 +46,33 @@ export interface WebSocketConfig {
 
 /**
  * 擴展的 Socket 介面
- * 包含用戶認證資訊
+ * 包含從 Kong 傳遞的用戶資訊
  */
 export interface AuthenticatedSocket extends Socket {
-  user?: {
+  /** 從 Kong Headers 中提取的用戶資訊 */
+  kongUser?: {
     userId: string;
     username: string;
     roles: string[];
     permissions: string[];
+    sessionId: string;
   };
+  /** 認證狀態（由 Kong 驗證） */
   isAuthenticated: boolean;
 }
 
 /**
- * 認證用戶資訊介面
+ * Kong 傳遞的用戶資訊介面
+ * 與 Kong JWT 載荷格式保持一致
  */
-export interface AuthenticatedUser {
+export interface KongUserInfo {
   userId: string;
   username: string;
   roles: string[];
   permissions: string[];
+  sessionId: string;
+  departmentId?: string;
+  level?: number;
 }
 
 /**

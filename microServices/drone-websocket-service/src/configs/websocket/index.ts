@@ -18,7 +18,7 @@
 export type {
   WebSocketConfig,
   AuthenticatedSocket,
-  AuthenticatedUser,
+  KongUserInfo,
   DroneSubscriptionRequest,
   DroneCommandRequest
 } from './types.js';

@@ -6,7 +6,7 @@ package aiot.common
 import future.keywords.in
 
 # Default deny all access unless explicitly allowed
-default allow = false
+# Note: Only gateway policy should define default allow
 default requires_audit = false
 
 # System roles hierarchy
