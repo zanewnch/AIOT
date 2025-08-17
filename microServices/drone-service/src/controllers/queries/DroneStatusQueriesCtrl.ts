@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneStatusQueriesSvc} from '../../services/queries/DroneStatusQueriesSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('DroneStatusQueries');
@@ -45,7 +45,7 @@ export class DroneStatusQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const droneStatuses = await this.droneStatusService.getAllDroneStatuses(limit);
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
+            const result = ResResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -62,7 +62,7 @@ export class DroneStatusQueries {
 
             // 驗證 ID
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -71,12 +71,12 @@ export class DroneStatusQueries {
             const droneStatus = await this.droneStatusService.getDroneStatusById(id);
 
             if (!droneStatus) {
-                const result = ControllerResult.notFound('找不到指定的無人機狀態資料');
+                const result = ResResult.notFound('找不到指定的無人機狀態資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatus);
+            const result = ResResult.success('無人機狀態資料獲取成功', droneStatus);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -92,7 +92,7 @@ export class DroneStatusQueries {
             const serial = req.params.serial;
 
             if (!serial || typeof serial !== 'string' || serial.trim().length === 0) {
-                const result = ControllerResult.badRequest('序號不能為空');
+                const result = ResResult.badRequest('序號不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -100,12 +100,12 @@ export class DroneStatusQueries {
             const droneStatus = await this.droneStatusService.getDroneStatusBySerial(serial.trim());
 
             if (!droneStatus) {
-                const result = ControllerResult.notFound('找不到指定序號的無人機狀態資料');
+                const result = ResResult.notFound('找不到指定序號的無人機狀態資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatus);
+            const result = ResResult.success('無人機狀態資料獲取成功', droneStatus);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -121,14 +121,14 @@ export class DroneStatusQueries {
             const status = req.params.status;
 
             if (!status || typeof status !== 'string' || status.trim().length === 0) {
-                const result = ControllerResult.badRequest('狀態參數不能為空');
+                const result = ResResult.badRequest('狀態參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const droneStatuses = await this.droneStatusService.getDronesByStatus(status.trim() as any);
 
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
+            const result = ResResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -144,14 +144,14 @@ export class DroneStatusQueries {
             const ownerId = parseInt(req.params.ownerId);
 
             if (isNaN(ownerId)) {
-                const result = ControllerResult.badRequest('無效的擁有者 ID 格式');
+                const result = ResResult.badRequest('無效的擁有者 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const droneStatuses = await this.droneStatusService.getDronesByOwner(ownerId);
 
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
+            const result = ResResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -167,14 +167,14 @@ export class DroneStatusQueries {
             const manufacturer = req.params.manufacturer;
 
             if (!manufacturer || typeof manufacturer !== 'string' || manufacturer.trim().length === 0) {
-                const result = ControllerResult.badRequest('製造商參數不能為空');
+                const result = ResResult.badRequest('製造商參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const droneStatuses = await this.droneStatusService.getDronesByManufacturer(manufacturer.trim());
 
-            const result = ControllerResult.success('無人機狀態資料獲取成功', droneStatuses);
+            const result = ResResult.success('無人機狀態資料獲取成功', droneStatuses);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -189,7 +189,7 @@ export class DroneStatusQueries {
         try {
             const statistics = await this.droneStatusService.getDroneStatusStatistics();
 
-            const result = ControllerResult.success('無人機狀態統計獲取成功', statistics);
+            const result = ResResult.success('無人機狀態統計獲取成功', statistics);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);

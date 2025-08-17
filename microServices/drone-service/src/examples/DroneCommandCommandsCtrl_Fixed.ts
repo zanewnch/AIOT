@@ -14,8 +14,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandCommandsSvc} from '../services/commands/DroneCommandCommandsSvc.js';
-import {createLogger, logRequest} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger, logRequest} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../container/types.js';
 import type {DroneCommandCreationAttributes} from '../models/DroneCommandModel.js';
 
@@ -67,17 +67,17 @@ export class DroneCommandCommandsBase {
 
             // 基本驗證
             if (!commandData.drone_id || !commandData.command_type || !commandData.command_data) {
-                const result = ControllerResult.badRequest('缺少必要的指令資料');
+                const result = ResResult.badRequest('缺少必要的指令資料');
                 res.status(result.status).json(result);
                 return;
             }
 
             const command = await this.commandService.createCommand(commandData);
 
-            const result = ControllerResult.created('無人機指令創建成功', command);
+            const result = ResResult.created('無人機指令創建成功', command);
             res.status(result.status).json(result);
         } catch (error) {
-            const result = ControllerResult.internalError(`創建無人機指令失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`創建無人機指令失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     };
@@ -92,7 +92,7 @@ export class DroneCommandCommandsBase {
             const updateData = req.body;
 
             if (isNaN(commandId)) {
-                const result = ControllerResult.badRequest('無效的指令 ID');
+                const result = ResResult.badRequest('無效的指令 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -100,15 +100,15 @@ export class DroneCommandCommandsBase {
             const updatedCommand = await this.commandService.updateCommand(commandId, updateData);
 
             if (!updatedCommand) {
-                const result = ControllerResult.notFound(`指令 ${commandId} 不存在`);
+                const result = ResResult.notFound(`指令 ${commandId} 不存在`);
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令更新成功', updatedCommand);
+            const result = ResResult.success('無人機指令更新成功', updatedCommand);
             res.status(result.status).json(result);
         } catch (error) {
-            const result = ControllerResult.internalError(`更新無人機指令失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`更新無人機指令失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     };
@@ -122,7 +122,7 @@ export class DroneCommandCommandsBase {
             const commandId = parseInt(req.params.id, 10);
 
             if (isNaN(commandId)) {
-                const result = ControllerResult.badRequest('無效的指令 ID');
+                const result = ResResult.badRequest('無效的指令 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -130,15 +130,15 @@ export class DroneCommandCommandsBase {
             const deleted = await this.commandService.deleteCommand(commandId);
 
             if (!deleted) {
-                const result = ControllerResult.notFound(`指令 ${commandId} 不存在`);
+                const result = ResResult.notFound(`指令 ${commandId} 不存在`);
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令刪除成功');
+            const result = ResResult.success('無人機指令刪除成功');
             res.status(result.status).json(result);
         } catch (error) {
-            const result = ControllerResult.internalError(`刪除無人機指令失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`刪除無人機指令失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     };
@@ -152,17 +152,17 @@ export class DroneCommandCommandsBase {
             const commandId = parseInt(req.params.id, 10);
 
             if (isNaN(commandId)) {
-                const result = ControllerResult.badRequest('無效的指令 ID');
+                const result = ResResult.badRequest('無效的指令 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             const executionResult = await this.commandService.executeCommand(commandId);
 
-            const result = ControllerResult.success('無人機指令執行成功', executionResult);
+            const result = ResResult.success('無人機指令執行成功', executionResult);
             res.status(result.status).json(result);
         } catch (error) {
-            const result = ControllerResult.internalError(`執行無人機指令失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`執行無人機指令失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     };
@@ -177,17 +177,17 @@ export class DroneCommandCommandsBase {
             const {reason} = req.body;
 
             if (isNaN(commandId)) {
-                const result = ControllerResult.badRequest('無效的指令 ID');
+                const result = ResResult.badRequest('無效的指令 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             const cancelResult = await this.commandService.cancelCommand(commandId, reason);
 
-            const result = ControllerResult.success('無人機指令取消成功', cancelResult);
+            const result = ResResult.success('無人機指令取消成功', cancelResult);
             res.status(result.status).json(result);
         } catch (error) {
-            const result = ControllerResult.internalError(`取消無人機指令失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`取消無人機指令失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     };

@@ -19,7 +19,7 @@ import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../..
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import { DroneStatusQueriesSvc } from '../queries/DroneStatusQueriesSvc.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneStatusCommandsSvc');

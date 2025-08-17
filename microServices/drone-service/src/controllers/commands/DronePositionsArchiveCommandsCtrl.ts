@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DronePositionsArchiveCommandsSvc} from '../../services/commands/DronePositionsArchiveCommandsSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {DronePositionsArchiveCreationAttributes} from '../../models/DronePositionsArchiveModel.js';
 
@@ -48,19 +48,19 @@ export class DronePositionsArchiveCommands {
 
             // 基本驗證
             if (!archiveData.drone_id || typeof archiveData.drone_id !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!archiveData.latitude || !archiveData.longitude) {
-                const result = ControllerResult.badRequest('緯度和經度為必填項');
+                const result = ResResult.badRequest('緯度和經度為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
             const createdArchive = await this.archiveService.createPositionArchive(archiveData);
-            const result = ControllerResult.created('位置歷史歸檔記錄創建成功', createdArchive);
+            const result = ResResult.created('位置歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -78,7 +78,7 @@ export class DronePositionsArchiveCommands {
 
             // 基本驗證
             if (!Array.isArray(archivesData) || archivesData.length === 0) {
-                const result = ControllerResult.badRequest('歸檔資料陣列不能為空');
+                const result = ResResult.badRequest('歸檔資料陣列不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -87,14 +87,14 @@ export class DronePositionsArchiveCommands {
             for (let i = 0; i < archivesData.length; i++) {
                 const data = archivesData[i];
                 if (!data.drone_id || !data.latitude || !data.longitude) {
-                    const result = ControllerResult.badRequest(`第 ${i + 1} 筆資料格式不正確`);
+                    const result = ResResult.badRequest(`第 ${i + 1} 筆資料格式不正確`);
                     res.status(result.status).json(result);
                     return;
                 }
             }
 
             const createdArchives = await this.archiveService.bulkCreatePositionArchives(archivesData);
-            const result = ControllerResult.created('批量位置歷史歸檔記錄創建成功', {
+            const result = ResResult.created('批量位置歷史歸檔記錄創建成功', {
                 created: createdArchives.length,
                 data: createdArchives
             });
@@ -115,13 +115,13 @@ export class DronePositionsArchiveCommands {
             const updateData: Partial<DronePositionsArchiveCreationAttributes> = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!updateData || Object.keys(updateData).length === 0) {
-                const result = ControllerResult.badRequest('更新資料不能為空');
+                const result = ResResult.badRequest('更新資料不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -129,12 +129,12 @@ export class DronePositionsArchiveCommands {
             const updatedArchive = await this.archiveService.updatePositionArchive(id, updateData);
 
             if (!updatedArchive) {
-                const result = ControllerResult.notFound('找不到指定的位置歷史歸檔記錄');
+                const result = ResResult.notFound('找不到指定的位置歷史歸檔記錄');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('位置歷史歸檔資料更新成功', updatedArchive);
+            const result = ResResult.success('位置歷史歸檔資料更新成功', updatedArchive);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -150,7 +150,7 @@ export class DronePositionsArchiveCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -158,12 +158,12 @@ export class DronePositionsArchiveCommands {
             const isDeleted = await this.archiveService.deletePositionArchive(id);
 
             if (!isDeleted) {
-                const result = ControllerResult.notFound('找不到指定的位置歷史歸檔記錄');
+                const result = ResResult.notFound('找不到指定的位置歷史歸檔記錄');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('位置歷史歸檔資料刪除成功');
+            const result = ResResult.success('位置歷史歸檔資料刪除成功');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -179,13 +179,13 @@ export class DronePositionsArchiveCommands {
             const beforeDate = new Date(req.params.beforeDate);
 
             if (isNaN(beforeDate.getTime())) {
-                const result = ControllerResult.badRequest('無效的日期格式');
+                const result = ResResult.badRequest('無效的日期格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const deletedCount = await this.archiveService.deleteArchivesBeforeDate(beforeDate);
-            const result = ControllerResult.success(`已刪除 ${deletedCount} 筆歷史歸檔記錄`, {deletedCount});
+            const result = ResResult.success(`已刪除 ${deletedCount} 筆歷史歸檔記錄`, {deletedCount});
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -202,13 +202,13 @@ export class DronePositionsArchiveCommands {
             const batchId = req.params.batchId;
 
             if (!batchId || typeof batchId !== 'string' || batchId.trim().length === 0) {
-                const result = ControllerResult.badRequest('批次 ID 參數不能為空');
+                const result = ResResult.badRequest('批次 ID 參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const deletedCount = await this.archiveService.deleteArchiveBatch(batchId);
-            const result = ControllerResult.success(`已刪除批次 ${batchId} 的 ${deletedCount} 筆記錄`, {
+            const result = ResResult.success(`已刪除批次 ${batchId} 的 ${deletedCount} 筆記錄`, {
                 deletedCount,
                 batchId
             });

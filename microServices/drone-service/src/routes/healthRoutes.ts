@@ -12,7 +12,7 @@
  */
 
 import {Request, Response, Router} from 'express';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {ResResult} from '../utils/ResResult.js';
 
 const router = Router();
 
@@ -29,7 +29,7 @@ router.get('/health', (req: Request, res: Response) => {
         version: '1.0.0'
     };
 
-    const result = ControllerResult.success('Service is healthy', healthStatus);
+    const result = ResResult.success('Service is healthy', healthStatus);
     res.status(result.status).json(result);
 });
 
@@ -51,7 +51,7 @@ router.get('/health/detailed', (req: Request, res: Response) => {
         environment: process.env.NODE_ENV || 'development'
     };
 
-    const result = ControllerResult.success('Service is healthy', healthStatus);
+    const result = ResResult.success('Service is healthy', healthStatus);
     res.status(result.status).json(result);
 });
 

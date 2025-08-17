@@ -18,7 +18,7 @@ import type {
     QueueStatistics
 } from '../../types/services/IDroneCommandQueueService.js';
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandQueueQueriesSvc');

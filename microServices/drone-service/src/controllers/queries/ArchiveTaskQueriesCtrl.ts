@@ -16,8 +16,8 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {ArchiveTaskQueriesSvc} from '../../services/queries/ArchiveTaskQueriesSvc.js';
 import {ArchiveJobType, ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import type {IArchiveTaskQueries} from '../../types/controllers/queries/IArchiveTaskQueries.js';
 import {TYPES} from '../../container/types.js';
 
@@ -129,7 +129,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 options
             });
 
-            const result = ControllerResult.success('歸檔任務列表獲取成功', tasks);
+            const result = ResResult.success('歸檔任務列表獲取成功', tasks);
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('獲取歸檔任務列表失敗', {
@@ -138,7 +138,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`獲取歸檔任務列表失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`獲取歸檔任務列表失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -157,7 +157,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
             const taskId = parseInt(req.params.id, 10);
 
             if (isNaN(taskId)) {
-                const result = ControllerResult.badRequest('無效的任務 ID');
+                const result = ResResult.badRequest('無效的任務 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -167,14 +167,14 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
             const task = await this.queryService.getTaskById(taskId);
 
             if (!task) {
-                const result = ControllerResult.notFound(`任務 ${taskId} 不存在`);
+                const result = ResResult.notFound(`任務 ${taskId} 不存在`);
                 res.status(result.status).json(result);
                 return;
             }
 
             this.logger.info('歸檔任務獲取成功', {taskId, status: task.status});
 
-            const result = ControllerResult.success('歸檔任務獲取成功', task);
+            const result = ResResult.success('歸檔任務獲取成功', task);
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('獲取歸檔任務失敗', {
@@ -183,7 +183,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`獲取歸檔任務失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`獲取歸檔任務失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -206,7 +206,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 totalTasks: statistics.totalTasks
             });
 
-            const result = ControllerResult.success('歸檔任務統計資訊獲取成功', statistics);
+            const result = ResResult.success('歸檔任務統計資訊獲取成功', statistics);
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('獲取歸檔任務統計資訊失敗', {
@@ -214,7 +214,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`獲取歸檔任務統計資訊失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`獲取歸檔任務統計資訊失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -240,7 +240,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
 
             this.logger.info('歸檔任務資料獲取成功', {count: tasks.length});
 
-            const result = ControllerResult.success('歸檔任務資料獲取成功', tasks);
+            const result = ResResult.success('歸檔任務資料獲取成功', tasks);
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('獲取歸檔任務資料失敗', {
@@ -249,7 +249,7 @@ export class ArchiveTaskQueries implements IArchiveTaskQueries {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`獲取歸檔任務資料失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`獲取歸檔任務資料失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }

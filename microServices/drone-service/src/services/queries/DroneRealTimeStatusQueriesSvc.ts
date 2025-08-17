@@ -24,7 +24,7 @@ import type {
     DroneRealTimeStatusAttributes as ExternalAttributesLocal,
     RealTimeStatusStatistics 
 } from '../../types/services/IDroneRealTimeStatusService.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesSvc');

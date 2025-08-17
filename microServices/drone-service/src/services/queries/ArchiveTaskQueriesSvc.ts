@@ -28,7 +28,7 @@ import type {
 import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { TYPES } from '../../container/types.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 /**

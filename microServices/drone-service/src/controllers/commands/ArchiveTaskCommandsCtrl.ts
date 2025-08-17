@@ -17,8 +17,8 @@ import {Request, Response} from 'express';
 import {CreateArchiveTaskRequest} from '../../types/services/IArchiveTaskService.js';
 import {ArchiveTaskCommandsSvc} from '../../services/commands/ArchiveTaskCommandsSvc.js';
 import {ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
 /**
@@ -66,7 +66,7 @@ export class ArchiveTaskCommands {
             // 簡單的請求驗證
             if (!request.job_type || !request.table_name || !request.archive_table_name ||
                 !request.date_range_start || !request.date_range_end || !request.created_by) {
-                const result = ControllerResult.badRequest('缺少必要的請求參數');
+                const result = ResResult.badRequest('缺少必要的請求參數');
                 res.status(result.status).json(result);
                 return;
             }
@@ -87,7 +87,7 @@ export class ArchiveTaskCommands {
                 jobType: task.job_type
             });
 
-            const result = ControllerResult.created('歸檔任務創建成功', task);
+            const result = ResResult.created('歸檔任務創建成功', task);
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('創建歸檔任務失敗', {
@@ -96,7 +96,7 @@ export class ArchiveTaskCommands {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`創建歸檔任務失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`創建歸檔任務失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -117,7 +117,7 @@ export class ArchiveTaskCommands {
             const requests: CreateArchiveTaskRequest[] = req.body;
 
             if (!Array.isArray(requests) || requests.length === 0) {
-                const result = ControllerResult.badRequest('請求必須是非空的陣列');
+                const result = ResResult.badRequest('請求必須是非空的陣列');
                 res.status(result.status).json(result);
                 return;
             }
@@ -141,8 +141,8 @@ export class ArchiveTaskCommands {
             });
 
             const finalResult = result.failureCount === 0 ?
-                ControllerResult.created(`批次創建完成: 成功 ${result.successCount} 個，失敗 ${result.failureCount} 個`, result) :
-                ControllerResult.success(`批次創建完成: 成功 ${result.successCount} 個，失敗 ${result.failureCount} 個`, result);
+                ResResult.created(`批次創建完成: 成功 ${result.successCount} 個，失敗 ${result.failureCount} 個`, result) :
+                ResResult.success(`批次創建完成: 成功 ${result.successCount} 個，失敗 ${result.failureCount} 個`, result);
             res.status(result.failureCount === 0 ? 201 : 207).json(finalResult);
         } catch (error) {
             this.logger.error('批次創建歸檔任務失敗', {
@@ -151,7 +151,7 @@ export class ArchiveTaskCommands {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`批次創建歸檔任務失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`批次創建歸檔任務失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -170,7 +170,7 @@ export class ArchiveTaskCommands {
             const taskId = parseInt(req.params.id, 10);
 
             if (isNaN(taskId)) {
-                const result = ControllerResult.badRequest('無效的任務 ID');
+                const result = ResResult.badRequest('無效的任務 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -186,8 +186,8 @@ export class ArchiveTaskCommands {
             });
 
             const controllerResult = result.status === ArchiveTaskStatus.COMPLETED ?
-                ControllerResult.success('歸檔任務執行成功', result) :
-                new ControllerResult(400, `歸檔任務執行失敗: ${result.errorMessage}`, result);
+                ResResult.success('歸檔任務執行成功', result) :
+                new ResResult(400, `歸檔任務執行失敗: ${result.errorMessage}`, result);
 
             res.status(controllerResult.status).json(controllerResult);
         } catch (error) {
@@ -197,7 +197,7 @@ export class ArchiveTaskCommands {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`執行歸檔任務失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`執行歸檔任務失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -218,13 +218,13 @@ export class ArchiveTaskCommands {
             const {reason} = req.body;
 
             if (isNaN(taskId)) {
-                const result = ControllerResult.badRequest('無效的任務 ID');
+                const result = ResResult.badRequest('無效的任務 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!reason || !reason.trim()) {
-                const result = ControllerResult.badRequest('取消原因不能為空');
+                const result = ResResult.badRequest('取消原因不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -235,7 +235,7 @@ export class ArchiveTaskCommands {
 
             this.logger.info('歸檔任務取消成功', {taskId, reason});
 
-            const result = ControllerResult.success('歸檔任務取消成功', task);
+            const result = ResResult.success('歸檔任務取消成功', task);
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('取消歸檔任務失敗', {
@@ -245,7 +245,7 @@ export class ArchiveTaskCommands {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`取消歸檔任務失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`取消歸檔任務失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -264,7 +264,7 @@ export class ArchiveTaskCommands {
             const taskId = parseInt(req.params.id, 10);
 
             if (isNaN(taskId)) {
-                const result = ControllerResult.badRequest('無效的任務 ID');
+                const result = ResResult.badRequest('無效的任務 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -279,8 +279,8 @@ export class ArchiveTaskCommands {
             });
 
             const controllerResult = result.status === ArchiveTaskStatus.COMPLETED ?
-                ControllerResult.success('歸檔任務重試成功', result) :
-                new ControllerResult(400, `歸檔任務重試失敗: ${result.errorMessage}`, result);
+                ResResult.success('歸檔任務重試成功', result) :
+                new ResResult(400, `歸檔任務重試失敗: ${result.errorMessage}`, result);
 
             res.status(controllerResult.status).json(controllerResult);
         } catch (error) {
@@ -290,7 +290,7 @@ export class ArchiveTaskCommands {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`重試歸檔任務失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`重試歸檔任務失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }
@@ -310,14 +310,14 @@ export class ArchiveTaskCommands {
             const {daysOld, status} = req.query;
 
             if (!daysOld) {
-                const result = ControllerResult.badRequest('必須指定保留天數');
+                const result = ResResult.badRequest('必須指定保留天數');
                 res.status(result.status).json(result);
                 return;
             }
 
             const daysOldNum = parseInt(daysOld as string, 10);
             if (isNaN(daysOldNum) || daysOldNum <= 0) {
-                const result = ControllerResult.badRequest('保留天數必須是正整數');
+                const result = ResResult.badRequest('保留天數必須是正整數');
                 res.status(result.status).json(result);
                 return;
             }
@@ -337,7 +337,7 @@ export class ArchiveTaskCommands {
                 cleanedCount
             });
 
-            const result = ControllerResult.success(`成功清理 ${cleanedCount} 筆舊記錄`, {cleanedCount});
+            const result = ResResult.success(`成功清理 ${cleanedCount} 筆舊記錄`, {cleanedCount});
             res.status(result.status).json(result);
         } catch (error) {
             this.logger.error('清理舊歸檔任務記錄失敗', {
@@ -346,7 +346,7 @@ export class ArchiveTaskCommands {
                 stack: (error as Error).stack
             });
 
-            const result = ControllerResult.internalError(`清理舊歸檔任務記錄失敗: ${(error as Error).message}`);
+            const result = ResResult.internalError(`清理舊歸檔任務記錄失敗: ${(error as Error).message}`);
             res.status(result.status).json(result);
         }
     }

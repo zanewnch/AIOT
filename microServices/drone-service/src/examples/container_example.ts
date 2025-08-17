@@ -27,7 +27,7 @@ import {
 } from '../patterns/LoggerDecorator.js';
 
 // 導入現有的 logger 系統
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger, logRequest } from '../../configs/loggerConfig.js';
 import { Request } from 'express';
 
 /**

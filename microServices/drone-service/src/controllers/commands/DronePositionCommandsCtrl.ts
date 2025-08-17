@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DronePositionCommandsSvc} from '../../services/commands/DronePositionCommandsSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
 import type {DronePositionCreationAttributes} from '../../models/DronePositionModel.js';
@@ -44,13 +44,13 @@ export class DronePositionCommands {
 
             // 基本驗證
             if (!dronePositionData.drone_id || typeof dronePositionData.drone_id !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (typeof dronePositionData.latitude !== 'number' || typeof dronePositionData.longitude !== 'number') {
-                const result = ControllerResult.badRequest('緯度和經度為必填項且必須為數字');
+                const result = ResResult.badRequest('緯度和經度為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -59,7 +59,7 @@ export class DronePositionCommands {
             const createdData = await this.dronePositionCommandsSvc.createDronePosition(dronePositionData);
 
             // 建立成功回應
-            const result = ControllerResult.created('無人機位置資料創建成功', createdData);
+            const result = ResResult.created('無人機位置資料創建成功', createdData);
 
             // 回傳結果
             res.status(result.status).json(result);
@@ -78,26 +78,26 @@ export class DronePositionCommands {
 
             // 驗證 ID
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 驗證更新資料中的數值型別
             if (updateData.latitude !== undefined && typeof updateData.latitude !== 'number') {
-                const result = ControllerResult.badRequest('緯度必須為數字');
+                const result = ResResult.badRequest('緯度必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (updateData.longitude !== undefined && typeof updateData.longitude !== 'number') {
-                const result = ControllerResult.badRequest('經度必須為數字');
+                const result = ResResult.badRequest('經度必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (updateData.altitude !== undefined && typeof updateData.altitude !== 'number') {
-                const result = ControllerResult.badRequest('高度必須為數字');
+                const result = ResResult.badRequest('高度必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -106,12 +106,12 @@ export class DronePositionCommands {
             const updatedData = await this.dronePositionCommandsSvc.updateDronePosition(id, updateData);
 
             if (!updatedData) {
-                const result = ControllerResult.notFound('找不到指定的無人機位置資料');
+                const result = ResResult.notFound('找不到指定的無人機位置資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機位置資料更新成功', updatedData);
+            const result = ResResult.success('無人機位置資料更新成功', updatedData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -127,7 +127,7 @@ export class DronePositionCommands {
 
             // 驗證 ID
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -136,7 +136,7 @@ export class DronePositionCommands {
             await this.dronePositionCommandsSvc.deleteDronePosition(id);
 
             // 刪除成功（如果沒有拋出錯誤）
-            const result = ControllerResult.success('無人機位置資料刪除成功');
+            const result = ResResult.success('無人機位置資料刪除成功');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -152,7 +152,7 @@ export class DronePositionCommands {
 
             // 驗證批量資料
             if (!Array.isArray(dronePositionsData) || dronePositionsData.length === 0) {
-                const result = ControllerResult.badRequest('請提供有效的無人機位置資料陣列');
+                const result = ResResult.badRequest('請提供有效的無人機位置資料陣列');
                 res.status(result.status).json(result);
                 return;
             }
@@ -161,12 +161,12 @@ export class DronePositionCommands {
             for (let i = 0; i < dronePositionsData.length; i++) {
                 const data = dronePositionsData[i];
                 if (!data.drone_id || typeof data.drone_id !== 'number') {
-                    const result = ControllerResult.badRequest(`第 ${i + 1} 筆資料的無人機 ID 無效`);
+                    const result = ResResult.badRequest(`第 ${i + 1} 筆資料的無人機 ID 無效`);
                     res.status(result.status).json(result);
                     return;
                 }
                 if (typeof data.latitude !== 'number' || typeof data.longitude !== 'number') {
-                    const result = ControllerResult.badRequest(`第 ${i + 1} 筆資料的緯度或經度無效`);
+                    const result = ResResult.badRequest(`第 ${i + 1} 筆資料的緯度或經度無效`);
                     res.status(result.status).json(result);
                     return;
                 }
@@ -175,7 +175,7 @@ export class DronePositionCommands {
             // 呼叫命令服務層批量創建資料
             const createdData = await this.dronePositionCommandsSvc.createDronePositionsBatch(dronePositionsData);
 
-            const result = ControllerResult.created('批量無人機位置資料創建成功', createdData);
+            const result = ResResult.created('批量無人機位置資料創建成功', createdData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);

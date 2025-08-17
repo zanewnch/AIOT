@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandsArchiveQueriesSvc} from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
 
@@ -41,7 +41,7 @@ export class DroneCommandsArchiveQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const archives = await this.queryService.getAllCommandsArchive(limit);
-            const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -57,7 +57,7 @@ export class DroneCommandsArchiveQueries {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令歷史歸檔 ID 格式');
+                const result = ResResult.badRequest('無效的指令歷史歸檔 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -65,12 +65,12 @@ export class DroneCommandsArchiveQueries {
             const archive = await this.queryService.getCommandArchiveById(id);
 
             if (!archive) {
-                const result = ControllerResult.notFound('找不到指定的指令歷史歸檔');
+                const result = ResResult.notFound('找不到指定的指令歷史歸檔');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archive);
+            const result = ResResult.success('指令歷史歸檔資料獲取成功', archive);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -86,13 +86,13 @@ export class DroneCommandsArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getCommandArchivesByDroneId(droneId, limit);
-            const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -111,13 +111,13 @@ export class DroneCommandsArchiveQueries {
 
             // 驗證日期參數
             if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的時間格式');
+                const result = ResResult.badRequest('無效的時間格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getCommandArchivesByTimeRange(startTime, endTime, limit);
-            const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -134,13 +134,13 @@ export class DroneCommandsArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!commandType || typeof commandType !== 'string' || commandType.trim().length === 0) {
-                const result = ControllerResult.badRequest('指令類型參數不能為空');
+                const result = ResResult.badRequest('指令類型參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getCommandArchivesByType(commandType as any, limit);
-            const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -157,13 +157,13 @@ export class DroneCommandsArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!status || typeof status !== 'string' || status.trim().length === 0) {
-                const result = ControllerResult.badRequest('狀態參數不能為空');
+                const result = ResResult.badRequest('狀態參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getCommandArchivesByStatus(status as any, limit);
-            const result = ControllerResult.success('指令歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {

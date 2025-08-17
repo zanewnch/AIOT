@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneStatusArchiveQueriesSvc} from '../../services/queries/DroneStatusArchiveQueriesSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('DroneStatusArchiveQueries');
@@ -45,7 +45,7 @@ export class DroneStatusArchiveQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const archives = await this.queryService.getAllStatusArchives(limit);
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -62,7 +62,7 @@ export class DroneStatusArchiveQueries {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的狀態歷史歸檔 ID 格式');
+                const result = ResResult.badRequest('無效的狀態歷史歸檔 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -70,12 +70,12 @@ export class DroneStatusArchiveQueries {
             const archive = await this.queryService.getStatusArchiveById(id);
 
             if (!archive) {
-                const result = ControllerResult.notFound('找不到指定的狀態歷史歸檔');
+                const result = ResResult.notFound('找不到指定的狀態歷史歸檔');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archive);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archive);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -92,13 +92,13 @@ export class DroneStatusArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getStatusArchivesByDroneId(droneId, limit);
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -116,13 +116,13 @@ export class DroneStatusArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!status || typeof status !== 'string' || status.trim().length === 0) {
-                const result = ControllerResult.badRequest('狀態參數不能為空');
+                const result = ResResult.badRequest('狀態參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getStatusArchivesByStatus(status as any, limit);
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -140,13 +140,13 @@ export class DroneStatusArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(createdBy)) {
-                const result = ControllerResult.badRequest('無效的用戶 ID 格式');
+                const result = ResResult.badRequest('無效的用戶 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getStatusArchivesByCreatedBy(createdBy, limit);
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -166,13 +166,13 @@ export class DroneStatusArchiveQueries {
 
             // 驗證日期參數
             if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                const result = ControllerResult.badRequest('無效的日期格式');
+                const result = ResResult.badRequest('無效的日期格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getStatusArchivesByDateRange(startDate, endDate, limit);
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -190,13 +190,13 @@ export class DroneStatusArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
-                const result = ControllerResult.badRequest('變更原因參數不能為空');
+                const result = ResResult.badRequest('變更原因參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getStatusArchivesByReason(reason, limit);
-            const result = ControllerResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -212,7 +212,7 @@ export class DroneStatusArchiveQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
             const archives = await this.queryService.getLatestStatusArchives(limit);
-            const result = ControllerResult.success('最新狀態歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('最新狀態歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -229,13 +229,13 @@ export class DroneStatusArchiveQueries {
             const droneId = parseInt(req.params.droneId);
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archive = await this.queryService.getLatestStatusArchiveByDroneId(droneId);
-            const result = ControllerResult.success('最新狀態歷史歸檔資料獲取成功', archive);
+            const result = ResResult.success('最新狀態歷史歸檔資料獲取成功', archive);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -254,13 +254,13 @@ export class DroneStatusArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!fromStatus || !toStatus) {
-                const result = ControllerResult.badRequest('fromStatus 和 toStatus 參數為必填項');
+                const result = ResResult.badRequest('fromStatus 和 toStatus 參數為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.queryService.getStatusArchivesByTransition(fromStatus as any, toStatus as any, limit);
-            const result = ControllerResult.success('狀態轉換歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('狀態轉換歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -280,19 +280,19 @@ export class DroneStatusArchiveQueries {
 
             // 驗證日期參數
             if (startDate && isNaN(startDate.getTime())) {
-                const result = ControllerResult.badRequest('無效的開始日期格式');
+                const result = ResResult.badRequest('無效的開始日期格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (endDate && isNaN(endDate.getTime())) {
-                const result = ControllerResult.badRequest('無效的結束日期格式');
+                const result = ResResult.badRequest('無效的結束日期格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const statistics = await this.queryService.getStatusChangeStatistics(startDate, endDate);
-            const result = ControllerResult.success('狀態變更統計資料獲取成功', statistics);
+            const result = ResResult.success('狀態變更統計資料獲取成功', statistics);
 
             res.status(result.status).json(result);
         } catch (error) {

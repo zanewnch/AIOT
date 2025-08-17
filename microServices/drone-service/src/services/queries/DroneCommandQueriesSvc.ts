@@ -23,7 +23,7 @@ import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQu
 import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandQueriesSvc');

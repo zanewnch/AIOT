@@ -12,8 +12,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DronePositionsArchiveModel, type DronePositionsArchiveAttributes } from '../../models/DronePositionsArchiveModel.js';
-import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import type { PaginationParams, PaginatedResponse } from '../types/ApiResponseType.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
 import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 

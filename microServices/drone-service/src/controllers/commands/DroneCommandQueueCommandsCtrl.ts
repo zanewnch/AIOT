@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandQueueCommandsSvc} from '../../services/commands/DroneCommandQueueCommandsSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
 import type {DroneCommandQueueCreationAttributes} from '../../types/services/IDroneCommandQueueService.js';
@@ -49,20 +49,20 @@ export class DroneCommandQueueCommands {
 
             // 基本驗證 (使用佇列模型的屬性)
             if (!queueData.name || typeof queueData.name !== 'string') {
-                const result = ControllerResult.badRequest('佇列名稱為必填項');
+                const result = ResResult.badRequest('佇列名稱為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (typeof queueData.auto_execute !== 'boolean') {
-                const result = ControllerResult.badRequest('自動執行設定為必填項');
+                const result = ResResult.badRequest('自動執行設定為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
             const createdData = await this.commandService.createDroneCommandQueue(queueData);
 
-            const result = ControllerResult.created('無人機指令佇列創建成功', createdData);
+            const result = ResResult.created('無人機指令佇列創建成功', createdData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -79,19 +79,19 @@ export class DroneCommandQueueCommands {
             const updateData: Partial<DroneCommandQueueCreationAttributes> = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
             const updatedData = await this.commandService.updateDroneCommandQueue(id, updateData);
 
             if (!updatedData) {
-                const result = ControllerResult.notFound('找不到指定的無人機指令佇列');
+                const result = ResResult.notFound('找不到指定的無人機指令佇列');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令佇列更新成功', updatedData);
+            const result = ResResult.success('無人機指令佇列更新成功', updatedData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -107,19 +107,19 @@ export class DroneCommandQueueCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
             const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
 
             if (deletedRows === 0) {
-                const result = ControllerResult.notFound('找不到指定的無人機指令佇列');
+                const result = ResResult.notFound('找不到指定的無人機指令佇列');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令佇列刪除成功');
+            const result = ResResult.success('無人機指令佇列刪除成功');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -136,13 +136,13 @@ export class DroneCommandQueueCommands {
 
             // 基本驗證
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!commandType || typeof commandType !== 'string') {
-                const result = ControllerResult.badRequest('指令類型為必填項');
+                const result = ResResult.badRequest('指令類型為必填項');
                 res.status(result.status).json(result);
                 return;
             }
@@ -153,7 +153,7 @@ export class DroneCommandQueueCommands {
                 priority
             );
 
-            const result = ControllerResult.created('無人機指令已加入佇列', enqueuedCommand);
+            const result = ResResult.created('無人機指令已加入佇列', enqueuedCommand);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -169,19 +169,19 @@ export class DroneCommandQueueCommands {
             const droneId = parseInt(req.params.droneId);
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
             const dequeuedCommand = await this.commandService.dequeueDroneCommand(droneId);
 
             if (!dequeuedCommand) {
-                const result = ControllerResult.notFound('沒有待執行的無人機指令');
+                const result = ResResult.notFound('沒有待執行的無人機指令');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令已從佇列中取出', dequeuedCommand);
+            const result = ResResult.success('無人機指令已從佇列中取出', dequeuedCommand);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -197,13 +197,13 @@ export class DroneCommandQueueCommands {
             const droneId = parseInt(req.params.droneId);
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
             const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
 
-            const result = ControllerResult.success(`已清空 ${clearedCount} 個無人機指令`, {clearedCount});
+            const result = ResResult.success(`已清空 ${clearedCount} 個無人機指令`, {clearedCount});
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -220,13 +220,13 @@ export class DroneCommandQueueCommands {
             const {status} = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!status || typeof status !== 'string') {
-                const result = ControllerResult.badRequest('狀態為必填項');
+                const result = ResResult.badRequest('狀態為必填項');
                 res.status(result.status).json(result);
                 return;
             }
@@ -234,19 +234,19 @@ export class DroneCommandQueueCommands {
             // 驗證狀態是否為有效的枚舉值
             const validStatuses = Object.values(DroneCommandQueueStatus);
             if (!validStatuses.includes(status as DroneCommandQueueStatus)) {
-                const result = ControllerResult.badRequest(`無效的狀態值。允許的狀態: ${validStatuses.join(', ')}`);
+                const result = ResResult.badRequest(`無效的狀態值。允許的狀態: ${validStatuses.join(', ')}`);
                 res.status(result.status).json(result);
                 return;
             }
             const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, status as DroneCommandQueueStatus);
 
             if (!updatedData) {
-                const result = ControllerResult.notFound('找不到指定的無人機指令佇列');
+                const result = ResResult.notFound('找不到指定的無人機指令佇列');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令佇列狀態更新成功', updatedData);
+            const result = ResResult.success('無人機指令佇列狀態更新成功', updatedData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -262,11 +262,11 @@ export class DroneCommandQueueCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
-            const result = ControllerResult.success('無人機指令佇列已開始執行');
+            const result = ResResult.success('無人機指令佇列已開始執行');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -282,11 +282,11 @@ export class DroneCommandQueueCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
-            const result = ControllerResult.success('無人機指令佇列已暫停執行');
+            const result = ResResult.success('無人機指令佇列已暫停執行');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -302,11 +302,11 @@ export class DroneCommandQueueCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
-            const result = ControllerResult.success('無人機指令佇列已重置');
+            const result = ResResult.success('無人機指令佇列已重置');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -323,17 +323,17 @@ export class DroneCommandQueueCommands {
             const {commandType, commandData, priority = 1} = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!commandType) {
-                const result = ControllerResult.badRequest('指令類型為必填項');
+                const result = ResResult.badRequest('指令類型為必填項');
                 res.status(result.status).json(result);
                 return;
             }
-            const result = ControllerResult.success('指令已加入佇列', {
+            const result = ResResult.success('指令已加入佇列', {
                 queueId: id,
                 commandType,
                 priority

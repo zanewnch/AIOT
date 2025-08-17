@@ -18,7 +18,7 @@ import {
     DroneRealTimeStatusAttributes, 
     DroneRealTimeStatusCreationAttributes
 } from '../../models/DroneRealTimeStatusModel.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 /**
  * 無人機即時狀態命令 Repository 實現類別 - CQRS 命令端

@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DronePositionQueriesSvc} from '../../services/queries/DronePositionQueriesSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {IDronePositionQueries} from '../../types/controllers/queries/IDronePositionQueries.js';
 import {TYPES} from '../../container/types.js';
 
@@ -47,7 +47,7 @@ export class DronePositionQueries implements IDronePositionQueries {
             const limit = parseInt(req.query.limit as string) || 100;
             const positions = await this.dronePositionQueriesSvc.getAllDronePositions(limit);
 
-            const result = ControllerResult.success('無人機位置資料獲取成功', positions);
+            const result = ResResult.success('無人機位置資料獲取成功', positions);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -64,7 +64,7 @@ export class DronePositionQueries implements IDronePositionQueries {
 
             // 驗證 ID
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -73,12 +73,12 @@ export class DronePositionQueries implements IDronePositionQueries {
             const dronePosition = await this.dronePositionQueriesSvc.getDronePositionById(id);
 
             if (!dronePosition) {
-                const result = ControllerResult.notFound('找不到指定的無人機位置資料');
+                const result = ResResult.notFound('找不到指定的無人機位置資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機位置資料獲取成功', dronePosition);
+            const result = ResResult.success('無人機位置資料獲取成功', dronePosition);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -95,14 +95,14 @@ export class DronePositionQueries implements IDronePositionQueries {
 
             // 驗證 Drone ID
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const dronePositions = await this.dronePositionQueriesSvc.getDronePositionsByDroneId(droneId);
 
-            const result = ControllerResult.success('無人機位置資料獲取成功', dronePositions);
+            const result = ResResult.success('無人機位置資料獲取成功', dronePositions);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -119,7 +119,7 @@ export class DronePositionQueries implements IDronePositionQueries {
 
             // 驗證 Drone ID
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -127,12 +127,12 @@ export class DronePositionQueries implements IDronePositionQueries {
             const latestPosition = await this.dronePositionQueriesSvc.getLatestDronePosition(droneId);
 
             if (!latestPosition) {
-                const result = ControllerResult.notFound('找不到該無人機的位置資料');
+                const result = ResResult.notFound('找不到該無人機的位置資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('最新無人機位置資料獲取成功', latestPosition);
+            const result = ResResult.success('最新無人機位置資料獲取成功', latestPosition);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -150,14 +150,14 @@ export class DronePositionQueries implements IDronePositionQueries {
 
             // 驗證 Drone ID
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 驗證時間參數
             if (!startTime || !endTime) {
-                const result = ControllerResult.badRequest('需要提供開始時間和結束時間');
+                const result = ResResult.badRequest('需要提供開始時間和結束時間');
                 res.status(result.status).json(result);
                 return;
             }
@@ -166,14 +166,14 @@ export class DronePositionQueries implements IDronePositionQueries {
             const end = new Date(endTime as string);
 
             if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-                const result = ControllerResult.badRequest('無效的時間格式');
+                const result = ResResult.badRequest('無效的時間格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const dronePositions = await this.dronePositionQueriesSvc.getDronePositionsByTimeRange(droneId, start, end);
 
-            const result = ControllerResult.success('無人機位置資料獲取成功', dronePositions);
+            const result = ResResult.success('無人機位置資料獲取成功', dronePositions);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);

@@ -20,7 +20,7 @@ import {DroneStatusRoutes} from './droneStatusRoutes.js';
 import {DroneCommandRoutes} from './droneCommandRoutes.js';
 import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
 import {TYPES} from '../container/types.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {ResResult} from '../utils/ResResult.js';
 
 /**
  * 路由管理器類別
@@ -95,7 +95,7 @@ export class RouteManager {
                 version: '1.0.0'
             };
 
-            const result = ControllerResult.success('Service is healthy', healthStatus);
+            const result = ResResult.success('Service is healthy', healthStatus);
             res.status(result.status).json(result);
         });
 
@@ -114,7 +114,7 @@ export class RouteManager {
                 environment: process.env.NODE_ENV || 'development'
             };
 
-            const result = ControllerResult.success('Service is healthy', healthStatus);
+            const result = ResResult.success('Service is healthy', healthStatus);
             res.status(result.status).json(result);
         });
 

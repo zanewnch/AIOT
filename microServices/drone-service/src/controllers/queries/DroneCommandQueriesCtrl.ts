@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandQueriesSvc} from '../../services/queries/DroneCommandQueriesSvc.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
 /**
@@ -42,7 +42,7 @@ export class DroneCommandQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const commands = await this.queryService.getAllCommands(limit);
-            const result = ControllerResult.success('無人機指令獲取成功', commands);
+            const result = ResResult.success('無人機指令獲取成功', commands);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -58,7 +58,7 @@ export class DroneCommandQueries {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -66,12 +66,12 @@ export class DroneCommandQueries {
             const command = await this.queryService.getCommandById(id);
 
             if (!command) {
-                const result = ControllerResult.notFound('找不到指定的無人機指令');
+                const result = ResResult.notFound('找不到指定的無人機指令');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機指令獲取成功', command);
+            const result = ResResult.success('無人機指令獲取成功', command);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -88,13 +88,13 @@ export class DroneCommandQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const commands = await this.queryService.getCommandsByDroneId(droneId, limit);
-            const result = ControllerResult.success('無人機指令獲取成功', commands);
+            const result = ResResult.success('無人機指令獲取成功', commands);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -111,13 +111,13 @@ export class DroneCommandQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!status || typeof status !== 'string' || status.trim().length === 0) {
-                const result = ControllerResult.badRequest('狀態參數不能為空');
+                const result = ResResult.badRequest('狀態參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const commands = await this.queryService.getCommandsByStatus(status as any, limit);
-            const result = ControllerResult.success('無人機指令獲取成功', commands);
+            const result = ResResult.success('無人機指令獲取成功', commands);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -134,13 +134,13 @@ export class DroneCommandQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!type || typeof type !== 'string' || type.trim().length === 0) {
-                const result = ControllerResult.badRequest('類型參數不能為空');
+                const result = ResResult.badRequest('類型參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const commands = await this.queryService.getCommandsByType(type as any, limit);
-            const result = ControllerResult.success('無人機指令獲取成功', commands);
+            const result = ResResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -155,7 +155,7 @@ export class DroneCommandQueries {
     getCommandStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const statistics = await this.queryService.getCommandStatistics();
-            const result = ControllerResult.success('無人機指令統計獲取成功', statistics);
+            const result = ResResult.success('無人機指令統計獲取成功', statistics);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -170,7 +170,7 @@ export class DroneCommandQueries {
     getCommandTypeStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const typeStats = await this.queryService.getCommandTypeStatistics();
-            const result = ControllerResult.success('無人機指令類型統計獲取成功', typeStats);
+            const result = ResResult.success('無人機指令類型統計獲取成功', typeStats);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -187,13 +187,13 @@ export class DroneCommandQueries {
             const droneId = parseInt(req.params.droneId);
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const summary = await this.queryService.getDroneCommandSummary(droneId);
-            const result = ControllerResult.success('無人機指令摘要獲取成功', summary);
+            const result = ResResult.success('無人機指令摘要獲取成功', summary);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -209,7 +209,7 @@ export class DroneCommandQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
             const commands = await this.queryService.getLatestCommands(limit);
-            const result = ControllerResult.success('待執行無人機指令獲取成功', commands);
+            const result = ResResult.success('待執行無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -225,7 +225,7 @@ export class DroneCommandQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
             const commands = await this.queryService.getLatestCommands(limit);
-            const result = ControllerResult.success('執行中無人機指令獲取成功', commands);
+            const result = ResResult.success('執行中無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -241,7 +241,7 @@ export class DroneCommandQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
             const commands = await this.queryService.getLatestCommands(limit);
-            const result = ControllerResult.success('最新指令獲取成功', commands);
+            const result = ResResult.success('最新指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -257,7 +257,7 @@ export class DroneCommandQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 50;
             const commands = await this.queryService.getFailedCommands(limit);
-            const result = ControllerResult.success('失敗指令獲取成功', commands);
+            const result = ResResult.success('失敗指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -276,13 +276,13 @@ export class DroneCommandQueries {
 
             // 驗證 issuedBy 參數
             if (isNaN(issuedBy)) {
-                const result = ControllerResult.badRequest('無效的用戶 ID 格式');
+                const result = ResResult.badRequest('無效的用戶 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const commands = await this.queryService.getCommandsByIssuedBy(issuedBy, limit);
-            const result = ControllerResult.success('無人機指令獲取成功', commands);
+            const result = ResResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -302,13 +302,13 @@ export class DroneCommandQueries {
 
             // 驗證日期參數
             if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                const result = ControllerResult.badRequest('無效的日期格式');
+                const result = ResResult.badRequest('無效的日期格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const commands = await this.queryService.getCommandsByDateRange(startDate, endDate, limit);
-            const result = ControllerResult.success('無人機指令獲取成功', commands);
+            const result = ResResult.success('無人機指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -326,13 +326,13 @@ export class DroneCommandQueries {
 
             // 驗證 droneId 參數
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const commands = await this.queryService.getPendingCommandsByDroneId(droneId);
-            const result = ControllerResult.success('待執行指令獲取成功', commands);
+            const result = ResResult.success('待執行指令獲取成功', commands);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -350,13 +350,13 @@ export class DroneCommandQueries {
 
             // 驗證 droneId 參數
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const command = await this.queryService.getExecutingCommandByDroneId(droneId);
-            const result = ControllerResult.success('執行中指令獲取成功', command);
+            const result = ResResult.success('執行中指令獲取成功', command);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -374,13 +374,13 @@ export class DroneCommandQueries {
 
             // 驗證 droneId 參數
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const summary = await this.queryService.getDroneCommandSummary(droneId);
-            const result = ControllerResult.success('無人機指令摘要獲取成功', summary);
+            const result = ResResult.success('無人機指令摘要獲取成功', summary);
 
             res.status(result.status).json(result);
         } catch (error) {

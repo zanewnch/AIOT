@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandCommandsSvc} from '../../services/commands/DroneCommandCommandsSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {DroneCommandCreationAttributes} from '../../models/DroneCommandModel.js';
 
@@ -48,13 +48,13 @@ export class DroneCommandCommands {
 
             // 基本驗證
             if (!commandData.drone_id || typeof commandData.drone_id !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!commandData.command_type || typeof commandData.command_type !== 'string') {
-                const result = ControllerResult.badRequest('指令類型為必填項');
+                const result = ResResult.badRequest('指令類型為必填項');
                 res.status(result.status).json(result);
                 return;
             }
@@ -62,10 +62,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.createCommand(commandData);
 
             if (result.success) {
-                const response = ControllerResult.created('無人機指令創建成功', result.command);
+                const response = ResResult.created('無人機指令創建成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '指令創建失敗');
+                const response = ResResult.badRequest(result.message || '指令創建失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -83,7 +83,7 @@ export class DroneCommandCommands {
 
             // 驗證批量資料
             if (!Array.isArray(commandsData) || commandsData.length === 0) {
-                const result = ControllerResult.badRequest('請提供有效的指令資料陣列');
+                const result = ResResult.badRequest('請提供有效的指令資料陣列');
                 res.status(result.status).json(result);
                 return;
             }
@@ -92,12 +92,12 @@ export class DroneCommandCommands {
             for (let i = 0; i < commandsData.length; i++) {
                 const data = commandsData[i];
                 if (!data.drone_id || typeof data.drone_id !== 'number') {
-                    const result = ControllerResult.badRequest(`第 ${i + 1} 筆資料的無人機 ID 無效`);
+                    const result = ResResult.badRequest(`第 ${i + 1} 筆資料的無人機 ID 無效`);
                     res.status(result.status).json(result);
                     return;
                 }
                 if (!data.command_type || typeof data.command_type !== 'string') {
-                    const result = ControllerResult.badRequest(`第 ${i + 1} 筆資料的指令類型無效`);
+                    const result = ResResult.badRequest(`第 ${i + 1} 筆資料的指令類型無效`);
                     res.status(result.status).json(result);
                     return;
                 }
@@ -106,10 +106,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.createBatchCommands(commandsData);
 
             if (result.successCount > 0) {
-                const response = ControllerResult.created('批量無人機指令創建成功', result.successful);
+                const response = ResResult.created('批量無人機指令創建成功', result.successful);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest('所有批量指令創建失敗');
+                const response = ResResult.badRequest('所有批量指令創建失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -127,7 +127,7 @@ export class DroneCommandCommands {
             const updateData: Partial<DroneCommandCreationAttributes> = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -135,10 +135,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.updateCommand(id, updateData);
 
             if (result) {
-                const response = ControllerResult.success('無人機指令更新成功', result);
+                const response = ResResult.success('無人機指令更新成功', result);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.notFound('找不到指定的無人機指令');
+                const response = ResResult.notFound('找不到指定的無人機指令');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -155,7 +155,7 @@ export class DroneCommandCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -163,10 +163,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.deleteCommand(id);
 
             if (result) {
-                const response = ControllerResult.success('無人機指令刪除成功');
+                const response = ResResult.success('無人機指令刪除成功');
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.notFound('找不到指定的無人機指令');
+                const response = ResResult.notFound('找不到指定的無人機指令');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -185,7 +185,7 @@ export class DroneCommandCommands {
             const {droneId, altitude = 10, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -196,10 +196,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('起飛指令發送成功', result.command);
+                const response = ResResult.success('起飛指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '起飛指令發送失敗');
+                const response = ResResult.badRequest(result.message || '起飛指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -216,7 +216,7 @@ export class DroneCommandCommands {
             const {droneId, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -224,10 +224,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.sendLandCommand(droneId, 1, parameters);
 
             if (result.success) {
-                const response = ControllerResult.success('降落指令發送成功', result.command);
+                const response = ResResult.success('降落指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '降落指令發送失敗');
+                const response = ResResult.badRequest(result.message || '降落指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -244,7 +244,7 @@ export class DroneCommandCommands {
             const {droneId, duration} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -252,10 +252,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.sendHoverCommand(droneId, 1, {duration});
 
             if (result.success) {
-                const response = ControllerResult.success('懸停指令發送成功', result.command);
+                const response = ResResult.success('懸停指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '懸停指令發送失敗');
+                const response = ResResult.badRequest(result.message || '懸停指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -272,13 +272,13 @@ export class DroneCommandCommands {
             const {droneId, latitude, longitude, altitude, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (typeof latitude !== 'number' || typeof longitude !== 'number') {
-                const result = ControllerResult.badRequest('緯度和經度為必填項且必須為數字');
+                const result = ResResult.badRequest('緯度和經度為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -291,10 +291,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('飛行指令發送成功', result.command);
+                const response = ResResult.success('飛行指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '飛行指令發送失敗');
+                const response = ResResult.badRequest(result.message || '飛行指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -311,7 +311,7 @@ export class DroneCommandCommands {
             const {droneId, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -319,10 +319,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.sendReturnCommand(droneId, 1, parameters);
 
             if (result.success) {
-                const response = ControllerResult.success('返航指令發送成功', result.command);
+                const response = ResResult.success('返航指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '返航指令發送失敗');
+                const response = ResResult.badRequest(result.message || '返航指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -339,7 +339,7 @@ export class DroneCommandCommands {
             const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -350,10 +350,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('前進指令發送成功', result.command);
+                const response = ResResult.success('前進指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '前進指令發送失敗');
+                const response = ResResult.badRequest(result.message || '前進指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -370,7 +370,7 @@ export class DroneCommandCommands {
             const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -381,10 +381,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('後退指令發送成功', result.command);
+                const response = ResResult.success('後退指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '後退指令發送失敗');
+                const response = ResResult.badRequest(result.message || '後退指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -401,7 +401,7 @@ export class DroneCommandCommands {
             const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -412,10 +412,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('左移指令發送成功', result.command);
+                const response = ResResult.success('左移指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '左移指令發送失敗');
+                const response = ResResult.badRequest(result.message || '左移指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -432,7 +432,7 @@ export class DroneCommandCommands {
             const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -443,10 +443,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('右移指令發送成功', result.command);
+                const response = ResResult.success('右移指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '右移指令發送失敗');
+                const response = ResResult.badRequest(result.message || '右移指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -463,7 +463,7 @@ export class DroneCommandCommands {
             const {droneId, degrees = 90, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -474,10 +474,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('左轉指令發送成功', result.command);
+                const response = ResResult.success('左轉指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '左轉指令發送失敗');
+                const response = ResResult.badRequest(result.message || '左轉指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -494,7 +494,7 @@ export class DroneCommandCommands {
             const {droneId, degrees = 90, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -505,10 +505,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success) {
-                const response = ControllerResult.success('右轉指令發送成功', result.command);
+                const response = ResResult.success('右轉指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '右轉指令發送失敗');
+                const response = ResResult.badRequest(result.message || '右轉指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -525,7 +525,7 @@ export class DroneCommandCommands {
             const {droneId, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -533,10 +533,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.sendEmergencyCommand(droneId, 1, parameters);
 
             if (result.success) {
-                const response = ControllerResult.success('緊急停止指令發送成功', result.command);
+                const response = ResResult.success('緊急停止指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '緊急停止指令發送失敗');
+                const response = ResResult.badRequest(result.message || '緊急停止指令發送失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -555,7 +555,7 @@ export class DroneCommandCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -563,10 +563,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.executeCommand(id);
 
             if (result.success) {
-                const response = ControllerResult.success('指令執行成功', result.command);
+                const response = ResResult.success('指令執行成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '指令執行失敗');
+                const response = ResResult.badRequest(result.message || '指令執行失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -583,7 +583,7 @@ export class DroneCommandCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -591,10 +591,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.completeCommand(id);
 
             if (result.success) {
-                const response = ControllerResult.success('指令完成成功', result.command);
+                const response = ResResult.success('指令完成成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '指令完成失敗');
+                const response = ResResult.badRequest(result.message || '指令完成失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -612,7 +612,7 @@ export class DroneCommandCommands {
             const {reason} = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -620,10 +620,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.failCommand(id, reason);
 
             if (result.success) {
-                const response = ControllerResult.success('指令標記失敗成功', result.command);
+                const response = ResResult.success('指令標記失敗成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '指令標記失敗失敗');
+                const response = ResResult.badRequest(result.message || '指令標記失敗失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -641,7 +641,7 @@ export class DroneCommandCommands {
             const {reason} = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -649,10 +649,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.cancelCommand(id, reason);
 
             if (result.success) {
-                const response = ControllerResult.success('指令取消成功', result.command);
+                const response = ResResult.success('指令取消成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message || '指令取消失敗');
+                const response = ResResult.badRequest(result.message || '指令取消失敗');
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -670,19 +670,19 @@ export class DroneCommandCommands {
 
             // 基本驗證
             if (!droneId || typeof droneId !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!issuedBy || typeof issuedBy !== 'number') {
-                const result = ControllerResult.badRequest('發送者 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('發送者 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (typeof latitude !== 'number' || typeof longitude !== 'number' || typeof altitude !== 'number') {
-                const result = ControllerResult.badRequest('緯度、經度和高度為必填項且必須為數字');
+                const result = ResResult.badRequest('緯度、經度和高度為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -695,10 +695,10 @@ export class DroneCommandCommands {
             });
 
             if (result.success && result.command) {
-                const response = ControllerResult.created('移動指令發送成功', result.command);
+                const response = ResResult.created('移動指令發送成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message);
+                const response = ResResult.badRequest(result.message);
                 res.status(response.status).json(response);
             }
         } catch (error) {
@@ -717,13 +717,13 @@ export class DroneCommandCommands {
 
             // 驗證 ID
             if (isNaN(commandId)) {
-                const result = ControllerResult.badRequest('無效的指令 ID 格式');
+                const result = ResResult.badRequest('無效的指令 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!issuedBy || typeof issuedBy !== 'number') {
-                const result = ControllerResult.badRequest('發送者 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('發送者 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
@@ -731,10 +731,10 @@ export class DroneCommandCommands {
             const result = await this.commandService.retryFailedCommand(commandId, issuedBy);
 
             if (result.success && result.command) {
-                const response = ControllerResult.created('指令重試成功', result.command);
+                const response = ResResult.created('指令重試成功', result.command);
                 res.status(response.status).json(response);
             } else {
-                const response = ControllerResult.badRequest(result.message);
+                const response = ResResult.badRequest(result.message);
                 res.status(response.status).json(response);
             }
         } catch (error) {

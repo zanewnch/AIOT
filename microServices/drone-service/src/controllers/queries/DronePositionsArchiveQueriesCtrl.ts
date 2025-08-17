@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DronePositionsArchiveQueriesSvc} from '../../services/queries/DronePositionsArchiveQueriesSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('DronePositionsArchiveQueries');
@@ -45,7 +45,7 @@ export class DronePositionsArchiveQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const archives = await this.archiveService.getAllPositionArchives(limit);
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -62,7 +62,7 @@ export class DronePositionsArchiveQueries {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的位置歷史歸檔 ID 格式');
+                const result = ResResult.badRequest('無效的位置歷史歸檔 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -70,12 +70,12 @@ export class DronePositionsArchiveQueries {
             const archive = await this.archiveService.getPositionArchiveById(id);
 
             if (!archive) {
-                const result = ControllerResult.notFound('找不到指定的位置歷史歸檔');
+                const result = ResResult.notFound('找不到指定的位置歷史歸檔');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archive);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archive);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -91,7 +91,7 @@ export class DronePositionsArchiveQueries {
             const originalId = parseInt(req.params.originalId);
 
             if (isNaN(originalId)) {
-                const result = ControllerResult.badRequest('無效的原始 ID 格式');
+                const result = ResResult.badRequest('無效的原始 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -99,12 +99,12 @@ export class DronePositionsArchiveQueries {
             const archive = await this.archiveService.getPositionArchiveByOriginalId(originalId);
 
             if (!archive) {
-                const result = ControllerResult.notFound('找不到指定的位置歷史歸檔');
+                const result = ResResult.notFound('找不到指定的位置歷史歸檔');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archive);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archive);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -121,13 +121,13 @@ export class DronePositionsArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.archiveService.getPositionArchivesByDroneId(droneId, limit);
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -147,13 +147,13 @@ export class DronePositionsArchiveQueries {
 
             // 驗證日期參數
             if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的時間格式');
+                const result = ResResult.badRequest('無效的時間格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.archiveService.getPositionArchivesByTimeRange(startTime, endTime, limit);
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -171,13 +171,13 @@ export class DronePositionsArchiveQueries {
             const limit = parseInt(req.query.limit as string) || 50;
 
             if (!batchId || typeof batchId !== 'string' || batchId.trim().length === 0) {
-                const result = ControllerResult.badRequest('批次 ID 參數不能為空');
+                const result = ResResult.badRequest('批次 ID 參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archives = await this.archiveService.getPositionArchivesByBatchId(batchId);
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -202,7 +202,7 @@ export class DronePositionsArchiveQueries {
             };
 
             if (Object.values(coords).some(isNaN)) {
-                const result = ControllerResult.badRequest('無效的地理座標格式');
+                const result = ResResult.badRequest('無效的地理座標格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -210,7 +210,7 @@ export class DronePositionsArchiveQueries {
             const archives = await this.archiveService.getPositionArchivesByGeoBounds(
                 coords.minLat, coords.maxLat, coords.minLon, coords.maxLon, parseInt(limit as string)
             );
-            const result = ControllerResult.success('位置歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -229,13 +229,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const trajectory = await this.archiveService.getTrajectoryByDroneAndTime(droneId, startTime, endTime);
-            const result = ControllerResult.success('軌跡資料獲取成功', trajectory);
+            const result = ResResult.success('軌跡資料獲取成功', trajectory);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -251,7 +251,7 @@ export class DronePositionsArchiveQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
             const archives = await this.archiveService.getLatestPositionArchives(limit);
-            const result = ControllerResult.success('最新位置歷史歸檔資料獲取成功', archives);
+            const result = ResResult.success('最新位置歷史歸檔資料獲取成功', archives);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -268,13 +268,13 @@ export class DronePositionsArchiveQueries {
             const droneId = parseInt(req.params.droneId);
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const archive = await this.archiveService.getLatestPositionArchiveByDroneId(droneId);
-            const result = ControllerResult.success('最新位置歷史歸檔資料獲取成功', archive);
+            const result = ResResult.success('最新位置歷史歸檔資料獲取成功', archive);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -289,7 +289,7 @@ export class DronePositionsArchiveQueries {
     getTotalArchiveCount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const count = await this.archiveService.getTotalArchiveCount();
-            const result = ControllerResult.success('歸檔總數獲取成功', {count});
+            const result = ResResult.success('歸檔總數獲取成功', {count});
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -307,13 +307,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const stats = await this.archiveService.calculateTrajectoryStatistics(droneId, startTime, endTime);
-            const result = ControllerResult.success('軌跡統計資料獲取成功', stats);
+            const result = ResResult.success('軌跡統計資料獲取成功', stats);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -332,13 +332,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const stats = await this.archiveService.calculateBatteryUsageStatistics(droneId, startTime, endTime);
-            const result = ControllerResult.success('電池使用統計資料獲取成功', stats);
+            const result = ResResult.success('電池使用統計資料獲取成功', stats);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -357,13 +357,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const stats = await this.archiveService.calculatePositionDistributionStatistics(droneId, startTime, endTime);
-            const result = ControllerResult.success('位置分佈統計資料獲取成功', stats);
+            const result = ResResult.success('位置分佈統計資料獲取成功', stats);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -380,13 +380,13 @@ export class DronePositionsArchiveQueries {
             const batchId = req.params.batchId;
 
             if (!batchId || typeof batchId !== 'string' || batchId.trim().length === 0) {
-                const result = ControllerResult.badRequest('批次 ID 參數不能為空');
+                const result = ResResult.badRequest('批次 ID 參數不能為空');
                 res.status(result.status).json(result);
                 return;
             }
 
             const stats = await this.archiveService.getArchiveBatchStatistics(batchId);
-            const result = ControllerResult.success('歸檔批次統計資料獲取成功', stats);
+            const result = ResResult.success('歸檔批次統計資料獲取成功', stats);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -405,13 +405,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const patterns = await this.archiveService.analyzeFlightPatterns(droneId, startTime, endTime);
-            const result = ControllerResult.success('飛行模式分析完成', patterns);
+            const result = ResResult.success('飛行模式分析完成', patterns);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -430,13 +430,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const anomalies = await this.archiveService.detectAnomalousPositions(droneId, startTime, endTime);
-            const result = ControllerResult.success('異常位置檢測完成', anomalies);
+            const result = ResResult.success('異常位置檢測完成', anomalies);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -455,13 +455,13 @@ export class DronePositionsArchiveQueries {
             const endTime = new Date(req.query.endTime as string);
 
             if (isNaN(droneId) || isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ControllerResult.badRequest('無效的參數格式');
+                const result = ResResult.badRequest('無效的參數格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             const report = await this.archiveService.generateTrajectorySummaryReport(droneId, startTime, endTime);
-            const result = ControllerResult.success('軌跡摘要報告生成完成', report);
+            const result = ResResult.success('軌跡摘要報告生成完成', report);
 
             res.status(result.status).json(result);
         } catch (error) {

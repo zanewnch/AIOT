@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneRealTimeStatusCommandsSvc} from '../../services/commands/DroneRealTimeStatusCommandsSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {
     DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes
@@ -50,14 +50,14 @@ export class DroneRealTimeStatusCommands {
 
             // 基本驗證
             if (!statusData.drone_id || typeof statusData.drone_id !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             const createdData = await this.droneRealTimeStatusCommandsService.createDroneRealTimeStatus(statusData);
 
-            const result = ControllerResult.created('無人機即時狀態資料創建成功', createdData);
+            const result = ResResult.created('無人機即時狀態資料創建成功', createdData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -74,7 +74,7 @@ export class DroneRealTimeStatusCommands {
             const updateData: Partial<ExternalCreationAttributes> = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -82,12 +82,12 @@ export class DroneRealTimeStatusCommands {
             const updatedData = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatus(id, updateData);
 
             if (!updatedData) {
-                const result = ControllerResult.notFound('找不到指定的無人機即時狀態資料');
+                const result = ResResult.notFound('找不到指定的無人機即時狀態資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機即時狀態資料更新成功', updatedData);
+            const result = ResResult.success('無人機即時狀態資料更新成功', updatedData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -103,7 +103,7 @@ export class DroneRealTimeStatusCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -111,12 +111,12 @@ export class DroneRealTimeStatusCommands {
             const deletedRows = await this.droneRealTimeStatusCommandsService.deleteDroneRealTimeStatus(id);
 
             if (deletedRows === 0) {
-                const result = ControllerResult.notFound('找不到指定的無人機即時狀態資料');
+                const result = ResResult.notFound('找不到指定的無人機即時狀態資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機即時狀態資料刪除成功');
+            const result = ResResult.success('無人機即時狀態資料刪除成功');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -133,7 +133,7 @@ export class DroneRealTimeStatusCommands {
             const statusData: Partial<ExternalCreationAttributes> = req.body;
 
             if (isNaN(droneId)) {
-                const result = ControllerResult.badRequest('無效的無人機 ID 格式');
+                const result = ResResult.badRequest('無效的無人機 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -141,12 +141,12 @@ export class DroneRealTimeStatusCommands {
             const updatedData = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatusByDroneId(droneId, statusData);
 
             if (!updatedData) {
-                const result = ControllerResult.notFound('找不到該無人機的即時狀態資料');
+                const result = ResResult.notFound('找不到該無人機的即時狀態資料');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('無人機即時狀態更新成功', updatedData);
+            const result = ResResult.success('無人機即時狀態更新成功', updatedData);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -162,7 +162,7 @@ export class DroneRealTimeStatusCommands {
             const statusUpdates: Array<{ droneId: number; statusData: Partial<ExternalCreationAttributes> }> = req.body;
 
             if (!Array.isArray(statusUpdates) || statusUpdates.length === 0) {
-                const result = ControllerResult.badRequest('請提供有效的狀態更新資料陣列');
+                const result = ResResult.badRequest('請提供有效的狀態更新資料陣列');
                 res.status(result.status).json(result);
                 return;
             }
@@ -171,7 +171,7 @@ export class DroneRealTimeStatusCommands {
             for (let i = 0; i < statusUpdates.length; i++) {
                 const update = statusUpdates[i];
                 if (!update.droneId || typeof update.droneId !== 'number') {
-                    const result = ControllerResult.badRequest(`第 ${i + 1} 筆資料的無人機 ID 無效`);
+                    const result = ResResult.badRequest(`第 ${i + 1} 筆資料的無人機 ID 無效`);
                     res.status(result.status).json(result);
                     return;
                 }
@@ -179,7 +179,7 @@ export class DroneRealTimeStatusCommands {
 
             const updatedStatuses = await this.droneRealTimeStatusCommandsService.updateDroneRealTimeStatusesBatch(statusUpdates);
 
-            const result = ControllerResult.success('批量無人機即時狀態更新成功', updatedStatuses);
+            const result = ResResult.success('批量無人機即時狀態更新成功', updatedStatuses);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);

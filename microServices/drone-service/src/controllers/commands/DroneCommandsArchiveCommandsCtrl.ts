@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandsArchiveCommandsSvc} from '../../services/commands/DroneCommandsArchiveCommandsSvc.js';
-import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
-import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {createLogger} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {DroneCommandsArchiveCreationAttributes} from '../../models/DroneCommandsArchiveModel.js';
 
@@ -48,19 +48,19 @@ export class DroneCommandsArchiveCommands {
 
             // 基本驗證
             if (!archiveData.drone_id || typeof archiveData.drone_id !== 'number') {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('無人機 ID 為必填項且必須為數字');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!archiveData.command_type || typeof archiveData.command_type !== 'string') {
-                const result = ControllerResult.badRequest('指令類型為必填項');
+                const result = ResResult.badRequest('指令類型為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
             const createdArchive = await this.commandService.createCommandArchive(archiveData);
-            const result = ControllerResult.created('指令歷史歸檔記錄創建成功', createdArchive);
+            const result = ResResult.created('指令歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
         } catch (error) {
@@ -78,13 +78,13 @@ export class DroneCommandsArchiveCommands {
             const updateData: Partial<DroneCommandsArchiveCreationAttributes> = req.body;
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!updateData || Object.keys(updateData).length === 0) {
-                const result = ControllerResult.badRequest('更新資料不能為空');
+                const result = ResResult.badRequest('更新資料不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -92,12 +92,12 @@ export class DroneCommandsArchiveCommands {
             const updatedArchive = await this.commandService.updateCommandArchive(id, updateData);
 
             if (!updatedArchive) {
-                const result = ControllerResult.notFound('找不到指定的指令歷史歸檔記錄');
+                const result = ResResult.notFound('找不到指定的指令歷史歸檔記錄');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('指令歷史歸檔資料更新成功', updatedArchive);
+            const result = ResResult.success('指令歷史歸檔資料更新成功', updatedArchive);
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -113,7 +113,7 @@ export class DroneCommandsArchiveCommands {
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                const result = ControllerResult.badRequest('無效的 ID 格式');
+                const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
@@ -121,12 +121,12 @@ export class DroneCommandsArchiveCommands {
             const isDeleted = await this.commandService.deleteCommandArchive(id);
 
             if (!isDeleted) {
-                const result = ControllerResult.notFound('找不到指定的指令歷史歸檔記錄');
+                const result = ResResult.notFound('找不到指定的指令歷史歸檔記錄');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ControllerResult.success('指令歷史歸檔資料刪除成功');
+            const result = ResResult.success('指令歷史歸檔資料刪除成功');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);

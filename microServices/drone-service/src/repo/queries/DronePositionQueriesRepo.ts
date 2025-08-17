@@ -12,8 +12,8 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DronePositionModel, type DronePositionAttributes } from '../../models/DronePositionModel.js';
-import type { PaginationParams, PaginatedResponse } from '@aiot/shared-packages/types/ApiResponseType.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
+import type { PaginationParams, PaginatedResponse } from '../types/ApiResponseType.js';
+import { createLogger } from '../../configs/loggerConfig.js';
 
 /**
  * 無人機位置查詢 Repository 實現類別 - CQRS 查詢端
