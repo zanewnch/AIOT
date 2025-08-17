@@ -20,7 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
 const logger = createLogger('AuthCommandsSvc');
 
 /**
- * 登入請求介面 - 支援 OPA 集中驗證
+ * 登入請求介面 - 支援 Gateway 集中驗證
  */
 export interface LoginRequest {
     username: string;
@@ -208,7 +208,7 @@ export class AuthCommandsSvc {
     }
 
     /**
-     * 生成包含完整權限的 JWT for OPA
+     * 生成包含完整權限的 JWT for Gateway
      */
     private async generateJWT(
         userId: number, 
@@ -266,7 +266,7 @@ export class AuthCommandsSvc {
     }
 
     /**
-     * 使用者登入 - 支援 OPA 集中驗證
+     * 使用者登入 - 支援 Gateway 集中驗證
      */
     public login = async (request: LoginRequest): Promise<LoginResponse> => {
         try {
@@ -291,7 +291,7 @@ export class AuthCommandsSvc {
             const sessionId = uuidv4();
             this.activeSessions.set(sessionId, user.id.toString());
             
-            // 生成包含完整權限的 JWT for OPA
+            // 生成包含完整權限的 JWT for Gateway
             const token = await this.generateJWT(user.id, request.username, userPermissions, {
                 sessionId,
                 ipAddress: request.ipAddress,

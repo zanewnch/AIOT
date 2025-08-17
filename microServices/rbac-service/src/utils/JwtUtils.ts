@@ -1,7 +1,7 @@
 /**
- * @fileoverview JWT 工具類 - 支援 OPA 集中驗證
+ * @fileoverview JWT 工具類 - 支援 Gateway 層認證
  * 
- * 此模組提供 JWT 生成和驗證功能，專為 OPA 權限驗證設計
+ * 此模組提供 JWT 生成和驗證功能，為 Express.js Gateway 認證層設計
  * JWT 包含自定義 claims 包括用戶權限信息
  * 
  * @author AIOT Team
@@ -16,7 +16,7 @@ const logger = createLogger('JwtUtils');
 
 /**
  * JWT 自定義 Claims 介面
- * 包含 OPA 需要的所有權限和用戶信息
+ * 包含 Gateway 認證層需要的所有權限和用戶信息
  */
 export interface JwtClaims {
     // 標準 JWT Claims
@@ -26,7 +26,7 @@ export interface JwtClaims {
     iss: string;        // Issuer
     aud: string;        // Audience
     
-    // 自定義 Claims for OPA
+    // 自定義 Claims for Gateway 認證
     user: {
         id: number;
         username: string;
@@ -81,7 +81,7 @@ export interface JwtGenerateOptions {
  * JWT 工具類
  * 
  * 提供 JWT 生成、驗證和解析功能
- * 專為 OPA 權限系統設計
+ * 專為 Express.js Gateway 權限系統設計
  */
 export class JwtUtils {
     private static readonly JWT_SECRET = process.env.JWT_SECRET || 'aiot-jwt-secret-key-2024';
@@ -117,7 +117,7 @@ export class JwtUtils {
                     is_active: options.user.is_active
                 },
                 
-                // 權限信息 - OPA 核心數據
+                // 權限信息 - Gateway 核心數據
                 permissions: {
                     roles: options.roles,
                     permissions: options.permissions,
@@ -213,7 +213,7 @@ export class JwtUtils {
     
     /**
      * 提取 JWT 中的權限信息
-     * 為 OPA 策略評估提供便捷方法
+     * 為 Gateway 層權限檢查提供便捷方法
      * 
      * @param token JWT 字符串
      * @returns 權限信息對象或 null
@@ -255,7 +255,7 @@ export interface JwtMiddlewareOptions {
 
 /**
  * Express JWT 中間件
- * 為 OPA 集成設計
+ * 為 RBAC 服務內部認證設計
  */
 export const jwtMiddleware = (options: JwtMiddlewareOptions = {}) => {
     return (req: any, res: any, next: any) => {
@@ -297,7 +297,7 @@ export const jwtMiddleware = (options: JwtMiddlewareOptions = {}) => {
                     req.permissions = claims.permissions;
                     req.jwt = claims;
                     
-                    // 為 OPA 準備權限上下文
+                    // 為 Gateway 層準備權限上下文
                     if (options.extractPermissions) {
                         req.authContext = {
                             userId: claims.user.id,

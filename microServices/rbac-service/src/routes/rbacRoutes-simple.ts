@@ -2,7 +2,7 @@
  * @fileoverview RBAC 簡化路由 - 集中式權限管理版本
  * 
  * 簡化版 RBAC 路由，提供基本 API 端點結構
- * 認證和授權由 Kong Gateway + OPA 處理
+ * 認證和授權由 Express.js Gateway 處理
  * 
  * @module Routes/RbacRoutes
  * @version 2.0.0
@@ -18,7 +18,7 @@ router.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
     service: 'rbac-routes',
-    message: 'RBAC routes active - Auth handled by Kong Gateway + OPA'
+    message: 'RBAC routes active - Auth handled by Express.js Gateway'
   });
 });
 

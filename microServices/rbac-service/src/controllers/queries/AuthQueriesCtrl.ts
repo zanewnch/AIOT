@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，包含身份驗證檢查等讀取邏輯。
  *
- * 使用 Kong Headers 獲取用戶信息，認證和授權由 OPA 在 Kong 層處理。
+ * 使用 Kong Headers 獲取用戶信息，認證和授權由 Express.js Gateway 處理。
  *
  * @module AuthQueries
  * @author AIOT Team
@@ -28,7 +28,7 @@ const logger = createLogger('AuthQueries');
  *
  * 專門處理認證相關的查詢請求，包含身份驗證檢查等功能。
  * 所有方法都是只讀的，遵循 CQRS 模式的查詢端原則。
- * 使用 Kong Headers 獲取用戶信息，認證由 OPA 處理。
+ * 使用 Kong Headers 獲取用戶信息，認證由 Express.js Gateway 處理。
  *
  * @class AuthQueries
  * @since 1.0.0
@@ -83,7 +83,7 @@ export class AuthQueries {
                     // 添加數據庫中的詳細資訊（如果有）
                     ...userDetails,
                     // Kong 提供的額外信息
-                    authMethod: 'kong-opa',
+                    authMethod: 'express-gateway',
                     authenticatedAt: new Date().toISOString()
                 }
             });

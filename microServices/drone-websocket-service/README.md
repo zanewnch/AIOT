@@ -8,7 +8,7 @@
 - **WebSocket 連線管理**：處理客戶端 WebSocket 連線
 - **即時資料廣播**：無人機位置和狀態的即時推送
 - **房間管理**：基於無人機 ID 的訂閱管理
-- **安全整合**：與 OPA 權限管理整合
+- **安全整合**：與 Express.js Gateway 權限管理整合
 
 ### 與其他服務的關係
 ```
@@ -83,9 +83,9 @@ socket.on('drone:status:update', (data) => {
 - `CORS_ORIGIN`: CORS 允許的來源
 
 ### 認證和授權
-- **認證**: 由 Kong Gateway + OPA 統一處理
+- **認證**: 由 Express.js Gateway 統一處理
 - **WebSocket 連線**: 通過 Kong Gateway 代理，支援認證用戶
-- **權限控制**: 基於 OPA (Open Policy Agent) 進行集中式管理
+- **權限控制**: 基於 Express.js Gateway 進行集中式管理
 - **無需 JWT**: 服務本身不處理認證邏輯，專注於即時通訊
 
 ## 📊 健康檢查

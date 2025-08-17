@@ -1,0 +1,29 @@
+# AIOT RBAC Service - Development Dockerfile
+# 🐳 開發環境專用，支援 Hot-Reload 和除錯
+
+FROM node:18-bullseye as development
+
+# 設定工作目錄
+WORKDIR /app
+
+# 安裝系統依賴
+RUN apt-get update && apt-get install -y curl netcat && rm -rf /var/lib/apt/lists/*
+
+# 複製 package 檔案並安裝依賴
+COPY package*.json ./
+RUN npm install
+
+# 安裝開發必要的全域套件
+RUN npm install -g nodemon tsx ts-node
+
+# 開發環境使用 root 用戶以避免 volume mount 權限問題
+
+# 開發端口 (HTTP + gRPC + Debug)
+EXPOSE 3051 50051 9229
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3051/health || exit 1
+
+# 開發環境啟動命令 (nodemon 監控檔案變化)
+CMD ["npm", "run", "dev"]

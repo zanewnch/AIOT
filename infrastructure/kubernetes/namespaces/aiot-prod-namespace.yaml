@@ -68,11 +68,6 @@ spec:
         matchLabels:
           name: aiot-prod
   
-  # 允許 Kong Gateway 存取
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: kong-system
           
   # 允許監控系統存取
   - from:

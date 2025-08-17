@@ -26,7 +26,7 @@ import { TYPES } from '../container/types.js';
  * 認證路由類別
  * 
  * 負責配置和管理所有認證相關的路由端點
- * 使用 Kong Headers 中間件來獲取用戶信息，由 OPA 在 Kong 層進行認證和授權
+ * 使用 Kong Headers 中間件來獲取用戶信息，由 Express.js Gateway 層進行認證和授權
  */
 class AuthRoutes {
   private router: Router;

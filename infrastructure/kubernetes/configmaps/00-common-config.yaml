@@ -35,8 +35,6 @@ data:
   CONSUL_HOST: "consul-service.aiot-prod.svc.cluster.local"
   CONSUL_PORT: "8500"
   
-  # OPA 配置
-  OPA_URL: "http://opa-service.aiot-prod.svc.cluster.local:8181"
   
   # JWT 配置
   JWT_EXPIRES_IN: "24000h"

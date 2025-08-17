@@ -2,7 +2,7 @@
  * @fileoverview Kong Headers 中間件
  * 
  * 此中間件從 Kong Gateway 傳遞的 headers 中提取用戶信息，
- * 替代原本的 JWT 認證中間件。OPA 已經在 Kong 層完成了認證和授權檢查。
+ * 替代原本的 JWT 認證中間件。Express.js Gateway 已經完成了認證和授權檢查。
  * 
  * @module KongHeadersMiddleware
  * @author AIOT Team

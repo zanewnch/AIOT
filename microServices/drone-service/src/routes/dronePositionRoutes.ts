@@ -53,10 +53,10 @@ export class DronePositionRoutes {
 
     /**
      * 設定查詢路由 (GET 操作)
-     * 使用 Kong Headers 中間件獲取用戶信息，由 OPA 處理權限驗證
+     * 使用 Kong Headers 中間件獲取用戶信息，由 Express.js Gateway 處理權限驗證
      */
     private setupQueryRoutes(): void {
-        // 獲取所有無人機位置 - 權限由 Kong + OPA 處理
+        // 獲取所有無人機位置 - 權限由 Express.js Gateway 處理
         this.router.get('/', 
             KongHeadersMiddleware.extractUserInfo,
             (req, res, next) => this.dronePositionQueries.getAllDronePositions(req, res, next)

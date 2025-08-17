@@ -3,7 +3,7 @@
  * 
  * 使用 class 封裝路由邏輯，結合 InversifyJS 依賴注入和 arrow functions。
  * 遵循 CQRS 模式，分離命令（Commands）和查詢（Queries）路由。
- * 認證和授權現在由 Kong Gateway + OPA 集中處理。
+ * 認證和授權現在由 Express.js Gateway 集中處理。
  * 
  * @module UserPreferenceRoutes
  * @author AIOT Team
@@ -50,7 +50,7 @@ export class UserPreferenceRoutes {
 
     /**
      * 設定查詢路由 (GET 操作)
-     * 使用 Kong Headers 中間件獲取用戶信息，由 OPA 處理權限驗證
+     * 使用 Kong Headers 中間件獲取用戶信息，由 Express.js Gateway 處理權限驗證
      */
     private setupQueryRoutes = (): void => {
         // ==============================================
@@ -60,7 +60,7 @@ export class UserPreferenceRoutes {
         /**
          * 取得所有用戶偏好設定
          * @route GET /api/user-preferences
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/', 
             KongHeadersMiddleware.extractUserInfo,
@@ -70,49 +70,49 @@ export class UserPreferenceRoutes {
         /**
          * 根據 ID 取得用戶偏好設定
          * @route GET /api/user-preferences/:id
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/:id', this.getUserPreferenceById);
 
         /**
          * 根據用戶 ID 取得用戶偏好設定
          * @route GET /api/user-preferences/user/:userId
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/user/:userId', this.getUserPreferenceByUserId);
 
         /**
          * 根據主題查詢用戶偏好設定
          * @route GET /api/user-preferences/theme/:theme
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/theme/:theme', this.getUserPreferencesByTheme);
 
         /**
          * 分頁查詢用戶偏好設定
          * @route GET /api/user-preferences/paginated
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/paginated', this.getUserPreferencesWithPagination);
 
         /**
          * 搜尋用戶偏好設定
          * @route GET /api/user-preferences/search
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/search', this.searchUserPreferences);
 
         /**
          * 取得用戶偏好設定統計資料
          * @route GET /api/user-preferences/statistics
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/statistics', this.getUserPreferenceStatistics);
 
         /**
          * 檢查用戶偏好設定是否存在
          * @route GET /api/user-preferences/exists/:userId
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.get('/exists/:userId', this.checkUserPreferenceExists);
     }
@@ -128,56 +128,56 @@ export class UserPreferenceRoutes {
         /**
          * 創建新的用戶偏好設定
          * @route POST /api/user-preferences
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.post('/', this.createUserPreference);
 
         /**
          * 批量創建用戶偏好設定
          * @route POST /api/user-preferences/bulk
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.post('/bulk', this.bulkCreateUserPreferences);
 
         /**
          * 更新用戶偏好設定
          * @route PUT /api/user-preferences/:id
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.put('/:id', this.updateUserPreference);
 
         /**
          * 根據用戶 ID 更新用戶偏好設定
          * @route PUT /api/user-preferences/user/:userId
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.put('/user/:userId', this.updateUserPreferenceByUserId);
 
         /**
          * 刪除用戶偏好設定
          * @route DELETE /api/user-preferences/:id
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.delete('/:id', this.deleteUserPreference);
 
         /**
          * 根據用戶 ID 刪除用戶偏好設定
          * @route DELETE /api/user-preferences/user/:userId
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.delete('/user/:userId', this.deleteUserPreferenceByUserId);
 
         /**
          * Upsert 用戶偏好設定（如果存在則更新，否則創建）
          * @route POST /api/user-preferences/upsert/:userId
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.post('/upsert/:userId', this.upsertUserPreference);
 
         /**
          * 重設用戶偏好設定為預設值
          * @route POST /api/user-preferences/reset/:userId
-         * @access Controlled by Kong Gateway + OPA
+         * @access Controlled by Express.js Gateway
          */
         this.router.post('/reset/:userId', this.resetUserPreferenceToDefault);
     }

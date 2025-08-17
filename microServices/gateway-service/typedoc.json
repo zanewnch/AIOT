@@ -1,0 +1,78 @@
+{
+  "entryPoints": [
+    "./src/controllers",
+    "./src/middleware", 
+    "./src/routes",
+    "./src/utils",
+    "./src/configs",
+    "./src/services"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "./docs",
+  "theme": "hierarchy",
+  "plugin": ["typedoc-theme-hierarchy"],
+  "includeVersion": true,
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeInternal": false,
+  "visibilityFilters": {
+    "private": true,
+    "protected": true,
+    "inherited": true
+  },
+  "readme": "none",
+  "name": "AIOT Gateway Service API Documentation",
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Controllers",
+    "Middleware",
+    "Routes",
+    "Services",
+    "Utils",
+    "Config",
+    "*"
+  ],
+  "groupOrder": [
+    "Controllers",
+    "Middleware", 
+    "Routes",
+    "Services",
+    "Utils",
+    "Config",
+    "*"
+  ],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Method",
+    "Accessor"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "titleLink": "https://github.com/zanewnch/AIOT",
+  "navigationLinks": {
+    "GitHub": "https://github.com/zanewnch/AIOT",
+    "API Docs": "/api-docs"
+  },
+  "skipErrorChecking": true,
+  "exclude": [
+    "**/node_modules/**",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

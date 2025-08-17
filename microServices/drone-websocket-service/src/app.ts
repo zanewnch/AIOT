@@ -25,7 +25,7 @@ import { container } from './container/container.js';
 import { TYPES } from './container/types.js';
 import { RouteManager } from './routes/index.js';
 import { createLogger } from './configs/loggerConfig.js';
-// 移除 JWT 認證 - 使用 OPA 進行集中式權限管理
+// 移除 JWT 認證 - 使用 Express.js Gateway 進行集中式權限管理
 
 const logger = createLogger('App');
 

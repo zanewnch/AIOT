@@ -8,7 +8,7 @@
  * - 使用者角色關聯管理
  * - 角色權限關聯管理
  *
- * 認證和授權現在由 Kong Gateway + OPA 集中處理
+ * 認證和授權現在由 Express.js Gateway 集中處理
  *
  * @module Routes/RbacRoutes
  * @version 2.0.0
@@ -32,7 +32,7 @@ import { TYPES } from '../container/types.js';
 /**
  * RBAC 路由類別 - 集中式權限管理版本
  *
- * 所有認證和權限檢查現在由 Kong Gateway + OPA 處理
+ * 所有認證和權限檢查現在由 Express.js Gateway 處理
  */
 class RbacRoutes {
   private router: Router;
