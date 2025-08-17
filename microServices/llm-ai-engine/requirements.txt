@@ -18,6 +18,4 @@ openvino>=2025.0.0
 optimum[openvino]>=1.17.0
 
 # Intel NPU 支援 - 備用方案 IPEX-LLM
---pre
---upgrade
-ipex-llm[npu]
+# ipex-llm[npu] --pre --upgrade
