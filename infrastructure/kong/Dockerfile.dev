@@ -1,0 +1,33 @@
+# AIOT Kong Gateway - Development Dockerfile
+# ⚙️ 開發環境專用，支援 gRPC Gateway + HTTP + Admin API
+
+FROM kong:3.4 as development
+
+# 安裝系統依賴和除錯工具
+USER root
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    netcat \
+    dnsutils \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Kong 已內建 gRPC 支援，不需要額外插件
+
+# 創建必要目錄
+RUN mkdir -p /usr/local/kong/logs /usr/local/kong/ssl
+
+# 切換回 kong 用戶
+USER kong
+
+# 開發端口 (Proxy + Admin API + gRPC)
+EXPOSE 8000 8001 8443 8444
+
+# 健康檢查 - 檢查 Admin API
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8001/status || exit 1
+
+# 開發環境啟動命令
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["kong", "docker-start"]

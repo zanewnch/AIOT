@@ -1,0 +1,31 @@
+# AIOT Consul - Development Dockerfile
+# ⚙️ 開發環境專用，支援服務發現 + 健康檢查 + 配置管理
+
+FROM consul:1.16.1 as development
+
+# 安裝系統依賴和除錯工具
+USER root
+RUN apk add --no-cache \
+    curl \
+    wget \
+    netcat-openbsd \
+    bind-tools \
+    jq \
+    && rm -rf /var/cache/apk/*
+
+# 創建必要目錄
+RUN mkdir -p /consul/data /consul/config /consul/logs
+
+# 切換回 consul 用戶
+USER consul
+
+# 開發端口 (HTTP API + DNS + Serf LAN + Serf WAN + Server RPC)
+EXPOSE 8500 8600 8301 8302 8300
+
+# 健康檢查 - 檢查 Consul API
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8500/v1/status/leader || exit 1
+
+# 開發環境啟動命令 (single node cluster)
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["consul", "agent", "-dev", "-client=0.0.0.0", "-ui"]

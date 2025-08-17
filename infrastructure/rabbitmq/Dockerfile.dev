@@ -1,0 +1,39 @@
+# AIOT RabbitMQ - Development Dockerfile
+# ⚙️ 開發環境專用，支援消息佇列 + Management UI + 監控
+
+FROM rabbitmq:3.12-management-alpine as development
+
+# 安裝系統依賴和除錯工具
+USER root
+RUN apk add --no-cache \
+    curl \
+    wget \
+    netcat-openbsd \
+    bind-tools \
+    jq \
+    && rm -rf /var/cache/apk/*
+
+# 啟用 RabbitMQ 插件 (開發環境需要更多插件)
+RUN rabbitmq-plugins enable rabbitmq_management \
+    rabbitmq_prometheus \
+    rabbitmq_shovel \
+    rabbitmq_shovel_management \
+    rabbitmq_federation \
+    rabbitmq_federation_management
+
+# 創建必要目錄
+RUN mkdir -p /var/lib/rabbitmq/mnesia /var/log/rabbitmq
+
+# 切換回 rabbitmq 用戶
+USER rabbitmq
+
+# 開發端口 (AMQP + Management UI + Prometheus)
+EXPOSE 5672 15672 15692 25672 4369
+
+# 健康檢查 - 檢查 RabbitMQ 狀態
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD rabbitmq-diagnostics -q ping || exit 1
+
+# 開發環境啟動命令
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["rabbitmq-server"]

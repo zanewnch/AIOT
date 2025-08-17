@@ -59,7 +59,9 @@ services:
   
   # Consul 服務發現
   consul:
-    image: consul:1.15
+    build:
+      context: ../consul
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-consul
     ports:
@@ -82,7 +84,9 @@ services:
 
   # Kong API Gateway
   kong:
-    image: kong:3.4
+    build:
+      context: ../kong
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-kong
     ports:
@@ -148,7 +152,7 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+      test: ["CMD", "/opa", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -266,7 +270,9 @@ services:
 
   # 共享 MySQL 資料庫（用於跨服務共享数據）
   aiot-shared-mysql:
-    image: mysql:8.0
+    build:
+      context: ../database
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-shared-mysql
     ports:
@@ -329,7 +335,9 @@ services:
 
   # RabbitMQ 消息隊列
   aiot-rabbitmq:
-    image: rabbitmq:3-management-alpine
+    build:
+      context: ../rabbitmq
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-rabbitmq
     ports:

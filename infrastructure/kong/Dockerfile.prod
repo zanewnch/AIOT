@@ -1,0 +1,34 @@
+# AIOT Kong Gateway - Production Dockerfile
+# ⚙️ 生產環境專用，優化性能和安全性
+
+FROM kong:3.4 as production
+
+# 安裝最小必要依賴
+USER root
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Kong 已內建 gRPC 支援，不需要額外插件
+
+# 創建非 root 用戶 (安全最佳實踐)
+RUN groupadd -g 1001 konguser && useradd -r -u 1001 -g konguser konguser
+
+# 創建必要目錄並設定權限
+RUN mkdir -p /usr/local/kong/logs /usr/local/kong/ssl \
+    && chown -R konguser:konguser /usr/local/kong
+
+# 切換到非 root 用戶
+USER konguser
+
+# 生產端口 (Proxy + Admin API)
+EXPOSE 8000 8001 8443 8444
+
+# 健康檢查 - 生產環境簡化檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8001/status || exit 1
+
+# 生產環境啟動命令
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["kong", "docker-start"]

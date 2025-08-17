@@ -1,0 +1,36 @@
+# AIOT RabbitMQ - Production Dockerfile
+# ⚙️ 生產環境專用，優化性能和安全性
+
+FROM rabbitmq:3.12-management-alpine as production
+
+# 安裝最小必要依賴
+USER root
+RUN apk add --no-cache \
+    curl \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# 啟用生產必要的 RabbitMQ 插件
+RUN rabbitmq-plugins enable rabbitmq_management \
+    rabbitmq_prometheus
+
+# 創建非 root 用戶 (安全最佳實踐)
+RUN addgroup -g 1001 rmquser && adduser -D -u 1001 -G rmquser rmquser
+
+# 創建必要目錄並設定權限
+RUN mkdir -p /var/lib/rabbitmq/mnesia /var/log/rabbitmq \
+    && chown -R rmquser:rmquser /var/lib/rabbitmq /var/log/rabbitmq
+
+# 切換到非 root 用戶
+USER rmquser
+
+# 生產端口 (AMQP + Management UI + Prometheus)
+EXPOSE 5672 15672 15692 25672 4369
+
+# 健康檢查 - 生產環境簡化檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD rabbitmq-diagnostics -q ping || exit 1
+
+# 生產環境啟動命令
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["rabbitmq-server"]

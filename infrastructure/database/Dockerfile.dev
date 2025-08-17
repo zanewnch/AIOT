@@ -1,0 +1,36 @@
+# AIOT MySQL - Development Dockerfile
+# ⚙️ 開發環境專用，支援多資料庫 + 自動初始化 + 監控
+
+FROM mysql:8.0 as development
+
+# 安裝系統依賴和除錯工具
+USER root
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    netcat \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# 開發環境 MySQL 配置
+RUN echo '[mysqld]' > /etc/mysql/conf.d/dev.cnf \
+    && echo 'general_log = 1' >> /etc/mysql/conf.d/dev.cnf \
+    && echo 'general_log_file = /var/log/mysql/general.log' >> /etc/mysql/conf.d/dev.cnf \
+    && echo 'slow_query_log = 1' >> /etc/mysql/conf.d/dev.cnf \
+    && echo 'slow_query_log_file = /var/log/mysql/slow.log' >> /etc/mysql/conf.d/dev.cnf \
+    && echo 'long_query_time = 2' >> /etc/mysql/conf.d/dev.cnf \
+    && echo 'max_connections = 200' >> /etc/mysql/conf.d/dev.cnf
+
+# 創建日誌目錄
+RUN mkdir -p /var/log/mysql && chown mysql:mysql /var/log/mysql
+
+# 開發端口
+EXPOSE 3306
+
+# 健康檢查 - 檢查 MySQL 連線
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1
+
+# 開發環境啟動命令
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]

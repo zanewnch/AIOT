@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS drone_positions (
     altitude FLOAT NOT NULL COMMENT '高度（公尺）',
     speed FLOAT NULL COMMENT '速度（m/s）',
     heading FLOAT NULL COMMENT '航向（0-360度）',
+    battery_level FLOAT NOT NULL COMMENT '電池電量百分比',
     timestamp TIMESTAMP NOT NULL COMMENT '位置記錄時間',
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '建立時間',
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
@@ -127,7 +128,7 @@ CREATE TABLE IF NOT EXISTS drone_positions (
 CREATE TABLE IF NOT EXISTS drone_commands (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主鍵識別碼',
     drone_id BIGINT NOT NULL COMMENT '無人機ID（外鍵）',
-    command_type ENUM('takeoff', 'land', 'move', 'hover', 'return_home', 'emergency_stop') NOT NULL COMMENT '指令類型',
+    command_type ENUM('takeoff', 'land', 'hover', 'flyTo', 'return', 'moveForward', 'moveBackward', 'moveLeft', 'moveRight', 'rotateLeft', 'rotateRight', 'emergency') NOT NULL COMMENT '指令類型',
     command_data JSON NULL COMMENT '指令參數（JSON格式）',
     status ENUM('pending', 'executing', 'completed', 'failed', 'cancelled') NOT NULL DEFAULT 'pending' COMMENT '指令狀態',
     issued_by BIGINT NOT NULL COMMENT '指令發出者用戶ID',
@@ -178,23 +179,29 @@ CREATE TABLE IF NOT EXISTS drone_command_queue (
 -- 創建歸檔任務表 (archive_tasks)
 CREATE TABLE IF NOT EXISTS archive_tasks (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主鍵識別碼',
-    task_type ENUM('drone_positions', 'drone_commands', 'drone_status') NOT NULL COMMENT '歸檔任務類型',
-    source_table VARCHAR(100) NOT NULL COMMENT '來源表名',
-    target_table VARCHAR(100) NOT NULL COMMENT '目標表名',
-    archive_date DATE NOT NULL COMMENT '歸檔日期',
-    records_count INT NOT NULL DEFAULT 0 COMMENT '歸檔記錄數',
-    status ENUM('pending', 'processing', 'completed', 'failed') NOT NULL DEFAULT 'pending' COMMENT '任務狀態',
+    job_type ENUM('positions', 'commands', 'status') NOT NULL COMMENT '歸檔任務類型',
+    table_name VARCHAR(100) NOT NULL COMMENT '來源表名',
+    archive_table_name VARCHAR(100) NOT NULL COMMENT '目標歸檔表名',
+    date_range_start TIMESTAMP NOT NULL COMMENT '歸檔資料起始時間',
+    date_range_end TIMESTAMP NOT NULL COMMENT '歸檔資料結束時間',
+    batch_id VARCHAR(255) NOT NULL COMMENT '歸檔批次識別碼',
+    total_records INT NOT NULL DEFAULT 0 COMMENT '總歸檔記錄數',
+    archived_records INT NOT NULL DEFAULT 0 COMMENT '已歸檔記錄數',
+    status ENUM('pending', 'running', 'completed', 'failed') NOT NULL DEFAULT 'pending' COMMENT '任務狀態',
     started_at TIMESTAMP NULL COMMENT '開始時間',
     completed_at TIMESTAMP NULL COMMENT '完成時間',
     error_message TEXT NULL COMMENT '錯誤訊息',
+    created_by VARCHAR(100) NOT NULL COMMENT '創建者',
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '建立時間',
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
 
     PRIMARY KEY (id),
-    INDEX idx_task_type (task_type),
-    INDEX idx_archive_date (archive_date),
+    INDEX idx_job_type (job_type),
     INDEX idx_status (status),
-    INDEX idx_started_at (started_at)
+    INDEX idx_batch_id (batch_id),
+    INDEX idx_date_range_start (date_range_start),
+    INDEX idx_started_at (started_at),
+    INDEX idx_status_job_type (status, job_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='歸檔任務表';
 
 -- 創建歷史資料歸檔表
@@ -208,13 +215,19 @@ CREATE TABLE IF NOT EXISTS drone_positions_archive (
     altitude FLOAT NOT NULL COMMENT '高度（公尺）',
     speed FLOAT NULL COMMENT '速度（m/s）',
     heading FLOAT NULL COMMENT '航向（0-360度）',
+    battery_level FLOAT NOT NULL COMMENT '電池電量百分比',
+    temperature FLOAT NOT NULL COMMENT '環境溫度（攝氏度）',
     timestamp TIMESTAMP NOT NULL COMMENT '位置記錄時間',
     archived_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '歸檔時間',
+    archive_batch_id VARCHAR(255) NOT NULL COMMENT '歸檔批次識別碼',
+    created_at TIMESTAMP NOT NULL COMMENT '原始記錄建立時間',
 
     PRIMARY KEY (id),
     INDEX idx_drone_id (drone_id),
     INDEX idx_timestamp (timestamp),
-    INDEX idx_archived_at (archived_at)
+    INDEX idx_archived_at (archived_at),
+    INDEX idx_archive_batch_id (archive_batch_id),
+    INDEX idx_original_id (original_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='無人機位置歷史歸檔表';
 
 -- 無人機指令歷史表 (drone_commands_archive)
@@ -222,7 +235,7 @@ CREATE TABLE IF NOT EXISTS drone_commands_archive (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主鍵識別碼',
     original_id BIGINT NOT NULL COMMENT '原始記錄ID',
     drone_id BIGINT NOT NULL COMMENT '無人機ID',
-    command_type ENUM('takeoff', 'land', 'move', 'hover', 'return_home', 'emergency_stop') NOT NULL COMMENT '指令類型',
+    command_type ENUM('takeoff', 'land', 'hover', 'flyTo', 'return', 'moveForward', 'moveBackward', 'moveLeft', 'moveRight', 'rotateLeft', 'rotateRight', 'emergency') NOT NULL COMMENT '指令類型',
     command_data JSON NULL COMMENT '指令參數（JSON格式）',
     status ENUM('pending', 'executing', 'completed', 'failed', 'cancelled') NOT NULL COMMENT '指令狀態',
     issued_by BIGINT NOT NULL COMMENT '指令發出者用戶ID',
@@ -231,12 +244,17 @@ CREATE TABLE IF NOT EXISTS drone_commands_archive (
     completed_at TIMESTAMP NULL COMMENT '指令完成時間',
     error_message TEXT NULL COMMENT '錯誤訊息',
     archived_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '歸檔時間',
+    archive_batch_id VARCHAR(255) NOT NULL COMMENT '歸檔批次識別碼',
+    created_at TIMESTAMP NOT NULL COMMENT '原始記錄建立時間',
 
     PRIMARY KEY (id),
     INDEX idx_drone_id (drone_id),
     INDEX idx_command_type (command_type),
     INDEX idx_issued_at (issued_at),
-    INDEX idx_archived_at (archived_at)
+    INDEX idx_archived_at (archived_at),
+    INDEX idx_archive_batch_id (archive_batch_id),
+    INDEX idx_original_id (original_id),
+    INDEX idx_issued_by (issued_by)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='無人機指令歷史歸檔表';
 
 -- 無人機狀態歷史表 (drone_status_archive)
@@ -251,11 +269,15 @@ CREATE TABLE IF NOT EXISTS drone_status_archive (
     current_speed FLOAT NULL COMMENT '當前速度',
     is_connected BOOLEAN NOT NULL COMMENT '是否在線',
     archived_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '歸檔時間',
+    archive_batch_id VARCHAR(255) NOT NULL COMMENT '歸檔批次識別碼',
+    created_at TIMESTAMP NOT NULL COMMENT '原始記錄建立時間',
 
     PRIMARY KEY (id),
     INDEX idx_drone_id (drone_id),
     INDEX idx_last_seen (last_seen),
-    INDEX idx_archived_at (archived_at)
+    INDEX idx_archived_at (archived_at),
+    INDEX idx_archive_batch_id (archive_batch_id),
+    INDEX idx_original_id (original_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='無人機狀態歷史歸檔表';
 
 -- =====================================
@@ -291,18 +313,18 @@ VALUES
   (10, 0, 'offline', DATE_SUB(NOW(), INTERVAL 1 DAY), 0, 0, 0, 0, FALSE, 'Battery depleted', 20.0, 0, NOW(), NOW());
 
 -- 插入無人機位置測試數據（台北101周邊）
-INSERT IGNORE INTO drone_positions (drone_id, latitude, longitude, altitude, speed, heading, timestamp, createdAt, updatedAt)
+INSERT IGNORE INTO drone_positions (drone_id, latitude, longitude, altitude, speed, heading, battery_level, timestamp, createdAt, updatedAt)
 VALUES
-  (1, 25.0337, 121.5645, 100.0, 0, 0, NOW(), NOW(), NOW()),
-  (2, 25.0340, 121.5650, 100.0, 0, 45, NOW(), NOW(), NOW()),
-  (3, 25.0345, 121.5655, 100.0, 0, 90, NOW(), NOW(), NOW()),
-  (4, 25.0350, 121.5660, 100.0, 0, 180, DATE_SUB(NOW(), INTERVAL 5 MINUTE), NOW(), NOW()),
-  (5, 25.0355, 121.5665, 100.0, 0, 270, NOW(), NOW(), NOW()),
-  (6, 25.0360, 121.5670, 100.0, 0, 315, DATE_SUB(NOW(), INTERVAL 30 MINUTE), NOW(), NOW()),
-  (7, 25.0365, 121.5675, 100.0, 0, 0, NOW(), NOW(), NOW()),
-  (8, 25.0370, 121.5680, 150.0, 12.5, 135, NOW(), NOW(), NOW()),
-  (9, 25.0375, 121.5685, 100.0, 0, 0, DATE_SUB(NOW(), INTERVAL 2 HOUR), NOW(), NOW()),
-  (10, 25.0380, 121.5690, 100.0, 0, 0, DATE_SUB(NOW(), INTERVAL 1 DAY), NOW(), NOW());
+  (1, 25.0337, 121.5645, 100.0, 0, 0, 85.5, NOW(), NOW(), NOW()),
+  (2, 25.0340, 121.5650, 100.0, 0, 45, 92.3, NOW(), NOW(), NOW()),
+  (3, 25.0345, 121.5655, 100.0, 0, 90, 78.8, NOW(), NOW(), NOW()),
+  (4, 25.0350, 121.5660, 100.0, 0, 180, 45.2, DATE_SUB(NOW(), INTERVAL 5 MINUTE), NOW(), NOW()),
+  (5, 25.0355, 121.5665, 100.0, 0, 270, 90.1, NOW(), NOW(), NOW()),
+  (6, 25.0360, 121.5670, 100.0, 0, 315, 23.4, DATE_SUB(NOW(), INTERVAL 30 MINUTE), NOW(), NOW()),
+  (7, 25.0365, 121.5675, 100.0, 0, 0, 67.9, NOW(), NOW(), NOW()),
+  (8, 25.0370, 121.5680, 150.0, 12.5, 135, 88.7, NOW(), NOW(), NOW()),
+  (9, 25.0375, 121.5685, 100.0, 0, 0, 15.3, DATE_SUB(NOW(), INTERVAL 2 HOUR), NOW(), NOW()),
+  (10, 25.0380, 121.5690, 100.0, 0, 0, 56.8, DATE_SUB(NOW(), INTERVAL 1 DAY), NOW(), NOW());
 
 -- 插入無人機指令測試數據
 INSERT IGNORE INTO drone_commands (drone_id, command_type, command_data, status, issued_by, issued_at, executed_at, completed_at, error_message, createdAt, updatedAt)
