@@ -195,9 +195,8 @@ services:
     volumes:
       - mysql_rbac_data:/var/lib/mysql
       # RBAC 專用初始化腳本
-      - ../database/mysql/00_database_init.sql:/docker-entrypoint-initdb.d/00_database_init.sql:ro
-      - ../database/mysql/01_rbac_system_init.sql:/docker-entrypoint-initdb.d/01_rbac_system_init.sql:ro
-      - ../database/mysql/02_users_test_data.sql:/docker-entrypoint-initdb.d/02_users_test_data.sql:ro
+      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
+      - ../database/mysql/01_rbac_complete_init.sql:/docker-entrypoint-initdb.d/01_rbac_complete_init.sql:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -225,12 +224,8 @@ services:
     volumes:
       - mysql_drone_data:/var/lib/mysql
       # Drone 專用初始化腳本
-      - ../database/mysql/00_database_init.sql:/docker-entrypoint-initdb.d/00_database_init.sql:ro
-      - ../database/mysql/03_drone_flight_positions.sql:/docker-entrypoint-initdb.d/03_drone_flight_positions.sql:ro
-      - ../database/mysql/04_drone_basic_info.sql:/docker-entrypoint-initdb.d/04_drone_basic_info.sql:ro
-      - ../database/mysql/05_drone_realtime_status_table.sql:/docker-entrypoint-initdb.d/05_drone_realtime_status_table.sql:ro
-      - ../database/mysql/06_drone_commands_test_data.sql:/docker-entrypoint-initdb.d/06_drone_commands_test_data.sql:ro
-      - ../database/mysql/07_command_queues_test_data.sql:/docker-entrypoint-initdb.d/07_command_queues_test_data.sql:ro
+      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
+      - ../database/mysql/02_drone_complete_init.sql:/docker-entrypoint-initdb.d/02_drone_complete_init.sql:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -258,8 +253,8 @@ services:
     volumes:
       - mysql_general_data:/var/lib/mysql
       # General 專用初始化腳本
-      - ../database/mysql/00_database_init.sql:/docker-entrypoint-initdb.d/00_database_init.sql:ro
-      - ../database/mysql/08_user_preferences_init.sql:/docker-entrypoint-initdb.d/08_user_preferences_init.sql:ro
+      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
+      - ../database/mysql/03_user_preferences_init.sql:/docker-entrypoint-initdb.d/03_user_preferences_init.sql:ro
     networks:
       - aiot-network
     restart: unless-stopped
@@ -287,7 +282,7 @@ services:
     volumes:
       - mysql_shared_data:/var/lib/mysql
       # 基礎初始化腳本
-      - ../database/mysql/00_database_init.sql:/docker-entrypoint-initdb.d/00_database_init.sql:ro
+      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
     networks:
       - aiot-network
     restart: unless-stopped

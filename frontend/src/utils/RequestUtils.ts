@@ -87,8 +87,8 @@ export class RequestUtils {
     // 設定響應攔截器，用於統一處理響應數據和錯誤
     this.apiClient.interceptors.response.use(
       (response) => {
-        // 成功響應時，直接返回響應數據，過濾掉 axios 的包裝
-        return response.data;
+        // 保持完整的響應結構，讓各方法自己決定取什麼
+        return response;
       },
       (error) => {
         // 檢查是否為 401 未授權錯誤
@@ -124,7 +124,8 @@ export class RequestUtils {
    */
   async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 GET 請求
-    return this.apiClient.get(url, config);
+    const response = await this.apiClient.get(url, config);
+    return response.data;
   }
 
   /**
@@ -143,7 +144,8 @@ export class RequestUtils {
    */
   async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 POST 請求
-    return this.apiClient.post(url, data, config);
+    const response = await this.apiClient.post(url, data, config);
+    return response.data;
   }
 
   /**
@@ -162,7 +164,8 @@ export class RequestUtils {
    */
   async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 PUT 請求
-    return this.apiClient.put(url, data, config);
+    const response = await this.apiClient.put(url, data, config);
+    return response.data;
   }
 
   /**
@@ -180,7 +183,8 @@ export class RequestUtils {
    */
   async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 DELETE 請求
-    return this.apiClient.delete(url, config);
+    const response = await this.apiClient.delete(url, config);
+    return response.data;
   }
 
   /**
@@ -199,7 +203,8 @@ export class RequestUtils {
    */
   async patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 PATCH 請求
-    return this.apiClient.patch(url, data, config);
+    const response = await this.apiClient.patch(url, data, config);
+    return response.data;
   }
 
   /**
