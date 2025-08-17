@@ -3,6 +3,7 @@
 ## 🏗️ Kong + Consul 微服務架構
 
 ### 🎯 架構設計原則
+
 - **微服務模式**: 每個服務獨立部署、獨立資料庫、獨立擴展
 - **CQRS模式**: Command/Query Responsibility Segregation (讀寫分離)
 - **分層架構**: Controller → Service → Repository 三層架構
@@ -10,6 +11,7 @@
 - **服務發現**: Consul 自動服務註冊與發現
 
 ### 📁 目錄結構
+
 ```
 AIOT/
 ├── microServices/                   # 微服務目錄 (現有結構)
@@ -113,7 +115,7 @@ AIOT/
 │   │   │   │   ├── rbac-specific.ts    # RBAC 服務特定中間件
 │   │   │   │   └── permission-check.ts # 權限檢查中間件
 │   │   │   ├── utils/
-│   │   │   │   ├── ControllerResult.ts
+│   │   │   │   ├── ResResult.ts
 │   │   │   │   ├── ServiceResult.ts
 │   │   │   │   └── constants.ts
 │   │   │   └── types/              # 服務特定類型定義
@@ -305,7 +307,7 @@ AIOT/
 │   │   │   │   ├── drone-auth.ts        # 無人機特定認證中間件
 │   │   │   │   └── command-validation.ts # 命令驗證中間件
 │   │   │   ├── utils/
-│   │   │   │   ├── ControllerResult.ts
+│   │   │   │   ├── ResResult.ts
 │   │   │   │   ├── ServiceResult.ts
 │   │   │   │   └── constants.ts
 │   │   │   └── types/              # 服務特定類型定義
@@ -406,7 +408,7 @@ AIOT/
 │       │   ├── middleware/
 │       │   │   └── user-preference-validation.ts # 用戶偏好驗證中間件
 │       │   ├── utils/
-│       │   │   ├── ControllerResult.ts
+│       │   │   ├── ResResult.ts
 │       │   │   ├── ServiceResult.ts
 │       │   │   └── constants.ts
 │       │   └── types/              # 服務特定類型定義
@@ -580,54 +582,61 @@ AIOT/
 ## 🌐 架構組件說明
 
 ### 1. Kong API Gateway
+
 - **作用**: 統一入口、路由轉發、認證、限流、日誌
 - **Port**: 8000 (HTTP), 8443 (HTTPS), 8001 (Admin API)
 - **功能**:
-  - 動態路由到微服務
-  - JWT 認證整合
-  - 請求/回應轉換
-  - 限流和安全防護
+    - 動態路由到微服務
+    - JWT 認證整合
+    - 請求/回應轉換
+    - 限流和安全防護
 
 ### 2. Consul Service Discovery
+
 - **作用**: 服務註冊與發現、健康檢查、配置管理
 - **Port**: 8500 (HTTP UI), 8600 (DNS)
 - **功能**:
-  - 自動服務註冊
-  - 健康狀態監控
-  - 服務間通訊發現
-  - 配置中心
+    - 自動服務註冊
+    - 健康狀態監控
+    - 服務間通訊發現
+    - 配置中心
 
 ### 3. 微服務列表
 
-| 服務名稱 | 端口 | 功能描述 | 資料庫 | 通訊協議 |
-|---------|------|----------|--------|----------|
-| rbac-service | 3001 | 角色權限管理、用戶管理 | rbac_db | HTTP + gRPC |
-| drone-service | 3002 | 無人機管理、命令、歷史、WebSocket | drone_db | HTTP + gRPC + WebSocket |
-| user-preference-service | 3003 | 用戶偏好設定 | preference_db | HTTP + gRPC |
+| 服務名稱                    | 端口   | 功能描述                  | 資料庫           | 通訊協議                    |
+|-------------------------|------|-----------------------|---------------|-------------------------|
+| rbac-service            | 3001 | 角色權限管理、用戶管理           | rbac_db       | HTTP + gRPC             |
+| drone-service           | 3002 | 無人機管理、命令、歷史、WebSocket | drone_db      | HTTP + gRPC + WebSocket |
+| user-preference-service | 3003 | 用戶偏好設定                | preference_db | HTTP + gRPC             |
 
 ## 🔄 服務間通訊
 
 ### 對外 API (客戶端調用)
+
 ```
 Client → Kong Gateway → Consul (服務發現) → 微服務 (HTTP REST)
 ```
 
 ### WebSocket 連線
+
 ```
 Client → Kong Gateway (WebSocket支援) → drone-service (Socket.IO)
 ```
 
 ### 服務間通訊 (高效能)
+
 ```
 微服務A → Consul (服務發現) → 微服務B (gRPC)
 ```
 
 ### 異步通訊
+
 ```
 微服務 → RabbitMQ → 其他微服務 (事件驅動)
 ```
 
 ### 跨服務事務 (編排式 Saga)
+
 ```
 業務服務 → Saga Orchestrator → 依序協調多個微服務
                               ↓
@@ -637,24 +646,28 @@ Client → Kong Gateway (WebSocket支援) → drone-service (Socket.IO)
 ## 🚀 部署流程
 
 ### 1. 啟動基礎設施
+
 ```bash
 # 啟動 Consul + Kong + 資料庫
 docker-compose up consul kong postgres redis rabbitmq -d
 ```
 
 ### 2. 啟動微服務
+
 ```bash
 # 啟動所有微服務 (自動註冊到 Consul)
 docker-compose up rbac-service drone-service user-preference-service -d
 ```
 
 ### 3. Kong 路由自動配置
+
 ```bash
 # Kong 透過 Consul 自動發現服務並配置路由
 # 支援自動健康檢查和故障轉移
 ```
 
 ### 4. 擴展服務 (Kubernetes 就緒)
+
 ```bash
 # 水平擴展無人機服務
 kubectl scale deployment drone-service --replicas=3
@@ -663,11 +676,13 @@ kubectl scale deployment drone-service --replicas=3
 ## 🛡️ 安全考量
 
 ### 1. 服務間認證
+
 - 使用 mTLS (Mutual TLS)
 - JWT Token 傳遞
 - API Key 驗證
 
 ### 2. Kong 安全插件
+
 - Rate Limiting
 - CORS
 - IP Restriction
@@ -676,16 +691,19 @@ kubectl scale deployment drone-service --replicas=3
 ## 📊 監控與日誌
 
 ### 1. 健康檢查
+
 - Consul Health Checks
 - Kong Upstream Health
 - 自定義健康端點
 
 ### 2. 日誌聚合
+
 - Kong Access Logs
 - 微服務應用日誌
 - Consul 操作日誌
 
 ### 3. 指標收集
+
 - Kong Prometheus Plugin
 - 服務級別指標
 - 基礎設施指標
@@ -693,6 +711,7 @@ kubectl scale deployment drone-service --replicas=3
 ## 🔧 開發與測試
 
 ### 1. 本地開發
+
 ```bash
 # 啟動單一服務進行開發
 cd services/auth-service
@@ -700,12 +719,14 @@ npm run dev
 ```
 
 ### 2. 整合測試
+
 ```bash
 # 啟動完整環境
 docker-compose -f docker-compose.dev.yml up
 ```
 
 ### 3. 服務測試
+
 - 單元測試: 各服務獨立測試
 - 整合測試: 通過 Kong Gateway 測試
 - gRPC 測試: 服務間通訊測試
@@ -714,6 +735,7 @@ docker-compose -f docker-compose.dev.yml up
 ## 🎯 技術棧總結
 
 ### 微服務核心
+
 - **API Gateway**: Kong
 - **服務發現**: Consul
 - **容器化**: Docker + Docker Compose
@@ -721,23 +743,27 @@ docker-compose -f docker-compose.dev.yml up
 - **套件管理**: Lerna Monorepo + 7個npm packages
 
 ### 通訊協議
+
 - **對外API**: HTTP REST
 - **服務間**: gRPC (高效能)
 - **即時通訊**: WebSocket (Socket.IO)
 - **異步**: RabbitMQ
 
 ### 資料存儲
+
 - **主資料庫**: MySQL 8.0 (每服務獨立)
 - **快取**: Redis
 - **分散式事務**: 編排式 Saga Pattern
 
 ### 認證授權
+
 - **認證庫**: 共用 @aiot/auth 套件
 - **中間件**: 共用 @aiot/middleware 套件
 - **協議**: JWT + mTLS
 - **授權**: RBAC (角色權限控制)
 
 ### 監控運維
+
 - **健康檢查**: Consul + Kong
 - **日誌**: 統一日誌收集
 - **指標**: Prometheus + Grafana
@@ -748,19 +774,19 @@ docker-compose -f docker-compose.dev.yml up
 ### 為何使用 Git Submodule?
 
 1. **獨立版本控制**：
-   - `aiot-shared-packages` 有自己的 Git 倉庫和版本歷史
-   - 微服務項目可以鎖定特定版本的共享套件
-   - 便於套件的獨立開發和測試
+    - `aiot-shared-packages` 有自己的 Git 倉庫和版本歷史
+    - 微服務項目可以鎖定特定版本的共享套件
+    - 便於套件的獨立開發和測試
 
 2. **跨項目共享**：
-   - 多個 AIOT 相關項目可以共用同一套件庫
-   - 套件更新可以選擇性地同步到各個項目
-   - 避免代碼重複，確保一致性
+    - 多個 AIOT 相關項目可以共用同一套件庫
+    - 套件更新可以選擇性地同步到各個項目
+    - 避免代碼重複，確保一致性
 
 3. **依賴管理簡化**：
-   - 直接使用 Git URL 作為 npm 依賴
-   - 無需發布到 npm registry
-   - 適合私有項目和快速開發
+    - 直接使用 Git URL 作為 npm 依賴
+    - 無需發布到 npm registry
+    - 適合私有項目和快速開發
 
 ### Git Submodule 使用方法
 
@@ -788,34 +814,46 @@ git clone --recurse-submodules https://github.com/your-org/AIOT.git
 ```typescript
 // rbac-service/package.json
 {
-  "dependencies": {
-    "aiot-shared-packages": "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
-  }
+    "dependencies"
+:
+    {
+        "aiot-shared-packages"
+    :
+        "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
+    }
 }
 
 // 在代碼中使用
-import { AuthMiddleware, ControllerResult } from 'aiot-shared-packages';
-import { UserType, ApiResponseType } from 'aiot-shared-packages/types';
+import {AuthMiddleware, ResResult} from 'aiot-shared-packages';
+import {UserType, ApiResponseType} from 'aiot-shared-packages/types';
 
 // drone-service/package.json  
 {
-  "dependencies": {
-    "aiot-shared-packages": "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
-  }
+    "dependencies"
+:
+    {
+        "aiot-shared-packages"
+    :
+        "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
+    }
 }
 
 // 在代碼中使用
-import { 
-  WebSocketAuthMiddleware, 
-  ErrorHandleMiddleware,
-  ServiceResult 
+import {
+    WebSocketAuthMiddleware,
+    ErrorHandleMiddleware,
+    ServiceResult
 } from 'aiot-shared-packages';
 
 // user-preference-service/package.json
 {
-  "dependencies": {
-    "aiot-shared-packages": "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
-  }
+    "dependencies"
+:
+    {
+        "aiot-shared-packages"
+    :
+        "git+https://github.com/your-org/aiot-shared-packages.git#v1.0.0"
+    }
 }
 ```
 
@@ -840,13 +878,13 @@ git commit -m "update shared packages to v1.0.1"
 ### 為何選擇編排式 Saga？
 
 1. **邏輯集中，易於管理**：
-   - 中央協調者（Orchestrator）集中處理所有業務邏輯
-   - 開發者容易追蹤流程、除錯和管理狀態
-   - 特別適合複雜業務流程和多微服務協調
+    - 中央協調者（Orchestrator）集中處理所有業務邏輯
+    - 開發者容易追蹤流程、除錯和管理狀態
+    - 特別適合複雜業務流程和多微服務協調
 
 2. **無人機業務場景適用**：
-   - 無人機任務執行涉及：用戶認證 → 命令驗證 → 執行 → 狀態更新 → 歷史歸檔
-   - 任何步驟失敗都需要回滾到一致狀態
+    - 無人機任務執行涉及：用戶認證 → 命令驗證 → 執行 → 狀態更新 → 歷史歸檔
+    - 任何步驟失敗都需要回滾到一致狀態
 
 ### Saga 實作架構
 

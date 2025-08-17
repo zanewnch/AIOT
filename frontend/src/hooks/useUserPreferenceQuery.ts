@@ -10,7 +10,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import {
   UserPreferences,
   CreateUserPreferencesRequest,
@@ -47,7 +47,7 @@ export class UserPreferenceQuery {
       queryFn: async (): Promise<UserPreferences> => {
         try {
           const response = await apiClient.get('/user/preferences');
-          const result = RequestResult.fromResponse<UserPreferences>(response);
+          const result = ReqResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -81,7 +81,7 @@ export class UserPreferenceQuery {
       mutationFn: async (data: CreateUserPreferencesRequest): Promise<UserPreferences> => {
         try {
           const response = await apiClient.post('/user/preferences', data);
-          const result = RequestResult.fromResponse<UserPreferences>(response);
+          const result = ReqResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -119,7 +119,7 @@ export class UserPreferenceQuery {
       mutationFn: async (data: UpdateUserPreferencesRequest): Promise<UserPreferences> => {
         try {
           const response = await apiClient.put('/user/preferences', data);
-          const result = RequestResult.fromResponse<UserPreferences>(response);
+          const result = ReqResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
             throw new Error(result.message);

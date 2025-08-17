@@ -12,7 +12,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   ChatMessage,

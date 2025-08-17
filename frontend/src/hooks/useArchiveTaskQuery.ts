@@ -10,7 +10,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import {
   ArchiveTask,
   ArchiveTaskStatistics,
@@ -97,7 +97,7 @@ export class ArchiveTaskQuery {
           const url = queryString ? `/archive-tasks?${queryString}` : '/archive-tasks';
           
           const response = await apiClient.get(url);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -135,7 +135,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
           const response = await apiClient.get('/archive-tasks/data');
-          const result = RequestResult.fromResponse<ArchiveTask[]>(response);
+          const result = ReqResult.fromResponse<ArchiveTask[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -168,7 +168,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask> => {
         try {
           const response = await apiClient.get(`/api/archive-tasks/${id}`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -206,7 +206,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
           const response = await apiClient.get(`/api/archive-tasks?status=${status}`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -244,7 +244,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
           const response = await apiClient.get(`/api/archive-tasks?jobType=${type}`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -282,7 +282,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
           const response = await apiClient.get(`/api/archive-tasks?batchId=${encodeURIComponent(batchId)}`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -320,7 +320,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTaskStatistics> => {
         try {
           const response = await apiClient.get('/archive-tasks/statistics');
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTaskStatistics>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTaskStatistics>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -360,7 +360,7 @@ export class ArchiveTaskQuery {
       mutationFn: async (data: CreateArchiveTaskRequest): Promise<ArchiveTask> => {
         try {
           const response = await apiClient.post('/archive-tasks', data);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -410,7 +410,7 @@ export class ArchiveTaskQuery {
       mutationFn: async (data: CreateArchiveTaskRequest[]): Promise<BatchArchiveResult> => {
         try {
           const response = await apiClient.post('/archive-tasks/batch', data);
-          const result = RequestResult.fromResponse<ApiResponse<BatchArchiveResult>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<BatchArchiveResult>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -463,7 +463,7 @@ export class ArchiveTaskQuery {
       mutationFn: async (taskId: number): Promise<ArchiveTaskExecutionResult> => {
         try {
           const response = await apiClient.post(`/api/archive-tasks/${taskId}/execute`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTaskExecutionResult>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTaskExecutionResult>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -510,7 +510,7 @@ export class ArchiveTaskQuery {
       mutationFn: async ({ taskId, reason }: { taskId: number; reason: string }): Promise<ArchiveTask> => {
         try {
           const response = await apiClient.post(`/api/archive-tasks/${taskId}/cancel`, { reason });
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -557,7 +557,7 @@ export class ArchiveTaskQuery {
       mutationFn: async (taskId: number): Promise<ArchiveTaskExecutionResult> => {
         try {
           const response = await apiClient.post(`/api/archive-tasks/${taskId}/retry`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTaskExecutionResult>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTaskExecutionResult>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -610,7 +610,7 @@ export class ArchiveTaskQuery {
           }
           
           const response = await apiClient.delete(`/api/archive-tasks/cleanup?${params.toString()}`);
-          const result = RequestResult.fromResponse<ApiResponse<{ cleanedCount: number }>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<{ cleanedCount: number }>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -650,7 +650,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
           const response = await apiClient.get(`/api/archive-tasks?status=${ArchiveTaskStatus.RUNNING}`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -689,7 +689,7 @@ export class ArchiveTaskQuery {
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
           const response = await apiClient.get(`/api/archive-tasks?sortBy=createdAt&sortOrder=DESC&limit=${limit}`);
-          const result = RequestResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
+          const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
             throw new Error(result.message);

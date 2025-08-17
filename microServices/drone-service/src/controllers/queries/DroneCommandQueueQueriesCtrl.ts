@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機指令佇列查詢控制器
- * 
+ *
  * 此文件實作了無人機指令佇列查詢控制器，
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
- * 
+ *
  * @module DroneCommandQueueQueries
  * @author AIOT Team
  * @since 1.0.0
@@ -12,23 +12,22 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneCommandQueueQueriesSvc } from '../../services/queries/DroneCommandQueueQueriesSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
-import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneCommandQueueQueriesSvc} from '../../services/queries/DroneCommandQueueQueriesSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
 
 const logger = createLogger('DroneCommandQueueQueries');
 
 /**
  * 無人機指令佇列查詢控制器類別
- * 
+ *
  * 專門處理無人機指令佇列相關的查詢請求，包含取得佇列資料等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
- * 
+ *
  * @class DroneCommandQueueQueries
  * @since 1.0.0
  */
@@ -36,7 +35,8 @@ const logger = createLogger('DroneCommandQueueQueries');
 export class DroneCommandQueueQueries {
     constructor(
         @inject(TYPES.DroneCommandQueueQueriesSvc) private readonly queryService: DroneCommandQueueQueriesSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 取得所有無人機指令佇列資料

@@ -12,49 +12,17 @@
  */
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
-import { apiClient } from '../../../utils/RequestUtils';
-import { RequestResult } from '../../../utils/RequestResult';
+import { useGetAllCommandsArchive, type DroneCommandArchive } from '../../../hooks/useDroneCommandArchiveQuery';
 import styles from '../../../styles/TableViewer.module.scss';
 
 const logger = createLogger('DroneCommandsArchiveTableView');
 
-/**
- * 無人機指令歷史歸檔介面定義
- */
-interface DroneCommandsArchive {
-  id: number;
-  original_id: number;
-  drone_id: number;
-  command_type: string;
-  command_data: object | null;
-  status: string;
-  issued_by: number;
-  issued_at: string;
-  executed_at: string | null;
-  completed_at: string | null;
-  error_message: string | null;
-  archived_at: string;
-  archive_batch_id: string;
-  created_at: string;
-}
+// 使用導入的 DroneCommandArchive 類型，移除本地重複定義
 
-/**
- * API 函數：獲取無人機指令歷史歸檔數據
- */
-const fetchDroneCommandsArchive = async (): Promise<DroneCommandsArchive[]> => {
-  const response = await apiClient.get('/drone-commands-archive/data');
-  const result = RequestResult.fromResponse<DroneCommandsArchive[]>(response);
-  
-  if (result.isError()) {
-    throw new Error(result.message);
-  }
-  
-  return result.unwrap();
-};
+// 移除自定義 fetch 函數，使用現有的 React Query hook
 
 /**
  * 無人機指令歷史歸檔表格視圖組件
@@ -63,14 +31,11 @@ const fetchDroneCommandsArchive = async (): Promise<DroneCommandsArchive[]> => {
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  */
 export const DroneCommandsArchiveTableView: React.FC = () => {
-  // React Query hooks for data
-  const { data: droneCommandsArchiveData, isLoading, error, refetch } = useQuery({
-    queryKey: ['droneCommandsArchive'],
-    queryFn: fetchDroneCommandsArchive,
-    staleTime: 60 * 1000, // 1分鐘內不會重新獲取（歸檔數據變化較少）
-    gcTime: 10 * 60 * 1000, // 10分鐘後清除緩存
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  // 使用現有的 React Query hook
+  const { data: droneCommandsArchiveData, isLoading, error, refetch } = useGetAllCommandsArchive({
+    limit: 100, // 分頁參數：限制數量
+    sortBy: 'issued_at', // 排序欄位  
+    sortOrder: 'DESC' // 排序方向
   });
   
   // Zustand stores for UI state
@@ -92,8 +57,8 @@ export const DroneCommandsArchiveTableView: React.FC = () => {
     
     const sorted = [...droneCommandsArchiveData];
     sorted.sort((a, b) => {
-      const aValue = a[sorting.field as keyof DroneCommandsArchive];
-      const bValue = b[sorting.field as keyof DroneCommandsArchive];
+      const aValue = a[sorting.field as keyof DroneCommandArchive];
+      const bValue = b[sorting.field as keyof DroneCommandArchive];
       
       if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
       if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
@@ -230,11 +195,11 @@ export const DroneCommandsArchiveTableView: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((item: DroneCommandsArchive, index: number) => (
+          {sortedData.map((item: DroneCommandArchive, index: number) => (
             <tr key={item.id || index} className={styles.tableRow}>
               {columns.map((column) => (
                 <td key={column} className={styles.tableCell}>
-                  {formatValue(item[column as keyof DroneCommandsArchive], column)}
+                  {formatValue(item[column as keyof DroneCommandArchive], column)}
                 </td>
               ))}
             </tr>

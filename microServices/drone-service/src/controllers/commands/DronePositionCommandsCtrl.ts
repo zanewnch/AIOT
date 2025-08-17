@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機位置命令控制器
- * 
+ *
  * 此文件實作了無人機位置命令控制器，
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
- * 
+ *
  * @module DronePositionCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -12,32 +12,28 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DronePositionCommandsSvc } from '../../services/commands/DronePositionCommandsSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
-import type { DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DronePositionCommandsSvc} from '../../services/commands/DronePositionCommandsSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
+import type {DronePositionCreationAttributes} from '../../models/DronePositionModel.js';
 
 const logger = createLogger('DronePositionCommands');
 
 /**
  * 無人機位置命令控制器類別
- * 
+ *
  * 專門處理無人機位置相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class DronePositionCommands
  * @since 1.0.0
  */
 @injectable()
 export class DronePositionCommands {
-    constructor(
-        @inject(TYPES.DronePositionCommandsSvc) private readonly dronePositionCommandsSvc: DronePositionCommandsSvc
-    ) {}
-
     /**
      * 創建新的無人機位置資料
      * @route POST /api/drone-position/data
@@ -71,7 +67,6 @@ export class DronePositionCommands {
             next(error);
         }
     }, 'createDronePosition')
-
     /**
      * 更新指定無人機位置資料
      * @route PUT /api/drone-position/data/:id
@@ -122,7 +117,6 @@ export class DronePositionCommands {
             next(error);
         }
     }, 'updateDronePosition')
-
     /**
      * 刪除指定無人機位置資料
      * @route DELETE /api/drone-position/data/:id
@@ -148,7 +142,6 @@ export class DronePositionCommands {
             next(error);
         }
     }, 'deleteDronePosition')
-
     /**
      * 批量創建無人機位置資料
      * @route POST /api/drone-position/data/batch
@@ -188,4 +181,9 @@ export class DronePositionCommands {
             next(error);
         }
     }, 'createDronePositionsBatch')
+
+    constructor(
+        @inject(TYPES.DronePositionCommandsSvc) private readonly dronePositionCommandsSvc: DronePositionCommandsSvc
+    ) {
+    }
 }

@@ -30,6 +30,7 @@ export default defineConfig({
     // 提高 chunk 大小警告閾值
     chunkSizeWarningLimit: 600,
     rollupOptions: {
+      external: ['socket.io-client'],
       output: {
         // 手動 chunk 分割
         manualChunks: {
@@ -68,7 +69,7 @@ export default defineConfig({
     exclude: [],
   },
   optimizeDeps: {
-    include: ["react", "react-dom"],
+    include: ["react", "react-dom", "socket.io-client"],
     esbuildOptions: {
       loader: {
         ".js": "jsx",

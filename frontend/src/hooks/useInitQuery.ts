@@ -19,7 +19,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import type { InitResponse, StressTestResponse, InitAllDemoResponse } from '../types/init';
 import type { TableError } from '../types/table';
 import { createLogger } from '../configs/loggerConfig';
@@ -55,7 +55,7 @@ export class InitQuery {
       mutationFn: async (): Promise<InitResponse> => {
         try {
           const response = await apiClient.post('/init/rbac-demo');
-          const result = RequestResult.fromResponse<InitResponse>(response);
+          const result = ReqResult.fromResponse<InitResponse>(response);
           
           if (result.isSuccess() && result.data) {
             logger.info('RBAC 示例資料初始化成功');
@@ -100,7 +100,7 @@ export class InitQuery {
       mutationFn: async (): Promise<InitResponse> => {
         try {
           const response = await apiClient.post('/init/rtk-demo');
-          const result = RequestResult.fromResponse<InitResponse>(response);
+          const result = ReqResult.fromResponse<InitResponse>(response);
           
           if (result.isSuccess() && result.data) {
             logger.info('RTK 示例資料初始化成功');
@@ -145,7 +145,7 @@ export class InitQuery {
       mutationFn: async (): Promise<InitResponse> => {
         try {
           const response = await apiClient.post('/init/admin-user');
-          const result = RequestResult.fromResponse<InitResponse>(response);
+          const result = ReqResult.fromResponse<InitResponse>(response);
           
           if (result.isSuccess() && result.data) {
             logger.info('管理員帳號創建成功');
@@ -187,7 +187,7 @@ export class InitQuery {
       mutationFn: async (): Promise<StressTestResponse> => {
         try {
           const response = await apiClient.post('/init/stress-test-data');
-          const result = RequestResult.fromResponse<StressTestResponse>(response);
+          const result = ReqResult.fromResponse<StressTestResponse>(response);
           
           if (result.isSuccess() && result.data) {
             logger.info('壓力測試資料創建成功');
@@ -234,7 +234,7 @@ export class InitQuery {
           // Helper function for RBAC initialization
           const initRbacDemo = async (): Promise<InitResponse> => {
             const response = await apiClient.post('/init/rbac-demo');
-            const result = RequestResult.fromResponse<InitResponse>(response);
+            const result = ReqResult.fromResponse<InitResponse>(response);
             
             if (result.isSuccess() && result.data) {
               logger.info('RBAC 示例資料初始化成功');
@@ -247,7 +247,7 @@ export class InitQuery {
           // Helper function for RTK initialization
           const initRtkDemo = async (): Promise<InitResponse> => {
             const response = await apiClient.post('/init/rtk-demo');
-            const result = RequestResult.fromResponse<InitResponse>(response);
+            const result = ReqResult.fromResponse<InitResponse>(response);
             
             if (result.isSuccess() && result.data) {
               logger.info('RTK 示例資料初始化成功');

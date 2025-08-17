@@ -1,6 +1,6 @@
 /**
  * @fileoverview 使用者命令控制器單元測試
- * 
+ *
  * 測試 UserCommands 類別的所有功能，包含：
  * - 使用者創建測試
  * - 使用者更新測試
@@ -8,27 +8,27 @@
  * - 使用者狀態管理測試
  * - 輸入驗證測試
  * - 錯誤處理測試
- * 
+ *
  * @author AIOT Team
  * @since 1.0.0
  */
 
-import { Request, Response } from 'express';
-import { UserCommands } from '../../../src/controllers/commands/UserCommandsCtrl.js';
-import { UserCommandsSvc } from '../../../src/services/commands/UserCommandsSvc.js';
-import { ControllerResult } from '../../../src/utils/ControllerResult.js';
+import {Request, Response} from 'express';
+import {UserCommands} from '../../../src/controllers/commands/UserCommandsCtrl.js';
+import {UserCommandsSvc} from '../../../src/services/commands/UserCommandsSvc.js';
+import {ResResult} from '../../../src/utils/ResResult.js';
 
-// Mock ControllerResult
-jest.mock('../../../src/utils/ControllerResult.js', () => ({
+// Mock ResResult
+jest.mock('../../../src/utils/ResResult.js', () => ({
     ControllerResult: {
-        badRequest: jest.fn((message: string, data?: any) => ({ status: 400, message, data })),
-        created: jest.fn((message: string, data?: any) => ({ status: 201, message, data })),
-        success: jest.fn((message: string, data?: any) => ({ status: 200, message, data })),
-        notFound: jest.fn((message: string, data?: any) => ({ status: 404, message, data })),
-        conflict: jest.fn((message: string, data?: any) => ({ status: 409, message, data })),
-        unauthorized: jest.fn((message: string, data?: any) => ({ status: 401, message, data })),
-        forbidden: jest.fn((message: string, data?: any) => ({ status: 403, message, data })),
-        internalServerError: jest.fn((message: string, data?: any) => ({ status: 500, message, data })),
+        badRequest: jest.fn((message: string, data?: any) => ({status: 400, message, data})),
+        created: jest.fn((message: string, data?: any) => ({status: 201, message, data})),
+        success: jest.fn((message: string, data?: any) => ({status: 200, message, data})),
+        notFound: jest.fn((message: string, data?: any) => ({status: 404, message, data})),
+        conflict: jest.fn((message: string, data?: any) => ({status: 409, message, data})),
+        unauthorized: jest.fn((message: string, data?: any) => ({status: 401, message, data})),
+        forbidden: jest.fn((message: string, data?: any) => ({status: 403, message, data})),
+        internalServerError: jest.fn((message: string, data?: any) => ({status: 500, message, data})),
     }
 }));
 
@@ -72,7 +72,7 @@ describe('UserCommands', () => {
         mockRequest = {
             body: {},
             params: {},
-            user: { id: 1, username: 'admin' }, // Mock authenticated user
+            user: {id: 1, username: 'admin'}, // Mock authenticated user
         };
 
         mockResponse = {
@@ -115,7 +115,7 @@ describe('UserCommands', () => {
                 email: userData.email,
                 password: userData.password
             });
-            expect(ControllerResult.created).toHaveBeenCalledWith(
+            expect(ResResult.created).toHaveBeenCalledWith(
                 '使用者創建成功',
                 createdUser
             );
@@ -123,14 +123,14 @@ describe('UserCommands', () => {
         });
 
         it('應該在缺少必要欄位時返回錯誤', async () => {
-            mockRequest.body = { username: 'testuser' }; // 缺少 email 和 password
+            mockRequest.body = {username: 'testuser'}; // 缺少 email 和 password
 
             await controller.createUser(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('缺少必要的使用者資訊');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('缺少必要的使用者資訊');
             expect(mockUserCommandsSvc.createUser).not.toHaveBeenCalled();
         });
 
@@ -147,7 +147,7 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('密碼確認不匹配');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('密碼確認不匹配');
             expect(mockUserCommandsSvc.createUser).not.toHaveBeenCalled();
         });
 
@@ -170,7 +170,7 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.conflict).toHaveBeenCalledWith('使用者名稱已存在');
+            expect(ResResult.conflict).toHaveBeenCalledWith('使用者名稱已存在');
         });
 
         it('應該處理服務拋出的異常', async () => {
@@ -190,7 +190,7 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.internalServerError).toHaveBeenCalledWith(
+            expect(ResResult.internalServerError).toHaveBeenCalledWith(
                 '系統內部錯誤，請稍後再試'
             );
         });
@@ -204,7 +204,7 @@ describe('UserCommands', () => {
                 display_name: 'New Display Name'
             };
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = updateData;
 
             const updatedUser = {
@@ -229,29 +229,29 @@ describe('UserCommands', () => {
                 parseInt(userId),
                 updateData
             );
-            expect(ControllerResult.success).toHaveBeenCalledWith(
+            expect(ResResult.success).toHaveBeenCalledWith(
                 '使用者更新成功',
                 updatedUser
             );
         });
 
         it('應該在無效 ID 時返回錯誤', async () => {
-            mockRequest.params = { id: 'invalid' };
-            mockRequest.body = { email: 'test@example.com' };
+            mockRequest.params = {id: 'invalid'};
+            mockRequest.body = {email: 'test@example.com'};
 
             await controller.updateUser(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('無效的使用者 ID 格式');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('無效的使用者 ID 格式');
             expect(mockUserCommandsSvc.updateUser).not.toHaveBeenCalled();
         });
 
         it('應該在找不到使用者時返回 404', async () => {
             const userId = '999';
-            mockRequest.params = { id: userId };
-            mockRequest.body = { email: 'test@example.com' };
+            mockRequest.params = {id: userId};
+            mockRequest.body = {email: 'test@example.com'};
 
             mockUserCommandsSvc.updateUser.mockResolvedValue({
                 success: false,
@@ -263,14 +263,14 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.notFound).toHaveBeenCalledWith('使用者不存在');
+            expect(ResResult.notFound).toHaveBeenCalledWith('使用者不存在');
         });
     });
 
     describe('deleteUser', () => {
         it('應該成功刪除使用者', async () => {
             const userId = '1';
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
 
             mockUserCommandsSvc.deleteUser.mockResolvedValue({
                 success: true,
@@ -283,25 +283,25 @@ describe('UserCommands', () => {
             );
 
             expect(mockUserCommandsSvc.deleteUser).toHaveBeenCalledWith(parseInt(userId));
-            expect(ControllerResult.success).toHaveBeenCalledWith('使用者刪除成功');
+            expect(ResResult.success).toHaveBeenCalledWith('使用者刪除成功');
         });
 
         it('應該在嘗試刪除自己時返回錯誤', async () => {
             const userId = '1'; // 與 mockRequest.user.id 相同
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
 
             await controller.deleteUser(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('不能刪除自己的帳號');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('不能刪除自己的帳號');
             expect(mockUserCommandsSvc.deleteUser).not.toHaveBeenCalled();
         });
 
         it('應該在找不到使用者時返回 404', async () => {
             const userId = '999';
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
 
             mockUserCommandsSvc.deleteUser.mockResolvedValue({
                 success: false,
@@ -313,7 +313,7 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.notFound).toHaveBeenCalledWith('使用者不存在');
+            expect(ResResult.notFound).toHaveBeenCalledWith('使用者不存在');
         });
     });
 
@@ -326,7 +326,7 @@ describe('UserCommands', () => {
                 confirmNewPassword: 'newPassword123'
             };
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = passwordData;
 
             mockUserCommandsSvc.changePassword.mockResolvedValue({
@@ -344,24 +344,24 @@ describe('UserCommands', () => {
                 passwordData.currentPassword,
                 passwordData.newPassword
             );
-            expect(ControllerResult.success).toHaveBeenCalledWith('密碼更新成功');
+            expect(ResResult.success).toHaveBeenCalledWith('密碼更新成功');
         });
 
         it('應該在缺少必要欄位時返回錯誤', async () => {
-            mockRequest.params = { id: '1' };
-            mockRequest.body = { currentPassword: 'old123' }; // 缺少新密碼
+            mockRequest.params = {id: '1'};
+            mockRequest.body = {currentPassword: 'old123'}; // 缺少新密碼
 
             await controller.changePassword(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('缺少必要的密碼資訊');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('缺少必要的密碼資訊');
             expect(mockUserCommandsSvc.changePassword).not.toHaveBeenCalled();
         });
 
         it('應該在新密碼確認不匹配時返回錯誤', async () => {
-            mockRequest.params = { id: '1' };
+            mockRequest.params = {id: '1'};
             mockRequest.body = {
                 currentPassword: 'old123',
                 newPassword: 'new123',
@@ -373,7 +373,7 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('新密碼確認不匹配');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('新密碼確認不匹配');
             expect(mockUserCommandsSvc.changePassword).not.toHaveBeenCalled();
         });
 
@@ -385,7 +385,7 @@ describe('UserCommands', () => {
                 confirmNewPassword: 'newPassword123'
             };
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = passwordData;
 
             mockUserCommandsSvc.changePassword.mockResolvedValue({
@@ -398,14 +398,14 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.unauthorized).toHaveBeenCalledWith('目前密碼錯誤');
+            expect(ResResult.unauthorized).toHaveBeenCalledWith('目前密碼錯誤');
         });
     });
 
     describe('activateUser', () => {
         it('應該成功啟用使用者', async () => {
             const userId = '1';
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
 
             const activatedUser = {
                 id: 1,
@@ -425,7 +425,7 @@ describe('UserCommands', () => {
             );
 
             expect(mockUserCommandsSvc.activateUser).toHaveBeenCalledWith(parseInt(userId));
-            expect(ControllerResult.success).toHaveBeenCalledWith(
+            expect(ResResult.success).toHaveBeenCalledWith(
                 '使用者啟用成功',
                 activatedUser
             );
@@ -435,7 +435,7 @@ describe('UserCommands', () => {
     describe('deactivateUser', () => {
         it('應該成功停用使用者', async () => {
             const userId = '2'; // 不是當前使用者
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
 
             const deactivatedUser = {
                 id: 2,
@@ -455,7 +455,7 @@ describe('UserCommands', () => {
             );
 
             expect(mockUserCommandsSvc.deactivateUser).toHaveBeenCalledWith(parseInt(userId));
-            expect(ControllerResult.success).toHaveBeenCalledWith(
+            expect(ResResult.success).toHaveBeenCalledWith(
                 '使用者停用成功',
                 deactivatedUser
             );
@@ -463,14 +463,14 @@ describe('UserCommands', () => {
 
         it('應該在嘗試停用自己時返回錯誤', async () => {
             const userId = '1'; // 與 mockRequest.user.id 相同
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
 
             await controller.deactivateUser(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('不能停用自己的帳號');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('不能停用自己的帳號');
             expect(mockUserCommandsSvc.deactivateUser).not.toHaveBeenCalled();
         });
     });
@@ -478,9 +478,9 @@ describe('UserCommands', () => {
     describe('assignRole', () => {
         it('應該成功分配角色給使用者', async () => {
             const userId = '1';
-            const roleData = { roleId: 2 };
+            const roleData = {roleId: 2};
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = roleData;
 
             mockUserCommandsSvc.assignRole.mockResolvedValue({
@@ -497,11 +497,11 @@ describe('UserCommands', () => {
                 parseInt(userId),
                 roleData.roleId
             );
-            expect(ControllerResult.success).toHaveBeenCalledWith('角色分配成功');
+            expect(ResResult.success).toHaveBeenCalledWith('角色分配成功');
         });
 
         it('應該在缺少角色 ID 時返回錯誤', async () => {
-            mockRequest.params = { id: '1' };
+            mockRequest.params = {id: '1'};
             mockRequest.body = {}; // 缺少 roleId
 
             await controller.assignRole(
@@ -509,15 +509,15 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.badRequest).toHaveBeenCalledWith('缺少角色 ID');
+            expect(ResResult.badRequest).toHaveBeenCalledWith('缺少角色 ID');
             expect(mockUserCommandsSvc.assignRole).not.toHaveBeenCalled();
         });
 
         it('應該在角色已存在時返回衝突錯誤', async () => {
             const userId = '1';
-            const roleData = { roleId: 2 };
+            const roleData = {roleId: 2};
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = roleData;
 
             mockUserCommandsSvc.assignRole.mockResolvedValue({
@@ -530,16 +530,16 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.conflict).toHaveBeenCalledWith('使用者已擁有此角色');
+            expect(ResResult.conflict).toHaveBeenCalledWith('使用者已擁有此角色');
         });
     });
 
     describe('removeRole', () => {
         it('應該成功移除使用者角色', async () => {
             const userId = '1';
-            const roleData = { roleId: 2 };
+            const roleData = {roleId: 2};
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = roleData;
 
             mockUserCommandsSvc.removeRole.mockResolvedValue({
@@ -556,14 +556,14 @@ describe('UserCommands', () => {
                 parseInt(userId),
                 roleData.roleId
             );
-            expect(ControllerResult.success).toHaveBeenCalledWith('角色移除成功');
+            expect(ResResult.success).toHaveBeenCalledWith('角色移除成功');
         });
 
         it('應該在找不到角色關聯時返回 404', async () => {
             const userId = '1';
-            const roleData = { roleId: 2 };
+            const roleData = {roleId: 2};
 
-            mockRequest.params = { id: userId };
+            mockRequest.params = {id: userId};
             mockRequest.body = roleData;
 
             mockUserCommandsSvc.removeRole.mockResolvedValue({
@@ -576,7 +576,7 @@ describe('UserCommands', () => {
                 mockResponse as Response
             );
 
-            expect(ControllerResult.notFound).toHaveBeenCalledWith('找不到指定的角色關聯');
+            expect(ResResult.notFound).toHaveBeenCalledWith('找不到指定的角色關聯');
         });
     });
 });

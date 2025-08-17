@@ -10,7 +10,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import {
   DroneStatus,
   CreateDroneStatusRequest,
@@ -52,7 +52,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
           const response = await apiClient.get('/drone-status/data');
-          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -91,7 +91,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatus> => {
         try {
           const response = await apiClient.get(`/api/drone-status/data/${id}`);
-          const result = RequestResult.fromResponse<DroneStatus>(response);
+          const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -124,7 +124,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatus> => {
         try {
           const response = await apiClient.get(`/api/drone-status/data/serial/${serial}`);
-          const result = RequestResult.fromResponse<DroneStatus>(response);
+          const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -157,7 +157,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status/data/status/${status}`);
-          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -196,7 +196,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status/data/owner/${ownerId}`);
-          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -229,7 +229,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status/data/manufacturer/${manufacturer}`);
-          const result = RequestResult.fromResponse<DroneStatus[]>(response);
+          const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -262,7 +262,7 @@ export class DroneStatusQuery {
       queryFn: async (): Promise<DroneStatusStatistics> => {
         try {
           const response = await apiClient.get('/drone-status/statistics');
-          const result = RequestResult.fromResponse<DroneStatusStatistics>(response);
+          const result = ReqResult.fromResponse<DroneStatusStatistics>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -297,7 +297,7 @@ export class DroneStatusQuery {
       mutationFn: async (data: CreateDroneStatusRequest): Promise<DroneStatus> => {
         try {
           const response = await apiClient.post('/drone-status/data', data);
-          const result = RequestResult.fromResponse<DroneStatus>(response);
+          const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -338,7 +338,7 @@ export class DroneStatusQuery {
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusRequest }): Promise<DroneStatus> => {
         try {
           const response = await apiClient.put(`/api/drone-status/data/${id}`, data);
-          const result = RequestResult.fromResponse<DroneStatus>(response);
+          const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -384,7 +384,7 @@ export class DroneStatusQuery {
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusOnlyRequest }): Promise<DroneStatus> => {
         try {
           const response = await apiClient.patch(`/api/drone-status/data/${id}/status`, data);
-          const result = RequestResult.fromResponse<DroneStatus>(response);
+          const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -427,7 +427,7 @@ export class DroneStatusQuery {
       mutationFn: async (id: string): Promise<void> => {
         try {
           const response = await apiClient.delete(`/api/drone-status/data/${id}`);
-          const result = RequestResult.fromResponse(response);
+          const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {
             throw new Error(result.message);

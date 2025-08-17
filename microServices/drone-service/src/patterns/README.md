@@ -3,6 +3,7 @@
 ## 概述
 
 這是一個簡單易懂的 Logger Decorator 實現，接收兩個參數：
+
 1. `originalFunction` - 原始函數
 2. `methodName` - 方法名稱（用於日誌顯示）
 
@@ -61,12 +62,14 @@ class DroneRepository {
 ## 日誌輸出範例
 
 ### 成功執行
+
 ```
 [2025-08-13 10:30:15] [DECORATOR] INFO: 開始執行 Controller.createDrone
 [2025-08-13 10:30:16] [DECORATOR] INFO: Controller.createDrone 執行完成 {"executionTime":"800ms"}
 ```
 
 ### 錯誤執行
+
 ```
 [2025-08-13 10:30:15] [DECORATOR] INFO: 開始執行 Service.saveDrone
 [2025-08-13 10:30:15] [DECORATOR] ERROR: Service.saveDrone 執行失敗 {"error":"Database connection failed","executionTime":"50ms"}
@@ -82,31 +85,32 @@ class DroneRepository {
 ## 完整範例
 
 ```typescript
-import { logController } from '../patterns/LoggerDecorator.js';
-import { ControllerResult } from '../utils/ControllerResult.js';
+import {logController} from '../patterns/LoggerDecorator.js';
+import {ResResult} from '../utils/ResResult.js';
 
 @injectable()
 export class DroneCommandCommands {
-    constructor(private readonly commandService: DroneCommandCommandsSvc) {}
+    constructor(private readonly commandService: DroneCommandCommandsSvc) {
+    }
 
     createCommand = logController(async (req, res) => {
         try {
             const commandData = req.body;
-            
+
             // 基本驗證
             if (!commandData.drone_id) {
-                const result = ControllerResult.badRequest('無人機 ID 為必填項');
+                const result = ResResult.badRequest('無人機 ID 為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 調用服務
             const command = await this.commandService.createCommand(commandData);
-            
-            const result = ControllerResult.success(command, '無人機指令創建成功');
+
+            const result = ResResult.success(command, '無人機指令創建成功');
             res.status(result.status).json(result);
         } catch (error) {
-            const result = ControllerResult.internalServerError('創建無人機指令時發生錯誤');
+            const result = ResResult.internalServerError('創建無人機指令時發生錯誤');
             res.status(result.status).json(result);
         }
     }, 'createCommand');
@@ -115,13 +119,13 @@ export class DroneCommandCommands {
 
 ## 對比舊版本
 
-| 特性 | 舊版本 (複雜) | 新版本 (簡單) |
-|------|-------------|-------------|
-| 參數數量 | 複雜的配置物件 | 只要 2 個參數 |
-| 理解難度 | 需要學習複雜的類別和介面 | 一眼就懂 |
-| 使用方式 | 工廠方法 + 泛型 + Proxy | 直接包裝函數 |
-| 程式碼行數 | 200+ 行 | 50 行左右 |
-| TypeScript 錯誤 | 複雜的類型問題 | 無類型問題 |
+| 特性            | 舊版本 (複雜)          | 新版本 (簡單) |
+|---------------|-------------------|----------|
+| 參數數量          | 複雜的配置物件           | 只要 2 個參數 |
+| 理解難度          | 需要學習複雜的類別和介面      | 一眼就懂     |
+| 使用方式          | 工廠方法 + 泛型 + Proxy | 直接包裝函數   |
+| 程式碼行數         | 200+ 行            | 50 行左右   |
+| TypeScript 錯誤 | 複雜的類型問題           | 無類型問題    |
 
 ## 為什麼選擇簡單版本？
 

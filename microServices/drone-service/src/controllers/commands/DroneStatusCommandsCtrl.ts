@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機狀態命令控制器
- * 
+ *
  * 此文件實作了無人機狀態命令控制器，
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
- * 
+ *
  * @module DroneStatusCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -12,32 +12,28 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneStatusCommandsSvc } from '../../services/commands/DroneStatusCommandsSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
-import type { DroneStatusCreationAttributes, DroneStatus } from '../../models/DroneStatusModel.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneStatusCommandsSvc} from '../../services/commands/DroneStatusCommandsSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
+import type {DroneStatus, DroneStatusCreationAttributes} from '../../models/DroneStatusModel.js';
 
 const logger = createLogger('DroneStatusCommands');
 
 /**
  * 無人機狀態命令控制器類別
- * 
+ *
  * 專門處理無人機狀態相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class DroneStatusCommands
  * @since 1.0.0
  */
 @injectable()
 export class DroneStatusCommands {
-    constructor(
-        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneStatusService: DroneStatusCommandsSvc
-    ) {}
-
     /**
      * 創建新的無人機狀態資料
      * @route POST /api/drone-status/data
@@ -58,7 +54,6 @@ export class DroneStatusCommands {
             next(error);
         }
     }, 'createDroneStatus')
-
     /**
      * 更新指定無人機狀態資料
      * @route PUT /api/drone-status/data/:id
@@ -90,7 +85,6 @@ export class DroneStatusCommands {
             next(error);
         }
     }, 'updateDroneStatus')
-
     /**
      * 刪除指定無人機狀態資料
      * @route DELETE /api/drone-status/data/:id
@@ -116,7 +110,6 @@ export class DroneStatusCommands {
             next(error);
         }
     }, 'deleteDroneStatus')
-
     /**
      * 更新無人機狀態
      * @route PATCH /api/drone-status/data/:id/status
@@ -124,7 +117,7 @@ export class DroneStatusCommands {
     updateDroneStatusOnly = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const { status } = req.body;
+            const {status} = req.body;
 
             // 驗證 ID
             if (isNaN(id)) {
@@ -155,4 +148,9 @@ export class DroneStatusCommands {
             next(error);
         }
     }, 'updateDroneStatusOnly')
+
+    constructor(
+        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneStatusService: DroneStatusCommandsSvc
+    ) {
+    }
 }

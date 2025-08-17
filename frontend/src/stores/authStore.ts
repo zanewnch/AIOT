@@ -14,8 +14,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { User, ExtendedLoginResponse } from '../types/auth';
-import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+// API 邏輯已移至 hooks/useAuthQuery.ts
 
 /**
  * 認證狀態接口
@@ -38,7 +37,8 @@ interface AuthState {
   // 複合動作
   setAuthData: (data: ExtendedLoginResponse) => void;
   clearAuth: () => void;
-  initializeAuth: () => Promise<boolean>;
+  initializeAuthSuccess: (userData: any) => void;
+  initializeAuthError: (error: string | null) => void;
 }
 
 /**
@@ -99,44 +99,25 @@ export const useAuthStore = create<AuthState>()(
             error: null
           }, false, 'auth/clearAuth'),
 
-        // 初始化認證 - 檢查 httpOnly cookie 是否有效
-        initializeAuth: async () => {
-          set({ isLoading: true, error: null }, false, 'auth/initializeAuth/start');
-          
-          try {
-            // 嘗試使用 cookie 向後端發送驗證請求
-            const response = await apiClient.get('/auth');
-            const result = RequestResult.fromResponse(response);
-            
-            if (result.isSuccess()) {
-              const userData = result.unwrap();
-              
-              // 設置認證數據
-              set({
-                isAuthenticated: true,
-                user: userData.user,
-                token: userData.token || null,
-                isLoading: false,
-                error: null
-              }, false, 'auth/initializeAuth/success');
-              
-              return true;
-            } else {
-              throw new Error(result.message);
-            }
-          } catch (error) {
-            // 如果驗證失敗，清除認證狀態
-            set({
-              isAuthenticated: false,
-              user: null,
-              token: null,
-              isLoading: false,
-              error: error instanceof Error ? error.message : 'Authentication failed'
-            }, false, 'auth/initializeAuth/error');
-            
-            return false;
-          }
-        }
+        // 初始化認證成功
+        initializeAuthSuccess: (userData) => 
+          set({
+            isAuthenticated: true,
+            user: userData.user,
+            token: userData.token || null,
+            isLoading: false,
+            error: null
+          }, false, 'auth/initializeAuth/success'),
+
+        // 初始化認證失敗
+        initializeAuthError: (error) => 
+          set({
+            isAuthenticated: false,
+            user: null,
+            token: null,
+            isLoading: false,
+            error
+          }, false, 'auth/initializeAuth/error')
       }),
       {
         name: 'auth-store',
@@ -190,7 +171,8 @@ export const useAuthActions = () => {
   const { 
     setAuthData, 
     clearAuth, 
-    initializeAuth, 
+    initializeAuthSuccess,
+    initializeAuthError,
     setLoading, 
     setError 
   } = useAuthStore();
@@ -198,7 +180,8 @@ export const useAuthActions = () => {
   return {
     setAuthData,
     clearAuth,
-    initializeAuth,
+    initializeAuthSuccess,
+    initializeAuthError,
     setLoading,
     setError
   };

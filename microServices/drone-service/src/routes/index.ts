@@ -1,32 +1,32 @@
 /**
  * @fileoverview Drone 微服務路由統一註冊中心
- * 
+ *
  * 此文件負責管理和註冊所有的 HTTP API 路由，採用 CQRS 架構和 IoC 容器：
  * - 使用 class-based 路由配置
  * - 透過依賴注入管理路由控制器
  * - 支援 Query/Command 分離模式
- * 
+ *
  * @author AIOT Team
  * @version 1.0.0
  * @since 2024-01-01
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Express, Router } from 'express';
-import { ArchiveTaskRoutes } from './archiveTaskRoutes.js';
-import { DronePositionRoutes } from './dronePositionRoutes.js';
-import { DroneStatusRoutes } from './droneStatusRoutes.js';
-import { DroneCommandRoutes } from './droneCommandRoutes.js';
-import { DroneRealtimeRoutes } from './droneRealtimeRoutes.js';
-import { TYPES } from '../container/types.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
+import {inject, injectable} from 'inversify';
+import {Express, Router} from 'express';
+import {ArchiveTaskRoutes} from './archiveTaskRoutes.js';
+import {DronePositionRoutes} from './dronePositionRoutes.js';
+import {DroneStatusRoutes} from './droneStatusRoutes.js';
+import {DroneCommandRoutes} from './droneCommandRoutes.js';
+import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
+import {TYPES} from '../container/types.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
 
 /**
  * 路由管理器類別
- * 
+ *
  * 負責統一註冊所有 API 路由，使用 IoC 容器管理依賴
- * 
+ *
  * @class RouteManager
  */
 @injectable()
@@ -37,11 +37,12 @@ export class RouteManager {
         @inject(TYPES.DroneStatusRoutes) private readonly droneStatusRoutes: DroneStatusRoutes,
         @inject(TYPES.DroneCommandRoutes) private readonly droneCommandRoutes: DroneCommandRoutes,
         @inject(TYPES.DroneRealtimeRoutes) private readonly droneRealtimeRoutes: DroneRealtimeRoutes
-    ) {}
+    ) {
+    }
 
     /**
      * 註冊所有 API 路由到 Express 應用程式
-     * 
+     *
      * @param app Express 應用程式實例
      */
     registerAllRoutes(app: Express): void {
@@ -78,7 +79,7 @@ export class RouteManager {
 
     /**
      * 註冊健康檢查路由
-     * 
+     *
      * @param app Express 應用程式實例
      */
     private registerHealthRoutes(app: Express): void {

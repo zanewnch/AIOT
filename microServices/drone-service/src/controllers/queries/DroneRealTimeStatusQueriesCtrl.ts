@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機即時狀態查詢控制器
- * 
+ *
  * 此文件實作了無人機即時狀態查詢控制器，
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
- * 
+ *
  * @module DroneRealTimeStatusQueries
  * @author AIOT Team
  * @since 1.0.0
@@ -12,22 +12,21 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneRealTimeStatusQueriesSvc } from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneRealTimeStatusQueriesSvc} from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('DroneRealTimeStatusQueries');
 
 /**
  * 無人機即時狀態查詢控制器類別
- * 
+ *
  * 專門處理無人機即時狀態相關的查詢請求，包含取得即時狀態等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
- * 
+ *
  * @class DroneRealTimeStatusQueries
  * @since 1.0.0
  */
@@ -35,7 +34,8 @@ const logger = createLogger('DroneRealTimeStatusQueries');
 export class DroneRealTimeStatusQueries {
     constructor(
         @inject(TYPES.DroneStatusQueriesSvc) private readonly droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 取得所有無人機即時狀態資料

@@ -10,7 +10,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import {
   DronePositionArchive,
   CreatePositionArchiveRequest,
@@ -62,7 +62,7 @@ export class DronePositionsArchiveQuery {
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
           const response = await apiClient.get('/drone-positions-archive/data');
-          const result = RequestResult.fromResponse<DronePositionArchive[]>(response);
+          const result = ReqResult.fromResponse<DronePositionArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -95,7 +95,7 @@ export class DronePositionsArchiveQuery {
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
           const response = await apiClient.get('/drone-positions-archive/data/latest');
-          const result = RequestResult.fromResponse<DronePositionArchive[]>(response);
+          const result = ReqResult.fromResponse<DronePositionArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -129,7 +129,7 @@ export class DronePositionsArchiveQuery {
       queryFn: async (): Promise<DronePositionArchive> => {
         try {
           const response = await apiClient.get(`/api/drone-positions-archive/data/${id}`);
-          const result = RequestResult.fromResponse<DronePositionArchive>(response);
+          const result = ReqResult.fromResponse<DronePositionArchive>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -162,7 +162,7 @@ export class DronePositionsArchiveQuery {
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
           const response = await apiClient.get(`/api/drone-positions-archive/data/drone/${droneId}`);
-          const result = RequestResult.fromResponse<DronePositionArchive[]>(response);
+          const result = ReqResult.fromResponse<DronePositionArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -196,7 +196,7 @@ export class DronePositionsArchiveQuery {
       mutationFn: async (data: CreatePositionArchiveRequest): Promise<DronePositionArchive> => {
         try {
           const response = await apiClient.post('/drone-positions-archive/data', data);
-          const result = RequestResult.fromResponse<DronePositionArchive>(response);
+          const result = ReqResult.fromResponse<DronePositionArchive>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -234,7 +234,7 @@ export class DronePositionsArchiveQuery {
       mutationFn: async (id: string): Promise<void> => {
         try {
           const response = await apiClient.delete(`/api/drone-positions-archive/data/${id}`);
-          const result = RequestResult.fromResponse(response);
+          const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {
             throw new Error(result.message);

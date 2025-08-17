@@ -1,10 +1,10 @@
 /**
  * @fileoverview 認證命令控制器
- * 
+ *
  * 此文件實作了認證命令控制器，
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含登入、登出等寫入邏輯。
- * 
+ *
  * @module AuthCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -12,22 +12,22 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { AuthCommandsSvc } from '../../services/commands/AuthCommandsSvc.js';
-import { createLogger, logRequest, logAuthEvent } from '../../configs/loggerConfig.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { JwtBlacklistMiddleware } from '../../middleware/JwtBlacklistMiddleware.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {AuthCommandsSvc} from '../../services/commands/AuthCommandsSvc.js';
+import {createLogger, logAuthEvent, logRequest} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult';
+import {TYPES} from '../../container/types.js';
+import {JwtBlacklistMiddleware} from '../../middleware/JwtBlacklistMiddleware.js';
 
 const logger = createLogger('AuthCommands');
 
 /**
  * 認證命令控制器類別
- * 
+ *
  * 專門處理認證相關的命令請求，包含登入、登出等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class AuthCommands
  * @since 1.0.0
  */
@@ -35,7 +35,8 @@ const logger = createLogger('AuthCommands');
 export class AuthCommands {
     constructor(
         @inject(TYPES.AuthCommandsSvc) private readonly authCommandsSvc: AuthCommandsSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 處理使用者登入請求
@@ -47,13 +48,17 @@ export class AuthCommands {
             logRequest(req, `Login attempt for user: ${req.body.username}`, 'info');
 
             // 從請求主體中解構取得登入資料
-            const { username, password, rememberMe }: { username: string, password: string, rememberMe?: boolean } = req.body;
+            const {username, password, rememberMe}: {
+                username: string,
+                password: string,
+                rememberMe?: boolean
+            } = req.body;
 
             // 參數驗證 - 確保必要欄位存在
             if (!username || !password) {
                 logger.warn(`Login request missing required credentials from IP: ${req.ip}`);
                 // 回傳 400 錯誤，表示請求參數不完整
-                const response = ControllerResult.badRequest('Username and password are required');
+                const response = ResResult.badRequest('Username and password are required');
                 res.status(response.status).json(response.toJSON());
                 return;
             }
@@ -77,9 +82,9 @@ export class AuthCommands {
             // 檢查登入結果
             if (!result.success) {
                 logger.warn(`Authentication failed for user: ${username}, reason: ${result.message}, IP: ${ipAddress}`);
-                logAuthEvent('login', username, false, { reason: result.message, ip: ipAddress });
+                logAuthEvent('login', username, false, {reason: result.message, ip: ipAddress});
                 // 回傳 401 錯誤，表示認證失敗
-                const response = ControllerResult.unauthorized(result.message);
+                const response = ResResult.unauthorized(result.message);
                 res.status(response.status).json(response.toJSON());
                 return;
             }
@@ -115,7 +120,7 @@ export class AuthCommands {
             });
 
             // 回傳登入成功的回應 (不返回 token，安全存儲在 httpOnly cookie 中)
-            const response = ControllerResult.success(result.message, {
+            const response = ResResult.success(result.message, {
                 rememberMe: rememberMe || false, // 記住我狀態
                 user: {
                     id: result.user?.id, // 使用者 ID
@@ -151,7 +156,7 @@ export class AuthCommands {
             // 如果存在 token，則從 Redis 清除會話並加入黑名單
             if (token) {
                 logger.debug('Processing logout - clearing session and blacklisting token');
-                
+
                 // 1. 從 Redis 清除會話資料
                 await this.authCommandsSvc.logout({
                     token,
@@ -160,7 +165,7 @@ export class AuthCommands {
 
                 // 2. 將 JWT token 加入黑名單，防止重複使用
                 const blacklisted = await JwtBlacklistMiddleware.addCurrentTokenToBlacklist(req, 'logout');
-                
+
                 if (blacklisted) {
                     logger.info(`JWT token successfully added to blacklist for user: ${username}`);
                 } else {
@@ -190,10 +195,10 @@ export class AuthCommands {
             res.clearCookie('feature_flags'); // 清除功能開關狀態
 
             logger.info(`Logout completed successfully for user: ${username}, IP: ${req.ip}`);
-            logAuthEvent('logout', username, true, { ip: req.ip });
+            logAuthEvent('logout', username, true, {ip: req.ip});
 
             // 回傳登出成功的回應
-            const response = ControllerResult.success('Logout successful');
+            const response = ResResult.success('Logout successful');
             res.status(response.status).json(response.toJSON());
         } catch (err) {
             logger.error('Logout error:', err);

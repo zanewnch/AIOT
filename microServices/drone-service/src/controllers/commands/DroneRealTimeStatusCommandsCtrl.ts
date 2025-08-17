@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機即時狀態命令控制器
- * 
+ *
  * 此文件實作了無人機即時狀態命令控制器，
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
- * 
+ *
  * @module DroneRealTimeStatusCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -12,23 +12,24 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRealTimeStatusCommandsSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
-import type { DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes } from '../../types/services/IDroneRealTimeStatusService.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneRealTimeStatusCommandsSvc} from '../../services/commands/DroneRealTimeStatusCommandsSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import type {
+    DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes
+} from '../../types/services/IDroneRealTimeStatusService.js';
 
 const logger = createLogger('DroneRealTimeStatusCommands');
 
 /**
  * 無人機即時狀態命令控制器類別
- * 
+ *
  * 專門處理無人機即時狀態相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class DroneRealTimeStatusCommands
  * @since 1.0.0
  */
@@ -36,7 +37,8 @@ const logger = createLogger('DroneRealTimeStatusCommands');
 export class DroneRealTimeStatusCommands {
     constructor(
         @inject(TYPES.DroneStatusCommandsSvc) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 創建新的無人機即時狀態資料

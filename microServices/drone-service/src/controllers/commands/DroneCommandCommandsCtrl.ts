@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機指令命令控制器
- * 
+ *
  * 此文件實作了無人機指令命令控制器，
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除、發送指令等寫入邏輯。
- * 
+ *
  * @module DroneCommandCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -12,22 +12,22 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneCommandCommandsSvc } from '../../services/commands/DroneCommandCommandsSvc.js';
-import { createLogger } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import type { DroneCommandCreationAttributes } from '../../models/DroneCommandModel.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneCommandCommandsSvc} from '../../services/commands/DroneCommandCommandsSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import type {DroneCommandCreationAttributes} from '../../models/DroneCommandModel.js';
 
 const logger = createLogger('DroneCommandCommands');
 
 /**
  * 無人機指令命令控制器類別
- * 
+ *
  * 專門處理無人機指令相關的命令請求，包含創建、更新、刪除、發送指令等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class DroneCommandCommands
  * @since 1.0.0
  */
@@ -35,7 +35,8 @@ const logger = createLogger('DroneCommandCommands');
 export class DroneCommandCommands {
     constructor(
         @inject(TYPES.DroneCommandCommandsSvc) private readonly commandService: DroneCommandCommandsSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 創建新的無人機指令
@@ -59,7 +60,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.createCommand(commandData);
-            
+
             if (result.success) {
                 const response = ControllerResult.created('無人機指令創建成功', result.command);
                 res.status(response.status).json(response);
@@ -103,7 +104,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.createBatchCommands(commandsData);
-            
+
             if (result.successCount > 0) {
                 const response = ControllerResult.created('批量無人機指令創建成功', result.successful);
                 res.status(response.status).json(response);
@@ -132,7 +133,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.updateCommand(id, updateData);
-            
+
             if (result) {
                 const response = ControllerResult.success('無人機指令更新成功', result);
                 res.status(response.status).json(response);
@@ -160,7 +161,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.deleteCommand(id);
-            
+
             if (result) {
                 const response = ControllerResult.success('無人機指令刪除成功');
                 res.status(response.status).json(response);
@@ -181,7 +182,7 @@ export class DroneCommandCommands {
      */
     sendTakeoffCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, altitude = 10, parameters } = req.body;
+            const {droneId, altitude = 10, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -189,8 +190,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendTakeoffCommand(droneId, 1, { altitude, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendTakeoffCommand(droneId, 1, {
+                altitude,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('起飛指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -209,7 +213,7 @@ export class DroneCommandCommands {
      */
     sendLandCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, parameters } = req.body;
+            const {droneId, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -218,7 +222,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.sendLandCommand(droneId, 1, parameters);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('降落指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -237,7 +241,7 @@ export class DroneCommandCommands {
      */
     sendHoverCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, duration } = req.body;
+            const {droneId, duration} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -245,8 +249,8 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendHoverCommand(droneId, 1, { duration });
-            
+            const result = await this.commandService.sendHoverCommand(droneId, 1, {duration});
+
             if (result.success) {
                 const response = ControllerResult.success('懸停指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -265,7 +269,7 @@ export class DroneCommandCommands {
      */
     sendFlyToCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, latitude, longitude, altitude, parameters } = req.body;
+            const {droneId, latitude, longitude, altitude, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -279,8 +283,13 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendMoveCommand(droneId, 1, { latitude, longitude, altitude, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendMoveCommand(droneId, 1, {
+                latitude,
+                longitude,
+                altitude,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('飛行指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -299,7 +308,7 @@ export class DroneCommandCommands {
      */
     sendReturnCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, parameters } = req.body;
+            const {droneId, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -308,7 +317,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.sendReturnCommand(droneId, 1, parameters);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('返航指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -327,7 +336,7 @@ export class DroneCommandCommands {
      */
     sendMoveForwardCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, distance = 1, parameters } = req.body;
+            const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -335,8 +344,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendMoveForwardCommand(droneId, 1, { distance, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendMoveForwardCommand(droneId, 1, {
+                distance,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('前進指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -355,7 +367,7 @@ export class DroneCommandCommands {
      */
     sendMoveBackwardCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, distance = 1, parameters } = req.body;
+            const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -363,8 +375,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendMoveBackwardCommand(droneId, 1, { distance, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendMoveBackwardCommand(droneId, 1, {
+                distance,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('後退指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -383,7 +398,7 @@ export class DroneCommandCommands {
      */
     sendMoveLeftCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, distance = 1, parameters } = req.body;
+            const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -391,8 +406,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendMoveLeftCommand(droneId, 1, { distance, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendMoveLeftCommand(droneId, 1, {
+                distance,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('左移指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -411,7 +429,7 @@ export class DroneCommandCommands {
      */
     sendMoveRightCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, distance = 1, parameters } = req.body;
+            const {droneId, distance = 1, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -419,8 +437,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendMoveRightCommand(droneId, 1, { distance, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendMoveRightCommand(droneId, 1, {
+                distance,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('右移指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -439,7 +460,7 @@ export class DroneCommandCommands {
      */
     sendRotateLeftCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, degrees = 90, parameters } = req.body;
+            const {droneId, degrees = 90, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -447,8 +468,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendRotateLeftCommand(droneId, 1, { degrees, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendRotateLeftCommand(droneId, 1, {
+                degrees,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('左轉指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -467,7 +491,7 @@ export class DroneCommandCommands {
      */
     sendRotateRightCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, degrees = 90, parameters } = req.body;
+            const {droneId, degrees = 90, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -475,8 +499,11 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendRotateRightCommand(droneId, 1, { degrees, speed: parameters?.speed });
-            
+            const result = await this.commandService.sendRotateRightCommand(droneId, 1, {
+                degrees,
+                speed: parameters?.speed
+            });
+
             if (result.success) {
                 const response = ControllerResult.success('右轉指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -495,7 +522,7 @@ export class DroneCommandCommands {
      */
     sendEmergencyCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, parameters } = req.body;
+            const {droneId, parameters} = req.body;
 
             if (!droneId || typeof droneId !== 'number') {
                 const result = ControllerResult.badRequest('無人機 ID 為必填項且必須為數字');
@@ -504,7 +531,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.sendEmergencyCommand(droneId, 1, parameters);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('緊急停止指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -534,7 +561,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.executeCommand(id);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('指令執行成功', result.command);
                 res.status(response.status).json(response);
@@ -562,7 +589,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.completeCommand(id);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('指令完成成功', result.command);
                 res.status(response.status).json(response);
@@ -582,7 +609,7 @@ export class DroneCommandCommands {
     failCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const { reason } = req.body;
+            const {reason} = req.body;
 
             if (isNaN(id)) {
                 const result = ControllerResult.badRequest('無效的指令 ID 格式');
@@ -591,7 +618,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.failCommand(id, reason);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('指令標記失敗成功', result.command);
                 res.status(response.status).json(response);
@@ -611,7 +638,7 @@ export class DroneCommandCommands {
     cancelCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const { reason } = req.body;
+            const {reason} = req.body;
 
             if (isNaN(id)) {
                 const result = ControllerResult.badRequest('無效的指令 ID 格式');
@@ -620,7 +647,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.cancelCommand(id, reason);
-            
+
             if (result.success) {
                 const response = ControllerResult.success('指令取消成功', result.command);
                 res.status(response.status).json(response);
@@ -639,7 +666,7 @@ export class DroneCommandCommands {
      */
     sendMoveCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, issuedBy, latitude, longitude, altitude, speed } = req.body;
+            const {droneId, issuedBy, latitude, longitude, altitude, speed} = req.body;
 
             // 基本驗證
             if (!droneId || typeof droneId !== 'number') {
@@ -660,8 +687,13 @@ export class DroneCommandCommands {
                 return;
             }
 
-            const result = await this.commandService.sendFlyToCommand(droneId, issuedBy, { latitude, longitude, altitude, speed });
-            
+            const result = await this.commandService.sendFlyToCommand(droneId, issuedBy, {
+                latitude,
+                longitude,
+                altitude,
+                speed
+            });
+
             if (result.success && result.command) {
                 const response = ControllerResult.created('移動指令發送成功', result.command);
                 res.status(response.status).json(response);
@@ -681,7 +713,7 @@ export class DroneCommandCommands {
     retryFailedCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandId = parseInt(req.params.id);
-            const { issuedBy } = req.body;
+            const {issuedBy} = req.body;
 
             // 驗證 ID
             if (isNaN(commandId)) {
@@ -697,7 +729,7 @@ export class DroneCommandCommands {
             }
 
             const result = await this.commandService.retryFailedCommand(commandId, issuedBy);
-            
+
             if (result.success && result.command) {
                 const response = ControllerResult.created('指令重試成功', result.command);
                 res.status(response.status).json(response);

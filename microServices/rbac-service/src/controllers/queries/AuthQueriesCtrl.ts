@@ -1,12 +1,12 @@
 /**
  * @fileoverview 認證查詢控制器
- * 
+ *
  * 此文件實作了認證查詢控制器，
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，包含身份驗證檢查等讀取邏輯。
- * 
+ *
  * 使用 Kong Headers 獲取用戶信息，認證和授權由 OPA 在 Kong 層處理。
- * 
+ *
  * @module AuthQueries
  * @author AIOT Team
  * @since 1.0.0
@@ -14,22 +14,22 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { AuthQueriesSvc } from '../../services/queries/AuthQueriesSvc.js';
-import { createLogger, logRequest } from '../../configs/loggerConfig.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {AuthQueriesSvc} from '../../services/queries/AuthQueriesSvc.js';
+import {createLogger, logRequest} from '../../configs/loggerConfig.js';
+import {ResResult} from '../../utils/ResResult';
+import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('AuthQueries');
 
 /**
  * 認證查詢控制器類別
- * 
+ *
  * 專門處理認證相關的查詢請求，包含身份驗證檢查等功能。
  * 所有方法都是只讀的，遵循 CQRS 模式的查詢端原則。
  * 使用 Kong Headers 獲取用戶信息，認證由 OPA 處理。
- * 
+ *
  * @class AuthQueries
  * @since 1.0.0
  */
@@ -37,7 +37,8 @@ const logger = createLogger('AuthQueries');
 export class AuthQueries {
     constructor(
         @inject(TYPES.AuthQueriesSvc) private readonly authQueriesSvc: AuthQueriesSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 獲取當前使用者資訊 - 使用 Kong Headers
@@ -52,7 +53,7 @@ export class AuthQueries {
 
             if (!user) {
                 logger.warn(`User info request failed: No user info from Kong headers, IP: ${req.ip}`);
-                const response = ControllerResult.unauthorized('User information not available');
+                const response = ResResult.unauthorized('User information not available');
                 res.status(response.status).json(response.toJSON());
                 return;
             }
@@ -69,7 +70,7 @@ export class AuthQueries {
             }
 
             // 回傳用戶資訊（結合 Kong headers 和數據庫資訊）
-            const response = ControllerResult.success('User information retrieved successfully', {
+            const response = ResResult.success('User information retrieved successfully', {
                 isAuthenticated: true,
                 user: {
                     id: user.id,
@@ -106,7 +107,7 @@ export class AuthQueries {
 
             if (!user) {
                 logger.warn(`Authentication check failed: No user info from Kong headers, IP: ${req.ip}`);
-                const response = ControllerResult.unauthorized('Authentication required');
+                const response = ResResult.unauthorized('Authentication required');
                 res.status(response.status).json(response.toJSON());
                 return;
             }
@@ -114,7 +115,7 @@ export class AuthQueries {
             logger.info(`Authentication check successful for user: ${user.username}, ID: ${user.id}`);
 
             // 回傳認證狀態
-            const response = ControllerResult.success('User authenticated', {
+            const response = ResResult.success('User authenticated', {
                 isAuthenticated: true,
                 user: {
                     id: user.id,
@@ -147,7 +148,7 @@ export class AuthQueries {
             const user = req.kongUser || req.user;
 
             if (!user) {
-                const response = ControllerResult.unauthorized('Authentication required');
+                const response = ResResult.unauthorized('Authentication required');
                 res.status(response.status).json(response.toJSON());
                 return;
             }
@@ -155,7 +156,7 @@ export class AuthQueries {
             logger.info(`Permissions request for user: ${user.username}, permissions count: ${user.permissions.length}`);
 
             // 回傳完整權限列表
-            const response = ControllerResult.success('User permissions retrieved', {
+            const response = ResResult.success('User permissions retrieved', {
                 user: {
                     id: user.id,
                     username: user.username

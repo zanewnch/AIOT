@@ -1,9 +1,9 @@
 /**
  * @fileoverview 無人機指令命令控制器 - 使用正確的 Decorator Pattern
- * 
+ *
  * 這是一個展示如何正確使用 Decorator Pattern 的範例文件。
  * 移除了 TypeScript @decorator 語法糖，改用真正的設計模式實現。
- * 
+ *
  * @module DroneCommandCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -11,16 +11,16 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneCommandCommandsSvc } from '../services/commands/DroneCommandCommandsSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../container/types.js';
-import type { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../models/DroneCommandModel.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneCommandCommandsSvc} from '../services/commands/DroneCommandCommandsSvc.js';
+import {createLogger, logRequest} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../container/types.js';
+import type {DroneCommandCreationAttributes} from '../models/DroneCommandModel.js';
 
 // 導入正確的 Decorator Pattern
-import { createLoggedController, LoggerFactory, Logger } from '../patterns/LoggerDecorator.js';
+import {createLoggedController, Logger, LoggerFactory} from '../patterns/LoggerDecorator.js';
 
 /**
  * Logger Factory 實現 - 適配現有的 logger 系統
@@ -43,10 +43,10 @@ class DroneServiceLoggerFactory implements LoggerFactory {
 
 /**
  * 原始的無人機指令命令控制器類別（無裝飾器）
- * 
+ *
  * 專門處理無人機指令相關的命令請求，包含創建、更新、刪除、發送指令等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class DroneCommandCommandsBase
  * @since 2.0.0
  */
@@ -54,7 +54,8 @@ class DroneServiceLoggerFactory implements LoggerFactory {
 export class DroneCommandCommandsBase {
     constructor(
         @inject(TYPES.DroneCommandCommandsSvc) private readonly commandService: DroneCommandCommandsSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 創建新的無人機指令
@@ -72,7 +73,7 @@ export class DroneCommandCommandsBase {
             }
 
             const command = await this.commandService.createCommand(commandData);
-            
+
             const result = ControllerResult.created('無人機指令創建成功', command);
             res.status(result.status).json(result);
         } catch (error) {
@@ -97,7 +98,7 @@ export class DroneCommandCommandsBase {
             }
 
             const updatedCommand = await this.commandService.updateCommand(commandId, updateData);
-            
+
             if (!updatedCommand) {
                 const result = ControllerResult.notFound(`指令 ${commandId} 不存在`);
                 res.status(result.status).json(result);
@@ -127,7 +128,7 @@ export class DroneCommandCommandsBase {
             }
 
             const deleted = await this.commandService.deleteCommand(commandId);
-            
+
             if (!deleted) {
                 const result = ControllerResult.notFound(`指令 ${commandId} 不存在`);
                 res.status(result.status).json(result);
@@ -157,7 +158,7 @@ export class DroneCommandCommandsBase {
             }
 
             const executionResult = await this.commandService.executeCommand(commandId);
-            
+
             const result = ControllerResult.success('無人機指令執行成功', executionResult);
             res.status(result.status).json(result);
         } catch (error) {
@@ -173,7 +174,7 @@ export class DroneCommandCommandsBase {
     cancelCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandId = parseInt(req.params.id, 10);
-            const { reason } = req.body;
+            const {reason} = req.body;
 
             if (isNaN(commandId)) {
                 const result = ControllerResult.badRequest('無效的指令 ID');
@@ -182,7 +183,7 @@ export class DroneCommandCommandsBase {
             }
 
             const cancelResult = await this.commandService.cancelCommand(commandId, reason);
-            
+
             const result = ControllerResult.success('無人機指令取消成功', cancelResult);
             res.status(result.status).json(result);
         } catch (error) {
@@ -194,16 +195,16 @@ export class DroneCommandCommandsBase {
 
 /**
  * 工廠方法：創建帶有日誌功能的無人機指令控制器
- * 
+ *
  * 使用正確的 Decorator Pattern 來包裝控制器，提供自動日誌記錄功能。
- * 
+ *
  * @param commandService - 無人機指令服務實例
  * @returns 帶有日誌功能的控制器實例
  */
 export const createDroneCommandCommands = (commandService: DroneCommandCommandsSvc) => {
     const baseController = new DroneCommandCommandsBase(commandService);
     const loggerFactory = new DroneServiceLoggerFactory();
-    
+
     return createLoggedController(
         baseController,
         'DroneCommandCommands',
@@ -219,8 +220,8 @@ export const createDroneCommandCommands = (commandService: DroneCommandCommandsS
 
 /**
  * 為了保持向後兼容性，導出帶有日誌功能的類別
- * 
+ *
  * 注意：這個導出主要是為了與現有的 DI 容器兼容。
  * 建議使用 createDroneCommandCommands 工廠方法。
  */
-export { DroneCommandCommandsBase as DroneCommandCommands };
+export {DroneCommandCommandsBase as DroneCommandCommands};

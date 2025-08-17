@@ -1,18 +1,18 @@
 /**
  * @fileoverview 健康檢查路由配置
- * 
+ *
  * 提供微服務健康狀態檢查端點，用於：
  * - Kong 的健康檢查
  * - Consul 的服務健康監控
  * - 系統監控和負載均衡
- * 
+ *
  * @author AIOT Team
  * @version 1.0.0
  * @since 2024-01-01
  */
 
-import { Router, Request, Response } from 'express';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
+import {Request, Response, Router} from 'express';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
 
 const router = Router();
 
@@ -55,4 +55,4 @@ router.get('/health/detailed', (req: Request, res: Response) => {
     res.status(result.status).json(result);
 });
 
-export { router as healthRoutes };
+export {router as healthRoutes};

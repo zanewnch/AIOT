@@ -1,6 +1,6 @@
 /**
  * @fileoverview 無人機指令命令控制器單元測試
- * 
+ *
  * 測試 DroneCommandCommandsCtrl 類別的所有功能，包含：
  * - 指令創建測試
  * - 批量指令創建測試
@@ -8,24 +8,24 @@
  * - 各種飛行指令發送測試
  * - 指令狀態管理測試
  * - 錯誤處理測試
- * 
+ *
  * @author AIOT Team
  * @since 1.0.0
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { DroneCommandCommands } from '../../../src/controllers/commands/DroneCommandCommandsCtrl.js';
-import { DroneCommandCommandsSvc } from '../../../src/services/commands/DroneCommandCommandsSvc.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { DroneCommandCreationAttributes } from '../../../src/models/DroneCommandModel.js';
+import {NextFunction, Request, Response} from 'express';
+import {DroneCommandCommands} from '../../../src/controllers/commands/DroneCommandCommandsCtrl.js';
+import {DroneCommandCommandsSvc} from '../../../src/services/commands/DroneCommandCommandsSvc.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {DroneCommandCreationAttributes} from '../../../src/models/DroneCommandModel.js';
 
-// Mock ControllerResult
-jest.mock('@aiot/shared-packages/ControllerResult.js', () => ({
+// Mock ResResult
+jest.mock('@aiot/shared-packages/ResResult.js', () => ({
     ControllerResult: {
-        badRequest: jest.fn((message: string, data?: any) => ({ status: 400, message, data })),
-        created: jest.fn((message: string, data?: any) => ({ status: 201, message, data })),
-        success: jest.fn((message: string, data?: any) => ({ status: 200, message, data })),
-        notFound: jest.fn((message: string, data?: any) => ({ status: 404, message, data })),
+        badRequest: jest.fn((message: string, data?: any) => ({status: 400, message, data})),
+        created: jest.fn((message: string, data?: any) => ({status: 201, message, data})),
+        success: jest.fn((message: string, data?: any) => ({status: 200, message, data})),
+        notFound: jest.fn((message: string, data?: any) => ({status: 404, message, data})),
     }
 }));
 
@@ -103,7 +103,7 @@ describe('DroneCommandCommands', () => {
             mockRequest.body = commandData;
             mockCommandService.createCommand.mockResolvedValue({
                 success: true,
-                command: { id: 1, ...commandData }
+                command: {id: 1, ...commandData}
             });
 
             await controller.createCommand(
@@ -115,12 +115,12 @@ describe('DroneCommandCommands', () => {
             expect(mockCommandService.createCommand).toHaveBeenCalledWith(commandData);
             expect(ControllerResult.created).toHaveBeenCalledWith(
                 '無人機指令創建成功',
-                { id: 1, ...commandData }
+                {id: 1, ...commandData}
             );
         });
 
         it('應該在缺少 drone_id 時返回錯誤', async () => {
-            mockRequest.body = { command_type: 'TAKEOFF' };
+            mockRequest.body = {command_type: 'TAKEOFF'};
 
             await controller.createCommand(
                 mockRequest as Request,
@@ -135,7 +135,7 @@ describe('DroneCommandCommands', () => {
         });
 
         it('應該在缺少 command_type 時返回錯誤', async () => {
-            mockRequest.body = { drone_id: 1 };
+            mockRequest.body = {drone_id: 1};
 
             await controller.createCommand(
                 mockRequest as Request,
@@ -150,7 +150,7 @@ describe('DroneCommandCommands', () => {
         });
 
         it('應該在服務返回失敗時處理錯誤', async () => {
-            const commandData = { drone_id: 1, command_type: 'TAKEOFF' };
+            const commandData = {drone_id: 1, command_type: 'TAKEOFF'};
             mockRequest.body = commandData;
             mockCommandService.createCommand.mockResolvedValue({
                 success: false,
@@ -167,7 +167,7 @@ describe('DroneCommandCommands', () => {
         });
 
         it('應該處理拋出的異常', async () => {
-            mockRequest.body = { drone_id: 1, command_type: 'TAKEOFF' };
+            mockRequest.body = {drone_id: 1, command_type: 'TAKEOFF'};
             const error = new Error('Service error');
             mockCommandService.createCommand.mockRejectedValue(error);
 
@@ -184,8 +184,8 @@ describe('DroneCommandCommands', () => {
     describe('createCommandsBatch', () => {
         it('應該成功創建批量指令', async () => {
             const commandsData = [
-                { drone_id: 1, command_type: 'TAKEOFF', issued_by: 1 },
-                { drone_id: 2, command_type: 'LAND', issued_by: 1 }
+                {drone_id: 1, command_type: 'TAKEOFF', issued_by: 1},
+                {drone_id: 2, command_type: 'LAND', issued_by: 1}
             ];
             mockRequest.body = commandsData;
             mockCommandService.createBatchCommands.mockResolvedValue({
@@ -207,7 +207,7 @@ describe('DroneCommandCommands', () => {
         });
 
         it('應該在非陣列資料時返回錯誤', async () => {
-            mockRequest.body = { not: 'array' };
+            mockRequest.body = {not: 'array'};
 
             await controller.createCommandsBatch(
                 mockRequest as Request,
@@ -236,8 +236,8 @@ describe('DroneCommandCommands', () => {
 
         it('應該驗證陣列中的每筆資料', async () => {
             mockRequest.body = [
-                { drone_id: 1, command_type: 'TAKEOFF' },
-                { drone_id: 'invalid', command_type: 'LAND' }
+                {drone_id: 1, command_type: 'TAKEOFF'},
+                {drone_id: 'invalid', command_type: 'LAND'}
             ];
 
             await controller.createCommandsBatch(
@@ -254,8 +254,8 @@ describe('DroneCommandCommands', () => {
 
     describe('updateCommand', () => {
         it('應該成功更新指令', async () => {
-            const updateData = { command_type: 'LAND' };
-            mockRequest.params = { id: '1' };
+            const updateData = {command_type: 'LAND'};
+            mockRequest.params = {id: '1'};
             mockRequest.body = updateData;
             mockCommandService.updateCommand.mockResolvedValue({
                 id: 1,
@@ -271,12 +271,12 @@ describe('DroneCommandCommands', () => {
             expect(mockCommandService.updateCommand).toHaveBeenCalledWith(1, updateData);
             expect(ControllerResult.success).toHaveBeenCalledWith(
                 '無人機指令更新成功',
-                { id: 1, ...updateData }
+                {id: 1, ...updateData}
             );
         });
 
         it('應該在無效 ID 時返回錯誤', async () => {
-            mockRequest.params = { id: 'invalid' };
+            mockRequest.params = {id: 'invalid'};
 
             await controller.updateCommand(
                 mockRequest as Request,
@@ -290,7 +290,7 @@ describe('DroneCommandCommands', () => {
         });
 
         it('應該在找不到指令時返回 404', async () => {
-            mockRequest.params = { id: '999' };
+            mockRequest.params = {id: '999'};
             mockCommandService.updateCommand.mockResolvedValue(null);
 
             await controller.updateCommand(
@@ -307,7 +307,7 @@ describe('DroneCommandCommands', () => {
 
     describe('deleteCommand', () => {
         it('應該成功刪除指令', async () => {
-            mockRequest.params = { id: '1' };
+            mockRequest.params = {id: '1'};
             mockCommandService.deleteCommand.mockResolvedValue(true);
 
             await controller.deleteCommand(
@@ -321,7 +321,7 @@ describe('DroneCommandCommands', () => {
         });
 
         it('應該在找不到指令時返回 404', async () => {
-            mockRequest.params = { id: '999' };
+            mockRequest.params = {id: '999'};
             mockCommandService.deleteCommand.mockResolvedValue(false);
 
             await controller.deleteCommand(
@@ -339,10 +339,10 @@ describe('DroneCommandCommands', () => {
     describe('飛行指令測試', () => {
         describe('sendTakeoffCommand', () => {
             it('應該成功發送起飛指令', async () => {
-                mockRequest.body = { droneId: 1, altitude: 10 };
+                mockRequest.body = {droneId: 1, altitude: 10};
                 mockCommandService.sendTakeoffCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, command_type: 'TAKEOFF' }
+                    command: {id: 1, command_type: 'TAKEOFF'}
                 });
 
                 await controller.sendTakeoffCommand(
@@ -352,16 +352,16 @@ describe('DroneCommandCommands', () => {
                 );
 
                 expect(mockCommandService.sendTakeoffCommand).toHaveBeenCalledWith(
-                    1, 1, { altitude: 10, speed: undefined }
+                    1, 1, {altitude: 10, speed: undefined}
                 );
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '起飛指令發送成功',
-                    { id: 1, command_type: 'TAKEOFF' }
+                    {id: 1, command_type: 'TAKEOFF'}
                 );
             });
 
             it('應該在缺少 droneId 時返回錯誤', async () => {
-                mockRequest.body = { altitude: 10 };
+                mockRequest.body = {altitude: 10};
 
                 await controller.sendTakeoffCommand(
                     mockRequest as Request,
@@ -377,10 +377,10 @@ describe('DroneCommandCommands', () => {
 
         describe('sendLandCommand', () => {
             it('應該成功發送降落指令', async () => {
-                mockRequest.body = { droneId: 1 };
+                mockRequest.body = {droneId: 1};
                 mockCommandService.sendLandCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, command_type: 'LAND' }
+                    command: {id: 1, command_type: 'LAND'}
                 });
 
                 await controller.sendLandCommand(
@@ -392,7 +392,7 @@ describe('DroneCommandCommands', () => {
                 expect(mockCommandService.sendLandCommand).toHaveBeenCalledWith(1, 1, undefined);
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '降落指令發送成功',
-                    { id: 1, command_type: 'LAND' }
+                    {id: 1, command_type: 'LAND'}
                 );
             });
         });
@@ -407,7 +407,7 @@ describe('DroneCommandCommands', () => {
                 };
                 mockCommandService.sendMoveCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, command_type: 'MOVE' }
+                    command: {id: 1, command_type: 'MOVE'}
                 });
 
                 await controller.sendFlyToCommand(
@@ -417,16 +417,16 @@ describe('DroneCommandCommands', () => {
                 );
 
                 expect(mockCommandService.sendMoveCommand).toHaveBeenCalledWith(
-                    1, 1, { latitude: 25.0, longitude: 121.0, altitude: 100, speed: undefined }
+                    1, 1, {latitude: 25.0, longitude: 121.0, altitude: 100, speed: undefined}
                 );
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '飛行指令發送成功',
-                    { id: 1, command_type: 'MOVE' }
+                    {id: 1, command_type: 'MOVE'}
                 );
             });
 
             it('應該在缺少座標時返回錯誤', async () => {
-                mockRequest.body = { droneId: 1, latitude: 25.0 };
+                mockRequest.body = {droneId: 1, latitude: 25.0};
 
                 await controller.sendFlyToCommand(
                     mockRequest as Request,
@@ -442,10 +442,10 @@ describe('DroneCommandCommands', () => {
 
         describe('sendEmergencyCommand', () => {
             it('應該成功發送緊急停止指令', async () => {
-                mockRequest.body = { droneId: 1 };
+                mockRequest.body = {droneId: 1};
                 mockCommandService.sendEmergencyCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, command_type: 'EMERGENCY' }
+                    command: {id: 1, command_type: 'EMERGENCY'}
                 });
 
                 await controller.sendEmergencyCommand(
@@ -457,7 +457,7 @@ describe('DroneCommandCommands', () => {
                 expect(mockCommandService.sendEmergencyCommand).toHaveBeenCalledWith(1, 1, undefined);
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '緊急停止指令發送成功',
-                    { id: 1, command_type: 'EMERGENCY' }
+                    {id: 1, command_type: 'EMERGENCY'}
                 );
             });
         });
@@ -466,10 +466,10 @@ describe('DroneCommandCommands', () => {
     describe('指令狀態管理測試', () => {
         describe('executeCommand', () => {
             it('應該成功執行指令', async () => {
-                mockRequest.params = { id: '1' };
+                mockRequest.params = {id: '1'};
                 mockCommandService.executeCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, status: 'EXECUTING' }
+                    command: {id: 1, status: 'EXECUTING'}
                 });
 
                 await controller.executeCommand(
@@ -481,17 +481,17 @@ describe('DroneCommandCommands', () => {
                 expect(mockCommandService.executeCommand).toHaveBeenCalledWith(1);
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '指令執行成功',
-                    { id: 1, status: 'EXECUTING' }
+                    {id: 1, status: 'EXECUTING'}
                 );
             });
         });
 
         describe('completeCommand', () => {
             it('應該成功完成指令', async () => {
-                mockRequest.params = { id: '1' };
+                mockRequest.params = {id: '1'};
                 mockCommandService.completeCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, status: 'COMPLETED' }
+                    command: {id: 1, status: 'COMPLETED'}
                 });
 
                 await controller.completeCommand(
@@ -503,18 +503,18 @@ describe('DroneCommandCommands', () => {
                 expect(mockCommandService.completeCommand).toHaveBeenCalledWith(1);
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '指令完成成功',
-                    { id: 1, status: 'COMPLETED' }
+                    {id: 1, status: 'COMPLETED'}
                 );
             });
         });
 
         describe('failCommand', () => {
             it('應該成功標記指令失敗', async () => {
-                mockRequest.params = { id: '1' };
-                mockRequest.body = { reason: '通訊失敗' };
+                mockRequest.params = {id: '1'};
+                mockRequest.body = {reason: '通訊失敗'};
                 mockCommandService.failCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, status: 'FAILED' }
+                    command: {id: 1, status: 'FAILED'}
                 });
 
                 await controller.failCommand(
@@ -526,18 +526,18 @@ describe('DroneCommandCommands', () => {
                 expect(mockCommandService.failCommand).toHaveBeenCalledWith(1, '通訊失敗');
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '指令標記失敗成功',
-                    { id: 1, status: 'FAILED' }
+                    {id: 1, status: 'FAILED'}
                 );
             });
         });
 
         describe('cancelCommand', () => {
             it('應該成功取消指令', async () => {
-                mockRequest.params = { id: '1' };
-                mockRequest.body = { reason: '用戶取消' };
+                mockRequest.params = {id: '1'};
+                mockRequest.body = {reason: '用戶取消'};
                 mockCommandService.cancelCommand.mockResolvedValue({
                     success: true,
-                    command: { id: 1, status: 'CANCELLED' }
+                    command: {id: 1, status: 'CANCELLED'}
                 });
 
                 await controller.cancelCommand(
@@ -549,7 +549,7 @@ describe('DroneCommandCommands', () => {
                 expect(mockCommandService.cancelCommand).toHaveBeenCalledWith(1, '用戶取消');
                 expect(ControllerResult.success).toHaveBeenCalledWith(
                     '指令取消成功',
-                    { id: 1, status: 'CANCELLED' }
+                    {id: 1, status: 'CANCELLED'}
                 );
             });
         });
@@ -557,11 +557,11 @@ describe('DroneCommandCommands', () => {
 
     describe('retryFailedCommand', () => {
         it('應該成功重試失敗的指令', async () => {
-            mockRequest.params = { id: '1' };
-            mockRequest.body = { issuedBy: 1 };
+            mockRequest.params = {id: '1'};
+            mockRequest.body = {issuedBy: 1};
             mockCommandService.retryFailedCommand.mockResolvedValue({
                 success: true,
-                command: { id: 2, originalCommandId: 1 }
+                command: {id: 2, originalCommandId: 1}
             });
 
             await controller.retryFailedCommand(
@@ -573,12 +573,12 @@ describe('DroneCommandCommands', () => {
             expect(mockCommandService.retryFailedCommand).toHaveBeenCalledWith(1, 1);
             expect(ControllerResult.created).toHaveBeenCalledWith(
                 '指令重試成功',
-                { id: 2, originalCommandId: 1 }
+                {id: 2, originalCommandId: 1}
             );
         });
 
         it('應該在缺少 issuedBy 時返回錯誤', async () => {
-            mockRequest.params = { id: '1' };
+            mockRequest.params = {id: '1'};
             mockRequest.body = {};
 
             await controller.retryFailedCommand(

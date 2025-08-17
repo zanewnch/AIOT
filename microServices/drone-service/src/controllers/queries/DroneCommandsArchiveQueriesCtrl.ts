@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機指令歷史歸檔查詢控制器
- * 
+ *
  * 此文件實作了無人機指令歷史歸檔查詢控制器，
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
- * 
+ *
  * @module DroneCommandsArchiveQueries
  * @author AIOT Team
  * @since 1.0.0
@@ -12,31 +12,27 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneCommandsArchiveQueriesSvc } from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneCommandsArchiveQueriesSvc} from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandsArchiveQueries');
 
 /**
  * 無人機指令歷史歸檔查詢控制器類別
- * 
+ *
  * 專門處理無人機指令歷史歸檔相關的查詢請求，包含取得指令資料、統計等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
- * 
+ *
  * @class DroneCommandsArchiveQueries
  * @since 1.0.0
  */
 @injectable()
 export class DroneCommandsArchiveQueries {
-    constructor(
-        @inject(TYPES.DroneCommandsArchiveQueriesSvc) private readonly queryService: DroneCommandsArchiveQueriesSvc
-    ) {}
-
     /**
      * 取得所有指令歷史歸檔資料
      * @route GET /api/drone-commands-archive/data
@@ -52,7 +48,6 @@ export class DroneCommandsArchiveQueries {
             next(error);
         }
     }, 'getAllCommandsArchive')
-
     /**
      * 根據 ID 取得指令歷史歸檔資料
      * @route GET /api/drone-commands-archive/data/:id
@@ -68,7 +63,7 @@ export class DroneCommandsArchiveQueries {
             }
 
             const archive = await this.queryService.getCommandArchiveById(id);
-            
+
             if (!archive) {
                 const result = ControllerResult.notFound('找不到指定的指令歷史歸檔');
                 res.status(result.status).json(result);
@@ -81,7 +76,6 @@ export class DroneCommandsArchiveQueries {
             next(error);
         }
     }, 'getCommandArchiveById')
-
     /**
      * 根據無人機 ID 查詢指令歷史歸檔
      * @route GET /api/drone-commands-archive/data/drone/:droneId
@@ -105,7 +99,6 @@ export class DroneCommandsArchiveQueries {
             next(error);
         }
     }, 'getCommandArchivesByDroneId')
-
     /**
      * 根據時間範圍查詢指令歷史歸檔
      * @route GET /api/drone-commands-archive/data/time-range
@@ -131,7 +124,6 @@ export class DroneCommandsArchiveQueries {
             next(error);
         }
     }, 'getCommandArchivesByTimeRange')
-
     /**
      * 根據指令類型查詢歷史歸檔
      * @route GET /api/drone-commands-archive/data/command-type/:commandType
@@ -155,7 +147,6 @@ export class DroneCommandsArchiveQueries {
             next(error);
         }
     }, 'getCommandArchivesByType')
-
     /**
      * 根據指令狀態查詢歷史歸檔
      * @route GET /api/drone-commands-archive/data/status/:status
@@ -179,4 +170,9 @@ export class DroneCommandsArchiveQueries {
             next(error);
         }
     }, 'getCommandArchivesByStatus')
+
+    constructor(
+        @inject(TYPES.DroneCommandsArchiveQueriesSvc) private readonly queryService: DroneCommandsArchiveQueriesSvc
+    ) {
+    }
 }

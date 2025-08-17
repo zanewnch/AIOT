@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機指令佇列命令控制器
- * 
+ *
  * 此文件實作了無人機指令佇列命令控制器，
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
- * 
+ *
  * @module DroneCommandQueueCommands
  * @author AIOT Team
  * @since 1.0.0
@@ -12,24 +12,23 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DroneCommandQueueCommandsSvc } from '../../services/commands/DroneCommandQueueCommandsSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
-import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
-import type { DroneCommandQueueCreationAttributes } from '../../types/services/IDroneCommandQueueService.js';
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DroneCommandQueueCommandsSvc} from '../../services/commands/DroneCommandQueueCommandsSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {TYPES} from '../../container/types.js';
+import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
+import type {DroneCommandQueueCreationAttributes} from '../../types/services/IDroneCommandQueueService.js';
 
 const logger = createLogger('DroneCommandQueueCommands');
 
 /**
  * 無人機指令佇列命令控制器類別
- * 
+ *
  * 專門處理無人機指令佇列相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
- * 
+ *
  * @class DroneCommandQueueCommands
  * @since 1.0.0
  */
@@ -37,7 +36,8 @@ const logger = createLogger('DroneCommandQueueCommands');
 export class DroneCommandQueueCommands {
     constructor(
         @inject(TYPES.DroneCommandQueueCommandsSvc) private readonly commandService: DroneCommandQueueCommandsSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 創建新的無人機指令佇列
@@ -83,7 +83,7 @@ export class DroneCommandQueueCommands {
                 res.status(result.status).json(result);
                 return;
             }
-const updatedData = await this.commandService.updateDroneCommandQueue(id, updateData);
+            const updatedData = await this.commandService.updateDroneCommandQueue(id, updateData);
 
             if (!updatedData) {
                 const result = ControllerResult.notFound('找不到指定的無人機指令佇列');
@@ -111,7 +111,7 @@ const updatedData = await this.commandService.updateDroneCommandQueue(id, update
                 res.status(result.status).json(result);
                 return;
             }
-const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
+            const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
 
             if (deletedRows === 0) {
                 const result = ControllerResult.notFound('找不到指定的無人機指令佇列');
@@ -132,7 +132,7 @@ const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
      */
     enqueueDroneCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { droneId, commandType, commandData, priority = 1 } = req.body;
+            const {droneId, commandType, commandData, priority = 1} = req.body;
 
             // 基本驗證
             if (!droneId || typeof droneId !== 'number') {
@@ -146,7 +146,7 @@ const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
                 res.status(result.status).json(result);
                 return;
             }
-const enqueuedCommand = await this.commandService.enqueueDroneCommand(
+            const enqueuedCommand = await this.commandService.enqueueDroneCommand(
                 droneId,
                 commandType,
                 commandData,
@@ -173,7 +173,7 @@ const enqueuedCommand = await this.commandService.enqueueDroneCommand(
                 res.status(result.status).json(result);
                 return;
             }
-const dequeuedCommand = await this.commandService.dequeueDroneCommand(droneId);
+            const dequeuedCommand = await this.commandService.dequeueDroneCommand(droneId);
 
             if (!dequeuedCommand) {
                 const result = ControllerResult.notFound('沒有待執行的無人機指令');
@@ -201,9 +201,9 @@ const dequeuedCommand = await this.commandService.dequeueDroneCommand(droneId);
                 res.status(result.status).json(result);
                 return;
             }
-const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
+            const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
 
-            const result = ControllerResult.success(`已清空 ${clearedCount} 個無人機指令`, { clearedCount });
+            const result = ControllerResult.success(`已清空 ${clearedCount} 個無人機指令`, {clearedCount});
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -217,7 +217,7 @@ const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
     updateDroneCommandQueueStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const { status } = req.body;
+            const {status} = req.body;
 
             if (isNaN(id)) {
                 const result = ControllerResult.badRequest('無效的 ID 格式');
@@ -238,7 +238,7 @@ const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
                 res.status(result.status).json(result);
                 return;
             }
-const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, status as DroneCommandQueueStatus);
+            const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, status as DroneCommandQueueStatus);
 
             if (!updatedData) {
                 const result = ControllerResult.notFound('找不到指定的無人機指令佇列');
@@ -266,7 +266,7 @@ const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, 
                 res.status(result.status).json(result);
                 return;
             }
-const result = ControllerResult.success('無人機指令佇列已開始執行');
+            const result = ControllerResult.success('無人機指令佇列已開始執行');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -286,7 +286,7 @@ const result = ControllerResult.success('無人機指令佇列已開始執行');
                 res.status(result.status).json(result);
                 return;
             }
-const result = ControllerResult.success('無人機指令佇列已暫停執行');
+            const result = ControllerResult.success('無人機指令佇列已暫停執行');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -306,7 +306,7 @@ const result = ControllerResult.success('無人機指令佇列已暫停執行');
                 res.status(result.status).json(result);
                 return;
             }
-const result = ControllerResult.success('無人機指令佇列已重置');
+            const result = ControllerResult.success('無人機指令佇列已重置');
             res.status(result.status).json(result);
         } catch (error) {
             next(error);
@@ -320,7 +320,7 @@ const result = ControllerResult.success('無人機指令佇列已重置');
     addCommandToQueue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const { commandType, commandData, priority = 1 } = req.body;
+            const {commandType, commandData, priority = 1} = req.body;
 
             if (isNaN(id)) {
                 const result = ControllerResult.badRequest('無效的 ID 格式');
@@ -333,7 +333,7 @@ const result = ControllerResult.success('無人機指令佇列已重置');
                 res.status(result.status).json(result);
                 return;
             }
-const result = ControllerResult.success('指令已加入佇列', {
+            const result = ControllerResult.success('指令已加入佇列', {
                 queueId: id,
                 commandType,
                 priority

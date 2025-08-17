@@ -1,10 +1,10 @@
 /**
  * @fileoverview 無人機位置查詢控制器
- * 
+ *
  * 此文件實作了無人機位置查詢控制器，
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
- * 
+ *
  * @module DronePositionQueries
  * @author AIOT Team
  * @since 1.0.0
@@ -12,23 +12,22 @@
  */
 
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
-import { DronePositionQueriesSvc } from '../../services/queries/DronePositionQueriesSvc.js';
-import { createLogger, logRequest } from '@aiot/shared-packages/loggerConfig.js';
-import { ControllerResult } from '@aiot/shared-packages/ControllerResult.js';
-import { IDronePositionQueries } from '../../types/controllers/queries/IDronePositionQueries.js';
-import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
+import {inject, injectable} from 'inversify';
+import {NextFunction, Request, Response} from 'express';
+import {DronePositionQueriesSvc} from '../../services/queries/DronePositionQueriesSvc.js';
+import {createLogger} from '@aiot/shared-packages/loggerConfig.js';
+import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
+import {IDronePositionQueries} from '../../types/controllers/queries/IDronePositionQueries.js';
+import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('DronePositionQueries');
 
 /**
  * 無人機位置查詢控制器類別
- * 
+ *
  * 專門處理無人機位置相關的查詢請求，包含取得位置資料等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
- * 
+ *
  * @class DronePositionQueries
  * @since 1.0.0
  */
@@ -36,7 +35,8 @@ const logger = createLogger('DronePositionQueries');
 export class DronePositionQueries implements IDronePositionQueries {
     constructor(
         @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesSvc: DronePositionQueriesSvc
-    ) {}
+    ) {
+    }
 
     /**
      * 取得所有無人機位置資料
@@ -46,7 +46,7 @@ export class DronePositionQueries implements IDronePositionQueries {
         try {
             const limit = parseInt(req.query.limit as string) || 100;
             const positions = await this.dronePositionQueriesSvc.getAllDronePositions(limit);
-            
+
             const result = ControllerResult.success('無人機位置資料獲取成功', positions);
             res.status(result.status).json(result);
         } catch (error) {
@@ -146,7 +146,7 @@ export class DronePositionQueries implements IDronePositionQueries {
     getDronePositionsByTimeRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
-            const { startTime, endTime } = req.query;
+            const {startTime, endTime} = req.query;
 
             // 驗證 Drone ID
             if (isNaN(droneId)) {

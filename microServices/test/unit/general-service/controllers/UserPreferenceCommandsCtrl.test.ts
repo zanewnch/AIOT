@@ -1,6 +1,6 @@
 /**
  * @fileoverview 用戶偏好設定命令控制器單元測試
- * 
+ *
  * 測試 UserPreferenceCommands 類別的所有功能，包含：
  * - 用戶偏好設定創建測試
  * - 用戶偏好設定更新測試
@@ -8,44 +8,48 @@
  * - 批量操作測試
  * - 輸入驗證測試
  * - 錯誤處理測試
- * 
+ *
  * @author AIOT Team
  * @since 1.0.0
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { UserPreferenceCommands } from '../../../src/controllers/commands/UserPreferenceCommandsCtrl.js';
-import { UserPreferenceCommandsSvc } from '../../../src/services/commands/UserPreferenceCommandsSvc.js';
-import { ControllerResult } from '../../../src/utils/ControllerResult.js';
-import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from '../../../src/models/UserPreferenceModel.js';
+import {NextFunction, Request, Response} from 'express';
+import {UserPreferenceCommands} from '../../../src/controllers/commands/UserPreferenceCommandsCtrl.js';
+import {UserPreferenceCommandsSvc} from '../../../src/services/commands/UserPreferenceCommandsSvc.js';
+import {ControllerResult} from '../../../src/utils/ResResult.js';
+import type {
+    UserPreferenceAttributes,
+    UserPreferenceCreationAttributes
+} from '../../../src/models/UserPreferenceModel.js';
 
-// Mock ControllerResult
-jest.mock('../../../src/utils/ControllerResult.js', () => ({
+// Mock ResResult
+jest.mock('../../../src/utils/ResResult.js', () => ({
     ControllerResult: {
         badRequest: jest.fn((res: Response, message: string, data?: any) => {
-            res.status(400).json({ status: 400, message, data });
+            res.status(400).json({status: 400, message, data});
         }),
         created: jest.fn((res: Response, message: string, data?: any) => {
-            res.status(201).json({ status: 201, message, data });
+            res.status(201).json({status: 201, message, data});
         }),
         success: jest.fn((res: Response, message: string, data?: any) => {
-            res.status(200).json({ status: 200, message, data });
+            res.status(200).json({status: 200, message, data});
         }),
         notFound: jest.fn((res: Response, message: string, data?: any) => {
-            res.status(404).json({ status: 404, message, data });
+            res.status(404).json({status: 404, message, data});
         }),
         conflict: jest.fn((res: Response, message: string, data?: any) => {
-            res.status(409).json({ status: 409, message, data });
+            res.status(409).json({status: 409, message, data});
         }),
         internalServerError: jest.fn((res: Response, message: string, data?: any) => {
-            res.status(500).json({ status: 500, message, data });
+            res.status(500).json({status: 500, message, data});
         }),
     }
 }));
 
 // Mock Logger decorator
 jest.mock('../../../src/decorators/LoggerDecorator.js', () => ({
-    Logger: () => () => {},
+    Logger: () => () => {
+    },
 }));
 
 describe('UserPreferenceCommands', () => {
@@ -75,7 +79,7 @@ describe('UserPreferenceCommands', () => {
         mockRequest = {
             body: {},
             params: {},
-            user: { id: 1, username: 'testuser' }, // Mock authenticated user
+            user: {id: 1, username: 'testuser'}, // Mock authenticated user
         };
 
         mockResponse = {
@@ -223,7 +227,7 @@ describe('UserPreferenceCommands', () => {
                 }
             };
 
-            mockRequest.params = { id: preferenceId };
+            mockRequest.params = {id: preferenceId};
             mockRequest.body = updateData;
 
             const updatedPreference: UserPreferenceAttributes = {
@@ -257,8 +261,8 @@ describe('UserPreferenceCommands', () => {
         });
 
         it('應該在無效 ID 時返回錯誤', async () => {
-            mockRequest.params = { id: 'invalid' };
-            mockRequest.body = { theme: 'dark' };
+            mockRequest.params = {id: 'invalid'};
+            mockRequest.body = {theme: 'dark'};
 
             await controller.updateUserPreference(
                 mockRequest as Request,
@@ -275,8 +279,8 @@ describe('UserPreferenceCommands', () => {
 
         it('應該在找不到偏好設定時返回 404', async () => {
             const preferenceId = '999';
-            mockRequest.params = { id: preferenceId };
-            mockRequest.body = { theme: 'dark' };
+            mockRequest.params = {id: preferenceId};
+            mockRequest.body = {theme: 'dark'};
 
             mockUserPreferenceCommandsSvc.updateUserPreference.mockResolvedValue({
                 success: false,
@@ -297,7 +301,7 @@ describe('UserPreferenceCommands', () => {
 
         it('應該驗證更新資料格式', async () => {
             const preferenceId = '1';
-            mockRequest.params = { id: preferenceId };
+            mockRequest.params = {id: preferenceId};
             mockRequest.body = {
                 theme: 'invalid-theme', // 無效的主題值
                 language: 123 // 無效的語言格式
@@ -324,7 +328,7 @@ describe('UserPreferenceCommands', () => {
     describe('deleteUserPreference', () => {
         it('應該成功刪除用戶偏好設定', async () => {
             const preferenceId = '1';
-            mockRequest.params = { id: preferenceId };
+            mockRequest.params = {id: preferenceId};
 
             mockUserPreferenceCommandsSvc.deleteUserPreference.mockResolvedValue({
                 success: true,
@@ -347,7 +351,7 @@ describe('UserPreferenceCommands', () => {
         });
 
         it('應該在無效 ID 時返回錯誤', async () => {
-            mockRequest.params = { id: 'invalid' };
+            mockRequest.params = {id: 'invalid'};
 
             await controller.deleteUserPreference(
                 mockRequest as Request,
@@ -364,7 +368,7 @@ describe('UserPreferenceCommands', () => {
 
         it('應該在找不到偏好設定時返回 404', async () => {
             const preferenceId = '999';
-            mockRequest.params = { id: preferenceId };
+            mockRequest.params = {id: preferenceId};
 
             mockUserPreferenceCommandsSvc.deleteUserPreference.mockResolvedValue({
                 success: false,
@@ -399,7 +403,7 @@ describe('UserPreferenceCommands', () => {
                 }
             ];
 
-            mockRequest.body = { preferences: preferencesData };
+            mockRequest.body = {preferences: preferencesData};
 
             const createdPreferences: UserPreferenceAttributes[] = preferencesData.map((data, index) => ({
                 id: index + 1,
@@ -454,7 +458,7 @@ describe('UserPreferenceCommands', () => {
         });
 
         it('應該在偏好設定陣列為空時返回錯誤', async () => {
-            mockRequest.body = { preferences: [] };
+            mockRequest.body = {preferences: []};
 
             await controller.bulkCreateUserPreferences(
                 mockRequest as Request,
@@ -471,11 +475,11 @@ describe('UserPreferenceCommands', () => {
 
         it('應該處理部分成功的批量創建', async () => {
             const preferencesData: UserPreferenceCreationAttributes[] = [
-                { userId: 1, theme: 'dark' },
-                { userId: 999, theme: 'light' } // 假設這個會失敗
+                {userId: 1, theme: 'dark'},
+                {userId: 999, theme: 'light'} // 假設這個會失敗
             ];
 
-            mockRequest.body = { preferences: preferencesData };
+            mockRequest.body = {preferences: preferencesData};
 
             const successfulPreference: UserPreferenceAttributes = {
                 id: 1,
@@ -489,7 +493,7 @@ describe('UserPreferenceCommands', () => {
                 success: true,
                 data: {
                     successful: [successfulPreference],
-                    failed: [{ data: preferencesData[1], error: 'User not found' }],
+                    failed: [{data: preferencesData[1], error: 'User not found'}],
                     successCount: 1,
                     failedCount: 1
                 }
@@ -515,7 +519,7 @@ describe('UserPreferenceCommands', () => {
     describe('resetUserPreferences', () => {
         it('應該成功重設用戶偏好設定為默認值', async () => {
             const userId = '1';
-            mockRequest.params = { userId };
+            mockRequest.params = {userId};
 
             const defaultPreferences: UserPreferenceAttributes = {
                 id: 1,
@@ -554,7 +558,7 @@ describe('UserPreferenceCommands', () => {
         });
 
         it('應該在無效用戶 ID 時返回錯誤', async () => {
-            mockRequest.params = { userId: 'invalid' };
+            mockRequest.params = {userId: 'invalid'};
 
             await controller.resetUserPreferences(
                 mockRequest as Request,
@@ -571,7 +575,7 @@ describe('UserPreferenceCommands', () => {
 
         it('應該在找不到用戶時返回 404', async () => {
             const userId = '999';
-            mockRequest.params = { userId };
+            mockRequest.params = {userId};
 
             mockUserPreferenceCommandsSvc.resetUserPreferences.mockResolvedValue({
                 success: false,

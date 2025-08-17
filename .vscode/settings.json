@@ -10,5 +10,6 @@
   ],
   "dotnet.preferCSharpExtension": true,
   "editor.fontFamily": "monospace",
-  "editor.fontSize": 16
+  "editor.fontSize": 18,
+  "files.autoSave": "afterDelay"
 }

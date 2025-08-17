@@ -17,7 +17,7 @@ import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
 import { apiClient } from '../../../utils/RequestUtils';
-import { RequestResult } from '../../../utils/RequestResult';
+import { ReqResult } from '../../../utils/ReqResult';
 import styles from '../../../styles/TableViewer.module.scss';
 
 const logger = createLogger('DroneStatusArchiveTableView');
@@ -50,7 +50,7 @@ interface DroneStatusArchive {
  */
 const fetchDroneStatusArchive = async (): Promise<DroneStatusArchive[]> => {
   const response = await apiClient.get('/drone-status-archive/data');
-  const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+  const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
   
   if (result.isError()) {
     throw new Error(result.message);

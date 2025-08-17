@@ -12,7 +12,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import { createLogger } from '../configs/loggerConfig';
 import type { TableError } from '../types/table';
 
@@ -91,7 +91,7 @@ export const useInfiniteTableData = <T = any>(config: InfiniteTableConfig) => {
         });
 
         const response = await apiClient.get(`${endpoint}?${params}`);
-        const result = RequestResult.fromResponse<PaginatedResponse<T>>(response);
+        const result = ReqResult.fromResponse<PaginatedResponse<T>>(response);
 
         if (result.isError()) {
           throw new Error(result.message);

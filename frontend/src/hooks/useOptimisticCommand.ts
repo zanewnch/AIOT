@@ -12,7 +12,7 @@
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import { createLogger } from '../configs/loggerConfig';
 
 const logger = createLogger('useOptimisticCommand');
@@ -98,7 +98,7 @@ export const useOptimisticCommand = () => {
           timestamp: new Date().toISOString()
         });
 
-        const result = RequestResult.fromResponse(response);
+        const result = ReqResult.fromResponse(response);
         if (result.isError()) {
           throw new Error(result.message);
         }

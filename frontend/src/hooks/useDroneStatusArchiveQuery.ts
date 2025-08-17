@@ -10,7 +10,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../utils/RequestUtils';
-import { RequestResult } from '../utils/RequestResult';
+import { ReqResult } from '../utils/ReqResult';
 import { DateRangeQuery } from '../types/droneCommand';
 import type {
   DroneStatusArchive,
@@ -68,7 +68,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get('/drone-status-archive/data');
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -101,7 +101,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get('/drone-status-archive/data/latest');
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -135,7 +135,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<StatusChangeStatistics> => {
         try {
           const response = await apiClient.get('/drone-status-archive/statistics');
-          const result = RequestResult.fromResponse<StatusChangeStatistics>(response);
+          const result = ReqResult.fromResponse<StatusChangeStatistics>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -169,7 +169,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive> => {
         try {
           const response = await apiClient.get(`/api/drone-status-archive/data/${id}`);
-          const result = RequestResult.fromResponse<DroneStatusArchive>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -202,7 +202,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status-archive/data/drone/${droneId}`);
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -235,7 +235,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status-archive/data/status/${status}`);
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -268,7 +268,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status-archive/data/created-by/${userId}`);
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -301,7 +301,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get(`/api/drone-status-archive/data/reason/${reason}`);
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -334,7 +334,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get('/drone-status-archive/data/date-range', { params: dateRange! });
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -367,7 +367,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive | null> => {
         try {
           const response = await apiClient.get(`/api/drone-status-archive/data/drone/${droneId}/latest`);
-          const result = RequestResult.fromResponse<DroneStatusArchive | null>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive | null>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -402,7 +402,7 @@ export class DroneStatusArchiveQuery {
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
           const response = await apiClient.get('/drone-status-archive/data/transition', { params: query! });
-          const result = RequestResult.fromResponse<DroneStatusArchive[]>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -436,7 +436,7 @@ export class DroneStatusArchiveQuery {
       mutationFn: async (data: CreateStatusArchiveRequest): Promise<DroneStatusArchive> => {
         try {
           const response = await apiClient.post('/drone-status-archive/data', data);
-          const result = RequestResult.fromResponse<DroneStatusArchive>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -478,7 +478,7 @@ export class DroneStatusArchiveQuery {
       mutationFn: async ({ id, data }: { id: string; data: UpdateStatusArchiveRequest }): Promise<DroneStatusArchive> => {
         try {
           const response = await apiClient.put(`/api/drone-status-archive/data/${id}`, data);
-          const result = RequestResult.fromResponse<DroneStatusArchive>(response);
+          const result = ReqResult.fromResponse<DroneStatusArchive>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -520,7 +520,7 @@ export class DroneStatusArchiveQuery {
       mutationFn: async (id: string): Promise<void> => {
         try {
           const response = await apiClient.delete(`/api/drone-status-archive/data/${id}`);
-          const result = RequestResult.fromResponse(response);
+          const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {
             throw new Error(result.message);
