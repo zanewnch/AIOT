@@ -21,7 +21,6 @@ import {
   AutoIncrement, // 自動遞增裝飾器
   AllowNull,  // 允許空值設定裝飾器
   Unique,     // 唯一性約束裝飾器
-  BelongsToMany, // 多對多關聯裝飾器
   CreatedAt,  // 建立時間裝飾器
   UpdatedAt,  // 更新時間裝飾器
 } from 'sequelize-typescript';
@@ -29,9 +28,7 @@ import {
 // 導入 Sequelize 的類型定義
 import type { Optional } from 'sequelize';  // Sequelize 的選擇性類型定義
 
-// 導入相關的模型類別
-import { RoleModel } from './RoleModel.js';           // 角色模型，用於建立多對多關聯
-import { UserRoleModel } from './UserToRoleModel.js'; // 使用者角色關聯表模型
+// Auth 服務不管理角色關聯，只關注認證功能
 
 /**
  * 使用者屬性介面
@@ -195,15 +192,5 @@ export class UserModel extends Model<UserAttributes, UserCreationAttributes> imp
   @Column(DataType.DATE)  // 日期類型
   declare updatedAt: Date;
 
-  /**
-   * 關聯的角色列表
-   * 
-   * 透過多對多關聯，取得此使用者擁有的所有角色。
-   * 關聯透過 UserRoleModel 中介表實現。
-   * 
-   * @type {RoleModel[] | undefined}
-   * @memberof UserModel
-   */
-  @BelongsToMany(() => RoleModel, () => UserRoleModel)  // 多對多關聯設定
-  declare roles?: RoleModel[];
+  // Auth 服務不管理角色關聯，角色權限由 RBAC 服務負責
 }

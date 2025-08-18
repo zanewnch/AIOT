@@ -5,18 +5,6 @@
  * 專注於處理所有讀取相關的認證業務操作。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * 功能特點：
- * - 會話驗證和使用者資料擷取
- * - 使用者存在性檢查
- * - JWT Token 驗證
- * - 會話狀態查詢
- *
- * 安全特性：
- * - 驗證會話有效性
- * - 檢查 Redis 中的會話狀態
- * - 從資料庫獲取最新使用者資料
- * - 錯誤處理和日誌記錄
- *
  * @module AuthQueriesSvc
  * @author AIOT Team
  * @since 1.0.0
@@ -26,7 +14,6 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import { SessionQueriesSvc } from './SessionQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -63,13 +50,11 @@ export interface SessionValidationResult {
  */
 @injectable()
 export class AuthQueriesSvc {
-    private userQueriesRepository: UserQueriesRepository;
     private sessionQueriesSvc: SessionQueriesSvc;
 
     constructor(
         @inject(TYPES.SessionQueriesSvc) sessionQueriesSvc: SessionQueriesSvc
     ) {
-        this.userQueriesRepository = new UserQueriesRepository();
         this.sessionQueriesSvc = sessionQueriesSvc;
     }
 
@@ -97,18 +82,6 @@ export class AuthQueriesSvc {
      *
      * @param token JWT Token
      * @returns Promise<SessionValidationResult> 會話驗證結果
-     *
-     * @example
-     * ```typescript
-     * const authQueriesSvc = new AuthQueriesSvc();
-     * const result = await authQueriesSvc.validateSession(token);
-     * 
-     * if (result.isValid && result.user) {
-     *   console.log(`會話有效，使用者：${result.user.username}`);
-     * } else {
-     *   console.log(`會話無效：${result.message}`);
-     * }
-     * ```
      */
     public validateSession = async (token: string): Promise<SessionValidationResult> => {
         try {
@@ -136,7 +109,7 @@ export class AuthQueriesSvc {
             logger.debug(`Session found for user ID: ${sessionData.userId}`);
 
             // 從資料庫取得最新的使用者資料
-            const user = await this.userQueriesRepository.findById(sessionData.userId);
+            const user = await UserModel.findByPk(sessionData.userId);
             if (!user) {
                 logger.warn(`Session validation failed: User not found in database for ID: ${sessionData.userId}`);
                 return {
@@ -179,7 +152,7 @@ export class AuthQueriesSvc {
                 return false;
             }
 
-            const user = await this.userQueriesRepository.findByUsername(username.trim());
+            const user = await UserModel.findOne({ where: { username: username.trim() } });
             return !!user;
         } catch (error) {
             logger.error(`Error checking user existence by username ${username}:`, error);
@@ -198,7 +171,7 @@ export class AuthQueriesSvc {
                 return false;
             }
 
-            const user = await this.userQueriesRepository.findById(userId);
+            const user = await UserModel.findByPk(userId);
             return !!user;
         } catch (error) {
             logger.error(`Error checking user existence by ID ${userId}:`, error);
@@ -219,7 +192,7 @@ export class AuthQueriesSvc {
             }
 
             logger.debug(`Getting user by username: ${username}`);
-            const user = await this.userQueriesRepository.findByUsername(username.trim());
+            const user = await UserModel.findOne({ where: { username: username.trim() } });
 
             if (!user) {
                 logger.debug(`User not found for username: ${username}`);
@@ -247,7 +220,7 @@ export class AuthQueriesSvc {
             }
 
             logger.debug(`Getting user by ID: ${userId}`);
-            const user = await this.userQueriesRepository.findById(userId);
+            const user = await UserModel.findByPk(userId);
 
             if (!user) {
                 logger.debug(`User not found for ID: ${userId}`);
