@@ -151,7 +151,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
      * 權限測試 - 需要無人機權限
      */
     router.get('/test/permissions', 
-        AuthMiddleware.requirePermissions('drone:read'),
+        AuthMiddleware.requirePermissions('drone.read'),
         AuthTestController.testPermissions
     );
 
@@ -167,7 +167,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
      * 無人機權限測試
      */
     router.get('/test/drone', 
-        AuthMiddleware.requirePermissions('drone:read', 'drone:write'),
+        AuthMiddleware.requirePermissions('drone.read', 'drone.update'),
         AuthTestController.testDroneAccess
     );
 
@@ -219,7 +219,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
      * Drone 服務路由 (需要認證和權限)
      */
     router.use('/drone',
-        AuthMiddleware.requirePermissions('drone:read', 'drone:write'),
+        AuthMiddleware.requirePermissions('drone.read', 'drone.update'),
         proxyMiddleware.createDynamicProxy({
             target: 'drone-service',
             pathPrefix: '',
