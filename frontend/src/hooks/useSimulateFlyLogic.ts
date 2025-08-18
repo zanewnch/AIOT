@@ -14,10 +14,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from "react";
-
-// 從環境變數獲取 Google Maps API Key
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD_o0dWCymZaMZRzN6Uy2Rt3U_L56L_eH0";
-const GOOGLE_MAPS_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`;
+import { googleMapsLoader } from "../utils/GoogleMapsLoader";
 
 // 台北101的座標作為預設中心點
 const DEFAULT_CENTER = {
@@ -101,35 +98,14 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   });
 
   /**
-   * 載入 Google Maps JavaScript API
+   * 載入 Google Maps JavaScript API (使用統一管理器)
    */
-  const loadGoogleMapsAPI = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      // 如果已經載入，直接返回
-      if (window.google && window.google.maps) {
-        resolve();
-        return;
-      }
-
-      // 如果腳本已經存在，等待載入完成
-      const existingScript = document.querySelector(`script[src*="maps.googleapis.com"]`);
-      if (existingScript) {
-        existingScript.addEventListener('load', () => resolve());
-        existingScript.addEventListener('error', () => reject(new Error('Google Maps API 載入失敗')));
-        return;
-      }
-
-      // 創建並載入腳本
-      const script = document.createElement('script');
-      script.src = GOOGLE_MAPS_API_URL;
-      script.async = true;
-      script.defer = true;
-
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error('Google Maps API 載入失敗'));
-
-      document.head.appendChild(script);
-    });
+  const loadGoogleMapsAPI = async (): Promise<void> => {
+    try {
+      await googleMapsLoader.load();
+    } catch (error) {
+      throw error;
+    }
   };
 
   /**
@@ -160,7 +136,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
    * 初始化 Google Maps
    */
   const initializeMap = async () => {
-    if (!mapRef.current || !window.google) {
+    if (!mapRef.current || !googleMapsLoader.isGoogleMapsLoaded()) {
       return;
     }
 
@@ -661,10 +637,10 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
         await loadGoogleMapsAPI();
         setIsApiLoaded(true);
 
-        // 短暫延遲確保 DOM 已準備好
+        // 延遲確保 DOM 和 Google Maps API 都已準備好
         setTimeout(() => {
           initializeMap();
-        }, 100);
+        }, 300);
 
       } catch (err) {
         console.error('Google Maps 載入錯誤:', err);

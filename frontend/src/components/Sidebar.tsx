@@ -42,7 +42,6 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/content/tableviewer', label: 'Table Viewer', icon: '📊', matchPath: '/tableviewer' },
   { path: '/content/chat', label: 'AI 聊天', icon: '🤖', matchPath: '/chat' },
   { path: '/content/api-docs', label: 'API 文檔', icon: '📚', matchPath: '/api-docs' },
-  { path: '/content/docpage', label: 'Doc Page', icon: '📄', matchPath: '/docpage' },
   { path: '/content/mappage', label: '地圖頁面', icon: '🗺️', matchPath: '/mappage' },
   { path: '/content/flyingpage', label: '飛行頁面', icon: '✈️', matchPath: '/flyingpage' },
   { path: '/content/command-history', label: '指令歷史', icon: '📋', matchPath: '/command-history' },

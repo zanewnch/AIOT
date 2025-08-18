@@ -62,6 +62,14 @@ export class KongHeadersMiddleware {
 
   /**
    * 提取用戶信息中間件
+   *
+   * @remarks
+   * 解析 Kong headers 並建立 `kongUser` 物件存入 `req.kongUser`，同時同步到 `req.user` 以保持相容性。
+   * 若必要 header 缺失，會回傳 401。
+   *
+   * @param req - Express Request
+   * @param res - Express Response
+   * @param next - NextFunction
    */
   public static extractUserInfo = (req: Request, res: Response, next: NextFunction): void => {
     try {
@@ -80,7 +88,7 @@ export class KongHeadersMiddleware {
       const sessionId = req.headers[KongHeadersMiddleware.KONG_HEADERS.SESSION_ID] as string;
       const authMethod = req.headers[KongHeadersMiddleware.KONG_HEADERS.AUTH_METHOD] as string;
 
-      // 檢查必要的用戶信息是否存在
+  // 檢查必要的用戶信息是否存在（userId & username 為最小必要欄位）
       if (!userId || !username) {
         logger.warn('Missing required user headers from Kong', { 
           path: req.path,
@@ -99,7 +107,7 @@ export class KongHeadersMiddleware {
         });
       }
 
-      // 解析角色和權限（可能是逗號分隔的字符串）
+  // 解析角色和權限（可能是逗號分隔的字符串或單一值）
       const roles = rolesHeader ? rolesHeader.split(',').map(r => r.trim()) : [];
       const permissions = permissionsHeader ? permissionsHeader.split(',').map(p => p.trim()) : [];
 
@@ -115,7 +123,7 @@ export class KongHeadersMiddleware {
         ipAddress: req.ip || req.headers[KongHeadersMiddleware.KONG_HEADERS.IP_ADDRESS] as string
       };
 
-      // 將用戶信息添加到 request 對象
+  // 將用戶信息添加到 request 對象，並同步到 req.user 以維持向後相容性
       req.kongUser = kongUser;
       req.user = kongUser; // 保持向後兼容
 

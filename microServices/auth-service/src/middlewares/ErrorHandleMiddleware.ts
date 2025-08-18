@@ -40,6 +40,14 @@ import createError from 'http-errors'; // 引入 HTTP 錯誤建立工具
  * app.use(ErrorHandleMiddleware.handle);
  * ```
  */
+/**
+ * ErrorHandleMiddleware
+ *
+ * 統一處理應用的錯誤，包括 404 與通用錯誤處理，支援 JSON 與 HTML 回應格式。
+ *
+ * @remarks
+ * 將 `notFound` 放在所有路由之後，將 `handle` 放在應用最後，以捕捉所有未處理錯誤。
+ */
 export class ErrorHandleMiddleware {
     /**
      * 處理404錯誤的中間件
@@ -71,9 +79,17 @@ export class ErrorHandleMiddleware {
      * // 會創建404錯誤並傳遞給錯誤處理中間件
      * ```
      */
+    /**
+     * 404 中間件 - 當路由不存在時呼叫
+     *
+     * @param req - Express Request
+     * @param res - Express Response
+     * @param next - NextFunction
+     */
     static notFound(req: Request, res: Response, next: NextFunction): void {
-        // 建立 404 錯誤並傳遞給錯誤處理中間件
-        next(createError(404, `Route ${req.originalUrl} not found`));
+    // 建立 404 錯誤並傳遞給錯誤處理中間件
+    // 這裡只封裝錯誤，實際回應在 handle 中統一處理
+    next(createError(404, `Route ${req.originalUrl} not found`));
     }
 
     /**
@@ -140,6 +156,14 @@ export class ErrorHandleMiddleware {
      *   }
      * });
      * ```
+     */
+    /**
+     * 全域錯誤處理中間件
+     *
+     * @param err - 錯誤物件 (可能包含 status, message, stack 等)
+     * @param req - Express Request
+     * @param res - Express Response
+     * @param _next - NextFunction
      */
     static handle(err: any, req: Request, res: Response, _next: NextFunction): void {
         const isDevelopment = req.app.get('env') === 'development';

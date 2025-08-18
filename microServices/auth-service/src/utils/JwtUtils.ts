@@ -79,9 +79,11 @@ export interface JwtGenerateOptions {
 
 /**
  * JWT 工具類
- * 
- * 提供 JWT 生成、驗證和解析功能
- * 專為 Express.js Gateway 權限系統設計
+ *
+ * 提供 JWT 生成、驗證和解析功能，專為 Express.js Gateway 權限系統設計。
+ *
+ * @remarks
+ * 此類別的方法為靜態方法，方便在中間件與服務中直接呼叫，回傳型別已明確標註，便於 TypeDoc 自動產生 API 文件。
  */
 export class JwtUtils {
     private static readonly JWT_SECRET = process.env.JWT_SECRET || 'aiot-jwt-secret-key-2024';
@@ -90,9 +92,9 @@ export class JwtUtils {
     
     /**
      * 生成包含權限信息的 JWT
-     * 
-     * @param options JWT 生成選項
-     * @returns Promise<string> JWT 字符串
+     *
+     * @param options - JWT 生成選項，包含使用者、權限與會話資訊
+     * @returns Promise<string> - 返回簽名後的 JWT 字串
      */
     public static async generateToken(options: JwtGenerateOptions): Promise<string> {
         try {
@@ -140,12 +142,9 @@ export class JwtUtils {
                 }
             };
             
-            const token = jwt.sign(claims, this.JWT_SECRET, {
-                algorithm: 'HS256'
-            });
-            
-            logger.info(`JWT generated successfully for user: ${options.user.username}`);
-            return token;
+            const token = jwt.sign(claims, this.JWT_SECRET, { algorithm: 'HS256' }); // 使用 HS256 演算法簽名
+            logger.info(`JWT generated successfully for user: ${options.user.username}`); // 記錄訊息
+            return token; // 回傳 token
             
         } catch (error) {
             logger.error('Failed to generate JWT:', error);
@@ -155,9 +154,9 @@ export class JwtUtils {
     
     /**
      * 驗證 JWT 並返回 Claims
-     * 
-     * @param token JWT 字符串
-     * @returns Promise<JwtClaims> 解析後的 Claims
+     *
+     * @param token - JWT 字串
+     * @returns Promise<JwtClaims> - 解析後的 Claims
      */
     public static async verifyToken(token: string): Promise<JwtClaims> {
         try {
@@ -167,8 +166,8 @@ export class JwtUtils {
                 audience: this.JWT_AUDIENCE
             }) as JwtClaims;
             
-            logger.debug(`JWT verified successfully for user: ${decoded.user.username}`);
-            return decoded;
+            logger.debug(`JWT verified successfully for user: ${decoded.user.username}`); // 驗證成功的 debug 日誌
+            return decoded; // 回傳解析後的 claims
             
         } catch (error) {
             logger.warn('JWT verification failed:', error);
@@ -177,10 +176,10 @@ export class JwtUtils {
     }
     
     /**
-     * 解析 JWT 不進行驗證（用於調試）
-     * 
-     * @param token JWT 字符串
-     * @returns JwtClaims | null
+     * 解析 JWT（不進行驗證） — 用於調試或提取資料
+     *
+     * @param token - JWT 字串
+     * @returns JwtClaims | null - 若解析成功回傳 JwtClaims，否則回傳 null
      */
     public static decodeToken(token: string): JwtClaims | null {
         try {
@@ -193,10 +192,10 @@ export class JwtUtils {
     
     /**
      * 檢查 JWT 是否即將過期
-     * 
-     * @param token JWT 字符串
-     * @param bufferSeconds 緩衝時間（秒）
-     * @returns boolean
+     *
+     * @param token - JWT 字串
+     * @param bufferSeconds - 緩衝時間（秒），預設 300 秒
+     * @returns boolean - 若即將過期或解析失敗回傳 true
      */
     public static isTokenExpiringSoon(token: string, bufferSeconds: number = 300): boolean {
         try {
@@ -212,19 +211,12 @@ export class JwtUtils {
     }
     
     /**
-     * 提取 JWT 中的權限信息
-     * 為 Gateway 層權限檢查提供便捷方法
-     * 
-     * @param token JWT 字符串
-     * @returns 權限信息對象或 null
+     * 提取 JWT 中的權限信息 — 供 Gateway 層 RBAC 使用
+     *
+     * @param token - JWT 字串
+     * @returns { roles, permissions, scopes, userId, username } | null
      */
-    public static extractPermissions(token: string): {
-        roles: string[];
-        permissions: string[];
-        scopes: string[];
-        userId: number;
-        username: string;
-    } | null {
+    public static extractPermissions(token: string): { roles: string[]; permissions: string[]; scopes: string[]; userId: number; username: string; } | null {
         try {
             const decoded = this.decodeToken(token);
             if (!decoded) return null;

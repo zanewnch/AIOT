@@ -39,7 +39,7 @@ export class DroneStatusArchiveQueriesRepository {
         try {
             this.logger.info('Fetching all drone status archive data', { limit });
             const archives = await DroneStatusArchiveModel.findAll({
-                order: [['timestamp', 'DESC']],
+                order: [['archived_at', 'DESC']],
                 limit
             });
 
@@ -59,7 +59,7 @@ export class DroneStatusArchiveQueriesRepository {
      */
     selectPagination = async (params: PaginationParams): Promise<PaginatedResponse<DroneStatusArchiveAttributes>> => {
         try {
-            const { page = 1, limit = 10, sortBy = 'timestamp', sortOrder = 'DESC' } = params;
+            const { page = 1, limit = 10, sortBy = 'archived_at', sortOrder = 'DESC' } = params;
             const offset = (page - 1) * limit;
 
             this.logger.info('Fetching paginated drone status archive data', { page, limit, sortBy, sortOrder });
@@ -134,7 +134,7 @@ export class DroneStatusArchiveQueriesRepository {
 
             const archives = await DroneStatusArchiveModel.findAll({
                 where: { drone_id: droneId },
-                order: [['timestamp', 'DESC']],
+                order: [['archived_at', 'DESC']],
                 limit
             });
 
@@ -158,8 +158,8 @@ export class DroneStatusArchiveQueriesRepository {
             this.logger.info('Fetching drone status archive by status', { status, limit });
 
             const archives = await DroneStatusArchiveModel.findAll({
-                where: { status },
-                order: [['timestamp', 'DESC']],
+                where: { current_status: status },
+                order: [['archived_at', 'DESC']],
                 limit
             });
 
@@ -182,14 +182,9 @@ export class DroneStatusArchiveQueriesRepository {
         try {
             this.logger.info('Fetching drone status archive by created by', { createdBy, limit });
 
-            const archives = await DroneStatusArchiveModel.findAll({
-                where: { created_by: createdBy },
-                order: [['timestamp', 'DESC']],
-                limit
-            });
-
-            this.logger.info(`Successfully fetched ${archives.length} archive records created by user ${createdBy}`);
-            return archives.map(item => item.toJSON() as DroneStatusArchiveAttributes);
+            // 注意：資料庫表中沒有 created_by 欄位，這裡跳過查詢
+            this.logger.warn('created_by field not available in archive table, returning empty array');
+            return [];
         } catch (error) {
             this.logger.error('Error fetching drone status archive by created by', { createdBy, limit, error });
             throw error;
@@ -210,11 +205,11 @@ export class DroneStatusArchiveQueriesRepository {
 
             const archives = await DroneStatusArchiveModel.findAll({
                 where: {
-                    timestamp: {
+                    archived_at: {
                         [Op.between]: [startDate, endDate]
                     }
                 },
-                order: [['timestamp', 'DESC']],
+                order: [['archived_at', 'DESC']],
                 limit
             });
 
@@ -237,18 +232,9 @@ export class DroneStatusArchiveQueriesRepository {
         try {
             this.logger.info('Fetching drone status archive by reason', { reason, limit });
 
-            const archives = await DroneStatusArchiveModel.findAll({
-                where: {
-                    reason: {
-                        [Op.like]: `%${reason}%`
-                    }
-                },
-                order: [['timestamp', 'DESC']],
-                limit
-            });
-
-            this.logger.info(`Successfully fetched ${archives.length} archive records with reason containing "${reason}"`);
-            return archives.map(item => item.toJSON() as DroneStatusArchiveAttributes);
+            // 注意：資料庫表中沒有 reason 欄位，這裡跳過查詢
+            this.logger.warn('reason field not available in archive table, returning empty array');
+            return [];
         } catch (error) {
             this.logger.error('Error fetching drone status archive by reason', { reason, limit, error });
             throw error;
@@ -266,7 +252,7 @@ export class DroneStatusArchiveQueriesRepository {
             this.logger.info('Fetching latest drone status archive records', { limit });
 
             const archives = await DroneStatusArchiveModel.findAll({
-                order: [['timestamp', 'DESC']],
+                order: [['archived_at', 'DESC']],
                 limit
             });
 
@@ -318,17 +304,9 @@ export class DroneStatusArchiveQueriesRepository {
         try {
             this.logger.info('Fetching drone status archive by status transition', { fromStatus, toStatus, limit });
 
-            const archives = await DroneStatusArchiveModel.findAll({
-                where: {
-                    previous_status: fromStatus,
-                    status: toStatus
-                },
-                order: [['timestamp', 'DESC']],
-                limit
-            });
-
-            this.logger.info(`Successfully fetched ${archives.length} archive records for transition ${fromStatus} -> ${toStatus}`);
-            return archives.map(item => item.toJSON() as DroneStatusArchiveAttributes);
+            // 注意：資料庫表中沒有 previous_status 欄位，這裡跳過查詢
+            this.logger.warn('previous_status field not available in archive table, returning empty array');
+            return [];
         } catch (error) {
             this.logger.error('Error fetching drone status archive by status transition', { fromStatus, toStatus, limit, error });
             throw error;
@@ -355,17 +333,14 @@ export class DroneStatusArchiveQueriesRepository {
 
             const archives = await DroneStatusArchiveModel.findAll({
                 where: whereClause,
-                attributes: ['status', 'previous_status']
+                attributes: ['current_status']
             });
 
             const statistics: { [key: string]: number } = {};
 
             archives.forEach(archive => {
-                const transition = `${archive.previous_status || 'null'} -> ${archive.status}`;
-                statistics[transition] = (statistics[transition] || 0) + 1;
-
-                // 也統計每個狀態的總變更次數
-                const statusKey = `to_${archive.status}`;
+                // 統計每個狀態的總數量
+                const statusKey = `status_${archive.current_status}`;
                 statistics[statusKey] = (statistics[statusKey] || 0) + 1;
             });
 
@@ -428,7 +403,7 @@ export class DroneStatusArchiveQueriesRepository {
             this.logger.info('Counting drone status archive records by date range', { startDate, endDate });
             const count = await DroneStatusArchiveModel.count({
                 where: {
-                    timestamp: {
+                    archived_at: {
                         [Op.between]: [startDate, endDate]
                     }
                 }

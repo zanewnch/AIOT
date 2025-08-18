@@ -38,19 +38,23 @@ export function createContainer(): Container {
   container.bind<AuthCommandsSvc>(TYPES.AuthCommandsSvc)
     .to(AuthCommandsSvc)
     .inSingletonScope();
+  // 說明: 註冊認證命令服務為 singleton，供全域注入使用
   
   container.bind<AuthQueriesSvc>(TYPES.AuthQueriesSvc)
     .to(AuthQueriesSvc)
     .inSingletonScope();
+  // 說明: 查詢服務同樣以 singleton 註冊，避免多次建立 DB 連線
     
   container.bind<SessionQueriesSvc>(TYPES.SessionQueriesSvc)
     .to(SessionQueriesSvc)
     .inSingletonScope();
+  // 說明: 會話查詢服務，用於驗證與查詢 session 資訊
 
   // JWT 安全服務
   container.bind<JwtBlacklistService>(TYPES.JwtBlacklistService)
     .to(JwtBlacklistService)
     .inSingletonScope();
+  // 說明: JWT 黑名單服務，用於登出或強制失效 token
 
   // ===== 認證控制器註冊 =====
   

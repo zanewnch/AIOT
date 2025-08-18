@@ -64,6 +64,7 @@ export class JwtBlacklistService {
      */
     async addToBlacklist(token: string, expiresAt: number, reason: string = 'logout'): Promise<void> {
         try {
+            // 以 token 的 hash 作為 redis key，避免在儲存層暴露完整 token
             const key = this.getRedisKey(token);
             const currentTime = Math.floor(Date.now() / 1000);
             const ttl = Math.max(expiresAt - currentTime, 1); // 至少保留 1 秒

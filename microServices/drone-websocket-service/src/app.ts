@@ -22,6 +22,8 @@ import { IntegratedWebSocketService as WebSocketService } from './configs/websoc
 // Legacy simple service import (if needed for backward compatibility)
 // import { WebSocketService as SimpleWebSocketService } from './configs/websocket/service-simple.js';
 import { container } from './container/container.js';
+// Consul 服務註冊
+import { ConsulConfig } from './configs/consulConfig.js';
 import { TYPES } from './container/types.js';
 import { RouteManager } from './routes/index.js';
 import { createLogger } from './configs/loggerConfig.js';

@@ -51,7 +51,7 @@ export class ChatQuery {
     } as const;
 
     // 從環境變數獲取 LLM 服務 URL，預設為本地開發環境
-    this.LLM_SERVICE_URL = process.env.REACT_APP_LLM_SERVICE_URL || 'http://localhost:8022';
+    this.LLM_SERVICE_URL = import.meta.env.VITE_LLM_SERVICE_URL || 'http://localhost:8022';
   }
 
   /**

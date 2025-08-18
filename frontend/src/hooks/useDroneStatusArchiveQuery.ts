@@ -67,7 +67,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone-status-archive/data');
+          const response = await apiClient.get('/drone/statuses/archive');
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -100,7 +100,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.LATEST_STATUS_ARCHIVES,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone-status-archive/data/latest');
+          const response = await apiClient.get('/drone/statuses/archive');
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -134,7 +134,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_CHANGE_STATISTICS,
       queryFn: async (): Promise<StatusChangeStatistics> => {
         try {
-          const response = await apiClient.get('/drone-status-archive/statistics');
+          const response = await apiClient.get('/drone/statuses/archive/statistics');
           const result = ReqResult.fromResponse<StatusChangeStatistics>(response);
           
           if (result.isError()) {
@@ -168,7 +168,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVE_BY_ID(id),
       queryFn: async (): Promise<DroneStatusArchive> => {
         try {
-          const response = await apiClient.get(`/api/drone-status-archive/data/${id}`);
+          const response = await apiClient.get(`/drone/statuses/archive/${id}`);
           const result = ReqResult.fromResponse<DroneStatusArchive>(response);
           
           if (result.isError()) {
@@ -201,7 +201,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status-archive/data/drone/${droneId}`);
+          const response = await apiClient.get(`/drone/statuses/archive/drone/${droneId}`);
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -234,7 +234,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_STATUS(status),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status-archive/data/status/${status}`);
+          const response = await apiClient.get(`/drone/statuses/archive/drone/${status}`);
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -267,7 +267,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_USER(userId),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status-archive/data/created-by/${userId}`);
+          const response = await apiClient.get(`/drone/statuses/archive/drone/${userId}`);
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -300,7 +300,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_REASON(reason),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status-archive/data/reason/${reason}`);
+          const response = await apiClient.get(`/drone/statuses/archive/drone/${reason}`);
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -333,7 +333,7 @@ export class DroneStatusArchiveQuery {
       queryKey: ['droneStatusArchive', 'dateRange', dateRange],
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone-status-archive/data/date-range', { params: dateRange! });
+          const response = await apiClient.get('/drone/statuses/archive/time-range', { params: dateRange! });
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -366,7 +366,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.LATEST_STATUS_ARCHIVE_BY_DRONE(droneId),
       queryFn: async (): Promise<DroneStatusArchive | null> => {
         try {
-          const response = await apiClient.get(`/api/drone-status-archive/data/drone/${droneId}/latest`);
+          const response = await apiClient.get(`/drone/statuses/archive/drone/${droneId}`);
           const result = ReqResult.fromResponse<DroneStatusArchive | null>(response);
           
           if (result.isError()) {
@@ -401,7 +401,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_TRANSITION,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone-status-archive/data/transition', { params: query! });
+          const response = await apiClient.get('/drone/statuses/archive', { params: query! });
           const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
           
           if (result.isError()) {
@@ -435,7 +435,7 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async (data: CreateStatusArchiveRequest): Promise<DroneStatusArchive> => {
         try {
-          const response = await apiClient.post('/drone-status-archive/data', data);
+          const response = await apiClient.post('/drone/statuses/archive', data);
           const result = ReqResult.fromResponse<DroneStatusArchive>(response);
           
           if (result.isError()) {
@@ -477,7 +477,7 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateStatusArchiveRequest }): Promise<DroneStatusArchive> => {
         try {
-          const response = await apiClient.put(`/api/drone-status-archive/data/${id}`, data);
+          const response = await apiClient.put(`/drone/statuses/archive/${id}`, data);
           const result = ReqResult.fromResponse<DroneStatusArchive>(response);
           
           if (result.isError()) {
@@ -519,7 +519,7 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const response = await apiClient.delete(`/api/drone-status-archive/data/${id}`);
+          const response = await apiClient.delete(`/drone/statuses/archive/${id}`);
           const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {

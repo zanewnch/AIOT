@@ -49,9 +49,10 @@ export class DroneCommandRoutes {
      * 設定所有路由
      */
     private setupRoutes(): void {
-        this.setupQueryRoutes();
+        // 先設定更具體的路由，避免被通配符路由攔截
         this.setupQueueRoutes();
         this.setupArchiveRoutes();
+        this.setupQueryRoutes();
         this.setupCommandRoutes();
     }
 
@@ -64,6 +65,9 @@ export class DroneCommandRoutes {
 
         // 獲取無人機命令資料（用於前端表格顯示）
         this.router.get('/data', (req, res, next) => this.droneCommandQueries.getAllCommands(req, res, next));
+
+        // 獲取最新無人機命令（必須在 /:id 之前，避免被通用路由攔截）
+        this.router.get('/latest', (req, res, next) => this.droneCommandQueries.getLatestCommands(req, res, next));
 
         // 根據 ID 獲取無人機命令
         this.router.get('/:id', (req, res, next) => this.droneCommandQueries.getCommandById(req, res, next));

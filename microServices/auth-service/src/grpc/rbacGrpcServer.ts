@@ -119,11 +119,16 @@ export class RbacGrpcServer {
       GetUserById: this.getUserById.bind(this),
       CreateUser: this.createUser.bind(this),
       UpdateUser: this.updateUser.bind(this),
-      DeleteUser: this.deleteUser.bind(this),
+  // 載入 proto 與註冊 service handlers
+  this.loadProtoAndAddService();
 
       // 角色管理方法
       GetRoles: this.getRoles.bind(this),
-      GetRoleById: this.getRoleById.bind(this),
+   * 載入 proto 文件並添加服務
+   *
+   * @remarks
+   * 這裡會將 proto 定義載入並將對應的 controller method 綁定到 gRPC service.
+   */
       CreateRole: this.createRole.bind(this),
       UpdateRole: this.updateRole.bind(this),
       DeleteRole: this.deleteRole.bind(this),

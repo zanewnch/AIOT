@@ -6,10 +6,9 @@
  */
 
 import { Router } from 'express';
-import { ConsulService } from '../services/ConsulService.js';
 import { ProxyMiddleware } from '../middleware/ProxyMiddleware.js';
 import { GatewayController } from '../controllers/GatewayController.js';
-import { HealthService } from '../services/HealthService.js';
+import { HealthConfig } from '../configs/healthConfig.js';
 import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { AuthTestController } from '../controllers/AuthTestController.js';
 import { loggerConfig } from '../configs/loggerConfig.js';
@@ -17,13 +16,12 @@ import { ResResult } from '../utils/ResResult.js';
 
 /**
  * 創建 API 路由配置
- * @param consulService - Consul 服務實例
- * @param healthService - 健康檢查服務實例
+ * @param healthConfig - 健康檢查配置實例
  * @returns Express Router
  */
-export function createApiRoutes(consulService: ConsulService, healthService: HealthService): Router {
+export function createApiRoutes(healthConfig: HealthConfig): Router {
     const router = Router();
-    const gatewayController = new GatewayController(consulService);
+    const gatewayController = new GatewayController();
     const proxyMiddleware = gatewayController.getProxyMiddleware();
     const logger = loggerConfig;
 
@@ -41,7 +39,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
      */
     router.get('/health', async (req, res) => {
         try {
-            const gatewayHealth = healthService.getGatewayHealth();
+            const gatewayHealth = healthConfig.getGatewayHealth();
             ResResult.success(res, gatewayHealth, 'Gateway is healthy');
         } catch (error) {
             logger.error('❌ Gateway health check failed:', error);
@@ -54,7 +52,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
      */
     router.get('/health/system', async (req, res) => {
         try {
-            const systemHealth = await healthService.getSystemHealth();
+            const systemHealth = await healthConfig.getSystemHealth();
             
             if (systemHealth.status === 'healthy') {
                 ResResult.success(res, systemHealth, 'System is healthy');
@@ -78,7 +76,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
     router.get('/health/services/:serviceName', async (req, res) => {
         try {
             const { serviceName } = req.params;
-            const healthResult = await healthService.checkServiceHealth(serviceName);
+            const healthResult = await healthConfig.checkServiceHealth(serviceName);
             
             if (healthResult.healthy) {
                 ResResult.success(res, healthResult, `Service ${serviceName} is healthy`);
@@ -99,7 +97,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
             const { serviceName } = req.params;
             const timeRange = parseInt(req.query.hours as string) || 24;
             
-            const availability = healthService.getServiceAvailability(serviceName, timeRange);
+            const availability = healthConfig.getServiceAvailability(serviceName, timeRange);
             ResResult.success(res, availability, `Availability statistics for ${serviceName}`);
         } catch (error) {
             logger.error(`❌ Failed to get availability for ${req.params.serviceName}:`, error);
@@ -298,11 +296,10 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
 
 /**
  * 創建 WebSocket 代理路由
- * @param consulService - Consul 服務實例
  * @returns WebSocket 代理中間件
  */
-export function createWebSocketRoutes(consulService: ConsulService) {
-    const proxyMiddleware = new ProxyMiddleware(consulService);
+export function createWebSocketRoutes() {
+    const proxyMiddleware = new ProxyMiddleware();
     
     return {
         // Socket.io 代理到 drone-websocket-service

@@ -34,6 +34,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/socket.io": "^3.0.1",
     "amqplib": "^0.10.3",
+    "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "concurrently": "^8.2.2",
     "cookie-parser": "~1.4.4",

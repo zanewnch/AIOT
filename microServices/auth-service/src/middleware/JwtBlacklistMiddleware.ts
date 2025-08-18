@@ -1,11 +1,27 @@
 /**
- * @fileoverview JWT 黑名單檢查中間件
+ * @fileoverview JWT 黑名單中間件 - 檔案層級意圖說明
  * 
- * 此中間件在 Kong JWT 驗證之後執行，檢查 token 是否在黑名單中
- * 如果 token 已被加入黑名單（如登出後），則拒絕請求
+ * 目的：此中間件提供 JWT token 黑名單檢查功能，用於管理已被撤銷或禁用的 token。
+ * 在 Kong JWT 驗證之後執行，確保即使 token 簽名正確，也會被禁止使用。
  * 
- * @author AIOT Team
+ * **主要功能：**
+ * - JWT token 黑名單檢查和驗證
+ * - 登出後 token 自動加入黑名單
+ * - 黑名單管理和統計功能
+ * - 集成 Redis 存儲和過期管理
+ * 
+ * **安全考量：**
+ * - 防止已登出 token 的重用
+ * - 防止被盜用 token 的惡意使用
+ * - 支援強制登出和 token 撤銷
+ * - 自動清理過期的黑名單項目
+ * 
+ * **整合說明：**
+ * 此中間件應在 Kong API Gateway 的 JWT 驗證之後使用，
+ * 形成雙重安全檢查機制：第一層是簽名驗證，第二層是黑名單檢查。
+ * 
  * @version 1.0.0
+ * @author AIOT Team
  * @since 2025-08-16
  */
 
@@ -19,6 +35,13 @@ const logger = createLogger('JwtBlacklistMiddleware');
  * JWT 黑名單檢查中間件類別
  */
 export class JwtBlacklistMiddleware {
+    /**
+     * 黑名單服務實例
+     * 單例模式的服務實例，管理 JWT token 的黑名單操作
+     * @private
+     * @static
+     * @type {JwtBlacklistService}
+     */
     private static blacklistService: JwtBlacklistService;
 
     /**
@@ -41,6 +64,11 @@ export class JwtBlacklistMiddleware {
      * @param res Express 回應對象
      * @param next Next 函數
      */
+    /**
+     * 檢查 JWT token 是否在黑名單中的中間件
+     *
+     * 此中間件應在 Kong JWT 驗證之後執行；若 token 在黑名單中，則回傳 401。
+     */
     static checkBlacklist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             // 確保黑名單服務已初始化
@@ -48,7 +76,7 @@ export class JwtBlacklistMiddleware {
                 JwtBlacklistMiddleware.initialize();
             }
 
-            // 從 Cookie 中獲取 JWT token
+            // 從 Cookie 中獲取 JWT token（也可以擴展為從 Authorization header 取 token）
             const authToken = req.cookies?.auth_token;
             
             if (!authToken) {
@@ -90,6 +118,13 @@ export class JwtBlacklistMiddleware {
      * @param reason 加入黑名單的原因
      * @returns Promise<boolean> 是否成功加入黑名單
      */
+    /**
+     * 將當前請求的 JWT token 加入黑名單
+     *
+     * @param req - Express Request
+     * @param reason - 加入黑名單的原因 (預設 'logout')
+     * @returns Promise<boolean> - 是否成功加入黑名單
+     */
     static async addCurrentTokenToBlacklist(req: Request, reason: string = 'logout'): Promise<boolean> {
         try {
             // 確保黑名單服務已初始化
@@ -105,7 +140,7 @@ export class JwtBlacklistMiddleware {
                 return false;
             }
 
-            // 解析 JWT 獲取過期時間
+            // 解析 JWT 獲取過期時間（最簡單的 base64 decode，生產環境請使用 jwt.decode）
             const tokenParts = authToken.split('.');
             if (tokenParts.length !== 3) {
                 logger.error('Invalid JWT token format');
@@ -137,6 +172,11 @@ export class JwtBlacklistMiddleware {
      * 
      * @returns Promise<{count: number, keys: string[]}> 黑名單統計
      */
+    /**
+     * 取得黑名單統計信息
+     *
+     * @returns Promise<{count: number, keys: string[]}> - 黑名單統計資料
+     */
     static async getBlacklistStats(): Promise<{count: number, keys: string[]}> {
         try {
             if (!JwtBlacklistMiddleware.blacklistService) {
@@ -152,6 +192,11 @@ export class JwtBlacklistMiddleware {
 
     /**
      * 關閉黑名單服務
+     */
+    /**
+     * 關閉黑名單服務，釋放資源
+     *
+     * @returns Promise<void>
      */
     static async close(): Promise<void> {
         if (JwtBlacklistMiddleware.blacklistService) {

@@ -25,6 +25,8 @@ import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express �
 import { JwtBlacklistMiddleware } from './middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
 // InversifyJS 容器和類型
 import { container } from './container/container.js';
+// Consul 服務註冊
+import { ConsulConfig } from './configs/consulConfig.js';
 
 /**
  * Express 應用程式配置類別
@@ -92,6 +94,13 @@ export class App {
     private initialized: boolean = false;
 
     /**
+     * Consul 服務註冊實例
+     * @private
+     * @type {ConsulService}
+     */
+    private consulConfig: ConsulConfig;
+
+    /**
      * App 類別建構函數
      * 建立 Express 應用程式實例，但不進行初始化
      * 實際的服務初始化需要呼叫 initialize() 方法
@@ -99,6 +108,8 @@ export class App {
     constructor() {
         // 建立基本的 Express 應用程式實例
         this.app = express();
+        // 初始化 Consul 服務
+        this.consulConfig = new ConsulConfig();
         console.log('🏗️  Express application instance created');
     }
 
@@ -153,7 +164,10 @@ export class App {
             // 標記初始化完成
             this.initialized = true;
 
-            console.log('✅ RBAC application initialization completed successfully');
+            // 註冊到 Consul
+            await this.consulConfig.registerService();
+
+            console.log('✅ Auth application initialization completed successfully');
         } catch (error) {
             console.error('❌ Application initialization failed:', error);
             throw error; // 重新拋出錯誤，讓呼叫者知道初始化失敗
@@ -302,7 +316,13 @@ export class App {
         console.log('🛑 Gracefully shutting down application...');
 
         try {
-            // 步驟 1：關閉 Redis 連線
+            // 步驟 1：從 Consul 註銷服務
+            if (this.consulConfig) {
+                console.log('🗂️  Deregistering from Consul...');
+                await this.consulConfig.deregisterService();
+            }
+
+            // 步驟 2：關閉 Redis 連線
             if (this.redis) {
                 console.log('💾 Closing Redis connection...');
                 await this.redis.quit();

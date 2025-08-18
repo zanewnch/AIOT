@@ -50,7 +50,7 @@ import { DroneStatus } from './DroneStatusModel.js';
 /**
  * 無人機狀態歷史資料屬性介面
  * 
- * 定義無人機狀態變更歷史的完整屬性結構，包含所有必要的欄位定義。
+ * 定義無人機狀態歷史歸檔的完整屬性結構，包含所有必要的欄位定義。
  * 此介面確保型別安全和資料完整性。
  * 
  * @interface DroneStatusArchiveAttributes
@@ -64,58 +64,70 @@ export type DroneStatusArchiveAttributes = {
     id: number;
     
     /** 
+     * 原始資料表的 ID
+     * @type {number} 保留對原始 drone_statuses 表記錄的追蹤
+     */
+    original_id: number;
+    
+    /** 
      * 無人機外鍵
      * @type {number} 關聯到 drones_status 表的外鍵
      */
     drone_id: number;
     
     /** 
-     * 狀態變更
-     * @type {DroneStatus} 變更後的狀態
+     * 當前電池電量
+     * @type {number} 無人機電池電量，範圍 0-100%
      */
-    status: DroneStatus;
+    current_battery_level: number;
     
     /** 
-     * 前一狀態
-     * @type {DroneStatus | null} 變更前的狀態，初始狀態時為 null
+     * 當前狀態
+     * @type {DroneStatus} 無人機的當前狀態
      */
-    previous_status: DroneStatus | null;
+    current_status: DroneStatus;
     
     /** 
-     * 變更原因
-     * @type {string} 狀態變更的原因說明
+     * 最後連線時間
+     * @type {Date} 無人機最後一次連線的時間戳記
      */
-    reason: string;
+    last_seen: Date;
     
     /** 
-     * 詳細資訊
-     * @type {object | null} JSON 格式的詳細資訊，可包含任意結構化資料
+     * 當前高度
+     * @type {number | null} 無人機的當前高度，可選欄位
      */
-    details: object | null;
+    current_altitude: number | null;
     
     /** 
-     * 狀態變更時間
-     * @type {Date} 狀態變更發生的時間戳記
+     * 當前速度
+     * @type {number | null} 無人機的當前速度，可選欄位
      */
-    timestamp: Date;
+    current_speed: number | null;
     
     /** 
-     * 操作者
-     * @type {number | null} 執行狀態變更的用戶ID，可選欄位
+     * 是否連線
+     * @type {boolean} 無人機是否處於連線狀態
      */
-    created_by: number | null;
+    is_connected: boolean;
     
     /** 
-     * 建立時間
-     * @type {Date} 記錄建立時間戳記
+     * 歸檔時間
+     * @type {Date} 資料被歸檔的時間戳記
      */
-    createdAt: Date;
+    archived_at: Date;
     
     /** 
-     * 更新時間
-     * @type {Date} 記錄的最後更新時間戳記
+     * 歸檔批次識別碼
+     * @type {string} 歸檔作業的批次識別碼，用於追蹤批次歸檔操作
      */
-    updatedAt: Date;
+    archive_batch_id: string;
+    
+    /** 
+     * 原始記錄建立時間
+     * @type {Date} 原始資料在 drone_statuses 表中的建立時間
+     */
+    created_at: Date;
 };
 
 /**
@@ -128,7 +140,7 @@ export type DroneStatusArchiveAttributes = {
  * @extends {Optional<DroneStatusArchiveAttributes, 'id'>}
  * @since 1.0.0
  */
-export type DroneStatusArchiveCreationAttributes = Optional<DroneStatusArchiveAttributes, 'id' | 'createdAt' | 'updatedAt'>;
+export type DroneStatusArchiveCreationAttributes = Optional<DroneStatusArchiveAttributes, 'id'>;
 
 /**
  * 無人機狀態歷史模型類別
@@ -178,144 +190,93 @@ export type DroneStatusArchiveCreationAttributes = Optional<DroneStatusArchiveAt
  * });
  * ```
  */
-@Table({ tableName: 'drone_status_archive', timestamps: true }) // 設定資料表名稱為 'drone_status_archive'，啟用時間戳記
+@Table({ tableName: 'drone_status_archive', timestamps: false }) // 設定資料表名稱為 'drone_status_archive'，不使用自動時間戳記
 export class DroneStatusArchiveModel extends Model<DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes> implements DroneStatusArchiveAttributes {
     /**
      * 主鍵識別碼
-     * 
-     * 唯一識別每筆狀態變更記錄的主鍵，由資料庫自動遞增生成。
-     * 使用 BIGINT 型態以支援大量歷史資料儲存。
-     * 
-     * @type {number}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
      */
-    @PrimaryKey              // 標記為主鍵
-    @AutoIncrement           // 設定自動遞增
-    @Column(DataType.BIGINT) // 定義為 BIGINT 型態
+    @PrimaryKey
+    @AutoIncrement
+    @Column(DataType.BIGINT)
     declare id: number;
 
     /**
-     * 無人機外鍵
-     * 
-     * 關聯到 drones_status 表的外鍵，標識此狀態變更屬於哪台無人機。
-     * 
-     * @type {number}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
+     * 原始資料表的 ID
      */
-    @AllowNull(false)         // 設定為必填欄位
-    @ForeignKey(() => DroneStatusModel) // 設定外鍵關聯
-    @Column(DataType.BIGINT)  // 定義為 BIGINT 型態
+    @AllowNull(false)
+    @Column(DataType.BIGINT)
+    declare original_id: number;
+
+    /**
+     * 無人機外鍵
+     */
+    @AllowNull(false)
+    @ForeignKey(() => DroneStatusModel)
+    @Column(DataType.BIGINT)
     declare drone_id: number;
 
     /**
-     * 狀態變更
-     * 
-     * 無人機變更後的狀態，包含 active（活躍）、inactive（非活躍）、
-     * maintenance（維護中）、flying（飛行中）。
-     * 
-     * @type {DroneStatus}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
+     * 當前電池電量
      */
-    @AllowNull(false)                                                           // 設定為必填欄位
-    @Column(DataType.ENUM(...Object.values(DroneStatus)))                      // 定義為 ENUM 型態
-    declare status: DroneStatus;
+    @AllowNull(false)
+    @Column(DataType.FLOAT)
+    declare current_battery_level: number;
 
     /**
-     * 前一狀態
-     * 
-     * 無人機變更前的狀態，初始狀態變更時此欄位為 null。
-     * 
-     * @type {DroneStatus | null}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
+     * 當前狀態
      */
-    @AllowNull(true)                                                            // 允許空值
-    @Column(DataType.ENUM(...Object.values(DroneStatus)))                      // 定義為 ENUM 型態
-    declare previous_status: DroneStatus | null;
+    @AllowNull(false)
+    @Column(DataType.ENUM('idle', 'flying', 'charging', 'maintenance', 'offline', 'error'))
+    declare current_status: DroneStatus;
 
     /**
-     * 變更原因
-     * 
-     * 狀態變更的原因說明，用於記錄為什麼進行此次狀態變更。
-     * 
-     * @type {string}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
+     * 最後連線時間
      */
-    @AllowNull(false)           // 設定為必填欄位
-    @Column(DataType.STRING)    // 定義為 STRING 型態
-    declare reason: string;
-
-    /**
-     * 詳細資訊
-     * 
-     * JSON 格式的詳細資訊，可包含任意結構化資料，如任務ID、天氣條件、
-     * 維護項目等相關資訊。
-     * 
-     * @type {object | null}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
-     */
-    @AllowNull(true)           // 允許空值
-    @Column(DataType.JSON)     // 定義為 JSON 型態
-    declare details: object | null;
-
-    /**
-     * 狀態變更時間
-     * 
-     * 狀態變更發生的精確時間戳記，用於時間序列分析和狀態追蹤。
-     * 
-     * @type {Date}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
-     */
-    @AllowNull(false)          // 設定為必填欄位
-    @Column(DataType.DATE)     // 定義為 DATE 型態
-    declare timestamp: Date;
-
-    /**
-     * 操作者
-     * 
-     * 執行狀態變更的用戶ID，關聯到 users 表。
-     * 此欄位為可選，允許系統自動變更狀態的情況。
-     * 
-     * @type {number | null}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
-     */
-    @AllowNull(true)          // 允許空值
-    @Column(DataType.BIGINT)  // 定義為 BIGINT 型態
-    declare created_by: number | null;
-
-    /**
-     * 建立時間
-     * 
-     * 狀態變更記錄的建立時間戳記，由 Sequelize 自動管理。
-     * 此欄位用於記錄何時將此變更寫入資料庫。
-     * 
-     * @type {Date}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
-     */
-    @CreatedAt
+    @AllowNull(false)
     @Column(DataType.DATE)
-    declare createdAt: Date;
+    declare last_seen: Date;
 
     /**
-     * 更新時間
-     * 
-     * 狀態變更記錄的最後更新時間戳記，由 Sequelize 自動管理。
-     * 
-     * @type {Date}
-     * @memberof DroneStatusArchiveModel
-     * @since 1.0.0
+     * 當前高度
      */
-    @UpdatedAt
+    @AllowNull(true)
+    @Column(DataType.FLOAT)
+    declare current_altitude: number | null;
+
+    /**
+     * 當前速度
+     */
+    @AllowNull(true)
+    @Column(DataType.FLOAT)
+    declare current_speed: number | null;
+
+    /**
+     * 是否連線
+     */
+    @AllowNull(false)
+    @Column(DataType.BOOLEAN)
+    declare is_connected: boolean;
+
+    /**
+     * 歸檔時間
+     */
+    @AllowNull(false)
     @Column(DataType.DATE)
-    declare updatedAt: Date;
+    declare archived_at: Date;
+
+    /**
+     * 歸檔批次識別碼
+     */
+    @AllowNull(false)
+    @Column(DataType.STRING)
+    declare archive_batch_id: string;
+
+    /**
+     * 原始記錄建立時間
+     */
+    @AllowNull(false)
+    @Column(DataType.DATE)
+    declare created_at: Date;
 
     /**
      * 關聯到無人機狀態表

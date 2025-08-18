@@ -26,6 +26,8 @@ import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
 import { TYPES } from './container/types.js';
+// Consul 服務註冊
+import { ConsulConfig } from './configs/consulConfig.js';
 import type {
     IDroneEventHandler,
     IWebSocketService,
@@ -109,6 +111,13 @@ export class App {
     private droneEventHandlerFactory: ((type: DroneEventType) => IDroneEventHandler) | null = null;
 
     /**
+     * Consul 服務註冊實例
+     * @private
+     * @type {ConsulConfig}
+     */
+    private consulConfig: ConsulConfig;
+
+    /**
      * 建構函式 - 初始化 Express 應用程式
      *
      * 執行以下初始化步驟：
@@ -124,6 +133,7 @@ export class App {
     constructor() {
         this.app = express(); // 建立 Express 應用程式實例
         this.rabbitMQManager = new RabbitMQManager(); // 初始化 RabbitMQ 管理器
+        this.consulConfig = new ConsulConfig(); // 初始化 Consul 配置
 
         // 執行基本配置設定
         this.setupSequelize(); // 設定 Sequelize 資料庫連線
@@ -362,6 +372,9 @@ export class App {
             // 步驟 5：設定錯誤處理（必須在所有路由之後）
             this.setupErrorHandling(); // 註冊錯誤處理中間件
 
+            // 步驟 6：註冊到 Consul
+            await this.consulConfig.registerService();
+
             console.log('✅ App initialized successfully'); // 輸出應用程式初始化完成訊息
         } catch (err) {
             console.error('❌ App initialization failed', err); // 輸出初始化失敗錯誤
@@ -394,7 +407,13 @@ export class App {
      */
     async shutdown(): Promise<void> {
         try {
-            // 步驟 0：關閉 WebSocket 服務（先關閉即時連線）
+            // 步驟 1：從 Consul 註銷服務
+            if (this.consulConfig) {
+                console.log('🗂️  Deregistering from Consul...');
+                await this.consulConfig.deregisterService();
+            }
+
+            // 步驟 2：// 步驟 0：關閉 WebSocket 服務（先關閉即時連線）
             if (this.webSocketService) {
                 console.log('📡 Closing WebSocket connections...');
                 await this.webSocketService.shutdown();

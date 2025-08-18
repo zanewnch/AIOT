@@ -423,7 +423,7 @@ const DroneStatusPanel: React.FC<DroneStatusPanelProps> = ({
             </div>
 
             {/* WebSocket 統計信息（開發模式下顯示）*/}
-            {process.env.NODE_ENV === 'development' && wsAuthenticated && (
+            {import.meta.env.DEV && wsAuthenticated && (
               <div>
                 <h4 className="text-xs font-medium text-gray-300 mb-2">
                   即時統計

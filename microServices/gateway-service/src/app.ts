@@ -18,9 +18,9 @@ import 'reflect-metadata';
 import { loggerConfig } from './configs/loggerConfig.js';
 import { serverConfig } from './configs/serverConfig.js';
 
-// Import services
-import { ConsulService } from './services/ConsulService.js';
-import { HealthService } from './services/HealthService.js';
+// Import configs
+import { ConsulConfig } from './configs/consulConfig.js';
+import { HealthConfig } from './configs/healthConfig.js';
 
 // Import middleware
 import { ErrorHandleMiddleware } from './middleware/ErrorHandleMiddleware.js';
@@ -38,8 +38,8 @@ import { createApiRoutes, createWebSocketRoutes } from './routes/apiRoutes.js';
 export class GatewayApp {
     public app: Application;
     private logger = loggerConfig;
-    private consulService!: ConsulService;
-    private healthService!: HealthService;
+    private consulConfig!: ConsulConfig;
+    private healthConfig!: HealthConfig;
 
     constructor() {
         this.app = express();
@@ -58,8 +58,8 @@ export class GatewayApp {
      * 初始化服務實例
      */
     private initializeServices(): void {
-        this.consulService = new ConsulService();
-        this.healthService = new HealthService(this.consulService);
+        this.consulConfig = new ConsulConfig();
+        this.healthConfig = new HealthConfig(this.consulConfig);
         
         // 初始化認證中間件
         AuthMiddleware.initialize();
@@ -128,7 +128,7 @@ export class GatewayApp {
         this.app.use('/', mainRoutes);
 
         // API 路由（包含微服務代理）
-        const apiRoutes = createApiRoutes(this.consulService, this.healthService);
+        const apiRoutes = createApiRoutes(this.healthConfig);
         this.app.use('/api', apiRoutes);
 
         // 404 處理
@@ -151,7 +151,7 @@ export class GatewayApp {
      */
     private initializeWebSocketProxying(): void {
         try {
-            const wsRoutes = createWebSocketRoutes(this.consulService);
+            const wsRoutes = createWebSocketRoutes();
             
             // Socket.io 代理
             this.app.use('/socket.io', wsRoutes['/socket.io']);
@@ -175,7 +175,8 @@ export class GatewayApp {
      */
     public async registerWithConsul(port: number): Promise<void> {
         try {
-            await this.consulService.registerGatewayService(port);
+            await this.consulConfig.registerService();
+            this.logger.info('✅ Gateway service registered to Consul');
         } catch (error) {
             this.logger.error('❌ Failed to register Gateway with Consul:', error);
         }
@@ -189,10 +190,10 @@ export class GatewayApp {
             this.logger.info('🔄 Starting graceful shutdown...');
             
             // 從 Consul 取消註冊
-            await this.consulService.cleanup();
+            await this.consulConfig.deregisterService();
             
-            // 清理健康服務
-            this.healthService.cleanup();
+            // TODO: 修復後恢復 HealthService 清理
+            // this.healthService.cleanup();
             
             // 清理認證中間件
             await AuthMiddleware.cleanup();
@@ -211,19 +212,19 @@ export class GatewayApp {
     }
 
     /**
-     * 取得 Consul 服務實例
-     * @returns ConsulService 實例
+     * 取得 Consul 配置實例
+     * @returns ConsulConfig 實例
      */
-    public getConsulService(): ConsulService {
-        return this.consulService;
+    public getConsulConfig(): ConsulConfig {
+        return this.consulConfig;
     }
 
     /**
-     * 取得健康檢查服務實例
-     * @returns HealthService 實例
+     * 取得健康檢查配置實例
+     * @returns HealthConfig 實例
      */
-    public getHealthService(): HealthService {
-        return this.healthService;
+    public getHealthConfig(): HealthConfig {
+        return this.healthConfig;
     }
 
     /**
@@ -243,7 +244,7 @@ export class GatewayApp {
                     // 檢查是否為 Socket.io 連接
                     if (request.url?.startsWith('/socket.io/')) {
                         // 發現 drone-websocket-service
-                        const serviceInstances = await this.consulService.getHealthyServices('drone-websocket-service');
+                        const serviceInstances = await this.consulConfig.getHealthyServices('drone-websocket-service');
                         
                         if (!serviceInstances || serviceInstances.length === 0) {
                             this.logger.error('❌ drone-websocket-service not found for WebSocket upgrade');

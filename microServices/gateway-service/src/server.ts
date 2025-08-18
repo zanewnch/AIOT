@@ -46,7 +46,7 @@ async function startServer(): Promise<void> {
             // 啟動後的狀態檢查
             setTimeout(async () => {
                 try {
-                    const systemHealth = await gatewayApp!.getHealthService().getSystemHealth();
+                    const systemHealth = await gatewayApp!.getHealthConfig().getSystemHealth();
                     logger.info('🏥 Initial system health check:', {
                         status: systemHealth.status,
                         healthyServices: Object.values(systemHealth.services).filter(s => s.healthy).length,
@@ -131,9 +131,9 @@ async function startServer(): Promise<void> {
         setInterval(async () => {
             try {
                 if (gatewayApp) {
-                    const consulService = gatewayApp.getConsulService();
-                    const servicesHealth = await consulService.getAllServicesHealth();
-                    const healthyCount = Object.values(servicesHealth).filter(Boolean).length;
+                    const healthConfig = gatewayApp.getHealthConfig();
+                    const servicesHealth = await healthConfig.checkAllServicesHealth();
+                    const healthyCount = Object.values(servicesHealth).filter(s => s.healthy).length;
                     const totalCount = Object.keys(servicesHealth).length;
                     
                     logger.debug(`📊 Periodic status: ${healthyCount}/${totalCount} services healthy`);

@@ -9,8 +9,17 @@ import { Request, Response, NextFunction } from 'express';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import axios, { AxiosResponse } from 'axios';
 import { loggerConfig, logProxyRequest, logRouteEvent } from '../configs/loggerConfig.js';
-import { ConsulService, ServiceInstance } from '../services/ConsulService.js';
 import { GatewayError } from './ErrorHandleMiddleware.js';
+
+/**
+ * 服務實例介面
+ */
+export interface ServiceInstance {
+    address: string;
+    port: number;
+    service: string;
+    id: string;
+}
 
 /**
  * 代理配置介面
@@ -34,10 +43,61 @@ export interface ProxyConfig {
  * 微服務代理中間件類別
  */
 export class ProxyMiddleware {
-    private consulService: ConsulService;
+    private consulUrl: string;
 
-    constructor(consulService: ConsulService) {
-        this.consulService = consulService;
+    constructor() {
+        this.consulUrl = `http://${process.env.CONSUL_HOST || 'consul'}:${process.env.CONSUL_PORT || '8500'}`;
+    }
+
+    /**
+     * 從 Consul 獲取健康的服務實例
+     */
+    private async getServiceInstance(serviceName: string): Promise<ServiceInstance | null> {
+        try {
+            const response = await axios.get(`${this.consulUrl}/v1/health/service/${serviceName}?passing=true`);
+            const services = response.data;
+            
+            if (!services || services.length === 0) {
+                loggerConfig.warn(`⚠️ No healthy instances found for service: ${serviceName}`);
+                return null;
+            }
+
+            // 選擇第一個健康的服務實例
+            const service = services[0];
+            return {
+                address: service.Service.Address,
+                port: service.Service.Port,
+                service: service.Service.Service,
+                id: service.Service.ID
+            };
+        } catch (error) {
+            loggerConfig.error(`❌ Failed to get service instance for ${serviceName}:`, error.message);
+            return null;
+        }
+    }
+
+    /**
+     * 從 Consul 獲取所有健康的服務實例
+     */
+    private async getHealthyServices(serviceName: string): Promise<ServiceInstance[]> {
+        try {
+            const response = await axios.get(`${this.consulUrl}/v1/health/service/${serviceName}?passing=true`);
+            const services = response.data;
+            
+            if (!services || services.length === 0) {
+                return [];
+            }
+
+            return services.map((service: any) => ({
+                address: service.Service.Address,
+                port: service.Service.Port,
+                service: service.Service.Service,
+                id: service.Service.ID
+            }));
+        } catch (error) {
+            loggerConfig.error(`❌ Failed to get healthy services for ${serviceName}:`, error.message);
+            return [];
+        }
     }
 
     /**
@@ -51,7 +111,7 @@ export class ProxyMiddleware {
             
             try {
                 // 獲取健康的服務實例
-                const serviceInstance = await this.consulService.getServiceInstance(config.target);
+                const serviceInstance = await this.getServiceInstance(config.target);
                 
                 if (!serviceInstance) {
                     throw new GatewayError(
@@ -260,7 +320,7 @@ export class ProxyMiddleware {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 // 為 WebSocket 連接發現目標服務
-                const serviceInstances = await this.consulService.getHealthyServices(config.target);
+                const serviceInstances = await this.getHealthyServices(config.target);
                 
                 if (!serviceInstances || serviceInstances.length === 0) {
                     loggerConfig.error(`❌ WebSocket target service not found: ${config.target}`);
@@ -340,7 +400,7 @@ export class ProxyMiddleware {
      */
     public async checkServiceHealth(serviceName: string): Promise<boolean> {
         try {
-            const serviceInstance = await this.consulService.getServiceInstance(serviceName);
+            const serviceInstance = await this.getServiceInstance(serviceName);
             if (!serviceInstance) {
                 return false;
             }

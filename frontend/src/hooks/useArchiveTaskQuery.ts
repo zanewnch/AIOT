@@ -94,7 +94,7 @@ export class ArchiveTaskQuery {
           }
           
           const queryString = params.toString();
-          const url = queryString ? `/archive-tasks?${queryString}` : '/archive-tasks';
+          const url = queryString ? `/drone/archive-tasks?${queryString}` : '/drone/archive-tasks';
           
           const response = await apiClient.get(url);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
@@ -134,7 +134,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_DATA,
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get('/archive-tasks/data');
+          const response = await apiClient.get('/drone/archive-tasks/data');
           const result = ReqResult.fromResponse<ArchiveTask[]>(response);
           
           if (result.isError()) {
@@ -167,7 +167,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASK_BY_ID(id),
       queryFn: async (): Promise<ArchiveTask> => {
         try {
-          const response = await apiClient.get(`/api/archive-tasks/${id}`);
+          const response = await apiClient.get(`/drone/archive-tasks/${id}`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
@@ -205,7 +205,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_STATUS(status),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get(`/api/archive-tasks?status=${status}`);
+          const response = await apiClient.get(`/drone/archive-tasks?status=${status}`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
@@ -243,7 +243,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_TYPE(type),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get(`/api/archive-tasks?jobType=${type}`);
+          const response = await apiClient.get(`/drone/archive-tasks?jobType=${type}`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
@@ -281,7 +281,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_BATCH(batchId),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get(`/api/archive-tasks?batchId=${encodeURIComponent(batchId)}`);
+          const response = await apiClient.get(`/drone/archive-tasks?batchId=${encodeURIComponent(batchId)}`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
@@ -319,7 +319,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASK_STATISTICS,
       queryFn: async (): Promise<ArchiveTaskStatistics> => {
         try {
-          const response = await apiClient.get('/archive-tasks/statistics');
+          const response = await apiClient.get('/drone/archive-tasks/statistics');
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTaskStatistics>>(response);
           
           if (result.isError()) {
@@ -359,7 +359,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (data: CreateArchiveTaskRequest): Promise<ArchiveTask> => {
         try {
-          const response = await apiClient.post('/archive-tasks', data);
+          const response = await apiClient.post('/drone/archive-tasks', data);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
@@ -409,7 +409,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (data: CreateArchiveTaskRequest[]): Promise<BatchArchiveResult> => {
         try {
-          const response = await apiClient.post('/archive-tasks/batch', data);
+          const response = await apiClient.post('/drone/archive-tasks/batch', data);
           const result = ReqResult.fromResponse<ApiResponse<BatchArchiveResult>>(response);
           
           if (result.isError()) {
@@ -462,7 +462,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (taskId: number): Promise<ArchiveTaskExecutionResult> => {
         try {
-          const response = await apiClient.post(`/api/archive-tasks/${taskId}/execute`);
+          const response = await apiClient.post(`/drone/archive-tasks/${taskId}/execute`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTaskExecutionResult>>(response);
           
           if (result.isError()) {
@@ -509,7 +509,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async ({ taskId, reason }: { taskId: number; reason: string }): Promise<ArchiveTask> => {
         try {
-          const response = await apiClient.post(`/api/archive-tasks/${taskId}/cancel`, { reason });
+          const response = await apiClient.post(`/drone/archive-tasks/${taskId}/cancel`, { reason });
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask>>(response);
           
           if (result.isError()) {
@@ -556,7 +556,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (taskId: number): Promise<ArchiveTaskExecutionResult> => {
         try {
-          const response = await apiClient.post(`/api/archive-tasks/${taskId}/retry`);
+          const response = await apiClient.post(`/drone/archive-tasks/${taskId}/retry`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTaskExecutionResult>>(response);
           
           if (result.isError()) {
@@ -609,7 +609,7 @@ export class ArchiveTaskQuery {
             params.append('status', status);
           }
           
-          const response = await apiClient.delete(`/api/archive-tasks/cleanup?${params.toString()}`);
+          const response = await apiClient.delete(`/drone/archive-tasks/cleanup?${params.toString()}`);
           const result = ReqResult.fromResponse<ApiResponse<{ cleanedCount: number }>>(response);
           
           if (result.isError()) {
@@ -649,7 +649,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_STATUS(ArchiveTaskStatus.RUNNING),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get(`/api/archive-tasks?status=${ArchiveTaskStatus.RUNNING}`);
+          const response = await apiClient.get(`/drone/archive-tasks?status=${ArchiveTaskStatus.RUNNING}`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {
@@ -688,7 +688,7 @@ export class ArchiveTaskQuery {
       queryKey: [...this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS, 'recent', limit],
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const response = await apiClient.get(`/api/archive-tasks?sortBy=createdAt&sortOrder=DESC&limit=${limit}`);
+          const response = await apiClient.get(`/drone/archive-tasks?sortBy=createdAt&sortOrder=DESC&limit=${limit}`);
           const result = ReqResult.fromResponse<ApiResponse<ArchiveTask[]>>(response);
           
           if (result.isError()) {

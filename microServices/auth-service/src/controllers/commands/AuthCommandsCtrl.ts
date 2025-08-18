@@ -1,209 +1,282 @@
 /**
- * @fileoverview 認證命令控制器
+ * @fileoverview AuthCommands 控制器 - 檔案層級意圖說明
  *
- * 此文件實作了認證命令控制器，
- * 專注於處理所有寫入和操作相關的 HTTP API 端點。
- * 遵循 CQRS 模式，只處理命令操作，包含登入、登出等寫入邏輯。
+ * 目的：此控制器負責處理所有寫入/命令型的認證 API 端點，遵循 CQRS 的命令端模式。
+ * - 負責處理使用者登入、登出等會改變系統狀態的操作
+ * - 從 HTTP 請求中解析和驗證輸入參數
+ * - 委派具體的業務邏輯給 AuthCommandsSvc 服務層
+ * - 處理認證相關的 cookie 設定和清理
+ * - 整合 JWT 黑名單機制以確保安全性
+ * - 提供統一的 ResResult 格式回應
  *
- * @module AuthCommands
- * @author AIOT Team
- * @since 1.0.0
+ * 安全考量：
+ * - 使用 HttpOnly cookie 儲存敏感的認證 token
+ * - 實作 JWT 黑名單機制防止 token 重播攻擊
+ * - 詳細記錄所有認證事件以供審計
+ *
  * @version 1.0.0
+ * @author AIOT Team
+ * @since 2024-01-01
  */
 
-import 'reflect-metadata';
-import {inject, injectable} from 'inversify';
-import {NextFunction, Request, Response} from 'express';
-import {AuthCommandsSvc} from '../../services/commands/AuthCommandsSvc.js';
-import {createLogger, logAuthEvent, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from '../../utils/ResResult';
-import {TYPES} from '../../container/types.js';
-import {JwtBlacklistMiddleware} from '../../middleware/JwtBlacklistMiddleware.js';
+import 'reflect-metadata'; // 支援 TypeScript 裝飾器反射
+import {inject, injectable} from 'inversify'; // Inversify DI 裝飾器
+import {NextFunction, Request, Response} from 'express'; // Express 型別
+import {AuthCommandsSvc} from '../../services/commands/AuthCommandsSvc.js'; // 命令服務介面/實作
+import {createLogger, logAuthEvent, logRequest} from '../../configs/loggerConfig.js'; // 日誌與事件記錄函式
+import {ResResult} from '../../utils/ResResult'; // 統一 API 回應封裝
+import {TYPES} from '../../container/types.js'; // DI container key
+import {JwtBlacklistMiddleware} from '../../middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
 
-const logger = createLogger('AuthCommands');
+const logger = createLogger('AuthCommands'); // 建立 module 專屬 logger
 
 /**
- * 認證命令控制器類別
+ * 認證命令控制器類別 - 處理所有認證相關的命令型操作
  *
- * 專門處理認證相關的命令請求，包含登入、登出等功能。
- * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
+ * 此類別是 CQRS 模式中的命令端控制器，專門負責處理會改變系統狀態的認證操作。
+ * 主要功能包括使用者登入、登出，以及相關的安全機制管理。
+ *
+ * **核心職責：**
+ * - HTTP 請求解析和參數驗證
+ * - 委派業務邏輯給服務層執行
+ * - 管理認證 cookie 的生命週期
+ * - 整合 JWT 黑名單機制
+ * - 記錄安全審計日誌
+ *
+ * **安全特性：**
+ * - HttpOnly cookie 防止 XSS 攻擊
+ * - JWT 黑名單機制防止 token 重播
+ * - 詳細的認證事件記錄
+ * - IP 地址和 User Agent 追蹤
  *
  * @class AuthCommands
+ * @example
+ * ```typescript
+ * // 透過 Inversify 容器注入使用
+ * const authController = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
+ * ```
+ *
  * @since 1.0.0
+ * @public
  */
-@injectable()
-export class AuthCommands {
+@injectable() // 標記可注入
+export class AuthCommands { // 控制器類別
+    /**
+     * AuthCommands 控制器建構函數
+     *
+     * 透過 Inversify 依賴注入機制注入所需的服務實例。
+     *
+     * @param authCommandsSvc - 認證命令服務實例，負責執行具體的認證業務邏輯
+     */
     constructor(
-        @inject(TYPES.AuthCommandsSvc) private readonly authCommandsSvc: AuthCommandsSvc
+        @inject(TYPES.AuthCommandsSvc) private readonly authCommandsSvc: AuthCommandsSvc // 注入命令服務實例，用於執行認證相關的業務邏輯
     ) {
     }
 
     /**
-     * 處理使用者登入請求
-     * @route POST /api/auth/login
+     * 處理使用者登入請求 - HTTP POST /api/auth/login
+     *
+     * 此方法負責處理使用者的登入驗證流程，包括參數驗證、身份認證、
+     * JWT token 產生和 HttpOnly cookie 設定。
+     *
+     * **處理流程：**
+     * 1. 驗證必要的請求參數（username, password）
+     * 2. 收集請求元數據（IP 地址、User Agent）
+     * 3. 委派 AuthCommandsSvc 進行身份驗證
+     * 4. 設定 HttpOnly cookie 儲存 JWT token
+     * 5. 處理 "記住我" 功能的額外 cookie 設定
+     * 6. 記錄認證事件用於安全審計
+     *
+     * **安全特性：**
+     * - HttpOnly cookie 防止 XSS 攻擊
+     * - 根據生產環境設定 Secure cookie flag
+     * - SameSite=strict 防止 CSRF 攻擊
+     * - 詳細的登入事件記錄和監控
+     *
+     * **請求體格式：**
+     * ```typescript
+     * {
+     *   username: string;    // 使用者名稱（必填）
+     *   password: string;    // 密碼（必填）
+     *   rememberMe?: boolean; // 記住登入狀態（選填，預設 false）
+     * }
+     * ```
+     *
+     * **成功回應格式：**
+     * ```typescript
+     * {
+     *   status: 200,
+     *   message: "Login successful",
+     *   data: {
+     *     rememberMe: boolean,
+     *     user: {
+     *       id: string,
+     *       username: string,
+     *       roles: string[],
+     *       permissions: string[], // 僅回傳前 10 項權限
+     *       departmentId?: string,
+     *       level?: number
+     *     }
+     *   }
+     * }
+     * ```
+     *
+     * @param req - Express 請求物件，應包含 username 和 password 在 body 中
+     * @param res - Express 回應物件，用於設定 cookie 和回傳結果
+     * @param next - Express 下一個中介函式，用於錯誤處理
+     * @returns Promise<void> 非同步操作完成的 Promise
+     *
+     * @throws {Error} 當認證服務出現異常時拋出錯誤
+     *
+     * @example
+     * ```typescript
+     * // POST /api/auth/login
+     * // Content-Type: application/json
+     * {
+     *   "username": "admin",
+     *   "password": "admin123",
+     *   "rememberMe": true
+     * }
+     * ```
      */
-    public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => { // 登入控制器方法
         try {
-            // 記錄登入請求
-            logRequest(req, `Login attempt for user: ${req.body.username}`, 'info');
+            logRequest(req, `Login attempt for user: ${req.body.username}`, 'info'); // 記錄請求
 
-            // 從請求主體中解構取得登入資料
-            const {username, password, rememberMe}: {
-                username: string,
-                password: string,
-                rememberMe?: boolean
-            } = req.body;
+            // 解析 body 中的登入欄位（以型別註記讓 TypeDoc 顯示參數結構）
+            const {username, password, rememberMe}: { username: string, password: string, rememberMe?: boolean } = req.body;
 
-            // 參數驗證 - 確保必要欄位存在
-            if (!username || !password) {
-                logger.warn(`Login request missing required credentials from IP: ${req.ip}`);
-                // 回傳 400 錯誤，表示請求參數不完整
-                const response = ResResult.badRequest('Username and password are required');
-                res.status(response.status).json(response.toJSON());
-                return;
+            if (!username || !password) { // 檢查必要欄位
+                logger.warn(`Login request missing required credentials from IP: ${req.ip}`); // 記錄警告
+                const response = ResResult.badRequest('Username and password are required'); // 回傳 400
+                res.status(response.status).json(response.toJSON()); // 傳回 JSON
+                return; // 停止處理
             }
 
-            // 取得使用者代理字串用於安全審計
-            const userAgent = req.get('user-agent');
-            // 取得客戶端 IP 位址，優先使用代理伺服器傳遞的真實 IP
-            const ipAddress = req.ip || req.socket.remoteAddress;
+            // 取得請求的 user agent 與 ip（可能由反向 proxy 提供）
+            const userAgent = req.get('user-agent'); // 取得 user-agent
+            const ipAddress = req.ip || req.socket.remoteAddress; // 取得 IP
 
-            logger.info(`Starting login authentication for user: ${username}, IP: ${ipAddress}`);
+            logger.info(`Starting login authentication for user: ${username}, IP: ${ipAddress}`); // info 日誌
 
-            // 調用 CQRS 命令服務進行登入驗證（包含 Redis 會話管理）
-            const result = await this.authCommandsSvc.login({
-                username,
-                password,
-                userAgent,
-                ipAddress,
-                rememberMe
-            });
+            // 呼叫命令服務進行登入流程（包含驗證與 token 產生）
+            const result = await this.authCommandsSvc.login({ username, password, userAgent, ipAddress, rememberMe });
 
-            // 檢查登入結果
-            if (!result.success) {
-                logger.warn(`Authentication failed for user: ${username}, reason: ${result.message}, IP: ${ipAddress}`);
-                logAuthEvent('login', username, false, {reason: result.message, ip: ipAddress});
-                // 回傳 401 錯誤，表示認證失敗
-                const response = ResResult.unauthorized(result.message);
-                res.status(response.status).json(response.toJSON());
-                return;
+            if (!result.success) { // 登入失敗處理
+                logger.warn(`Authentication failed for user: ${username}, reason: ${result.message}, IP: ${ipAddress}`); // 記錄失敗
+                logAuthEvent('login', username, false, {reason: result.message, ip: ipAddress}); // 寫入認證事件
+                const response = ResResult.unauthorized(result.message); // 組成 401
+                res.status(response.status).json(response.toJSON()); // 回傳
+                return; // 停止
             }
 
-            // 根據「記住我」選項設定不同的過期時間
-            const cookieMaxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000; // 7天 or 1小時
+            // 設定 cookie：根據 rememberMe 決定過期時間
+            const cookieMaxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000;
 
-            // 設置 httpOnly cookie 來儲存 JWT，提升安全性
-            res.cookie('auth_token', result.token, {
-                httpOnly: true, // 防止 JavaScript 存取，避免 XSS 攻擊
-                secure: process.env.NODE_ENV === 'production', // 只在 HTTPS 時設為 true
-                sameSite: 'strict', // 防止 CSRF 攻擊
-                maxAge: cookieMaxAge, // 設定 cookie 過期時間
-                path: '/' // 確保 cookie 在整個網站可用
-            });
+            // 設定 HttpOnly 的 auth_token cookie，供後續請求驗證
+            res.cookie('auth_token', result.token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: cookieMaxAge, path: '/' });
 
-            // 設置記住我狀態的 cookie（供前端顯示使用）
+            // 若使用者選擇記住我，則額外設定一個非 HttpOnly 的 flag cookie 供前端顯示
             if (rememberMe) {
-                res.cookie('remember_me', 'true', {
-                    httpOnly: false, // 允許前端讀取來顯示狀態
-                    secure: process.env.NODE_ENV === 'production', // 生產環境使用 HTTPS
-                    sameSite: 'strict', // 防止 CSRF 攻擊
-                    maxAge: cookieMaxAge // 與 JWT cookie 相同的過期時間
-                });
+                res.cookie('remember_me', 'true', { httpOnly: false, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: cookieMaxAge });
             }
 
-            logger.info(`Login authentication successful for user: ${username}, userID: ${result.user?.id}, rememberMe: ${rememberMe || false}`);
-            logAuthEvent('login', username, true, {
-                userId: result.user?.id,
-                rememberMe: rememberMe || false,
-                ip: ipAddress,
-                userAgent
-            });
+            logger.info(`Login authentication successful for user: ${username}, userID: ${result.user?.id}, rememberMe: ${rememberMe || false}`); // 成功日誌
+            logAuthEvent('login', username, true, { userId: result.user?.id, rememberMe: rememberMe || false, ip: ipAddress, userAgent }); // 認證事件
 
-            // 回傳登入成功的回應 (不返回 token，安全存儲在 httpOnly cookie 中)
-            const response = ResResult.success(result.message, {
-                rememberMe: rememberMe || false, // 記住我狀態
-                user: {
-                    id: result.user?.id, // 使用者 ID
-                    username: result.user?.username, // 使用者名稱
-                    roles: result.user?.roles, // 使用者角色
-                    permissions: result.user?.permissions?.slice(0, 10), // 權限預覽（前10個）
-                    departmentId: result.user?.departmentId,
-                    level: result.user?.level
-                }
-            });
+            // 回傳成功響應（限制權限清單長度以避免過大 payload）
+            const response = ResResult.success(result.message, { rememberMe: rememberMe || false, user: { id: result.user?.id, username: result.user?.username, roles: result.user?.roles, permissions: result.user?.permissions?.slice(0, 10), departmentId: result.user?.departmentId, level: result.user?.level } });
             res.status(response.status).json(response.toJSON());
-        } catch (err) {
-            logger.error('Login error:', err);
-            // 將例外處理委派給 Express 錯誤處理中間件
-            next(err);
+        } catch (err) { // 錯誤處理
+            logger.error('Login error:', err); // 記錄錯誤
+            next(err); // 傳遞給 Express 錯誤中間件
         }
     }
 
     /**
-     * 處理使用者登出請求
-     * @route POST /api/auth/logout
+     * 處理使用者登出請求 - HTTP POST /api/auth/logout
+     *
+     * 此方法負責安全地登出使用者，包括 JWT token 失效、清理 cookie
+     * 和記錄安全審計日誌。即使沒有有效的 token 也會執行清理動作。
+     *
+     * **處理流程：**
+     * 1. 從 cookie 或 Authorization header 提取 JWT token
+     * 2. 委派 AuthCommandsSvc 執行登出業務邏輯
+     * 3. 將 JWT token 加入黑名單防止重用
+     * 4. 清理所有相關的 HttpOnly 和一般 cookie
+     * 5. 記錄登出事件用於安全審計
+     *
+     * **安全特性：**
+     * - JWT 黑名單機制防止 token 重播攻擊
+     * - 完整清理所有認證相關 cookie
+     * - 詳細的登出事件記錄
+     * - 即使無 token 也執行清理（防止殘留狀態）
+     *
+     * **成功回應格式：**
+     * ```typescript
+     * {
+     *   status: 200,
+     *   message: "Logout successful",
+     *   data: null
+     * }
+     * ```
+     *
+     * @param req - Express 請求物件，可能包含認證 token 在 cookie 或 header 中
+     * @param res - Express 回應物件，用於清理 cookie 和回傳結果
+     * @param next - Express 下一個中介函式，用於錯誤處理
+     * @returns Promise<void> 非同步操作完成的 Promise
+     *
+     * @throws {Error} 當登出服務出現異常時拋出錯誤
+     *
+     * @example
+     * ```typescript
+     * // POST /api/auth/logout
+     * // Cookie: auth_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+     * // 或
+     * // Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+     * ```
      */
-    public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => { // 登出控制器方法
         try {
-            logRequest(req, 'Logout request', 'info');
+            logRequest(req, 'Logout request', 'info'); // 記錄請求
 
-            // 取得 JWT token，優先從 cookie 取得，其次從 Authorization header 取得
+            // 嘗試從 cookie 或 header 取得 token
             const token = req.cookies?.auth_token || req.headers.authorization?.replace('Bearer ', '');
 
-            const username = req.user?.username || 'unknown';
+            const username: any = (req as any).user?.username || 'unknown'; // cast to any to avoid strict User type issues
             logger.info(`Processing logout request for user: ${username}, IP: ${req.ip}`);
 
-            // 如果存在 token，則從 Redis 清除會話並加入黑名單
             if (token) {
+                // 有 token 的情況：清理 session 並將 token 加入黑名單
                 logger.debug('Processing logout - clearing session and blacklisting token');
 
-                // 1. 從 Redis 清除會話資料
-                await this.authCommandsSvc.logout({
-                    token,
-                    userId: req.user?.id
-                });
+                // 呼叫 logout 時僅傳遞 token（示範 LogoutRequest 為簡化版本）
+                await this.authCommandsSvc.logout({ token });
 
-                // 2. 將 JWT token 加入黑名單，防止重複使用
                 const blacklisted = await JwtBlacklistMiddleware.addCurrentTokenToBlacklist(req, 'logout');
 
-                if (blacklisted) {
-                    logger.info(`JWT token successfully added to blacklist for user: ${username}`);
-                } else {
-                    logger.warn(`Failed to add JWT token to blacklist for user: ${username}`);
-                }
+                if (blacklisted) { logger.info(`JWT token successfully added to blacklist for user: ${username}`); } else { logger.warn(`Failed to add JWT token to blacklist for user: ${username}`); }
             } else {
                 logger.warn(`Logout attempted without valid token for user: ${username}`);
             }
 
-            // 清除 JWT cookie，使用與設定時相同的選項
-            res.clearCookie('auth_token', {
-                httpOnly: true, // 與設定時一致
-                secure: process.env.NODE_ENV === 'production', // 生產環境使用 HTTPS
-                sameSite: 'strict', // 防止 CSRF 攻擊
-                path: '/' // 確保清除正確的 cookie
-            });
 
-            // 清除記住我 cookie
-            res.clearCookie('remember_me', {
-                httpOnly: false, // 與設定時一致
-                secure: process.env.NODE_ENV === 'production', // 生產環境使用 HTTPS
-                sameSite: 'strict' // 防止 CSRF 攻擊
-            });
+            // 清理相關 cookie（JWT 與其他應用相關 cookie）
+            res.clearCookie('auth_token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/' });
+            res.clearCookie('remember_me', { httpOnly: false, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' });
 
-            // 清除其他相關 cookie，確保完全登出
-            res.clearCookie('user_preferences'); // 清除使用者偏好設定
-            res.clearCookie('feature_flags'); // 清除功能開關狀態
+            // 清除應用其他可能的 cookie（示範）
+            res.clearCookie('user_preferences');
+            res.clearCookie('feature_flags');
 
-            logger.info(`Logout completed successfully for user: ${username}, IP: ${req.ip}`);
-            logAuthEvent('logout', username, true, {ip: req.ip});
+            logger.info(`Logout completed successfully for user: ${username}, IP: ${req.ip}`); // 完成日誌
+            logAuthEvent('logout', username, true, {ip: req.ip}); // 認證事件
 
-            // 回傳登出成功的回應
-            const response = ResResult.success('Logout successful');
-            res.status(response.status).json(response.toJSON());
-        } catch (err) {
-            logger.error('Logout error:', err);
-            // 將例外處理委派給 Express 錯誤處理中間件
-            next(err);
+            const response = ResResult.success('Logout successful'); // 回傳成功
+            res.status(response.status).json(response.toJSON()); // 傳回
+        } catch (err) { // 錯誤處理
+            logger.error('Logout error:', err); // 記錄錯誤
+            next(err); // 傳遞
         }
     }
 }

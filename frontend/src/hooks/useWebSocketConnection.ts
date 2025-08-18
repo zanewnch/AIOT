@@ -108,7 +108,7 @@ interface ConnectionStats {
  */
 export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
   const {
-    url = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8000',
+    url = import.meta.env.VITE_WS_URL || 'ws://localhost:3004',
     autoConnect = true,
     autoReconnect = true,
     reconnectDelay = 3000,

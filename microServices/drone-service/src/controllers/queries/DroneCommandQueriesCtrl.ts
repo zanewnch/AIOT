@@ -387,4 +387,19 @@ export class DroneCommandQueries {
             next(error);
         }
     }
+
+    /**
+     * 取得最新的無人機指令 (預設20筆)
+     * @route GET /api/drone/commands/latest
+     */
+    getLatestCommands = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const limit = parseInt(req.query.limit as string) || 20;
+            const commands = await this.queryService.getAllCommands(limit);
+            const result = ResResult.success('最新無人機指令獲取成功', commands);
+            res.status(result.status).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
 }

@@ -1,3 +1,32 @@
+"""
+LangChain 視覺客戶端模組。
+
+本模組實作了基於 LangChain 的 AI 客戶端，支援視覺問答、文字生成、
+RAG 檢索增強生成和對話記憶功能。作為 Django LLM 服務的核心推理引擎。
+
+主要功能:
+- 基於 SmolLM2 的文字生成
+- 多模態支援（文字 + 圖像）
+- RAG 檢索增強生成
+- 對話記憶與上下文管理
+- 向量資料庫整合
+- Django 生命週期管理
+
+技術架構:
+- LangChain 作為核心框架
+- HuggingFace Transformers 模型整合
+- Chroma 向量資料庫
+- 支援多設備推理（CPU/GPU/NPU）
+
+注意事項:
+- 在 Django migrate 期間自動跳過模型載入
+- 支援 DJANGO_SKIP_MODEL_LOADING 環境變數
+- 自動設備檢測和最佳化配置
+
+Author: AIOT Team
+Version: 2.0.0
+"""
+
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -20,7 +49,28 @@ logger = logging.getLogger(__name__)
 
 
 class LangChainVisionClient:
-    def __init__(self, config: LLMConfig = None):
+    """
+    LangChain 視覺客戶端類別。
+    
+    整合 LangChain 框架與 SmolLM2 模型，提供完整的 AI 推理服務。
+    支援文字生成、視覺問答、RAG 檢索和對話記憶功能。
+    
+    Attributes:
+        config (LLMConfig): AI 引擎配置物件
+        device (str): 推理設備類型
+        llm (pipeline): HuggingFace 推理管道
+        embeddings (HuggingFaceEmbeddings): 文字嵌入模型
+        vector_store (Chroma): 向量資料庫實例
+        memory (ConversationBufferMemory): 對話記憶管理器
+        
+    Note:
+        - 在 Django migrate 時自動跳過模型載入以避免錯誤
+        - 支援多設備推理和自動設備檢測
+        - 整合 RAG 檢索和對話記憶功能
+        - 提供完整的錯誤處理和日誌記錄
+    """
+    
+    def __init__(self, config: LLMConfig = None) -> None:
         self.config = config or DEFAULT_LLM_CONFIG
         self.device = self.config.device
         self.llm = None

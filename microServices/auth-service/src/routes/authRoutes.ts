@@ -49,6 +49,14 @@ class AuthRoutes {
   }
 
   /**
+   * 建構子 - 由 DI container 解析 Controller 並初始化路由
+   *
+   * @remarks
+   * 使用 container 取得被註冊的 controller 實例，並呼叫 setupAuthRoutes 設定路由。
+   */
+  // (constructor 已定義於上方)
+
+  /**
    * 設定認證路由 - RESTful 設計
    */
   private setupAuthRoutes = (): void => {
@@ -81,14 +89,14 @@ class AuthRoutes {
           const base64Payload = authToken.split('.')[1];
           const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString());
           
-          // 提取用戶信息
+          // 提取用戶信息 (payload 來自已驗證的 JWT)
           const userInfo = {
             id: payload.user.id,
             username: payload.user.username,
             roles: payload.permissions.roles,
             permissions: payload.permissions.permissions,
-            departmentId: 1, // 從 payload 中獲取或設定預設值
-            level: 8,        // 從 payload 中獲取或設定預設值
+            departmentId: 1, // 若 payload 未提供則使用預設值
+            level: 8,        // 若 payload 未提供則使用預設值
             sessionId: payload.session.session_id,
             isAuthenticated: true,
             authMethod: 'kong-jwt'

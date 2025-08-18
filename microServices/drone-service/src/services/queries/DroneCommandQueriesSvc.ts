@@ -66,7 +66,7 @@ export class DroneCommandQueriesSvc {
                 throw new Error('限制筆數必須在 1 到 1000 之間');
             }
 
-            const commands = await this.commandRepository.selectAll(limit);
+            const commands = await this.commandRepository.findAll(limit);
             logger.info(`Successfully retrieved ${commands.length} commands`);
             return commands;
         } catch (error) {

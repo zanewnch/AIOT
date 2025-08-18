@@ -21,46 +21,48 @@ import { createLogger } from '../../configs/loggerConfig.js';
 const logger = createLogger('AuthQueriesSvc');
 
 /**
- * 使用者會話資料傳輸物件
+ * UserSessionDTO - 代表會話中的使用者摘要資料，供查詢回傳使用
  */
 export interface UserSessionDTO {
-    id: number;
-    username: string;
-    email: string;
-    isActive: boolean;
-    lastLoginAt: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
+    id: number; // 使用者 ID
+    username: string; // 使用者名稱
+    email: string; // 電子郵件
+    isActive: boolean; // 帳號是否啟用
+    lastLoginAt: Date | null; // 最後登入時間
+    createdAt: Date; // 建立時間
+    updatedAt: Date; // 更新時間
 }
 
 /**
- * 會話驗證結果物件
+ * SessionValidationResult - 驗證會話的結果型別
  */
 export interface SessionValidationResult {
-    isValid: boolean;
-    user?: UserSessionDTO;
-    message?: string;
+    isValid: boolean; // 會話是否有效
+    user?: UserSessionDTO; // 若有效，回傳使用者摘要資料
+    message?: string; // 遇到錯誤或無效時的訊息
 }
 
 /**
- * 身份驗證查詢服務類別
- * 
- * 提供身份驗證的所有查詢功能，
- * 包含會話驗證、使用者資料查詢和狀態檢查。
+ * 認證查詢服務類別
+ *
+ * @remarks
+ * 提供會話驗證、使用者查詢與會話狀態檢查等查詢相關功能，適合由控制器注入使用。
  */
 @injectable()
 export class AuthQueriesSvc {
-    private sessionQueriesSvc: SessionQueriesSvc;
+    private sessionQueriesSvc: SessionQueriesSvc; // 注入的 session 查詢服務
 
     constructor(
         @inject(TYPES.SessionQueriesSvc) sessionQueriesSvc: SessionQueriesSvc
     ) {
-        this.sessionQueriesSvc = sessionQueriesSvc;
+        this.sessionQueriesSvc = sessionQueriesSvc; // 建構子注入
     }
 
     /**
-     * 將使用者模型轉換為會話 DTO
-     * @param model 使用者模型
+     * 將 UserModel 轉換成會話 DTO，避免將完整模型暴露給外層
+     *
+     * @param model - UserModel 實例
+     * @returns UserSessionDTO
      * @private
      */
     private userModelToSessionDTO = (model: UserModel): UserSessionDTO => {
@@ -77,81 +79,55 @@ export class AuthQueriesSvc {
 
     /**
      * 驗證會話並取得使用者資料
-     * 
-     * 檢查 Redis 中的會話狀態並從資料庫取得最新的使用者資料
      *
-     * @param token JWT Token
-     * @returns Promise<SessionValidationResult> 會話驗證結果
+     * @param token - JWT Token
+     * @returns Promise<SessionValidationResult> - 會話驗證結果
      */
     public validateSession = async (token: string): Promise<SessionValidationResult> => {
         try {
             logger.debug('Session validation started');
 
-            // 驗證輸入
             if (!token || typeof token !== 'string' || token.trim().length === 0) {
                 logger.warn('Session validation failed: Invalid token format');
-                return {
-                    isValid: false,
-                    message: 'Invalid token format'
-                };
+                return { isValid: false, message: 'Invalid token format' };
             }
 
-            // 首先檢查 Redis 會話
-            const sessionData = await this.sessionQueriesSvc.getUserSession(token);
+            const sessionData = await this.sessionQueriesSvc.getUserSession(token); // 從 Redis 查詢會話
             if (!sessionData) {
                 logger.warn('Session validation failed: Session not found in Redis');
-                return {
-                    isValid: false,
-                    message: 'Session not found or expired'
-                };
+                return { isValid: false, message: 'Session not found or expired' };
             }
 
             logger.debug(`Session found for user ID: ${sessionData.userId}`);
 
-            // 從資料庫取得最新的使用者資料
-            const user = await UserModel.findByPk(sessionData.userId);
+            const user = await UserModel.findByPk(sessionData.userId); // 從資料庫取出使用者
             if (!user) {
                 logger.warn(`Session validation failed: User not found in database for ID: ${sessionData.userId}`);
-                return {
-                    isValid: false,
-                    message: 'User not found'
-                };
+                return { isValid: false, message: 'User not found' };
             }
 
-            // 檢查使用者是否仍然處於活躍狀態
-            if (!user.isActive) {
+            if (!user.isActive) { // 檢查帳號是否啟用
                 logger.warn(`Session validation failed: User account is inactive for ID: ${sessionData.userId}`);
-                return {
-                    isValid: false,
-                    message: 'User account is inactive'
-                };
+                return { isValid: false, message: 'User account is inactive' };
             }
 
             logger.debug(`Session validation successful for user: ${user.username}`);
-            return {
-                isValid: true,
-                user: this.userModelToSessionDTO(user)
-            };
+            return { isValid: true, user: this.userModelToSessionDTO(user) };
         } catch (error) {
             logger.error('Session validation error occurred:', error);
-            return {
-                isValid: false,
-                message: 'Session validation failed due to system error'
-            };
+            return { isValid: false, message: 'Session validation failed due to system error' };
         }
     }
 
     /**
-     * 檢查使用者是否存在
-     * @param username 使用者名稱
-     * @returns 使用者是否存在
+     * 檢查使用者是否存在（以 username）
+     *
+     * @param username - 要檢查的使用者名稱
+     * @returns Promise<boolean>
      */
     public userExistsByUsername = async (username: string): Promise<boolean> => {
         try {
-            if (!username || typeof username !== 'string' || username.trim().length === 0) {
-                return false;
-            }
-
+            if (!username || typeof username !== 'string' || username.trim().length === 0) { return false; }
             const user = await UserModel.findOne({ where: { username: username.trim() } });
             return !!user;
         } catch (error) {
@@ -161,16 +137,14 @@ export class AuthQueriesSvc {
     }
 
     /**
-     * 檢查使用者是否存在
-     * @param userId 使用者 ID
-     * @returns 使用者是否存在
+     * 檢查使用者是否存在（以 userId）
+     *
+     * @param userId - 使用者 ID
+     * @returns Promise<boolean>
      */
     public userExistsById = async (userId: number): Promise<boolean> => {
         try {
-            if (!userId || userId <= 0) {
-                return false;
-            }
-
+            if (!userId || userId <= 0) { return false; }
             const user = await UserModel.findByPk(userId);
             return !!user;
         } catch (error) {
@@ -181,24 +155,16 @@ export class AuthQueriesSvc {
 
     /**
      * 根據使用者名稱取得使用者資料
-     * @param username 使用者名稱
-     * @returns 使用者資料或 null
+     *
+     * @param username - 使用者名稱
+     * @returns Promise<UserModel | null>
      */
     public getUserByUsername = async (username: string): Promise<UserModel | null> => {
         try {
-            if (!username || typeof username !== 'string' || username.trim().length === 0) {
-                logger.warn('Invalid username provided');
-                return null;
-            }
-
+            if (!username || typeof username !== 'string' || username.trim().length === 0) { logger.warn('Invalid username provided'); return null; }
             logger.debug(`Getting user by username: ${username}`);
             const user = await UserModel.findOne({ where: { username: username.trim() } });
-
-            if (!user) {
-                logger.debug(`User not found for username: ${username}`);
-                return null;
-            }
-
+            if (!user) { logger.debug(`User not found for username: ${username}`); return null; }
             logger.debug(`User found: ${user.username} (ID: ${user.id})`);
             return user;
         } catch (error) {
@@ -209,24 +175,16 @@ export class AuthQueriesSvc {
 
     /**
      * 根據使用者 ID 取得使用者資料
-     * @param userId 使用者 ID
-     * @returns 使用者資料或 null
+     *
+     * @param userId - 使用者 ID
+     * @returns Promise<UserModel | null>
      */
     public getUserById = async (userId: number): Promise<UserModel | null> => {
         try {
-            if (!userId || userId <= 0) {
-                logger.warn(`Invalid user ID: ${userId}`);
-                return null;
-            }
-
+            if (!userId || userId <= 0) { logger.warn(`Invalid user ID: ${userId}`); return null; }
             logger.debug(`Getting user by ID: ${userId}`);
             const user = await UserModel.findByPk(userId);
-
-            if (!user) {
-                logger.debug(`User not found for ID: ${userId}`);
-                return null;
-            }
-
+            if (!user) { logger.debug(`User not found for ID: ${userId}`); return null; }
             logger.debug(`User found: ${user.username} (ID: ${user.id})`);
             return user;
         } catch (error) {
@@ -237,15 +195,13 @@ export class AuthQueriesSvc {
 
     /**
      * 檢查會話是否存在於 Redis 中
-     * @param token JWT Token
-     * @returns 會話是否存在
+     *
+     * @param token - JWT Token
+     * @returns Promise<boolean>
      */
     public sessionExists = async (token: string): Promise<boolean> => {
         try {
-            if (!token || typeof token !== 'string' || token.trim().length === 0) {
-                return false;
-            }
-
+            if (!token || typeof token !== 'string' || token.trim().length === 0) { return false; }
             const sessionData = await this.sessionQueriesSvc.getUserSession(token);
             return !!sessionData;
         } catch (error) {
@@ -256,23 +212,16 @@ export class AuthQueriesSvc {
 
     /**
      * 取得使用者會話資料
-     * @param token JWT Token
-     * @returns 會話資料或 null
+     *
+     * @param token - JWT Token
+     * @returns Promise<any> - 會話資料或 null
      */
     public getSessionData = async (token: string): Promise<any> => {
         try {
-            if (!token || typeof token !== 'string' || token.trim().length === 0) {
-                return null;
-            }
-
+            if (!token || typeof token !== 'string' || token.trim().length === 0) { return null; }
             logger.debug('Getting session data from Redis');
             const sessionData = await this.sessionQueriesSvc.getUserSession(token);
-
-            if (!sessionData) {
-                logger.debug('Session data not found in Redis');
-                return null;
-            }
-
+            if (!sessionData) { logger.debug('Session data not found in Redis'); return null; }
             logger.debug(`Session data found for user ID: ${sessionData.userId}`);
             return sessionData;
         } catch (error) {

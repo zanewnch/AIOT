@@ -51,7 +51,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUSES,
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get('/drone-status/data');
+          const response = await apiClient.get('/drone/statuses');
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -90,7 +90,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_BY_ID(id),
       queryFn: async (): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.get(`/api/drone-status/data/${id}`);
+          const response = await apiClient.get(`/drone/statuses/${id}`);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -123,7 +123,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_BY_SERIAL(serial),
       queryFn: async (): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.get(`/api/drone-status/data/serial/${serial}`);
+          const response = await apiClient.get(`/drone/statuses/drone/${serial}`);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -156,7 +156,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_STATUS(status),
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status/data/status/${status}`);
+          const response = await apiClient.get(`/drone/statuses/drone/${status}`);
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -195,7 +195,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_OWNER(ownerId),
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status/data/owner/${ownerId}`);
+          const response = await apiClient.get(`/drone/statuses/drone/${ownerId}`);
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -228,7 +228,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_MANUFACTURER(manufacturer),
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get(`/api/drone-status/data/manufacturer/${manufacturer}`);
+          const response = await apiClient.get(`/drone/statuses/drone/${manufacturer}`);
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -261,7 +261,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_STATISTICS,
       queryFn: async (): Promise<DroneStatusStatistics> => {
         try {
-          const response = await apiClient.get('/drone-status/statistics');
+          const response = await apiClient.get('/drone/statuses/statistics');
           const result = ReqResult.fromResponse<DroneStatusStatistics>(response);
           
           if (result.isError()) {
@@ -296,7 +296,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async (data: CreateDroneStatusRequest): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.post('/drone-status/data', data);
+          const response = await apiClient.post('/drone/statuses', data);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -337,7 +337,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusRequest }): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.put(`/api/drone-status/data/${id}`, data);
+          const response = await apiClient.put(`/drone/statuses/${id}`, data);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -383,7 +383,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusOnlyRequest }): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.patch(`/api/drone-status/data/${id}/status`, data);
+          const response = await apiClient.patch(`/drone/statuses/${id}`, data);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -426,7 +426,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const response = await apiClient.delete(`/api/drone-status/data/${id}`);
+          const response = await apiClient.delete(`/drone/statuses/${id}`);
           const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {
@@ -451,3 +451,229 @@ export class DroneStatusQuery {
     });
   }
 }
+
+/**
+ * 全局 DroneStatusQuery 實例
+ * 
+ * 提供統一的無人機狀態查詢服務實例
+ * 
+ * @example
+ * ```typescript
+ * import { droneStatusQuery } from './useDroneStatusQuery';
+ * 
+ * const droneStatuses = droneStatusQuery.useAll();
+ * ```
+ */
+export const droneStatusQuery = new DroneStatusQuery();
+
+/**
+ * 獲取所有無人機狀態的 Hook
+ * 
+ * @returns {UseQueryResult<DroneStatus[], TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: droneStatuses, isLoading, error } = useAllDroneStatuses();
+ * ```
+ */
+export const useAllDroneStatuses = () => {
+  return droneStatusQuery.useAll();
+};
+
+/**
+ * 根據 ID 獲取無人機狀態的 Hook
+ * 
+ * @param {string} id - 無人機狀態 ID
+ * @param {boolean} enabled - 是否啟用查詢，預設為 true
+ * @returns {UseQueryResult<DroneStatus, TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: droneStatus, isLoading } = useDroneStatusById('drone-001');
+ * ```
+ */
+export const useDroneStatusById = (id: string, enabled?: boolean) => {
+  return droneStatusQuery.useById(id, enabled);
+};
+
+/**
+ * 根據序號獲取無人機狀態的 Hook
+ * 
+ * @param {string} serial - 無人機序號
+ * @param {boolean} enabled - 是否啟用查詢，預設為 true
+ * @returns {UseQueryResult<DroneStatus, TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: droneStatus } = useDroneStatusBySerial('SN001');
+ * ```
+ */
+export const useDroneStatusBySerial = (serial: string, enabled?: boolean) => {
+  return droneStatusQuery.useBySerial(serial, enabled);
+};
+
+/**
+ * 根據狀態獲取無人機列表的 Hook
+ * 
+ * @param {string} status - 無人機狀態
+ * @param {boolean} enabled - 是否啟用查詢，預設為 true
+ * @returns {UseQueryResult<DroneStatus[], TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: activeDrones } = useDroneStatusByStatus('active');
+ * ```
+ */
+export const useDroneStatusByStatus = (status: string, enabled?: boolean) => {
+  return droneStatusQuery.useByStatus(status, enabled);
+};
+
+/**
+ * 根據擁有者獲取無人機列表的 Hook
+ * 
+ * @param {string} ownerId - 擁有者 ID
+ * @param {boolean} enabled - 是否啟用查詢，預設為 true
+ * @returns {UseQueryResult<DroneStatus[], TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: userDrones } = useDroneStatusByOwner('user-123');
+ * ```
+ */
+export const useDroneStatusByOwner = (ownerId: string, enabled?: boolean) => {
+  return droneStatusQuery.useByOwner(ownerId, enabled);
+};
+
+/**
+ * 根據製造商獲取無人機列表的 Hook
+ * 
+ * @param {string} manufacturer - 製造商名稱
+ * @param {boolean} enabled - 是否啟用查詢，預設為 true
+ * @returns {UseQueryResult<DroneStatus[], TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: djiDrones } = useDroneStatusByManufacturer('DJI');
+ * ```
+ */
+export const useDroneStatusByManufacturer = (manufacturer: string, enabled?: boolean) => {
+  return droneStatusQuery.useByManufacturer(manufacturer, enabled);
+};
+
+/**
+ * 獲取無人機狀態統計的 Hook
+ * 
+ * @returns {UseQueryResult<DroneStatusStatistics, TableError>} React Query 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const { data: stats } = useDroneStatusStatistics();
+ * console.log('總無人機數:', stats?.totalDrones);
+ * ```
+ */
+export const useDroneStatusStatistics = () => {
+  return droneStatusQuery.useStatistics();
+};
+
+/**
+ * 創建無人機狀態的 Mutation Hook
+ * 
+ * @returns {UseMutationResult<DroneStatus, TableError, CreateDroneStatusRequest>} React Query Mutation 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const createDroneStatusMutation = useCreateDroneStatus();
+ * 
+ * const handleCreate = async () => {
+ *   try {
+ *     const newDroneStatus = await createDroneStatusMutation.mutateAsync({
+ *       serialNumber: 'SN001',
+ *       name: '無人機 001',
+ *       model: 'Model X',
+ *       manufacturer: 'DJI',
+ *       ownerId: 'user-123'
+ *     });
+ *     console.log('創建成功:', newDroneStatus);
+ *   } catch (error) {
+ *     console.error('創建失敗:', error);
+ *   }
+ * };
+ * ```
+ */
+export const useCreateDroneStatus = () => {
+  return droneStatusQuery.useCreate();
+};
+
+/**
+ * 更新無人機狀態的 Mutation Hook
+ * 
+ * @returns {UseMutationResult<DroneStatus, TableError, {id: string, data: UpdateDroneStatusRequest}>} React Query Mutation 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const updateDroneStatusMutation = useUpdateDroneStatus();
+ * 
+ * const handleUpdate = async (id: string, data: UpdateDroneStatusRequest) => {
+ *   try {
+ *     const updatedDroneStatus = await updateDroneStatusMutation.mutateAsync({ id, data });
+ *     console.log('更新成功:', updatedDroneStatus);
+ *   } catch (error) {
+ *     console.error('更新失敗:', error);
+ *   }
+ * };
+ * ```
+ */
+export const useUpdateDroneStatus = () => {
+  return droneStatusQuery.useUpdate();
+};
+
+/**
+ * 只更新無人機狀態的 Mutation Hook
+ * 
+ * @returns {UseMutationResult<DroneStatus, TableError, {id: string, data: UpdateDroneStatusOnlyRequest}>} React Query Mutation 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const updateStatusOnlyMutation = useUpdateDroneStatusOnly();
+ * 
+ * const handleStatusUpdate = async (id: string, status: string, batteryLevel?: number) => {
+ *   try {
+ *     const result = await updateStatusOnlyMutation.mutateAsync({ 
+ *       id, 
+ *       data: { status, batteryLevel }
+ *     });
+ *     console.log('狀態更新成功:', result);
+ *   } catch (error) {
+ *     console.error('狀態更新失敗:', error);
+ *   }
+ * };
+ * ```
+ */
+export const useUpdateDroneStatusOnly = () => {
+  return droneStatusQuery.useUpdateStatusOnly();
+};
+
+/**
+ * 刪除無人機狀態的 Mutation Hook
+ * 
+ * @returns {UseMutationResult<void, TableError, string>} React Query Mutation 結果對象
+ * 
+ * @example
+ * ```typescript
+ * const deleteDroneStatusMutation = useDeleteDroneStatus();
+ * 
+ * const handleDelete = async (id: string) => {
+ *   if (confirm('確定要刪除此無人機狀態嗎？')) {
+ *     try {
+ *       await deleteDroneStatusMutation.mutateAsync(id);
+ *       console.log('刪除成功');
+ *     } catch (error) {
+ *       console.error('刪除失敗:', error);
+ *     }
+ *   }
+ * };
+ * ```
+ */
+export const useDeleteDroneStatus = () => {
+  return droneStatusQuery.useDelete();
+};

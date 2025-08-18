@@ -93,13 +93,13 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
     .sort((a, b) => {
       switch (sortBy) {
         case 'serial':
-          return a.serialNumber.localeCompare(b.serialNumber);
+          return (a.drone_serial || '').localeCompare(b.drone_serial || '');
         case 'model':
-          return a.model.localeCompare(b.model);
+          return (a.model || '').localeCompare(b.model || '');
         case 'status':
-          return a.status.localeCompare(b.status);
+          return (a.status || '').localeCompare(b.status || '');
         case 'battery':
-          return b.batteryLevel - a.batteryLevel;
+          return (b.battery_capacity || 0) - (a.battery_capacity || 0);
         default:
           return 0;
       }
@@ -152,8 +152,8 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
             {/* 標題區域 */}
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-semibold text-gray-100 text-sm">{drone.serialNumber}</h3>
-                <p className="text-xs text-gray-400">{drone.name}</p>
+                <h3 className="font-semibold text-gray-100 text-sm">{drone.drone_serial}</h3>
+                <p className="text-xs text-gray-400">{drone.drone_name}</p>
               </div>
               <input
                 type="checkbox"
@@ -181,20 +181,20 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
             {/* 規格摘要 */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">電池電量</span>
-                <span className="text-gray-200">{drone.batteryLevel}%</span>
+                <span className="text-gray-400">電池容量</span>
+                <span className="text-gray-200">{drone.battery_capacity}mAh</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-gray-400">最大航程</span>
-                <span className="text-gray-200">{(drone.maxRange / 1000).toFixed(1)}km</span>
+                <span className="text-gray-200">{(drone.max_range / 1000).toFixed(1)}km</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">最大飛行時間</span>
-                <span className="text-gray-200">{drone.maxFlightTime}min</span>
+                <span className="text-gray-400">重量</span>
+                <span className="text-gray-200">{drone.weight}g</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-400">上次連線</span>
-                <span className="text-gray-200">{new Date(drone.lastSeen).toLocaleString('zh-TW').slice(5, 16)}</span>
+                <span className="text-gray-400">最大高度</span>
+                <span className="text-gray-200">{drone.max_altitude}m</span>
               </div>
             </div>
 
@@ -246,7 +246,7 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">規格項目</th>
                 {selectedDroneData.map((drone) => (
                   <th key={drone.id} className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase">
-                    {drone.serialNumber}
+                    {drone.drone_serial}
                   </th>
                 ))}
               </tr>
@@ -256,10 +256,10 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
                 { label: '製造商', key: 'manufacturer' },
                 { label: '型號', key: 'model' },
                 { label: '狀態', key: 'status' },
-                { label: '電池電量 (%)', key: 'batteryLevel' },
-                { label: '最大航程 (km)', key: 'maxRange', format: (v: number) => (v / 1000).toFixed(1) },
-                { label: '最大飛行時間 (min)', key: 'maxFlightTime' },
-                { label: '韌體版本', key: 'firmwareVersion' },
+                { label: '電池容量 (mAh)', key: 'battery_capacity' },
+                { label: '最大航程 (km)', key: 'max_range', format: (v: number) => (v / 1000).toFixed(1) },
+                { label: '重量 (g)', key: 'weight' },
+                { label: '最大高度 (m)', key: 'max_altitude' },
               ].map((spec) => (
                 <tr key={spec.key}>
                   <td className="px-4 py-3 text-sm font-medium text-gray-200">{spec.label}</td>

@@ -427,44 +427,68 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
    */
   const reevaluate = useCallback(async () => {
     logger.info('重新評估地圖載入條件');
-    await initialize();
-  }, [initialize]);
+    
+    try {
+      const device = detectDeviceCapabilities();
+      const network = detectNetworkConditions();
+      const battery = await detectBatteryStatus();
+
+      setDeviceCapabilities(device);
+      setNetworkConditions(network);
+      setBatteryStatus(battery);
+
+      const strategy = determineLoadingStrategy(device, network, battery);
+      setLoadingStrategy(strategy);
+
+      // 根據策略決定是否立即載入
+      if (strategy === 'eager') {
+        setShouldLoadMap(true);
+      } else if (strategy === 'never') {
+        setShouldLoadMap(false);
+      }
+
+      logger.info('條件地圖載入器重新評估完成', { strategy });
+    } catch (error) {
+      logger.error('條件地圖載入器重新評估失敗', { error });
+    }
+  }, [detectDeviceCapabilities, detectNetworkConditions, detectBatteryStatus, determineLoadingStrategy]);
 
   // 監聽視窗大小變化
   useEffect(() => {
     const handleResize = () => {
-      if (deviceCapabilities) {
-        const newCapabilities = { ...deviceCapabilities };
-        newCapabilities.viewport = {
-          width: window.innerWidth,
-          height: window.innerHeight,
+      setDeviceCapabilities(prev => {
+        if (!prev) return null;
+        
+        const newCapabilities = { 
+          ...prev,
+          viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          }
         };
-        setDeviceCapabilities(newCapabilities);
         
         // 重新評估策略
         if (networkConditions && batteryStatus) {
           const strategy = determineLoadingStrategy(newCapabilities, networkConditions, batteryStatus);
           setLoadingStrategy(strategy);
         }
-      }
+        
+        return newCapabilities;
+      });
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [deviceCapabilities, networkConditions, batteryStatus, determineLoadingStrategy]);
+  }, [networkConditions, batteryStatus, determineLoadingStrategy]);
 
   // 監聽網路狀態變化
   useEffect(() => {
     const handleOnline = () => {
-      if (networkConditions) {
-        setNetworkConditions({ ...networkConditions, isOnline: true });
-      }
+      setNetworkConditions(prev => prev ? { ...prev, isOnline: true } : null);
     };
 
     const handleOffline = () => {
-      if (networkConditions) {
-        setNetworkConditions({ ...networkConditions, isOnline: false });
-      }
+      setNetworkConditions(prev => prev ? { ...prev, isOnline: false } : null);
     };
 
     window.addEventListener('online', handleOnline);
@@ -474,12 +498,14 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [networkConditions]);
+  }, []); // 只在掛載時添加監聽器
 
-  // 初始化
+  // 初始化 - 只在組件第一次掛載時執行
   useEffect(() => {
-    initialize();
-  }, [initialize]);
+    if (!isInitialized) {
+      initialize();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * 載入建議

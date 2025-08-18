@@ -46,9 +46,10 @@ export class DronePositionRoutes {
      * 設定所有路由
      */
     private setupRoutes(): void {
+        // 先設定更具體的路由，避免被通配符路由攔截
+        this.setupArchiveRoutes();
         this.setupQueryRoutes();
         this.setupCommandRoutes();
-        this.setupArchiveRoutes();
     }
 
     /**

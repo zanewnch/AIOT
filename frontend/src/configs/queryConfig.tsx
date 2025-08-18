@@ -90,7 +90,7 @@ export const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       {children}
       {/* 開發環境下顯示 React Query DevTools */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.DEV && (
         <ReactQueryDevtools 
           initialIsOpen={false}
           position="bottom-right"

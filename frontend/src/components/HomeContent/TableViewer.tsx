@@ -150,9 +150,38 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   // 注意：通知功能現在由 React Query hooks 直接處理，不再需要 TableService 的回調
 
   /**
+   * 滾動標籤容器到指定的標籤位置
+   *
+   * @param targetTableType - 目標表格類型
+   */
+  const scrollToTab = (targetTableType: TableType) => {
+    if (!tabsScrollRef.current) return;
+
+    const targetButton = tabsScrollRef.current.querySelector(
+      `[data-table="${targetTableType}"]`
+    ) as HTMLButtonElement;
+
+    if (targetButton) {
+      const container = tabsScrollRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const buttonRect = targetButton.getBoundingClientRect();
+      
+      // 計算需要滾動的距離
+      const scrollLeft = container.scrollLeft;
+      const targetScrollLeft = scrollLeft + (buttonRect.left - containerRect.left) - (containerRect.width / 2) + (buttonRect.width / 2);
+      
+      // 平滑滾動到目標位置
+      container.scrollTo({
+        left: targetScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  /**
    * 處理表格切換操作
    *
-   * 當用戶點擊表格切換標籤時，更新活動表格類型
+   * 當用戶點擊表格切換標籤時，更新活動表格類型並滾動標籤容器
    *
    * @param tableType - 要切換到的表格類型
    */
@@ -166,6 +195,9 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
     });
 
     setActiveTable(tableType); // 設置活動表格
+    
+    // 滾動到對應的標籤位置
+    scrollToTab(tableType);
   };
 
   /**

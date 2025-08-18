@@ -95,6 +95,24 @@ interface ImportMetaEnv {
    */
   readonly VITE_API_BASE_URL: string;
   
+  /** 
+   * Google Maps API Key
+   * 用於載入和使用 Google Maps JavaScript API
+   */
+  readonly VITE_GOOGLE_MAPS_API_KEY: string;
+  
+  /** 
+   * WebSocket URL
+   * 用於 WebSocket 連線的基礎網址
+   */
+  readonly VITE_WS_URL: string;
+  
+  /** 
+   * 是否啟用模擬模式
+   * 控制飛行頁面是否顯示模擬模式選項
+   */
+  readonly VITE_ENABLE_SIMULATE_MODE: string;
+  
   // 根據需要在此處添加更多環境變數
   // add more env variables here as needed
 }
@@ -118,4 +136,20 @@ interface ImportMeta {
    * 包含所有可用的 Vite 環境變數
    */
   readonly env: ImportMetaEnv;
+}
+
+/**
+ * Google Maps JavaScript API 全局類型聲明
+ * 
+ * 聲明 Google Maps JavaScript API 的全局命名空間，
+ * 讓 TypeScript 能夠識別 window.google 物件
+ */
+declare global {
+  /**
+   * 瀏覽器 window 物件擴展
+   */
+  interface Window {
+    /** Google Maps JavaScript API 全局物件 */
+    google?: typeof google;
+  }
 }

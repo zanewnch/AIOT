@@ -61,8 +61,8 @@ interface LogEntry {
 /**
  * 環境檢測
  */
-const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = !isProduction;
+const isProduction = import.meta.env.PROD;
+const isDevelopment = import.meta.env.DEV;
 
 /**
  * 預設配置

@@ -111,7 +111,7 @@ export class DroneCommandArchiveQuery {
           if (options.sortBy) params.append('sortBy', options.sortBy);
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
-          const url = `/api/drone-commands-archive/data?${params.toString()}`;
+          const url = `/drone/commands/archive?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -157,7 +157,7 @@ export class DroneCommandArchiveQuery {
           if (options.sortBy) params.append('sortBy', options.sortBy);
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
-          const url = `/api/drone-commands-archive/data/drone/${droneId}?${params.toString()}`;
+          const url = `/drone/commands/archive/drone/${droneId}?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -186,48 +186,23 @@ export class DroneCommandArchiveQuery {
 
   /**
    * 根據時間範圍獲取指令歷史
+   * NOTE: 暫時停用，因為後端尚未實現 /archive/time-range API 端點
    * 
    * @param query - 時間範圍查詢參數
    * @returns useQuery hook
    */
   useGetCommandsArchiveByTimeRange(query: TimeRangeQuery) {
+    // 暫時返回空結果，避免調用不存在的 API
     return useQuery({
       queryKey: this.DRONE_COMMAND_ARCHIVE_QUERY_KEYS.DRONE_COMMANDS_ARCHIVE_TIME_RANGE(query),
       queryFn: async (): Promise<DroneCommandArchive[]> => {
-        try {
-          logger.debug('Fetching commands archive by time range', { query });
-          
-          const params = new URLSearchParams();
-          params.append('startDate', query.startDate);
-          params.append('endDate', query.endDate);
-          if (query.droneId) params.append('droneId', query.droneId.toString());
-          if (query.status) params.append('status', query.status);
-          if (query.commandType) params.append('commandType', query.commandType);
-          
-          const url = `/api/drone-commands-archive/data/time-range?${params.toString()}`;
-          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
-          
-          if (!result.isSuccess()) {
-            throw new Error(result.message);
-          }
-          
-          const commands = result.data || [];
-          logger.info(`Successfully fetched ${commands.length} commands archive records for time range`);
-          return commands;
-        } catch (error: any) {
-          logger.error('Failed to fetch commands archive by time range', { error, query });
-          const tableError: TableError = {
-            message: error.response?.data?.message || error.message || 'Failed to fetch commands archive by time range',
-            status: error.response?.status,
-            details: error.response?.data,
-          };
-          throw tableError;
-        }
+        logger.warn('useGetCommandsArchiveByTimeRange is disabled - backend API not implemented');
+        return []; // 返回空數組而不是調用不存在的 API
       },
-      enabled: !!(query.startDate && query.endDate),
-      staleTime: 60 * 1000, // 1 minute
-      gcTime: 10 * 60 * 1000, // 10 minutes
-      retry: 2,
+      enabled: false, // 完全禁用這個查詢
+      staleTime: 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: 0,
     });
   }
 
@@ -249,7 +224,7 @@ export class DroneCommandArchiveQuery {
           if (options.limit) params.append('limit', options.limit.toString());
           if (options.page) params.append('page', options.page.toString());
           
-          const url = `/api/drone-commands-archive/data/status/${status}?${params.toString()}`;
+          const url = `/drone/commands/archive/status/${status}?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -294,7 +269,7 @@ export class DroneCommandArchiveQuery {
           if (options.limit) params.append('limit', options.limit.toString());
           if (options.page) params.append('page', options.page.toString());
           
-          const url = `/api/drone-commands-archive/data/command-type/${commandType}?${params.toString()}`;
+          const url = `/drone/commands/archive/command-type/${commandType}?${params.toString()}`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -334,7 +309,7 @@ export class DroneCommandArchiveQuery {
         try {
           logger.debug('Fetching latest commands archive', { limit });
           
-          const url = `/api/drone-commands-archive/data?limit=${limit}&sortBy=issued_at&sortOrder=DESC`;
+          const url = `/drone/commands/archive?limit=${limit}&sortBy=issued_at&sortOrder=DESC`;
           const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
@@ -378,6 +353,7 @@ export const useGetCommandsArchiveByDroneId = (droneId: number, options?: Pagina
 export const useGetLatestCommandsArchive = (limit?: number) => 
   droneCommandArchiveQuery.useGetLatestCommandsArchive(limit);
 
+// NOTE: 暫時停用後端API調用，但保持導出以避免編譯錯誤
 export const useGetCommandsArchiveByTimeRange = (query: TimeRangeQuery) => 
   droneCommandArchiveQuery.useGetCommandsArchiveByTimeRange(query);
 

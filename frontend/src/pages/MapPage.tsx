@@ -14,7 +14,7 @@
 import React, { useRef, useState } from "react"; // 引入 React 核心庫和 Hooks
 import { useRealMapLogic } from "../hooks/useRealMapLogic";
 import { useSimulateMapLogic } from "../hooks/useSimulateMapLogic";
-import { useSmartMapLoader } from "../hooks/useConditionalMapLoader";
+// 移除重複的地圖載入器 import，ConditionalMapContainer 已經處理了載入邏輯
 import { DronePositionQuery } from "../hooks/useDronePositionQuery";
 import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
 
@@ -80,14 +80,7 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
   // 選擇當前使用的邏輯
   const currentLogic = isSimulateMode ? simulateMapLogic : realMapLogic;
   
-  // 🚀 智能地圖載入器
-  const {
-    shouldLoadMap,
-    loadingRecommendation,
-    isMobile,
-    isLowPerformance,
-    handleUserInteraction,
-  } = useSmartMapLoader();
+  // 🚀 地圖載入邏輯已移至 ConditionalMapContainer 組件中處理，避免重複初始化
 
   /**
    * 切換模式處理函數
@@ -148,34 +141,7 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
           )}
         </div>
 
-        {/* 🚀 智能載入建議 */}
-        {loadingRecommendation && !shouldLoadMap && (
-          <div className="bg-gradient-to-r from-blue-900/50 to-indigo-900/50 rounded-2xl border border-blue-700/50 p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white">
-                    {isMobile ? '📱' : isLowPerformance ? '⚡' : '🗺️'}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-100">智能載入建議</h3>
-                  <p className="text-sm text-gray-400">
-                    {isMobile && '移動設備檢測到，'}
-                    {isLowPerformance && '性能優化模式，'}
-                    建議按需載入地圖以提升體驗
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleUserInteraction}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-              >
-                載入地圖
-              </button>
-            </div>
-          </div>
-        )}
+        {/* 智能載入邏輯已移除，地圖將直接載入 */}
 
         {/* 主要內容區域 */}
         <div className="space-y-6">
@@ -188,32 +154,8 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
                 style={{ minHeight: "300px" }}
               />
 
-              {/* 條件載入狀態 */}
-              {!shouldLoadMap && (
-                <div className="absolute inset-0 bg-gray-800/95 backdrop-blur-sm flex items-center justify-center">
-                  <div className="text-center text-gray-300 max-w-md mx-4">
-                    <div className="w-16 h-16 bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-700">
-                      <span className="text-2xl">🗺️</span>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">地圖待載入</h3>
-                    <p className="text-sm text-gray-400 mb-4">
-                      基於您的設備狀況，地圖將在您需要時載入
-                    </p>
-                    <button
-                      onClick={handleUserInteraction}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
-                    >
-                      <span className="flex items-center justify-center gap-2">
-                        <span>📍</span>
-                        <span>載入地圖</span>
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
               {/* 載入覆蓋層 - 改善動畫 */}
-              {shouldLoadMap && currentLogic.isLoading && (
+              {currentLogic.isLoading && (
                 <div className="absolute inset-0 bg-gray-800/90 backdrop-blur-sm flex items-center justify-center">
                   <div className="text-center text-gray-300">
                     <div className="relative mb-4">

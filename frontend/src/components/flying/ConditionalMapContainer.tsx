@@ -385,28 +385,12 @@ const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
     </div>
   );
 
-  // 主要渲染邏輯
+  // 🚀 簡化渲染邏輯 - 直接載入地圖，跳過複雜的條件判斷
   return (
     <div 
       ref={containerRef}
       className={`col-span-1 lg:col-span-3 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden flex flex-col ${className}`}
     >
-      {/* 設備信息面板（開發模式下顯示）*/}
-      {process.env.NODE_ENV === 'development' && isInitialized && (
-        <div className="p-3 border-b border-gray-700">
-          <DeviceInfoPanel
-            deviceCapabilities={deviceCapabilities}
-            networkConditions={networkConditions}
-            batteryStatus={batteryStatus}
-          />
-          <MapLoadingRecommendation
-            recommendation={loadingRecommendation}
-            onForceLoad={forceLoadMap}
-            onDisable={disableMapLoading}
-          />
-        </div>
-      )}
-
       <div className="relative flex-1">
         {/* 地圖容器 */}
         <div
@@ -415,36 +399,32 @@ const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
           style={{ minHeight: "400px" }}
         />
 
-        {/* 載入狀態覆蓋層 */}
-        {!isInitialized && renderLoadingState()}
+        {/* 直接載入地圖組件，跳過條件檢查 */}
+        <Suspense fallback={renderLoadingState()}>
+          <LazyMapContainer
+            mapRef={mapRef}
+            isLoading={isLoading}
+            error={error}
+            isSimulateMode={isSimulateMode}
+            realModeLoading={realModeLoading}
+          />
+        </Suspense>
 
-        {/* 條件載入邏輯 */}
-        {isInitialized && !shouldLoadMap && loadingStrategy === 'on-interaction' && renderInteractionPrompt()}
-        {isInitialized && !shouldLoadMap && loadingStrategy === 'never' && renderDisabledState()}
-
-        {/* 地圖組件載入 */}
-        {shouldLoadMap && (
-          <Suspense fallback={renderLoadingState()}>
-            <LazyMapContainer
-              mapRef={mapRef}
-              isLoading={isLoading}
-              error={error}
-              isSimulateMode={isSimulateMode}
-              realModeLoading={realModeLoading}
-            />
-          </Suspense>
-        )}
-
-        {/* 性能提示橫幅 */}
-        {isInitialized && shouldLoadMap && (isMobile || isLowPerformance) && (
-          <div className="absolute top-2 left-2 right-2 bg-orange-900/80 backdrop-blur-sm border border-orange-700 rounded-lg px-3 py-2">
-            <div className="flex items-center gap-2 text-orange-200 text-sm">
-              <span>⚡</span>
-              <span>
-                {isMobile && '移動端優化模式'}
-                {isLowPerformance && '性能優化模式'}
-                {isSlowNetwork && ' • 網路優化'}
-              </span>
+        {/* 錯誤處理 */}
+        {error && (
+          <div className="absolute inset-0 bg-red-900/80 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-center text-red-200 max-w-md mx-4">
+              <div className="w-16 h-16 bg-red-800/30 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-600">
+                <span className="text-2xl">⚠️</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">地圖載入失敗</h3>
+              <p className="text-sm text-red-300 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-red-700 text-red-100 rounded-lg text-sm font-medium transition-colors hover:bg-red-600"
+              >
+                重新載入頁面
+              </button>
             </div>
           </div>
         )}

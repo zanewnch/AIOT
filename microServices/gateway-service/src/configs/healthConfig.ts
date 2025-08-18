@@ -1,12 +1,12 @@
 /**
- * @fileoverview 健康檢查和服務監控服務
+ * @fileoverview 健康檢查和服務監控配置
  * @description 提供 Gateway 和微服務的健康監控功能
  * @author AIOT Development Team
  * @version 1.0.0
  */
 
-import { ConsulService } from './ConsulService.js';
-import { loggerConfig, logServiceHealth } from '../configs/loggerConfig.js';
+import { ConsulConfig } from './consulConfig.js';
+import { loggerConfig, logServiceHealth } from './loggerConfig.js';
 
 /**
  * 健康檢查結果介面
@@ -51,16 +51,16 @@ export interface SystemHealth {
 }
 
 /**
- * 健康檢查服務類別
+ * 健康檢查配置類別
  */
-export class HealthService {
-    private consulService: ConsulService;
+export class HealthConfig {
+    private consulConfig: ConsulConfig;
     private logger = loggerConfig;
     private healthHistory: Map<string, HealthCheckResult[]> = new Map();
     private readonly MAX_HISTORY = 100; // 保留最近 100 次檢查記錄
 
-    constructor(consulService: ConsulService) {
-        this.consulService = consulService;
+    constructor(consulConfig: ConsulConfig) {
+        this.consulConfig = consulConfig;
         this.startContinuousHealthChecking();
     }
 
@@ -73,7 +73,7 @@ export class HealthService {
         const startTime = Date.now();
         
         try {
-            const services = await this.consulService.getHealthyServices(serviceName);
+            const services = await this.consulConfig.getHealthyServices(serviceName);
             const responseTime = Date.now() - startTime;
             const healthy = services.length > 0;
 
@@ -84,7 +84,7 @@ export class HealthService {
                 timestamp: new Date().toISOString(),
                 details: {
                     instances: services.length,
-                    endpoints: services.map(s => `${s.address}:${s.port}`)
+                    endpoints: services.map((s: any) => `${s.address}:${s.port}`)
                 }
             };
 
@@ -98,7 +98,7 @@ export class HealthService {
 
             return result;
 
-        } catch (error) {
+        } catch (error: any) {
             const responseTime = Date.now() - startTime;
             const result: HealthCheckResult = {
                 service: serviceName,
@@ -294,6 +294,6 @@ export class HealthService {
      */
     public cleanup(): void {
         this.healthHistory.clear();
-        this.logger.info('🧹 Health service cleanup completed');
+        this.logger.info('🧹 Health config cleanup completed');
     }
 }

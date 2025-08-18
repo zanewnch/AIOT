@@ -12,12 +12,10 @@
  */
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
-import { apiClient } from '../../../utils/RequestUtils';
-import { ReqResult } from '../../../utils/ReqResult';
+import { DroneStatusQuery } from '../../../hooks/useDroneStatusQuery';
 import styles from '../../../styles/TableViewer.module.scss';
 
 const logger = createLogger('DroneStatusTableView');
@@ -46,19 +44,8 @@ interface DroneStatus {
   updatedAt: string;
 }
 
-/**
- * API 函數：獲取無人機狀態數據
- */
-const fetchDroneStatus = async (): Promise<DroneStatus[]> => {
-  const response = await apiClient.get('/drone-status/data');
-  const result = ReqResult.fromResponse<DroneStatus[]>(response);
-  
-  if (result.isError()) {
-    throw new Error(result.message);
-  }
-  
-  return result.unwrap();
-};
+// 創建 query service 實例
+const droneStatusQuery = new DroneStatusQuery();
 
 /**
  * 無人機狀態表格視圖組件
@@ -67,17 +54,8 @@ const fetchDroneStatus = async (): Promise<DroneStatus[]> => {
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  */
 export const DroneStatusTableView: React.FC = () => {
-  // React Query hooks for data with real-time updates
-  const { data: droneStatusData, isLoading, error, refetch } = useQuery({
-    queryKey: ['droneStatus'],
-    queryFn: fetchDroneStatus,
-    staleTime: 10 * 1000, // 10秒內不會重新獲取（即時數據需要較頻繁更新）
-    gcTime: 2 * 60 * 1000, // 2分鐘後清除緩存
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    refetchInterval: 15 * 1000, // 每15秒自動重新獲取
-    refetchIntervalInBackground: true, // 背景也自動更新
-  });
+  // 使用 React Query hooks for data with real-time updates
+  const { data: droneStatusData, isLoading, error, refetch } = droneStatusQuery.useAll();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

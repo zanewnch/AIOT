@@ -12,12 +12,10 @@
  */
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useTableUIStore } from '../../../stores/tableStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
-import { apiClient } from '../../../utils/RequestUtils';
-import { ReqResult } from '../../../utils/ReqResult';
+import { DronePositionsArchiveQuery } from '../../../hooks/useDronePositionsArchiveQuery';
 import styles from '../../../styles/TableViewer.module.scss';
 
 const logger = createLogger('DronePositionsArchiveTableView');
@@ -42,19 +40,8 @@ interface DronePositionsArchive {
   created_at: string;
 }
 
-/**
- * API 函數：獲取無人機位置歷史歸檔數據
- */
-const fetchDronePositionsArchive = async (): Promise<DronePositionsArchive[]> => {
-  const response = await apiClient.get('/drone-positions-archive/data');
-  const result = ReqResult.fromResponse<DronePositionsArchive[]>(response);
-  
-  if (result.isError()) {
-    throw new Error(result.message);
-  }
-  
-  return result.unwrap();
-};
+// 創建 query service 實例
+const dronePositionsArchiveQuery = new DronePositionsArchiveQuery();
 
 /**
  * 無人機位置歷史歸檔表格視圖組件
@@ -63,15 +50,8 @@ const fetchDronePositionsArchive = async (): Promise<DronePositionsArchive[]> =>
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  */
 export const DronePositionsArchiveTableView: React.FC = () => {
-  // React Query hooks for data
-  const { data: dronePositionsArchiveData, isLoading, error, refetch } = useQuery({
-    queryKey: ['dronePositionsArchive'],
-    queryFn: fetchDronePositionsArchive,
-    staleTime: 2 * 60 * 1000, // 2分鐘內不會重新獲取（歸檔數據變化較少）
-    gcTime: 15 * 60 * 1000, // 15分鐘後清除緩存
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
+  // 使用 React Query hooks for data
+  const { data: dronePositionsArchiveData, isLoading, error, refetch } = dronePositionsArchiveQuery.useAll();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();

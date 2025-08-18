@@ -84,10 +84,10 @@ export type DronePositionsArchiveAttributes = {
     timestamp: Date;
     
     /** 
-     * GPS信號強度
+     * GPS信號強度 - 暫時註解，資料庫表中不存在此欄位
      * @type {number} GPS 接收信號的強度指標，範圍 0-100
      */
-    signal_strength: number;
+    // signal_strength: number;
     
     /** 
      * 飛行速度
@@ -331,9 +331,10 @@ export class DronePositionsArchiveModel extends Model<DronePositionsArchiveAttri
      * @memberof DronePositionsArchiveModel
      * @since 1.0.0
      */
-    @AllowNull(false)         // 設定為必填欄位
-    @Column(DataType.FLOAT)   // 定義為 FLOAT 型態
-    declare signal_strength: number;
+    // 暫時註解，資料庫表中不存在此欄位
+    // @AllowNull(false)         // 設定為必填欄位
+    // @Column(DataType.FLOAT)   // 定義為 FLOAT 型態
+    // declare signal_strength: number;
 
     /**
      * 飛行速度
@@ -475,12 +476,13 @@ export class DronePositionsArchiveModel extends Model<DronePositionsArchiveAttri
      * @memberof DronePositionsArchiveModel
      * @since 1.0.0
      */
-    getSignalQuality(): string {
-        if (this.signal_strength >= 90) return 'excellent';
-        if (this.signal_strength >= 70) return 'good';
-        if (this.signal_strength >= 50) return 'fair';
-        return 'poor';
-    }
+    // 暫時註解，signal_strength 欄位不存在
+    // getSignalQuality(): string {
+    //     if (this.signal_strength >= 90) return 'excellent';
+    //     if (this.signal_strength >= 70) return 'good';
+    //     if (this.signal_strength >= 50) return 'fair';
+    //     return 'poor';
+    // }
 
     /**
      * 檢查電池狀態

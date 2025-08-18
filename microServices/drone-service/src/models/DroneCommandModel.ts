@@ -115,10 +115,10 @@ export type DroneCommandAttributes = {
     drone_id: number;
     
     /** 
-     * 佇列外鍵
+     * 佇列外鍵 - 暫時移除，資料庫表中不存在此欄位
      * @type {number | null} 關聯到 drone_command_queues 表的外鍵，可為空表示獨立指令
      */
-    queue_id: number | null;
+    // queue_id: number | null;
     
     /** 
      * 指令類型
@@ -191,7 +191,7 @@ export type DroneCommandAttributes = {
  * @extends {Optional<DroneCommandAttributes, 'id'>}
  * @since 1.0.0
  */
-export type DroneCommandCreationAttributes = Optional<DroneCommandAttributes, 'id' | 'createdAt' | 'updatedAt' | 'queue_id'>;
+export type DroneCommandCreationAttributes = Optional<DroneCommandAttributes, 'id' | 'createdAt' | 'updatedAt'>;
 
 /**
  * 無人機指令模型類別
@@ -362,9 +362,10 @@ export class DroneCommandModel extends Model<DroneCommandAttributes, DroneComman
      * @memberof DroneCommandModel
      * @since 1.0.0
      */
-    @AllowNull(true)          // 允許空值，表示可以是獨立指令
-    @Column(DataType.BIGINT)  // 定義為 BIGINT 型態
-    declare queue_id: number | null;
+    // 暫時註解掉，資料庫表中不存在此欄位
+    // @AllowNull(true)          // 允許空值，表示可以是獨立指令
+    // @Column(DataType.BIGINT)  // 定義為 BIGINT 型態
+    // declare queue_id: number | null;
 
     /**
      * 指令類型

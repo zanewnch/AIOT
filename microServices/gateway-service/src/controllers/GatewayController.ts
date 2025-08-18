@@ -6,7 +6,6 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { ConsulService } from '../services/ConsulService.js';
 import { ProxyMiddleware } from '../middleware/ProxyMiddleware.js';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
@@ -28,7 +27,6 @@ interface ServiceRouteConfig {
  * Gateway 控制器類別
  */
 export class GatewayController {
-    private consulService: ConsulService;
     private proxyMiddleware: ProxyMiddleware;
     private logger = loggerConfig;
 
@@ -81,9 +79,64 @@ export class GatewayController {
         }
     ];
 
-    constructor(consulService: ConsulService) {
-        this.consulService = consulService;
-        this.proxyMiddleware = new ProxyMiddleware(consulService);
+    constructor() {
+        this.proxyMiddleware = new ProxyMiddleware();
+    }
+
+    /**
+     * 直接從 Consul 獲取所有服務健康狀態
+     */
+    private async getAllServicesHealth(): Promise<any[]> {
+        try {
+            const consulUrl = `http://${process.env.CONSUL_HOST || 'consul'}:${process.env.CONSUL_PORT || '8500'}`;
+            const response = await fetch(`${consulUrl}/v1/agent/services`);
+            const services = await response.json();
+            
+            const healthPromises = Object.keys(services).map(async (serviceId) => {
+                const service = services[serviceId];
+                try {
+                    const healthResponse = await fetch(`${consulUrl}/v1/health/service/${service.Service}?passing=true`);
+                    const healthData = await healthResponse.json();
+                    return {
+                        name: service.Service,
+                        healthy: healthData.length > 0,
+                        instances: healthData.length
+                    };
+                } catch {
+                    return {
+                        name: service.Service,
+                        healthy: false,
+                        instances: 0
+                    };
+                }
+            });
+            
+            return Promise.all(healthPromises);
+        } catch (error) {
+            this.logger.error('❌ Failed to get services health:', error);
+            return [];
+        }
+    }
+
+    /**
+     * 直接從 Consul 獲取健康服務實例
+     */
+    private async getHealthyServices(serviceName: string): Promise<any[]> {
+        try {
+            const consulUrl = `http://${process.env.CONSUL_HOST || 'consul'}:${process.env.CONSUL_PORT || '8500'}`;
+            const response = await fetch(`${consulUrl}/v1/health/service/${serviceName}?passing=true`);
+            const services = await response.json();
+            
+            return services.map((service: any) => ({
+                address: service.Service.Address,
+                port: service.Service.Port,
+                service: service.Service.Service,
+                id: service.Service.ID
+            }));
+        } catch (error) {
+            this.logger.error(`❌ Failed to get healthy services for ${serviceName}:`, error);
+            return [];
+        }
     }
 
     /**
@@ -91,7 +144,7 @@ export class GatewayController {
      */
     public getGatewayInfo = async (req: Request, res: Response): Promise<void> => {
         try {
-            const servicesHealth = await this.consulService.getAllServicesHealth();
+            const servicesHealth = await this.getAllServicesHealth();
             
             const gatewayInfo = {
                 service: 'AIOT API Gateway',
@@ -123,13 +176,13 @@ export class GatewayController {
      */
     public getServicesHealth = async (req: Request, res: Response): Promise<void> => {
         try {
-            const servicesHealth = await this.consulService.getAllServicesHealth();
+            const servicesHealth = await this.getAllServicesHealth();
             const healthDetails: any = {};
 
             // 獲取詳細的服務實例資訊
             for (const serviceName of Object.keys(servicesHealth)) {
                 try {
-                    const instances = await this.consulService.getHealthyServices(serviceName);
+                    const instances = await this.getHealthyServices(serviceName);
                     healthDetails[serviceName] = {
                         healthy: servicesHealth[serviceName],
                         instances: instances.length,
@@ -164,7 +217,7 @@ export class GatewayController {
                 return;
             }
 
-            const instances = await this.consulService.getHealthyServices(serviceName);
+            const instances = await this.getHealthyServices(serviceName);
             
             if (instances.length === 0) {
                 ResResult.notFound(res, `Service ${serviceName} not found or unhealthy`);
@@ -197,7 +250,7 @@ export class GatewayController {
      */
     public refreshServiceDiscovery = async (req: Request, res: Response): Promise<void> => {
         try {
-            const servicesHealth = await this.consulService.getAllServicesHealth();
+            const servicesHealth = await this.getAllServicesHealth();
             
             ResResult.success(res, { 
                 refreshed: true, 

@@ -49,10 +49,11 @@ export class DroneStatusRoutes {
      * 設定所有路由
      */
     private setupRoutes(): void {
+        // 先設定更具體的路由，避免被通配符路由攔截
+        this.setupArchiveRoutes();
+        this.setupRealtimeRoutes();
         this.setupQueryRoutes();
         this.setupCommandRoutes();
-        this.setupRealtimeRoutes();
-        this.setupArchiveRoutes();
     }
 
     /**
@@ -132,19 +133,19 @@ export class DroneStatusRoutes {
      */
     private setupArchiveRoutes(): void {
         // 獲取所有歷史狀態記錄
-        this.router.get('/archive', (req, res, next) => this.droneStatusArchiveQueries.getAllArchivedStatuses(req, res, next));
+        this.router.get('/archive', (req, res, next) => this.droneStatusArchiveQueries.getAllStatusArchives(req, res, next));
 
         // 根據無人機 ID 獲取歷史狀態
-        this.router.get('/archive/drone/:droneId', (req, res, next) => this.droneStatusArchiveQueries.getArchivedStatusesByDroneId(req, res, next));
+        this.router.get('/archive/drone/:droneId', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByDroneId(req, res, next));
 
         // 根據時間範圍獲取歷史狀態
-        this.router.get('/archive/time-range', (req, res, next) => this.droneStatusArchiveQueries.getArchivedStatusesByTimeRange(req, res, next));
+        this.router.get('/archive/time-range', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByDateRange(req, res, next));
 
         // 獲取歷史狀態統計
-        this.router.get('/archive/statistics', (req, res, next) => this.droneStatusArchiveQueries.getArchivedStatusStatistics(req, res, next));
+        this.router.get('/archive/statistics', (req, res, next) => this.droneStatusArchiveQueries.getStatusChangeStatistics(req, res, next));
 
         // 根據 ID 獲取歷史狀態詳情
-        this.router.get('/archive/:id', (req, res, next) => this.droneStatusArchiveQueries.getArchivedStatusById(req, res, next));
+        this.router.get('/archive/:id', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchiveById(req, res, next));
 
         // 歸檔狀態記錄
         this.router.post('/archive', (req, res, next) => this.droneStatusArchiveCommands.archiveStatus(req, res, next));
