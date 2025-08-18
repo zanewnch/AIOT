@@ -139,7 +139,17 @@ export class ProxyMiddleware {
                     host: undefined, // 移除原始 host 標頭
                     'x-forwarded-for': req.ip,
                     'x-forwarded-proto': req.protocol,
-                    'x-gateway-service': 'aiot-gateway'
+                    'x-gateway-service': 'aiot-gateway',
+                    // 添加用戶信息 headers 給下游服務（Kong 格式）
+                    ...(req.user && {
+                        'x-consumer-id': req.user.id?.toString(),
+                        'x-consumer-username': req.user.username,
+                        'x-user-id': req.user.id?.toString(),
+                        'x-user-username': req.user.username,
+                        'x-user-roles': JSON.stringify(req.permissions?.roles || []),
+                        'x-user-permissions': JSON.stringify(req.permissions?.permissions || []),
+                        'x-user-session-id': req.session?.session_id
+                    })
                 },
                 timeout: config.timeout || 30000,
                 validateStatus: () => true // 接受所有狀態碼
@@ -208,7 +218,17 @@ export class ProxyMiddleware {
                     host: undefined,
                     'x-forwarded-for': req.ip,
                     'x-forwarded-proto': req.protocol,
-                    'x-gateway-service': 'aiot-gateway'
+                    'x-gateway-service': 'aiot-gateway',
+                    // 添加用戶信息 headers 給下游服務（Kong 格式）
+                    ...(req.user && {
+                        'x-consumer-id': req.user.id?.toString(),
+                        'x-consumer-username': req.user.username,
+                        'x-user-id': req.user.id?.toString(),
+                        'x-user-username': req.user.username,
+                        'x-user-roles': JSON.stringify(req.permissions?.roles || []),
+                        'x-user-permissions': JSON.stringify(req.permissions?.permissions || []),
+                        'x-user-session-id': req.session?.session_id
+                    })
                 },
                 timeout: config.timeout || 30000,
                 validateStatus: () => true

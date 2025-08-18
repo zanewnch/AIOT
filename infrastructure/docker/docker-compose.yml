@@ -70,13 +70,6 @@ services:
     volumes:
       - consul_data:/consul/data
       - ../consul/consul.json:/consul/config/consul.json:ro
-      # 將所有服務配置文件直接掛載到根配置目錄
-      - ../consul/services/auth-service.json:/consul/config/auth-service.json:ro
-      - ../consul/services/rbac-service.json:/consul/config/rbac-service.json:ro
-      - ../consul/services/drone-service.json:/consul/config/drone-service.json:ro
-      - ../consul/services/general-service.json:/consul/config/general-service.json:ro
-      - ../consul/services/docs-service.json:/consul/config/docs-service.json:ro
-      - ../consul/services/drone-websocket-service.json:/consul/config/drone-websocket-service.json:ro
     networks:
       - aiot-network
     restart: unless-stopped
