@@ -30,14 +30,11 @@ import { AuthMiddleware } from './middleware/AuthMiddleware.js';
 import { createMainRoutes } from './routes/index.js';
 import { createApiRoutes, createWebSocketRoutes } from './routes/apiRoutes.js';
 
-// Import patterns
-import { LogClass } from './patterns/LoggerDecorator.js';
 
 /**
  * Gateway Service Express Application Class
  * @description 創建和配置完整的 API Gateway 應用程式
  */
-@LogClass('GatewayApp')
 export class GatewayApp {
     public app: Application;
     private logger = loggerConfig;

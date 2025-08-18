@@ -11,7 +11,6 @@ import axios, { AxiosResponse } from 'axios';
 import { loggerConfig, logProxyRequest, logRouteEvent } from '../configs/loggerConfig.js';
 import { ConsulService, ServiceInstance } from '../services/ConsulService.js';
 import { GatewayError } from './ErrorHandleMiddleware.js';
-import { LogClass } from '../patterns/LoggerDecorator.js';
 
 /**
  * 代理配置介面
@@ -34,7 +33,6 @@ export interface ProxyConfig {
 /**
  * 微服務代理中間件類別
  */
-@LogClass('ProxyMiddleware')
 export class ProxyMiddleware {
     private consulService: ConsulService;
     private logger = loggerConfig;

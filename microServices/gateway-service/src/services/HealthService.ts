@@ -7,7 +7,6 @@
 
 import { ConsulService } from './ConsulService.js';
 import { loggerConfig, logServiceHealth } from '../configs/loggerConfig.js';
-import { LogClass } from '../patterns/LoggerDecorator.js';
 
 /**
  * 健康檢查結果介面
@@ -54,7 +53,6 @@ export interface SystemHealth {
 /**
  * 健康檢查服務類別
  */
-@LogClass('HealthService')
 export class HealthService {
     private consulService: ConsulService;
     private logger = loggerConfig;

@@ -5,12 +5,12 @@ FROM mysql:8.0 as development
 
 # 安裝系統依賴和除錯工具
 USER root
-RUN apt-get update && apt-get install -y \
+RUN microdnf update && microdnf install -y \
     curl \
     wget \
-    netcat \
-    procps \
-    && rm -rf /var/lib/apt/lists/*
+    nmap-ncat \
+    procps-ng \
+    && microdnf clean all
 
 # 開發環境 MySQL 配置
 RUN echo '[mysqld]' > /etc/mysql/conf.d/dev.cnf \

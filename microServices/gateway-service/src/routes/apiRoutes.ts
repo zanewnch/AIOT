@@ -177,8 +177,9 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
 
     /**
      * RBAC 服務路由 - 認證端點 (公開，不需要認證)
+     * 支援 /auth 和 /auth/* 路徑
      */
-    router.use('/auth/*', 
+    router.use('/auth*', 
         // 對於 auth 端點，我們使用可選認證以支援登入/登出
         AuthMiddleware.optional({
             skipPaths: ['/auth'], // 登入端點跳過認證

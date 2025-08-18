@@ -1,0 +1,29 @@
+{
+  "service": {
+    "id": "drone-websocket-service",
+    "name": "drone-websocket-service",
+    "tags": [
+      "drone",
+      "websocket",
+      "realtime",
+      "microservice",
+      "nodejs",
+      "socketio"
+    ],
+    "address": "aiot-drone-websocket-service",
+    "port": 3004,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "websocket,http"
+    },
+    "check": {
+      "id": "drone-websocket-service-health",
+      "name": "Drone WebSocket Service Health Check",
+      "http": "http://aiot-drone-websocket-service:3004/health",
+      "interval": "10s",
+      "timeout": "3s",
+      "deregister_critical_service_after": "30s"
+    }
+  }
+}

@@ -7,7 +7,6 @@
 
 import axios, { AxiosInstance } from 'axios';
 import { loggerConfig } from '../configs/loggerConfig.js';
-import { LogClass } from '../patterns/LoggerDecorator.js';
 
 /**
  * 服務實例介面
@@ -57,7 +56,6 @@ interface ConsulHealthResponse {
 /**
  * Consul 服務發現類別
  */
-@LogClass('ConsulService')
 export class ConsulService {
     private consulClient: AxiosInstance;
     private logger = loggerConfig;

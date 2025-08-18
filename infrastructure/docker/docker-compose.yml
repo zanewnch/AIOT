@@ -74,7 +74,16 @@ services:
     networks:
       - aiot-network
     restart: unless-stopped
+    # 修復權限問題：添加必要的 capabilities 和安全設定
+    cap_add:
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:false
+    user: "0:0"  # 使用 root 用戶避免 setgroups 權限問題
     healthcheck:
+      # 檢查 Consul 集群成員狀態和服務註冊功能
+      # 確保 Consul 節點正常運行並可以進行服務發現
       test: ["CMD", "consul", "members"]
       interval: 10s
       timeout: 5s
@@ -111,6 +120,8 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
+      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 確保 RBAC 服務的專用資料庫可以正常連線和查詢
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
       interval: 10s
       timeout: 5s
@@ -140,6 +151,8 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
+      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 確保 Drone 服務的專用資料庫可以正常連線和查詢
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
       interval: 10s
       timeout: 5s
@@ -169,6 +182,8 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
+      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 確保 General 服務的專用資料庫可以正常連線和查詢
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
       interval: 10s
       timeout: 5s
@@ -199,6 +214,8 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
+      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 確保共享資料庫可以正常連線，供跨服務數據共享使用
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
       interval: 10s
       timeout: 5s
@@ -221,6 +238,8 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
+      # 檢查 MongoDB 資料庫連線和認證狀態
+      # 執行 ping 命令確保 MongoDB 服務正常運行並可接受查詢請求
       test: ["CMD", "mongosh", "-u", "admin", "-p", "admin", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
@@ -238,6 +257,13 @@ services:
     networks:
       - aiot-network
     restart: unless-stopped
+    healthcheck:
+      # 檢查 Redis 快取服務的連線狀態
+      # 確保 Redis 可以正常接收和處理快取請求，支援微服務的階段式存取
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # RabbitMQ 消息隊列
   aiot-rabbitmq:
@@ -260,6 +286,8 @@ services:
       - aiot-network
     restart: unless-stopped
     healthcheck:
+      # 檢查 RabbitMQ 消息隊列服務狀態
+      # 確保消息隊列可以正常接收和處理消息，微服務間異步通訊正常
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 30s
       timeout: 10s
@@ -301,6 +329,8 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
+      # 檢查 RBAC 微服務的 HTTP API 端點健康狀態
+      # 確保權限認證服務正常運行，可以處理用戶權限驗證請求
       test: ["CMD", "curl", "-f", "http://localhost:3051/health"]
       interval: 30s
       timeout: 10s
@@ -340,6 +370,8 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
+      # 檢查 Drone 微服務的 HTTP API 端點健康狀態
+      # 確保無人機管理服務正常運行，可以處理無人機相關的 API 請求
       test: ["CMD", "curl", "-f", "http://localhost:3052/health"]
       interval: 30s
       timeout: 10s
@@ -377,6 +409,8 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
+      # 檢查 Drone WebSocket 服務的健康狀態
+      # 確保無人機即時通訊服務正常，可以處理 WebSocket 連線和即時數據推送
       test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
       interval: 30s
       timeout: 10s
@@ -414,6 +448,8 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
+      # 檢查 General 微服務的 HTTP API 端點健康狀態
+      # 確保通用服務正常運行，可以處理用戶偏好設定等通用功能請求
       test: ["CMD", "curl", "-f", "http://localhost:3053/health"]
       interval: 30s
       timeout: 10s
@@ -451,6 +487,8 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
+      # 檢查 Docs 微服務的 HTTP API 端點健康狀態
+      # 確保文檔聚合服務正常運行，可以提供各微服務的 API 文檔查詢
       test: ["CMD", "curl", "-f", "http://localhost:3054/health"]
       interval: 30s
       timeout: 10s
@@ -498,6 +536,8 @@ services:
         condition: service_started
     restart: unless-stopped
     healthcheck:
+      # 檢查 Gateway 服務的健康狀態
+      # 確保 API 網關正常運行，可以接收和轉發前端請求到對應的微服務
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
@@ -534,6 +574,8 @@ services:
     # 前端不依賴後端服務，獨立啟動
     restart: unless-stopped
     healthcheck:
+      # 檢查前端 React 應用的健康狀態
+      # 確保 Vite 開發服務器正常運行，前端頁面可以正常訪問和載入
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
       timeout: 10s

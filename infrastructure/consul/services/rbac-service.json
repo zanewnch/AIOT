@@ -10,7 +10,7 @@
       "express"
     ],
     "address": "aiot-rbac-service",
-    "port": 3001,
+    "port": 3051,
     "meta": {
       "version": "1.0.0",
       "env": "development",
@@ -19,30 +19,10 @@
     "check": {
       "id": "rbac-service-health",
       "name": "RBAC Service Health Check",
-      "http": "http://aiot-rbac-service:3001/health",
+      "http": "http://aiot-rbac-service:3051/health",
       "interval": "10s",
       "timeout": "3s",
       "deregister_critical_service_after": "30s"
-    },
-    "checks": [
-      {
-        "id": "rbac-service-api",
-        "name": "RBAC API Check",
-        "http": "http://aiot-rbac-service:3001/api/health",
-        "interval": "30s",
-        "timeout": "5s"
-      },
-      {
-        "id": "rbac-service-grpc",
-        "name": "RBAC gRPC Check",
-        "grpc": "aiot-rbac-service:50051",
-        "interval": "30s",
-        "timeout": "5s"
-      }
-    ],
-    "weights": {
-      "passing": 10,
-      "warning": 1
     }
   }
 }

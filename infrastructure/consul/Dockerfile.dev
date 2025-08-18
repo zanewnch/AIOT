@@ -1,7 +1,7 @@
 # AIOT Consul - Development Dockerfile
 # ⚙️ 開發環境專用，支援服務發現 + 健康檢查 + 配置管理
 
-FROM consul:1.16.1 as development
+FROM consul:1.15 as development
 
 # 安裝系統依賴和除錯工具
 USER root
@@ -28,4 +28,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 
 # 開發環境啟動命令 (single node cluster)
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["consul", "agent", "-dev", "-client=0.0.0.0", "-ui"]
+CMD ["consul", "agent", "-server", "-bootstrap-expect=1", "-client=0.0.0.0", "-ui", "-data-dir=/consul/data", "-config-dir=/consul/config"]

@@ -1,26 +1,26 @@
 {
   "service": {
-    "id": "drone-service",
-    "name": "drone-service",
+    "id": "general-service",
+    "name": "general-service",
     "tags": [
-      "drone",
-      "iot",
-      "api",
+      "general",
+      "user-preference",
       "microservice",
       "nodejs",
+      "express",
       "grpc"
     ],
-    "address": "aiot-drone-service",
-    "port": 3052,
+    "address": "aiot-general-service",
+    "port": 3053,
     "meta": {
       "version": "1.0.0",
       "env": "development",
       "protocols": "grpc,http"
     },
     "check": {
-      "id": "drone-service-health",
-      "name": "Drone Service Health Check",
-      "http": "http://aiot-drone-service:3052/health",
+      "id": "general-service-health",
+      "name": "General Service Health Check",
+      "http": "http://aiot-general-service:3053/health",
       "interval": "10s",
       "timeout": "3s",
       "deregister_critical_service_after": "30s"
