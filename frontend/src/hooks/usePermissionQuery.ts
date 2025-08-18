@@ -95,7 +95,7 @@ export class PermissionQuery {
         try {
           logger.debug(`Updating permission with ID: ${id}`, data);
           
-          await apiClient.putWithResult(`/api/rbac/permissions/${id}`, data);
+          await apiClient.putWithResult(`/rbac/permissions/${id}`, data);
           
           logger.info(`Successfully updated permission with ID: ${id}`);
           return { id, data };

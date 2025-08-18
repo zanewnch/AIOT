@@ -71,6 +71,7 @@ services:
       - consul_data:/consul/data
       - ../consul/consul.json:/consul/config/consul.json:ro
       # 將所有服務配置文件直接掛載到根配置目錄
+      - ../consul/services/auth-service.json:/consul/config/auth-service.json:ro
       - ../consul/services/rbac-service.json:/consul/config/rbac-service.json:ro
       - ../consul/services/drone-service.json:/consul/config/drone-service.json:ro
       - ../consul/services/general-service.json:/consul/config/general-service.json:ro
@@ -302,7 +303,46 @@ services:
   # 微服務 (Microservices)
   # ==========================================================================
 
-  # RBAC 微服務 (gRPC + HTTP)
+  # Auth 微服務 (gRPC + HTTP) - 專門處理認證功能
+  auth-service:
+    build:
+      context: ../../microServices/auth-service
+      dockerfile: Dockerfile.dev
+    logging: *default-logging
+    container_name: aiot-auth-service
+    ports:
+      - "50055:50055" # gRPC for inter-service communication
+      - "3055:3055"   # HTTP API endpoint
+    environment:
+      <<: *common-env
+      SERVICE_NAME: auth-service
+      GRPC_PORT: 50055
+      HTTP_PORT: 3055
+      # Auth 使用 RBAC 資料庫（共享用戶表）
+      DB_HOST: aiot-rbac-mysql
+      DB_NAME: rbac_db
+    volumes:
+      - ../../microServices/auth-service:/app
+      - /app/node_modules
+    networks:
+      - aiot-network
+    depends_on:
+      consul:
+        condition: service_healthy
+      aiot-rbac-mysql:
+        condition: service_healthy
+      aiot-redis:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      # 檢查 Auth 微服務的 HTTP API 端點健康狀態
+      # 確保認證服務正常運行，可以處理用戶登入登出請求
+      test: ["CMD", "curl", "-f", "http://localhost:3055/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # RBAC 微服務 (gRPC + HTTP) - 專門處理角色權限管理
   rbac-service:
     build:
       context: ../../microServices/rbac-service

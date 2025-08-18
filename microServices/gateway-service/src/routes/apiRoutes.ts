@@ -176,10 +176,10 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
     // ==========================================================================
 
     /**
-     * RBAC 服務路由 - 認證端點 (公開，不需要認證)
+     * Auth 服務路由 - 認證端點 (公開，不需要認證)
      * 支援 /auth 和 /auth/* 路徑
      */
-    router.use('/auth*', 
+    router.use('/auth', 
         // 對於 auth 端點，我們使用可選認證以支援登入/登出
         AuthMiddleware.optional({
             skipPaths: ['/auth'], // 登入端點跳過認證
@@ -187,10 +187,10 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
             logAuthEvents: true
         }),
         proxyMiddleware.createDynamicProxy({
-            target: 'rbac-service',
-            pathPrefix: '/api/auth',
+            target: 'auth-service',
+            pathPrefix: '',
             useGrpc: true,
-            httpPort: 3051,
+            httpPort: 3055,  // Auth Service 使用新的端口
             timeout: 30000,
             retries: 3
         })
@@ -199,7 +199,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
     /**
      * RBAC 服務路由 - 權限管理端點 (需要認證)
      */
-    router.use('/rbac/*',
+    router.use('/rbac',
         AuthMiddleware.required({
             checkBlacklist: true,
             extractPermissions: true,
@@ -207,7 +207,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
         }),
         proxyMiddleware.createDynamicProxy({
             target: 'rbac-service',
-            pathPrefix: '/api/rbac',
+            pathPrefix: '',
             useGrpc: true,
             httpPort: 3051,
             timeout: 30000,
@@ -218,11 +218,11 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
     /**
      * Drone 服務路由 (需要認證和權限)
      */
-    router.use('/drone/*',
+    router.use('/drone',
         AuthMiddleware.requirePermissions('drone:read', 'drone:write'),
         proxyMiddleware.createDynamicProxy({
             target: 'drone-service',
-            pathPrefix: '/api/drone',
+            pathPrefix: '',
             useGrpc: true,
             httpPort: 3052,
             timeout: 30000,
@@ -233,14 +233,14 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
     /**
      * General 服務路由 (需要認證)
      */
-    router.use('/general/*',
+    router.use('/general',
         AuthMiddleware.required({
             checkBlacklist: true,
             extractPermissions: true
         }),
         proxyMiddleware.createDynamicProxy({
             target: 'general-service',
-            pathPrefix: '/api/general',
+            pathPrefix: '',
             useGrpc: true,
             httpPort: 3053,
             timeout: 30000,
@@ -251,7 +251,7 @@ export function createApiRoutes(consulService: ConsulService, healthService: Hea
     /**
      * Docs 服務路由 (公開訪問)
      */
-    router.use('/docs/*',
+    router.use('/docs',
         // 文檔可以公開訪問，但如果有認證則記錄
         AuthMiddleware.optional({
             logAuthEvents: false

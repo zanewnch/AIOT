@@ -22,6 +22,9 @@ export { RbacInitService } from './RbacInitService.js';
 export { UserQueriesSvc } from './queries/UserQueriesSvc.js';
 export { UserCommandsSvc } from './commands/UserCommandsSvc.js';
 
+// 匯出 CQRS 模式的認證服務
+export { AuthQueriesSvc } from './queries/AuthQueriesSvc.js';
+export { AuthCommandsSvc } from './commands/AuthCommandsSvc.js';
 
 // 匯出 CQRS 模式的會話服務
 export { SessionQueriesSvc } from './queries/SessionQueriesSvc.js';

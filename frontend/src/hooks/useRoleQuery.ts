@@ -93,7 +93,7 @@ export class RoleQuery {
         try {
           logger.debug(`Fetching permissions for role ${roleId}`);
           
-          const result = await apiClient.getWithResult<Permission[]>(`/api/rbac/roles/${roleId}/permissions`);
+          const result = await apiClient.getWithResult<Permission[]>(`/rbac/roles/${roleId}/permissions`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -165,7 +165,7 @@ export class RoleQuery {
         try {
           logger.debug(`Updating role with ID: ${id}`, data);
           
-          await apiClient.putWithResult(`/api/rbac/roles/${id}`, data);
+          await apiClient.putWithResult(`/rbac/roles/${id}`, data);
           
           logger.info(`Successfully updated role with ID: ${id}`);
           return { id, data };

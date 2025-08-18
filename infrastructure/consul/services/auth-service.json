@@ -1,0 +1,31 @@
+{
+  "service": {
+    "id": "auth-service",
+    "name": "auth-service",
+    "tags": [
+      "auth",
+      "authentication",
+      "login",
+      "microservice",
+      "nodejs",
+      "express",
+      "grpc"
+    ],
+    "address": "aiot-auth-service",
+    "port": 3055,
+    "meta": {
+      "version": "1.0.0",
+      "env": "development",
+      "protocols": "grpc,http",
+      "description": "Authentication service for user login/logout"
+    },
+    "check": {
+      "id": "auth-service-health",
+      "name": "Auth Service Health Check",
+      "http": "http://aiot-auth-service:3055/health",
+      "interval": "10s",
+      "timeout": "3s",
+      "deregister_critical_service_after": "30s"
+    }
+  }
+}

@@ -35,7 +35,6 @@ export interface ProxyConfig {
  */
 export class ProxyMiddleware {
     private consulService: ConsulService;
-    private logger = loggerConfig;
 
     constructor(consulService: ConsulService) {
         this.consulService = consulService;
@@ -76,7 +75,7 @@ export class ProxyMiddleware {
                 logRouteEvent(req.originalUrl, config.target, res.statusCode, responseTime);
 
             } catch (error) {
-                this.logger.error(`❌ Proxy error for ${config.target}:`, error);
+                loggerConfig.error(`❌ Proxy error for ${config.target}:`, error);
                 
                 if (error instanceof GatewayError) {
                     res.status(error.statusCode).json({
@@ -105,10 +104,35 @@ export class ProxyMiddleware {
         const httpPort = config.httpPort || (serviceInstance.port + 1000);
         const targetUrl = `http://${serviceInstance.address}:${httpPort}`;
 
+        // 處理路徑重寫：移除 pathPrefix
+        let targetPath = req.path;
+        loggerConfig.debug(`🔍 Path rewriting debug`, {
+            originalPath: req.path,
+            pathPrefix: config.pathPrefix,
+            startsWithPrefix: config.pathPrefix ? req.path.startsWith(config.pathPrefix) : false
+        });
+        
+        if (config.pathPrefix && req.path.startsWith(config.pathPrefix)) {
+            targetPath = req.path.substring(config.pathPrefix.length);
+            // 確保路徑以 / 開頭
+            if (!targetPath.startsWith('/')) {
+                targetPath = '/' + targetPath;
+            }
+            loggerConfig.debug(`✅ Path rewritten`, {
+                original: req.path,
+                target: targetPath
+            });
+        } else {
+            loggerConfig.debug(`⚠️ No path rewriting applied`, {
+                path: req.path,
+                prefix: config.pathPrefix
+            });
+        }
+
         try {
             const response = await axios({
                 method: req.method as any,
-                url: `${targetUrl}${req.path}`,
+                url: `${targetUrl}${targetPath}`,
                 data: req.body,
                 headers: {
                     ...req.headers,
@@ -129,7 +153,7 @@ export class ProxyMiddleware {
             res.send(response.data);
 
         } catch (error) {
-            this.logger.error(`❌ gRPC proxy error:`, error);
+            loggerConfig.error(`❌ gRPC proxy error:`, error);
             throw new GatewayError(
                 `Failed to connect to ${config.target} service`,
                 503,
@@ -149,10 +173,35 @@ export class ProxyMiddleware {
     ): Promise<void> {
         const targetUrl = `http://${serviceInstance.address}:${serviceInstance.port}`;
 
+        // 處理路徑重寫：移除 pathPrefix
+        let targetPath = req.path;
+        loggerConfig.debug(`🔍 Path rewriting debug`, {
+            originalPath: req.path,
+            pathPrefix: config.pathPrefix,
+            startsWithPrefix: config.pathPrefix ? req.path.startsWith(config.pathPrefix) : false
+        });
+        
+        if (config.pathPrefix && req.path.startsWith(config.pathPrefix)) {
+            targetPath = req.path.substring(config.pathPrefix.length);
+            // 確保路徑以 / 開頭
+            if (!targetPath.startsWith('/')) {
+                targetPath = '/' + targetPath;
+            }
+            loggerConfig.debug(`✅ Path rewritten`, {
+                original: req.path,
+                target: targetPath
+            });
+        } else {
+            loggerConfig.debug(`⚠️ No path rewriting applied`, {
+                path: req.path,
+                prefix: config.pathPrefix
+            });
+        }
+
         try {
             const response = await axios({
                 method: req.method as any,
-                url: `${targetUrl}${req.path}`,
+                url: `${targetUrl}${targetPath}`,
                 data: req.body,
                 headers: {
                     ...req.headers,
@@ -173,7 +222,7 @@ export class ProxyMiddleware {
             res.send(response.data);
 
         } catch (error) {
-            this.logger.error(`❌ HTTP proxy error:`, error);
+            loggerConfig.error(`❌ HTTP proxy error:`, error);
             throw new GatewayError(
                 `Failed to connect to ${config.target} service`,
                 503,
@@ -194,7 +243,7 @@ export class ProxyMiddleware {
                 const serviceInstances = await this.consulService.getHealthyServices(config.target);
                 
                 if (!serviceInstances || serviceInstances.length === 0) {
-                    this.logger.error(`❌ WebSocket target service not found: ${config.target}`);
+                    loggerConfig.error(`❌ WebSocket target service not found: ${config.target}`);
                     return res.status(503).json({
                         status: 503,
                         message: `WebSocket service ${config.target} unavailable`,
@@ -213,7 +262,7 @@ export class ProxyMiddleware {
                     ws: true
                 } as any);
                 
-                this.logger.info(`🔌 Creating WebSocket proxy to ${config.target}`, {
+                loggerConfig.info(`🔌 Creating WebSocket proxy to ${config.target}`, {
                     target: targetUrl,
                     url: req.url
                 });
@@ -222,7 +271,7 @@ export class ProxyMiddleware {
                 wsProxy(req, res, next);
                 
             } catch (error) {
-                this.logger.error(`❌ WebSocket proxy setup failed for ${config.target}:`, error);
+                loggerConfig.error(`❌ WebSocket proxy setup failed for ${config.target}:`, error);
                 res.status(500).json({
                     status: 500,
                     message: 'WebSocket proxy setup failed',
@@ -242,7 +291,7 @@ export class ProxyMiddleware {
             changeOrigin: true,
             pathRewrite: pathRewrite || {},
             onError: (err: any, req: any, res: any) => {
-                this.logger.error(`❌ Static proxy error:`, err);
+                loggerConfig.error(`❌ Static proxy error:`, err);
                 if (res && typeof res.writeHead === 'function') {
                     res.writeHead(503, {
                         'Content-Type': 'application/json',
@@ -283,7 +332,7 @@ export class ProxyMiddleware {
 
             return response.status === 200;
         } catch (error) {
-            this.logger.debug(`Service ${serviceName} health check failed:`, error.message);
+            loggerConfig.debug(`Service ${serviceName} health check failed:`, error.message);
             return false;
         }
     }

@@ -232,7 +232,7 @@ export class UserQuery {
         try {
           logger.debug(`Updating user with ID: ${id}`, data);
           
-          await apiClient.putWithResult(`/api/rbac/users/${id}`, data);
+          await apiClient.putWithResult(`/rbac/users/${id}`, data);
           
           logger.info(`Successfully updated user with ID: ${id}`);
           return { id, data };

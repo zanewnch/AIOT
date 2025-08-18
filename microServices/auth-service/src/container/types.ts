@@ -111,6 +111,15 @@ export const TYPES = {
    */
   ArchiveTaskQueriesSvc: Symbol.for('ArchiveTaskQueriesSvc'),
 
+  /**
+   * 認證命令服務類型
+   */
+  AuthCommandsSvc: Symbol.for('AuthCommandsSvc'),
+
+  /**
+   * 認證查詢服務類型
+   */
+  AuthQueriesSvc: Symbol.for('AuthQueriesSvc'),
 
   /**
    * 會話查詢服務類型
@@ -290,6 +299,10 @@ export const TYPES = {
    */
   ArchiveTaskCommandsCtrl: Symbol.for('ArchiveTaskCommandsCtrl'),
 
+  /**
+   * 認證命令控制器類型
+   */
+  AuthCommandsCtrl: Symbol.for('AuthCommandsCtrl'),
 
   /**
    * 無人機命令命令控制器類型
@@ -362,6 +375,10 @@ export const TYPES = {
    */
   ArchiveTaskQueriesCtrl: Symbol.for('ArchiveTaskQueriesCtrl'),
 
+  /**
+   * 認證查詢控制器類型
+   */
+  AuthQueriesCtrl: Symbol.for('AuthQueriesCtrl'),
 
   /**
    * 無人機命令查詢控制器類型

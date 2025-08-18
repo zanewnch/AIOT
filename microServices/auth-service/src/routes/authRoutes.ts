@@ -36,7 +36,7 @@ class AuthRoutes {
 
   // RESTful 路由設計 - 使用 HTTP 方法區分功能
   private readonly ROUTES = {
-    AUTH: '/'  // /api/auth 被 Kong strip_path 後變成 /
+    AUTH: '/'  // /api/auth 被 Gateway strip_path 後變成 /
   } as const;
 
   constructor() {

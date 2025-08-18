@@ -27,6 +27,8 @@ import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.
 import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -48,6 +50,8 @@ export class RbacGrpcServer {
   private userToRoleCommands: UserToRoleCommands;
   private roleToPermissionQueries: RoleToPermissionQueries;
   private roleToPermissionCommands: RoleToPermissionCommands;
+  private authCommands: AuthCommands;
+  private authQueries: AuthQueries;
 
   constructor() {
     this.server = new grpc.Server({
@@ -73,6 +77,8 @@ export class RbacGrpcServer {
     this.userToRoleCommands = container.get<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl);
     this.roleToPermissionQueries = container.get<RoleToPermissionQueries>(TYPES.RoleToPermissionQueriesCtrl);
     this.roleToPermissionCommands = container.get<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl);
+    this.authCommands = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
+    this.authQueries = container.get<AuthQueries>(TYPES.AuthQueriesCtrl);
 
     this.loadProtoAndAddService();
   }

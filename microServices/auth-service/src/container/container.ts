@@ -23,6 +23,8 @@ import { UserToRoleCommandsSvc } from '../services/commands/UserToRoleCommandsSv
 import { UserToRoleQueriesSvc } from '../services/queries/UserToRoleQueriesSvc.js';
 import { RoleToPermissionCommandsSvc } from '../services/commands/RoleToPermissionCommandsSvc.js';
 import { RoleToPermissionQueriesSvc } from '../services/queries/RoleToPermissionQueriesSvc.js';
+import { AuthCommandsSvc } from '../services/commands/AuthCommandsSvc.js';
+import { AuthQueriesSvc } from '../services/queries/AuthQueriesSvc.js';
 import { SessionQueriesSvc } from '../services/queries/SessionQueriesSvc.js';
 
 // RBAC 控制器
@@ -36,6 +38,8 @@ import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCt
 import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
 import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 
 // JWT 安全服務
 import { JwtBlacklistService } from '../services/shared/JwtBlacklistService.js';
@@ -95,6 +99,14 @@ export function createContainer(): Container {
     .to(RoleToPermissionQueriesSvc)
     .inSingletonScope();
 
+  // 認證服務
+  container.bind<AuthCommandsSvc>(TYPES.AuthCommandsSvc)
+    .to(AuthCommandsSvc)
+    .inSingletonScope();
+  
+  container.bind<AuthQueriesSvc>(TYPES.AuthQueriesSvc)
+    .to(AuthQueriesSvc)
+    .inSingletonScope();
     
   container.bind<SessionQueriesSvc>(TYPES.SessionQueriesSvc)
     .to(SessionQueriesSvc)
@@ -152,6 +164,14 @@ export function createContainer(): Container {
     .to(RoleToPermissionQueries)
     .inSingletonScope();
 
+  // 認證控制器
+  container.bind<AuthCommands>(TYPES.AuthCommandsCtrl)
+    .to(AuthCommands)
+    .inSingletonScope();
+  
+  container.bind<AuthQueries>(TYPES.AuthQueriesCtrl)
+    .to(AuthQueries)
+    .inSingletonScope();
 
   console.log('✅ RBAC IoC Container configured with RBAC services only');
   
