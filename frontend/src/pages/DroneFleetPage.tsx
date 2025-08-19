@@ -20,9 +20,11 @@ import type { DroneStatus } from "../types/droneStatus";
 enum StatusFilter {
   ALL = 'all',
   IDLE = 'idle',
+  ACTIVE = 'active',
   FLYING = 'flying',
   CHARGING = 'charging',
   MAINTENANCE = 'maintenance',
+  INACTIVE = 'inactive',
   OFFLINE = 'offline',
   ERROR = 'error'
 }
@@ -45,6 +47,15 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
   // 使用真實 API hooks
   const droneQuery = new DroneStatusQuery();
   const { data: droneFleet = [], isLoading, error } = droneQuery.useAll();
+
+  // 調試：檢查 API 回傳的數據
+  React.useEffect(() => {
+    if (droneFleet.length > 0) {
+      console.log('DroneFleet 數據:', droneFleet[0]);
+      console.log('第一台無人機名稱:', droneFleet[0].drone_name);
+      console.log('第一台無人機狀態:', droneFleet[0].status);
+    }
+  }, [droneFleet]);
 
   // 顯示載入狀態
   if (isLoading) {
@@ -89,7 +100,7 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
   };
 
   const filteredAndSortedDrones = droneFleet
-    .filter(drone => filterStatus === StatusFilter.ALL || drone.status === filterStatus)
+    .filter(drone => filterStatus === StatusFilter.ALL || normalizeStatus(drone.status) === filterStatus)
     .sort((a, b) => {
       switch (sortBy) {
         case 'serial':
@@ -105,21 +116,39 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
       }
     });
 
+  // 狀態轉換：將後端狀態轉換為前端顯示
+  const normalizeStatus = (status: string): string => {
+    const statusMap: Record<string, string> = {
+      'ACTIVE': 'active',
+      'INACTIVE': 'inactive', 
+      'FLYING': 'flying',
+      'IDLE': 'idle',
+      'CHARGING': 'charging',
+      'MAINTENANCE': 'maintenance',
+      'OFFLINE': 'offline',
+      'ERROR': 'error'
+    };
+    return statusMap[status.toUpperCase()] || status.toLowerCase();
+  };
+
   const getStatusBadge = (status: string) => {
+    const normalizedStatus = normalizeStatus(status);
     const configs = {
-      idle: { bg: 'bg-gray-900/30', text: 'text-gray-300', border: 'border-gray-700', icon: '⚫' },
-      flying: { bg: 'bg-blue-900/30', text: 'text-blue-300', border: 'border-blue-700', icon: '✈️' },
-      charging: { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '🔋' },
-      maintenance: { bg: 'bg-orange-900/30', text: 'text-orange-300', border: 'border-orange-700', icon: '🔧' },
-      offline: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '📴' },
-      error: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '⚠️' },
+      idle: { bg: 'bg-gray-900/30', text: 'text-gray-300', border: 'border-gray-700', icon: '🟢', label: '待機' },
+      active: { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '🟢', label: '活躍' },
+      flying: { bg: 'bg-blue-900/30', text: 'text-blue-300', border: 'border-blue-700', icon: '✈️', label: '飛行中' },
+      charging: { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '🔋', label: '充電中' },
+      maintenance: { bg: 'bg-orange-900/30', text: 'text-orange-300', border: 'border-orange-700', icon: '🔧', label: '維護中' },
+      inactive: { bg: 'bg-gray-900/30', text: 'text-gray-300', border: 'border-gray-700', icon: '⚫', label: '非活躍' },
+      offline: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '📴', label: '離線' },
+      error: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '⚠️', label: '錯誤' },
     };
     
-    const config = configs[status as keyof typeof configs] || configs.offline;
+    const config = configs[normalizedStatus as keyof typeof configs] || configs.offline;
     return (
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text} border ${config.border}`}>
         <span>{config.icon}</span>
-        <span>{status.toUpperCase()}</span>
+        <span>{config.label}</span>
       </span>
     );
   };
@@ -133,6 +162,25 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
       'Skydio': '🇺🇸',
     };
     return icons[manufacturer as keyof typeof icons] || '🚁';
+  };
+
+  // 安全顯示文字（處理編碼問題）
+  const safeDisplayText = (text: string | undefined | null): string => {
+    if (!text) return '-';
+    
+    // 檢查是否為亂碼（包含特殊字符模式）
+    const hasGarbledText = /[çä¸åæ™ºæ©]/g.test(text);
+    
+    if (hasGarbledText) {
+      // 如果是亂碼，嘗試解碼或使用預設值
+      const serialMatch = text.match(/AIOT-(\d+)/);
+      if (serialMatch) {
+        return `無人機 ${serialMatch[1]} 號`;
+      }
+      return '無人機名稱';
+    }
+    
+    return text;
   };
 
   // 網格視圖
@@ -153,7 +201,7 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
             <div className="flex items-start justify-between mb-3">
               <div>
                 <h3 className="font-semibold text-gray-100 text-sm">{drone.drone_serial}</h3>
-                <p className="text-xs text-gray-400">{drone.drone_name}</p>
+                <p className="text-xs text-gray-400">{safeDisplayText(drone.drone_name)}</p>
               </div>
               <input
                 type="checkbox"
@@ -208,8 +256,10 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
                   className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded text-xs text-gray-100 focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="idle">待機</option>
+                  <option value="active">活躍</option>
                   <option value="charging">充電中</option>
                   <option value="maintenance">維護中</option>
+                  <option value="inactive">非活躍</option>
                   <option value="offline">離線</option>
                 </select>
               </div>
@@ -297,8 +347,8 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
           {/* 視圖模式切換 */}
           <div className="flex bg-gray-700 rounded-lg p-1">
             {[
-              { id: 'grid', icon: '⊞', label: '網格' },
-              { id: 'compare', icon: '⚖', label: '對比' }
+              { id: 'grid', icon: '📊', label: '網格' },
+              { id: 'compare', icon: '⚖️', label: '對比' }
             ].map((mode) => (
               <button
                 key={mode.id}
@@ -329,8 +379,8 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
           </div>
         </div>
 
-        {['idle', 'flying', 'charging', 'maintenance', 'offline', 'error'].map((status) => {
-          const count = droneFleet.filter(drone => drone.status === status).length;
+        {['idle', 'active', 'flying', 'charging', 'maintenance', 'inactive', 'offline', 'error'].map((status) => {
+          const count = droneFleet.filter(drone => normalizeStatus(drone.status) === status).length;
           return (
             <div key={status} className="bg-gray-800 rounded-lg border border-gray-700 p-4">
               <div className="flex items-center justify-between">
@@ -355,9 +405,11 @@ const DroneFleetPage: React.FC<DroneFleetPageProps> = ({ className }) => {
           >
             <option value="all">所有狀態</option>
             <option value="idle">待機</option>
+            <option value="active">活躍</option>
             <option value="flying">飛行中</option>
             <option value="charging">充電中</option>
             <option value="maintenance">維護中</option>
+            <option value="inactive">非活躍</option>
             <option value="offline">離線</option>
             <option value="error">錯誤</option>
           </select>

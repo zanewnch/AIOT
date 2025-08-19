@@ -17,12 +17,16 @@
 -- - drone_commands_archive: 指令數據歷史歸檔表
 -- - drone_status_archive: 狀態數據歷史歸檔表
 --
--- 插入的測試數據：
+-- 插入的測試數據規模：
 -- - 10台測試無人機（DJI、Autel、Skydio、Parrot等品牌）
--- - 即時狀態數據（電量、連線狀態、GPS信號等）
--- - 位置記錄（台北101周邊區域的GPS座標）
--- - 指令記錄（起飛、移動、返航等測試指令）
--- - 指令佇列（待執行和正在執行的指令）
+-- - 基礎數據：即時狀態、初始位置、測試指令、指令佇列
+-- - 大量數據生成：
+--   * 100個初始數據點（每台無人機10個，間隔10秒）
+--   * 10,000筆隨機位置數據（分佈在過去30天，台北101周邊5公里）
+--   * 10,000筆隨機歷史位置數據
+--   * 200筆隨機狀態歷史數據
+--   * 100筆隨機指令歷史數據
+-- - 總計：超過 20,000 筆測試數據
 --
 -- 🎯 前端測試場景設計：
 -- Simulation 1 - 多機協同測試：
@@ -342,6 +346,210 @@ INSERT IGNORE INTO drone_command_queue (drone_id, command_id, queue_position, pr
 VALUES
   (1, 3, 1, 3, DATE_ADD(NOW(), INTERVAL 5 MINUTE), 'queued', 0, 3, NOW(), NOW()),
   (8, 2, 1, 1, NOW(), 'processing', 0, 3, NOW(), NOW());
+
+-- =====================================
+-- 3. 生成大量測試數據
+-- =====================================
+-- 創建程序生成每台無人機 10 個數據點（100個數據點）+ 1 萬筆隨機數據
+
+DELIMITER $$
+
+CREATE PROCEDURE GenerateDroneData()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE j INT DEFAULT 1;
+    DECLARE drone_id INT;
+    DECLARE base_lat FLOAT DEFAULT 25.0337; -- 台北101 緯度
+    DECLARE base_lng FLOAT DEFAULT 121.5645; -- 台北101 經度
+    DECLARE random_lat FLOAT;
+    DECLARE random_lng FLOAT;
+    DECLARE random_alt FLOAT;
+    DECLARE random_speed FLOAT;
+    DECLARE random_heading FLOAT;
+    DECLARE random_battery FLOAT;
+    DECLARE random_signal FLOAT;
+    DECLARE random_temp FLOAT;
+    DECLARE time_offset INT;
+    
+    -- 禁用外鍵約束以提升插入性能
+    SET FOREIGN_KEY_CHECKS = 0;
+    
+    -- =====================================
+    -- 第一部分：為每台無人機生成 10 個數據點 (總共100個)
+    -- =====================================
+    SELECT '開始生成每台無人機 10 個數據點...' AS progress;
+    
+    WHILE i <= 10 DO -- 10台無人機
+        SET j = 1;
+        WHILE j <= 10 DO -- 每台10個數據點
+            -- 計算時間偏移（每個數據點間隔10秒）
+            SET time_offset = (j - 1) * 10;
+            
+            -- 生成隨機位置（以台北101為中心，半徑1公里內）
+            SET random_lat = base_lat + (RAND() - 0.5) * 0.01; -- 約±500米
+            SET random_lng = base_lng + (RAND() - 0.5) * 0.01; -- 約±500米
+            SET random_alt = 50 + RAND() * 150; -- 50-200米高度
+            SET random_speed = RAND() * 15; -- 0-15 m/s
+            SET random_heading = RAND() * 360; -- 0-360度
+            SET random_battery = 20 + RAND() * 80; -- 20-100%
+            SET random_signal = 70 + RAND() * 30; -- 70-100%
+            SET random_temp = 15 + RAND() * 20; -- 15-35攝氏度
+            
+            -- 插入位置數據
+            INSERT IGNORE INTO drone_positions (
+                drone_id, latitude, longitude, altitude, speed, heading, 
+                battery_level, signal_strength, timestamp, createdAt, updatedAt
+            ) VALUES (
+                i, random_lat, random_lng, random_alt, random_speed, random_heading,
+                random_battery, random_signal,
+                NOW() - INTERVAL time_offset SECOND,
+                NOW(), NOW()
+            );
+            
+            -- 插入歸檔位置數據
+            INSERT IGNORE INTO drone_positions_archive (
+                original_id, drone_id, latitude, longitude, altitude, speed, heading,
+                battery_level, signal_strength, temperature, timestamp, 
+                archived_at, archive_batch_id, created_at
+            ) VALUES (
+                (i-1) * 10 + j, i, random_lat, random_lng, random_alt, random_speed, random_heading,
+                random_battery, random_signal, random_temp,
+                NOW() - INTERVAL time_offset SECOND,
+                NOW(), 'batch_initial_100', NOW()
+            );
+            
+            SET j = j + 1;
+        END WHILE;
+        SET i = i + 1;
+    END WHILE;
+    
+    SELECT '每台無人機 10 個數據點生成完成，共 100 個數據點' AS progress;
+    
+    -- =====================================
+    -- 第二部分：生成 1 萬筆隨機數據
+    -- =====================================
+    SELECT '開始生成 1 萬筆隨機數據...' AS progress;
+    
+    SET i = 1;
+    WHILE i <= 10000 DO
+        -- 隨機選擇無人機 (1-10)
+        SET drone_id = FLOOR(RAND() * 10) + 1;
+        
+        -- 生成隨機數據
+        SET random_lat = base_lat + (RAND() - 0.5) * 0.05; -- 約±2.5公里範圍
+        SET random_lng = base_lng + (RAND() - 0.5) * 0.05;
+        SET random_alt = RAND() * 500; -- 0-500米
+        SET random_speed = RAND() * 25; -- 0-25 m/s
+        SET random_heading = RAND() * 360;
+        SET random_battery = RAND() * 100; -- 0-100%
+        SET random_signal = 50 + RAND() * 50; -- 50-100%
+        SET random_temp = 10 + RAND() * 30; -- 10-40攝氏度
+        
+        -- 隨機時間偏移（過去30天內）
+        SET time_offset = FLOOR(RAND() * 30 * 24 * 60 * 60); -- 30天秒數
+        
+        -- 插入位置數據
+        INSERT IGNORE INTO drone_positions (
+            drone_id, latitude, longitude, altitude, speed, heading,
+            battery_level, signal_strength, timestamp, createdAt, updatedAt
+        ) VALUES (
+            drone_id, random_lat, random_lng, random_alt, random_speed, random_heading,
+            random_battery, random_signal,
+            NOW() - INTERVAL time_offset SECOND,
+            NOW(), NOW()
+        );
+        
+        -- 插入歸檔位置數據
+        INSERT IGNORE INTO drone_positions_archive (
+            original_id, drone_id, latitude, longitude, altitude, speed, heading,
+            battery_level, signal_strength, temperature, timestamp,
+            archived_at, archive_batch_id, created_at
+        ) VALUES (
+            100 + i, drone_id, random_lat, random_lng, random_alt, random_speed, random_heading,
+            random_battery, random_signal, random_temp,
+            NOW() - INTERVAL time_offset SECOND,
+            NOW(), CONCAT('batch_random_', FLOOR(i / 1000)), NOW()
+        );
+        
+        -- 隨機插入狀態數據（每50筆位置數據插入1筆狀態）
+        IF i % 50 = 0 THEN
+            INSERT IGNORE INTO drone_status_archive (
+                original_id, drone_id, current_battery_level, current_status,
+                last_seen, current_altitude, current_speed, is_connected,
+                archived_at, archive_batch_id, created_at
+            ) VALUES (
+                i / 50, drone_id, random_battery,
+                CASE FLOOR(RAND() * 6)
+                    WHEN 0 THEN 'idle'
+                    WHEN 1 THEN 'flying'
+                    WHEN 2 THEN 'charging'
+                    WHEN 3 THEN 'maintenance'
+                    WHEN 4 THEN 'offline'
+                    ELSE 'error'
+                END,
+                NOW() - INTERVAL time_offset SECOND,
+                random_alt, random_speed, (RAND() > 0.2),
+                NOW(), CONCAT('status_batch_', FLOOR((i/50) / 100)), NOW()
+            );
+        END IF;
+        
+        -- 隨機插入指令數據（每100筆位置數據插入1筆指令）
+        IF i % 100 = 0 THEN
+            INSERT IGNORE INTO drone_commands_archive (
+                original_id, drone_id, command_type, command_data, status,
+                issued_by, issued_at, executed_at, completed_at,
+                archived_at, archive_batch_id, created_at
+            ) VALUES (
+                i / 100, drone_id,
+                CASE FLOOR(RAND() * 6)
+                    WHEN 0 THEN 'takeoff'
+                    WHEN 1 THEN 'land'
+                    WHEN 2 THEN 'hover'
+                    WHEN 3 THEN 'flyTo'
+                    WHEN 4 THEN 'return'
+                    ELSE 'emergency'
+                END,
+                JSON_OBJECT('altitude', random_alt, 'speed', random_speed),
+                CASE FLOOR(RAND() * 4)
+                    WHEN 0 THEN 'completed'
+                    WHEN 1 THEN 'failed'
+                    WHEN 2 THEN 'executing'
+                    ELSE 'pending'
+                END,
+                1, -- issued_by admin user
+                NOW() - INTERVAL time_offset SECOND,
+                NOW() - INTERVAL (time_offset - 30) SECOND,
+                NOW() - INTERVAL (time_offset - 60) SECOND,
+                NOW(), CONCAT('cmd_batch_', FLOOR((i/100) / 100)), NOW()
+            );
+        END IF;
+        
+        SET i = i + 1;
+        
+        -- 每1000筆顯示進度
+        IF i % 1000 = 0 THEN
+            SELECT CONCAT('已生成 ', i, ' 筆隨機數據') AS progress;
+        END IF;
+    END WHILE;
+    
+    -- 重新啟用外鍵約束
+    SET FOREIGN_KEY_CHECKS = 1;
+    
+    SELECT '成功生成所有測試數據！' AS result;
+    SELECT '- 100 個初始數據點（每台無人機10個）' AS summary1;
+    SELECT '- 10,000 筆隨機位置數據' AS summary2;
+    SELECT '- 200 筆隨機狀態數據' AS summary3;
+    SELECT '- 100 筆隨機指令數據' AS summary4;
+    
+END$$
+
+DELIMITER ;
+
+-- 執行程序生成數據
+CALL GenerateDroneData();
+
+-- 刪除臨時程序
+DROP PROCEDURE GenerateDroneData;
 
 -- 提交交易
 COMMIT;

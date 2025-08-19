@@ -19,9 +19,8 @@ import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路�
 
 // 使用動態導入來實現代碼分割和懶加載
 const Homepage = lazy(() => import("./pages/Homepage").then(module => ({ default: module.Homepage })));
-const TableViewer = lazy(() => import("./components/HomeContent/TableViewer").then(module => ({ default: module.TableViewer })));
-const HomeContent = lazy(() => import("./components/HomeContent/HomeContent").then(module => ({ default: module.HomeContent })));
-const InitPage = lazy(() => import("./pages/InitPage").then(module => ({ default: module.InitPage })));
+const TableViewer = lazy(() => import("./components/tableviewer/TableViewer").then(module => ({ default: module.TableViewer })));
+const HomeContent = lazy(() => import("./components/HomeComponent").then(module => ({ default: module.HomeContent })));
 const SwaggerDocPage = lazy(() => import("./pages/SwaggerDocPage"));
 const MapPage = lazy(() => import("./pages/MapPage"));
 const FlyingPage = lazy(() => import("./pages/FlyingPage"));
@@ -50,7 +49,7 @@ function App() {
    * @description 使用 Zustand 和 React Query 來管理認證狀態
    * 自動處理認證狀態的初始化、載入和錯誤狀態
    */
-  const { isAuthenticated, isLoading: authStoreLoading } = useAuth();
+  const { isLoading: authStoreLoading } = useAuth();
   const { isLoading: initializeLoading } = useInitializeAuth();
   
   // 總載入狀態 = store 載入狀態 || 初始化載入狀態
@@ -113,10 +112,9 @@ function App() {
           {/* 定義路由規則容器 */}
           {/* 公開路由 - 無需認證即可訪問 */}
           <Route path="/login" element={<LoginPage />} /> {/* 登入頁面路由 */}
-          <Route path="/" element={<InitPage />} /> {/* 系統初始化頁面 */}
           {/* 受保護的路由 - 需要認證才能訪問 */}
           <Route
-            path="/content"
+            path="/"
             element={
               <ProtectedRoute>
                 {/* 包裝受保護路由組件，檢查認證狀態 */}

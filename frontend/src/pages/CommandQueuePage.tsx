@@ -23,11 +23,13 @@ import {
   useStartQueue,
   usePauseQueue,
   useResetQueue,
-  useAddCommandToQueue,
-  type DroneCommandQueue,
-  type CreateQueueRequest,
-  type CommandCondition
+  useAddCommandToQueue
 } from "../hooks";
+import type { 
+  DroneCommandQueue,
+  CreateQueueRequest,
+  CommandCondition
+} from "../hooks/useDroneCommandQueueQuery";
 import type { DroneCommandType } from "../hooks/useOptimisticCommand";
 
 // 可用的命令類型列表（與後端保持一致）

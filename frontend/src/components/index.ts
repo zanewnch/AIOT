@@ -15,7 +15,7 @@ export { ThemeToggle } from './ThemeToggle'; // 匯出主題切換組件
 export { Sidebar } from './Sidebar'; // 匯出側邊欄導航組件
 
 // 內容展示組件匯出
-export { TableViewer } from './HomeContent/TableViewer'; // 匯出表格檢視器組件
+export { TableViewer } from './tableviewer/TableViewer'; // 匯出表格檢視器組件
 
 // 基礎 UI 組件匯出
 export { Button } from './Button'; // 匯出通用按鈕組件

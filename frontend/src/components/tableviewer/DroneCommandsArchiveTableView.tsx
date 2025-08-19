@@ -1,35 +1,42 @@
 /**
- * @fileoverview 無人機指令表格視圖組件
+ * @fileoverview 無人機指令歷史歸檔表格視圖組件
  * 
- * 此組件提供無人機指令的表格視圖功能，包括：
- * - 無人機指令數據的顯示和載入
- * - 指令狀態的動態表格渲染
+ * 此組件提供無人機指令歷史歸檔的表格視圖功能，包括：
+ * - 歸檔指令數據的顯示和載入
+ * - 歷史指令狀態的動態表格渲染
  * - 錯誤處理和載入狀態管理
- * - 指令執行進度和時間的顯示
+ * - 指令執行分析和批次歸檔追蹤
  * 
  * @author AIOT 開發團隊
  * @since 2024-01-01
  */
 
 import React from 'react';
-import { DroneCommandQuery } from '../../../hooks/useDroneCommandQuery';
-import { useTableUIStore } from '../../../stores/tableStore';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { createLogger } from '../../../configs/loggerConfig';
-import styles from '../../../styles/TableViewer.module.scss';
+import { useTableUIStore } from '../../stores/tableStore';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { createLogger } from '../../configs/loggerConfig';
+import { useGetAllCommandsArchive, type DroneCommandArchive } from '../../hooks/useDroneCommandArchiveQuery';
+import styles from '../../styles/TableViewer.module.scss';
 
-const logger = createLogger('DroneCommandTableView');
+const logger = createLogger('DroneCommandsArchiveTableView');
+
+// 使用導入的 DroneCommandArchive 類型，移除本地重複定義
+
+// 移除自定義 fetch 函數，使用現有的 React Query hook
 
 /**
- * 無人機指令表格視圖組件
+ * 無人機指令歷史歸檔表格視圖組件
  * 
- * 此組件負責顯示無人機指令的表格視圖，提供指令數據的查看功能。
+ * 此組件負責顯示無人機指令歷史歸檔的表格視圖，提供歸檔指令數據的查看功能。
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  */
-export const DroneCommandTableView: React.FC = () => {
-  // React Query hooks for data
-  const droneCommandQuery = new DroneCommandQuery();
-  const { data: droneCommandData, isLoading, error, refetch } = droneCommandQuery.useAllDroneCommands();
+export const DroneCommandsArchiveTableView: React.FC = () => {
+  // 使用現有的 React Query hook
+  const { data: droneCommandsArchiveData, isLoading, error, refetch } = useGetAllCommandsArchive({
+    limit: 100, // 分頁參數：限制數量
+    sortBy: 'issued_at', // 排序欄位  
+    sortOrder: 'DESC' // 排序方向
+  });
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();
@@ -38,7 +45,7 @@ export const DroneCommandTableView: React.FC = () => {
    * 處理排序
    */
   const handleSort = (field: string) => {
-    logger.debug('無人機指令表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
+    logger.debug('無人機指令歷史歸檔表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
     toggleSortOrder(field as any);
   };
 
@@ -46,12 +53,12 @@ export const DroneCommandTableView: React.FC = () => {
    * 排序數據
    */
   const sortedData = React.useMemo(() => {
-    if (!droneCommandData) return [];
+    if (!droneCommandsArchiveData) return [];
     
-    const sorted = [...droneCommandData];
+    const sorted = [...droneCommandsArchiveData];
     sorted.sort((a, b) => {
-      const aValue = a[sorting.field as keyof typeof a];
-      const bValue = b[sorting.field as keyof typeof b];
+      const aValue = a[sorting.field as keyof DroneCommandArchive];
+      const bValue = b[sorting.field as keyof DroneCommandArchive];
       
       if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
       if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
@@ -59,20 +66,20 @@ export const DroneCommandTableView: React.FC = () => {
     });
     
     return sorted;
-  }, [droneCommandData, sorting]);
+  }, [droneCommandsArchiveData, sorting]);
 
   // 載入狀態檢查
   if (isLoading) {
-    return <LoadingSpinner message="載入無人機指令數據中..." />;
+    return <LoadingSpinner message="載入無人機指令歷史歸檔數據中..." />;
   }
 
   // 錯誤狀態檢查
   if (error) {
     return (
       <div className={styles.error}>
-        <span>載入無人機指令數據時發生錯誤: {(error as Error).message}</span>
+        <span>載入無人機指令歷史歸檔數據時發生錯誤: {(error as Error).message}</span>
         <button onClick={() => {
-          logger.info('重新載入無人機指令數據', { operation: 'retry' });
+          logger.info('重新載入無人機指令歷史歸檔數據', { operation: 'retry' });
           refetch();
         }} className={styles.retryButton}>
           重試
@@ -82,12 +89,12 @@ export const DroneCommandTableView: React.FC = () => {
   }
 
   // 空資料檢查
-  if (!droneCommandData || droneCommandData.length === 0) {
+  if (!droneCommandsArchiveData || droneCommandsArchiveData.length === 0) {
     return (
       <div className={styles.noData}>
-        <span>目前沒有無人機指令數據</span>
+        <span>目前沒有無人機指令歷史歸檔數據</span>
         <button onClick={() => {
-          logger.info('刷新無人機指令數據', { operation: 'refresh' });
+          logger.info('刷新無人機指令歷史歸檔數據', { operation: 'refresh' });
           refetch();
         }} className={styles.refreshButton}>
           重新載入
@@ -97,7 +104,7 @@ export const DroneCommandTableView: React.FC = () => {
   }
 
   // 動態獲取表格欄位
-  const columns = Object.keys(droneCommandData[0]);
+  const columns = Object.keys(droneCommandsArchiveData[0]);
 
   /**
    * 格式化欄位值以便顯示
@@ -106,7 +113,7 @@ export const DroneCommandTableView: React.FC = () => {
     if (value === null || value === undefined) return '-';
     
     // 日期格式化
-    if (column.includes('At') || column.includes('_at')) {
+    if (column.includes('_at') || column.includes('At')) {
       try {
         return new Date(value).toLocaleString('zh-TW');
       } catch {
@@ -146,7 +153,7 @@ export const DroneCommandTableView: React.FC = () => {
     }
     
     // 指令類型中文化
-    if (column === 'commandType') {
+    if (column === 'command_type') {
       const typeMap: { [key: string]: string } = {
         'takeoff': '起飛',
         'land': '降落',
@@ -162,7 +169,7 @@ export const DroneCommandTableView: React.FC = () => {
 
   return (
     <div className={styles.tableContainer}>
-      {/* 無人機指令數據表格 */}
+      {/* 無人機指令歷史歸檔數據表格 */}
       <table 
         className={styles.table} 
         style={{ '--row-count': sortedData.length } as React.CSSProperties}
@@ -188,11 +195,11 @@ export const DroneCommandTableView: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((item: any, index: number) => (
+          {sortedData.map((item: DroneCommandArchive, index: number) => (
             <tr key={item.id || index} className={styles.tableRow}>
               {columns.map((column) => (
                 <td key={column} className={styles.tableCell}>
-                  {formatValue(item[column], column)}
+                  {formatValue(item[column as keyof DroneCommandArchive], column)}
                 </td>
               ))}
             </tr>

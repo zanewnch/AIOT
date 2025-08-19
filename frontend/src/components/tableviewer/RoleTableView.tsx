@@ -12,11 +12,11 @@
  */
 
 import React from 'react';
-import { RoleQuery } from '../../../hooks/useRoleQuery';
-import { useTableUIStore } from '../../../stores/tableStore';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { createLogger } from '../../../configs/loggerConfig';
-import styles from '../../../styles/TableViewer.module.scss';
+import { RoleQuery } from '../../hooks/useRoleQuery';
+import { useTableUIStore } from '../../stores/tableStore';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { createLogger } from '../../configs/loggerConfig';
+import styles from '../../styles/TableViewer.module.scss';
 
 const logger = createLogger('RoleTableView');
 

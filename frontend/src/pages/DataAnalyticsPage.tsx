@@ -583,100 +583,110 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
 
           {selectedChart === 'statistics' && (
             <div className="space-y-6">
-              {/* 詳細統計表格 */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <h4 className="text-md font-semibold text-gray-100 mb-3">指令統計</h4>
-                  <div className="space-y-3">
-                    {['takeoff', 'move', 'hover', 'land'].map(cmdType => {
-                      const cmdData = performanceData.filter(d => d.command_type === cmdType);
-                      const successCount = cmdData.filter(d => d.success).length;
-                      const successRate = cmdData.length > 0 ? (successCount / cmdData.length) * 100 : 0;
-                      
-                      return (
-                        <div key={cmdType} className="flex items-center justify-between">
-                          <span className="text-gray-300 capitalize">{cmdType}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400">{cmdData.length}次</span>
-                            <span className={`text-xs font-semibold ${
-                              successRate >= 90 ? 'text-green-300' :
-                              successRate >= 70 ? 'text-yellow-300' : 'text-red-300'
-                            }`}>
-                              {successRate.toFixed(0)}%
-                            </span>
-                          </div>
+              {hasAnyData ? (
+                <>
+                  {/* 詳細統計表格 */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-100 mb-3">指令統計</h4>
+                      <div className="space-y-3">
+                        {['takeoff', 'move', 'hover', 'land'].map(cmdType => {
+                          const cmdData = performanceData.filter(d => d.command_type === cmdType);
+                          const successCount = cmdData.filter(d => d.success).length;
+                          const successRate = cmdData.length > 0 ? (successCount / cmdData.length) * 100 : 0;
+                          
+                          return (
+                            <div key={cmdType} className="flex items-center justify-between">
+                              <span className="text-gray-300 capitalize">{cmdType}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-400">{cmdData.length}次</span>
+                                <span className={`text-xs font-semibold ${
+                                  successRate >= 90 ? 'text-green-300' :
+                                  successRate >= 70 ? 'text-yellow-300' : 'text-red-300'
+                                }`}>
+                                  {successRate.toFixed(0)}%
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-100 mb-3">飛行統計</h4>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">總飛行點數</span>
+                          <span className="text-gray-100">{flightPathData.length}</span>
                         </div>
-                      );
-                    })}
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">最高飛行高度</span>
+                          <span className="text-gray-100">
+                            {flightPathData.length > 0 ? Math.max(...flightPathData.map(d => d.altitude)).toFixed(0) : 0}m
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">最大飛行速度</span>
+                          <span className="text-gray-100">
+                            {flightPathData.length > 0 ? Math.max(...flightPathData.map(d => d.speed)).toFixed(1) : 0} m/s
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">平均飛行速度</span>
+                          <span className="text-gray-100">
+                            {flightPathData.length > 0 ? 
+                              (flightPathData.reduce((sum, d) => sum + d.speed, 0) / flightPathData.length).toFixed(1) : 0
+                            } m/s
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* 性能評估 */}
+                  <div className="bg-gray-700/50 rounded-lg p-4">
+                    <h4 className="text-md font-semibold text-gray-100 mb-3">系統性能評估</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="text-center p-3 bg-gray-600/50 rounded">
+                        <div className={`text-lg font-bold ${
+                          stats.successRate >= 95 ? 'text-green-400' :
+                          stats.successRate >= 85 ? 'text-yellow-400' : 'text-red-400'
+                        }`}>
+                          {stats.successRate >= 95 ? '優秀' : stats.successRate >= 85 ? '良好' : '需改善'}
+                        </div>
+                        <div className="text-xs text-gray-400">指令執行穩定性</div>
+                      </div>
+
+                      <div className="text-center p-3 bg-gray-600/50 rounded">
+                        <div className={`text-lg font-bold ${
+                          stats.avgExecutionTime < 2000 ? 'text-green-400' :
+                          stats.avgExecutionTime < 4000 ? 'text-yellow-400' : 'text-red-400'
+                        }`}>
+                          {stats.avgExecutionTime < 2000 ? '快速' : stats.avgExecutionTime < 4000 ? '正常' : '緩慢'}
+                        </div>
+                        <div className="text-xs text-gray-400">響應速度</div>
+                      </div>
+
+                      <div className="text-center p-3 bg-gray-600/50 rounded">
+                        <div className={`text-lg font-bold ${
+                          stats.currentBattery > 50 ? 'text-green-400' :
+                          stats.currentBattery > 20 ? 'text-yellow-400' : 'text-red-400'
+                        }`}>
+                          {stats.currentBattery > 50 ? '充足' : stats.currentBattery > 20 ? '適中' : '不足'}
+                        </div>
+                        <div className="text-xs text-gray-400">電力狀況</div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="text-6xl mb-4">📈</div>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無統計資料</h3>
+                  <p className="text-sm text-gray-500">系統開始運作後，詳細統計報表將顯示在這裡</p>
                 </div>
-
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <h4 className="text-md font-semibold text-gray-100 mb-3">飛行統計</h4>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">總飛行點數</span>
-                      <span className="text-gray-100">{flightPathData.length}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">最高飛行高度</span>
-                      <span className="text-gray-100">
-                        {flightPathData.length > 0 ? Math.max(...flightPathData.map(d => d.altitude)).toFixed(0) : 0}m
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">最大飛行速度</span>
-                      <span className="text-gray-100">
-                        {flightPathData.length > 0 ? Math.max(...flightPathData.map(d => d.speed)).toFixed(1) : 0} m/s
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">平均飛行速度</span>
-                      <span className="text-gray-100">
-                        {flightPathData.length > 0 ? 
-                          (flightPathData.reduce((sum, d) => sum + d.speed, 0) / flightPathData.length).toFixed(1) : 0
-                        } m/s
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 性能評估 */}
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <h4 className="text-md font-semibold text-gray-100 mb-3">系統性能評估</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-gray-600/50 rounded">
-                    <div className={`text-lg font-bold ${
-                      stats.successRate >= 95 ? 'text-green-400' :
-                      stats.successRate >= 85 ? 'text-yellow-400' : 'text-red-400'
-                    }`}>
-                      {stats.successRate >= 95 ? '優秀' : stats.successRate >= 85 ? '良好' : '需改善'}
-                    </div>
-                    <div className="text-xs text-gray-400">指令執行穩定性</div>
-                  </div>
-
-                  <div className="text-center p-3 bg-gray-600/50 rounded">
-                    <div className={`text-lg font-bold ${
-                      stats.avgExecutionTime < 2000 ? 'text-green-400' :
-                      stats.avgExecutionTime < 4000 ? 'text-yellow-400' : 'text-red-400'
-                    }`}>
-                      {stats.avgExecutionTime < 2000 ? '快速' : stats.avgExecutionTime < 4000 ? '正常' : '緩慢'}
-                    </div>
-                    <div className="text-xs text-gray-400">響應速度</div>
-                  </div>
-
-                  <div className="text-center p-3 bg-gray-600/50 rounded">
-                    <div className={`text-lg font-bold ${
-                      stats.currentBattery > 50 ? 'text-green-400' :
-                      stats.currentBattery > 20 ? 'text-yellow-400' : 'text-red-400'
-                    }`}>
-                      {stats.currentBattery > 50 ? '充足' : stats.currentBattery > 20 ? '適中' : '不足'}
-                    </div>
-                    <div className="text-xs text-gray-400">電力狀況</div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>

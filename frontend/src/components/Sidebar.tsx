@@ -64,14 +64,14 @@ const logger = createLogger('Sidebar');
  */
 const NAV_ITEMS: NavItem[] = [
   { path: '/', label: '首頁', icon: '🏠', matchPath: '/' },
-  { path: '/content/tableviewer', label: 'Table Viewer', icon: '📊', matchPath: '/tableviewer' },
-  { path: '/content/chat', label: 'AI 聊天', icon: '🤖', matchPath: '/chat' },
-  { path: '/content/mappage', label: '地圖頁面', icon: '🗺️', matchPath: '/mappage' },
-  { path: '/content/flyingpage', label: '飛行頁面', icon: '✈️', matchPath: '/flyingpage' },
-  { path: '/content/command-history', label: '指令歷史', icon: '📋', matchPath: '/command-history' },
-  { path: '/content/drone-fleet', label: '機隊管理', icon: '🚁', matchPath: '/drone-fleet' },
-  { path: '/content/command-queue', label: '指令佇列', icon: '⚡', matchPath: '/command-queue' },
-  { path: '/content/data-analytics', label: '資料分析', icon: '📈', matchPath: '/data-analytics' }
+  { path: '/tableviewer', label: 'Table Viewer', icon: '📊', matchPath: '/tableviewer' },
+  { path: '/chat', label: 'AI 聊天', icon: '🤖', matchPath: '/chat' },
+  { path: '/mappage', label: '地圖頁面', icon: '🗺️', matchPath: '/mappage' },
+  { path: '/flyingpage', label: '飛行頁面', icon: '✈️', matchPath: '/flyingpage' },
+  { path: '/command-history', label: '指令歷史', icon: '📋', matchPath: '/command-history' },
+  { path: '/drone-fleet', label: '機隊管理', icon: '🚁', matchPath: '/drone-fleet' },
+  { path: '/command-queue', label: '指令佇列', icon: '⚡', matchPath: '/command-queue' },
+  { path: '/data-analytics', label: '資料分析', icon: '📈', matchPath: '/data-analytics' }
 ];
 
 /**

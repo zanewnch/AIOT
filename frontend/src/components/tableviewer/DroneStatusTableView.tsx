@@ -1,32 +1,31 @@
 /**
- * @fileoverview 無人機狀態歷史歸檔表格視圖組件
+ * @fileoverview 無人機狀態表格視圖組件
  * 
- * 此組件提供無人機狀態歷史歸檔的表格視圖功能，包括：
- * - 歸檔狀態數據的顯示和載入
- * - 無人機歷史狀態的動態表格渲染
+ * 此組件提供無人機狀態的表格視圖功能，包括：
+ * - 無人機狀態數據的顯示和載入
+ * - 即時狀態的動態表格渲染
  * - 錯誤處理和載入狀態管理
- * - 飛行狀態和系統參數的詳細顯示
+ * - 飛行狀態和系統參數的即時顯示
  * 
  * @author AIOT 開發團隊
  * @since 2024-01-01
  */
 
 import React from 'react';
-import { useTableUIStore } from '../../../stores/tableStore';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { createLogger } from '../../../configs/loggerConfig';
-import { DroneStatusArchiveQuery } from '../../../hooks/useDroneStatusArchiveQuery';
-import styles from '../../../styles/TableViewer.module.scss';
+import { useTableUIStore } from '../../stores/tableStore';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { createLogger } from '../../configs/loggerConfig';
+import { DroneStatusQuery } from '../../hooks/useDroneStatusQuery';
+import styles from '../../styles/TableViewer.module.scss';
 
-const logger = createLogger('DroneStatusArchiveTableView');
+const logger = createLogger('DroneStatusTableView');
 
 /**
- * 無人機狀態歷史歸檔介面定義
+ * 無人機狀態介面定義
  */
-interface DroneStatusArchive {
+interface DroneStatus {
   id: number;
-  original_id: number;
-  drone_id: number;
+  drone_id?: string;
   flight_status: string;
   battery_level: number;
   signal_strength: number;
@@ -38,23 +37,25 @@ interface DroneStatusArchive {
   humidity: number;
   wind_speed: number;
   timestamp: string;
-  archived_at: string;
-  archive_batch_id: string;
-  created_at: string;
+  last_ping: string;
+  is_connected: boolean;
+  firmware_version: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // 創建 query service 實例
-const droneStatusArchiveQuery = new DroneStatusArchiveQuery();
+const droneStatusQuery = new DroneStatusQuery();
 
 /**
- * 無人機狀態歷史歸檔表格視圖組件
+ * 無人機狀態表格視圖組件
  * 
- * 此組件負責顯示無人機狀態歷史歸檔的表格視圖，提供歸檔狀態數據的查看功能。
+ * 此組件負責顯示無人機狀態的表格視圖，提供即時狀態數據的查看功能。
  * 包含動態表格渲染、載入狀態管理、錯誤處理等功能。
  */
-export const DroneStatusArchiveTableView: React.FC = () => {
-  // 使用 React Query hooks for data
-  const { data: droneStatusArchiveData, isLoading, error, refetch } = droneStatusArchiveQuery.useAll();
+export const DroneStatusTableView: React.FC = () => {
+  // 使用 React Query hooks for data with real-time updates
+  const { data: droneStatusData, isLoading, error, refetch } = droneStatusQuery.useAll();
   
   // Zustand stores for UI state
   const { sorting, toggleSortOrder } = useTableUIStore();
@@ -63,7 +64,7 @@ export const DroneStatusArchiveTableView: React.FC = () => {
    * 處理排序
    */
   const handleSort = (field: string) => {
-    logger.debug('無人機狀態歷史歸檔表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
+    logger.debug('無人機狀態表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
     toggleSortOrder(field as any);
   };
 
@@ -71,12 +72,12 @@ export const DroneStatusArchiveTableView: React.FC = () => {
    * 排序數據
    */
   const sortedData = React.useMemo(() => {
-    if (!droneStatusArchiveData) return [];
+    if (!droneStatusData) return [];
     
-    const sorted = [...droneStatusArchiveData];
+    const sorted = [...droneStatusData];
     sorted.sort((a, b) => {
-      const aValue = a[sorting.field as keyof DroneStatusArchive];
-      const bValue = b[sorting.field as keyof DroneStatusArchive];
+      const aValue = a[sorting.field as keyof DroneStatus];
+      const bValue = b[sorting.field as keyof DroneStatus];
       
       if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
       if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
@@ -84,20 +85,20 @@ export const DroneStatusArchiveTableView: React.FC = () => {
     });
     
     return sorted;
-  }, [droneStatusArchiveData, sorting]);
+  }, [droneStatusData, sorting]);
 
   // 載入狀態檢查
   if (isLoading) {
-    return <LoadingSpinner message="載入無人機狀態歷史歸檔數據中..." />;
+    return <LoadingSpinner message="載入無人機狀態數據中..." />;
   }
 
   // 錯誤狀態檢查
   if (error) {
     return (
       <div className={styles.error}>
-        <span>載入無人機狀態歷史歸檔數據時發生錯誤: {(error as Error).message}</span>
+        <span>載入無人機狀態數據時發生錯誤: {(error as Error).message}</span>
         <button onClick={() => {
-          logger.info('重新載入無人機狀態歷史歸檔數據', { operation: 'retry' });
+          logger.info('重新載入無人機狀態數據', { operation: 'retry' });
           refetch();
         }} className={styles.retryButton}>
           重試
@@ -107,12 +108,12 @@ export const DroneStatusArchiveTableView: React.FC = () => {
   }
 
   // 空資料檢查
-  if (!droneStatusArchiveData || droneStatusArchiveData.length === 0) {
+  if (!droneStatusData || droneStatusData.length === 0) {
     return (
       <div className={styles.noData}>
-        <span>目前沒有無人機狀態歷史歸檔數據</span>
+        <span>目前沒有無人機狀態數據</span>
         <button onClick={() => {
-          logger.info('刷新無人機狀態歷史歸檔數據', { operation: 'refresh' });
+          logger.info('刷新無人機狀態數據', { operation: 'refresh' });
           refetch();
         }} className={styles.refreshButton}>
           重新載入
@@ -122,7 +123,7 @@ export const DroneStatusArchiveTableView: React.FC = () => {
   }
 
   // 動態獲取表格欄位
-  const columns = Object.keys(droneStatusArchiveData[0]);
+  const columns = Object.keys(droneStatusData[0]);
 
   /**
    * 格式化欄位值以便顯示
@@ -131,7 +132,7 @@ export const DroneStatusArchiveTableView: React.FC = () => {
     if (value === null || value === undefined) return '-';
     
     // 日期格式化
-    if (column.includes('_at') || column === 'timestamp') {
+    if (column.includes('At') || column === 'timestamp' || column === 'last_ping') {
       try {
         return new Date(value).toLocaleString('zh-TW');
       } catch {
@@ -165,7 +166,12 @@ export const DroneStatusArchiveTableView: React.FC = () => {
       return gpsStatusMap[value] || value;
     }
     
-    // 電池電量格式化（加上百分比符號）
+    // 連接狀態格式化
+    if (column === 'is_connected') {
+      return value ? '已連接' : '未連接';
+    }
+    
+    // 電池電量格式化（加上百分比符號和顏色提示）
     if (column === 'battery_level') {
       return typeof value === 'number' ? `${value}%` : value;
     }
@@ -218,9 +224,33 @@ export const DroneStatusArchiveTableView: React.FC = () => {
     return String(value);
   };
 
+  /**
+   * 獲取行的特殊樣式類別（基於狀態）
+   */
+  const getRowClassName = (item: DroneStatus): string => {
+    let className = styles.tableRow;
+    
+    // 根據連接狀態添加樣式
+    if (!item.is_connected) {
+      className += ` ${styles.disconnected}`;
+    }
+    
+    // 根據電池電量添加警告樣式
+    if (item.battery_level < 20) {
+      className += ` ${styles.lowBattery}`;
+    }
+    
+    // 根據飛行狀態添加樣式
+    if (item.flight_status === 'emergency') {
+      className += ` ${styles.emergency}`;
+    }
+    
+    return className;
+  };
+
   return (
     <div className={styles.tableContainer}>
-      {/* 無人機狀態歷史歸檔數據表格 */}
+      {/* 無人機狀態數據表格 */}
       <table 
         className={styles.table} 
         style={{ '--row-count': sortedData.length } as React.CSSProperties}
@@ -246,11 +276,11 @@ export const DroneStatusArchiveTableView: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((item: DroneStatusArchive, index: number) => (
-            <tr key={item.id || index} className={styles.tableRow}>
+          {sortedData.map((item: DroneStatus, index: number) => (
+            <tr key={item.id || index} className={getRowClassName(item)}>
               {columns.map((column) => (
                 <td key={column} className={styles.tableCell}>
-                  {formatValue(item[column as keyof DroneStatusArchive], column)}
+                  {formatValue(item[column as keyof DroneStatus], column)}
                 </td>
               ))}
             </tr>

@@ -13,11 +13,11 @@
  */
 
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useInfiniteTableData } from '../../../hooks/useInfiniteTableData';
-import { useTableUIStore } from '../../../stores/tableStore';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { createLogger } from '../../../configs/loggerConfig';
-import styles from '../../../styles/TableViewer.module.scss';
+import { useInfiniteTableData } from '../../hooks/useInfiniteTableData';
+import { useTableUIStore } from '../../stores/tableStore';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { createLogger } from '../../configs/loggerConfig';
+import styles from '../../styles/TableViewer.module.scss';
 
 const logger = createLogger('EnhancedDroneStatusTableView');
 

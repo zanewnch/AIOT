@@ -12,12 +12,12 @@
  */
 
 import React from 'react';
-import { UserQuery } from '../../../hooks/useUserQuery';
-import { useOptimisticUser, useQuickUserActions } from '../../../hooks/useOptimisticUser';
-import { useTableUIStore } from '../../../stores/tableStore';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { createLogger } from '../../../configs/loggerConfig';
-import styles from '../../../styles/TableViewer.module.scss';
+import { UserQuery } from '../../hooks/useUserQuery';
+import { useOptimisticUser, useQuickUserActions } from '../../hooks/useOptimisticUser';
+import { useTableUIStore } from '../../stores/tableStore';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { createLogger } from '../../configs/loggerConfig';
+import styles from '../../styles/TableViewer.module.scss';
 
 const logger = createLogger('UserTableView');
 

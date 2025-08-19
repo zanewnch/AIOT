@@ -89,16 +89,6 @@ export {
   useUpdateRTKData,
   useDeleteRTKData
 } from './useRTKQuery';
-export { 
-  InitQuery,
-  initQuery,
-  useInitQuery,
-  useInitAllDemo,
-  useInitRbacDemo,
-  useInitRtkDemo,
-  useCreateAdminUser,
-  useCreateStressTestData
-} from './useInitQuery';
 
 // 其他專用 hooks
 export * from './useArchiveTaskQuery';

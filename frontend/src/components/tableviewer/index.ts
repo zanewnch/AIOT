@@ -38,20 +38,14 @@ export { RoleToPermissionTableView } from './RoleToPermissionTableView';
 // 導出用戶角色關聯表格視圖組件 - 提供用戶與角色關聯關係的表格視圖
 export { UserToRoleTableView } from './UserToRoleTableView';
 
-// 導出歸檔任務表格視圖組件 - 提供歸檔任務管理的表格視圖
-export { ArchiveTaskTableView } from './ArchiveTaskTableView';
-
 // 導出無人機指令表格視圖組件 - 提供無人機指令管理的表格視圖
 export { DroneCommandTableView } from './DroneCommandTableView';
 
-// 導出無人機指令歷史歸檔表格視圖組件 - 提供無人機指令歷史歸檔的表格視圖
-export { DroneCommandsArchiveTableView } from './DroneCommandsArchiveTableView';
-
-// 導出無人機位置歷史歸檔表格視圖組件 - 提供無人機位置歷史歸檔的表格視圖
-export { DronePositionsArchiveTableView } from './DronePositionsArchiveTableView';
-
-// 導出無人機狀態歷史歸檔表格視圖組件 - 提供無人機狀態歷史歸檔的表格視圖
-export { DroneStatusArchiveTableView } from './DroneStatusArchiveTableView';
+// 注意：以下組件使用懶加載方式，不在此處靜態導出以避免代碼分割衝突：
+// - ArchiveTaskTableView（在 TableViewer.tsx 中懶加載）
+// - DroneCommandsArchiveTableView（在 TableViewer.tsx 中懶加載）
+// - DronePositionsArchiveTableView（在 TableViewer.tsx 中懶加載）
+// - DroneStatusArchiveTableView（在 TableViewer.tsx 中懶加載）
 
 // 導出無人機位置表格視圖組件 - 提供無人機位置管理的表格視圖
 export { DronePositionTableView } from './DronePositionTableView';

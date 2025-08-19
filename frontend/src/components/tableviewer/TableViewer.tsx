@@ -28,29 +28,29 @@ import {
   DronePositionTableView, // 無人機位置表格視圖組件
   DroneStatusTableView, // 無人機狀態表格視圖組件
   UserPreferenceTableView, // 使用者偏好設定表格視圖組件
-} from "./tables"; // 引入表格組件
+} from "."; // 引入表格組件
 
 // 🔄 懶加載的歸檔表格組件（低頻使用）
 const ArchiveTaskTableView = lazy(() => 
-  import("./tables/ArchiveTaskTableView").then(module => ({
+  import("./ArchiveTaskTableView").then(module => ({
     default: module.ArchiveTaskTableView
   }))
 );
 
 const DroneCommandsArchiveTableView = lazy(() => 
-  import("./tables/DroneCommandsArchiveTableView").then(module => ({
+  import("./DroneCommandsArchiveTableView").then(module => ({
     default: module.DroneCommandsArchiveTableView
   }))
 );
 
 const DronePositionsArchiveTableView = lazy(() => 
-  import("./tables/DronePositionsArchiveTableView").then(module => ({
+  import("./DronePositionsArchiveTableView").then(module => ({
     default: module.DronePositionsArchiveTableView
   }))
 );
 
 const DroneStatusArchiveTableView = lazy(() => 
-  import("./tables/DroneStatusArchiveTableView").then(module => ({
+  import("./DroneStatusArchiveTableView").then(module => ({
     default: module.DroneStatusArchiveTableView
   }))
 );

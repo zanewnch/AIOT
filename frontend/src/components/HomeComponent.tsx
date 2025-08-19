@@ -13,7 +13,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from '../../styles/HomeContent.module.scss';
+import styles from '../styles/HomeContent.module.scss';
 
 /**
  * 首頁主要內容組件

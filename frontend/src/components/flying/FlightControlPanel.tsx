@@ -14,6 +14,13 @@ import React from "react";
 
 interface SimulateDroneStats {
   status: 'grounded' | 'taking_off' | 'hovering' | 'flying' | 'landing' | 'emergency';
+  altitude: number;
+  battery: number;
+  heading: number;
+  position: { lat: number; lng: number };
+  currentCommand: string | null;
+  flightTime: number;
+  distanceTraveled: number;
 }
 
 interface SimulateFlyLogic {
@@ -147,6 +154,14 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                   <span className="text-red-300">載入失敗</span>
+                </div>
+              )}
+              
+              {/* 電量警告 */}
+              {simulateDroneStats?.battery && simulateDroneStats.battery <= 20 && (
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+                  <span className="text-yellow-300">電量不足</span>
                 </div>
               )}
               
@@ -372,8 +387,8 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                   disabled={isAnyOperationPending || !!error}
                 >
                   <span className="flex items-center justify-center gap-1">
-                    <span>🏠</span>
-                    <span>返航</span>
+                    <span>🔄</span>
+                    <span>重置</span>
                   </span>
                 </button>
 

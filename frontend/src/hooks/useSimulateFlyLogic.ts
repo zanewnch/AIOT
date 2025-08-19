@@ -37,7 +37,7 @@ const DRONE_CONFIG = {
 type DroneStatus = 'grounded' | 'taking_off' | 'hovering' | 'flying' | 'landing' | 'emergency';
 
 // 飛行命令類型
-type FlightCommand = 'takeoff' | 'land' | 'hover' | 'flyTo' | 'moveForward' | 'moveBackward' | 'moveLeft' | 'moveRight' | 'rotateLeft' | 'rotateRight' | 'emergency';
+type FlightCommand = 'takeoff' | 'land' | 'hover' | 'flyTo' | 'moveForward' | 'moveBackward' | 'moveLeft' | 'moveRight' | 'rotateLeft' | 'rotateRight' | 'emergency' | 'return';
 
 interface DroneState {
   id: string;
@@ -81,6 +81,8 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   const droneRef = useRef<DroneState | null>(null);
   // 飛行控制計時器
   const flightTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 動作定時器集合（用於管理各種定時器，避免內存洩漏）
+  const actionTimersRef = useRef<Set<NodeJS.Timeout>>(new Set());
 
   // 組件狀態
   const [isLoading, setIsLoading] = useState(true);
@@ -96,6 +98,23 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     flightTime: 0,
     distanceTraveled: 0,
   });
+
+  /**
+   * 定時器管理函數
+   */
+  const addTimer = (timer: NodeJS.Timeout) => {
+    actionTimersRef.current.add(timer);
+  };
+
+  const clearTimer = (timer: NodeJS.Timeout) => {
+    clearInterval(timer);
+    actionTimersRef.current.delete(timer);
+  };
+
+  const clearAllTimers = () => {
+    actionTimersRef.current.forEach(timer => clearInterval(timer));
+    actionTimersRef.current.clear();
+  };
 
   /**
    * 載入 Google Maps JavaScript API (使用統一管理器)
@@ -282,7 +301,10 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     // 模擬起飛過程（3秒內升到50米）
     let currentAltitude = 0;
     const takeoffTimer = setInterval(() => {
-      if (!droneRef.current) return;
+      if (!droneRef.current) {
+        clearTimer(takeoffTimer);
+        return;
+      }
       
       currentAltitude += 17; // 每秒上升約17米
       droneRef.current.altitude = Math.min(currentAltitude, 50);
@@ -290,11 +312,12 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       if (currentAltitude >= 50) {
         droneRef.current.status = 'hovering';
         droneRef.current.currentCommand = null;
-        clearInterval(takeoffTimer);
+        clearTimer(takeoffTimer);
       }
       
       updateDroneStats();
     }, 1000);
+    addTimer(takeoffTimer);
   };
 
   /**
@@ -309,18 +332,22 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     
     // 模擬降落過程
     const landingTimer = setInterval(() => {
-      if (!droneRef.current) return;
+      if (!droneRef.current) {
+        clearTimer(landingTimer);
+        return;
+      }
       
       droneRef.current.altitude = Math.max(0, droneRef.current.altitude - 17);
       
       if (droneRef.current.altitude <= 0) {
         droneRef.current.status = 'grounded';
         droneRef.current.currentCommand = null;
-        clearInterval(landingTimer);
+        clearTimer(landingTimer);
       }
       
       updateDroneStats();
     }, 1000);
+    addTimer(landingTimer);
   };
 
   /**
@@ -367,15 +394,12 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     if (!droneRef.current || droneRef.current.status === 'grounded') return;
     
     const distance = 0.001;
+    // 後退：朝航向相反方向移動，但保持原航向
     const headingRad = ((droneRef.current.heading + 180) % 360 * Math.PI) / 180;
     const newLat = droneRef.current.position.lat + distance * Math.cos(headingRad);
     const newLng = droneRef.current.position.lng + distance * Math.sin(headingRad);
     
-    // 後退時航向應該相反
-    const newHeading = (droneRef.current.heading + 180) % 360;
-    droneRef.current.heading = newHeading;
-    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, newHeading);
-    
+    // 保持原航向不變（後退不改變朝向）
     flyToPosition({ lat: newLat, lng: newLng });
   };
 
@@ -386,15 +410,12 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     if (!droneRef.current || droneRef.current.status === 'grounded') return;
     
     const distance = 0.001;
+    // 左移：朝左90度方向移動，但保持原航向
     const headingRad = ((droneRef.current.heading - 90 + 360) % 360 * Math.PI) / 180;
     const newLat = droneRef.current.position.lat + distance * Math.cos(headingRad);
     const newLng = droneRef.current.position.lng + distance * Math.sin(headingRad);
     
-    // 左移時航向應該向左
-    const newHeading = (droneRef.current.heading - 90 + 360) % 360;
-    droneRef.current.heading = newHeading;
-    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, newHeading);
-    
+    // 保持原航向不變（側移不改變朝向）
     flyToPosition({ lat: newLat, lng: newLng });
   };
 
@@ -405,15 +426,12 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
     if (!droneRef.current || droneRef.current.status === 'grounded') return;
     
     const distance = 0.001;
+    // 右移：朝右90度方向移動，但保持原航向
     const headingRad = ((droneRef.current.heading + 90) % 360 * Math.PI) / 180;
     const newLat = droneRef.current.position.lat + distance * Math.cos(headingRad);
     const newLng = droneRef.current.position.lng + distance * Math.sin(headingRad);
     
-    // 右移時航向應該向右
-    const newHeading = (droneRef.current.heading + 90) % 360;
-    droneRef.current.heading = newHeading;
-    droneRef.current.marker.content = createDroneIcon(DRONE_CONFIG.color, newHeading);
-    
+    // 保持原航向不變（側移不改變朝向）
     flyToPosition({ lat: newLat, lng: newLng });
   };
 
@@ -451,14 +469,22 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   const emergencyStop = () => {
     if (!droneRef.current) return;
     
+    // 清除所有動作定時器
+    clearAllTimers();
+    
     droneRef.current.status = 'emergency';
     droneRef.current.currentCommand = 'emergency';
     droneRef.current.targetPosition = null;
     
-    // 緊急降落
-    setTimeout(() => {
-      land();
+    // 緊急降落（2秒後自動降落）
+    const emergencyTimer = setTimeout(() => {
+      if (droneRef.current) {
+        land();
+      }
     }, 2000);
+    addTimer(emergencyTimer);
+    
+    updateDroneStats();
   };
 
   /**
@@ -467,6 +493,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   const returnToHome = () => {
     if (!droneRef.current || droneRef.current.status === 'grounded') return;
     
+    droneRef.current.currentCommand = 'return';
     flyToPosition(droneRef.current.homePosition);
   };
 
@@ -476,6 +503,16 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
   const updateDroneStats = () => {
     if (!droneRef.current) return;
     
+    // 計算真實的飛行距離
+    let totalDistance = 0;
+    for (let i = 1; i < droneRef.current.flightPath.length; i++) {
+      const prev = droneRef.current.flightPath[i - 1];
+      const curr = droneRef.current.flightPath[i];
+      const latDiff = curr.lat - prev.lat;
+      const lngDiff = curr.lng - prev.lng;
+      totalDistance += Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 111000; // 轉換為公尺
+    }
+    
     setDroneStats({
       status: droneRef.current.status,
       altitude: droneRef.current.altitude,
@@ -484,7 +521,7 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       position: droneRef.current.position,
       currentCommand: droneRef.current.currentCommand,
       flightTime: Math.floor(Date.now() / 1000), // 簡化的飛行時間
-      distanceTraveled: droneRef.current.flightPath.length * 0.1, // 簡化的距離計算
+      distanceTraveled: Math.round(totalDistance), // 真實的距離計算（公尺）
     });
 
     // 更新資訊視窗
@@ -526,15 +563,48 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       if (distance < drone.speed * 2) {
         drone.position = { ...drone.targetPosition };
         drone.targetPosition = null;
-        drone.status = 'hovering';
-        drone.currentCommand = null;
+        
+        // 檢查是否為返航指令，如果是則自動降落
+        if (drone.currentCommand === 'return') {
+          // 返航到達後自動降落
+          drone.status = 'landing';
+          drone.currentCommand = 'land';
+          
+          // 模擬降落過程
+          const landingTimer = setInterval(() => {
+            if (!droneRef.current) {
+              clearTimer(landingTimer);
+              return;
+            }
+            
+            droneRef.current.altitude = Math.max(0, droneRef.current.altitude - 17);
+            
+            if (droneRef.current.altitude <= 0) {
+              droneRef.current.status = 'grounded';
+              droneRef.current.currentCommand = null;
+              clearTimer(landingTimer);
+            }
+            
+            updateDroneStats();
+          }, 1000);
+          addTimer(landingTimer);
+        } else {
+          // 其他飛行指令到達後懸停
+          drone.status = 'hovering';
+          drone.currentCommand = null;
+        }
       } else {
         // 計算移動方向的航向角度
         const newHeading = Math.atan2(lngDiff, latDiff) * (180 / Math.PI);
         const normalizedHeading = (newHeading + 360) % 360;
         
-        // 只有當航向有明顯變化時才更新（避免頻繁小幅度調整）
-        if (Math.abs(normalizedHeading - drone.heading) > 5) {
+        // 只有在非側移和後退時才更新航向（這些操作應保持原航向）
+        const currentCommand = drone.currentCommand;
+        const shouldUpdateHeading = currentCommand !== 'moveLeft' && 
+                                     currentCommand !== 'moveRight' && 
+                                     currentCommand !== 'moveBackward';
+        
+        if (shouldUpdateHeading && Math.abs(normalizedHeading - drone.heading) > 5) {
           drone.heading = normalizedHeading;
           
           // 更新標記圖標以反映飛行方向
@@ -560,10 +630,44 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       drone.flightPath.push({ ...drone.position });
     }
 
-    // 模擬電量消耗
+    // 模擬電量消耗（基於狀態和高度）
     if (drone.status !== 'grounded') {
-      const consumptionRate = drone.status === 'flying' ? 0.1 : 0.05; // 飛行時消耗更多電量
+      let consumptionRate = 0.05; // 基礎消耗
+      
+      // 根據狀態調整消耗率
+      switch (drone.status) {
+        case 'taking_off':
+        case 'landing':
+          consumptionRate = 0.15; // 起飛降落消耗最多
+          break;
+        case 'flying':
+          consumptionRate = 0.10; // 飛行消耗中等
+          break;
+        case 'hovering':
+          consumptionRate = 0.08; // 懸停消耗稍少
+          break;
+        case 'emergency':
+          consumptionRate = 0.20; // 緊急狀態消耗很大
+          break;
+      }
+      
+      // 高度越高，消耗越大
+      const altitudeFactor = 1 + (drone.altitude / 1000); // 每1000米增加1倍消耗
+      consumptionRate *= altitudeFactor;
+      
       drone.battery = Math.max(0, drone.battery - consumptionRate);
+      
+      // 電量不足時自動返航
+      if (drone.battery <= 20 && drone.status !== 'landing' && drone.status !== 'emergency') {
+        console.warn('電量不足，自動執行返航');
+        returnToHome();
+      }
+      
+      // 電量極低時緊急降落
+      if (drone.battery <= 5 && drone.status !== 'emergency') {
+        console.error('電量極低，執行緊急降落');
+        emergencyStop();
+      }
     }
 
     // 更新統計資訊
@@ -588,6 +692,8 @@ export const useSimulateFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
       clearInterval(flightTimerRef.current);
       flightTimerRef.current = null;
     }
+    // 清理所有動作定時器
+    clearAllTimers();
   };
 
   /**

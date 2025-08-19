@@ -3,8 +3,9 @@
 -- =====================================================
 -- 功能描述：
 -- 1. 創建完整的 RBAC (Role-Based Access Control) 表結構
--- 2. 插入基礎權限、角色和測試用戶數據
+-- 2. 插入基礎權限、角色和大量測試用戶數據
 -- 3. 建立用戶-角色和角色-權限的關聯關係
+-- 4. 使用存儲過程批量生成 1萬筆測試用戶數據
 -- 
 -- 創建的表結構（5個表）：
 -- - users: 使用者資料表（主鍵、用戶名、密碼雜湊、郵箱等）
@@ -13,13 +14,24 @@
 -- - user_roles: 使用者角色關聯表（多對多關係）
 -- - role_permissions: 角色權限關聯表（多對多關係）
 --
--- 插入的測試數據：
+-- 插入的數據規模：
 -- - 23個基礎權限（user.*, role.*, permission.*, drone.*, system.*, audit.*）
 -- - 4個角色（admin, user, operator, viewer）
--- - 19個測試用戶（4個基本用戶 + 15個虛擬用戶）
+-- - 10,004個用戶：
+--   * 1個管理員用戶（admin - 擁有全部權限）
+--   * 3個基礎測試用戶（user, operator, viewer）
+--   * 10,000個大量測試用戶（test_user_00001 到 test_user_10000）
+-- - 智能角色分配（user:70%, viewer:20%, operator:10%）
 -- - 完整的權限分配（admin擁有所有權限，其他角色有限制權限）
 --
--- 預設管理員帳號：admin / admin（密碼雜湊）
+-- 預設管理員帳號：admin / admin（擁有所有系統權限）
+-- 測試用戶密碼：password123（適用於所有 test_user_xxxxx 帳號）
+-- 
+-- 性能特性：
+-- - 使用存儲過程批量插入，優化大數據量處理
+-- - 隨機生成用戶屬性（活躍狀態、建立時間、角色分配）
+-- - 進度監控（每1000筆顯示進度）
+-- - 統計報表（用戶總數、角色分佈、活躍用戶比例）
 -- =====================================================
 
 -- 使用 RBAC 微服務專用數據庫
@@ -171,25 +183,86 @@ VALUES
   ('operator', '$2b$10$operatorHashForDroneOperator789012345', 'operator@aiot.com', TRUE, NOW(), NOW()),
   ('viewer', '$2b$10$viewerHashForReadOnlyViewer456789012', 'viewer@aiot.com', TRUE, NOW(), NOW());
 
--- 插入額外的虛擬測試用戶（用於測試分頁、篩選等功能）
--- 密碼都是 'password123' 的雜湊值
-INSERT IGNORE INTO users (username, passwordHash, email, isActive, createdAt, updatedAt)
-VALUES 
-  ('user_001', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_001@example.com', TRUE, NOW(), NOW()),
-  ('user_002', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_002@example.com', TRUE, NOW(), NOW()),
-  ('user_003', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_003@example.com', TRUE, NOW(), NOW()),
-  ('user_004', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_004@example.com', TRUE, NOW(), NOW()),
-  ('user_005', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_005@example.com', TRUE, NOW(), NOW()),
-  ('user_006', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_006@example.com', TRUE, NOW(), NOW()),
-  ('user_007', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_007@example.com', TRUE, NOW(), NOW()),
-  ('user_008', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_008@example.com', TRUE, NOW(), NOW()),
-  ('user_009', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_009@example.com', TRUE, NOW(), NOW()),
-  ('user_010', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_010@example.com', TRUE, NOW(), NOW()),
-  ('user_011', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_011@example.com', TRUE, NOW(), NOW()),
-  ('user_012', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_012@example.com', TRUE, NOW(), NOW()),
-  ('user_013', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_013@example.com', TRUE, NOW(), NOW()),
-  ('user_014', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_014@example.com', TRUE, NOW(), NOW()),
-  ('user_015', '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 'user_015@example.com', TRUE, NOW(), NOW());
+-- =====================================
+-- 6. 生成 1萬筆測試用戶數據
+-- =====================================
+-- 創建臨時程序來生成大量用戶數據
+DELIMITER $$
+
+CREATE PROCEDURE GenerateTestUsers()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE user_name VARCHAR(100);
+    DECLARE user_email VARCHAR(255);
+    DECLARE random_active BOOLEAN;
+    DECLARE random_role_num INT;
+    
+    -- 禁用外鍵約束以提升插入性能
+    SET FOREIGN_KEY_CHECKS = 0;
+    
+    WHILE i <= 10000 DO
+        -- 生成用戶名和郵箱
+        SET user_name = CONCAT('test_user_', LPAD(i, 5, '0'));
+        SET user_email = CONCAT('test_user_', LPAD(i, 5, '0'), '@example.com');
+        
+        -- 隨機生成活躍狀態 (90% 活躍)
+        SET random_active = (RAND() > 0.1);
+        
+        -- 插入用戶 (密碼都是 'password123' 的雜湊值)
+        INSERT IGNORE INTO users (username, passwordHash, email, isActive, createdAt, updatedAt)
+        VALUES (
+            user_name, 
+            '$2b$10$rOyFbMR5lJTmJGv6PD8VUeN0VjH8pJBa3hVrKjY2LqX4.Ck9D5vFO', 
+            user_email, 
+            random_active,
+            NOW() - INTERVAL FLOOR(RAND() * 365) DAY,  -- 隨機建立時間(過去一年內)
+            NOW()
+        );
+        
+        -- 隨機分配角色 (user: 70%, viewer: 20%, operator: 10%)
+        SET random_role_num = FLOOR(RAND() * 10) + 1;
+        
+        IF random_role_num <= 7 THEN
+            -- 分配 user 角色 (70%)
+            INSERT IGNORE INTO user_roles (userId, roleId, createdAt, updatedAt)
+            SELECT u.id, r.id, NOW(), NOW()
+            FROM users u, roles r
+            WHERE u.username = user_name AND r.name = 'user';
+        ELSEIF random_role_num <= 9 THEN
+            -- 分配 viewer 角色 (20%)
+            INSERT IGNORE INTO user_roles (userId, roleId, createdAt, updatedAt)
+            SELECT u.id, r.id, NOW(), NOW()
+            FROM users u, roles r
+            WHERE u.username = user_name AND r.name = 'viewer';
+        ELSE
+            -- 分配 operator 角色 (10%)
+            INSERT IGNORE INTO user_roles (userId, roleId, createdAt, updatedAt)
+            SELECT u.id, r.id, NOW(), NOW()
+            FROM users u, roles r
+            WHERE u.username = user_name AND r.name = 'operator';
+        END IF;
+        
+        SET i = i + 1;
+        
+        -- 每1000筆顯示進度
+        IF i % 1000 = 0 THEN
+            SELECT CONCAT('已生成 ', i, ' 筆用戶數據') AS progress;
+        END IF;
+    END WHILE;
+    
+    -- 重新啟用外鍵約束
+    SET FOREIGN_KEY_CHECKS = 1;
+    
+    SELECT '成功生成 10,000 筆測試用戶數據' AS result;
+END$$
+
+DELIMITER ;
+
+-- 執行程序生成用戶數據
+CALL GenerateTestUsers();
+
+-- 刪除臨時程序
+DROP PROCEDURE GenerateTestUsers;
 
 -- =====================================
 -- 4. 分配用戶角色關聯
@@ -218,11 +291,7 @@ SELECT u.id, r.id, NOW(), NOW()
 FROM users u, roles r
 WHERE u.username = 'viewer' AND r.name = 'viewer';
 
--- 為所有 user_xxx 用戶分配 user 角色
-INSERT IGNORE INTO user_roles (userId, roleId, createdAt, updatedAt)
-SELECT u.id, r.id, NOW(), NOW()
-FROM users u, roles r
-WHERE u.username LIKE 'user_%' AND r.name = 'user';
+-- 注意：大量測試用戶的角色分配已在 GenerateTestUsers() 程序中完成
 
 -- =====================================
 -- 5. 分配角色權限關聯
@@ -257,8 +326,27 @@ WHERE r.name = 'viewer'
 -- 提交交易
 COMMIT;
 
--- 顯示執行結果
+-- 顯示執行結果與統計
 SELECT 'RBAC initialization completed successfully' AS status;
+
+-- 統計用戶數據
+SELECT 
+    '用戶統計' AS category,
+    COUNT(*) AS total_count,
+    SUM(CASE WHEN isActive = 1 THEN 1 ELSE 0 END) AS active_users,
+    SUM(CASE WHEN isActive = 0 THEN 1 ELSE 0 END) AS inactive_users
+FROM users;
+
+-- 統計用戶角色分佈
+SELECT 
+    r.displayName AS role_name,
+    COUNT(ur.userId) AS user_count,
+    ROUND(COUNT(ur.userId) * 100.0 / (SELECT COUNT(*) FROM user_roles), 2) AS percentage
+FROM roles r
+LEFT JOIN user_roles ur ON r.id = ur.roleId
+WHERE ur.isActive = 1
+GROUP BY r.id, r.displayName
+ORDER BY user_count DESC;
 
 -- 驗證結果：顯示 admin 用戶的權限
 SELECT

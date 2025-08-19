@@ -11,12 +11,12 @@
  */
 
 import React from 'react';
-import { DronePositionQuery } from '../../../hooks/useDronePositionQuery';
-import { useTableUIStore } from '../../../stores/tableStore';
-import { DronePosition } from '../../../types/dronePosition';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { createLogger } from '../../../configs/loggerConfig';
-import styles from '../../../styles/TableViewer.module.scss';
+import { DronePositionQuery } from '../../hooks/useDronePositionQuery';
+import { useTableUIStore } from '../../stores/tableStore';
+import { DronePosition } from '../../types/dronePosition';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { createLogger } from '../../configs/loggerConfig';
+import styles from '../../styles/TableViewer.module.scss';
 
 const logger = createLogger('DronePositionTableView');
 
