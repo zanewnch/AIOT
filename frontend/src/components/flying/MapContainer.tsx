@@ -158,20 +158,26 @@ const MapContainer: React.FC<MapContainerProps> = ({
       
       logger.info('Google Maps initialized successfully');
       
-      // 添加示例標記
-      if (window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
-        const marker = new window.google.maps.marker.AdvancedMarkerElement({
-          map: map,
-          position: { lat: 25.0330, lng: 121.5654 },
-          title: '無人機基地'
-        });
-      } else {
-        // 使用傳統標記作為後備
-        const marker = new window.google.maps.Marker({
-          position: { lat: 25.0330, lng: 121.5654 },
-          map: map,
-          title: '無人機基地'
-        });
+      // 添加示例標記 - 使用新的 AdvancedMarkerElement API
+      try {
+        if (window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+          const marker = new window.google.maps.marker.AdvancedMarkerElement({
+            map: map,
+            position: { lat: 25.0330, lng: 121.5654 },
+            title: '無人機基地'
+          });
+          logger.info('AdvancedMarkerElement 示例標記已添加');
+        } else {
+          // 使用傳統標記作為後備
+          const marker = new window.google.maps.Marker({
+            position: { lat: 25.0330, lng: 121.5654 },
+            map: map,
+            title: '無人機基地'
+          });
+          logger.info('傳統 Marker 示例標記已添加');
+        }
+      } catch (markerError) {
+        logger.warn('無法添加示例標記:', markerError);
       }
 
     } catch (err: any) {
@@ -219,7 +225,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
   }, [loadGoogleMapsAPI, initializeMap]);
 
   return (
-    <div className="col-span-1 lg:col-span-3 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden flex flex-col">
+    <>
       <div className="relative flex-1">
         <div
           ref={mapRef}
@@ -276,7 +282,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

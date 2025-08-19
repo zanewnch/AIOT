@@ -61,13 +61,11 @@ class GoogleMapsLoader {
    * 檢查 Google Maps API 是否已載入
    */
   isGoogleMapsLoaded(): boolean {
-    // 檢查全局 google 對象和完整的 maps 對象
-    // 確保所有必要的 API 組件都已載入
+    // 檢查全局 google 對象和基本的 maps 對象
+    // 確保基本的 API 組件已載入，不強制要求 AdvancedMarkerElement
     const hasGoogleObject = window.google && 
                            window.google.maps && 
-                           window.google.maps.Map && 
-                           window.google.maps.marker &&
-                           window.google.maps.marker.AdvancedMarkerElement;
+                           window.google.maps.Map;
     
     if (hasGoogleObject && !this.isLoaded) {
       // 如果全局對象存在但狀態未更新，同步狀態

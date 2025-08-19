@@ -134,9 +134,10 @@ export const useOptimisticCommand = () => {
         
         // 發送到後端 API
         const response = await apiClient.post('/drone/commands', {
-          command: command.type,
-          droneId: command.droneId || 'default',
+          command_type: command.type,
+          drone_id: 1, // 預設無人機 ID 為 1
           parameters: command.parameters || {},
+          issued_by: 1, // 預設發送者 ID 為 1（admin用戶）
           timestamp: new Date().toISOString()
         });
 

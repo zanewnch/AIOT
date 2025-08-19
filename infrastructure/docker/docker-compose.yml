@@ -597,12 +597,7 @@ services:
     environment:
       # 前端專用環境變數（不繼承微服務配置）
       NODE_ENV: development
-      # API 端點配置 - 前端連接到 Gateway Service
-      VITE_API_BASE_URL: http://localhost:8000/api
-      VITE_WS_URL: ws://localhost:8000/socket.io
-      VITE_GATEWAY_URL: http://localhost:8000
-      # 開發模式配置
-      CHOKIDAR_USEPOLLING: true  # 支援容器內 hot-reload
+      # 其他環境變數使用 .env 文件中的設定，避免衝突
     volumes:
       - ../../frontend:/app/fe
       - /app/fe/node_modules

@@ -10,6 +10,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import httpProxy from 'http-proxy';
 import { Server, IncomingMessage } from 'http';
 import { Socket } from 'net';
 import 'reflect-metadata';
@@ -40,6 +41,7 @@ export class GatewayApp {
     private logger = loggerConfig;
     private consulConfig!: ConsulConfig;
     private healthConfig!: HealthConfig;
+    private socketIoProxy: any; // 添加 node-http-proxy 實例
 
     constructor() {
         this.app = express();
@@ -49,8 +51,8 @@ export class GatewayApp {
         
         // 初始化應用程式
         this.initializeMiddleware();
+        this.initializeWebSocketProxying(); // 🔑 WebSocket 代理必須在其他路由之前
         this.initializeRoutes();
-        this.initializeWebSocketProxying(); // 嘗試將 WebSocket 代理放在路由之後
         this.initializeErrorHandling();
     }
 
@@ -116,13 +118,6 @@ export class GatewayApp {
             next();
         });
 
-        // 調試中間件 - 記錄所有請求
-        this.app.use((req: Request, res: Response, next: NextFunction) => {
-            if (req.originalUrl.includes('socket.io')) {
-                this.logger.info(`🔍 All requests debug: ${req.method} ${req.originalUrl} (path: ${req.path})`);
-            }
-            next();
-        });
 
     }
 
@@ -164,48 +159,91 @@ export class GatewayApp {
 
     /**
      * 初始化 WebSocket 代理
-     * @description 重新設計的 Socket.IO 代理，支援認證和完整的 Socket.IO 協議
+     * @description 使用 node-http-proxy 實現 Socket.IO 代理，專門支援 WebSocket
      */
     private initializeWebSocketProxying(): void {
         try {
-            this.logger.info('🔌 Initializing comprehensive WebSocket proxying...');
+            this.logger.info('🔌 Initializing node-http-proxy for Socket.IO...');
             
-            // 使用正確的 Socket.IO 代理配置 (包含 WebSocket 支援)
-            const socketIoProxy = createProxyMiddleware({
+            // 創建 node-http-proxy 實例，專門支援 WebSocket
+            this.socketIoProxy = httpProxy.createProxyServer({
                 target: 'http://aiot-drone-websocket-service:3004',
                 changeOrigin: true,
-                ws: true, // 🔑 關鍵！啟用 WebSocket 代理支援
-                secure: false,
-                logLevel: 'debug',
-                onProxyReq: (proxyReq, req, res) => {
-                    this.logger.info(`🔌 PROXY CALLED: ${req.method} ${req.url} -> ${proxyReq.path}`);
-                },
-                onProxyRes: (proxyRes, req, res) => {
-                    this.logger.info(`📤 PROXY RESPONSE: ${proxyRes.statusCode} for ${req.url}`);
-                },
-                onError: (err, req, res) => {
-                    this.logger.error('❌ PROXY ERROR:', {
-                        error: err.message,
-                        url: req.url,
-                        method: req.method
+                ws: true, // 🔑 啟用 WebSocket 支援
+                secure: false
+            });
+
+            // 監聽代理事件
+            this.socketIoProxy.on('proxyReq', (proxyReq, req, res) => {
+                this.logger.info(`🔌 HTTP Proxy: ${req.method} ${req.url}`);
+                
+                // 添加認證 headers
+                const authToken = (req as any).cookies?.auth_token || req.headers?.authorization;
+                if (authToken) {
+                    proxyReq.setHeader('X-Auth-Token', authToken);
+                    this.logger.debug('🔐 Added auth token to HTTP request');
+                }
+            });
+
+            this.socketIoProxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+                this.logger.info(`🔌 WebSocket Proxy: ${req.url}`);
+                
+                // 為 WebSocket 添加認證 headers
+                const authToken = req.headers?.cookie?.match(/auth_token=([^;]+)/)?.[1];
+                if (authToken) {
+                    proxyReq.setHeader('X-Auth-Token', authToken);
+                    this.logger.debug('🔐 Added auth token to WebSocket request');
+                }
+            });
+
+            this.socketIoProxy.on('error', (err, req, res) => {
+                this.logger.error('❌ HTTP Proxy Error:', {
+                    error: err.message,
+                    url: req.url,
+                    method: req.method
+                });
+                
+                // Check if res is an Express Response object before using Express methods
+                if (res && typeof res.status === 'function' && !res.headersSent) {
+                    res.status(502).json({
+                        error: 'Socket.IO proxy error',
+                        message: err.message
                     });
-                    
-                    if (res && !res.headersSent) {
-                        res.status(502).json({
-                            error: 'Proxy error',
+                } else if (res && typeof res.writeHead === 'function') {
+                    // Handle WebSocket errors - res is a ServerResponse object
+                    try {
+                        res.writeHead(502, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({
+                            error: 'Socket.IO proxy error',
                             message: err.message
-                        });
+                        }));
+                    } catch (writeError) {
+                        this.logger.error('❌ Failed to write error response:', writeError);
                     }
                 }
             });
 
-            // 直接註冊 Socket.IO 代理中間件
-            this.app.use('/socket.io', socketIoProxy);
+            // 代理 Socket.IO HTTP 請求 (GET/POST)
+            this.app.all('/socket.io/*', (req: Request, res: Response) => {
+                this.logger.info(`📡 Proxying Socket.IO HTTP request: ${req.method} ${req.url}`);
+                this.socketIoProxy.web(req, res);
+            });
             
-            this.logger.info('✅ Socket.IO proxy registered: /socket.io -> aiot-drone-websocket-service:3004');
+            // 代理 Socket.IO namespace 請求 (如 /drone)
+            this.app.all('/drone', (req: Request, res: Response) => {
+                this.logger.info(`📡 Proxying Socket.IO namespace request: ${req.method} ${req.url}`);
+                this.socketIoProxy.web(req, res);
+            });
+            
+            this.app.all('/drone/*', (req: Request, res: Response) => {
+                this.logger.info(`📡 Proxying Socket.IO namespace request: ${req.method} ${req.url}`);
+                this.socketIoProxy.web(req, res);
+            });
+            
+            this.logger.info('✅ node-http-proxy for Socket.IO initialized: /socket.io/* -> aiot-drone-websocket-service:3004');
             
         } catch (error) {
-            this.logger.error('❌ WebSocket proxying initialization failed:', error);
+            this.logger.error('❌ Socket.IO proxy initialization failed:', error);
             throw error;
         }
     }
@@ -281,19 +319,23 @@ export class GatewayApp {
      * @param server - HTTP 伺服器實例
      */
     public async setupWebSocketUpgrade(server: Server): Promise<void> {
-        // 🔑 關鍵！手動設置 WebSocket upgrade 事件處理
+        // 🔑 使用 node-http-proxy 處理 WebSocket 升級
         server.on('upgrade', (request, socket, head) => {
             this.logger.info(`🔄 WebSocket upgrade request: ${request.url}`);
             
-            // 檢查是否為 Socket.IO 請求
-            if (request.url?.startsWith('/socket.io')) {
-                this.logger.info('🎯 Handling Socket.IO WebSocket upgrade');
-                // 找到對應的代理中間件並處理升級
-                // 這會由 http-proxy-middleware 的 upgrade 方法處理
+            // 檢查是否為 Socket.IO WebSocket 請求
+            if (request.url?.startsWith('/socket.io') || request.url?.startsWith('/drone')) {
+                this.logger.info('🎯 Proxying Socket.IO WebSocket upgrade via node-http-proxy');
+                
+                // 使用 node-http-proxy 處理 WebSocket 升級
+                this.socketIoProxy.ws(request, socket, head);
+            } else {
+                this.logger.warn(`❌ Non-Socket.IO WebSocket upgrade rejected: ${request.url}`);
+                socket.destroy();
             }
         });
         
-        this.logger.info('✅ WebSocket upgrade handling configured for Socket.IO');
+        this.logger.info('✅ WebSocket upgrade handling configured with node-http-proxy');
     }
 }
 

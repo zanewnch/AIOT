@@ -18,7 +18,6 @@ import { DronePositionQuery } from "../hooks/useDronePositionQuery";
 import { DroneCommandQuery } from "../hooks/useDroneCommandQuery";
 import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
 import FlyingPageHeader from "../components/flying/FlyingPageHeader";
-import ConditionalMapContainer from "../components/flying/ConditionalMapContainer";
 import DroneStatusPanel from "../components/flying/DroneStatusPanel";
 import FlightControlPanel from "../components/flying/FlightControlPanel";
 
@@ -110,14 +109,51 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
         <div className="space-y-6">
           {/* 第一行：地圖 + 無人機狀態 */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* 🚀 智能條件載入地圖容器 - 占3/5寬度 */}
-            <ConditionalMapContainer
-              mapRef={mapRef}
-              isLoading={currentLogic.isLoading}
-              error={currentLogic.error}
-              isSimulateMode={isSimulateMode}
-              realModeLoading={realModeLoading}
-            />
+            {/* 地圖容器 - 完全照抄 MapPage 邏輯 */}
+            <div className="col-span-1 lg:col-span-3 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden">
+              <div className="relative">
+                <div
+                  ref={mapRef}
+                  className="w-full h-64 sm:h-96 lg:h-[500px]"
+                  style={{ minHeight: "300px" }}
+                />
+
+                {/* 載入覆蓋層 - 改善動畫 */}
+                {currentLogic.isLoading && (
+                  <div className="absolute inset-0 bg-gray-800/90 backdrop-blur-sm flex items-center justify-center">
+                    <div className="text-center text-gray-300">
+                      <div className="relative mb-4">
+                        <div className="animate-spin w-12 h-12 border-4 border-blue-800 border-t-blue-400 rounded-full mx-auto"></div>
+                        <div className="absolute inset-0 animate-pulse">
+                          <div className="w-8 h-8 bg-blue-400/20 rounded-full mx-auto mt-2"></div>
+                        </div>
+                      </div>
+                      <p className="text-lg font-semibold">
+                        {isSimulateMode
+                          ? "模擬地圖載入中..."
+                          : "Google Maps 載入中..."}
+                      </p>
+                      <p className="text-sm mt-2 text-gray-400">請稍候片刻</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 錯誤覆蓋層 - 改善設計 */}
+                {currentLogic.error && (
+                  <div className="absolute inset-0 bg-red-900/90 backdrop-blur-sm flex items-center justify-center">
+                    <div className="text-center text-red-300 bg-gray-800 p-6 rounded-xl shadow-lg max-w-md mx-4 border border-red-700">
+                      <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-700">
+                        <span className="text-2xl">⚠</span>
+                      </div>
+                      <p className="text-lg font-semibold mb-2">載入失敗</p>
+                      <p className="text-sm text-gray-400">
+                        {currentLogic.error}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* 無人機狀態面板 - 占2/5寬度 */}
             <DroneStatusPanel

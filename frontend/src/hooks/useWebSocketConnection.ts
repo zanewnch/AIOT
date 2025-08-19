@@ -393,6 +393,7 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
     try {
       // 連接到 /drone 命名空間（所有 drone 事件處理器都在此命名空間）
+      // 正確的 Socket.IO namespace 連接方式：base_url + /namespace
       const socketInstance = io(`${url}/drone`, {
         timeout,
         autoConnect: false,
