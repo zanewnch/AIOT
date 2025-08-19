@@ -34,7 +34,7 @@ export function getWebSocketConfig(): WebSocketConfig {
       // 開發環境允許本地端口，生產環境需要指定實際域名
       origin: process.env.NODE_ENV === 'production' 
         ? (process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com'])
-        : ['http://localhost:3000', 'http://localhost:5173'],
+        : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8000'],
       methods: ['GET', 'POST'],
       credentials: true
     },

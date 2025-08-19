@@ -14,7 +14,6 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNotificationStore } from '../stores/notificationStore';
 import { apiClient } from '../utils/RequestUtils';
 import { createLogger } from '../configs/loggerConfig';
 import type { User, UserUpdateRequest, UserRole, TableError } from '../types/table';
@@ -62,7 +61,6 @@ interface UserOperationRequest {
  */
 export const useOptimisticUser = () => {
   const queryClient = useQueryClient();
-  const { addSuccess, addError, addWarning } = useNotificationStore();
 
   // 樂觀更新狀態
   const [optimisticState, setOptimisticState] = useState<OptimisticUserState>({
@@ -195,7 +193,6 @@ export const useOptimisticUser = () => {
         update_permissions: '更新用戶權限',
       };
 
-      addSuccess(`${operationLabels[type]}成功`);
       
       logger.info('用戶操作成功完成', { 
         userId, 
@@ -235,7 +232,6 @@ export const useOptimisticUser = () => {
       const tableError = error as TableError;
       const errorMessage = tableError.message || 'Unknown error';
       
-      addError(`用戶操作失敗: ${errorMessage}`);
       
       logger.error('用戶操作失敗並已回滾', { 
         userId, 
@@ -262,7 +258,6 @@ export const useOptimisticUser = () => {
 
     // 如果是狀態更新，添加視覺反饋
     if (operationType === 'update_status') {
-      addWarning('正在更新用戶狀態...');
     }
 
     return userUpdateMutation.mutateAsync({
@@ -271,7 +266,7 @@ export const useOptimisticUser = () => {
       data: updateData,
       optimisticUpdate,
     });
-  }, [userUpdateMutation, addWarning]);
+  }, [userUpdateMutation]);
 
   /**
    * 分配用戶角色
@@ -287,7 +282,6 @@ export const useOptimisticUser = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    addWarning('正在分配用戶角色...');
 
     return userUpdateMutation.mutateAsync({
       userId,
@@ -295,7 +289,7 @@ export const useOptimisticUser = () => {
       data: { roleId },
       optimisticUpdate,
     });
-  }, [userUpdateMutation, addWarning]);
+  }, [userUpdateMutation]);
 
   /**
    * 移除用戶角色
@@ -308,7 +302,6 @@ export const useOptimisticUser = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    addWarning('正在移除用戶角色...');
 
     return userUpdateMutation.mutateAsync({
       userId,
@@ -316,7 +309,7 @@ export const useOptimisticUser = () => {
       data: { roleId },
       optimisticUpdate,
     });
-  }, [userUpdateMutation, addWarning]);
+  }, [userUpdateMutation]);
 
   /**
    * 檢查用戶是否正在更新
@@ -342,7 +335,6 @@ export const useOptimisticUser = () => {
       operationType?: UserOperationType;
     }>
   ) => {
-    addWarning(`正在批量更新 ${operations.length} 個用戶...`);
 
     const promises = operations.map(({ userId, updateData, operationType }) =>
       updateUser(userId, updateData, operationType)
@@ -350,12 +342,11 @@ export const useOptimisticUser = () => {
 
     try {
       await Promise.all(promises);
-      addSuccess(`成功批量更新 ${operations.length} 個用戶`);
     } catch (error) {
       logger.error('批量用戶更新失敗', { error, operationsCount: operations.length });
       // 個別的錯誤處理已在 mutation 的 onError 中處理
     }
-  }, [updateUser, addWarning, addSuccess]);
+  }, [updateUser]);
 
   return {
     // 主要操作函數

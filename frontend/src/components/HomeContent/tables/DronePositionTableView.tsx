@@ -13,7 +13,6 @@
 import React from 'react';
 import { DronePositionQuery } from '../../../hooks/useDronePositionQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
-import { useNotificationStore } from '../../../stores/notificationStore';
 import { DronePosition } from '../../../types/dronePosition';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
@@ -50,7 +49,6 @@ export const DronePositionTableView: React.FC = () => {
   } = useTableUIStore();
 
   // Notification store
-  const { addSuccess, addError } = useNotificationStore();
 
   /**
    * 處理無人機位置數據編輯操作
@@ -73,7 +71,6 @@ export const DronePositionTableView: React.FC = () => {
     // 基本數據驗證
     const item = editModal.editingItem as DronePosition;
     if (!item.id) {
-      addError('缺少必要的 ID 欄位');
       return;
     }
 
@@ -95,12 +92,10 @@ export const DronePositionTableView: React.FC = () => {
       });
 
       logger.info('無人機位置數據更新成功', { id: item.id });
-      addSuccess('無人機位置數據更新成功');
       closeEditModal();
       refetch();
     } catch (error) {
       logger.error('無人機位置數據更新失敗', { id: item.id, error: (error as Error).message });
-      addError('無人機位置數據更新失敗: ' + (error as Error).message);
     }
   };
 

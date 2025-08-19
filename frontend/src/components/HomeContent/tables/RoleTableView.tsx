@@ -14,7 +14,6 @@
 import React from 'react';
 import { RoleQuery } from '../../../hooks/useRoleQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
-import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
@@ -44,7 +43,6 @@ export const RoleTableView: React.FC = () => {
   } = useTableUIStore();
   
   // Notification store
-  const { addSuccess, addError } = useNotificationStore();
 
   /**
    * 處理角色編輯操作
@@ -72,12 +70,10 @@ export const RoleTableView: React.FC = () => {
       });
       
       logger.info('角色保存成功', { roleId, roleName, operation: 'save_success' });
-      addSuccess('角色更新成功');
       closeEditModal();
       refetch();
     } catch (error) {
       logger.error('角色保存失敗', { roleId, roleName, error: (error as Error).message, operation: 'save_error' });
-      addError('角色更新失敗: ' + (error as Error).message);
     }
   };
 

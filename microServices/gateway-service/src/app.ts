@@ -49,8 +49,8 @@ export class GatewayApp {
         
         // 初始化應用程式
         this.initializeMiddleware();
-        this.initializeWebSocketProxying(); // WebSocket 代理必須在路由之前
         this.initializeRoutes();
+        this.initializeWebSocketProxying(); // 嘗試將 WebSocket 代理放在路由之後
         this.initializeErrorHandling();
     }
 
@@ -116,6 +116,14 @@ export class GatewayApp {
             next();
         });
 
+        // 調試中間件 - 記錄所有請求
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            if (req.originalUrl.includes('socket.io')) {
+                this.logger.info(`🔍 All requests debug: ${req.method} ${req.originalUrl} (path: ${req.path})`);
+            }
+            next();
+        });
+
     }
 
     /**
@@ -132,14 +140,23 @@ export class GatewayApp {
         this.app.use('/api', apiRoutes);
 
         // 404 處理
-        this.app.use('*', (req: Request, res: Response) => {
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            
             this.logger.warn(`🚫 Route not found: ${req.method} ${req.originalUrl}`);
             res.status(404).json({
                 status: 404,
-                message: 'Route not found',
-                path: req.originalUrl,
+                message: '找不到請求的資源',
+                error: 'ROUTE_NOT_FOUND',
+                path: req.path,
                 method: req.method,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                availableEndpoints: {
+                    health: '/health',
+                    info: '/info',
+                    websocketStatus: '/api/websocket/status',
+                    websocketInfo: '/api/websocket/info',
+                    socketConnection: '/socket.io/'
+                }
             });
         });
 
@@ -147,34 +164,49 @@ export class GatewayApp {
 
     /**
      * 初始化 WebSocket 代理
-     * @description 設置 WebSocket 連接的代理配置
+     * @description 重新設計的 Socket.IO 代理，支援認證和完整的 Socket.IO 協議
      */
     private initializeWebSocketProxying(): void {
         try {
-            this.logger.info('🔌 Initializing WebSocket proxying...');
+            this.logger.info('🔌 Initializing comprehensive WebSocket proxying...');
             
-            // 直接創建 Socket.io 代理到 drone-websocket-service
+            // 使用正確的 Socket.IO 代理配置 (包含 WebSocket 支援)
             const socketIoProxy = createProxyMiddleware({
                 target: 'http://aiot-drone-websocket-service:3004',
                 changeOrigin: true,
-                ws: true, // 支援 WebSocket 升級
-                onError: (err: any, req: any, res: any) => {
-                    this.logger.error('WebSocket proxy error:', err.message);
+                ws: true, // 🔑 關鍵！啟用 WebSocket 代理支援
+                secure: false,
+                logLevel: 'debug',
+                onProxyReq: (proxyReq, req, res) => {
+                    this.logger.info(`🔌 PROXY CALLED: ${req.method} ${req.url} -> ${proxyReq.path}`);
                 },
-                onProxyReq: (proxyReq: any, req: any, res: any) => {
-                    this.logger.info('WebSocket proxy request:', { 
-                        originalUrl: req.originalUrl,
-                        url: req.url, 
-                        targetPath: proxyReq.path 
+                onProxyRes: (proxyRes, req, res) => {
+                    this.logger.info(`📤 PROXY RESPONSE: ${proxyRes.statusCode} for ${req.url}`);
+                },
+                onError: (err, req, res) => {
+                    this.logger.error('❌ PROXY ERROR:', {
+                        error: err.message,
+                        url: req.url,
+                        method: req.method
                     });
+                    
+                    if (res && !res.headersSent) {
+                        res.status(502).json({
+                            error: 'Proxy error',
+                            message: err.message
+                        });
+                    }
                 }
-            } as any);
-            
+            });
+
+            // 直接註冊 Socket.IO 代理中間件
             this.app.use('/socket.io', socketIoProxy);
-            this.logger.info('✅ Socket.io proxy registered at /socket.io -> aiot-drone-websocket-service:3004');
+            
+            this.logger.info('✅ Socket.IO proxy registered: /socket.io -> aiot-drone-websocket-service:3004');
             
         } catch (error) {
             this.logger.error('❌ WebSocket proxying initialization failed:', error);
+            throw error;
         }
     }
 
@@ -249,85 +281,19 @@ export class GatewayApp {
      * @param server - HTTP 伺服器實例
      */
     public async setupWebSocketUpgrade(server: Server): Promise<void> {
-        try {
-            // 監聽 WebSocket 升級事件
-            server.on('upgrade', async (request: any, socket: any, head: any) => {
-                try {
-                    this.logger.info('🔌 WebSocket upgrade request received', {
-                        url: request.url,
-                        headers: request.headers
-                    });
-                    
-                    // 檢查是否為 Socket.io 連接
-                    if (request.url?.startsWith('/socket.io/')) {
-                        // 發現 drone-websocket-service
-                        const serviceInstances = await this.consulConfig.getHealthyServices('drone-websocket-service');
-                        
-                        if (!serviceInstances || serviceInstances.length === 0) {
-                            this.logger.error('❌ drone-websocket-service not found for WebSocket upgrade');
-                            socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n');
-                            socket.destroy();
-                            return;
-                        }
-                        
-                        // 選擇目標服務實例
-                        const targetInstance = serviceInstances[0];
-                        const targetHost = targetInstance.address;
-                        const targetPort = targetInstance.port;
-                        
-                        this.logger.info(`🔌 Proxying WebSocket to drone-websocket-service at ${targetHost}:${targetPort}`);
-                        
-                        // 創建簡化的 WebSocket 代理
-                        const proxy = createProxyMiddleware({
-                            target: `http://${targetHost}:${targetPort}`,
-                            changeOrigin: true,
-                            ws: true
-                        } as any);
-                        
-                        this.logger.debug('🔌 Creating WebSocket proxy to', {
-                            target: `${targetHost}:${targetPort}`,
-                            url: request.url
-                        });
-                        
-                        // 處理 WebSocket 升級
-                        try {
-                            (proxy as any).upgrade(request, socket, head);
-                        } catch (proxyError) {
-                            this.logger.error('❌ WebSocket proxy upgrade failed:', {
-                                error: proxyError,
-                                target: `${targetHost}:${targetPort}`,
-                                url: request.url
-                            });
-                            
-                            if (socket && !socket.destroyed) {
-                                socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
-                                socket.destroy();
-                            }
-                        }
-                        
-                    } else {
-                        // 不支援的 WebSocket 路徑
-                        this.logger.warn(`⚠️ Unsupported WebSocket path: ${request.url}`);
-                        socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-                        socket.destroy();
-                    }
-                    
-                } catch (error) {
-                    this.logger.error('❌ WebSocket upgrade handling error:', error);
-                    
-                    if (socket && !socket.destroyed) {
-                        socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
-                        socket.destroy();
-                    }
-                }
-            });
+        // 🔑 關鍵！手動設置 WebSocket upgrade 事件處理
+        server.on('upgrade', (request, socket, head) => {
+            this.logger.info(`🔄 WebSocket upgrade request: ${request.url}`);
             
-            this.logger.info('✅ WebSocket upgrade handling configured successfully');
-            
-        } catch (error) {
-            this.logger.error('❌ Failed to setup WebSocket upgrade handling:', error);
-            throw error;
-        }
+            // 檢查是否為 Socket.IO 請求
+            if (request.url?.startsWith('/socket.io')) {
+                this.logger.info('🎯 Handling Socket.IO WebSocket upgrade');
+                // 找到對應的代理中間件並處理升級
+                // 這會由 http-proxy-middleware 的 upgrade 方法處理
+            }
+        });
+        
+        this.logger.info('✅ WebSocket upgrade handling configured for Socket.IO');
     }
 }
 

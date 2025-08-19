@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {Express, Router} from 'express';
+import {Express, Router, Application} from 'express';
 import {ArchiveTaskRoutes} from './archiveTaskRoutes.js';
 import {DronePositionRoutes} from './dronePositionRoutes.js';
 import {DroneStatusRoutes} from './droneStatusRoutes.js';
@@ -45,7 +45,7 @@ export class RouteManager {
      *
      * @param app Express 應用程式實例
      */
-    registerAllRoutes(app: Express): void {
+    registerAllRoutes(app: Application): void {
         console.log('🛣️  Registering all API routes...');
 
         try {

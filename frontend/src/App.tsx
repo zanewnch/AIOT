@@ -15,7 +15,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"; // 引入 React
 import { Suspense, lazy } from "react"; // 引入 React 懶加載相關組件
 import { useAuth } from "./stores"; // 引入認證 Hook
 import { useInitializeAuth } from "./hooks/useAuthQuery"; // 引入認證初始化 Hook
-import { NotificationContainer } from "./components/Notification/NotificationContainer"; // 引入通知容器組件
 import ProtectedRoute from "./components/ProtectedRoute"; // 引入受保護路由組件
 
 // 使用動態導入來實現代碼分割和懶加載
@@ -65,7 +64,6 @@ function App() {
    * - Routes: 定義路由規則
    * - 公開路由：不需要認證即可訪問
    * - 受保護路由：需要認證才能訪問
-   * - NotificationContainer: 全域通知系統
    */
 
   // 如果正在初始化認證狀態，顯示載入畫面
@@ -149,7 +147,6 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      <NotificationContainer /> {/* 全域通知容器，顯示系統通知訊息 */}
     </BrowserRouter>
   );
 }

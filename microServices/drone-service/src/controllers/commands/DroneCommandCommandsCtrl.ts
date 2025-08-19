@@ -128,8 +128,8 @@ export class DroneCommandCommands {
      *   "status": 201,
      *   "message": "批量無人機指令創建成功",
      *   "data": {
-     *     "successful": [/* 成功的指令 */],
-     *     "failed": [/* 失敗的指令 */],
+     *     "successful": [],  // 成功的指令
+     *     "failed": [],      // 失敗的指令
      *     "successCount": 2,
      *     "failCount": 0
      *   }
@@ -194,7 +194,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 更新請求範例
-     * PUT /api/drone-commands/data/123
+     * // PUT /api/drone-commands/data/123
      * {
      *   "parameters": { "altitude": 15 },
      *   "notes": "更新飛行高度"
@@ -204,7 +204,7 @@ export class DroneCommandCommands {
      * {
      *   "status": 200,
      *   "message": "無人機指令更新成功",
-     *   "data": { /* 更新後的指令數據 */ }
+     *   "data": {}  // 更新後的指令數據
      * }
      * ```
      * 
@@ -251,7 +251,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 刪除請求範例
-     * DELETE /api/drone-commands/data/123
+     * // DELETE /api/drone-commands/data/123
      * 
      * // 成功回應
      * {
@@ -1019,7 +1019,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 執行請求範例
-     * PUT /api/drone-commands/123/execute
+     * // PUT /api/drone-commands/123/execute
      * 
      * // 成功回應
      * {
@@ -1071,7 +1071,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 完成請求範例
-     * PUT /api/drone-commands/123/complete
+     * // PUT /api/drone-commands/123/complete
      * 
      * // 成功回應
      * {
@@ -1123,7 +1123,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 失敗標記請求範例
-     * PUT /api/drone-commands/123/fail
+     * // PUT /api/drone-commands/123/fail
      * {
      *   "reason": "無人機電池不足，無法完成指令"
      * }
@@ -1179,7 +1179,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 取消請求範例
-     * PUT /api/drone-commands/123/cancel
+     * // PUT /api/drone-commands/123/cancel
      * {
      *   "reason": "使用者手動取消任務"
      * }
@@ -1312,7 +1312,7 @@ export class DroneCommandCommands {
      * @example
      * ```typescript
      * // 重試請求範例
-     * POST /api/drone-commands/123/retry
+     * // POST /api/drone-commands/123/retry
      * {
      *   "issuedBy": 2
      * }

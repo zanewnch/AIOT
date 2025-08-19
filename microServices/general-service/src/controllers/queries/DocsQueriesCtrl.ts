@@ -46,7 +46,7 @@ export class DocsController {
     private readonly externalServices = [
         { name: 'MySQL', url: 'mysql://aiot-mysql:3306', description: '主要資料庫' },
         { name: 'Redis', url: 'redis://aiot-redis:6379', description: '快取服務' },
-        { name: 'RabbitMQ', url: 'amqp://aiot-rabbitmq:5672', description: '訊息佇列' },
+        // { name: 'RabbitMQ', url: 'amqp://aiot-rabbitmq:5672', description: '訊息佇列' }, // 已移除
         { name: 'Kong', url: 'http://aiot-kong:8000', description: 'API 閘道' }
     ];
 
@@ -108,7 +108,7 @@ export class DocsController {
                     'Client → Kong Gateway → Microservices',
                     'Microservices ↔ Redis (Cache)',
                     'Microservices ↔ MySQL (Persistence)',
-                    'Microservices → RabbitMQ (Async Processing)'
+                    // 'Microservices → RabbitMQ (Async Processing)' // 已移除
                 ]
             };
 

@@ -15,7 +15,6 @@ import React from 'react';
 import { UserQuery } from '../../../hooks/useUserQuery';
 import { useOptimisticUser, useQuickUserActions } from '../../../hooks/useOptimisticUser';
 import { useTableUIStore } from '../../../stores/tableStore';
-import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
@@ -47,8 +46,6 @@ export const UserTableView: React.FC = () => {
     toggleSortOrder 
   } = useTableUIStore();
   
-  // Notification store
-  const { addSuccess, addError } = useNotificationStore();
 
   /**
    * 處理用戶編輯操作

@@ -9,7 +9,6 @@
 
 // Store exports
 export { useAuthStore, useAuth, useAuthActions } from './authStore';
-export { useNotificationStore } from './notificationStore';
 export { useTableUIStore, useTableUI } from './tableStore';
 export { useThemeStore } from './themeStore';
 

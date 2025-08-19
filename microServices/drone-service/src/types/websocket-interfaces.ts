@@ -25,6 +25,9 @@ export interface IWebSocketService {
     initialize(): Promise<void>;
     broadcast(event: string, data: any): void;
     emitToRoom(room: string, event: string, data: any): void;
+    setupMiddleware(middleware: any): void;
+    setupEventHandlers(handler: (socket: any, namespace: string) => void): void;
+    shutdown(): Promise<void>;
 }
 
 /**
@@ -32,4 +35,5 @@ export interface IWebSocketService {
  */
 export interface IWebSocketAuthMiddleware {
     authenticate(socket: Socket, next: (err?: Error) => void): Promise<void>;
+    createMiddleware(): any;
 }

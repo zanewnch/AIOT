@@ -14,7 +14,6 @@
 import React from 'react';
 import { PermissionQuery } from '../../../hooks/usePermissionQuery';
 import { useTableUIStore } from '../../../stores/tableStore';
-import { useNotificationStore } from '../../../stores/notificationStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../../styles/TableViewer.module.scss';
@@ -55,7 +54,6 @@ export const PermissionTableView: React.FC = () => {
   } = useTableUIStore();
 
   // Notification store
-  const { addSuccess, addError } = useNotificationStore();
 
   /**
    * 處理權限編輯操作
@@ -82,7 +80,6 @@ export const PermissionTableView: React.FC = () => {
       });
 
       logger.info('權限更新成功', { permissionId: editModal.editingItem.id });
-      addSuccess('權限更新成功');
       closeEditModal();
       refetch();
     } catch (error) {
@@ -90,7 +87,6 @@ export const PermissionTableView: React.FC = () => {
         permissionId: editModal.editingItem.id,
         error: (error as Error).message
       });
-      addError('權限更新失敗: ' + (error as Error).message);
     }
   };
 

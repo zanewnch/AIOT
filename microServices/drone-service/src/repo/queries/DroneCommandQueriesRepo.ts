@@ -25,4 +25,11 @@ export class DroneCommandQueriesRepository {
   findById = async (id: number): Promise<DroneCommandModel | null> => {
     return await DroneCommandModel.findByPk(id);
   }
+
+  findLatest = async (limit = 20): Promise<DroneCommandModel[]> => {
+    return await DroneCommandModel.findAll({
+      order: [['createdAt', 'DESC']],
+      limit
+    });
+  }
 }

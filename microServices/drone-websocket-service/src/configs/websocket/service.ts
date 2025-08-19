@@ -98,11 +98,49 @@ export class IntegratedWebSocketService {
             next();
         });
 
-        // 認證中間件 (簡化版，實際環境可能需要更複雜的認證)
+        // 認證中間件 - 處理來自 Gateway 的認證資訊
         this.io.use((socket: Socket, next) => {
-            // 這裡可以添加認證邏輯
-            // 目前簡化處理，允許所有連線
-            next();
+            try {
+                // 從 handshake 中獲取認證資訊
+                const authToken = socket.handshake.headers['x-auth-token'] ||
+                                socket.handshake.auth?.token ||
+                                socket.handshake.query?.token;
+                
+                const userInfo = socket.handshake.headers['x-user-info'];
+                
+                if (authToken) {
+                    logger.debug('WebSocket認證資訊已接收', { 
+                        socketId: socket.id,
+                        hasToken: !!authToken,
+                        hasUserInfo: !!userInfo
+                    });
+                    
+                    // 將認證資訊存儲到 socket 中供後續使用
+                    (socket as any).authToken = authToken;
+                    
+                    if (userInfo) {
+                        try {
+                            (socket as any).user = JSON.parse(userInfo as string);
+                        } catch (e) {
+                            logger.warn('無法解析用戶資訊', { userInfo });
+                        }
+                    }
+                }
+                
+                // 允許連接（實際環境中可以添加 JWT 驗證邏輯）
+                logger.info('WebSocket 認證檢查完成', {
+                    socketId: socket.id,
+                    authenticated: !!authToken
+                });
+                
+                next();
+            } catch (error) {
+                logger.error('WebSocket 認證失敗', { 
+                    error: error instanceof Error ? error.message : 'Unknown error',
+                    socketId: socket.id
+                });
+                next(new Error('認證失敗'));
+            }
         });
     }
 
@@ -110,6 +148,9 @@ export class IntegratedWebSocketService {
      * 設置事件處理器
      */
     private setupEventHandlers(): void {
+        // 設置根命名空間
+        this.setupRootNamespace();
+        
         // 設置狀態相關的命名空間
         this.setupStatusNamespace();
         
@@ -121,6 +162,33 @@ export class IntegratedWebSocketService {
         
         // 設置管理命名空間 (預留)
         this.setupAdminNamespace();
+    }
+
+    /**
+     * 設置根命名空間事件處理
+     */
+    private setupRootNamespace(): void {
+        // 根命名空間 - 用於默認連接
+        this.io.on('connection', (socket: Socket) => {
+            logger.info('Client connected to root namespace', { socketId: socket.id });
+            
+            this.handleConnection(socket, 'root');
+            
+            // 提供基本的連接確認
+            socket.emit('connection_established', {
+                socketId: socket.id,
+                namespace: '/',
+                timestamp: new Date().toISOString(),
+                message: 'Connected to AIOT WebSocket service'
+            });
+            
+            // 處理斷線
+            socket.on('disconnect', () => {
+                this.handleDisconnection(socket, 'root');
+            });
+        });
+        
+        logger.info('Root namespace event handlers configured');
     }
 
     /**

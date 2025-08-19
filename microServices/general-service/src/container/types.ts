@@ -318,10 +318,10 @@ export const TYPES = {
    */
   RedisConnection: Symbol.for('RedisConnection'),
 
-  /**
-   * RabbitMQ 管理器類型
-   */
-  RabbitMQManager: Symbol.for('RabbitMQManager'),
+  // /**
+  //  * RabbitMQ 管理器類型
+  //  */
+  // RabbitMQManager: Symbol.for('RabbitMQManager'), // 已移除
 
   // ===== Commands Controllers =====
   /**

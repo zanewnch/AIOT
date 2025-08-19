@@ -15,7 +15,6 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNotificationStore } from '../stores/notificationStore';
 import { apiClient } from '../utils/RequestUtils';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
@@ -105,7 +104,6 @@ interface RBACOperationRequest {
  */
 export const useOptimisticRBAC = () => {
   const queryClient = useQueryClient();
-  const { addSuccess, addError, addWarning } = useNotificationStore();
 
   // 樂觀更新狀態
   const [optimisticState, setOptimisticState] = useState<OptimisticRBACState>({
@@ -272,7 +270,6 @@ export const useOptimisticRBAC = () => {
         remove_role_from_user: '移除用戶角色',
       };
 
-      addSuccess(`${operationLabels[type]}成功`);
       
       logger.info('RBAC 操作成功完成', { 
         type, 
@@ -315,7 +312,6 @@ export const useOptimisticRBAC = () => {
       const tableError = error as TableError;
       const errorMessage = tableError.message || 'Unknown error';
       
-      addError(`RBAC 操作失敗: ${errorMessage}`);
       
       logger.error('RBAC 操作失敗並已回滾', { 
         type, 
@@ -411,14 +407,13 @@ export const useOptimisticRBAC = () => {
     roleId: number,
     permissionId: number
   ) => {
-    addWarning('正在分配權限給角色...');
 
     return rbacMutation.mutateAsync({
       type: 'assign_permission_to_role',
       entityId: roleId,
       data: { permissionId },
     });
-  }, [rbacMutation, addWarning]);
+  }, [rbacMutation]);
 
   /**
    * 檢查角色是否正在更新

@@ -25,7 +25,7 @@ import { redisConfig } from './configs/redisConfig.js'; // Redis 連線配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
 import { container, ContainerUtils } from './container/container.js';
-import { TYPES } from './container/types.js';
+import { TYPES, DroneEventType } from './container/types.js';
 // Consul 服務註冊
 import { ConsulConfig } from './configs/consulConfig.js';
 import type {
@@ -303,10 +303,11 @@ export class App {
                 throw new Error('Drone event handler factory not initialized from IoC container');
             }
 
-            // 創建事件設置器並設定處理邏輯
-            const eventSetup = new DroneEventSetup(this.droneEventHandlerFactory);
+            // TODO: 創建事件設置器並設定處理邏輯
+            // const eventSetup = new DroneEventSetup(this.droneEventHandlerFactory);
             this.webSocketService.setupEventHandlers((socket: any, namespace: string) => {
-                eventSetup.setupSocketHandlers(socket, namespace);
+                // TODO: 實現事件處理邏輯
+                console.log('Socket connected:', socket.id, 'namespace:', namespace);
             });
 
             console.log('✅ WebSocket services initialized via IoC container');
@@ -561,12 +562,13 @@ export class App {
 
     /**
      * 獲取無人機狀態服務實例（透過 IoC 容器）
+     * TODO: 需要定義 IDroneStatusService 介面
      *
      * @public
      * @method getDroneStatusService
-     * @returns {IDroneStatusService} 無人機狀態服務實例
+     * @returns {any} 無人機狀態服務實例
      */
-    getDroneStatusService(): IDroneStatusService {
-        return ContainerUtils.get<IDroneStatusService>(TYPES.DroneStatusService);
-    }
+    // getDroneStatusService(): any {
+    //     return ContainerUtils.get<any>(TYPES.DroneStatusService);
+    // }
 }

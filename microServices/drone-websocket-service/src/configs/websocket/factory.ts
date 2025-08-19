@@ -54,7 +54,20 @@ export function setupSocketIONamespaces(io: SocketIOServer): void {
   // 無人機命名空間 - 用於無人機實時數據傳輸
   const droneNamespace = io.of(WEBSOCKET_NAMESPACES.DRONE);
 
+  // 根命名空間 - 用於默認連接（重定向到 /drone）
+  io.on('connection', (socket) => {
+    console.log('Client connected to root namespace:', socket.id);
+    // 可以在這裡重定向或提供基本功能
+    socket.emit('connection_established', {
+      socketId: socket.id,
+      namespace: '/',
+      timestamp: new Date().toISOString(),
+      message: 'Connected to root namespace, consider using /drone for drone-specific features'
+    });
+  });
+
   console.log('✅ WebSocket namespaces configured:', {
+    root: '/',
     drone: WEBSOCKET_NAMESPACES.DRONE
   });
 }

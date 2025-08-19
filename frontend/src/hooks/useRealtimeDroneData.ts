@@ -16,7 +16,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useWebSocketConnection, WEBSOCKET_EVENTS } from './useWebSocketConnection';
-import { useNotificationStore } from '../stores/notificationStore';
 import { createLogger } from '../configs/loggerConfig';
 
 const logger = createLogger('useRealtimeDroneData');
@@ -154,8 +153,6 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
   // React Query 客戶端
   const queryClient = useQueryClient();
   
-  // 通知服務
-  const { addInfo, addError } = useNotificationStore();
 
   // 狀態管理
   const [realtimePositions, setRealtimePositions] = useState<Map<string, DronePosition>>(new Map());
@@ -315,11 +312,10 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
     if (success) {
       logger.info('無人機位置訂閱請求已發送', { droneIds: idsToSubscribe });
-      addInfo(`已訂閱 ${idsToSubscribe.length} 架無人機位置更新`);
     }
 
     return success;
-  }, [isAuthenticated, subscribeAll, droneIds, emit, addInfo]);
+  }, [isAuthenticated, subscribeAll, droneIds, emit]);
 
   /**
    * 訂閱無人機狀態更新
@@ -348,11 +344,10 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
     if (success) {
       logger.info('無人機狀態訂閱請求已發送', { droneIds: idsToSubscribe });
-      addInfo(`已訂閱 ${idsToSubscribe.length} 架無人機狀態更新`);
     }
 
     return success;
-  }, [isAuthenticated, subscribeAll, droneIds, emit, addInfo]);
+  }, [isAuthenticated, subscribeAll, droneIds, emit]);
 
   /**
    * 取消位置訂閱
@@ -362,8 +357,7 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
   const unsubscribeFromPositions = useCallback(() => {
     emit(WEBSOCKET_EVENTS.DRONE_POSITION_UNSUBSCRIBE, {});
     logger.info('已取消無人機位置訂閱');
-    addInfo('已取消位置更新訂閱');
-  }, [emit, addInfo]);
+  }, [emit]);
 
   /**
    * 取消狀態訂閱
@@ -373,8 +367,7 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
   const unsubscribeFromStatuses = useCallback(() => {
     emit(WEBSOCKET_EVENTS.DRONE_STATUS_UNSUBSCRIBE, {});
     logger.info('已取消無人機狀態訂閱');
-    addInfo('已取消狀態更新訂閱');
-  }, [emit, addInfo]);
+  }, [emit]);
 
   /**
    * 發送無人機命令
@@ -394,7 +387,6 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
    */
   const sendDroneCommand = useCallback((droneId: string, command: any) => {
     if (!isAuthenticated) {
-      addError('未認證，無法發送命令');
       return false;
     }
 
@@ -408,11 +400,10 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
     
     if (success) {
       logger.info('無人機命令已發送', commandData);
-      addInfo(`命令已發送給無人機 ${droneId}`);
     }
 
     return success;
-  }, [isAuthenticated, emit, addInfo, addError]);
+  }, [isAuthenticated, emit]);
 
   /**
    * 設置 WebSocket 事件監聽器

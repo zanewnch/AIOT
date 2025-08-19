@@ -15,7 +15,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useNotificationStore } from '../stores/notificationStore';
 import { createLogger } from '../configs/loggerConfig';
 
 const logger = createLogger('useWebSocketConnection');
@@ -145,7 +144,7 @@ interface ConnectionStats {
  */
 export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
   const {
-    url = import.meta.env.VITE_WS_URL || 'ws://localhost:3004',
+    url = import.meta.env.VITE_WS_URL || 'ws://localhost:8000', // 通過 Gateway 連接
     autoConnect = true,
     autoReconnect = true,
     reconnectDelay = 3000,
@@ -177,7 +176,6 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
   const latencyHistoryRef = useRef<number[]>([]);
   
   // 通知服務
-  const { addError, addSuccess, addWarning } = useNotificationStore();
 
   /**
    * 清理定時器
@@ -231,7 +229,7 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
       if (socketRef.current?.connected) {
         const startTime = Date.now();
         
-        socketRef.current.emit('ping', startTime, (response: number) => {
+        socketRef.current.emit('ping', startTime, (_response: number) => {
           const latency = Date.now() - startTime;
           
           // 更新延遲歷史
@@ -275,7 +273,6 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
       }
 
       startHeartbeat();
-      addSuccess('即時連接已建立');
     });
 
     // 連接斷開
@@ -291,7 +288,6 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
       if (reason === 'io server disconnect') {
         // 服務器主動斷開，不自動重連
-        addWarning('服務器已斷開連接');
       } else if (autoReconnect) {
         // 網路問題等，嘗試重連
         attemptReconnect();
@@ -303,7 +299,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
       logger.error('WebSocket 連接錯誤', { error: err.message });
       setStatus('failed');
       setError(err.message);
-      addError(`連接失敗: ${err.message}`);
+      // 註釋掉懸浮通知，避免過多的錯誤提示
+      // addError(`連接失敗: ${err.message}`);
       
       if (autoReconnect) {
         attemptReconnect();
@@ -315,7 +312,6 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
       logger.info('WebSocket 認證成功');
       setStatus('authenticated');
       setIsAuthenticated(true);
-      addSuccess('即時更新認證成功');
     });
 
     // 認證失敗
@@ -323,7 +319,6 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
       logger.error('WebSocket 認證失敗', data);
       setIsAuthenticated(false);
       setError(data?.message || '認證失敗');
-      addError(`認證失敗: ${data?.message || '未知錯誤'}`);
     });
 
     // 錯誤處理
@@ -335,21 +330,14 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
     // 驗證錯誤
     socketInstance.on(WEBSOCKET_EVENTS.VALIDATION_ERROR, (data) => {
       logger.warn('WebSocket 驗證錯誤', data);
-      addWarning(`數據驗證錯誤: ${data?.message}`);
     });
 
     // 統計消息接收
-    const originalOnAny = socketInstance.onAny;
-    socketInstance.onAny = (event, ...args) => {
-      updateStats(prev => ({
-        ...prev,
-        messagesReceived: prev.messagesReceived + 1,
-      }));
-      
-      if (originalOnAny) {
-        originalOnAny.call(socketInstance, event, ...args);
-      }
-    };
+    socketInstance.onAny((event, ...args) => {
+      updateStats({
+        messagesReceived: stats.messagesReceived + 1,
+      });
+    });
     
   }, [
     authToken,
@@ -357,9 +345,6 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
     updateStats,
     startHeartbeat,
     clearTimers,
-    addSuccess,
-    addWarning,
-    addError,
   ]);
 
   /**
@@ -371,15 +356,15 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
     if (stats.reconnectAttempts >= maxReconnectAttempts) {
       logger.error('WebSocket 重連次數已達上限', { attempts: stats.reconnectAttempts });
       setStatus('failed');
-      addError('連接失敗，已停止重連嘗試');
+      // 註釋掉懸浮通知，避免過多的錯誤提示
+      // addError('連接失敗，已停止重連嘗試');
       return;
     }
 
     setStatus('reconnecting');
-    updateStats(prev => ({
-      ...prev,
-      reconnectAttempts: prev.reconnectAttempts + 1,
-    }));
+    updateStats({
+      reconnectAttempts: stats.reconnectAttempts + 1,
+    });
 
     logger.info('嘗試重連 WebSocket', { 
       attempt: stats.reconnectAttempts + 1,
@@ -389,7 +374,7 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
     reconnectTimeoutRef.current = setTimeout(() => {
       connect();
     }, reconnectDelay * Math.pow(1.5, stats.reconnectAttempts)); // 指數退避
-  }, [stats.reconnectAttempts, maxReconnectAttempts, reconnectDelay, updateStats, addError]);
+  }, [stats.reconnectAttempts, maxReconnectAttempts, reconnectDelay, updateStats]);
 
   /**
    * 建立連接
@@ -407,7 +392,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
     setError(null);
 
     try {
-      const socketInstance = io(url, {
+      // 連接到 /drone 命名空間（所有 drone 事件處理器都在此命名空間）
+      const socketInstance = io(`${url}/drone`, {
         timeout,
         autoConnect: false,
         transports: ['websocket', 'polling'],
@@ -475,26 +461,23 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
   const emit = useCallback(<T = any>(event: string, data?: any, callback?: (response: T) => void) => {
     if (!socketRef.current?.connected) {
       logger.warn('WebSocket 未連接，無法發送消息', { event, data });
-      addWarning('連接斷開，無法發送消息');
       return false;
     }
 
     try {
       socketRef.current.emit(event, data, callback);
       
-      updateStats(prev => ({
-        ...prev,
-        messagesSent: prev.messagesSent + 1,
-      }));
+      updateStats({
+        messagesSent: stats.messagesSent + 1,
+      });
       
       logger.debug('WebSocket 消息已發送', { event, data });
       return true;
     } catch (err: any) {
       logger.error('WebSocket 發送消息失敗', { event, data, error: err.message });
-      addError(`發送消息失敗: ${err.message}`);
       return false;
     }
-  }, [updateStats, addWarning, addError]);
+  }, [updateStats]);
 
   /**
    * 訂閱事件
@@ -549,12 +532,11 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
     
     if (!tokenToUse) {
       logger.warn('沒有提供認證令牌');
-      addWarning('缺少認證令牌');
       return false;
     }
 
     return emit(WEBSOCKET_EVENTS.AUTHENTICATE, { token: tokenToUse });
-  }, [authToken, emit, addWarning]);
+  }, [authToken, emit]);
 
   // 自動連接
   useEffect(() => {

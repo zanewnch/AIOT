@@ -18,7 +18,7 @@
 import 'dotenv/config'; // 載入環境變數配置檔案（.env）
 import { GeneralGrpcServer } from './grpc/generalGrpcServer.js'; // 導入 gRPC 服務器
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 配置
+// import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 配置 - 已移除
 import { redisConfig } from './configs/redisConfig.js'; // Redis 配置
 
 /**
@@ -28,7 +28,7 @@ import { redisConfig } from './configs/redisConfig.js'; // Redis 配置
  * - gRPC 伺服器的啟動和關閉
  * - 資料庫連線管理
  * - Redis 連線管理
- * - RabbitMQ 連線管理
+ * // - RabbitMQ 連線管理 - 已移除
  * - 優雅關閉機制的實現
  *
  * @class Server
@@ -49,12 +49,12 @@ class Server {
      */
     private sequelize: any;
 
-    /**
-     * RabbitMQ 管理器實例
-     * @private
-     * @type {RabbitMQManager}
-     */
-    private rabbitMQManager: RabbitMQManager;
+    // /**
+    //  * RabbitMQ 管理器實例
+    //  * @private
+    //  * @type {RabbitMQManager}
+    //  */
+    // private rabbitMQManager: RabbitMQManager; // 已移除
 
     /**
      * 建構函式 - 初始化 gRPC 伺服器實例
@@ -62,7 +62,7 @@ class Server {
     constructor() {
         this.grpcServer = new GeneralGrpcServer();
         this.sequelize = createSequelizeInstance();
-        this.rabbitMQManager = new RabbitMQManager();
+        // this.rabbitMQManager = new RabbitMQManager(); // 已移除
         this.setupShutdownHandlers();
     }
 
@@ -94,9 +94,9 @@ class Server {
             await redisConfig.connect();
             console.log('✅ Redis connected');
 
-            // 連線 RabbitMQ
-            await this.rabbitMQManager.connect();
-            console.log('✅ RabbitMQ connected');
+            // 連線 RabbitMQ - 已移除
+            // await this.rabbitMQManager.connect();
+            // console.log('✅ RabbitMQ connected');
 
             // 啟動 gRPC 服務器
             this.grpcServer.start(50053);
@@ -117,9 +117,9 @@ class Server {
             console.log('🖥️ Closing gRPC server...');
             this.grpcServer.stop();
 
-            // 關閉 RabbitMQ 連線
-            console.log('🔌 Closing RabbitMQ connection...');
-            await this.rabbitMQManager.close();
+            // 關閉 RabbitMQ 連線 - 已移除
+            // console.log('🔌 Closing RabbitMQ connection...');
+            // await this.rabbitMQManager.close();
 
             // 關閉 Redis 連線
             console.log('🔴 Closing Redis connection...');
