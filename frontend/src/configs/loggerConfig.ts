@@ -150,6 +150,30 @@ class LocalStorageManager {
 
   /**
    * 獲取日誌統計
+   * 
+   * 統計存儲的日誌數量和按級別分佈的數量
+   * 用於日誌分析和系統監控
+   * 
+   * @returns 包含統計信息的物件
+   * 
+   * @example
+   * ```typescript
+   * const manager = new LocalStorageManager();
+   * const stats = manager.getLogStats();
+   * 
+   * console.log(`總日誌數: ${stats.total}`);
+   * console.log('按級別分佈:');
+   * Object.entries(stats.byLevel).forEach(([level, count]) => {
+   *   console.log(`  ${level}: ${count}`);
+   * });
+   * 
+   * // 輸出示例:
+   * // 總日誌數: 150
+   * // 按級別分佈:
+   * //   info: 100
+   * //   warn: 30
+   * //   error: 20
+   * ```
    */
   getLogStats(): { total: number; byLevel: Record<string, number> } {
     const logs = this.getLogs();
@@ -183,6 +207,24 @@ class RemoteLogger {
 
   /**
    * 添加日誌到發送佇列
+   * 
+   * 將日誌項目添加到遠程發送佇列中
+   * 如果是錯誤級別的日誌，會立即發送而不等待定時器
+   * 
+   * @param entry - 要發送的日誌項目
+   * 
+   * @example
+   * ```typescript
+   * const remoteLogger = new RemoteLogger('/api/logs');
+   * remoteLogger.addLog({
+   *   timestamp: '2025-08-18T10:30:45.123Z',
+   *   level: 'error',
+   *   service: 'AuthService',
+   *   message: '登入失敗',
+   *   data: { reason: 'invalid_credentials' }
+   * });
+   * // 錯誤級別的日誌會立即發送
+   * ```
    */
   addLog(entry: LogEntry): void {
     this.queue.push(entry);
@@ -195,6 +237,24 @@ class RemoteLogger {
 
   /**
    * 發送所有待發送的日誌
+   * 
+   * 將佇列中的所有日誌批量發送到遠程端點
+   * 如果發送失敗，日誌會重新加入佇列等待下次發送
+   * 
+   * @returns Promise<void> 發送完成後解析
+   * 
+   * @example
+   * ```typescript
+   * const remoteLogger = new RemoteLogger();
+   * 
+   * // 手動觸發發送
+   * await remoteLogger.flushLogs();
+   * 
+   * // 自動定時發送（在構造函數中配置）
+   * setInterval(() => remoteLogger.flushLogs(), 30000);
+   * ```
+   * 
+   * @throws 當發送失敗時不會拋出錯誤，而是記錄警告並重新入列
    */
   private async flushLogs(): Promise<void> {
     if (this.sending || this.queue.length === 0) {
@@ -253,6 +313,16 @@ class LoggerFactory {
 
   /**
    * 記錄初始化資訊
+   * 
+   * 在控制台輸出 Logger 的初始化資訊，包含環境、配置和頁面信息
+   * 用於調試和監控 Logger 的運行狀態
+   * 
+   * @example
+   * ```typescript
+   * // 在構造函數中自動調用
+   * const factory = new LoggerFactory(config);
+   * // 控制台輸出: 🚀 Frontend Logger initialized { environment: 'development', ... }
+   * ```
    */
   private logInitialization(): void {
     const initInfo = {
@@ -269,6 +339,26 @@ class LoggerFactory {
 
   /**
    * 創建帶有服務標籤的日誌器
+   * 
+   * 為指定服務創建專用的日誌器實例，內置服務標籤
+   * 支援单例模式，同一服務名稱只會創建一次
+   * 
+   * @param serviceName - 服務名稱，用於標識日誌來源
+   * @returns 帶有服務標籤的日誌器實例
+   * 
+   * @example
+   * ```typescript
+   * const factory = new LoggerFactory();
+   * const userLogger = factory.createLogger('UserService');
+   * const orderLogger = factory.createLogger('OrderService');
+   * 
+   * userLogger.info('用戶登入成功'); // [UserService] 用戶登入成功
+   * orderLogger.error('訂單建立失敗'); // [OrderService] 訂單建立失敗
+   * 
+   * // 重複創建相同服務名稱會返回同一實例
+   * const sameLogger = factory.createLogger('UserService');
+   * console.log(userLogger === sameLogger); // true
+   * ```
    */
   createLogger(serviceName: string): ExtendedLogger {
     if (this.loggers.has(serviceName)) {
@@ -282,6 +372,20 @@ class LoggerFactory {
 
   /**
    * 創建具體的服務日誌器
+   * 
+   * 內部方法，建立具有完整日誌功能的服務日誌器
+   * 包括所有日誌級別、本地存儲和遠程發送功能
+   * 
+   * @param serviceName - 服務名稱
+   * @returns 完整的日誌器實例
+   * 
+   * @example
+   * ```typescript
+   * // 內部使用，不直接對外暴露
+   * const logger = this.createServiceLogger('TestService');
+   * logger.info('測試消息');
+   * logger.error('錯誤消息', { code: 500 });
+   * ```
    */
   private createServiceLogger(serviceName: string): ExtendedLogger {
     const createLogMethod = (level: string) => {

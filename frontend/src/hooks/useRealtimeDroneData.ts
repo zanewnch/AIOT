@@ -22,7 +22,10 @@ import { createLogger } from '../configs/loggerConfig';
 const logger = createLogger('useRealtimeDroneData');
 
 /**
- * 無人機位置數據
+ * 無人機位置數據介面
+ * 
+ * @interface DronePosition
+ * @description 定義無人機位置相關的數據結構，包含地理座標、飛行狀態等資訊
  */
 interface DronePosition {
   id: number;
@@ -37,7 +40,10 @@ interface DronePosition {
 }
 
 /**
- * 無人機狀態數據
+ * 無人機狀態數據介面
+ * 
+ * @interface DroneStatus
+ * @description 定義無人機運行狀態的數據結構，包含電池、信號強度、連線狀態等資訊
  */
 interface DroneStatus {
   id: number;
@@ -53,7 +59,10 @@ interface DroneStatus {
 }
 
 /**
- * 無人機命令響應
+ * 無人機命令響應介面
+ * 
+ * @interface DroneCommandResponse
+ * @description 定義無人機命令執行回應的數據結構
  */
 interface DroneCommandResponse {
   command_id: string;
@@ -65,7 +74,10 @@ interface DroneCommandResponse {
 }
 
 /**
- * 即時數據統計
+ * 即時數據統計介面
+ * 
+ * @interface RealtimeStats
+ * @description 追蹤無人機即時數據更新的統計資訊
  */
 interface RealtimeStats {
   /** 位置更新次數 */
@@ -81,7 +93,10 @@ interface RealtimeStats {
 }
 
 /**
- * 訂閱配置
+ * 訂閱配置介面
+ * 
+ * @interface SubscriptionConfig
+ * @description 設定無人機數據訂閱的相關參數
  */
 interface SubscriptionConfig {
   /** 是否自動訂閱 */
@@ -99,8 +114,24 @@ interface SubscriptionConfig {
 /**
  * 無人機即時數據 Hook
  * 
- * @param config 訂閱配置
- * @returns 即時數據和控制函數
+ * @description 提供無人機即時數據的訂閱和管理功能，包含位置、狀態、命令響應等數據的即時更新
+ * @param config - 訂閱配置選項
+ * @returns 包含即時數據、訂閱控制和統計資訊的物件
+ * 
+ * @example
+ * ```typescript
+ * const {
+ *   realtimePositions,
+ *   realtimeStatuses,
+ *   subscribeToPositions,
+ *   sendDroneCommand,
+ *   stats
+ * } = useRealtimeDroneData({
+ *   autoSubscribe: true,
+ *   droneIds: ['drone-001', 'drone-002'],
+ *   updateThrottle: 500
+ * });
+ * ```
  */
 export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
   const {
@@ -155,6 +186,9 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 更新統計信息
+   * 
+   * @description 更新即時數據的統計資訊
+   * @param updates - 要更新的統計資料部分
    */
   const updateStats = useCallback((updates: Partial<RealtimeStats>) => {
     setStats(prev => ({ ...prev, ...updates }));
@@ -162,6 +196,8 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 節流更新處理
+   * 
+   * @description 批量處理待處理的數據更新，避免過於頻繁的狀態更新影響性能
    */
   const processThrottledUpdates = useCallback(() => {
     const now = Date.now();
@@ -246,6 +282,18 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 訂閱無人機位置更新
+   * 
+   * @description 向 WebSocket 伺服器發送位置數據訂閱請求
+   * @param targetDroneIds - 要訂閱的無人機 ID 陣列，空陣列表示使用配置的預設值
+   * @returns 訂閱請求是否成功發送
+   * 
+   * @example
+   * ```typescript
+   * const success = subscribeToPositions(['drone-001', 'drone-002']);
+   * if (success) {
+   *   console.log('位置訂閱請求已發送');
+   * }
+   * ```
    */
   const subscribeToPositions = useCallback((targetDroneIds: string[] = []) => {
     if (!isAuthenticated) {
@@ -275,6 +323,15 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 訂閱無人機狀態更新
+   * 
+   * @description 向 WebSocket 伺服器發送狀態數據訂閱請求
+   * @param targetDroneIds - 要訂閱的無人機 ID 陣列，空陣列表示使用配置的預設值
+   * @returns 訂閱請求是否成功發送
+   * 
+   * @example
+   * ```typescript
+   * const success = subscribeToStatuses(['drone-001']);
+   * ```
    */
   const subscribeToStatuses = useCallback((targetDroneIds: string[] = []) => {
     if (!isAuthenticated) {
@@ -298,7 +355,9 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
   }, [isAuthenticated, subscribeAll, droneIds, emit, addInfo]);
 
   /**
-   * 取消訂閱
+   * 取消位置訂閱
+   * 
+   * @description 取消所有無人機位置數據的訂閱
    */
   const unsubscribeFromPositions = useCallback(() => {
     emit(WEBSOCKET_EVENTS.DRONE_POSITION_UNSUBSCRIBE, {});
@@ -306,6 +365,11 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
     addInfo('已取消位置更新訂閱');
   }, [emit, addInfo]);
 
+  /**
+   * 取消狀態訂閱
+   * 
+   * @description 取消所有無人機狀態數據的訂閱
+   */
   const unsubscribeFromStatuses = useCallback(() => {
     emit(WEBSOCKET_EVENTS.DRONE_STATUS_UNSUBSCRIBE, {});
     logger.info('已取消無人機狀態訂閱');
@@ -314,6 +378,19 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 發送無人機命令
+   * 
+   * @description 向指定無人機發送控制命令
+   * @param droneId - 目標無人機的 ID
+   * @param command - 要發送的命令對象
+   * @returns 命令是否成功發送
+   * 
+   * @example
+   * ```typescript
+   * const success = sendDroneCommand('drone-001', {
+   *   type: 'takeoff',
+   *   altitude: 10
+   * });
+   * ```
    */
   const sendDroneCommand = useCallback((droneId: string, command: any) => {
     if (!isAuthenticated) {
@@ -339,6 +416,8 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 設置 WebSocket 事件監聽器
+   * 
+   * @description 建立 WebSocket 事件監聽器，處理即時數據更新
    */
   useEffect(() => {
     if (!isConnected) return;
@@ -399,6 +478,8 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 自動訂閱
+   * 
+   * @description 當啟用自動訂閱且 WebSocket 已認證時，自動開始訂閱數據
    */
   useEffect(() => {
     if (autoSubscribe && isAuthenticated) {
@@ -409,6 +490,8 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 更新訂閱統計
+   * 
+   * @description 當訂閱的無人機列表變更時，更新統計資訊
    */
   useEffect(() => {
     const totalSubscribed = subscribedDroneIds.size;
@@ -417,6 +500,17 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 獲取特定無人機的即時數據
+   * 
+   * @description 取得指定無人機的最新位置和狀態資訊
+   * @param droneId - 無人機 ID
+   * @returns 包含位置、狀態、連線狀態和最後更新時間的物件
+   * 
+   * @example
+   * ```typescript
+   * const droneData = getDroneRealtimeData('drone-001');
+   * console.log('無人機位置:', droneData.position);
+   * console.log('是否在線:', droneData.isOnline);
+   * ```
    */
   const getDroneRealtimeData = useCallback((droneId: string) => {
     return {
@@ -432,6 +526,15 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
   /**
    * 清除過期數據
+   * 
+   * @description 移除超過指定時間的舊數據，保持數據的時效性
+   * @param maxAge - 最大保存時間（毫秒），預設為 5 分鐘
+   * 
+   * @example
+   * ```typescript
+   * // 清除 10 分鐘前的數據
+   * clearExpiredData(10 * 60 * 1000);
+   * ```
    */
   const clearExpiredData = useCallback((maxAge: number = 5 * 60 * 1000) => {
     const now = Date.now();
@@ -494,6 +597,19 @@ export const useRealtimeDroneData = (config: SubscriptionConfig = {}) => {
 
 /**
  * 簡化版無人機即時數據 Hook
+ * 
+ * @description 提供預設配置的無人機即時數據訂閱功能，適用於大多數基本使用場景
+ * @param droneIds - 要訂閱的無人機 ID 陣列，可選
+ * @returns 與 useRealtimeDroneData 相同的回傳值，但使用簡化的預設配置
+ * 
+ * @example
+ * ```typescript
+ * // 訂閱所有無人機
+ * const { realtimePositions, stats } = useSimpleRealtimeDroneData();
+ * 
+ * // 訂閱特定無人機
+ * const droneData = useSimpleRealtimeDroneData(['drone-001', 'drone-002']);
+ * ```
  */
 export const useSimpleRealtimeDroneData = (droneIds?: string[]) => {
   return useRealtimeDroneData({

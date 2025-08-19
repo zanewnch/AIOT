@@ -211,13 +211,20 @@ export class RequestUtils {
    * 設置認證 token
    *
    * 將認證 token 儲存到 localStorage 中，後續的請求會自動攜帶此 token
+   * 注意：當前系統使用 httpOnly cookie 認證，此方法作為備用方案
    *
-   * @param {string} token - 認證 token
+   * @param {string} token - 認證 token（JWT 格式）
    * @returns {void}
+   * 
+   * @deprecated 當前系統使用 httpOnly cookie 認證，建議透過登入 API 設置認證
    *
    * @example
    * ```typescript
-   * requestUtils.setAuthToken('your-jwt-token');
+   * // 備用方案：手動設置 token
+   * requestUtils.setAuthToken('eyJhbGciOiJIUzI1NiIs...');
+   * 
+   * // 推薦方案：透過登入 API
+   * await requestUtils.post('/auth/login', { username, password });
    * ```
    */
   setAuthToken(token: string): void {
@@ -229,12 +236,19 @@ export class RequestUtils {
    * 清除認證 token
    *
    * 從 localStorage 中移除認證 token，用於用戶登出
+   * 注意：當前系統使用 httpOnly cookie 認證，此方法作為清理方案
    *
    * @returns {void}
+   * 
+   * @deprecated 當前系統使用 httpOnly cookie 認證，建議透過登出 API 清除認證
    *
    * @example
    * ```typescript
+   * // 備用方案：手動清除 localStorage
    * requestUtils.clearAuthToken();
+   * 
+   * // 推薦方案：透過登出 API
+   * await requestUtils.post('/auth/logout');
    * ```
    */
   clearAuthToken(): void {
@@ -318,12 +332,21 @@ export class RequestUtils {
 
   /**
    * 發送 PUT 請求並返回 ReqResult
+   * 提供完整的錯誤處理和統一的響應格式
    *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {any} [data] - 請求主體數據
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<ReqResult<T>>} 返回包含 ReqResult 的 Promise
+   * 
+   * @example
+   * ```typescript
+   * const result = await requestUtils.putWithResult<User>('/users/123', updatedData);
+   * if (result.isSuccess()) {
+   *   console.log('更新成功:', result.data);
+   * }
+   * ```
    */
   async putWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
@@ -336,11 +359,20 @@ export class RequestUtils {
 
   /**
    * 發送 DELETE 請求並返回 ReqResult
+   * 提供完整的錯誤處理和統一的響應格式
    *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<ReqResult<T>>} 返回包含 ReqResult 的 Promise
+   * 
+   * @example
+   * ```typescript
+   * const result = await requestUtils.deleteWithResult('/users/123');
+   * if (result.isSuccess()) {
+   *   console.log('刪除成功');
+   * }
+   * ```
    */
   async deleteWithResult<T = any>(url: string, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
@@ -353,12 +385,21 @@ export class RequestUtils {
 
   /**
    * 發送 PATCH 請求並返回 ReqResult
+   * 用於部分更新資源，提供完整的錯誤處理和統一的響應格式
    *
    * @template T - 響應數據的類型
    * @param {string} url - 請求的 URL 路徑
-   * @param {any} [data] - 請求主體數據
+   * @param {any} [data] - 請求主體數據（部分更新字段）
    * @param {AxiosRequestConfig} [config] - 可選的 axios 請求配置
    * @returns {Promise<ReqResult<T>>} 返回包含 ReqResult 的 Promise
+   * 
+   * @example
+   * ```typescript
+   * const result = await requestUtils.patchWithResult<User>('/users/123', { email: 'new@example.com' });
+   * if (result.isSuccess()) {
+   *   console.log('部分更新成功:', result.data);
+   * }
+   * ```
    */
   async patchWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {

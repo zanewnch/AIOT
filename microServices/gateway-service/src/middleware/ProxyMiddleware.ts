@@ -317,8 +317,12 @@ export class ProxyMiddleware {
      * @returns WebSocket 代理中間件
      */
     public createWebSocketProxy(config: ProxyConfig) {
+        loggerConfig.info(`🔌 Creating WebSocket proxy middleware for: ${config.target}`);
+        
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
+                loggerConfig.info(`🔌 WebSocket proxy middleware triggered for: ${req.url}`);
+                
                 // 為 WebSocket 連接發現目標服務
                 const serviceInstances = await this.getHealthyServices(config.target);
                 

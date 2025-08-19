@@ -377,6 +377,24 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   /**
    * 處理用戶交互
+   * 
+   * 當使用者首次與組件交互時調用，用於觸發 'on-interaction' 策略的地圖載入
+   * 只會在第一次交互時觸發，後續交互不會重複載入
+   * 
+   * @example
+   * ```typescript
+   * const { handleUserInteraction } = useConditionalMapLoader();
+   * 
+   * return (
+   *   <div 
+   *     onClick={handleUserInteraction}
+   *     onTouchStart={handleUserInteraction}
+   *     onMouseEnter={handleUserInteraction}
+   *   >
+   *     點擊此處載入地圖
+   *   </div>
+   * );
+   * ```
    */
   const handleUserInteraction = useCallback(() => {
     if (!userInteracted) {
@@ -391,6 +409,30 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   /**
    * 處理地圖可見性變化
+   * 
+   * 當地圖容器進入或離開視窗時調用，用於實現 'lazy' 策略的延遲載入
+   * 結合 Intersection Observer 使用可實現高效的懶加載
+   * 
+   * @param isVisible - 地圖容器是否可見
+   * @returns 清理函數（如果設置了延遲定時器）
+   * 
+   * @example
+   * ```typescript
+   * const { handleVisibilityChange } = useConditionalMapLoader();
+   * 
+   * // 使用 Intersection Observer
+   * useEffect(() => {
+   *   const observer = new IntersectionObserver(([entry]) => {
+   *     handleVisibilityChange(entry.isIntersecting);
+   *   });
+   *   
+   *   if (mapContainer) {
+   *     observer.observe(mapContainer);
+   *   }
+   *   
+   *   return () => observer.disconnect();
+   * }, [mapContainer]);
+   * ```
    */
   const handleVisibilityChange = useCallback((isVisible: boolean) => {
     setIsMapVisible(isVisible);
@@ -408,6 +450,20 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   /**
    * 強制載入地圖
+   * 
+   * 無視所有條件限制，強制載入地圖組件
+   * 通常用於使用者手動選擇載入的情況
+   * 
+   * @example
+   * ```typescript
+   * const { forceLoadMap } = useConditionalMapLoader();
+   * 
+   * return (
+   *   <Button onClick={forceLoadMap}>
+   *     強制載入地圖
+   *   </Button>
+   * );
+   * ```
    */
   const forceLoadMap = useCallback(() => {
     logger.info('強制載入地圖');
@@ -416,6 +472,25 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   /**
    * 禁用地圖載入
+   * 
+   * 禁止地圖載入，通常用於用戶選擇不載入或系統檢測到不適合的條件
+   * 設定後即使在理想條件下也不會載入地圖
+   * 
+   * @example
+   * ```typescript
+   * const { disableMapLoading } = useConditionalMapLoader();
+   * 
+   * // 當網路連線很差時禁用地圖
+   * if (networkConditions?.type === '2g') {
+   *   disableMapLoading();
+   * }
+   * 
+   * return (
+   *   <Button onClick={disableMapLoading}>
+   *     禁用地圖載入
+   *   </Button>
+   * );
+   * ```
    */
   const disableMapLoading = useCallback(() => {
     logger.info('禁用地圖載入');
@@ -424,6 +499,34 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   /**
    * 重新評估載入條件
+   * 
+   * 重新檢測設備能力和環境條件，重新決定載入策略
+   * 用於當環境發生變化時（如網路連線改善、開始充電等）重新評估
+   * 
+   * @returns Promise<void> 重新評估完成後解析
+   * 
+   * @example
+   * ```typescript
+   * const { reevaluate } = useConditionalMapLoader();
+   * 
+   * // 當網路狀態改變時重新評估
+   * useEffect(() => {
+   *   const handleOnline = () => {
+   *     reevaluate();
+   *   };
+   *   
+   *   window.addEventListener('online', handleOnline);
+   *   return () => window.removeEventListener('online', handleOnline);
+   * }, []);
+   * 
+   * return (
+   *   <Button onClick={reevaluate}>
+   *     重新評估載入條件
+   *   </Button>
+   * );
+   * ```
+   * 
+   * @throws {Error} 當重新檢測失敗時不會拋出錯誤，而是記錄日誌
    */
   const reevaluate = useCallback(async () => {
     logger.info('重新評估地圖載入條件');
@@ -455,6 +558,12 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   // 監聽視窗大小變化
   useEffect(() => {
+    /**
+     * 處理視窗大小變化事件
+     * 
+     * 當視窗大小變化時更新設備能力信息並重新評估載入策略
+     * 用於響應式設計和動態調整加載策略
+     */
     const handleResize = () => {
       setDeviceCapabilities(prev => {
         if (!prev) return null;
@@ -483,10 +592,20 @@ export const useConditionalMapLoader = (config: MapLoadingConfig = {}) => {
 
   // 監聽網路狀態變化
   useEffect(() => {
+    /**
+     * 處理網路連線事件
+     * 
+     * 當設備重新連線到網路時更新網路狀態
+     */
     const handleOnline = () => {
       setNetworkConditions(prev => prev ? { ...prev, isOnline: true } : null);
     };
 
+    /**
+     * 處理網路斷線事件
+     * 
+     * 當設備斷開網路連線時更新網路狀態
+     */
     const handleOffline = () => {
       setNetworkConditions(prev => prev ? { ...prev, isOnline: false } : null);
     };

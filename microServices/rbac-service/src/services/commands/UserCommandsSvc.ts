@@ -86,9 +86,23 @@ export class UserCommandsSvc {
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 
+     * 嘗試建立 Redis 連線連接，用於快取操作
+     * 若 Redis 不可用，會記錄警告並拋出錯誤
+     * 
      * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
+     * @throws {Error} 當 Redis 連線不可用時拋出錯誤
+     * 
+     * @example
+     * ```typescript
+     * try {
+     *   const redis = this.getRedisClient();
+     *   await redis.get('user:123');
+     * } catch (error) {
+     *   // 降級使用數據庫查詢
+     * }
+     * ```
+     * 
      * @private
      */
     private getRedisClient = (): RedisClientType => {
@@ -102,7 +116,19 @@ export class UserCommandsSvc {
 
     /**
      * 產生使用者快取鍵值
-     * @param userId 使用者 ID
+     * 
+     * 根據使用者 ID 生成統一的 Redis 快取鍵值
+     * 遵循命名約定，确保快取鍵值的一致性
+     * 
+     * @param userId - 使用者的唯一識別碼
+     * @returns 格式化的 Redis 鍵值字符串
+     * 
+     * @example
+     * ```typescript
+     * const cacheKey = this.getUserCacheKey(123);
+     * console.log(cacheKey); // 輸出: "user:123"
+     * ```
+     * 
      * @private
      */
     private getUserCacheKey = (userId: number): string => {
@@ -111,7 +137,20 @@ export class UserCommandsSvc {
 
     /**
      * 將模型轉換為 DTO（過濾敏感資訊）
-     * @param model 使用者模型
+     * 
+     * 將內部使用者模型轉換為安全的數據傳輸物件
+     * 自動過濾敏感資訊如密碼和內部標記
+     * 
+     * @param model - 原始的使用者模型實例
+     * @returns 安全的使用者 DTO 物件
+     * 
+     * @example
+     * ```typescript
+     * const userModel = await User.findById(123);
+     * const safeUserData = this.modelToDTO(userModel);
+     * // safeUserData 不包含 password 等敏感資訊
+     * ```
+     * 
      * @private
      */
     private modelToDTO = (model: UserModel): UserDTO => {

@@ -61,6 +61,26 @@ export class DroneStatusArchiveQuery {
 
   /**
    * 基本查詢 - 獲取所有狀態歷史歸檔
+   * 
+   * 獲取系統中所有無人機狀態變更的歷史歸檔記錄
+   * 包含狀態轉換、變更原因、時間戳等詳細信息
+   * 
+   * @returns React Query 結果物件，包含所有狀態歷史歸檔數據
+   * 
+   * @example
+   * ```typescript
+   * const statusArchiveQuery = new DroneStatusArchiveQuery();
+   * const { data: archives, isLoading } = statusArchiveQuery.useAll();
+   * 
+   * return (
+   *   <StatusArchiveTable 
+   *     data={archives} 
+   *     loading={isLoading}
+   *   />
+   * );
+   * ```
+   * 
+   * @throws {TableError} 當 API 請求失敗時拋出錯誤
    */
   useAll() {
     return useQuery({
@@ -94,6 +114,23 @@ export class DroneStatusArchiveQuery {
 
   /**
    * 獲取最新狀態歷史歸檔
+   * 
+   * 獲取最近的無人機狀態變更記錄，支援自動刷新
+   * 用於系統監控和即時狀態追蹤
+   * 
+   * @returns React Query 結果物件，包含最新狀態歷史歸檔數據
+   * 
+   * @example
+   * ```typescript
+   * const statusArchiveQuery = new DroneStatusArchiveQuery();
+   * const { data: latestArchives } = statusArchiveQuery.useLatest();
+   * 
+   * return (
+   *   <LatestStatusPanel archives={latestArchives} />
+   * );
+   * ```
+   * 
+   * @throws {TableError} 當 API 請求失敗時拋出錯誤
    */
   useLatest() {
     return useQuery({
@@ -128,6 +165,27 @@ export class DroneStatusArchiveQuery {
 
   /**
    * 獲取狀態變更統計
+   * 
+   * 獲取無人機狀態變更的統計數據，包括變更次數、狀態分佈等
+   * 支援定時刷新，用於系統狀態分析和報告
+   * 
+   * @returns React Query 結果物件，包含狀態變更統計數據
+   * 
+   * @example
+   * ```typescript
+   * const statusArchiveQuery = new DroneStatusArchiveQuery();
+   * const { data: stats } = statusArchiveQuery.useStatistics();
+   * 
+   * return (
+   *   <StatusStatisticsChart 
+   *     totalChanges={stats.totalChanges}
+   *     statusDistribution={stats.statusDistribution}
+   *     mostActiveHour={stats.mostActiveHour}
+   *   />
+   * );
+   * ```
+   * 
+   * @throws {TableError} 當統計數據獲取失敗時拋出錯誤
    */
   useStatistics() {
     return useQuery({
@@ -162,6 +220,28 @@ export class DroneStatusArchiveQuery {
     
   /**
    * 參數化查詢 - 根據 ID 獲取狀態歷史歸檔
+   * 
+   * 使用唯一識別碼獲取特定狀態變更記錄的詳細信息
+   * 支援條件性啟用查詢，用於優化效能
+   * 
+   * @param id - 狀態歸檔的唯一識別碼
+   * @param enabled - 是否啟用查詢，默認為 true
+   * @returns React Query 結果物件，包含特定狀態歸檔數據
+   * 
+   * @example
+   * ```typescript
+   * const statusArchiveQuery = new DroneStatusArchiveQuery();
+   * const selectedId = 'archive-123';
+   * const { data: archive } = statusArchiveQuery.useById(
+   *   selectedId,
+   *   !!selectedId
+   * );
+   * 
+   * if (!archive) return null;
+   * return <StatusArchiveDetail archive={archive} />;
+   * ```
+   * 
+   * @throws {TableError} 當歸檔不存在或查詢失敗時拋出錯誤
    */
   useById(id: string, enabled: boolean = true) {
     return useQuery({
@@ -428,6 +508,35 @@ export class DroneStatusArchiveQuery {
     
   /**
    * 創建狀態歷史歸檔
+   * 
+   * 創建新的無人機狀態變更記錄，記錄狀態轉換詳細信息
+   * 成功創建後會自動刷新相關查詢緩存
+   * 
+   * @returns React Query mutation 物件，用於創建狀態歸檔
+   * 
+   * @example
+   * ```typescript
+   * const statusArchiveQuery = new DroneStatusArchiveQuery();
+   * const createArchiveMutation = statusArchiveQuery.useCreate();
+   * 
+   * const handleStatusChange = async () => {
+   *   try {
+   *     const newArchive = await createArchiveMutation.mutateAsync({
+   *       droneId: 'DRONE_001',
+   *       fromStatus: 'idle',
+   *       toStatus: 'flying',
+   *       reason: '開始巡邏任務',
+   *       changedBy: 'admin',
+   *       metadata: { mission_id: 'PATROL_001' }
+   *     });
+   *     console.log('狀態變更記錄已創建:', newArchive);
+   *   } catch (error) {
+   *     console.error('創建失敗:', error);
+   *   }
+   * };
+   * ```
+   * 
+   * @throws {TableError} 當創建請求失敗時拋出錯誤
    */
   useCreate() {
     const queryClient = useQueryClient();

@@ -235,6 +235,24 @@ export class UserPreferenceCommands {
 
     /**
      * 重置用戶偏好設定為預設值
+     * 
+     * 將指定用戶的所有偏好設定重置為系統預設值
+     * 適用於用戶重置或初始化偏好設定
+     * 
+     * @param req - Express 請求物件，包含用戶 ID
+     * @param res - Express 回應物件，用於返回結果
+     * @param next - Express 下一個中間件函數
+     * @returns Promise<void> 無直接返回值，通過 res 返回結果
+     * 
+     * @throws {Error} 當用戶不存在或重置失敗時拋出錯誤
+     * 
+     * @example
+     * ```typescript
+     * // 重置請求範例
+     * POST /api/user-preferences/reset/456
+     * // 無需 body，系統將使用預設值
+     * ```
+     * 
      * @route POST /api/user-preferences/reset/:userId
      */
     resetUserPreferenceToDefault = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

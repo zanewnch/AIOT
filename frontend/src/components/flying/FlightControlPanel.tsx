@@ -40,19 +40,59 @@ interface RealFlyLogic {
   markersCount: number;
 }
 
+/**
+ * 飛行控制面板組件屬性介面
+ * 
+ * 定義飛行控制面板組件需要的所有屬性
+ */
 interface FlightControlPanelProps {
+  /** 是否為模擬模式，true 為模擬模式，false 為真實模式 */
   isSimulateMode: boolean;
+  /** 是否正在載入中 */
   isLoading: boolean;
+  /** 錯誤訊息，無錯誤時為空字串 */
   error: string;
-  // 模擬模式數據
+  /** 模擬模式下的無人機狀態資料 */
   simulateDroneStats?: SimulateDroneStats;
+  /** 模擬模式下的飛行操作函式 */
   simulateFlyLogic?: SimulateFlyLogic;
-  // 真實模式數據
+  /** 真實模式下的操作函式 */
   realFlyLogic?: RealFlyLogic;
-  // 🚀 樂觀更新支持
+  /** 是否啟用樂觀更新功能，預設為 true */
   enableOptimisticUpdates?: boolean;
 }
 
+/**
+ * 飛行控制面板組件
+ * 
+ * 提供無人機飛行控制的主要介面，支援模擬和真實兩種模式。
+ * 在模擬模式下提供完整的飛行命令控制，在真實模式下提供地圖標記管理。
+ * 集成樂觀更新功能，提升使用者操作體驗。
+ * 
+ * @param props - 組件屬性
+ * @returns 飛行控制面板 JSX 元素
+ * 
+ * @example
+ * ```tsx
+ * // 模擬模式使用
+ * <FlightControlPanel
+ *   isSimulateMode={true}
+ *   isLoading={false}
+ *   error=""
+ *   simulateDroneStats={{ status: 'grounded' }}
+ *   simulateFlyLogic={simulateLogic}
+ *   enableOptimisticUpdates={true}
+ * />
+ * 
+ * // 真實模式使用
+ * <FlightControlPanel
+ *   isSimulateMode={false}
+ *   isLoading={false}
+ *   error=""
+ *   realFlyLogic={realLogic}
+ * />
+ * ```
+ */
 const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
   isSimulateMode,
   isLoading,
@@ -71,7 +111,22 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
     error: commandError
   } = useOptimisticCommand();
 
-  // 🎮 創建樂觀更新版本的控制函數
+  /**
+   * 為指定的命令類型創建樂觀更新版本的事件處理器
+   * 
+   * 這個函式會根據模式和設定決定使用樂觀更新或傳統處理方式
+   * 
+   * @param commandType - 命令類型，用於樂觀更新和待處理狀態管理
+   * @param originalHandler - 原始的事件處理器，在不使用樂觀更新時調用
+   * @returns 返回一個結合了樂觀更新功能的事件處理器
+   * 
+   * @example
+   * ```typescript
+   * const optimisticTakeoff = createOptimisticHandler('takeoff', simulateFlyLogic.takeoff);
+   * // 在模擬模式且啟用樂觀更新時，會使用 executeCommand
+   * // 否則直接調用 simulateFlyLogic.takeoff
+   * ```
+   */
   const createOptimisticHandler = (commandType: any, originalHandler?: () => void) => {
     return async () => {
       if (!enableOptimisticUpdates || !isSimulateMode) {

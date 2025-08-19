@@ -13,42 +13,116 @@
 import React, { useMemo } from "react";
 import { useSimpleRealtimeDroneData } from "../../hooks/useRealtimeDroneData";
 
+/**
+ * 無人機狀態介面
+ * 
+ * 定義無人機狀態資料的基本結構
+ */
 interface DroneStatus {
+  /** 無人機目前狀態 */
   status: string;
+  /** 狀態資料長度（可選） */
   length?: number;
 }
 
+/**
+ * 無人機位置介面
+ * 
+ * 定義無人機位置資料的基本結構
+ */
 interface DronePosition {
+  /** 緯度 */
   latitude: number;
+  /** 經度 */
   longitude: number;
+  /** 高度（公尺） */
   altitude: number;
 }
 
+/**
+ * 模擬無人機狀態統計介面
+ * 
+ * 定義模擬模式下無人機的完整狀態資訊
+ */
 interface SimulateDroneStats {
+  /** 無人機目前狀態 */
   status: 'grounded' | 'taking_off' | 'hovering' | 'flying' | 'landing' | 'emergency';
+  /** 高度（公尺） */
   altitude: number;
+  /** 電池電量（百分比） */
   battery: number;
+  /** 航向（度） */
   heading: number;
+  /** 無人機位置坐標 */
   position: { lat: number; lng: number };
+  /** 目前執行中的命令 */
   currentCommand: string | null;
 }
 
+/**
+ * 無人機狀態面板組件屬性介面
+ * 
+ * 定義無人機狀態面板組件需要的所有屬性
+ */
 interface DroneStatusPanelProps {
+  /** 是否為模擬模式 */
   isSimulateMode: boolean;
-  // 模擬模式數據
+  /** 模擬模式下的無人機狀態統計 */
   simulateDroneStats?: SimulateDroneStats;
+  /** Google Maps API 是否已載入 */
   isApiLoaded?: boolean;
-  // 真實模式數據
+  /** 真實模式下的無人機狀態列表 */
   droneStatuses?: DroneStatus[];
+  /** 真實模式下的無人機位置列表 */
   dronePositions?: DronePosition[];
+  /** 目前活躍的命令列表 */
   activeCommands?: any[];
+  /** 地圖上標記點數量 */
   markersCount?: number;
+  /** 真實模式是否正在載入 */
   realModeLoading?: boolean;
-  // 🚀 背景更新狀態
+  /** 是否正在背景更新數據 */
   isBackgroundUpdating?: boolean;
+  /** 最後更新時間 */
   lastUpdated?: Date;
 }
 
+/**
+ * 無人機狀態面板組件
+ * 
+ * 提供無人機狀態監控和資訊顯示功能，支援模擬和真實兩種模式。
+ * 集成 WebSocket 即時更新功能，能夠在真實模式下提供即時的無人機狀態和位置資訊。
+ * 在模擬模式下顯示詳細的無人機統計資訊。
+ * 
+ * @param props - 組件屬性
+ * @returns 無人機狀態面板 JSX 元素
+ * 
+ * @example
+ * ```tsx
+ * // 模擬模式使用
+ * <DroneStatusPanel
+ *   isSimulateMode={true}
+ *   simulateDroneStats={{
+ *     status: 'flying',
+ *     altitude: 50,
+ *     battery: 85,
+ *     heading: 45,
+ *     position: { lat: 25.0330, lng: 121.5654 },
+ *     currentCommand: 'move_forward'
+ *   }}
+ *   isApiLoaded={true}
+ * />
+ * 
+ * // 真實模式使用
+ * <DroneStatusPanel
+ *   isSimulateMode={false}
+ *   droneStatuses={droneStatusList}
+ *   dronePositions={dronePositionList}
+ *   activeCommands={commandList}
+ *   markersCount={3}
+ * />
+ * ```
+ */
 const DroneStatusPanel: React.FC<DroneStatusPanelProps> = ({
   isSimulateMode,
   simulateDroneStats,
@@ -73,7 +147,14 @@ const DroneStatusPanel: React.FC<DroneStatusPanelProps> = ({
     statusCount,
   } = useSimpleRealtimeDroneData();
 
-  // 合併 API 數據和即時數據
+  /**
+   * 合併 API 數據和 WebSocket 即時數據為無人機狀態
+   * 
+   * 在真實模式且 WebSocket 連接成功時，優先使用即時數據，
+   * 否則使用 API 數據。模擬模式直接使用 API 數據。
+   * 
+   * @returns 合併後的無人機狀態數據
+   */
   const mergedDroneStatuses = useMemo(() => {
     if (isSimulateMode || !wsConnected) {
       return droneStatuses;
@@ -110,6 +191,14 @@ const DroneStatusPanel: React.FC<DroneStatusPanelProps> = ({
     return merged;
   }, [isSimulateMode, wsConnected, droneStatuses, realtimeStatuses]);
 
+  /**
+   * 合併 API 數據和 WebSocket 即時數據為無人機位置
+   * 
+   * 在真實模式且 WebSocket 連接成功時，優先使用即時位置數據，
+   * 否則使用 API 位置數據。模擬模式不使用即時數據。
+   * 
+   * @returns 合併後的無人機位置數據
+   */
   const mergedDronePositions = useMemo(() => {
     if (isSimulateMode || !wsConnected) {
       return dronePositions;
@@ -118,7 +207,19 @@ const DroneStatusPanel: React.FC<DroneStatusPanelProps> = ({
     return realtimePositions.length > 0 ? realtimePositions : dronePositions;
   }, [isSimulateMode, wsConnected, dronePositions, realtimePositions]);
 
-  // WebSocket 連接狀態指示器
+  /**
+   * 取得 WebSocket 連接狀態的顯示顏色
+   * 
+   * 根據目前的連接狀態和模式返回對應的 CSS 顏色類別
+   * 
+   * @returns CSS 顏色類別字串
+   * 
+   * @example
+   * ```typescript
+   * const colorClass = getConnectionStatusColor();
+   * // 返回值可能為: 'text-green-300', 'text-red-300', 等
+   * ```
+   */
   const getConnectionStatusColor = () => {
     if (isSimulateMode) return 'text-orange-300';
     
@@ -137,6 +238,19 @@ const DroneStatusPanel: React.FC<DroneStatusPanelProps> = ({
     }
   };
 
+  /**
+   * 取得 WebSocket 連接狀態的顯示文字
+   * 
+   * 根據目前的連接狀態和模式返回對應的中文狀態文字
+   * 
+   * @returns 中文狀態文字
+   * 
+   * @example
+   * ```typescript
+   * const statusText = getConnectionStatusText();
+   * // 返回值可能為: '即時連接', '未連接', '模擬模式', 等
+   * ```
+   */
   const getConnectionStatusText = () => {
     if (isSimulateMode) return '模擬模式';
     

@@ -1,7 +1,11 @@
 /**
  * @fileoverview 飛行頁面標題組件
  * 
- * 提供頁面標題顯示和模式切換功能
+ * 此檔案提供飛行頁面的標題區域和模式切換功能，包含：
+ * - 頁面標題和描述的顯示
+ * - 模擬/真實模式切換按鈕
+ * - 載入狀態處理
+ * - 響應式設計支援
  * 
  * @author AIOT Team
  * @version 1.0.0
@@ -10,13 +14,51 @@
 
 import React from "react";
 
+/**
+ * 飛行頁面標題組件的屬性介面
+ * 
+ * 定義標題組件接受的所有屬性和其類型約束
+ */
 interface FlyingPageHeaderProps {
+  /** 是否為模擬模式 */
   isSimulateMode: boolean;
+  /** 模式切換回調函數 */
   onModeToggle: () => void;
+  /** 是否正在載入 */
   isLoading: boolean;
+  /** 是否啟用模擬模式功能 */
   enableSimulateMode: boolean;
 }
 
+/**
+ * 飛行頁面標題組件
+ * 
+ * 提供飛行頁面的標題區域，包含頁面標題、描述和模式切換功能。
+ * 根據不同模式狀態顯示相應的 UI 元素和樣式。
+ * 支援響應式設計，在不同螢幕尺寸下有適當的佈局調整。
+ * 
+ * @param props - 組件屬性
+ * @returns 飛行頁面標題的 JSX 元素
+ * 
+ * @example
+ * ```tsx
+ * // 基本使用
+ * <FlyingPageHeader
+ *   isSimulateMode={false}
+ *   onModeToggle={() => setSimulateMode(!simulateMode)}
+ *   isLoading={false}
+ *   enableSimulateMode={true}
+ * />
+ * 
+ * // 停用模式切換
+ * <FlyingPageHeader
+ *   isSimulateMode={false}
+ *   onModeToggle={() => {}}
+ *   isLoading={false}
+ *   enableSimulateMode={false}
+ * />
+ * ```
+ */
 const FlyingPageHeader: React.FC<FlyingPageHeaderProps> = ({
   isSimulateMode,
   onModeToggle,

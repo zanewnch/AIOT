@@ -62,6 +62,39 @@ export class ArchiveTaskQuery {
   
   /**
    * 獲取所有歸檔任務
+   * 
+   * 使用 React Query 從後端 API 獲取歸檔任務列表，支援各種查詢選項
+   * 包括狀態篩選、類型篩選、日期範圍等高級查詢功能
+   * 
+   * @param options - 查詢選項，包含篩選、排序、分頁等參數
+   * @param options.status - 任務狀態篩選 (pending, running, completed, failed)
+   * @param options.jobType - 任務類型篩選
+   * @param options.batchId - 批次ID篩選
+   * @param options.createdBy - 創建者篩選
+   * @param options.sortBy - 排序欄位
+   * @param options.sortOrder - 排序方向 (ASC|DESC)
+   * @param options.limit - 分頁限制
+   * @param options.offset - 分頁偏移
+   * @param options.dateRangeStart - 日期範圍開始
+   * @param options.dateRangeEnd - 日期範圍結束
+   * @returns React Query 結果物件，包含歸檔任務數據和載入狀態
+   * 
+   * @example
+   * ```typescript
+   * const archiveQuery = new ArchiveTaskQuery();
+   * const { data: tasks, isLoading, error } = archiveQuery.useArchiveTasks({
+   *   status: ArchiveTaskStatus.RUNNING,
+   *   sortBy: 'createdAt',
+   *   sortOrder: 'DESC',
+   *   limit: 20
+   * });
+   * 
+   * if (isLoading) return <div>載入中...</div>;
+   * if (error) return <div>錯誤: {error.message}</div>;
+   * return <ArchiveTaskTable tasks={tasks} />;
+   * ```
+   * 
+   * @throws {TableError} 當 API 請求失敗時拋出錯誤
    */
   useArchiveTasks(options?: ArchiveTaskQueryOptions) {
     return useQuery({
@@ -128,6 +161,27 @@ export class ArchiveTaskQuery {
 
   /**
    * 獲取歸檔任務資料（用於表格顯示）
+   * 
+   * 專門為表格組件優化的歸檔任務數據獲取方法
+   * 返回精簡的數據格式，適合表格快速渲染
+   * 
+   * @returns React Query 結果物件，包含表格用歸檔任務數據
+   * 
+   * @example
+   * ```typescript
+   * const archiveQuery = new ArchiveTaskQuery();
+   * const { data: tableData, isLoading } = archiveQuery.useArchiveTasksData();
+   * 
+   * return (
+   *   <DataTable
+   *     data={tableData}
+   *     loading={isLoading}
+   *     columns={archiveTaskColumns}
+   *   />
+   * );
+   * ```
+   * 
+   * @throws {TableError} 當數據獲取失敗時拋出錯誤
    */
   useArchiveTasksData() {
     return useQuery({
@@ -161,6 +215,28 @@ export class ArchiveTaskQuery {
 
   /**
    * 根據 ID 獲取歸檔任務
+   * 
+   * 使用唯一 ID 獲取特定歸檔任務的詳細資訊
+   * 支援條件性啟用查詢，用於優化效能
+   * 
+   * @param id - 歸檔任務的唯一識別碼
+   * @param enabled - 是否啟用查詢，默認為 true
+   * @returns React Query 結果物件，包含特定歸檔任務數據
+   * 
+   * @example
+   * ```typescript
+   * const archiveQuery = new ArchiveTaskQuery();
+   * const selectedTaskId = 123;
+   * const { data: task, isLoading } = archiveQuery.useArchiveTaskById(
+   *   selectedTaskId,
+   *   !!selectedTaskId
+   * );
+   * 
+   * if (!task) return null;
+   * return <ArchiveTaskDetail task={task} />;
+   * ```
+   * 
+   * @throws {TableError} 當任務不存在或查詢失敗時拋出錯誤
    */
   useArchiveTaskById(id: number, enabled: boolean = true) {
     return useQuery({
@@ -352,6 +428,33 @@ export class ArchiveTaskQuery {
 
   /**
    * 創建歸檔任務
+   * 
+   * 創建新的歸檔任務，支援各種任務類型和配置選項
+   * 成功創建後會自動刷新相關查詢緩存
+   * 
+   * @returns React Query mutation 物件，用於創建歸檔任務
+   * 
+   * @example
+   * ```typescript
+   * const archiveQuery = new ArchiveTaskQuery();
+   * const createTaskMutation = archiveQuery.useCreateArchiveTask();
+   * 
+   * const handleCreateTask = async () => {
+   *   try {
+   *     const newTask = await createTaskMutation.mutateAsync({
+   *       name: '數據歸檔任務',
+   *       job_type: ArchiveJobType.DATA_ARCHIVE,
+   *       config: { retention_days: 30 },
+   *       created_by: 'admin'
+   *     });
+   *     console.log('任務創建成功:', newTask);
+   *   } catch (error) {
+   *     console.error('創建失敗:', error);
+   *   }
+   * };
+   * ```
+   * 
+   * @throws {TableError} 當創建請求失敗時拋出錯誤
    */
   useCreateArchiveTask() {
     const queryClient = useQueryClient();
@@ -455,6 +558,38 @@ export class ArchiveTaskQuery {
 
   /**
    * 執行歸檔任務
+   * 
+   * 觸發特定歸檔任務的執行，將任務狀態從待執行變更為執行中
+   * 執行後會自動更新任務狀態並刷新相關查詢緩存
+   * 
+   * @returns React Query mutation 物件，用於執行歸檔任務
+   * 
+   * @example
+   * ```typescript
+   * const archiveQuery = new ArchiveTaskQuery();
+   * const executeTaskMutation = archiveQuery.useExecuteArchiveTask();
+   * 
+   * const handleExecuteTask = async (taskId: number) => {
+   *   try {
+   *     const result = await executeTaskMutation.mutateAsync(taskId);
+   *     console.log('任務執行結果:', result);
+   *     // 結果包含 taskId, status, executionDetails 等資訊
+   *   } catch (error) {
+   *     console.error('執行失敗:', error);
+   *   }
+   * };
+   * 
+   * return (
+   *   <Button 
+   *     onClick={() => handleExecuteTask(123)}
+   *     loading={executeTaskMutation.isPending}
+   *   >
+   *     執行任務
+   *   </Button>
+   * );
+   * ```
+   * 
+   * @throws {TableError} 當執行請求失敗時拋出錯誤
    */
   useExecuteArchiveTask() {
     const queryClient = useQueryClient();

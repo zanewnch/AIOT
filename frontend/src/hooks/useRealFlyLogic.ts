@@ -14,16 +14,29 @@
 import { useEffect, useRef, useState } from "react";
 import { googleMapsLoader } from "../utils/GoogleMapsLoader";
 
-// 台北101的座標作為預設中心點
+/**
+ * 預設地圖中心點座標（台北101）
+ * 
+ * @constant {Object} DEFAULT_CENTER
+ * @description 作為飛行起點的預設地理座標
+ */
 const DEFAULT_CENTER = {
+  /** 緯度 */
   lat: 25.0337,
+  /** 經度 */
   lng: 121.5645
 };
 
-// 宣告 Google Maps 全域類型
+/**
+ * 宣告 Google Maps 全域類型
+ * 
+ * @description 擴展 Window 介面以包含 Google Maps API
+ */
 declare global {
   interface Window {
+    /** Google Maps API 全域物件 */
     google: any;
+    /** Google Maps 初始化函數（可選） */
     initMap?: () => void;
   }
 }
@@ -31,10 +44,31 @@ declare global {
 /**
  * 真實飛行邏輯 Hook
  *
- * 提供真實飛行功能的所有邏輯處理
- *
+ * @description 提供真實飛行功能的所有邏輯處理，包括 Google Maps 初始化、飛行點管理等
  * @param mapRef - 地圖容器的 React ref
- * @returns 地圖狀態和操作方法
+ * @returns 包含地圖狀態、飛行點管理和操作方法的物件
+ * 
+ * @example
+ * ```typescript
+ * const mapRef = useRef<HTMLDivElement>(null);
+ * const {
+ *   isLoading,
+ *   error,
+ *   addMarker,
+ *   clearMarkers,
+ *   markersCount
+ * } = useRealFlyLogic(mapRef);
+ * 
+ * // 添加飛行點
+ * const handleAddFlyPoint = () => {
+ *   addMarker();
+ * };
+ * 
+ * // 清除所有飛行點
+ * const handleClearPoints = () => {
+ *   clearMarkers();
+ * };
+ * ```
  */
 export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
   // Google Maps 實例
@@ -48,7 +82,11 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
   const [error, setError] = useState<string>("");
 
   /**
-   * 載入 Google Maps JavaScript API (使用統一管理器)
+   * 載入 Google Maps JavaScript API
+   * 
+   * @description 使用統一管理器加載 Google Maps API
+   * @returns Promise，解析為 void
+   * @throws 當 API 載入失敗時拋出錯誤
    */
   const loadGoogleMapsAPI = async (): Promise<void> => {
     try {
@@ -60,6 +98,9 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
   /**
    * 初始化 Google Maps
+   * 
+   * @description 創建地圖實例並設置初始飛行點
+   * @throws 當地圖初始化失敗時拋出錯誤
    */
   const initializeMap = async () => {
     if (!mapRef.current || !googleMapsLoader.isGoogleMapsLoaded()) {
@@ -135,6 +176,15 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
   /**
    * 添加新飛行點
+   * 
+   * @description 在地圖中心附近隨機位置添加新的飛行點標記
+   * 
+   * @example
+   * ```typescript
+   * // 添加飛行點
+   * addMarker();
+   * console.log('飛行點數量:', markersCount);
+   * ```
    */
   const addMarker = () => {
     if (!mapInstanceRef.current) return;
@@ -176,6 +226,16 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
   /**
    * 縮放至適合所有飛行點
+   * 
+   * @description 自動調整地圖縮放和中心點，使所有飛行點都可見
+   * 
+   * @example
+   * ```typescript
+   * // 添加多個飛行點後，調整視野
+   * addMarker();
+   * addMarker();
+   * fitToMarkers();
+   * ```
    */
   const fitToMarkers = () => {
     if (!mapInstanceRef.current || markersRef.current.length === 0) return;
@@ -190,6 +250,14 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
   /**
    * 清除所有飛行點
+   * 
+   * @description 移除地圖上所有的飛行點標記
+   * 
+   * @example
+   * ```typescript
+   * clearMarkers();
+   * console.log('清除後飛行點數量:', markersCount); // 0
+   * ```
    */
   const clearMarkers = () => {
     markersRef.current.forEach(marker => {
@@ -198,7 +266,11 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
     markersRef.current = [];
   };
 
-  // 載入 Google Maps API 並初始化地圖
+  /**
+   * 載入 Google Maps API 並初始化地圖
+   * 
+   * @description 組件歷產時的副作用，負責載入 API 和初始化地圖
+   */
   useEffect(() => {
     const loadAndInitMap = async () => {
       try {
@@ -222,7 +294,11 @@ export const useRealFlyLogic = (mapRef: React.RefObject<HTMLDivElement>) => {
 
     loadAndInitMap();
 
-    // 清理函數
+    /**
+     * 清理函數
+     * 
+     * @description 組件卸載時清理所有飛行點資源
+     */
     return () => {
       if (markersRef.current.length > 0) {
         clearMarkers();

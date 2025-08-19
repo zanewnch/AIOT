@@ -17,23 +17,52 @@ const logger = createLogger('ConditionalMapContainer');
 // 🔄 懶加載地圖組件
 const LazyMapContainer = lazy(() => import('./MapContainer'));
 
+/**
+ * 條件載入地圖容器組件的屬性介面
+ * 
+ * @interface ConditionalMapContainerProps
+ */
 interface ConditionalMapContainerProps {
+  /** 地圖容器的 React ref 參考 */
   mapRef: React.RefObject<HTMLDivElement>;
+  /** 是否正在載入狀態 */
   isLoading: boolean;
+  /** 錯誤訊息字串 */
   error: string;
+  /** 是否為模擬模式 */
   isSimulateMode: boolean;
+  /** 真實模式是否正在載入，可選參數 */
   realModeLoading?: boolean;
+  /** 自定義 CSS 類名，可選參數 */
   className?: string;
 }
 
 /**
- * 地圖載入建議卡片組件
+ * 地圖載入建議卡片組件的屬性介面
+ * 
+ * @interface MapLoadingRecommendationProps
  */
-const MapLoadingRecommendation: React.FC<{
+interface MapLoadingRecommendationProps {
+  /** 載入建議物件，包含策略和原因資訊 */
   recommendation: any;
+  /** 強制載入地圖的回調函數 */
   onForceLoad: () => void;
+  /** 停用地圖載入的回調函數 */
   onDisable: () => void;
-}> = ({ recommendation, onForceLoad, onDisable }) => {
+}
+
+/**
+ * 地圖載入建議卡片組件
+ * 
+ * 根據系統建議顯示載入策略，並提供使用者強制載入或停用的選項
+ * 
+ * @param props - 組件屬性
+ * @param props.recommendation - 載入建議物件
+ * @param props.onForceLoad - 強制載入回調函數
+ * @param props.onDisable - 停用載入回調函數
+ * @returns JSX 元素或 null
+ */
+const MapLoadingRecommendation: React.FC<MapLoadingRecommendationProps> = ({ recommendation, onForceLoad, onDisable }) => {
   if (!recommendation) return null;
 
   const { strategy, shouldLoad, reasons, isRecommended } = recommendation;
@@ -104,13 +133,32 @@ const MapLoadingRecommendation: React.FC<{
 };
 
 /**
- * 設備信息面板組件
+ * 設備資訊面板組件的屬性介面
+ * 
+ * @interface DeviceInfoPanelProps
  */
-const DeviceInfoPanel: React.FC<{
+interface DeviceInfoPanelProps {
+  /** 設備性能資訊物件 */
   deviceCapabilities: any;
+  /** 網路狀況資訊物件 */
   networkConditions: any;
+  /** 電池狀態資訊物件 */
   batteryStatus: any;
-}> = ({ deviceCapabilities, networkConditions, batteryStatus }) => {
+}
+
+/**
+ * 設備資訊面板組件
+ * 
+ * 顯示設備性能、網路狀況和電池狀態等資訊，支援展開/收合功能
+ * 
+ * @param props - 組件屬性
+ * @param props.deviceCapabilities - 設備性能資訊
+ * @param props.networkConditions - 網路狀況資訊
+ * @param props.batteryStatus - 電池狀態資訊
+ * @returns JSX 元素或 null
+ */
+const DeviceInfoPanel: React.FC<DeviceInfoPanelProps> = ({ deviceCapabilities, networkConditions, batteryStatus }) => {
+  /** 面板是否展開的狀態 */
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!deviceCapabilities) return null;
@@ -215,6 +263,18 @@ const DeviceInfoPanel: React.FC<{
 
 /**
  * 條件載入地圖容器組件
+ * 
+ * 提供智能的地圖載入功能，根據設備性能、網路狀況、電池狀態等條件
+ * 決定地圖載入策略，支援懶載入、互動載入等多種載入模式
+ * 
+ * @param props - 組件屬性
+ * @param props.mapRef - 地圖容器的 React ref 參考
+ * @param props.isLoading - 是否正在載入狀態
+ * @param props.error - 錯誤訊息字串
+ * @param props.isSimulateMode - 是否為模擬模式
+ * @param props.realModeLoading - 真實模式是否正在載入
+ * @param props.className - 自定義 CSS 類名
+ * @returns JSX 元素
  */
 const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
   mapRef,
@@ -254,7 +314,9 @@ const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
   });
 
   // 可見性檢測
+  /** 容器元素的 ref 參考 */
   const containerRef = useRef<HTMLDivElement>(null);
+  /** 容器是否在視窗範圍內的狀態 */
   const [isInView, setIsInView] = useState(false);
 
   // Intersection Observer for visibility detection
@@ -299,6 +361,10 @@ const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
 
   /**
    * 渲染載入中狀態
+   * 
+   * 顯示帶有動畫效果的載入提示畫面
+   * 
+   * @returns JSX 元素
    */
   const renderLoadingState = () => (
     <div className="absolute inset-0 bg-gray-800/90 backdrop-blur-sm flex items-center justify-center">
@@ -321,6 +387,10 @@ const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
 
   /**
    * 渲染互動提示
+   * 
+   * 顯示需要使用者互動才能載入地圖的提示畫面
+   * 
+   * @returns JSX 元素
    */
   const renderInteractionPrompt = () => (
     <div className="absolute inset-0 bg-gray-800/95 backdrop-blur-sm flex items-center justify-center">
@@ -360,6 +430,10 @@ const ConditionalMapContainer: React.FC<ConditionalMapContainerProps> = ({
 
   /**
    * 渲染禁用狀態
+   * 
+   * 顯示地圖功能已被禁用的提示畫面，並提供強制啟用選項
+   * 
+   * @returns JSX 元素
    */
   const renderDisabledState = () => (
     <div className="absolute inset-0 bg-gray-800/95 backdrop-blur-sm flex items-center justify-center">

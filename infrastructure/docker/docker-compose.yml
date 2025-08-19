@@ -599,7 +599,7 @@ services:
       NODE_ENV: development
       # API 端點配置 - 前端連接到 Gateway Service
       VITE_API_BASE_URL: http://localhost:8000/api
-      VITE_WS_URL: ws://localhost:3004
+      VITE_WS_URL: ws://localhost:8000/socket.io
       VITE_GATEWAY_URL: http://localhost:8000
       # 開發模式配置
       CHOKIDAR_USEPOLLING: true  # 支援容器內 hot-reload

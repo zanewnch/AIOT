@@ -16,7 +16,10 @@ import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 /**
  * 按鈕組件的屬性介面
  * 
- * 定義按鈕組件可接受的所有屬性及其類型約束
+ * 定義按鈕組件可接受的所有屬性及其類型約束。
+ * 支援多種視覺風格、大小配置、狀態控制和事件處理
+ * 
+ * @interface ButtonProps
  */
 interface ButtonProps {
   /** 按鈕內容，可以是文字或其他 React 元素 */
@@ -37,7 +40,13 @@ interface ButtonProps {
   className?: string;
 }
 
-// 創建 Button 專用的 logger 實例
+/**
+ * Button 組件專用的日誌記錄器
+ * 
+ * 用於記錄按鈕點擊事件、狀態變化等用戶互動行為的日誌資訊
+ * 
+ * @const
+ */
 const logger = createLogger('Button');
 
 /**
@@ -72,10 +81,14 @@ export const Button: React.FC<ButtonProps> = ({
   className = '', // 額外的 CSS 類名，默認為空字串
 }) => {
   // 構建基礎 CSS 類名
-  const baseClass = 'btn'; // 按鈕基礎類名
-  const variantClass = `btn--${variant}`; // 根據風格變體生成的類名
-  const sizeClass = `btn--${size}`; // 根據大小規格生成的類名
-  const loadingClass = loading ? 'btn--loading' : ''; // 載入狀態的類名
+  /** 按鈕的基礎 CSS 類名 */
+  const baseClass = 'btn';
+  /** 根據視覺風格變體生成的 CSS 類名 */
+  const variantClass = `btn--${variant}`;
+  /** 根據大小規格生成的 CSS 類名 */
+  const sizeClass = `btn--${size}`;
+  /** 載入狀態的 CSS 類名，只有在載入時才添加 */
+  const loadingClass = loading ? 'btn--loading' : '';
   
   // 組合所有 CSS 類名，過濾空值並用空格連接
   const buttonClass = [

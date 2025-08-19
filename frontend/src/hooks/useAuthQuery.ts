@@ -19,10 +19,17 @@ import { createLogger } from '../configs/loggerConfig';
 const logger = createLogger('useAuthQuery');
 
 /**
- * AuthQuery - 認證查詢服務類
+ * 認證查詢服務類
  * 
- * 使用 class 封裝所有與認證相關的 React Query 操作
- * 每個方法返回對應的 React Query hook
+ * @class AuthQuery
+ * @description 使用 class 封裝所有與認證相關的 React Query 操作，提供統一的認證 API 調用功能
+ * 
+ * @example
+ * ```typescript
+ * const authQuery = new AuthQuery();
+ * const loginMutation = authQuery.useLogin();
+ * const initQuery = authQuery.useInitializeAuth();
+ * ```
  */
 export class AuthQuery {
   
@@ -35,10 +42,23 @@ export class AuthQuery {
   constructor() {}
   
   /**
-   * 初始化認證 Query - 檢查 httpOnly cookie 是否有效
+   * 初始化認證 Query
    * 
+   * @description 檢查 httpOnly cookie 是否有效，用於應用程式啟動時的認證狀態初始化
+   * @param enabled - 是否啟用查詢，預設為 true
+   * @returns React Query 的 useQuery 結果
+   * 
+   * @remarks
    * 注意：此函數使用 httpOnly cookie 進行認證檢查
    * 認證失敗是正常情況（表示用戶未登入或 cookie 過期）
+   * 
+   * @example
+   * ```typescript
+   * const { data, isLoading, error } = useInitializeAuth(true);
+   * if (data) {
+   *   console.log('用戶已認證:', data.user);
+   * }
+   * ```
    */
   useInitializeAuth(enabled: boolean = true) {
     const { initializeAuthSuccess, initializeAuthError, setLoading } = useAuthActions();
@@ -101,6 +121,26 @@ export class AuthQuery {
 
   /**
    * 登入 Mutation
+   * 
+   * @description 處理用戶登入請求的 React Query mutation
+   * @returns React Query 的 useMutation 結果
+   * 
+   * @example
+   * ```typescript
+   * const loginMutation = useLogin();
+   * 
+   * const handleLogin = async () => {
+   *   try {
+   *     const result = await loginMutation.mutateAsync({
+   *       username: 'admin',
+   *       password: 'password123'
+   *     });
+   *     console.log('登入成功:', result);
+   *   } catch (error) {
+   *     console.error('登入失敗:', error);
+   *   }
+   * };
+   * ```
    */
   useLogin() {
     const { setAuthData, setError } = useAuthActions();
@@ -140,6 +180,23 @@ export class AuthQuery {
 
   /**
    * 登出 Mutation
+   * 
+   * @description 處理用戶登出請求的 React Query mutation
+   * @returns React Query 的 useMutation 結果
+   * 
+   * @example
+   * ```typescript
+   * const logoutMutation = useLogout();
+   * 
+   * const handleLogout = async () => {
+   *   try {
+   *     await logoutMutation.mutateAsync();
+   *     console.log('登出成功');
+   *   } catch (error) {
+   *     console.error('登出失敗:', error);
+   *   }
+   * };
+   * ```
    */
   useLogout() {
     const { clearAuth, setError } = useAuthActions();
@@ -180,18 +237,39 @@ export class AuthQuery {
 
 /**
  * 全局 AuthQuery 實例
+ * 
+ * @constant {AuthQuery} authQuery
+ * @description 全局共享的 AuthQuery 實例，用於統一管理認證相關的查詢
  */
 export const authQuery = new AuthQuery();
 
 /**
  * 初始化認證 Hook
+ * 
+ * @description 使用全局 authQuery 實例的初始化認證方法
+ * @param enabled - 是否啟用查詢，可選
+ * @returns React Query 的 useQuery 結果
+ * 
+ * @example
+ * ```typescript
+ * const { data, isLoading } = useInitializeAuth();
+ * ```
  */
 export const useInitializeAuth = (enabled?: boolean) => {
   return authQuery.useInitializeAuth(enabled);
 };
 
 /**
- * 登入 Hook  
+ * 登入 Hook
+ * 
+ * @description 使用全局 authQuery 實例的登入方法
+ * @returns React Query 的 useMutation 結果
+ * 
+ * @example
+ * ```typescript
+ * const loginMutation = useLogin();
+ * loginMutation.mutate({ username: 'admin', password: 'password' });
+ * ```
  */
 export const useLogin = () => {
   return authQuery.useLogin();
@@ -199,6 +277,15 @@ export const useLogin = () => {
 
 /**
  * 登出 Hook
+ * 
+ * @description 使用全局 authQuery 實例的登出方法
+ * @returns React Query 的 useMutation 結果
+ * 
+ * @example
+ * ```typescript
+ * const logoutMutation = useLogout();
+ * logoutMutation.mutate();
+ * ```
  */
 export const useLogout = () => {
   return authQuery.useLogout();

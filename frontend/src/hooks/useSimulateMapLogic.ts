@@ -41,7 +41,20 @@ const DRONE_CONFIGS = [
 
 /**
  * 生成從共同起點向不同方向的飛行路徑
- * 每台無人機有20個軌跡點，形成放射狀飛行模式
+ * 
+ * 為所有無人機生成放射狀的模擬飛行路徑，每台無人機從台北101出發
+ * 向不同方向飛行，形成均勻分佈的放射狀模式
+ * 
+ * @returns 包含所有無人機飛行路徑的二維數組
+ * 
+ * @example
+ * ```typescript
+ * const paths = generateRadialFlightPaths();
+ * // paths[0] 包含第一台無人機的20個軌跡點
+ * // paths[1] 包含第二台無人機的20個軌跡點
+ * console.log('無人機路徑數量:', paths.length); // 10
+ * console.log('每條路徑軌跡點數量:', paths[0].length); // 21 (包含起始點)
+ * ```
  */
 const generateRadialFlightPaths = () => {
   const paths = [];
@@ -138,6 +151,23 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 載入 Google Maps JavaScript API (使用統一管理器)
+   * 
+   * 透過統一的 GoogleMapsLoader 載入 Google Maps API
+   * 確保 API 只被載入一次，避免重複載入造成的錯誤
+   * 
+   * @returns Promise<void> 載入完成後解析
+   * @throws {Error} 當 API 載入失敗時拋出錯誤
+   * 
+   * @example
+   * ```typescript
+   * try {
+   *   await loadGoogleMapsAPI();
+   *   console.log('Google Maps API 載入成功');
+   *   // 現在可以使用 window.google.maps
+   * } catch (error) {
+   *   console.error('載入失敗:', error);
+   * }
+   * ```
    */
   const loadGoogleMapsAPI = async (): Promise<void> => {
     try {
@@ -149,6 +179,25 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 創建自定義無人機圖標 - 現代科技風格
+   * 
+   * 動態生成具有指定顏色的無人機圖標 DOM 元素
+   * 使用現代扁平化設計風格，包含邊框和齒輪符號
+   * 
+   * @param color - 圖標的背景顏色 (CSS 顏色值)
+   * @returns HTMLElement 可用於 Google Maps AdvancedMarkerElement 的 DOM 元素
+   * 
+   * @example
+   * ```typescript
+   * const redDroneIcon = createDroneIcon('#FF6B6B');
+   * const blueDroneIcon = createDroneIcon('#4ECDC4');
+   * 
+   * // 在 Google Maps 標記中使用
+   * const marker = new google.maps.marker.AdvancedMarkerElement({
+   *   position: { lat: 25.0337, lng: 121.5645 },
+   *   map: mapInstance,
+   *   content: redDroneIcon
+   * });
+   * ```
    */
   const createDroneIcon = (color: string): HTMLElement => {
     const droneIcon = document.createElement('div');
@@ -173,6 +222,19 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 初始化 Google Maps
+   * 
+   * 創建 Google Maps 實例並設置適合無人機追蹤的配置
+   * 使用混合視圖 (HYBRID) 提供衛星圖像和街道標籤
+   * 
+   * @returns Promise<void> 初始化完成後解析
+   * 
+   * @example
+   * ```typescript
+   * await initializeMap();
+   * // 地圖已初始化，無人機標記已添加到地圖上
+   * ```
+   * 
+   * @throws {Error} 當地圖初始化失敗時拋出錯誤
    */
   const initializeMap = async () => {
     if (!mapRef.current || !googleMapsLoader.isGoogleMapsLoaded()) {
@@ -204,6 +266,18 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 初始化無人機
+   * 
+   * 在地圖上創建所有無人機的標記、信息視窗和飛行路徑
+   * 每台無人機都有自定義圖標、點擊事件和初始狀態
+   * 
+   * @param map - Google Maps 實例
+   * 
+   * @example
+   * ```typescript
+   * const mapInstance = new google.maps.Map(element, options);
+   * initializeDrones(mapInstance);
+   * // 10台無人機已添加到地圖上，每台都有標記和飛行路徑
+   * ```
    */
   const initializeDrones = (map: any) => {
     dronesRef.current = DRONE_CONFIGS.map((config, index) => {
@@ -258,6 +332,33 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 創建無人機資訊內容
+   * 
+   * 生成無人機信息視窗的 HTML 內容，包含狀態、位置、電量等詳細信息
+   * 使用響應式設計和狀態顏色編碼
+   * 
+   * @param config - 無人機配置信息
+   * @param config.id - 無人機唯一識別碼
+   * @param config.name - 無人機顯示名稱
+   * @param config.color - 無人機顏色
+   * @param position - 當前位置座標
+   * @param position.lat - 緯度
+   * @param position.lng - 經度
+   * @param battery - 電池電量百分比 (0-100)
+   * @param altitude - 飛行高度 (公尺)
+   * @param status - 無人機狀態 ('active' | 'returning' | 'landed')
+   * @returns 格式化的 HTML 字符串
+   * 
+   * @example
+   * ```typescript
+   * const infoContent = createDroneInfoContent(
+   *   { id: 'DRONE_001', name: '偵察無人機 Alpha', color: '#FF6B6B' },
+   *   { lat: 25.0337, lng: 121.5645 },
+   *   85, // 85% 電量
+   *   50, // 50公尺高度
+   *   'active'
+   * );
+   * infoWindow.setContent(infoContent);
+   * ```
    */
   const createDroneInfoContent = (
     config: { id: string; name: string; color: string },
@@ -285,6 +386,22 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 更新無人機位置 - 每秒移動到下一個軌跡點
+   * 
+   * 模擬無人機沿預定軌跡移動，更新位置、電量和統計數據
+   * 處理無人機完成任務後的狀態變更和路徑追蹤
+   * 
+   * @example
+   * ```typescript
+   * // 在計時器中調用此函數
+   * const timer = setInterval(updateDronePositions, 1000);
+   * 
+   * // 函數會自動：
+   * // 1. 移動無人機到下一個軌跡點
+   * // 2. 更新電量消耗
+   * // 3. 更新飛行路徑顯示
+   * // 4. 計算統計數據
+   * // 5. 處理任務完成狀態
+   * ```
    */
   const updateDronePositions = useCallback(() => {
     if (!mapInstanceRef.current) return;
@@ -368,6 +485,21 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 開始模擬
+   * 
+   * 啟動無人機飛行模擬，開始定時更新無人機位置
+   * 設置每秒一次的更新頻率，模擬真實飛行情況
+   * 
+   * @example
+   * ```typescript
+   * const { startSimulation } = useSimulateMapLogic(mapRef);
+   * 
+   * const handleStartClick = () => {
+   *   startSimulation();
+   *   console.log('模擬已開始');
+   * };
+   * 
+   * return <Button onClick={handleStartClick}>開始模擬</Button>;
+   * ```
    */
   const startSimulation = () => {
     if (simulationTimerRef.current) return;
@@ -379,6 +511,21 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 停止模擬
+   * 
+   * 停止無人機飛行模擬，清除定時器並更新模擬狀態
+   * 無人機會保持當前位置，不會重置到起始點
+   * 
+   * @example
+   * ```typescript
+   * const { stopSimulation } = useSimulateMapLogic(mapRef);
+   * 
+   * const handleStopClick = () => {
+   *   stopSimulation();
+   *   console.log('模擬已停止');
+   * };
+   * 
+   * return <Button onClick={handleStopClick}>停止模擬</Button>;
+   * ```
    */
   const stopSimulation = () => {
     if (simulationTimerRef.current) {
@@ -390,6 +537,21 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 重置模擬
+   * 
+   * 將所有無人機重置到初始狀態，包括位置、電量和任務狀態
+   * 清除飛行路徑並重置統計數據
+   * 
+   * @example
+   * ```typescript
+   * const { resetSimulation } = useSimulateMapLogic(mapRef);
+   * 
+   * const handleResetClick = () => {
+   *   resetSimulation();
+   *   console.log('模擬已重置');
+   * };
+   * 
+   * return <Button onClick={handleResetClick}>重置模擬</Button>;
+   * ```
    */
   const resetSimulation = () => {
     stopSimulation();
@@ -418,6 +580,21 @@ export const useSimulateMapLogic = (mapRef: React.RefObject<HTMLDivElement>) => 
 
   /**
    * 縮放至所有無人機
+   * 
+   * 自動調整地圖視野以包含所有無人機的當前位置
+   * 使用 Google Maps 的 fitBounds 方法實現最佳視野
+   * 
+   * @example
+   * ```typescript
+   * const { fitToDrones } = useSimulateMapLogic(mapRef);
+   * 
+   * const handleFitClick = () => {
+   *   fitToDrones();
+   *   console.log('地圖視野已調整');
+   * };
+   * 
+   * return <Button onClick={handleFitClick}>縮放至所有無人機</Button>;
+   * ```
    */
   const fitToDrones = () => {
     if (!mapInstanceRef.current || dronesRef.current.length === 0) return;

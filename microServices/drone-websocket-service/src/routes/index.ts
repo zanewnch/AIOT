@@ -193,7 +193,15 @@ export class RouteManager {
      * 設定 404 處理器
      */
     private setup404Handler = (): void => {
-        this.router.use('*', (req, res) => {
+        this.router.use('*', (req, res, next) => {
+            // 跳過 Socket.IO 相關路徑，這些由 Socket.IO 服務器處理
+            if (req.originalUrl.startsWith('/socket.io')) {
+                logger.debug('Skipping Socket.IO path in Express 404 handler', {
+                    url: req.originalUrl
+                });
+                return next(); // 讓 Socket.IO 處理
+            }
+            
             logger.warn('Route not found', {
                 method: req.method,
                 url: req.originalUrl,

@@ -18,12 +18,15 @@ import { createLogger } from '../configs/loggerConfig'; // 引入日誌配置
 /**
  * 受保護路由組件的屬性介面
  * 
- * 定義受保護路由組件可接受的所有屬性及其類型約束
+ * 定義受保護路由組件可接受的所有屬性及其類型約束。
+ * 此介面支援子組件傳遞和自定義載入畫面配置
+ * 
+ * @interface ProtectedRouteProps
  */
 interface ProtectedRouteProps {
-  /** 需要保護的子組件內容 */
+  /** 需要認證才能訪問的子組件內容 */
   children: React.ReactNode;
-  /** 自定義載入畫面組件，可選 */
+  /** 自定義載入畫面組件，當認證狀態檢查中時顯示，可選 */
   fallback?: React.ReactNode;
 }
 
@@ -51,7 +54,13 @@ interface ProtectedRouteProps {
  * ```
  */
 
-// 創建 ProtectedRoute 專用的 logger 實例
+/**
+ * ProtectedRoute 組件專用的日誌記錄器
+ * 
+ * 用於記錄路由保護檢查、認證狀態變化和重定向操作的日誌資訊
+ * 
+ * @const
+ */
 const logger = createLogger('ProtectedRoute');
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
@@ -59,10 +68,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   fallback // 自定義載入畫面組件
 }) => {
   // 從認證 Hook 獲取狀態
+  /** 當前用戶的認證狀態和載入狀態 */
   const { isAuthenticated, isLoading } = useAuth();
-  const location = useLocation(); // 獲取當前路徑資訊
+  /** 當前路由位置資訊，包含路徑和查詢參數 */
+  const location = useLocation();
 
-  // 記錄路由保護檢查
+  /**
+   * 記錄路由保護檢查的副作用
+   * 
+   * 當路徑或認證狀態發生變化時，記錄相關日誌資訊以便監控和除錯
+   */
   React.useEffect(() => {
     logger.info('Route protection check', {
       path: location.pathname,
@@ -77,7 +92,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     logger.debug('Showing authentication loading state', { path: location.pathname });
     return (
       <>
-        {fallback || ( // 使用自定義載入畫面或默認載入畫面
+        {/** 優先使用自定義的 fallback 組件，否則使用預設的載入畫面 */}
+        {fallback || (
           <div style={{ 
             display: 'flex', // 使用 flexbox 布局
             justifyContent: 'center', // 水平居中
@@ -92,7 +108,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
               alignItems: 'center', // 垂直居中對齊
               gap: '10px' // 元素間距
             }}>
-              {/* 載入動畫旋轉圓圈 */}
+              {/** 旋轉動畫載入指示器 */}
               <div style={{
                 width: '20px', // 寬度
                 height: '20px', // 高度
@@ -111,6 +127,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // 如果未認證，重定向到登入頁面並保存當前路徑
   if (!isAuthenticated) {
+    /** 建構登入頁面的重定向路徑，包含原始路徑作為查詢參數 */
     const redirectPath = `/login?redirectTo=${encodeURIComponent(location.pathname + location.search)}`;
     
     logger.warn('Access denied - redirecting to login', {
@@ -139,4 +156,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
-export default ProtectedRoute; // 同時提供默認匯出
+/**
+ * 預設匯出受保護路由組件
+ * 
+ * 提供替代的匯入方式，支援 import ProtectedRoute from './ProtectedRoute' 語法
+ */
+export default ProtectedRoute;

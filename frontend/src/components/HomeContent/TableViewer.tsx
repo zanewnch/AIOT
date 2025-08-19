@@ -58,16 +58,24 @@ import styles from "../../styles/TableViewer.module.scss"; // 引入表格樣式
 import { createLogger } from "../../configs/loggerConfig"; // 引入日誌配置
 
 /**
- * 表格視圖組件的屬性介面
+ * 表格視圖容器組件的屬性介面
+ *
+ * 定義表格視圖容器組件可接受的屬性
  *
  * @interface TableViewerProps
  */
 interface TableViewerProps {
-  /** 可選的自定義 CSS 類名 */
+  /** 可選的自定義 CSS 類名，用於自定義外觀樣式 */
   className?: string;
 }
 
-// 表格類型常量
+/**
+ * 表格類型常量定義
+ * 
+ * 定義系統中所有可用的表格類型標識符，用於統一管理和切換不同的表格視圖
+ * 
+ * @const
+ */
 const TABLE_TYPES = {
   PERMISSION: "permission",
   ROLE: "role",
@@ -87,8 +95,11 @@ const TABLE_TYPES = {
 /**
  * 表格配置陣列
  *
- * 定義每個表格的顯示標題和視圖名稱，用於標籤和標題顯示
- * 使用陣列結構提供更好的可讀性和維護性
+ * 定義每個表格的顯示標題和視圖名稱，用於標籤切換和標題顯示。
+ * 使用陣列結構提供更好的可讀性和維護性，支援動態渲染和順序管理
+ * 
+ * @type {Array<{viewName: string, title: string}>}
+ * @readonly
  */
 const viewItems = [
   { viewName: TABLE_TYPES.PERMISSION, title: "Permission Table" }, // 權限表格配置
@@ -118,7 +129,13 @@ const viewItems = [
   { viewName: TABLE_TYPES.USER_PREFERENCE, title: "User Preference Table" }, // 用戶偏好表格配置
 ];
 
-// 創建 TableViewer 專用的 logger 實例
+/**
+ * TableViewer 組件專用的日誌記錄器
+ * 
+ * 用於記錄表格切換、用戶互動等重要操作的日誌資訊
+ * 
+ * @const
+ */
 const logger = createLogger("TableViewer");
 
 /**
@@ -141,18 +158,21 @@ const logger = createLogger("TableViewer");
  */
 export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   // 從 Zustand stores 獲取狀態和方法
+  /** 當前活動的表格類型和設定方法 */
   const { activeTable, setActiveTable } = useTableUIStore();
 
   // 標籤滾動容器的引用
-  const
-  tabsScrollRef = useRef<HTMLDivElement>(null);
+  /** 標籤滾動容器的 DOM 引用 */
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
 
   // 注意：通知功能現在由 React Query hooks 直接處理，不再需要 TableService 的回調
 
   /**
    * 滾動標籤容器到指定的標籤位置
    *
-   * @param targetTableType - 目標表格類型
+   * 自動計算目標標籤的位置，並平滑滾動至該位置以確保可見
+   *
+   * @param targetTableType - 目標表格類型標識符
    */
   const scrollToTab = (targetTableType: TableType) => {
     if (!tabsScrollRef.current) return;
@@ -166,8 +186,10 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
       const containerRect = container.getBoundingClientRect();
       const buttonRect = targetButton.getBoundingClientRect();
       
-      // 計算需要滾動的距離
+      // 計算需要滾動的距離，將目標按鈕置中
+      /** 容器當前滾動位置 */
       const scrollLeft = container.scrollLeft;
+      /** 目標滾動位置，將按鈕置中顯示 */
       const targetScrollLeft = scrollLeft + (buttonRect.left - containerRect.left) - (containerRect.width / 2) + (buttonRect.width / 2);
       
       // 平滑滾動到目標位置
@@ -181,9 +203,10 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   /**
    * 處理表格切換操作
    *
-   * 當用戶點擊表格切換標籤時，更新活動表格類型並滾動標籤容器
+   * 當用戶點擊表格切換標籤時，更新活動表格類型並滾動標籤容器。
+   * 同時記錄操作日誌以便除錯和用戶行為分析
    *
-   * @param tableType - 要切換到的表格類型
+   * @param tableType - 要切換到的表格類型標識符
    */
   const handleTableChange = (tableType: TableType) => {
     // 記錄表格切換操作
@@ -203,7 +226,7 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   /**
    * 處理左箭頭點擊事件
    *
-   * 切換到前一個表格
+   * 切換到前一個表格，若已在第一個表格則不執行任何操作
    */
   const handleScrollLeft = useCallback(() => {
     const currentIndex = viewItems.findIndex(
@@ -218,7 +241,7 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   /**
    * 處理右箭頭點擊事件
    *
-   * 切換到下一個表格
+   * 切換到下一個表格，若已在最後一個表格則不執行任何操作
    */
   const handleScrollRight = useCallback(() => {
     const currentIndex = viewItems.findIndex(
@@ -324,14 +347,22 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
 
   /**
    * 渲染對應的表格組件
-   * 🚀 支持懶加載 - 歸檔表格組件將按需加載，減少初始bundle大小
    *
-   * 根據當前活動的表格類型，渲染對應的表格視圖組件
+   * 根據當前活動的表格類型，渲染對應的表格視圖組件。
+   * 支持懶加載機制 - 歸檔表格組件將按需加載，減少初始 bundle 大小。
+   * 使用 Suspense 包裝懶加載組件以提供加載狀態提示
    *
-   * @returns {JSX.Element} 對應的表格組件 JSX 元素
+   * @returns 對應的表格組件 JSX 元素
    */
   const renderCurrentTable = () => {
-    // 🔄 懶加載表格組件 - 使用 Suspense 包裝
+    /**
+     * 渲染懶加載表格組件
+     * 
+     * 使用 Suspense 包裝懶加載組件，提供加載狀態和錯誤邊界處理
+     * 
+     * @param Component - 懶加載的 React 組件
+     * @returns 包裝後的 JSX 元素
+     */
     const renderLazyTable = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
       <Suspense 
         fallback={
@@ -382,10 +413,13 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
   };
 
   // 計算當前表格的索引位置
+  /** 當前表格在配置陣列中的索引位置 */
   const currentTableIndex = viewItems.findIndex(
     (item) => item.viewName === activeTable
   );
+  /** 是否為第一個表格，用於控制左箭頭狀態 */
   const isFirstTable = currentTableIndex === 0;
+  /** 是否為最後一個表格，用於控制右箭頭狀態 */
   const isLastTable = currentTableIndex === viewItems.length - 1;
 
   // 渲染表格視圖容器的主要內容

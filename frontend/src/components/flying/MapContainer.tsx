@@ -18,16 +18,49 @@ import { googleMapsLoader } from "../../utils/GoogleMapsLoader";
 
 const logger = createLogger('MapContainer');
 
+/**
+ * 地圖容器組件屬性介面
+ * 
+ * 定義地圖容器組件需要的所有屬性
+ */
 interface MapContainerProps {
+  /** 地圖 DOM 元素的 ref，用於裝載 Google Maps */
   mapRef: React.RefObject<HTMLDivElement>;
+  /** 是否正在載入中 */
   isLoading: boolean;
+  /** 錯誤訊息 */
   error: string;
+  /** 是否為模擬模式 */
   isSimulateMode: boolean;
+  /** 真實模式是否正在載入 */
   realModeLoading?: boolean;
 }
 
 // 使用單例的 Google Maps 載入管理器，不需要全局變量
 
+/**
+ * 地圖容器組件
+ * 
+ * 提供 Google Maps 載入和顯示功能的主要組件。
+ * 支援自動 API 載入、地圖初始化、錯誤處理和載入狀態顯示。
+ * 使用單例模式管理 Google Maps API，確保效能和穩定性。
+ * 
+ * @param props - 組件屬性
+ * @returns 地圖容器 JSX 元素
+ * 
+ * @example
+ * ```tsx
+ * const mapRef = useRef<HTMLDivElement>(null);
+ * 
+ * <MapContainer
+ *   mapRef={mapRef}
+ *   isLoading={false}
+ *   error=""
+ *   isSimulateMode={true}
+ *   realModeLoading={false}
+ * />
+ * ```
+ */
 const MapContainer: React.FC<MapContainerProps> = ({
   mapRef,
   isLoading,
@@ -42,7 +75,22 @@ const MapContainer: React.FC<MapContainerProps> = ({
   const showLoading = isLoading || realModeLoading || isMapLoading;
 
   /**
-   * 載入 Google Maps JavaScript API (使用單例管理器)
+   * 載入 Google Maps JavaScript API
+   * 
+   * 使用單例管理器載入 Google Maps API，避免重複載入和 API 鍵暴露。
+   * 載入失敗時會設定錯誤狀態並拀出錯誤。
+   * 
+   * @throws 當 Google Maps API 載入失敗時拀出錯誤
+   * 
+   * @example
+   * ```typescript
+   * try {
+   *   await loadGoogleMapsAPI();
+   *   console.log('Google Maps API 載入成功');
+   * } catch (error) {
+   *   console.error('API 載入失敗:', error);
+   * }
+   * ```
    */
   const loadGoogleMapsAPI = useCallback(async () => {
     try {
@@ -55,6 +103,17 @@ const MapContainer: React.FC<MapContainerProps> = ({
 
   /**
    * 初始化 Google Maps 地圖實例
+   * 
+   * 在指定的 DOM 元素中創建 Google Maps 實例，配置地圖選項和控制器。
+   * 設定預設的中心位置（台北 101）和基本的地圖設定。
+   * 成功創建後會自動添加示例標記點。
+   * 
+   * @example
+   * ```typescript
+   * // 在 Google Maps API 載入完成後調用
+   * initializeMap();
+   * // 地圖將會在 mapRef.current 中显示
+   * ```
    */
   const initializeMap = useCallback(() => {
     if (!mapRef.current || !googleMapsLoader.isGoogleMapsLoaded()) {

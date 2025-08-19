@@ -22,42 +22,85 @@ import styles from '../../../styles/TableViewer.module.scss';
 const logger = createLogger('EnhancedDroneStatusTableView');
 
 /**
- * 無人機狀態介面定義
+ * 無人機狀態資料介面定義
+ * 
+ * 定義無人機狀態的完整資料結構，包含飛行參數、電池、信號等資訊
+ * 
+ * @interface DroneStatus
  */
 interface DroneStatus {
+  /** 無人機狀態記錄的唯一識別碼 */
   id: number;
+  /** 無人機的識別編號，可選 */
   drone_id?: string;
+  /** 當前飛行狀態（flying、grounded、emergency、maintenance 等） */
   flight_status: string;
+  /** 電池電量百分比 (0-100) */
   battery_level: number;
+  /** 信號強度百分比 (0-100) */
   signal_strength: number;
+  /** 當前海拔高度，單位：公尺 */
   altitude: number;
+  /** 當前飛行速度，單位：公里/小時 */
   speed: number;
+  /** 飛行方向角度 (0-360 度) */
   heading: number;
+  /** GPS 狀態資訊 */
   gps_status: string;
+  /** 環境溫度，單位：攝氏度 */
   temperature: number;
+  /** 環境濕度百分比 */
   humidity: number;
+  /** 風速，單位：公里/小時 */
   wind_speed: number;
+  /** 狀態記錄的時間戳記 */
   timestamp: string;
+  /** 最後一次心跳檢測時間 */
   last_ping: string;
+  /** 是否與控制端保持連線 */
   is_connected: boolean;
+  /** 無人機韌體版本號 */
   firmware_version: string;
+  /** 記錄建立時間 */
   createdAt: string;
+  /** 記錄最後更新時間 */
   updatedAt: string;
 }
 
+/**
+ * 增強版無人機狀態表格視圖組件的屬性介面
+ * 
+ * @interface EnhancedDroneStatusTableViewProps
+ */
 interface EnhancedDroneStatusTableViewProps {
-  /** 是否啟用無限滾動 */
+  /** 是否啟用無限滾動功能，預設為 true */
   enableInfiniteScroll?: boolean;
-  /** 是否啟用虛擬化 */
+  /** 是否啟用虛擬化渲染以提升大數據性能，預設為 false */
   enableVirtualization?: boolean;
-  /** 每頁數據量 */
+  /** 每頁載入的數據筆數，預設為 50 */
   pageSize?: number;
-  /** 表格容器高度 */
+  /** 表格容器的固定高度，單位：像素，預設為 600 */
   containerHeight?: number;
 }
 
 /**
  * 增強版無人機狀態表格視圖組件
+ * 
+ * 此組件提供功能豐富的無人機狀態表格視圖，包括：
+ * - 🔄 無限滾動分頁加載機制
+ * - 📊 虛擬化渲染支援大數據集
+ * - 🚀 樂觀更新和即時數據同步
+ * - 📱 響應式設計適配各種螢幕
+ * - 🔍 即時搜索和狀態篩選
+ * - 📋 可排序的表格欄位
+ * - 🎨 視覺化狀態指示器
+ * 
+ * @param props - 組件屬性
+ * @param props.enableInfiniteScroll - 是否啟用無限滾動
+ * @param props.enableVirtualization - 是否啟用虛擬化渲染
+ * @param props.pageSize - 每頁數據量
+ * @param props.containerHeight - 表格容器高度
+ * @returns JSX 元素
  */
 export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableViewProps> = ({
   enableInfiniteScroll = true,
@@ -66,11 +109,15 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
   containerHeight = 600,
 }) => {
   // 搜索和過濾狀態
+  /** 搜索關鍵字狀態 */
   const [searchTerm, setSearchTerm] = useState('');
+  /** 狀態篩選器值 */
   const [filterStatus, setFilterStatus] = useState<string>('all');
   
   // 表格容器引用
+  /** 表格容器的 DOM 引用 */
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  /** 當前滾動位置 */
   const [scrollTop, setScrollTop] = useState(0);
   
   // Zustand stores for UI state
@@ -100,7 +147,11 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
   });
 
   /**
-   * 處理排序
+   * 處理表格欄位排序
+   * 
+   * 切換指定欄位的排序順序（升序/降序）
+   * 
+   * @param field - 要排序的欄位名稱
    */
   const handleSort = (field: string) => {
     logger.debug('無人機狀態表格排序', { field, currentOrder: sorting.order, operation: 'sort' });
@@ -109,6 +160,10 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
 
   /**
    * 過濾和搜索數據
+   * 
+   * 根據搜索關鍵字和狀態篩選器對無人機數據進行過濾
+   * 
+   * @returns 過濾後的無人機狀態陣列
    */
   const filteredData = useMemo(() => {
     if (!droneStatusData) return [];
@@ -134,9 +189,16 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
 
   /**
    * 虛擬化計算
+   * 
+   * 根據滾動位置計算應該渲染的數據項目範圍，
+   * 用於提升大數據集的渲染性能
+   * 
+   * @returns 虛擬化渲染資訊物件
    */
   const virtualizedData = useMemo(() => {
-    const rowHeight = 50; // 每行高度
+    /** 每行的固定高度（像素） */
+    const rowHeight = 50;
+    /** 視窗外緩衝區大小（額外渲染的行數） */
     const bufferSize = 5;
     
     if (!enableVirtualization) {
@@ -165,7 +227,11 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
   }, [filteredData, scrollTop, containerHeight, enableVirtualization]);
 
   /**
-   * 滾動事件處理
+   * 滾動事件處理器
+   * 
+   * 處理表格滾動事件，更新虛擬化位置並觸發無限滾動載入
+   * 
+   * @param e - 滾動事件物件
    */
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
@@ -174,7 +240,8 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
     // 🔄 無限滾動觸發
     if (enableInfiniteScroll && hasNextPage && !isFetchingNextPage) {
       const { scrollTop, scrollHeight, clientHeight } = target;
-      const threshold = 200; // 200px 的提前加載閾值
+      /** 提前載入的閾值距離（像素） */
+      const threshold = 200;
       
       if (scrollTop + clientHeight >= scrollHeight - threshold) {
         logger.info('觸發無限滾動加載', { 
@@ -190,6 +257,11 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
 
   /**
    * 獲取狀態顯示樣式
+   * 
+   * 根據無人機飛行狀態返回對應的 CSS 樣式類名
+   * 
+   * @param status - 飛行狀態字串
+   * @returns CSS 樣式類名字串
    */
   const getStatusStyle = (status: string) => {
     const statusStyles = {
@@ -204,6 +276,12 @@ export const EnhancedDroneStatusTableView: React.FC<EnhancedDroneStatusTableView
 
   /**
    * 渲染表格行
+   * 
+   * 渲染單筆無人機狀態數據的表格行，包含所有欄位和視覺指示器
+   * 
+   * @param drone - 無人機狀態數據物件
+   * @param index - 在陣列中的索引位置
+   * @returns JSX 表格行元素
    */
   const renderTableRow = (drone: DroneStatus, index: number) => (
     <tr key={`${drone.id}-${index}`} className={styles.tableRow}>

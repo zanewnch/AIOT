@@ -10,7 +10,36 @@
 
 import { createLogger } from '../configs/loggerConfig';
 
+/** 日誌記錄器實例，用於記錄 GoogleMapsLoader 的操作和錯誤 */
 const logger = createLogger('GoogleMapsLoader');
+
+/**
+ * Google Maps API 載入狀態列舉
+ * 用於追蹤 API 的載入進度
+ */
+type LoadingState = 'idle' | 'loading' | 'loaded' | 'error';
+
+/**
+ * Google Maps API 配置參數
+ */
+interface GoogleMapsConfig {
+  /** Google Maps API 金鑰 */
+  apiKey: string;
+  /** 要載入的函式庫列表 */
+  libraries: string[];
+  /** 載入模式 */
+  loading: 'async' | 'defer';
+  /** 回調函數名稱 */
+  callback: string;
+}
+
+/** 預設的 Google Maps API 配置 */
+const DEFAULT_CONFIG: GoogleMapsConfig = {
+  apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+  libraries: ['marker'],
+  loading: 'async',
+  callback: '__googleMapsCallback'
+};
 
 // 全局狀態管理
 class GoogleMapsLoader {
@@ -33,6 +62,7 @@ class GoogleMapsLoader {
    */
   isGoogleMapsLoaded(): boolean {
     // 檢查全局 google 對象和完整的 maps 對象
+    // 確保所有必要的 API 組件都已載入
     const hasGoogleObject = window.google && 
                            window.google.maps && 
                            window.google.maps.Map && 
@@ -122,7 +152,9 @@ class GoogleMapsLoader {
 
       const script = document.createElement('script');
       script.id = 'google-maps-api-script'; // 添加 ID 以便追蹤
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker&loading=async&callback=__googleMapsCallback`;
+      // 使用預設配置建構 API URL
+      const config = { ...DEFAULT_CONFIG, apiKey };
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.apiKey}&libraries=${config.libraries.join(',')}&loading=${config.loading}&callback=${config.callback}`;
       script.async = true;
       script.defer = true;
 

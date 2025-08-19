@@ -49,8 +49,8 @@ export class GatewayApp {
         
         // 初始化應用程式
         this.initializeMiddleware();
+        this.initializeWebSocketProxying(); // WebSocket 代理必須在路由之前
         this.initializeRoutes();
-        this.initializeWebSocketProxying();
         this.initializeErrorHandling();
     }
 
@@ -151,13 +151,30 @@ export class GatewayApp {
      */
     private initializeWebSocketProxying(): void {
         try {
-            const wsRoutes = createWebSocketRoutes();
+            this.logger.info('🔌 Initializing WebSocket proxying...');
             
-            // Socket.io 代理
-            this.app.use('/socket.io', wsRoutes['/socket.io']);
+            // 直接創建 Socket.io 代理到 drone-websocket-service
+            const socketIoProxy = createProxyMiddleware({
+                target: 'http://aiot-drone-websocket-service:3004',
+                changeOrigin: true,
+                ws: true, // 支援 WebSocket 升級
+                onError: (err: any, req: any, res: any) => {
+                    this.logger.error('WebSocket proxy error:', err.message);
+                },
+                onProxyReq: (proxyReq: any, req: any, res: any) => {
+                    this.logger.info('WebSocket proxy request:', { 
+                        originalUrl: req.originalUrl,
+                        url: req.url, 
+                        targetPath: proxyReq.path 
+                    });
+                }
+            } as any);
+            
+            this.app.use('/socket.io', socketIoProxy);
+            this.logger.info('✅ Socket.io proxy registered at /socket.io -> aiot-drone-websocket-service:3004');
             
         } catch (error) {
-            this.logger.warn('⚠️ WebSocket proxying initialization failed:', error);
+            this.logger.error('❌ WebSocket proxying initialization failed:', error);
         }
     }
 

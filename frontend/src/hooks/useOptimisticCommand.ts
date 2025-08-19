@@ -17,44 +17,86 @@ import { createLogger } from '../configs/loggerConfig';
 
 const logger = createLogger('useOptimisticCommand');
 
+/**
+ * 無人機命令類型定義
+ * 
+ * 定義所有可用的無人機控制命令類型
+ */
 export type DroneCommandType = 
-  | 'takeoff' 
-  | 'land' 
-  | 'hover' 
-  | 'emergency_stop'
-  | 'move_forward'
-  | 'move_backward'
-  | 'move_left'
-  | 'move_right'
-  | 'rotate_left'
-  | 'rotate_right'
-  | 'return_to_home'
-  | 'reset';
+  | 'takeoff'        // 起飛
+  | 'land'           // 降落
+  | 'hover'          // 懸停
+  | 'emergency_stop' // 緊急停止
+  | 'move_forward'   // 向前移動
+  | 'move_backward'  // 向後移動
+  | 'move_left'      // 向左移動
+  | 'move_right'     // 向右移動
+  | 'rotate_left'    // 向左旋轉
+  | 'rotate_right'   // 向右旋轉
+  | 'return_to_home' // 返回原點
+  | 'reset';         // 重設
 
+/**
+ * 無人機狀態類型定義
+ * 
+ * 定義無人機的所有可能狀態
+ */
 export type DroneStatus = 
-  | 'grounded'
-  | 'taking_off'
-  | 'hovering'
-  | 'flying'
-  | 'landing'
-  | 'emergency'
-  | 'returning_home'
-  | 'resetting';
+  | 'grounded'       // 在地面
+  | 'taking_off'     // 起飛中
+  | 'hovering'       // 懸停中
+  | 'flying'         // 飛行中
+  | 'landing'        // 降落中
+  | 'emergency'      // 緊急狀態
+  | 'returning_home' // 返航中
+  | 'resetting';     // 重設中
 
+/**
+ * 無人機命令介面
+ * 
+ * 定義發送給無人機的命令結構
+ */
 export interface DroneCommand {
+  /** 命令類型 */
   type: DroneCommandType;
+  /** 無人機 ID，預設為 'default' */
   droneId?: string;
+  /** 命令參數，根據不同命令類型而定 */
   parameters?: Record<string, any>;
 }
 
+/**
+ * 樂觀更新無人機狀態介面
+ * 
+ * 定義樂觀更新機制中的無人機狀態
+ */
 export interface OptimisticDroneState {
+  /** 無人機目前狀態 */
   status: DroneStatus;
+  /** 目前執行中的命令 */
   currentCommand: DroneCommandType | null;
+  /** 是否正在執行命令 */
   isExecuting: boolean;
+  /** 最後一個執行的命令 */
   lastCommand?: DroneCommand;
+  /** 狀態更新時間戳 */
   timestamp: Date;
 }
 
+/**
+ * 根據命令類型取得樂觀更新的無人機狀態
+ * 
+ * 根據不同的命令類型，預測無人機執行命令後的狀態
+ * 
+ * @param command - 無人機命令類型
+ * @returns 預測的無人機狀態
+ * 
+ * @example
+ * ```typescript
+ * const status = getOptimisticStatus('takeoff');
+ * console.log(status); // 'taking_off'
+ * ```
+ */
 const getOptimisticStatus = (command: DroneCommandType): DroneStatus => {
   const statusMap: Record<DroneCommandType, DroneStatus> = {
     takeoff: 'taking_off',
@@ -185,7 +227,31 @@ export const useOptimisticCommand = () => {
     retryDelay: 1000
   });
 
-  // 🎮 執行命令函數
+  /**
+   * 執行無人機命令
+   * 
+   * 使用樂觀更新機制執行無人機命令，立即更新 UI 狀態，
+   * 然後在背景中發送到伺服器。如果失敗則回滾狀態。
+   * 
+   * @param command - 要執行的命令類型
+   * @param parameters - 命令參數（可選）
+   * @returns Promise，解析為伺服器回應的結果
+   * 
+   * @throws 當命令執行失敗時拋出錯誤
+   * 
+   * @example
+   * ```typescript
+   * try {
+   *   await executeCommand('takeoff');
+   *   console.log('起飛命令執行成功');
+   * } catch (error) {
+   *   console.error('命令執行失敗:', error);
+   * }
+   * 
+   * // 帶參數的命令
+   * await executeCommand('move_forward', { distance: 5 });
+   * ```
+   */
   const executeCommand = useCallback((command: DroneCommandType, parameters?: Record<string, any>) => {
     const droneCommand: DroneCommand = {
       type: command,
@@ -195,7 +261,27 @@ export const useOptimisticCommand = () => {
     return commandMutation.mutateAsync(droneCommand);
   }, [commandMutation]);
 
-  // 🔄 檢查命令是否在執行中
+  /**
+   * 檢查指定命令是否正在等待執行
+   * 
+   * 用於檢查某個特定命令是否在等待中，可用於 UI 狀態顯示
+   * 
+   * @param command - 要檢查的命令類型
+   * @returns 如果命令正在等待執行則返回 true
+   * 
+   * @example
+   * ```typescript
+   * const isTakeoffPending = isCommandPending('takeoff');
+   * if (isTakeoffPending) {
+   *   console.log('起飛命令正在執行中');
+   * }
+   * 
+   * // 用於 UI 顯示
+   * <button disabled={isCommandPending('takeoff')}>
+   *   {isCommandPending('takeoff') ? '起飛中...' : '起飛'}
+   * </button>
+   * ```
+   */
   const isCommandPending = useCallback((command: DroneCommandType) => {
     return pendingCommands.has(command);
   }, [pendingCommands]);

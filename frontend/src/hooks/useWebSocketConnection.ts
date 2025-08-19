@@ -21,7 +21,10 @@ import { createLogger } from '../configs/loggerConfig';
 const logger = createLogger('useWebSocketConnection');
 
 /**
- * WebSocket 連接狀態
+ * WebSocket 連接狀態類型
+ * 
+ * @typedef {string} ConnectionStatus
+ * @description 定義 WebSocket 連接的各種狀態
  */
 export type ConnectionStatus = 
   | 'disconnected'
@@ -32,7 +35,10 @@ export type ConnectionStatus =
   | 'failed';
 
 /**
- * WebSocket 事件類型
+ * WebSocket 事件類型常數
+ * 
+ * @constant {Object} WEBSOCKET_EVENTS
+ * @description 定義所有 WebSocket 通訊使用的事件名稱常數
  */
 export const WEBSOCKET_EVENTS = {
   // 連線相關
@@ -63,7 +69,10 @@ export const WEBSOCKET_EVENTS = {
 } as const;
 
 /**
- * WebSocket 配置
+ * WebSocket 配置介面
+ * 
+ * @interface WebSocketConfig
+ * @description 定義 WebSocket 連接的配置選項
  */
 interface WebSocketConfig {
   /** WebSocket 服務器 URL */
@@ -83,7 +92,10 @@ interface WebSocketConfig {
 }
 
 /**
- * 連接統計信息
+ * 連接統計信息介面
+ * 
+ * @interface ConnectionStats
+ * @description 追蹤 WebSocket 連接的性能和使用統計
  */
 interface ConnectionStats {
   /** 連接時間 */
@@ -103,8 +115,33 @@ interface ConnectionStats {
 /**
  * WebSocket 連接管理 Hook
  * 
- * @param config WebSocket 配置
- * @returns WebSocket 連接狀態和控制函數
+ * @description 提供完整的 WebSocket 連接管理功能，包括自動重連、認證、心跳檢測等
+ * @param config - WebSocket 配置選項
+ * @returns 包含連接狀態、控制函數、統計信息的物件
+ * 
+ * @example
+ * ```typescript
+ * const {
+ *   isConnected,
+ *   isAuthenticated,
+ *   emit,
+ *   subscribe,
+ *   connect,
+ *   disconnect
+ * } = useWebSocketConnection({
+ *   url: 'ws://localhost:3004',
+ *   autoConnect: true,
+ *   authToken: 'your-auth-token'
+ * });
+ * 
+ * // 訂閱事件
+ * const unsubscribe = subscribe('drone_update', (data) => {
+ *   console.log('收到無人機更新:', data);
+ * });
+ * 
+ * // 發送消息
+ * emit('command_send', { droneId: '001', command: 'takeoff' });
+ * ```
  */
 export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
   const {
@@ -144,6 +181,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 清理定時器
+   * 
+   * @description 清理所有運行中的定時器，防止記憶體洩漏
    */
   const clearTimers = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -158,6 +197,9 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 更新連接統計
+   * 
+   * @description 更新 WebSocket 連接的統計信息
+   * @param updates - 要更新的統計資料部分
    */
   const updateStats = useCallback((updates: Partial<ConnectionStats>) => {
     setStats(prev => ({ ...prev, ...updates }));
@@ -165,6 +207,9 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 計算平均延遲
+   * 
+   * @description 基於歷史延遲記錄計算平均網路延遲
+   * @returns 平均延遲時間（毫秒）
    */
   const calculateAverageLatency = useCallback(() => {
     const history = latencyHistoryRef.current;
@@ -176,6 +221,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 心跳檢測
+   * 
+   * @description 啟動定期心跳檢測，監控連接品質和延遲
    */
   const startHeartbeat = useCallback(() => {
     clearTimers();
@@ -206,6 +253,9 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 設置 Socket 事件監聽器
+   * 
+   * @description 為 Socket 實例設置所有必要的事件監聽器
+   * @param socketInstance - Socket.IO 客戶端實例
    */
   const setupSocketEventListeners = useCallback((socketInstance: Socket) => {
     // 連接成功
@@ -314,6 +364,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 嘗試重連
+   * 
+   * @description 執行自動重連邏輯，使用指數退避策略
    */
   const attemptReconnect = useCallback(() => {
     if (stats.reconnectAttempts >= maxReconnectAttempts) {
@@ -341,6 +393,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 建立連接
+   * 
+   * @description 建立新的 WebSocket 連接
    */
   const connect = useCallback(() => {
     if (socketRef.current?.connected) {
@@ -374,6 +428,8 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 斷開連接
+   * 
+   * @description 主動斷開 WebSocket 連接並清理資源
    */
   const disconnect = useCallback(() => {
     logger.info('主動斷開 WebSocket 連接');
@@ -397,6 +453,24 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 發送消息
+   * 
+   * @description 向 WebSocket 伺服器發送事件消息
+   * @template T - 回調響應的類型
+   * @param event - 事件名稱
+   * @param data - 要發送的數據
+   * @param callback - 接收響應的回調函數
+   * @returns 消息是否成功發送
+   * 
+   * @example
+   * ```typescript
+   * // 發送簡單消息
+   * const success = emit('ping', { timestamp: Date.now() });
+   * 
+   * // 發送帶回調的消息
+   * emit('get_data', { id: '123' }, (response) => {
+   *   console.log('接收到響應:', response);
+   * });
+   * ```
    */
   const emit = useCallback(<T = any>(event: string, data?: any, callback?: (response: T) => void) => {
     if (!socketRef.current?.connected) {
@@ -424,6 +498,21 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 訂閱事件
+   * 
+   * @description 訂閱 WebSocket 事件並返回取消訂閱函數
+   * @param event - 要訂閱的事件名稱
+   * @param callback - 事件處理回調函數
+   * @returns 取消訂閱的函數
+   * 
+   * @example
+   * ```typescript
+   * const unsubscribe = subscribe('message', (data) => {
+   *   console.log('收到消息:', data);
+   * });
+   * 
+   * // 稍後取消訂閱
+   * unsubscribe();
+   * ```
    */
   const subscribe = useCallback((event: string, callback: (...args: any[]) => void) => {
     if (!socketRef.current) {
@@ -445,6 +534,15 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 
   /**
    * 重新認證
+   * 
+   * @description 使用提供的令牌或配置的令牌進行 WebSocket 認證
+   * @param token - 認證令牌，可選，如果未提供則使用配置的令牌
+   * @returns 認證請求是否成功發送
+   * 
+   * @example
+   * ```typescript
+   * const success = authenticate('new-auth-token');
+   * ```
    */
   const authenticate = useCallback((token?: string) => {
     const tokenToUse = token || authToken;
@@ -503,7 +601,17 @@ export const useWebSocketConnection = (config: WebSocketConfig = {}) => {
 /**
  * 簡化版的 WebSocket Hook
  * 
- * 提供基本的連接管理，適用於大多數場景
+ * @description 提供基本的 WebSocket 連接管理，使用預設配置，適用於大多數基本場景
+ * @param url - WebSocket 伺服器 URL，可選
+ * @returns 與 useWebSocketConnection 相同的返回值，但使用簡化的預設配置
+ * 
+ * @example
+ * ```typescript
+ * const { isConnected, emit, subscribe } = useWebSocket();
+ * 
+ * // 使用自定義 URL
+ * const webSocket = useWebSocket('ws://localhost:8080');
+ * ```
  */
 export const useWebSocket = (url?: string) => {
   return useWebSocketConnection({

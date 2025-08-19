@@ -30,6 +30,9 @@ const logger = createLogger('useOptimisticRBAC');
 
 /**
  * RBAC 操作類型
+ * 
+ * @typedef {string} RBACOperationType
+ * @description 定義 RBAC 系統支持的各種操作類型
  */
 type RBACOperationType = 
   | 'update_role'
@@ -41,6 +44,9 @@ type RBACOperationType =
 
 /**
  * 樂觀更新狀態介面
+ * 
+ * @interface OptimisticRBACState
+ * @description 追蹤 RBAC 樂觀更新狀態的數據結構
  */
 interface OptimisticRBACState {
   /** 正在更新的項目 */
@@ -61,6 +67,9 @@ interface OptimisticRBACState {
 
 /**
  * RBAC 操作請求介面
+ * 
+ * @interface RBACOperationRequest
+ * @description 定義 RBAC 操作請求的數據結構
  */
 interface RBACOperationRequest {
   type: RBACOperationType;
@@ -72,9 +81,27 @@ interface RBACOperationRequest {
 /**
  * RBAC 樂觀更新 Hook
  * 
- * 提供角色基礎存取控制的樂觀更新功能
+ * @description 提供角色基礎存取控制的樂觀更新功能，包括角色、權限、用戶角色分配等操作
+ * @returns 包含樂觀更新函數、狀態檢查、統計資訊的物件
  * 
- * @returns 樂觀更新功能和狀態
+ * @example
+ * ```typescript
+ * const {
+ *   updateRole,
+ *   updatePermission,
+ *   assignPermissionToRole,
+ *   isRoleUpdating,
+ *   isLoading
+ * } = useOptimisticRBAC();
+ * 
+ * // 更新角色
+ * await updateRole(1, { name: '新角色名稱', description: '更新描述' });
+ * 
+ * // 檢查是否正在更新
+ * if (isRoleUpdating(1)) {
+ *   console.log('角色正在更新中');
+ * }
+ * ```
  */
 export const useOptimisticRBAC = () => {
   const queryClient = useQueryClient();
@@ -98,6 +125,8 @@ export const useOptimisticRBAC = () => {
 
   /**
    * RBAC 操作 Mutation
+   * 
+   * @description 處理所有 RBAC 相關操作的主要 mutation，包含樂觀更新和錯誤回滾機制
    */
   const rbacMutation = useMutation({
     mutationFn: async ({ type, entityId, data }: RBACOperationRequest) => {
@@ -299,6 +328,20 @@ export const useOptimisticRBAC = () => {
 
   /**
    * 更新角色
+   * 
+   * @description 樂觀更新指定角色的資訊
+   * @param roleId - 角色 ID
+   * @param updateData - 要更新的角色資料部分
+   * @returns Promise，解析為更新操作的結果
+   * 
+   * @example
+   * ```typescript
+   * await updateRole(1, {
+   *   name: '管理員',
+   *   description: '系統管理員角色',
+   *   is_active: true
+   * });
+   * ```
    */
   const updateRole = useCallback(async (
     roleId: number,
@@ -319,6 +362,20 @@ export const useOptimisticRBAC = () => {
 
   /**
    * 更新權限
+   * 
+   * @description 樂觀更新指定權限的資訊
+   * @param permissionId - 權限 ID
+   * @param updateData - 要更新的權限資料部分
+   * @returns Promise，解析為更新操作的結果
+   * 
+   * @example
+   * ```typescript
+   * await updatePermission(1, {
+   *   name: 'create_user',
+   *   description: '創建用戶權限',
+   *   is_active: true
+   * });
+   * ```
    */
   const updatePermission = useCallback(async (
     permissionId: number,
@@ -339,6 +396,16 @@ export const useOptimisticRBAC = () => {
 
   /**
    * 分配權限給角色
+   * 
+   * @description 將指定權限分配給指定角色
+   * @param roleId - 角色 ID
+   * @param permissionId - 權限 ID
+   * @returns Promise，解析為分配操作的結果
+   * 
+   * @example
+   * ```typescript
+   * await assignPermissionToRole(1, 5);
+   * ```
    */
   const assignPermissionToRole = useCallback(async (
     roleId: number,
@@ -354,23 +421,75 @@ export const useOptimisticRBAC = () => {
   }, [rbacMutation, addWarning]);
 
   /**
-   * 檢查項目是否正在更新
+   * 檢查角色是否正在更新
+   * 
+   * @description 檢查指定角色是否正在執行樂觀更新
+   * @param roleId - 角色 ID
+   * @returns 是否正在更新中
+   * 
+   * @example
+   * ```typescript
+   * if (isRoleUpdating(1)) {
+   *   console.log('角色 1 正在更新中');
+   * }
+   * ```
    */
   const isRoleUpdating = useCallback((roleId: number) => {
     return optimisticState.updatingItems.roles.has(roleId);
   }, [optimisticState.updatingItems.roles]);
 
+  /**
+   * 檢查權限是否正在更新
+   * 
+   * @description 檢查指定權限是否正在執行樂觀更新
+   * @param permissionId - 權限 ID
+   * @returns 是否正在更新中
+   * 
+   * @example
+   * ```typescript
+   * if (isPermissionUpdating(5)) {
+   *   console.log('權限 5 正在更新中');
+   * }
+   * ```
+   */
   const isPermissionUpdating = useCallback((permissionId: number) => {
     return optimisticState.updatingItems.permissions.has(permissionId);
   }, [optimisticState.updatingItems.permissions]);
 
   /**
-   * 獲取樂觀更新數據
+   * 獲取角色樂觀更新數據
+   * 
+   * @description 獲取指定角色的樂觀更新數據
+   * @param roleId - 角色 ID
+   * @returns 樂觀更新的角色資料，可能為 undefined
+   * 
+   * @example
+   * ```typescript
+   * const optimisticData = getRoleOptimisticData(1);
+   * if (optimisticData) {
+   *   console.log('樂觀更新的角色資料:', optimisticData);
+   * }
+   * ```
    */
   const getRoleOptimisticData = useCallback((roleId: number) => {
     return optimisticState.optimisticData.roles.get(roleId);
   }, [optimisticState.optimisticData.roles]);
 
+  /**
+   * 獲取權限樂觀更新數據
+   * 
+   * @description 獲取指定權限的樂觀更新數據
+   * @param permissionId - 權限 ID
+   * @returns 樂觀更新的權限資料，可能為 undefined
+   * 
+   * @example
+   * ```typescript
+   * const optimisticData = getPermissionOptimisticData(5);
+   * if (optimisticData) {
+   *   console.log('樂觀更新的權限資料:', optimisticData);
+   * }
+   * ```
+   */
   const getPermissionOptimisticData = useCallback((permissionId: number) => {
     return optimisticState.optimisticData.permissions.get(permissionId);
   }, [optimisticState.optimisticData.permissions]);
@@ -401,6 +520,20 @@ export const useOptimisticRBAC = () => {
 
 /**
  * 快捷的角色操作 Hook（簡化版）
+ * 
+ * @description 提供常用角色操作的快捷方法，封裝了最常用的角色更新操作
+ * @returns 包含快捷操作函數和狀態檢查的物件
+ * 
+ * @example
+ * ```typescript
+ * const { toggleRoleStatus, updateRoleProfile, isUpdating } = useQuickRoleActions();
+ * 
+ * // 切換角色狀態
+ * await toggleRoleStatus(1, true);
+ * 
+ * // 更新角色資料
+ * await updateRoleProfile(1, { name: '新名稱' });
+ * ```
  */
 export const useQuickRoleActions = () => {
   const { updateRole, isRoleUpdating } = useOptimisticRBAC();
@@ -408,6 +541,11 @@ export const useQuickRoleActions = () => {
   return {
     /**
      * 快速更新角色狀態
+     * 
+     * @description 切換角色的啟用/停用狀態
+     * @param roleId - 角色 ID
+     * @param currentStatus - 當前狀態
+     * @returns Promise，解析為更新結果
      */
     toggleRoleStatus: async (roleId: number, currentStatus: boolean) => {
       return updateRole(roleId, { 
@@ -417,6 +555,11 @@ export const useQuickRoleActions = () => {
 
     /**
      * 快速更新角色資料
+     * 
+     * @description 更新角色的基本資訊
+     * @param roleId - 角色 ID
+     * @param profileData - 要更新的資料
+     * @returns Promise，解析為更新結果
      */
     updateRoleProfile: async (roleId: number, profileData: Partial<Role>) => {
       return updateRole(roleId, profileData);
@@ -424,6 +567,8 @@ export const useQuickRoleActions = () => {
 
     /**
      * 狀態檢查
+     * 
+     * @description 檢查角色是否正在更新中
      */
     isUpdating: isRoleUpdating,
   };
@@ -431,6 +576,20 @@ export const useQuickRoleActions = () => {
 
 /**
  * 快捷的權限操作 Hook（簡化版）
+ * 
+ * @description 提供常用權限操作的快捷方法，封裝了最常用的權限更新操作
+ * @returns 包含快捷操作函數和狀態檢查的物件
+ * 
+ * @example
+ * ```typescript
+ * const { togglePermissionStatus, updatePermissionProfile, isUpdating } = useQuickPermissionActions();
+ * 
+ * // 切換權限狀態
+ * await togglePermissionStatus(1, true);
+ * 
+ * // 更新權限資料
+ * await updatePermissionProfile(1, { name: 'new_permission' });
+ * ```
  */
 export const useQuickPermissionActions = () => {
   const { updatePermission, isPermissionUpdating } = useOptimisticRBAC();
@@ -438,6 +597,11 @@ export const useQuickPermissionActions = () => {
   return {
     /**
      * 快速更新權限狀態
+     * 
+     * @description 切換權限的啟用/停用狀態
+     * @param permissionId - 權限 ID
+     * @param currentStatus - 當前狀態
+     * @returns Promise，解析為更新結果
      */
     togglePermissionStatus: async (permissionId: number, currentStatus: boolean) => {
       return updatePermission(permissionId, { 
@@ -447,6 +611,11 @@ export const useQuickPermissionActions = () => {
 
     /**
      * 快速更新權限資料
+     * 
+     * @description 更新權限的基本資訊
+     * @param permissionId - 權限 ID
+     * @param profileData - 要更新的資料
+     * @returns Promise，解析為更新結果
      */
     updatePermissionProfile: async (permissionId: number, profileData: Partial<Permission>) => {
       return updatePermission(permissionId, profileData);
@@ -454,6 +623,8 @@ export const useQuickPermissionActions = () => {
 
     /**
      * 狀態檢查
+     * 
+     * @description 檢查權限是否正在更新中
      */
     isUpdating: isPermissionUpdating,
   };

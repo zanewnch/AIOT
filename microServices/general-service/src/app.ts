@@ -19,7 +19,7 @@ import express from 'express'; // Express 框架，用於建立 HTTP 伺服器�
 import { Server as HTTPServer } from 'http'; // HTTP 伺服器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
+// import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器 - 已移除
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
@@ -80,13 +80,13 @@ export class App {
      */
     private sequelize: any;
 
-    /**
-     * RabbitMQ 訊息佇列管理器實例
-     * 用於處理非同步訊息和任務佇列
-     * @private
-     * @type {RabbitMQManager}
-     */
-    private rabbitMQManager: RabbitMQManager;
+    // /**
+    //  * RabbitMQ 訊息佇列管理器實例
+    //  * 用於處理非同步訊息和任務佇列
+    //  * @private
+    //  * @type {RabbitMQManager}
+    //  */
+    // private rabbitMQManager: RabbitMQManager; // 已移除
 
     /**
      * Consul 服務註冊實例
@@ -111,7 +111,7 @@ export class App {
      */
     constructor() {
         this.app = express(); // 建立 Express 應用程式實例
-        this.rabbitMQManager = new RabbitMQManager(); // 初始化 RabbitMQ 管理器
+        // this.rabbitMQManager = new RabbitMQManager(); // 初始化 RabbitMQ 管理器 - 已移除
         this.consulConfig = new ConsulConfig(); // 初始化 Consul 配置
 
         // 執行基本配置設定
@@ -135,21 +135,21 @@ export class App {
         this.sequelize = createSequelizeInstance(); // 建立 Sequelize 實例
     }
 
-    /**
-     * 初始化 RabbitMQ 連線
-     *
-     * 連線到 RabbitMQ 伺服器並建立訊息佇列通道。
-     * 此方法會在應用程式初始化過程中執行。
-     *
-     * @private
-     * @async
-     * @method setupRabbitMQ
-     * @returns {Promise<void>} 連線完成的 Promise
-     * @throws {Error} 當連線失敗時拋出錯誤
-     */
-    private async setupRabbitMQ(): Promise<void> {
-        await this.rabbitMQManager.connect(); // 連線到 RabbitMQ 伺服器
-    }
+    // /**
+    //  * 初始化 RabbitMQ 連線
+    //  *
+    //  * 連線到 RabbitMQ 伺服器並建立訊息佇列通道。
+    //  * 此方法會在應用程式初始化過程中執行。
+    //  *
+    //  * @private
+    //  * @async
+    //  * @method setupRabbitMQ
+    //  * @returns {Promise<void>} 連線完成的 Promise
+    //  * @throws {Error} 當連線失敗時拋出錯誤
+    //  */
+    // private async setupRabbitMQ(): Promise<void> {
+    //     await this.rabbitMQManager.connect(); // 連線到 RabbitMQ 伺服器
+    // } // 已移除
 
     /**
      * 初始化 Redis 連線
@@ -286,10 +286,10 @@ export class App {
             await this.setupRedis(); // 建立 Redis 連線
             console.log('✅ Redis connected'); // 輸出 Redis 連線成功訊息
 
-            // 步驟 3：連線 RabbitMQ 訊息佇列服務
-            await this.setupRabbitMQ(); // 建立 RabbitMQ 連線
-            console.log('✅ RabbitMQ ready'); // 輸出 RabbitMQ 準備就緒訊息
-            this.app.locals.rabbitMQChannel = this.rabbitMQManager.getChannel(); // 將 RabbitMQ 通道設為全域變數
+            // 步驟 3：連線 RabbitMQ 訊息佇列服務 - 已移除
+            // await this.setupRabbitMQ(); // 建立 RabbitMQ 連線
+            // console.log('✅ RabbitMQ ready'); // 輸出 RabbitMQ 準備就緒訊息
+            // this.app.locals.rabbitMQChannel = this.rabbitMQManager.getChannel(); // 將 RabbitMQ 通道設為全域變數
 
             // 步驟 4：設定應用程式路由
             await this.setRoutes(); // 註冊所有 API 路由
@@ -338,9 +338,9 @@ export class App {
                 await this.consulConfig.deregisterService();
             }
 
-            // 步驟 2：// 步驟 1：關閉 RabbitMQ 連線
-            console.log('🔌 Closing RabbitMQ connection...');
-            await this.rabbitMQManager.close(); // 關閉 RabbitMQ 連線和通道
+            // 步驟 2：關閉 RabbitMQ 連線 - 已移除
+            // console.log('🔌 Closing RabbitMQ connection...');
+            // await this.rabbitMQManager.close(); // 關閉 RabbitMQ 連線和通道
 
             // 步驟 2：關閉 Redis 連線
             console.log('🔴 Closing Redis connection...');
@@ -357,24 +357,24 @@ export class App {
         }
     }
 
-    /**
-     * 獲取 RabbitMQ 管理器實例
-     *
-     * 提供對 RabbitMQ 管理器的外部存取，用於訊息佇列操作。
-     *
-     * @public
-     * @method getRabbitMQManager
-     * @returns {RabbitMQManager} RabbitMQ 管理器實例
-     *
-     * @example
-     * ```typescript
-     * const rabbitmq = app.getRabbitMQManager();
-     * const channel = rabbitmq.getChannel();
-     * ```
-     */
-    getRabbitMQManager(): RabbitMQManager {
-        return this.rabbitMQManager; // 返回 RabbitMQ 管理器實例
-    }
+    // /**
+    //  * 獲取 RabbitMQ 管理器實例
+    //  *
+    //  * 提供對 RabbitMQ 管理器的外部存取，用於訊息佇列操作。
+    //  *
+    //  * @public
+    //  * @method getRabbitMQManager
+    //  * @returns {RabbitMQManager} RabbitMQ 管理器實例
+    //  *
+    //  * @example
+    //  * ```typescript
+    //  * const rabbitmq = app.getRabbitMQManager();
+    //  * const channel = rabbitmq.getChannel();
+    //  * ```
+    //  */
+    // getRabbitMQManager(): RabbitMQManager {
+    //     return this.rabbitMQManager; // 返回 RabbitMQ 管理器實例
+    // } // 已移除
 
     /**
      * 獲取 Sequelize 實例
