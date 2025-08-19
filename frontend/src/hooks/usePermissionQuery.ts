@@ -117,3 +117,14 @@ export class PermissionQuery {
     });
   }
 }
+
+/**
+ * 全局實例和便利 hooks
+ */
+export const permissionQuery = new PermissionQuery();
+export const usePermissionQuery = () => permissionQuery;
+export const useAllPermissions = () => permissionQuery.useAll();
+export const usePermissionById = (id: string) => permissionQuery.useById(id);
+export const useCreatePermission = () => permissionQuery.useCreate();
+export const useUpdatePermission = () => permissionQuery.useUpdate();
+export const useDeletePermission = () => permissionQuery.useDelete();

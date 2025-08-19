@@ -13,7 +13,7 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
-import { useGetCommandsArchiveByTimeRange } from "../hooks/useDroneCommandArchiveQuery";
+import { useGetLatestCommandsArchive } from "../hooks/useDroneCommandArchiveQuery";
 import { DronePositionsArchiveQuery } from "../hooks/useDronePositionsArchiveQuery";
 import { DroneStatusArchiveQuery } from "../hooks/useDroneStatusArchiveQuery";
 import type { DronePositionArchive } from "../types/dronePositionsArchive";
@@ -74,9 +74,8 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
     return { startDate, endDate };
   };
 
-  // 使用真實 API hooks
-  const timeQuery = getTimeRangeQuery();
-  const { data: commandsArchiveData = [], isLoading: commandsLoading } = useGetCommandsArchiveByTimeRange(timeQuery);
+  // 使用真實 API hooks - 改用可用的 API
+  const { data: commandsArchiveData = [], isLoading: commandsLoading } = useGetLatestCommandsArchive(100);
   
   const positionsQuery = new DronePositionsArchiveQuery();
   const { data: positionsData = [], isLoading: positionsLoading } = positionsQuery.useLatest();
@@ -84,7 +83,7 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
   const statusQuery = new DroneStatusArchiveQuery();
   const { isLoading: statusLoading } = statusQuery.useLatest();
 
-  // 轉換資料格式
+  // 轉換真實資料格式
   const performanceData: PerformanceDataPoint[] = commandsArchiveData.map(cmd => ({
     timestamp: new Date(cmd.issued_at),
     command_type: cmd.command_type,
@@ -325,6 +324,9 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
     );
   }
 
+  // 檢查是否有任何資料
+  const hasAnyData = performanceData.length > 0 || flightPathData.length > 0 || batteryData.length > 0;
+
   return (
     <div className={`${className || ""} min-h-screen bg-gray-900`}>
       <div className="p-3 sm:p-6 space-y-6">
@@ -437,115 +439,145 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
         <div className="p-4">
           {selectedChart === 'performance' && (
             <div className="space-y-4">
-              <canvas
-                ref={canvasRef}
-                width={800}
-                height={300}
-                className="w-full border border-gray-600 rounded"
-              />
-              <div className="flex items-center justify-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-gray-300">成功執行</span>
+              {performanceData.length > 0 ? (
+                <>
+                  <canvas
+                    ref={canvasRef}
+                    width={800}
+                    height={300}
+                    className="w-full border border-gray-600 rounded"
+                  />
+                  <div className="flex items-center justify-center gap-6 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-300">成功執行</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <span className="text-gray-300">執行失敗</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-1 bg-blue-400"></div>
+                      <span className="text-gray-300">執行時間趨勢</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="text-6xl mb-4">📊</div>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無性能資料</h3>
+                  <p className="text-sm text-gray-500">執行一些無人機指令後，性能分析圖表將顯示在這裡</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="text-gray-300">執行失敗</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-1 bg-blue-400"></div>
-                  <span className="text-gray-300">執行時間趨勢</span>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
           {selectedChart === 'heatmap' && (
             <div className="space-y-4">
-              <canvas
-                ref={heatmapRef}
-                width={600}
-                height={400}
-                className="w-full border border-gray-600 rounded"
-              />
-              <div className="text-center text-sm text-gray-400">
-                顏色深度表示飛行密度 - 紅色：高密度，藍色：低密度
-              </div>
+              {flightPathData.length > 0 ? (
+                <>
+                  <canvas
+                    ref={heatmapRef}
+                    width={600}
+                    height={400}
+                    className="w-full border border-gray-600 rounded"
+                  />
+                  <div className="text-center text-sm text-gray-400">
+                    顏色深度表示飛行密度 - 紅色：高密度，藍色：低密度
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="text-6xl mb-4">🔥</div>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無飛行路徑資料</h3>
+                  <p className="text-sm text-gray-500">無人機開始飛行後，飛行密度熱力圖將顯示在這裡</p>
+                </div>
+              )}
             </div>
           )}
 
           {selectedChart === 'battery' && (
             <div className="space-y-6">
-              {/* 電量趨勢圖 */}
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <h4 className="text-md font-semibold text-gray-100 mb-3">電量消耗趨勢</h4>
-                <div className="space-y-3">
-                  {batteryData.slice(-10).map((point, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      <div className="text-xs text-gray-400 w-16">
-                        {point.timestamp.toLocaleTimeString('zh-TW').slice(0, 5)}
-                      </div>
-                      <div className="flex-1 bg-gray-600 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full transition-all ${
-                            point.battery_level > 50 ? 'bg-green-500' :
-                            point.battery_level > 20 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${point.battery_level}%` }}
-                        ></div>
-                      </div>
-                      <div className="text-xs font-semibold text-gray-100 w-12">
-                        {point.battery_level.toFixed(0)}%
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 預測分析 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <h4 className="text-md font-semibold text-gray-100 mb-3">消耗分析</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">平均消耗率</span>
-                      <span className="text-gray-100">{stats.avgConsumptionRate.toFixed(2)}%/min</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">預估剩餘時間</span>
-                      <span className="text-gray-100">{stats.estimatedFlightTime.toFixed(0)} 分鐘</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">建議返航時間</span>
-                      <span className="text-yellow-300">{Math.max(0, stats.estimatedFlightTime - 10).toFixed(0)} 分鐘後</span>
+              {batteryData.length > 0 ? (
+                <>
+                  {/* 電量趨勢圖 */}
+                  <div className="bg-gray-700/50 rounded-lg p-4">
+                    <h4 className="text-md font-semibold text-gray-100 mb-3">電量消耗趨勢</h4>
+                    <div className="space-y-3">
+                      {batteryData.slice(-10).map((point, index) => (
+                        <div key={index} className="flex items-center gap-4">
+                          <div className="text-xs text-gray-400 w-16">
+                            {point.timestamp.toLocaleTimeString('zh-TW').slice(0, 5)}
+                          </div>
+                          <div className="flex-1 bg-gray-600 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all ${
+                                point.battery_level > 50 ? 'bg-green-500' :
+                                point.battery_level > 20 ? 'bg-yellow-500' : 'bg-red-500'
+                              }`}
+                              style={{ width: `${point.battery_level}%` }}
+                            ></div>
+                          </div>
+                          <div className="text-xs font-semibold text-gray-100 w-12">
+                            {point.battery_level.toFixed(0)}%
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
 
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <h4 className="text-md font-semibold text-gray-100 mb-3">電量預警</h4>
-                  <div className="space-y-2">
-                    {stats.currentBattery <= 20 && (
-                      <div className="flex items-center gap-2 text-red-300">
-                        <span>🚨</span>
-                        <span className="text-sm">電量嚴重不足，請立即降落</span>
+                  {/* 預測分析 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-100 mb-3">消耗分析</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">平均消耗率</span>
+                          <span className="text-gray-100">{stats.avgConsumptionRate.toFixed(2)}%/min</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">預估剩餘時間</span>
+                          <span className="text-gray-100">{stats.estimatedFlightTime.toFixed(0)} 分鐘</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">建議返航時間</span>
+                          <span className="text-yellow-300">{Math.max(0, stats.estimatedFlightTime - 10).toFixed(0)} 分鐘後</span>
+                        </div>
                       </div>
-                    )}
-                    {stats.currentBattery <= 30 && stats.currentBattery > 20 && (
-                      <div className="flex items-center gap-2 text-orange-300">
-                        <span>⚠️</span>
-                        <span className="text-sm">電量偏低，建議準備返航</span>
+                    </div>
+
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-100 mb-3">電量預警</h4>
+                      <div className="space-y-2">
+                        {stats.currentBattery <= 20 && (
+                          <div className="flex items-center gap-2 text-red-300">
+                            <span>🚨</span>
+                            <span className="text-sm">電量嚴重不足，請立即降落</span>
+                          </div>
+                        )}
+                        {stats.currentBattery <= 30 && stats.currentBattery > 20 && (
+                          <div className="flex items-center gap-2 text-orange-300">
+                            <span>⚠️</span>
+                            <span className="text-sm">電量偏低，建議準備返航</span>
+                          </div>
+                        )}
+                        {stats.currentBattery > 30 && (
+                          <div className="flex items-center gap-2 text-green-300">
+                            <span>✅</span>
+                            <span className="text-sm">電量充足，可繼續飛行</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {stats.currentBattery > 30 && (
-                      <div className="flex items-center gap-2 text-green-300">
-                        <span>✅</span>
-                        <span className="text-sm">電量充足，可繼續飛行</span>
-                      </div>
-                    )}
+                    </div>
                   </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="text-6xl mb-4">🔋</div>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無電量資料</h3>
+                  <p className="text-sm text-gray-500">無人機開始運作後，電量分析將顯示在這裡</p>
                 </div>
-              </div>
+              )}
             </div>
           )}
 

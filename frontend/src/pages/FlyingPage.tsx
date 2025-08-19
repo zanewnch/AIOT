@@ -66,7 +66,8 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   // 模式狀態：true = 模擬模式, false = 真實模式
-  const [isSimulateMode, setIsSimulateMode] = useState(false);
+  // 預設啟用模擬模式以方便測試
+  const [isSimulateMode, setIsSimulateMode] = useState(ENABLE_SIMULATE_MODE);
 
   // 根據模式選擇對應的 Hook
   const realFlyLogic = useRealFlyLogic(mapRef);

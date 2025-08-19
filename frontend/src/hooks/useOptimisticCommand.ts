@@ -20,21 +20,21 @@ const logger = createLogger('useOptimisticCommand');
 /**
  * 無人機命令類型定義
  * 
- * 定義所有可用的無人機控制命令類型
+ * 定義所有可用的無人機控制命令類型，與後端 DroneCommandType enum 保持一致
  */
 export type DroneCommandType = 
   | 'takeoff'        // 起飛
   | 'land'           // 降落
   | 'hover'          // 懸停
-  | 'emergency_stop' // 緊急停止
-  | 'move_forward'   // 向前移動
-  | 'move_backward'  // 向後移動
-  | 'move_left'      // 向左移動
-  | 'move_right'     // 向右移動
-  | 'rotate_left'    // 向左旋轉
-  | 'rotate_right'   // 向右旋轉
-  | 'return_to_home' // 返回原點
-  | 'reset';         // 重設
+  | 'flyTo'          // 飛行到指定座標位置
+  | 'return'         // 返航到起飛點
+  | 'moveForward'    // 向前移動
+  | 'moveBackward'   // 向後移動
+  | 'moveLeft'       // 向左移動
+  | 'moveRight'      // 向右移動
+  | 'rotateLeft'     // 向左旋轉（逆時針）
+  | 'rotateRight'    // 向右旋轉（順時針）
+  | 'emergency';     // 緊急停止/緊急降落
 
 /**
  * 無人機狀態類型定義
@@ -102,15 +102,15 @@ const getOptimisticStatus = (command: DroneCommandType): DroneStatus => {
     takeoff: 'taking_off',
     land: 'landing',
     hover: 'hovering',
-    emergency_stop: 'emergency',
-    move_forward: 'flying',
-    move_backward: 'flying',
-    move_left: 'flying',
-    move_right: 'flying',
-    rotate_left: 'flying',
-    rotate_right: 'flying',
-    return_to_home: 'returning_home',
-    reset: 'resetting'
+    flyTo: 'flying',
+    return: 'returning_home',
+    moveForward: 'flying',
+    moveBackward: 'flying',
+    moveLeft: 'flying',
+    moveRight: 'flying',
+    rotateLeft: 'flying',
+    rotateRight: 'flying',
+    emergency: 'emergency'
   };
   
   return statusMap[command] || 'flying';

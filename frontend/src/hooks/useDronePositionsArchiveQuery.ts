@@ -258,3 +258,15 @@ export class DronePositionsArchiveQuery {
     });
   }
 }
+
+/**
+ * 全局實例和便利 hooks
+ */
+export const dronePositionsArchiveQuery = new DronePositionsArchiveQuery();
+export const useDronePositionsArchiveQuery = () => dronePositionsArchiveQuery;
+export const useAllPositionArchives = () => dronePositionsArchiveQuery.useAll();
+export const useLatestPositionArchives = () => dronePositionsArchiveQuery.useLatest();
+export const usePositionArchiveById = (id: string) => dronePositionsArchiveQuery.useById(id);
+export const useCreatePositionArchive = () => dronePositionsArchiveQuery.useCreate();
+export const useUpdatePositionArchive = () => dronePositionsArchiveQuery.useUpdate();
+export const useDeletePositionArchive = () => dronePositionsArchiveQuery.useDelete();

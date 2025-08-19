@@ -28,15 +28,17 @@ import {
   type CreateQueueRequest,
   type CommandCondition
 } from "../hooks";
+import type { DroneCommandType } from "../hooks/useOptimisticCommand";
 
-// 使用後端的指令類型和狀態
-enum DroneCommandType {
-  TAKEOFF = 'takeoff',
-  LAND = 'land',
-  MOVE = 'move',
-  HOVER = 'hover',
-  RETURN = 'return'
-}
+// 可用的命令類型列表（與後端保持一致）
+const AVAILABLE_COMMAND_TYPES: DroneCommandType[] = [
+  'takeoff',
+  'land', 
+  'hover',
+  'flyTo',
+  'return',
+  'emergency'
+];
 
 enum CommandQueueStatus {
   PENDING = 'pending',
@@ -77,13 +79,14 @@ const CommandQueuePage: React.FC<CommandQueuePageProps> = ({ className }) => {
   const resetQueue = useResetQueue();
   const addCommandToQueue = useAddCommandToQueue();
 
-  // 預設指令模板
-  const commandTemplates = {
-    [DroneCommandType.TAKEOFF]: { altitude: 50, speed: 2.5 },
-    [DroneCommandType.LAND]: { speed: 1.5 },
-    [DroneCommandType.MOVE]: { latitude: 25.034, longitude: 121.565, altitude: 50, speed: 5.0 },
-    [DroneCommandType.HOVER]: { duration: 30 },
-    [DroneCommandType.RETURN]: { speed: 3.0 }
+  // 預設指令模板（與後端命令類型保持一致）
+  const commandTemplates: Record<string, any> = {
+    'takeoff': { altitude: 50, speed: 2.5 },
+    'land': { speed: 1.5 },
+    'hover': { duration: 30 },
+    'flyTo': { latitude: 25.034, longitude: 121.565, altitude: 50, speed: 5.0 },
+    'return': { speed: 3.0 },
+    'emergency': {}
   };
 
   const createNewQueue = async () => {
@@ -181,15 +184,26 @@ const CommandQueuePage: React.FC<CommandQueuePageProps> = ({ className }) => {
     );
   };
 
-  const getCommandIcon = (type: DroneCommandType | string) => {
-    const icons = {
-      [DroneCommandType.TAKEOFF]: '🚁',
-      [DroneCommandType.LAND]: '🛬',
-      [DroneCommandType.MOVE]: '✈️',
-      [DroneCommandType.HOVER]: '⏸️',
-      [DroneCommandType.RETURN]: '🏠',
+  const getCommandIcon = (type: string) => {
+    const icons: Record<string, string> = {
+      'takeoff': '🚁',
+      'land': '🛬',
+      'hover': '⏸️',
+      'flyTo': '🎯',
+      'return': '🏠',
+      'moveForward': '⬆️',
+      'moveBackward': '⬇️',
+      'moveLeft': '⬅️',
+      'moveRight': '➡️',
+      'rotateLeft': '↪️',
+      'rotateRight': '↩️',
+      'emergency': '🚨',
+      // 支援前端舊的類型
+      'move': '✈️',
+      'emergency_stop': '🚨',
+      'return_to_home': '🏠',
     };
-    return icons[type as DroneCommandType] || '📋';
+    return icons[type] || '📋';
   };
 
   const formatTime = (date: Date | string | null) => {
@@ -413,7 +427,7 @@ const CommandQueuePage: React.FC<CommandQueuePageProps> = ({ className }) => {
                 {/* 新增指令按鈕 */}
                 <div className="mt-4 pt-4 border-t border-gray-700">
                   <div className="flex flex-wrap gap-2">
-                    {Object.values(DroneCommandType).map((commandType) => (
+                    {AVAILABLE_COMMAND_TYPES.map((commandType) => (
                       <button
                         key={commandType}
                         onClick={() => handleAddCommandToQueue(selectedQueue.id.toString(), commandType)}

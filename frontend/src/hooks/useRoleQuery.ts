@@ -188,3 +188,16 @@ export class RoleQuery {
     });
   }
 }
+
+/**
+ * 全局實例和便利 hooks
+ */
+export const roleQuery = new RoleQuery();
+export const useRoleQuery = () => roleQuery;
+export const useAllRoles = () => roleQuery.useAll();
+export const useRoleById = (id: string) => roleQuery.useById(id);
+export const useRolePermissions = () => roleQuery.useRolePermissions();
+export const useCreateRole = () => roleQuery.useCreate();
+export const useUpdateRole = () => roleQuery.useUpdate();
+export const useDeleteRole = () => roleQuery.useDelete();
+export const useAssignPermissionsToRole = () => roleQuery.useAssignPermissions();

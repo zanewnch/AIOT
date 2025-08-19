@@ -121,10 +121,21 @@ export class DroneCommandQueueQuery {
             throw new Error(result.message);
           }
           
-          logger.info(`Successfully fetched ${result.data?.length || 0} command queues`);
-          return result.data || [];
+          // 確保返回的是數組
+          const data = result.data;
+          const queues = Array.isArray(data) ? data : [];
+          logger.info(`Successfully fetched ${queues.length} command queues`);
+          return queues;
         } catch (error: any) {
           logger.error('Failed to fetch command queues', { error, options });
+          
+          // 對於網路錯誤或其他嚴重問題，返回空數組而不是拋出錯誤
+          // 這樣組件可以正常渲染，只是顯示空列表
+          if (error.code === 'NETWORK_ERROR' || error.response?.status >= 500) {
+            logger.warn('Network or server error, returning empty array');
+            return [];
+          }
+          
           const tableError: TableError = {
             message: error.response?.data?.message || error.message || 'Failed to fetch command queues',
             status: error.response?.status,
@@ -136,6 +147,9 @@ export class DroneCommandQueueQuery {
       staleTime: 30 * 1000, // 30 seconds
       gcTime: 5 * 60 * 1000, // 5 minutes
       retry: 2,
+      // 額外保護：確保初始狀態和錯誤狀態都是空數組
+      initialData: [],
+      placeholderData: [],
     });
   }
 

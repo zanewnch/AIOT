@@ -255,3 +255,20 @@ export class UserQuery {
     });
   }
 }
+
+/**
+ * 全局 UserQuery 實例
+ */
+export const userQuery = new UserQuery();
+
+/**
+ * 便利 hooks - 使用全局實例
+ */
+export const useCurrentUser = () => userQuery.useCurrentUser();
+export const useCurrentUserSession = () => userQuery.useCurrentUserSession();
+export const useHasPermission = (permission: string) => userQuery.useHasPermission(permission);
+export const useHasRole = (role: string) => userQuery.useHasRole(role);
+export const useUserInfo = () => userQuery.useUserInfo();
+export const useRbacUsers = () => userQuery.useRbacUsers();
+export const useUserRoles = () => userQuery.useUserRoles();
+export const useUpdateUser = () => userQuery.useUpdateUser();

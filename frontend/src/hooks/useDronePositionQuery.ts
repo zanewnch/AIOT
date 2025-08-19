@@ -292,3 +292,15 @@ export class DronePositionQuery {
     });
   }
 }
+
+/**
+ * 全局實例和便利 hooks
+ */
+export const dronePositionQuery = new DronePositionQuery();
+export const useDronePositionsQuery = () => dronePositionQuery;
+export const useAllDronePositions = () => dronePositionQuery.useAll();
+export const useLatestDronePositions = () => dronePositionQuery.useLatest();
+export const useDronePositionById = (id: string) => dronePositionQuery.useById(id);
+export const useCreateDronePosition = () => dronePositionQuery.useCreate();
+export const useUpdateDronePosition = () => dronePositionQuery.useUpdate();
+export const useDeleteDronePosition = () => dronePositionQuery.useDelete();

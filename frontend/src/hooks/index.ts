@@ -7,8 +7,19 @@
  */
 
 // 主要查詢 hooks - 統一的 useXxxQuery 格式
-export { useAuthQuery } from './useAuthQuery';
-export { useUserQuery } from './useUserQuery';
+export { AuthQuery, authQuery, useInitializeAuth, useLogin, useLogout } from './useAuthQuery';
+export { 
+  UserQuery, 
+  userQuery, 
+  useCurrentUser, 
+  useCurrentUserSession, 
+  useHasPermission, 
+  useHasRole, 
+  useUserInfo, 
+  useRbacUsers, 
+  useUserRoles, 
+  useUpdateUser 
+} from './useUserQuery';
 export { 
   useDroneCommandQuery,
   useAllDroneCommands,
@@ -26,18 +37,94 @@ export {
   useExecuteCommand,
   useCancelCommand
 } from './useDroneCommandQuery';
-export { useDroneStatusQuery } from './useDroneStatusQuery';
-export { useDronePositionsQuery } from './useDronePositionQuery';
-export { usePermissionQuery } from './usePermissionQuery';
-export { useRoleQuery } from './useRoleQuery';
-export { useRTKQuery } from './useRTKQuery';
-export { useInitQuery } from './useInitQuery';
+export { 
+  DroneStatusQuery,
+  droneStatusQuery, 
+  useDroneStatusQuery,
+  useAllDroneStatuses,
+  useDroneStatusById,
+  useCreateDroneStatus,
+  useUpdateDroneStatus,
+  useDeleteDroneStatus
+} from './useDroneStatusQuery';
+export { 
+  DronePositionQuery,
+  dronePositionQuery,
+  useDronePositionsQuery, 
+  useAllDronePositions,
+  useLatestDronePositions,
+  useDronePositionById,
+  useCreateDronePosition,
+  useUpdateDronePosition,
+  useDeleteDronePosition
+} from './useDronePositionQuery';
+export { 
+  PermissionQuery,
+  permissionQuery,
+  usePermissionQuery,
+  useAllPermissions,
+  usePermissionById,
+  useCreatePermission,
+  useUpdatePermission,
+  useDeletePermission
+} from './usePermissionQuery';
+export { 
+  RoleQuery,
+  roleQuery,
+  useRoleQuery,
+  useAllRoles,
+  useRoleById,
+  useRolePermissions,
+  useCreateRole,
+  useUpdateRole,
+  useDeleteRole,
+  useAssignPermissionsToRole
+} from './useRoleQuery';
+export { 
+  RTKQuery,
+  rtkQuery,
+  useRTKQuery,
+  useRTKData,
+  useCreateRTKData,
+  useUpdateRTKData,
+  useDeleteRTKData
+} from './useRTKQuery';
+export { 
+  InitQuery,
+  initQuery,
+  useInitQuery,
+  useInitAllDemo,
+  useInitRbacDemo,
+  useInitRtkDemo,
+  useCreateAdminUser,
+  useCreateStressTestData
+} from './useInitQuery';
 
 // 其他專用 hooks
 export * from './useArchiveTaskQuery';
 export { useDroneCommandArchiveQuery, useGetAllCommandsArchive, useGetCommandsArchiveByDroneId, useGetLatestCommandsArchive } from './useDroneCommandArchiveQuery';
-export { useDronePositionsArchiveQuery } from './useDronePositionsArchiveQuery';
-export { useDroneStatusArchiveQuery } from './useDroneStatusArchiveQuery';
+export { 
+  DronePositionsArchiveQuery,
+  dronePositionsArchiveQuery,
+  useDronePositionsArchiveQuery,
+  useAllPositionArchives,
+  useLatestPositionArchives,
+  usePositionArchiveById,
+  useCreatePositionArchive,
+  useUpdatePositionArchive,
+  useDeletePositionArchive
+} from './useDronePositionsArchiveQuery';
+export { 
+  DroneStatusArchiveQuery,
+  droneStatusArchiveQuery,
+  useDroneStatusArchiveQuery,
+  useAllStatusArchives,
+  useLatestStatusArchives,
+  useStatusArchiveById,
+  useCreateStatusArchive,
+  useUpdateStatusArchive,
+  useDeleteStatusArchive
+} from './useDroneStatusArchiveQuery';
 export * from './useUserPreferenceQuery';
 export { 
   useDroneCommandQueueQuery,

@@ -114,5 +114,14 @@ export class RTKQuery {
   }
 }
 
+/**
+ * 全局實例和便利 hooks
+ */
+export const rtkQuery = new RTKQuery();
+export const useRTKQuery = () => rtkQuery;
+export const useRTKData = () => rtkQuery.useRTKData();
+export const useCreateRTKData = () => rtkQuery.useCreate();
+export const useUpdateRTKData = () => rtkQuery.useUpdate();
+export const useDeleteRTKData = () => rtkQuery.useDelete();
 
 

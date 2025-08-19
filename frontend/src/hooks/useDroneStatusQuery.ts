@@ -467,6 +467,11 @@ export class DroneStatusQuery {
 export const droneStatusQuery = new DroneStatusQuery();
 
 /**
+ * 主要的便利 hook - 返回查詢類實例
+ */
+export const useDroneStatusQuery = () => droneStatusQuery;
+
+/**
  * 獲取所有無人機狀態的 Hook
  * 
  * @returns {UseQueryResult<DroneStatus[], TableError>} React Query 結果對象

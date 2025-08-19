@@ -15,15 +15,7 @@
 import React, { useState, useMemo } from "react";
 import { useGetLatestCommandsArchive } from "../hooks/useDroneCommandArchiveQuery";
 import type { DroneCommandArchive } from "../hooks/useDroneCommandArchiveQuery";
-
-// 使用後端的枚舉類型
-enum DroneCommandType {
-  TAKEOFF = 'takeoff',
-  LAND = 'land',
-  MOVE = 'move',
-  HOVER = 'hover',
-  RETURN = 'return'
-}
+import type { DroneCommandType } from "../hooks/useOptimisticCommand";
 
 enum DroneCommandStatus {
   PENDING = 'pending',
@@ -74,15 +66,15 @@ const CommandHistoryPage: React.FC<CommandHistoryPageProps> = ({ className }) =>
     return new Date(cmd.completed_at).getTime() - new Date(cmd.issued_at).getTime();
   };
 
-  const getStatusBadge = (status: DroneCommandStatus) => {
-    const configs = {
-      [DroneCommandStatus.PENDING]: { bg: 'bg-yellow-900/30', text: 'text-yellow-300', border: 'border-yellow-700', icon: '⏳' },
-      [DroneCommandStatus.EXECUTING]: { bg: 'bg-blue-900/30', text: 'text-blue-300', border: 'border-blue-700', icon: '⚡' },
-      [DroneCommandStatus.COMPLETED]: { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '✅' },
-      [DroneCommandStatus.FAILED]: { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '❌' },
+  const getStatusBadge = (status: string) => {
+    const configs: Record<string, any> = {
+      'pending': { bg: 'bg-yellow-900/30', text: 'text-yellow-300', border: 'border-yellow-700', icon: '⏳' },
+      'executing': { bg: 'bg-blue-900/30', text: 'text-blue-300', border: 'border-blue-700', icon: '⚡' },
+      'completed': { bg: 'bg-green-900/30', text: 'text-green-300', border: 'border-green-700', icon: '✅' },
+      'failed': { bg: 'bg-red-900/30', text: 'text-red-300', border: 'border-red-700', icon: '❌' },
     };
     
-    const config = configs[status];
+    const config = configs[status] || configs['pending'];
     return (
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text} border ${config.border}`}>
         <span>{config.icon}</span>
@@ -91,15 +83,26 @@ const CommandHistoryPage: React.FC<CommandHistoryPageProps> = ({ className }) =>
     );
   };
 
-  const getCommandIcon = (type: DroneCommandType) => {
-    const icons = {
-      [DroneCommandType.TAKEOFF]: '🚁',
-      [DroneCommandType.LAND]: '🛬',
-      [DroneCommandType.MOVE]: '✈️',
-      [DroneCommandType.HOVER]: '⏸️',
-      [DroneCommandType.RETURN]: '🏠',
+  const getCommandIcon = (type: string) => {
+    const icons: Record<string, string> = {
+      'takeoff': '🚁',
+      'land': '🛬',
+      'hover': '⏸️',
+      'flyTo': '🎯',
+      'return': '🏠',
+      'moveForward': '⬆️',
+      'moveBackward': '⬇️',
+      'moveLeft': '⬅️',
+      'moveRight': '➡️',
+      'rotateLeft': '↪️',
+      'rotateRight': '↩️',
+      'emergency': '🚨',
+      // 支援前端舊的類型
+      'move': '✈️',
+      'emergency_stop': '🚨',
+      'return_to_home': '🏠',
     };
-    return icons[type];
+    return icons[type] || '📋';
   };
 
   const formatTime = (date: Date | string | null) => {

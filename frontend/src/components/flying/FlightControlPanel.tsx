@@ -11,7 +11,6 @@
  */
 
 import React from "react";
-import { useOptimisticCommand } from '../../hooks/useOptimisticCommand';
 
 interface SimulateDroneStats {
   status: 'grounded' | 'taking_off' | 'hovering' | 'flying' | 'landing' | 'emergency';
@@ -102,51 +101,24 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
   realFlyLogic,
   enableOptimisticUpdates = true,
 }) => {
-  // 🚀 樂觀更新 Hook
-  const {
-    executeCommand,
-    optimisticState,
-    isCommandPending,
-    hasAnyPendingCommand,
-    error: commandError
-  } = useOptimisticCommand();
+  // 模擬模式不需要樂觀更新
 
   /**
-   * 為指定的命令類型創建樂觀更新版本的事件處理器
+   * 創建模擬飛行命令處理器
    * 
-   * 這個函式會根據模式和設定決定使用樂觀更新或傳統處理方式
-   * 
-   * @param commandType - 命令類型，用於樂觀更新和待處理狀態管理
-   * @param originalHandler - 原始的事件處理器，在不使用樂觀更新時調用
-   * @returns 返回一個結合了樂觀更新功能的事件處理器
-   * 
-   * @example
-   * ```typescript
-   * const optimisticTakeoff = createOptimisticHandler('takeoff', simulateFlyLogic.takeoff);
-   * // 在模擬模式且啟用樂觀更新時，會使用 executeCommand
-   * // 否則直接調用 simulateFlyLogic.takeoff
-   * ```
+   * @param originalHandler - 模擬飛行邏輯函數
+   * @returns 返回處理器函數
    */
-  const createOptimisticHandler = (commandType: any, originalHandler?: () => void) => {
-    return async () => {
-      if (!enableOptimisticUpdates || !isSimulateMode) {
-        // 如果不啟用樂觀更新或在真實模式，使用原始處理器
-        originalHandler?.();
-        return;
-      }
-
-      try {
-        await executeCommand(commandType);
-      } catch (error) {
-        console.error(`Command ${commandType} failed:`, error);
-        // 錯誤已在 Hook 中處理，這裡可以添加額外的錯誤處理
-      }
+  const createHandler = (originalHandler?: () => void) => {
+    return () => {
+      // 模擬模式：直接調用模擬邏輯函數
+      originalHandler?.();
     };
   };
 
-  // 🔄 合併狀態 - 樂觀狀態優先於實際狀態
-  const currentDroneStatus = optimisticState?.status || simulateDroneStats?.status || 'grounded';
-  const isAnyOperationPending = hasAnyPendingCommand || isLoading;
+  // 🔄 簡化狀態邏輯 - 模擬模式直接使用模擬狀態
+  const currentDroneStatus = simulateDroneStats?.status || 'grounded';
+  const isAnyOperationPending = isLoading;
   return (
     <div className="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 overflow-hidden">
       {/* 控制按鈕區域 */}
@@ -157,29 +129,29 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
             {isSimulateMode ? "飛行命令控制" : "飛行控制"}
           </h2>
           
-          {/* 樂觀更新狀態指示器 */}
-          {isSimulateMode && enableOptimisticUpdates && (
+          {/* 模擬模式狀態指示器 */}
+          {isSimulateMode && (
             <div className="flex items-center gap-3 text-sm">
               {/* 當前執行命令 */}
-              {optimisticState?.isExecuting && (
+              {simulateDroneStats?.currentCommand && (
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
                   <span className="text-blue-300">
-                    執行中: {optimisticState.currentCommand}
+                    執行中: {simulateDroneStats.currentCommand}
                   </span>
                 </div>
               )}
               
               {/* 錯誤狀態 */}
-              {(commandError || error) && (
+              {error && (
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                  <span className="text-red-300">命令失敗</span>
+                  <span className="text-red-300">載入失敗</span>
                 </div>
               )}
               
               {/* 正常狀態 */}
-              {!optimisticState?.isExecuting && !commandError && !error && (
+              {!simulateDroneStats?.currentCommand && !error && (
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   <span className="text-gray-400">就緒</span>
@@ -199,14 +171,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('takeoff') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('takeoff', simulateFlyLogic.takeoff)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.takeoff)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus !== "grounded"
                   }
                 >
@@ -217,14 +186,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('hover') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('hover', simulateFlyLogic.hover)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.hover)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -235,14 +201,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('land') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('land', simulateFlyLogic.land)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.land)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -253,11 +216,9 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('emergency_stop') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('emergency_stop', simulateFlyLogic.emergencyStop)}
-                  disabled={isAnyOperationPending || !!error || !!commandError}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.emergencyStop)}
+                  disabled={isAnyOperationPending || !!error}
                 >
                   <span className="flex items-center justify-center gap-1">
                     <span>🚨</span>
@@ -274,14 +235,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('move_forward') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('move_forward', simulateFlyLogic.moveForward)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.moveForward)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -292,14 +250,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('move_backward') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('move_backward', simulateFlyLogic.moveBackward)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.moveBackward)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -310,14 +265,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('move_left') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('move_left', simulateFlyLogic.moveLeft)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.moveLeft)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -328,14 +280,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('move_right') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('move_right', simulateFlyLogic.moveRight)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.moveRight)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -354,14 +303,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('rotate_left') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('rotate_left', simulateFlyLogic.rotateLeft)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.rotateLeft)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -372,14 +318,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('rotate_right') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('rotate_right', simulateFlyLogic.rotateRight)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.rotateRight)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -390,14 +333,11 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 </button>
 
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('return_to_home') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('return_to_home', simulateFlyLogic.returnToHome)}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.returnToHome)}
                   disabled={
                     isAnyOperationPending ||
                     !!error ||
-                    !!commandError ||
                     currentDroneStatus === "grounded"
                   }
                 >
@@ -410,7 +350,7 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
                 <button
                   className="group relative px-3 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
                   onClick={simulateFlyLogic.fitToDrone}
-                  disabled={isAnyOperationPending || !!error || !!commandError}
+                  disabled={isAnyOperationPending || !!error}
                 >
                   <span className="flex items-center justify-center gap-1">
                     <span>🎯</span>
@@ -427,15 +367,13 @@ const FlightControlPanel: React.FC<FlightControlPanelProps> = ({
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  className={`group relative px-3 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm ${
-                    isCommandPending('reset') ? 'animate-pulse bg-opacity-80' : ''
-                  }`}
-                  onClick={createOptimisticHandler('reset', simulateFlyLogic.resetDrone)}
-                  disabled={isAnyOperationPending || !!error || !!commandError}
+                  className="group relative px-3 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+                  onClick={createHandler(simulateFlyLogic.resetDrone)}
+                  disabled={isAnyOperationPending || !!error}
                 >
                   <span className="flex items-center justify-center gap-1">
-                    <span>🔄</span>
-                    <span>重置無人機</span>
+                    <span>🏠</span>
+                    <span>返航</span>
                   </span>
                 </button>
 

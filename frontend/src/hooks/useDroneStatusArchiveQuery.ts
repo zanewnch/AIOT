@@ -654,3 +654,15 @@ export class DroneStatusArchiveQuery {
     });
   }
 }
+
+/**
+ * 全局實例和便利 hooks
+ */
+export const droneStatusArchiveQuery = new DroneStatusArchiveQuery();
+export const useDroneStatusArchiveQuery = () => droneStatusArchiveQuery;
+export const useAllStatusArchives = () => droneStatusArchiveQuery.useAll();
+export const useLatestStatusArchives = () => droneStatusArchiveQuery.useLatest();
+export const useStatusArchiveById = (id: string) => droneStatusArchiveQuery.useById(id);
+export const useCreateStatusArchive = () => droneStatusArchiveQuery.useCreate();
+export const useUpdateStatusArchive = () => droneStatusArchiveQuery.useUpdate();
+export const useDeleteStatusArchive = () => droneStatusArchiveQuery.useDelete();

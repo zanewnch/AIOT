@@ -348,3 +348,14 @@ export class InitQuery {
     };
   }
 }
+
+/**
+ * 全局實例和便利 hooks
+ */
+export const initQuery = new InitQuery();
+export const useInitQuery = () => initQuery;
+export const useInitAllDemo = () => initQuery.useInitAllDemo();
+export const useInitRbacDemo = () => initQuery.useInitRbacDemo();
+export const useInitRtkDemo = () => initQuery.useInitRtkDemo();
+export const useCreateAdminUser = () => initQuery.useCreateAdminUser();
+export const useCreateStressTestData = () => initQuery.useCreateStressTestData();
