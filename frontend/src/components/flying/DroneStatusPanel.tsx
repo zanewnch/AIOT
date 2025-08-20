@@ -85,6 +85,8 @@ interface DroneStatusPanelProps {
   isBackgroundUpdating?: boolean;
   /** 最後更新時間 */
   lastUpdated?: Date;
+  /** WebSocket 連接狀態 */
+  wsConnected?: boolean;
 }
 
 /**

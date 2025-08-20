@@ -66,6 +66,10 @@ interface FlightControlPanelProps {
   realFlyLogic?: RealFlyLogic;
   /** 是否啟用樂觀更新功能，預設為 true */
   enableOptimisticUpdates?: boolean;
+  /** WebSocket 連接狀態 */
+  wsConnected?: boolean;
+  /** WebSocket 發送指令函式 */
+  sendCommand?: (droneId: number, command: any) => void;
 }
 
 /**

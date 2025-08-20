@@ -1,167 +1,86 @@
 /**
- * @fileoverview 通用表格視圖組件
+ * @fileoverview 通用表格視圖組件 (底層渲染器)
  * 
- * 此組件提供統一的表格視圖功能，包括：
- * - 配置驅動的表格渲染
- * - 統一的數據載入和錯誤處理
- * - 排序功能
- * - 編輯模態框
- * - 樂觀更新支援
+ * 📋 **此組件的職責範圍：**
+ * - 🎨 **表格渲染**：根據配置動態渲染 HTML 表格結構
+ * - 📡 **資料管理**：處理 API 資料載入、錯誤狀態、重試機制
+ * - 🔧 **CRUD 操作**：編輯模態框、保存、更新、樂觀更新
+ * - 📈 **排序功能**：欄位排序、升降序切換
+ * - 🎯 **格式化**：資料格式化、自定義欄位格式化函數
+ * - ⚡ **互動功能**：編輯按鈕、自定義操作按鈕
+ * - 🔄 **狀態管理**：與 Zustand store 整合處理編輯狀態
+ *
+ * 🔗 **與 TableViewer 的分工：**
+ * - TableViewer 負責「選擇哪個表格」
+ * - GenericTableViewer 負責「如何渲染表格」
+ *
+ * 📊 **渲染流程：**
+ * ```
+ * 1. 接收 TableConfig 配置物件
+ * 2. 使用配置中的 useData() Hook 載入資料
+ * 3. 處理載入、錯誤、空資料狀態
+ * 4. 動態渲染表格標頭和資料列
+ * 5. 提供編輯和自定義操作功能
+ * ```
+ *
+ * 💡 **設計模式：**
+ * - 配置驅動開發 (Configuration-Driven Development)
+ * - 單一責任原則 (只負責單個表格的渲染)
+ * - 依賴注入 (通過 props 接收配置)
  * 
  * @author AIOT 開發團隊
  * @since 2024-01-01
  */
 
-import React, { useMemo } from 'react';
-import { useTableUIStore } from '../../stores/tableStore';
+import React from 'react';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { createLogger } from '../../configs/loggerConfig';
+import { PaginationControls } from '../common/PaginationControls';
 import { TableConfig } from '../../configs/tableConfigs';
+import { useTableData, useTableEdit, useEditModal } from './hooks';
+import { EditModal } from './components';
+import { createLogger } from '../../configs/loggerConfig';
 import styles from '../../styles/TableViewer.module.scss';
 
-/**
- * 通用表格視圖組件的屬性介面
- */
-interface GenericTableViewerProps {
-  /** 表格配置 */
-  config: TableConfig;
-  /** 可選的自定義 CSS 類名 */
-  className?: string;
-}
+
 
 /**
  * 通用表格視圖組件
  * 
  * 此組件根據配置動態渲染表格，提供統一的數據處理邏輯
  */
-export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, className }) => {
-  // 創建組件專用的日誌記錄器
+export const GenericTableViewer: React.FC<{config: TableConfig, className?: string}> = ({ config, className }) => {
   const logger = createLogger(`GenericTableViewer-${config.type}`);
+  
+  // 🎯 使用數據管理 Hook（支援分頁）
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    sortedData,
+    handleSort,
+    updateMutation,
+    sorting,
+    pagination,
+    paginationActions,
+    paginationEnabled,
+  } = useTableData({ config });
 
-  // 使用配置中的數據獲取 hook
-  const { data, isLoading, error, refetch } = config.useData();
-  
-  // 獲取更新 mutation（現在所有表格都支持編輯）
-  const updateMutation = config.useUpdateMutation();
-  
-  // Zustand stores for UI state
+  // 🎯 使用編輯邏輯 Hook
   const {
     editModal,
-    sorting,
-    openEditModal,
-    closeEditModal,
+    handleEdit,
+    handleSave,
+    handleCancel,
+    handleQuickToggle,
+    handleInputChange,
     updateEditingItem,
-    toggleSortOrder
-  } = useTableUIStore();
+  } = useTableEdit({ config, updateMutation, refetch });
 
-  /**
-   * 處理排序
-   */
-  const handleSort = (field: string) => {
-    logger.debug('表格排序', { 
-      tableType: config.type,
-      field, 
-      currentOrder: sorting.order, 
-      operation: 'sort' 
-    });
-    toggleSortOrder(field as any);
-  };
+  // 🎯 使用編輯模態框邏輯 Hook
+  const { shouldShowModal, editableColumns } = useEditModal({ config, editModal });
 
-  /**
-   * 排序數據
-   */
-  const sortedData = useMemo(() => {
-    if (!data) return [];
-    
-    const sorted = [...data];
-    sorted.sort((a, b) => {
-      const aValue = a[sorting.field];
-      const bValue = b[sorting.field];
-      
-      if (aValue < bValue) return sorting.order === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sorting.order === 'asc' ? 1 : -1;
-      return 0;
-    });
-    
-    return sorted;
-  }, [data, sorting]);
 
-  /**
-   * 處理編輯操作
-   */
-  const handleEdit = (item: any) => {
-    if (!config.hasEdit) return;
-    
-    logger.info('開始編輯項目', { 
-      tableType: config.type,
-      itemId: item?.id, 
-      operation: 'edit' 
-    });
-    openEditModal(config.type, item);
-  };
-
-  /**
-   * 處理保存操作
-   */
-  const handleSave = async () => {
-    if (!editModal.editingItem || !updateMutation) {
-      logger.warn('無法保存：缺少編輯項目或更新功能', { 
-        tableType: config.type,
-        hasEditingItem: !!editModal.editingItem,
-        hasUpdateMutation: !!updateMutation
-      });
-      return;
-    }
-
-    const itemId = editModal.editingItem.id;
-    logger.info('開始保存項目', { 
-      tableType: config.type,
-      itemId, 
-      operation: 'save' 
-    });
-
-    try {
-      await updateMutation.mutateAsync({
-        id: itemId,
-        data: editModal.editingItem
-      });
-
-      logger.info('項目更新成功', { 
-        tableType: config.type,
-        itemId, 
-        operation: 'save_success' 
-      });
-      closeEditModal();
-      refetch();
-    } catch (error) {
-      logger.error('項目更新失敗', {
-        tableType: config.type,
-        itemId,
-        error: (error as Error).message,
-        operation: 'save_error'
-      });
-    }
-  };
-
-  /**
-   * 處理輸入值變更
-   */
-  const handleInputChange = (field: string, value: any) => {
-    if (!editModal.editingItem) return;
-
-    const updatedItem = {
-      ...editModal.editingItem,
-      [field]: value
-    };
-    
-    updateEditingItem(updatedItem);
-    logger.debug('編輯項目欄位更新', { 
-      tableType: config.type,
-      field, 
-      value, 
-      operation: 'field_update' 
-    });
-  };
 
   /**
    * 格式化欄位值以便顯示
@@ -186,55 +105,6 @@ export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, 
     return String(value);
   };
 
-  /**
-   * 渲染編輯模態框
-   */
-  const renderEditModal = () => {
-    if (!config.hasEdit || !editModal.isOpen || editModal.tableType !== config.type) {
-      return null;
-    }
-
-    const editableColumns = config.columns.filter(col => !col.hideInEdit);
-
-    return (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modal}>
-          <div className={styles.modalHeader}>
-            <h3>編輯 {config.title}</h3>
-            <button onClick={closeEditModal} className={styles.closeButton}>
-              ×
-            </button>
-          </div>
-          <div className={styles.modalBody}>
-            {editableColumns.map((column) => (
-              <div key={column.key} className={styles.formGroup}>
-                <label htmlFor={column.key}>{column.title}:</label>
-                <input
-                  id={column.key}
-                  type="text"
-                  value={editModal.editingItem?.[column.key] || ''}
-                  onChange={(e) => handleInputChange(column.key, e.target.value)}
-                  className={styles.input}
-                />
-              </div>
-            ))}
-          </div>
-          <div className={styles.modalFooter}>
-            <button onClick={closeEditModal} className={styles.cancelButton}>
-              取消
-            </button>
-            <button 
-              onClick={handleSave} 
-              className={styles.saveButton}
-              disabled={updateMutation?.isLoading}
-            >
-              {updateMutation?.isLoading ? '保存中...' : '保存'}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   // 載入狀態檢查
   if (isLoading) {
@@ -272,10 +142,10 @@ export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, 
   }
 
   return (
-    <div className={`${styles.tableContainer} ${className || ''}`}>
+  <div className={`${styles.tableContainer} ${className || ''} table-center-outer`}>
       {/* 表格 */}
       <table 
-        className={styles.table} 
+        className={`${styles.table} table-center`} 
         style={{ '--row-count': sortedData.length } as React.CSSProperties}
       >
         <thead>
@@ -283,7 +153,7 @@ export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, 
             {config.columns.map((column) => (
               <th 
                 key={column.key}
-                className={`${column.sortable ? styles.sortable : ''} ${sorting.field === column.key ? styles.sorted : ''}`}
+                className={`${column.sortable ? styles.sortable : ''} ${sorting.field === column.key ? styles.sorted : ''} table-center-th`}
                 onClick={column.sortable ? () => handleSort(column.key) : undefined}
                 style={{ width: column.width }}
               >
@@ -298,7 +168,7 @@ export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, 
               </th>
             ))}
             {(config.hasEdit || config.customActions) && (
-              <th className={styles.actionsHeader}>操作</th>
+              <th className={`${styles.actionsHeader} table-center-th`}>操作</th>
             )}
           </tr>
         </thead>
@@ -306,12 +176,12 @@ export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, 
           {sortedData.map((item: any, index: number) => (
             <tr key={item.id || index} className={styles.tableRow}>
               {config.columns.map((column) => (
-                <td key={column.key} className={styles.tableCell}>
+                <td key={column.key} className={`${styles.tableCell} table-center-td`}>
                   {formatValue(item[column.key], column)}
                 </td>
               ))}
               {(config.hasEdit || config.customActions) && (
-                <td className={styles.actionsCell}>
+                <td className={`table-center-td ${styles.actionsCell}`}>
                   <div className={styles.actionButtons}>
                     {config.hasEdit && (
                       <button
@@ -340,8 +210,28 @@ export const GenericTableViewer: React.FC<GenericTableViewerProps> = ({ config, 
         </tbody>
       </table>
 
+      {/* 分頁控制 */}
+      {paginationEnabled && pagination && paginationActions && (
+        <div className={styles.paginationContainer}>
+          <PaginationControls
+            pagination={pagination}
+            actions={paginationActions}
+            className={styles.paginationControls}
+          />
+        </div>
+      )}
+
       {/* 編輯模態框 */}
-      {renderEditModal()}
+      {shouldShowModal && (
+        <EditModal
+          config={config}
+          editModal={editModal}
+          handleCancel={handleCancel}
+          handleSave={handleSave}
+          handleInputChange={handleInputChange}
+          updateMutation={updateMutation}
+        />
+      )}
     </div>
   );
 };

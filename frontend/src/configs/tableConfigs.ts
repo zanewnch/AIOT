@@ -9,6 +9,7 @@
  */
 
 import { TableType } from '../stores/tableStore';
+import { PaginationParams, PaginatedResponse } from '../types/pagination';
 
 // 導入所有需要的 Query hooks
 import { PermissionQuery } from '../hooks/usePermissionQuery';
@@ -53,11 +54,12 @@ export interface TableConfig<T = any> {
   /** 列配置 */
   columns: ColumnConfig[];
   /** 數據獲取函數 */
-  useData: () => {
+  useData: (params?: PaginationParams) => {
     data: T[] | undefined;
     isLoading: boolean;
     error: any;
     refetch: () => void;
+    paginationData?: PaginatedResponse<T>; // 分頁數據
   };
   /** 是否支持編輯功能 */
   hasEdit?: boolean;
@@ -75,6 +77,14 @@ export interface TableConfig<T = any> {
   isLazy?: boolean;
   /** 數據為空時的提示文字 */
   emptyText?: string;
+  /** 是否啟用分頁功能，預設為 true */
+  enablePagination?: boolean;
+  /** 預設每頁數量 */
+  defaultPageSize?: number;
+  /** 預設排序欄位 */
+  defaultSortBy?: string;
+  /** 預設排序方向 */
+  defaultSortOrder?: 'ASC' | 'DESC';
 }
 
 /**
@@ -235,6 +245,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'permission',
       title: 'Permission Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'id',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'name', title: '權限名稱', sortable: true },
@@ -244,9 +258,29 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime },
         { key: 'updatedAt', title: '更新時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const permissionQuery = new PermissionQuery();
-        return permissionQuery.useAllPermissionData();
+        const queryResult = permissionQuery.useAllPermissionData(params);
+        
+        // 轉換為統一格式
+        if (params) {
+          // 分頁模式
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          // 非分頁模式
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const permissionQuery = new PermissionQuery();
@@ -259,6 +293,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'role',
       title: 'Role Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'id',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'name', title: '角色名稱', sortable: true },
@@ -268,9 +306,29 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime },
         { key: 'updatedAt', title: '更新時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const roleQuery = new RoleQuery();
-        return roleQuery.useRoleData();
+        const queryResult = roleQuery.useRoleData(params);
+        
+        // 轉換為統一格式
+        if (params) {
+          // 分頁模式
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          // 非分頁模式
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const roleQuery = new RoleQuery();
@@ -284,6 +342,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       title: 'User Table',
       hasEdit: true,
       hasQuickActions: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'id',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'username', title: '用戶名', sortable: true },
@@ -293,9 +355,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime },
         { key: 'updatedAt', title: '更新時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const userQuery = new UserQuery();
-        return userQuery.useRbacUsers();
+        const queryResult = userQuery.useRbacUsers(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const userQuery = new UserQuery();
@@ -308,6 +387,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'roletopermission',
       title: 'Role to Permission Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'createdAt',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'roleId', title: '角色ID', sortable: true },
@@ -315,9 +398,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'isActive', title: '狀態', sortable: true, formatter: formatters.status },
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const roleQuery = new RoleQuery();
-        return roleQuery.useAllRolePermissions();
+        const queryResult = roleQuery.useAllRolePermissions(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const roleQuery = new RoleQuery();
@@ -330,6 +430,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'usertorole',
       title: 'User to Role Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'createdAt',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'userId', title: '用戶ID', sortable: true },
@@ -337,9 +441,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'isActive', title: '狀態', sortable: true, formatter: formatters.status },
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const userQuery = new UserQuery();
-        return userQuery.useUserRoles();
+        const queryResult = userQuery.useUserRoles(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const userQuery = new UserQuery();
@@ -352,6 +473,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'DronePosition',
       title: 'Drone Position Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 20,
+      defaultSortBy: 'timestamp',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'drone_id', title: '無人機ID', sortable: true },
@@ -364,9 +489,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'signal_strength', title: '信號強度', sortable: true, formatter: formatters.signal },
         { key: 'timestamp', title: '時間戳記', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const dronePositionQuery = new DronePositionQuery();
-        return dronePositionQuery.useAll();
+        const queryResult = dronePositionQuery.useAll(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const dronePositionQuery = new DronePositionQuery();
@@ -379,6 +521,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'DroneStatus',
       title: 'Drone Status Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 20,
+      defaultSortBy: 'last_seen',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'drone_id', title: '無人機ID', sortable: true },
@@ -390,9 +536,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'is_connected', title: '連線狀態', sortable: true, formatter: formatters.boolean },
         { key: 'temperature', title: '溫度', sortable: true, formatter: formatters.temperature }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const droneStatusQuery = new DroneStatusQuery();
-        return droneStatusQuery.useAll();
+        const queryResult = droneStatusQuery.useAll(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const droneStatusQuery = new DroneStatusQuery();
@@ -405,6 +568,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'DroneCommand',
       title: 'Drone Command Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 20,
+      defaultSortBy: 'issued_at',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'drone_id', title: '無人機ID', sortable: true },
@@ -416,9 +583,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'executed_at', title: '執行時間', sortable: true, formatter: formatters.datetime },
         { key: 'completed_at', title: '完成時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const droneCommandQuery = new DroneCommandQuery();
-        return droneCommandQuery.useAllDroneCommands();
+        const queryResult = droneCommandQuery.useAllDroneCommands(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const droneCommandQuery = new DroneCommandQuery();
@@ -431,6 +615,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       type: 'UserPreference',
       title: 'User Preference Table',
       hasEdit: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'updatedAt',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'userId', title: '用戶ID', sortable: true },
@@ -442,9 +630,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime },
         { key: 'updatedAt', title: '更新時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const userPreferenceQuery = new UserPreferenceQuery();
-        return userPreferenceQuery.useUserPreferences();
+        const queryResult = userPreferenceQuery.useUserPreferences(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const userPreferenceQuery = new UserPreferenceQuery();
@@ -458,6 +663,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       title: 'Archive Task Table',
       hasEdit: true,
       isLazy: true,
+      enablePagination: true,
+      defaultPageSize: 10,
+      defaultSortBy: 'started_at',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'job_type', title: '任務類型', sortable: true },
@@ -469,9 +678,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'started_at', title: '開始時間', sortable: true, formatter: formatters.datetime },
         { key: 'completed_at', title: '完成時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const archiveTaskQuery = new ArchiveTaskQuery();
-        return archiveTaskQuery.useArchiveTasks({});
+        const queryResult = archiveTaskQuery.useArchiveTasks(params || {});
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const archiveTaskQuery = new ArchiveTaskQuery();
@@ -485,6 +711,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       title: 'Drone Positions Archive Table',
       hasEdit: true,
       isLazy: true,
+      enablePagination: true,
+      defaultPageSize: 50,
+      defaultSortBy: 'archived_at',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'original_id', title: '原始ID', sortable: true },
@@ -500,9 +730,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'timestamp', title: '記錄時間', sortable: true, formatter: formatters.datetime },
         { key: 'archived_at', title: '歸檔時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const dronePositionsArchiveQuery = new DronePositionsArchiveQuery();
-        return dronePositionsArchiveQuery.useAll();
+        const queryResult = dronePositionsArchiveQuery.useAll(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const dronePositionsArchiveQuery = new DronePositionsArchiveQuery();
@@ -516,6 +763,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       title: 'Drone Status Archive Table',
       hasEdit: true,
       isLazy: true,
+      enablePagination: true,
+      defaultPageSize: 50,
+      defaultSortBy: 'archived_at',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'original_id', title: '原始ID', sortable: true },
@@ -528,9 +779,26 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'is_connected', title: '連線狀態', sortable: true, formatter: formatters.boolean },
         { key: 'archived_at', title: '歸檔時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         const droneStatusArchiveQuery = new DroneStatusArchiveQuery();
-        return droneStatusArchiveQuery.useAll();
+        const queryResult = droneStatusArchiveQuery.useAll(params);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         const droneStatusArchiveQuery = new DroneStatusArchiveQuery();
@@ -544,6 +812,10 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       title: 'Drone Commands Archive Table',
       hasEdit: true,
       isLazy: true,
+      enablePagination: true,
+      defaultPageSize: 50,
+      defaultSortBy: 'archived_at',
+      defaultSortOrder: 'DESC',
       columns: [
         { key: 'id', title: 'ID', sortable: true, width: '80px' },
         { key: 'original_id', title: '原始ID', sortable: true },
@@ -557,13 +829,37 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'completed_at', title: '完成時間', sortable: true, formatter: formatters.datetime },
         { key: 'archived_at', title: '歸檔時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: () => {
+      useData: (params?: PaginationParams) => {
         // 使用特殊的歸檔指令 hook
-        return useGetAllCommandsArchive({
+        const archiveParams = params ? {
+          limit: params.pageSize,
+          sortBy: params.sortBy || 'issued_at',
+          sortOrder: params.sortOrder || 'DESC',
+          page: params.page
+        } : {
           limit: 100,
           sortBy: 'issued_at',
           sortOrder: 'DESC'
-        });
+        };
+        
+        const queryResult = useGetAllCommandsArchive(archiveParams);
+        
+        if (params) {
+          return {
+            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch,
+            paginationData: queryResult.data as PaginatedResponse<any>
+          };
+        } else {
+          return {
+            data: queryResult.data as any[],
+            isLoading: queryResult.isLoading,
+            error: queryResult.error,
+            refetch: queryResult.refetch
+          };
+        }
       },
       useUpdateMutation: () => {
         return droneCommandArchiveQuery.useUpdate();

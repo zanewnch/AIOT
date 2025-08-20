@@ -23,7 +23,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
  * @class DronePositionQueriesRepository
  */
 @injectable()
-export class DronePositionQueriesRepository {
+export class DronePositionQueriesRepo {
     private readonly logger = createLogger('DronePositionQueriesRepository');
 
     /**

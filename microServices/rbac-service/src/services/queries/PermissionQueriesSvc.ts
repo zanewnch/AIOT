@@ -41,6 +41,7 @@ import type {
     CacheOptions,
     PermissionDTO
 } from '../../types/services/IPermissionService.js';
+import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
 
 const logger = createLogger('PermissionQueriesSvc');
 
@@ -512,6 +513,65 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         } catch (error) {
             logger.error(`Error fetching permission by ID ${permissionId}:`, error);
             throw new Error('Failed to fetch permission');
+        }
+    }
+
+    /**
+     * 分頁查詢權限列表
+     * 
+     * @param params 分頁參數
+     * @returns 分頁權限結果
+     */
+    public async getPermissionsPaginated(params: PaginationParams): Promise<PaginatedResult<PermissionDTO>> {
+        try {
+            logger.debug('Getting permissions with pagination', params);
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'id',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'name', 'category', 'isActive', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據
+            const [permissions, total] = await Promise.all([
+                this.permissionRepository.findPaginated(
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.permissionRepository.count()
+            ]);
+
+            // 轉換為 DTO
+            const permissionDTOs = permissions.map(permission => this.modelToDTO(permission));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                permissionDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully fetched permissions with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching permissions with pagination:', error);
+            throw new Error('Failed to fetch permissions with pagination');
         }
     }
 }

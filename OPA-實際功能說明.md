@@ -9,14 +9,14 @@ OPA 作為 AIOT 系統的**權限管理大腦**，集中處理所有微服務的
 #### 🔄 實際工作流程
 
 ```
-用戶發送請求 → Kong Gateway → OPA 檢查權限 → 允許/拒絕 → 微服務處理
+用戶發送請求 → API Gateway → OPA 檢查權限 → 允許/拒絕 → 微服務處理
 ```
 
 **具體案例**：
 - 用戶登入後獲得 JWT Token
-- 訪問無人機控制 API 時，Kong 先問 OPA："這個用戶可以控制無人機嗎？"
+- 訪問無人機控制 API 時，API Gateway 先問 OPA："這個用戶可以控制無人機嗎？"
 - OPA 查看用戶角色和策略規則，回答："可以，因為他是 drone_operator"
-- Kong 放行請求到 Drone Service
+- API Gateway 放行請求到 Drone Service
 
 ### 2. 角色基礎存取控制 (RBAC)
 
@@ -74,7 +74,7 @@ user、admin、researcher → 可以使用 AI 聊天功能
 **範例流程**：
 1. 用戶 `pilot_001` (drone_operator 角色) 想要發送無人機命令
 2. 請求：`POST /api/drone/command`
-3. Kong 問 OPA："pilot_001 可以發送無人機命令嗎？"
+3. API Gateway 問 OPA："pilot_001 可以發送無人機命令嗎？"
 4. OPA 查看策略：
    ```rego
    allow if {
@@ -84,7 +84,7 @@ user、admin、researcher → 可以使用 AI 聊天功能
    }
    ```
 5. OPA 回答："允許，因為 pilot_001 是 drone_operator"
-6. Kong 放行，Drone Service 處理命令
+6. API Gateway 放行，Drone Service 處理命令
 
 ### 5. 特殊情況處理
 
@@ -97,7 +97,7 @@ OPTIONS 請求 → CORS 預檢，自動允許
 
 #### 🔒 管理員特權
 ```
-Kong Admin API → 只有 superadmin 和 system_admin 可以訪問
+API Gateway Admin API → 只有 superadmin 和 system_admin 可以訪問
 審計日誌 → admin 以上角色強制記錄操作
 ```
 

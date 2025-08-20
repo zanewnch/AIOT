@@ -38,21 +38,49 @@ export class UserQueries {
     }
 
     /**
-     * 獲取所有使用者列表
+     * 獲取所有使用者列表（支援分頁）
      * @route GET /api/rbac/users
+     * @query page - 頁碼（從 1 開始）
+     * @query pageSize - 每頁數量
+     * @query sortBy - 排序欄位
+     * @query sortOrder - 排序方向（ASC/DESC）
      */
     public getUsers = async (req: Request, res: Response): Promise<void> => {
         try {
-            logRequest(req, 'Fetching all users', 'info');
-            logger.debug('Getting all users from service');
+            logRequest(req, 'Fetching users with pagination', 'info');
+            logger.debug('Getting users from service with pagination');
 
-            const users = await this.userQueriesSvc.getAllUsers();
-            const result = ResResult.success('使用者列表獲取成功', users);
+            // 解析分頁參數
+            const page = parseInt(req.query.page as string) || 1;
+            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const sortBy = (req.query.sortBy as string) || 'id';
+            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
+
+            const paginationParams = { page, pageSize, sortBy, sortOrder };
+
+            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
+            if (!req.query.page && !req.query.pageSize) {
+                // 向後兼容：沒有分頁參數時返回所有數據
+                const users = await this.userQueriesSvc.getAllUsers();
+                const result = ResResult.success('使用者列表獲取成功', users);
+                res.status(result.status).json(result);
+                logger.info('Successfully fetched all users (no pagination)', {count: users.length});
+                return;
+            }
+
+            // 使用分頁查詢
+            const paginatedResult = await this.userQueriesSvc.getUsersPaginated(paginationParams);
+            const result = ResResult.success('使用者列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);
-            logger.info('Successfully fetched all users', {count: users.length});
+            logger.info('Successfully fetched users with pagination', {
+                page: paginatedResult.page,
+                pageSize: paginatedResult.pageSize,
+                total: paginatedResult.total,
+                dataCount: paginatedResult.data.length
+            });
         } catch (error) {
-            logger.error('Error fetching all users', {error});
+            logger.error('Error fetching users', {error});
             const result = ResResult.internalError('獲取使用者列表失敗');
             res.status(result.status).json(result);
         }

@@ -1,6 +1,6 @@
 # AIOT 微服務架構設計
 
-## 🏗️ Kong + Consul 微服務架構
+## 🏗️ API Gateway + Consul 微服務架構
 
 ### 🎯 架構設計原則
 
@@ -19,7 +19,7 @@ AIOT/
 │   ├── drone/                      # 無人機服務 (Port: 3002)  
 │   └── feSetting/                  # 用戶偏好服務 (Port: 3003)
 ├── infrastructure/                 # 基礎設施配置
-│   ├── kong/                       # Kong Gateway 配置
+│   ├── kong/                       # API Gateway 配置
 │   ├── consul/                     # Consul 服務發現配置
 │   └── docker/                     # Docker 編排配置
 ├── gateway/                        # API Gateway 聲明式配置
@@ -445,18 +445,18 @@ AIOT/
 │       └── dist/                   # 編譯輸出目錄
 │
 ├── infrastructure/                # 基礎設施配置
-│   ├── kong/                      # Kong API Gateway 配置
-│   │   ├── kong.yml               # Kong 聲明式配置
-│   │   ├── kong.conf              # Kong 配置檔案
+│   ├── kong/                      # API Gateway 配置
+│   │   ├── kong.yml               # API Gateway 聲明式配置
+│   │   ├── kong.conf              # API Gateway 配置檔案
 │   │   ├── plugins/               # 自定義插件
 │   │   │   ├── auth-plugin.lua    # 認證插件
 │   │   │   ├── rate-limit-plugin.lua # 限流插件
 │   │   │   └── logging-plugin.lua # 日誌插件
-│   │   ├── migrations/            # Kong 資料庫遷移
+│   │   ├── migrations/            # API Gateway 資料庫遷移
 │   │   │   ├── 001_initial.sql
 │   │   │   └── 002_add_services.sql
 │   │   └── scripts/
-│   │       ├── setup-kong.sh      # Kong 初始化腳本
+│   │       ├── setup-kong.sh      # API Gateway 初始化腳本
 │   │       └── register-services.sh # 服務註冊腳本
 │   │
 │   ├── consul/                    # Consul 服務發現配置
@@ -531,7 +531,7 @@ AIOT/
 │
 ├── gateway/                       # API Gateway 設定檔
 │   ├── kong/
-│   │   ├── declarative/           # Kong 聲明式配置
+│   │   ├── declarative/           # API Gateway 聲明式配置
 │   │   │   ├── kong.yaml          # 主配置檔案
 │   │   │   ├── services.yaml      # 服務定義
 │   │   │   ├── routes.yaml        # 路由規則
@@ -581,7 +581,7 @@ AIOT/
 
 ## 🌐 架構組件說明
 
-### 1. Kong API Gateway
+### 1. API Gateway
 
 - **作用**: 統一入口、路由轉發、認證、限流、日誌
 - **Port**: 8000 (HTTP), 8443 (HTTPS), 8001 (Admin API)
@@ -614,13 +614,13 @@ AIOT/
 ### 對外 API (客戶端調用)
 
 ```
-Client → Kong Gateway → Consul (服務發現) → 微服務 (HTTP REST)
+Client → API Gateway → Consul (服務發現) → 微服務 (HTTP REST)
 ```
 
 ### WebSocket 連線
 
 ```
-Client → Kong Gateway (WebSocket支援) → drone-service (Socket.IO)
+Client → API Gateway (WebSocket支援) → drone-service (Socket.IO)
 ```
 
 ### 服務間通訊 (高效能)
@@ -648,7 +648,7 @@ Client → Kong Gateway (WebSocket支援) → drone-service (Socket.IO)
 ### 1. 啟動基礎設施
 
 ```bash
-# 啟動 Consul + Kong + 資料庫
+# 啟動 Consul + API Gateway + 資料庫
 docker-compose up consul kong postgres redis rabbitmq -d
 ```
 
@@ -659,10 +659,10 @@ docker-compose up consul kong postgres redis rabbitmq -d
 docker-compose up rbac-service drone-service user-preference-service -d
 ```
 
-### 3. Kong 路由自動配置
+### 3. API Gateway 路由自動配置
 
 ```bash
-# Kong 透過 Consul 自動發現服務並配置路由
+# API Gateway 透過 Consul 自動發現服務並配置路由
 # 支援自動健康檢查和故障轉移
 ```
 
@@ -681,7 +681,7 @@ kubectl scale deployment drone-service --replicas=3
 - JWT Token 傳遞
 - API Key 驗證
 
-### 2. Kong 安全插件
+### 2. API Gateway 安全插件
 
 - Rate Limiting
 - CORS
@@ -693,18 +693,18 @@ kubectl scale deployment drone-service --replicas=3
 ### 1. 健康檢查
 
 - Consul Health Checks
-- Kong Upstream Health
+- API Gateway Upstream Health
 - 自定義健康端點
 
 ### 2. 日誌聚合
 
-- Kong Access Logs
+- API Gateway Access Logs
 - 微服務應用日誌
 - Consul 操作日誌
 
 ### 3. 指標收集
 
-- Kong Prometheus Plugin
+- API Gateway Prometheus Plugin
 - 服務級別指標
 - 基礎設施指標
 
@@ -728,7 +728,7 @@ docker-compose -f docker-compose.dev.yml up
 ### 3. 服務測試
 
 - 單元測試: 各服務獨立測試
-- 整合測試: 通過 Kong Gateway 測試
+- 整合測試: 通過 API Gateway 測試
 - gRPC 測試: 服務間通訊測試
 - 端到端測試: 模擬真實用戶流程
 
@@ -736,7 +736,7 @@ docker-compose -f docker-compose.dev.yml up
 
 ### 微服務核心
 
-- **API Gateway**: Kong
+- **API Gateway**: API Gateway
 - **服務發現**: Consul
 - **容器化**: Docker + Docker Compose
 - **編排**: Kubernetes (生產環境)
@@ -764,7 +764,7 @@ docker-compose -f docker-compose.dev.yml up
 
 ### 監控運維
 
-- **健康檢查**: Consul + Kong
+- **健康檢查**: Consul + API Gateway
 - **日誌**: 統一日誌收集
 - **指標**: Prometheus + Grafana
 - **追蹤**: Jaeger (分散式追蹤)

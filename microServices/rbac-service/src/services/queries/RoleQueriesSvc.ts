@@ -30,6 +30,7 @@ import type { RoleModel } from '../../models/RoleModel.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
 
 const logger = createLogger('RoleQueriesSvc');
 
@@ -272,6 +273,65 @@ export class RoleQueriesSvc implements IRoleQueriesService {
         } catch (error) {
             logger.error('Failed to check role existence:', error);
             return false;
+        }
+    }
+
+    /**
+     * 分頁查詢角色列表
+     * 
+     * @param params 分頁參數
+     * @returns 分頁角色結果
+     */
+    public async getRolesPaginated(params: PaginationParams): Promise<PaginatedResult<RoleDTO>> {
+        try {
+            logger.debug('Getting roles with pagination', params);
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'id',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'name', 'displayName', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據
+            const [roles, total] = await Promise.all([
+                this.roleRepository.findPaginated(
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.roleRepository.count()
+            ]);
+
+            // 轉換為 DTO
+            const roleDTOs = roles.map(role => this.modelToDTO(role));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                roleDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully fetched roles with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching roles with pagination:', error);
+            throw new Error('Failed to fetch roles with pagination');
         }
     }
 }

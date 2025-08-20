@@ -8,24 +8,51 @@
 --
 -- 創建的表結構（9個表）：
 -- - drones_status: 無人機基本狀態表（序號、名稱、型號、製造商等）
+--   * 欄位：id, serial_number, name, model, manufacturer, firmware_version, created_at, updated_at
+--   * 用途：存儲無人機的基本資訊和硬體規格
 -- - drone_real_time_status: 無人機即時狀態表（電量、狀態、位置等）
+--   * 欄位：id, drone_id, battery_level, status, latitude, longitude, altitude, heading, speed, last_communication, created_at, updated_at
+--   * 用途：實時追蹤無人機的運行狀態和位置資訊
 -- - drone_positions: 無人機位置記錄表（GPS座標、高度、速度等）
+--   * 欄位：id, drone_id, latitude, longitude, altitude, heading, speed, battery_level, timestamp, created_at
+--   * 用途：記錄無人機的歷史飛行軌跡和位置資料
 -- - drone_commands: 無人機指令表（起飛、降落、移動等指令）
+--   * 欄位：id, drone_id, command_type, command_data, status, issued_by, issued_at, executed_at, completed_at, error_message, created_at, updated_at
+--   * 用途：管理發送給無人機的各種控制指令
 -- - drone_command_queue: 無人機指令佇列表（指令排程和優先級）
+--   * 欄位：id, drone_id, command_type, command_data, priority, status, scheduled_at, attempts, max_attempts, error_message, created_at, updated_at
+--   * 用途：實現指令的排程執行和優先級管理
 -- - archive_tasks: 歸檔任務表（數據歸檔管理）
+--   * 欄位：id, table_name, start_date, end_date, status, total_records, processed_records, batch_id, created_at, updated_at, completed_at
+--   * 用途：管理歷史數據的自動歸檔和清理任務
 -- - drone_positions_archive: 位置數據歷史歸檔表
+--   * 欄位：id, original_id, drone_id, latitude, longitude, altitude, heading, speed, battery_level, timestamp, batch_id, archived_at, created_at, updated_at
+--   * 用途：長期保存歷史位置數據，支持大數據分析
 -- - drone_commands_archive: 指令數據歷史歸檔表
+--   * 欄位：id, original_id, drone_id, command_type, command_data, status, issued_by, issued_at, executed_at, completed_at, error_message, archived_at, archive_batch_id, created_at
+--   * 用途：歸檔已完成的指令記錄，用於效能分析和審計
 -- - drone_status_archive: 狀態數據歷史歸檔表
+--   * 欄位：id, original_id, drone_id, battery_level, status, latitude, longitude, altitude, heading, speed, last_communication, archived_at, archive_batch_id, created_at
+--   * 用途：保存歷史狀態快照，支持狀態變化趨勢分析
 --
 -- 插入的測試數據規模：
 -- - 10台測試無人機（DJI、Autel、Skydio、Parrot等品牌）
--- - 基礎數據：即時狀態、初始位置、測試指令、指令佇列
--- - 大量數據生成：
---   * 100個初始數據點（每台無人機10個，間隔10秒）
---   * 10,000筆隨機位置數據（分佈在過去30天，台北101周邊5公里）
---   * 10,000筆隨機歷史位置數據
---   * 200筆隨機狀態歷史數據
---   * 100筆隨機指令歷史數據
+--   * DJI Mini 4 Pro, DJI Air 3, DJI Mavic 3 Pro 等
+--   * Autel EVO Max 4T, Skydio 2+, Parrot ANAFI Ai 等
+--   * 涵蓋消費級、專業級、工業級不同等級無人機
+-- - 基礎數據：即時狀態、初始位置、測試指令、指令佇列、歸檔任務
+-- - 大量數據生成（適用於壓力測試和數據分析）：
+--   * 100個初始數據點（每台無人機10個，時間間隔10秒）
+--   * 10台無人機多樣化即時狀態（40%待機，30%飛行中，20%維護中，10%離線）
+--   * 10台無人機固定的 drones_status 基本狀態表（主要設備資訊）
+--   * 6筆歸檔任務測試記錄（包含已完成、進行中、待處理、失敗等各種狀態）
+--   * 10,000筆隨機位置數據（時間分佈在過去30天，地理範圍：台北101周邊5公里半徑）
+--   * ~10,100筆隨機歷史位置歸檔數據（支持軌跡分析和熱力圖生成）
+--   * ~200筆隨機狀態歷史歸檔數據（電量變化、狀態轉換記錄）
+--   * ~100筆隨機指令歷史歸檔數據（包含takeoff、land、move、hover等各種指令類型）
+-- - 預設管理帳號：admin/admin（用於系統初始化和測試）
+-- - 自動化功能：包含 UpdateRandomDroneStatuses() 預存程序，用於持續更新即時狀態數據
+
 -- - 總計：超過 20,000 筆測試數據
 --
 -- 🎯 前端測試場景設計：
@@ -347,6 +374,16 @@ VALUES
   (1, 3, 1, 3, DATE_ADD(NOW(), INTERVAL 5 MINUTE), 'queued', 0, 3, NOW(), NOW()),
   (8, 2, 1, 1, NOW(), 'processing', 0, 3, NOW(), NOW());
 
+-- 插入歸檔任務測試數據
+INSERT IGNORE INTO archive_tasks (job_type, table_name, archive_table_name, date_range_start, date_range_end, batch_id, total_records, archived_records, status, started_at, completed_at, created_by, createdAt, updatedAt)
+VALUES
+  ('positions', 'drone_positions', 'drone_positions_archive', DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY), 'batch_pos_20241201', 1500, 1500, 'completed', DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 30 MINUTE, 'admin', NOW(), NOW()),
+  ('commands', 'drone_commands', 'drone_commands_archive', DATE_SUB(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 7 DAY), 'batch_cmd_20241115', 300, 300, 'completed', DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY) + INTERVAL 15 MINUTE, 'admin', NOW(), NOW()),
+  ('status', 'drone_real_time_status', 'drone_status_archive', DATE_SUB(NOW(), INTERVAL 14 DAY), DATE_SUB(NOW(), INTERVAL 3 DAY), 'batch_sta_20241120', 800, 800, 'completed', DATE_SUB(NOW(), INTERVAL 4 DAY), DATE_SUB(NOW(), INTERVAL 4 DAY) + INTERVAL 45 MINUTE, 'admin', NOW(), NOW()),
+  ('positions', 'drone_positions', 'drone_positions_archive', DATE_SUB(NOW(), INTERVAL 1 DAY), NOW(), 'batch_pos_20241208', 500, 480, 'running', DATE_SUB(NOW(), INTERVAL 1 HOUR), NULL, 'system', NOW(), NOW()),
+  ('commands', 'drone_commands', 'drone_commands_archive', DATE_SUB(NOW(), INTERVAL 3 DAY), NOW(), 'batch_cmd_20241205', 150, 0, 'pending', NULL, NULL, 'admin', NOW(), NOW()),
+  ('status', 'drone_real_time_status', 'drone_status_archive', DATE_SUB(NOW(), INTERVAL 2 DAY), NOW(), 'batch_sta_20241206', 200, 0, 'failed', DATE_SUB(NOW(), INTERVAL 30 MINUTE), NULL, 'system', NOW(), NOW());
+
 -- =====================================
 -- 3. 生成大量測試數據
 -- =====================================
@@ -532,14 +569,96 @@ BEGIN
         END IF;
     END WHILE;
     
+    -- =====================================
+    -- 第三部分：更新即時狀態表，提供隨機多樣的狀態
+    -- =====================================
+    SELECT '更新即時狀態表，模擬真實多樣的狀態...' AS progress;
+    
+    -- 為每台無人機更新隨機的即時狀態
+    SET i = 1;
+    WHILE i <= 10 DO
+        -- 生成隨機狀態數據
+        SET random_battery = 10 + RAND() * 90; -- 10-100% 電量
+        SET random_alt = RAND() * 300; -- 0-300米高度
+        SET random_speed = RAND() * 20; -- 0-20 m/s 速度
+        SET random_heading = RAND() * 360; -- 0-360度航向
+        SET random_signal = 60 + RAND() * 40; -- 60-100% 信號強度
+        SET random_temp = 15 + RAND() * 25; -- 15-40攝氏度溫度
+        
+        -- 隨機狀態分配（加權隨機，讓 idle 和 flying 出現更頻繁）
+        SET @status_rand = RAND();
+        SET @drone_status = CASE 
+            WHEN @status_rand < 0.4 THEN 'idle'       -- 40% 機率待機
+            WHEN @status_rand < 0.7 THEN 'flying'     -- 30% 機率飛行中
+            WHEN @status_rand < 0.8 THEN 'charging'   -- 10% 機率充電中
+            WHEN @status_rand < 0.9 THEN 'maintenance' -- 10% 機率維護中
+            WHEN @status_rand < 0.95 THEN 'offline'   -- 5% 機率離線
+            ELSE 'error'                               -- 5% 機率錯誤
+        END;
+        
+        -- 根據狀態調整其他參數
+        IF @drone_status = 'flying' THEN
+            SET random_alt = 50 + RAND() * 200; -- 飛行中高度 50-250m
+            SET random_speed = 5 + RAND() * 15;  -- 飛行中速度 5-20 m/s
+        ELSEIF @drone_status = 'charging' THEN
+            SET random_alt = 0;      -- 充電時高度為0
+            SET random_speed = 0;    -- 充電時速度為0
+            SET random_battery = 20 + RAND() * 80; -- 充電中電量 20-100%
+        ELSEIF @drone_status = 'offline' THEN
+            SET random_signal = 0;   -- 離線時無信號
+            SET random_speed = 0;    -- 離線時無速度
+            SET random_alt = 0;      -- 離線時高度為0
+        ELSEIF @drone_status = 'maintenance' THEN
+            SET random_speed = 0;    -- 維護時無速度
+            SET random_alt = 0;      -- 維護時高度為0
+        END IF;
+        
+        -- 更新即時狀態表
+        UPDATE drone_real_time_status 
+        SET 
+            current_battery_level = random_battery,
+            current_status = @drone_status,
+            last_seen = CASE 
+                WHEN @drone_status IN ('offline', 'error') 
+                THEN NOW() - INTERVAL FLOOR(RAND() * 120) MINUTE  -- 離線/錯誤：隨機1-2小時前
+                ELSE NOW() - INTERVAL FLOOR(RAND() * 10) SECOND   -- 其他狀態：隨機0-10秒前
+            END,
+            current_altitude = random_alt,
+            current_speed = random_speed,
+            current_heading = random_heading,
+            signal_strength = random_signal,
+            is_connected = (@drone_status NOT IN ('offline', 'error')),
+            error_message = CASE 
+                WHEN @drone_status = 'error' THEN 
+                    CASE FLOOR(RAND() * 4)
+                        WHEN 0 THEN 'GPS signal lost'
+                        WHEN 1 THEN 'Low battery warning'
+                        WHEN 2 THEN 'Motor overheating'
+                        ELSE 'Communication timeout'
+                    END
+                ELSE NULL
+            END,
+            temperature = random_temp,
+            flight_time_today = CASE 
+                WHEN @drone_status = 'flying' THEN FLOOR(RAND() * 7200)  -- 飛行中：0-2小時
+                ELSE FLOOR(RAND() * 3600)  -- 其他狀態：0-1小時
+            END,
+            updatedAt = NOW()
+        WHERE drone_id = i;
+        
+        SET i = i + 1;
+    END WHILE;
+    
     -- 重新啟用外鍵約束
     SET FOREIGN_KEY_CHECKS = 1;
     
     SELECT '成功生成所有測試數據！' AS result;
     SELECT '- 100 個初始數據點（每台無人機10個）' AS summary1;
     SELECT '- 10,000 筆隨機位置數據' AS summary2;
-    SELECT '- 200 筆隨機狀態數據' AS summary3;
-    SELECT '- 100 筆隨機指令數據' AS summary4;
+    SELECT '- 200 筆隨機狀態歷史數據' AS summary3;
+    SELECT '- 100 筆隨機指令歷史數據' AS summary4;
+    SELECT '- 10 台無人機的多樣化即時狀態' AS summary5;
+    SELECT '- 6 筆歸檔任務（各種狀態）' AS summary6;
     
 END$$
 
@@ -551,11 +670,110 @@ CALL GenerateDroneData();
 -- 刪除臨時程序
 DROP PROCEDURE GenerateDroneData;
 
+-- =====================================
+-- 創建即時狀態隨機更新程序（保留供後續使用）
+-- =====================================
+
+DELIMITER $$
+
+CREATE PROCEDURE UpdateRandomDroneStatuses()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE random_battery FLOAT;
+    DECLARE random_alt FLOAT;
+    DECLARE random_speed FLOAT;
+    DECLARE random_heading FLOAT;
+    DECLARE random_signal FLOAT;
+    DECLARE random_temp FLOAT;
+    
+    SELECT '🔄 更新隨機無人機即時狀態...' AS status;
+    
+    WHILE i <= 10 DO
+        -- 生成隨機狀態數據
+        SET random_battery = 10 + RAND() * 90;
+        SET random_alt = RAND() * 300;
+        SET random_speed = RAND() * 20;
+        SET random_heading = RAND() * 360;
+        SET random_signal = 60 + RAND() * 40;
+        SET random_temp = 15 + RAND() * 25;
+        
+        -- 隨機狀態分配
+        SET @status_rand = RAND();
+        SET @drone_status = CASE 
+            WHEN @status_rand < 0.4 THEN 'idle'
+            WHEN @status_rand < 0.7 THEN 'flying'
+            WHEN @status_rand < 0.8 THEN 'charging'
+            WHEN @status_rand < 0.9 THEN 'maintenance'
+            WHEN @status_rand < 0.95 THEN 'offline'
+            ELSE 'error'
+        END;
+        
+        -- 根據狀態調整參數
+        IF @drone_status = 'flying' THEN
+            SET random_alt = 50 + RAND() * 200;
+            SET random_speed = 5 + RAND() * 15;
+        ELSEIF @drone_status = 'charging' THEN
+            SET random_alt = 0;
+            SET random_speed = 0;
+            SET random_battery = 20 + RAND() * 80;
+        ELSEIF @drone_status = 'offline' THEN
+            SET random_signal = 0;
+            SET random_speed = 0;
+            SET random_alt = 0;
+        ELSEIF @drone_status = 'maintenance' THEN
+            SET random_speed = 0;
+            SET random_alt = 0;
+        END IF;
+        
+        -- 更新即時狀態
+        UPDATE drone_real_time_status 
+        SET 
+            current_battery_level = random_battery,
+            current_status = @drone_status,
+            last_seen = CASE 
+                WHEN @drone_status IN ('offline', 'error') 
+                THEN NOW() - INTERVAL FLOOR(RAND() * 120) MINUTE
+                ELSE NOW() - INTERVAL FLOOR(RAND() * 10) SECOND
+            END,
+            current_altitude = random_alt,
+            current_speed = random_speed,
+            current_heading = random_heading,
+            signal_strength = random_signal,
+            is_connected = (@drone_status NOT IN ('offline', 'error')),
+            error_message = CASE 
+                WHEN @drone_status = 'error' THEN 
+                    CASE FLOOR(RAND() * 4)
+                        WHEN 0 THEN 'GPS signal lost'
+                        WHEN 1 THEN 'Low battery warning'
+                        WHEN 2 THEN 'Motor overheating'
+                        ELSE 'Communication timeout'
+                    END
+                ELSE NULL
+            END,
+            temperature = random_temp,
+            flight_time_today = CASE 
+                WHEN @drone_status = 'flying' THEN FLOOR(RAND() * 7200)
+                ELSE FLOOR(RAND() * 3600)
+            END,
+            updatedAt = NOW()
+        WHERE drone_id = i;
+        
+        SET i = i + 1;
+    END WHILE;
+    
+    SELECT '✅ 已更新所有無人機即時狀態' AS result;
+    SELECT COUNT(*) AS updated_drones FROM drone_real_time_status;
+    
+END$$
+
+DELIMITER ;
+
 -- 提交交易
 COMMIT;
 
 -- 顯示創建結果
 SELECT 'Drone schema and test data created successfully' AS status;
+SELECT '💡 使用 CALL UpdateRandomDroneStatuses(); 可重新生成隨機即時狀態' AS tips;
 
 -- 顯示所有創建的表
 SHOW TABLES;
@@ -568,3 +786,13 @@ SELECT
 FROM information_schema.TABLES
 WHERE TABLE_SCHEMA = 'drone_db'
 ORDER BY TABLE_NAME;
+
+-- 顯示即時狀態多樣性統計
+SELECT 
+    '📊 即時狀態分佈統計' AS info,
+    current_status as '狀態',
+    COUNT(*) as '數量',
+    CONCAT(ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM drone_real_time_status), 1), '%') as '百分比'
+FROM drone_real_time_status 
+GROUP BY current_status 
+ORDER BY COUNT(*) DESC;

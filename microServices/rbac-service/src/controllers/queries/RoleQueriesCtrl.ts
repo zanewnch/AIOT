@@ -38,21 +38,49 @@ export class RoleQueries {
     }
 
     /**
-     * 獲取所有角色列表
+     * 獲取所有角色列表（支援分頁）
      * @route GET /api/rbac/roles
+     * @query page - 頁碼（從 1 開始）
+     * @query pageSize - 每頁數量
+     * @query sortBy - 排序欄位
+     * @query sortOrder - 排序方向（ASC/DESC）
      */
     public getRoles = async (req: Request, res: Response): Promise<void> => {
         try {
-            logRequest(req, 'Fetching all roles', 'info');
-            logger.debug('Getting all roles from service');
+            logRequest(req, 'Fetching roles with pagination', 'info');
+            logger.debug('Getting roles from service with pagination');
 
-            const roles = await this.roleQueriesService.getAllRoles();
-            const result = ResResult.success('角色列表獲取成功', roles);
+            // 解析分頁參數
+            const page = parseInt(req.query.page as string) || 1;
+            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const sortBy = (req.query.sortBy as string) || 'id';
+            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
+
+            const paginationParams = { page, pageSize, sortBy, sortOrder };
+
+            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
+            if (!req.query.page && !req.query.pageSize) {
+                // 向後兼容：沒有分頁參數時返回所有數據
+                const roles = await this.roleQueriesService.getAllRoles();
+                const result = ResResult.success('角色列表獲取成功', roles);
+                res.status(result.status).json(result);
+                logger.info('Successfully fetched all roles (no pagination)', {count: roles.length});
+                return;
+            }
+
+            // 使用分頁查詢
+            const paginatedResult = await this.roleQueriesService.getRolesPaginated(paginationParams);
+            const result = ResResult.success('角色列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);
-            logger.info('Successfully fetched all roles', {count: roles.length});
+            logger.info('Successfully fetched roles with pagination', {
+                page: paginatedResult.page,
+                pageSize: paginatedResult.pageSize,
+                total: paginatedResult.total,
+                dataCount: paginatedResult.data.length
+            });
         } catch (error) {
-            logger.error('Error fetching all roles', {error});
+            logger.error('Error fetching roles', {error});
             const result = ResResult.internalError('獲取角色列表失敗');
             res.status(result.status).json(result);
         }

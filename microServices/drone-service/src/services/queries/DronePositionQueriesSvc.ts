@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import type { DronePositionQueriesRepository } from '../../repo/queries/DronePositionQueriesRepo.js';
+import type { DronePositionQueriesRepo } from '../../repo/queries/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes } from '../../models/DronePositionModel.js';
 import type { IDronePositionQueriesSvc } from '../../types/services/IDronePositionService.js';
 import { TYPES } from '../../container/types.js';
@@ -34,7 +34,7 @@ const logger = createLogger('DronePositionQueriesSvc');
 @injectable()
 export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
     constructor(
-        @inject(TYPES.DronePositionQueriesRepository) private readonly dronePositionRepository: DronePositionQueriesRepository
+        @inject(TYPES.DronePositionQueriesRepo) private readonly dronePositionRepo: DronePositionQueriesRepo
     ) {}
 
     /**
@@ -302,6 +302,51 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             return count;
         } catch (error) {
             throw error;
+        }
+    }
+
+    /**
+     * 分頁查詢無人機位置列表
+     * 
+     * @param params 分頁參數
+     * @returns 分頁無人機位置結果
+     */
+    public async getDronePositionsPaginated(params: any): Promise<any> {
+        try {
+            logger.debug('Getting drone positions with pagination', params);
+
+            // 模擬分頁實現（實際應該在 repository 層實現）
+            const allPositions = await this.dronePositionRepository.selectAll();
+            const total = allPositions.length;
+
+            const page = params.page || 1;
+            const pageSize = params.pageSize || 10;
+            const offset = (page - 1) * pageSize;
+            
+            const paginatedPositions = allPositions.slice(offset, offset + pageSize);
+            const totalPages = Math.ceil(total / pageSize);
+
+            const result = {
+                data: paginatedPositions,
+                page,
+                pageSize,
+                total,
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
+            };
+
+            logger.info('Successfully fetched drone positions with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching drone positions with pagination:', error);
+            throw new Error('Failed to fetch drone positions with pagination');
         }
     }
 }

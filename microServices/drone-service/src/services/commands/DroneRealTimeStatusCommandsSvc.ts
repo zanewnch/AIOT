@@ -59,14 +59,14 @@ interface ExternalCreationAttributesLocalLocal {
  */
 @injectable()
 export class DroneRealTimeStatusCommandsSvc {
-    private readonly repository: DroneRealTimeStatusCommandsRepository;
+    private repo: DroneRealTimeStatusCommandsRepo;
     private readonly queryService: DroneRealTimeStatusQueriesSvc;
 
     constructor(
-        @inject(TYPES.DroneRealTimeStatusCommandsRepository) repository: DroneRealTimeStatusCommandsRepository,
+        @inject(TYPES.DroneRealTimeStatusCommandsRepository) repo: DroneRealTimeStatusCommandsRepository,
         @inject(TYPES.DroneRealTimeStatusQueriesSvc) queryService: DroneRealTimeStatusQueriesSvc
     ) {
-        this.repository = repository;
+        this.repo = repo;
         this.queryService = queryService;
     }
 
@@ -89,7 +89,7 @@ export class DroneRealTimeStatusCommandsSvc {
             };
 
             logger.info('Creating new drone real-time status', { droneId: data.drone_id });
-            const result = await this.repository.create(processedData);
+            const result = await this.repo.create(processedData);
             
             logger.info('Successfully created drone real-time status', { id: result.id, droneId: data.drone_id });
             return result;
@@ -115,7 +115,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             logger.info('Updating drone real-time status', { id, data });
-            const result = await this.repository.updateById(id, data);
+            const result = await this.repo.updateById(id, data);
             if (!result) {
                 throw new Error('更新即時狀態記錄失敗');
             }
@@ -137,7 +137,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             logger.info('Updating drone real-time status by drone ID', { droneId, data });
-            const result = await this.repository.updateByDroneId(droneId, data);
+            const result = await this.repo.updateByDroneId(droneId, data);
             if (!result) {
                 throw new Error('該無人機的即時狀態記錄不存在或更新失敗');
             }
@@ -165,7 +165,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             logger.info('Deleting drone real-time status', { id });
-            const result = await this.repository.deleteById(id);
+            const result = await this.repo.deleteById(id);
             if (!result) {
                 throw new Error('即時狀態記錄不存在或刪除失敗');
             }
@@ -187,7 +187,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             logger.info('Deleting drone real-time status by drone ID', { droneId });
-            const result = await this.repository.deleteByDroneId(droneId);
+            const result = await this.repo.deleteByDroneId(droneId);
             if (!result) {
                 throw new Error('該無人機的即時狀態記錄不存在或刪除失敗');
             }
@@ -215,7 +215,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             logger.info('Upserting drone real-time status', { droneId });
-            const result = await this.repository.upsertByDroneId(droneId, data);
+            const result = await this.repo.upsertByDroneId(droneId, data);
             
             logger.info('Successfully upserted drone real-time status', { droneId });
             return result;
@@ -234,7 +234,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             logger.info('Updating drone heartbeat', { droneId });
-            const result = await this.repository.updateLastSeen(droneId);
+            const result = await this.repo.updateLastSeen(droneId);
             
             if (result) {
                 logger.info('Successfully updated drone heartbeat', { droneId });
@@ -264,7 +264,7 @@ export class DroneRealTimeStatusCommandsSvc {
             };
 
             logger.info('Marking drone as offline', { droneId, errorMessage });
-            const result = await this.repository.updateByDroneId(droneId, updateData);
+            const result = await this.repo.updateByDroneId(droneId, updateData);
             if (!result) {
                 throw new Error('該無人機的即時狀態記錄不存在');
             }

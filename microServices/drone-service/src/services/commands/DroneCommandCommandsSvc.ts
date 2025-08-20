@@ -45,20 +45,20 @@ export class DroneCommandCommandsSvc {
         private readonly queryService: DroneCommandQueriesSvc
     ) {
         // Initialize repositories directly for now since they're not in DI container yet
-        this.commandsRepository = new DroneCommandCommandsRepository();
-        this.queriesRepository = new DroneCommandQueriesRepository();
+        this.commandsRepo = new DroneCommandCommandsRepository();
+        this.queriesRepo = new DroneCommandQueriesRepository();
         
         // 創建組合repository
-        this.commandRepository = Object.assign(
+        this.commandRepo = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDroneCommandRepository;
+        ) as IDroneCommandRepo;
     }
 
-    private readonly commandsRepository: DroneCommandCommandsRepository;
-    private readonly queriesRepository: DroneCommandQueriesRepository;
-    private readonly commandRepository: IDroneCommandRepository;
+    private readonly commandsRepo: DroneCommandCommandsRepo;
+    private readonly queriesRepo: DroneCommandQueriesRepo;
+    private readonly commandRepo: IDroneCommandRepo;
 
     /**
      * 建立新的無人機指令記錄

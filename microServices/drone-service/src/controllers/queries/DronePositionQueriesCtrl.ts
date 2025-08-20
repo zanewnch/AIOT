@@ -39,15 +39,36 @@ export class DronePositionQueries implements IDronePositionQueries {
     }
 
     /**
-     * 取得所有無人機位置資料
+     * 取得所有無人機位置資料（支援分頁）
      * @route GET /api/drone-position/data
+     * @query page - 頁碼（從 1 開始）
+     * @query pageSize - 每頁數量
+     * @query sortBy - 排序欄位
+     * @query sortOrder - 排序方向（ASC/DESC）
      */
     getAllDronePositions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const limit = parseInt(req.query.limit as string) || 100;
-            const positions = await this.dronePositionQueriesSvc.getAllDronePositions(limit);
+            // 解析分頁參數
+            const page = parseInt(req.query.page as string) || 1;
+            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const sortBy = (req.query.sortBy as string) || 'id';
+            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
 
-            const result = ResResult.success('無人機位置資料獲取成功', positions);
+            const paginationParams = { page, pageSize, sortBy, sortOrder };
+
+            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
+            if (!req.query.page && !req.query.pageSize) {
+                // 向後兼容：沒有分頁參數時返回所有數據
+                const positions = await this.dronePositionQueriesSvc.getAllDronePositions();
+                const result = ResResult.success('無人機位置資料獲取成功', positions);
+                res.status(result.status).json(result);
+                return;
+            }
+
+            // 使用分頁查詢
+            const paginatedResult = await this.dronePositionQueriesSvc.getDronePositionsPaginated(paginationParams);
+            const result = ResResult.success('無人機位置資料獲取成功', paginatedResult);
+
             res.status(result.status).json(result);
         } catch (error) {
             next(error);

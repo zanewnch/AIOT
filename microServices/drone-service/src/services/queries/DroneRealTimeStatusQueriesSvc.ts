@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { DroneRealTimeStatusQueriesRepository } from '../../repo/queries/DroneRealTimeStatusQueriesRepo.js';
+import { DroneRealTimeStatusQueriesRepo } from '../../repo/queries/DroneRealTimeStatusQueriesRepo.js';
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatus,
@@ -61,12 +61,12 @@ interface ExternalAttributesLocal {
  */
 @injectable()
 export class DroneRealTimeStatusQueriesSvc {
-    private repository: DroneRealTimeStatusQueriesRepository;
+    private repo: DroneRealTimeStatusQueriesRepo;
 
     constructor(
-        @inject(TYPES.DroneRealTimeStatusQueriesRepository) repository: DroneRealTimeStatusQueriesRepository
+        @inject(TYPES.DroneRealTimeStatusQueriesRepo) repo: DroneRealTimeStatusQueriesRepo
     ) {
-        this.repository = repository;
+        this.repo = repo;
     }
 
     /**
@@ -79,7 +79,7 @@ export class DroneRealTimeStatusQueriesSvc {
             }
 
             logger.info('Getting drone real-time status by ID', { id });
-            const result = await this.repository.findById(id);
+            const result = await this.repo.findById(id);
             if (!result) {
                 throw new Error('即時狀態記錄不存在');
             }
@@ -102,7 +102,7 @@ export class DroneRealTimeStatusQueriesSvc {
             }
 
             logger.info('Getting drone real-time status by drone ID', { droneId });
-            const result = await this.repository.findByDroneId(droneId);
+            const result = await this.repo.findByDroneId(droneId);
             if (!result) {
                 throw new Error('該無人機的即時狀態記錄不存在');
             }
@@ -121,7 +121,7 @@ export class DroneRealTimeStatusQueriesSvc {
     getAllRealTimeStatuses = async (): Promise<DroneRealTimeStatusModel[]> => {
         try {
             logger.info('Getting all drone real-time statuses');
-            const result = await this.repository.findAll();
+            const result = await this.repo.findAll();
             
             logger.info(`Retrieved ${result.length} drone real-time status records`);
             return result;
@@ -141,7 +141,7 @@ export class DroneRealTimeStatusQueriesSvc {
             }
 
             logger.info('Getting drone real-time statuses by status', { status });
-            const result = await this.repository.findByStatus(status);
+            const result = await this.repo.findByStatus(status);
             
             logger.info(`Retrieved ${result.length} drone real-time status records with status ${status}`);
             return result;
@@ -156,7 +156,7 @@ export class DroneRealTimeStatusQueriesSvc {
     getOnlineDrones = async (): Promise<DroneRealTimeStatusModel[]> => {
         try {
             logger.info('Getting online drones');
-            const result = await this.repository.findOnlineDrones();
+            const result = await this.repo.findOnlineDrones();
             
             logger.info(`Retrieved ${result.length} online drones`);
             return result;
@@ -175,7 +175,7 @@ export class DroneRealTimeStatusQueriesSvc {
             }
 
             logger.info('Getting offline drones', { thresholdMinutes });
-            const result = await this.repository.findOfflineDrones(thresholdMinutes);
+            const result = await this.repo.findOfflineDrones(thresholdMinutes);
             
             logger.info(`Retrieved ${result.length} offline drones`);
             return result;
@@ -190,7 +190,7 @@ export class DroneRealTimeStatusQueriesSvc {
     getBatteryStatistics = async (): Promise<any> => {
         try {
             logger.info('Getting battery statistics');
-            const result = await this.repository.getBatteryStatistics();
+            const result = await this.repo.getBatteryStatistics();
             
             logger.info('Successfully retrieved battery statistics');
             return result;
@@ -205,7 +205,7 @@ export class DroneRealTimeStatusQueriesSvc {
     getStatusStatistics = async (): Promise<any> => {
         try {
             logger.info('Getting status statistics');
-            const result = await this.repository.getStatusStatistics();
+            const result = await this.repo.getStatusStatistics();
             
             logger.info('Successfully retrieved status statistics');
             return result;
@@ -222,10 +222,10 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.info('Getting dashboard summary');
             
             const [onlineDrones, offlineDrones, batteryStats, statusStats] = await Promise.all([
-                this.repository.findOnlineDrones(),
-                this.repository.findOfflineDrones(),
-                this.repository.getBatteryStatistics(),
-                this.repository.getStatusStatistics()
+                this.repo.findOnlineDrones(),
+                this.repo.findOfflineDrones(),
+                this.repo.getBatteryStatistics(),
+                this.repo.getStatusStatistics()
             ]);
 
             const summary = {
@@ -258,7 +258,7 @@ export class DroneRealTimeStatusQueriesSvc {
             }
 
             logger.info('Checking low battery drones', { threshold });
-            const allDrones = await this.repository.findAll();
+            const allDrones = await this.repo.findAll();
             const lowBatteryDrones = allDrones.filter(drone => 
                 drone.current_battery_level <= threshold
             );
@@ -339,5 +339,50 @@ export class DroneRealTimeStatusQueriesSvc {
             averageBatteryLevel: batteryStats.averageBatteryLevel || 0,
             averageSignalStrength: batteryStats.averageSignalStrength || 0
         };
+    }
+
+    /**
+     * 分頁查詢無人機即時狀態列表
+     * 
+     * @param params 分頁參數
+     * @returns 分頁無人機即時狀態結果
+     */
+    public async getDroneRealTimeStatusesPaginated(params: any): Promise<any> {
+        try {
+            logger.debug('Getting drone real-time statuses with pagination', params);
+
+            // 模擬分頁實現（實際應該在 repository 層實現）
+            const allStatuses = await this.getAllRealTimeStatuses();
+            const total = allStatuses.length;
+
+            const page = params.page || 1;
+            const pageSize = params.pageSize || 10;
+            const offset = (page - 1) * pageSize;
+            
+            const paginatedStatuses = allStatuses.slice(offset, offset + pageSize);
+            const totalPages = Math.ceil(total / pageSize);
+
+            const result = {
+                data: paginatedStatuses,
+                page,
+                pageSize,
+                total,
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
+            };
+
+            logger.info('Successfully fetched drone real-time statuses with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching drone real-time statuses with pagination:', error);
+            throw new Error('Failed to fetch drone real-time statuses with pagination');
+        }
     }
 }

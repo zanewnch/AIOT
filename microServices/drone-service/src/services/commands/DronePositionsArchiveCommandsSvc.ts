@@ -34,21 +34,21 @@ const logger = createLogger('DronePositionsArchiveCommandsSvc');
  */
 @injectable()
 export class DronePositionsArchiveCommandsSvc {
-    private commandsRepository: DronePositionsArchiveCommandsRepository;
-    private queriesRepository: DronePositionsArchiveQueriesRepository;
-    private archiveRepository: IDronePositionsArchiveRepository; // 組合介面
+    private commandsRepo: DronePositionsArchiveCommandsRepo;
+    private queriesRepo: DronePositionsArchiveQueriesRepo;
+    private archiveRepo: IDronePositionsArchiveRepo; // 組合介面
     private queryService: DronePositionsArchiveQueriesSvc;
 
     constructor() {
-        this.commandsRepository = new DronePositionsArchiveCommandsRepository();
-        this.queriesRepository = new DronePositionsArchiveQueriesRepository();
+        this.commandsRepo = new DronePositionsArchiveCommandsRepository();
+        this.queriesRepo = new DronePositionsArchiveQueriesRepository();
         
         // 創建組合repository
-        this.archiveRepository = Object.assign(
+        this.archiveRepo = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDronePositionsArchiveRepository;
+        ) as IDronePositionsArchiveRepo;
         
         this.queryService = new DronePositionsArchiveQueriesSvc();
     }

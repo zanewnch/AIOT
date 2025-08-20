@@ -1,4 +1,25 @@
+
 @use './themes.scss' as *;
+// 置中表格用 class
+.table-center-outer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.table-center {
+  margin: auto;
+  width: 100%;
+}
+
+.table-center-th {
+  text-align: center !important;
+}
+
+.table-center-td {
+  text-align: center !important;
+}
 
 .tableViewerRoot {
   width: 100%;
@@ -150,23 +171,27 @@
 
 .tableHeader {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 0; // 移除下邊距
   padding: 20px 24px; // 添加內邊距保持美觀
   flex-shrink: 0; // 防止 header 被壓縮
   background-color: var(--bg-secondary); // 添加背景色區分
   border-bottom: 1px solid var(--border-color); // 添加底部邊框
+  position: relative;
 
   h2 {
     font-size: 24px;
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
+    text-align: center;
     @include theme-transition;
   }
 
   .recordCount {
+    position: absolute;
+    right: 24px;
     font-size: 14px;
     color: var(--text-secondary);
     background-color: var(--bg-secondary);
@@ -200,7 +225,7 @@
 
     th {
       padding: 16px;
-      text-align: left;
+      text-align: center;
       font-weight: 600;
       color: var(--text-primary);
       border-bottom: 2px solid var(--border-color);
@@ -212,10 +237,6 @@
 
       &:not(:last-child) {
         border-right: 1px solid var(--border-color);
-      }
-
-      &:last-child {
-        text-align: center;
       }
     }
   }
@@ -241,6 +262,7 @@
         color: var(--text-primary);
         font-size: 14px;
         vertical-align: middle; // 垂直居中對齊
+        text-align: center; // 水平居中對齊
         height: inherit; // 繼承行高度
         @include theme-transition;
 
@@ -251,23 +273,6 @@
         &:first-child {
           font-weight: 600;
           color: var(--accent-color);
-        }
-
-        &:nth-child(2),
-        &:nth-child(3),
-        &:nth-child(4),
-        &:nth-child(5) {
-          font-family: 'Courier New', monospace;
-          font-size: 13px;
-        }
-
-        &:nth-child(6) {
-          font-family: 'Courier New', monospace;
-          font-size: 12px;
-        }
-
-        &:last-child {
-          text-align: center;
         }
       }
     }
@@ -282,6 +287,7 @@
   padding: 20px 24px;
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
+  justify-items: center;
   @include theme-transition;
 }
 
@@ -289,6 +295,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  align-items: center;
+  text-align: center;
 
   label {
     font-size: 13px;
@@ -296,6 +304,7 @@
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-align: center;
     @include theme-transition;
   }
 
@@ -382,18 +391,25 @@
 
 .modalHeader {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
+  position: relative;
 
   h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
     color: var(--text-primary);
+    text-align: center;
     @include theme-transition;
+  }
+
+  .closeButton {
+    position: absolute;
+    right: 20px;
   }
 }
 
@@ -427,6 +443,7 @@
 
 .formGroup {
   margin-bottom: 20px;
+  text-align: center;
 
   label {
     display: block;
@@ -434,6 +451,7 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--text-primary);
+    text-align: center;
     @include theme-transition;
   }
 }
@@ -446,6 +464,7 @@
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-size: 14px;
+  text-align: center;
   transition: all 0.2s ease;
   box-sizing: border-box;
 
@@ -457,6 +476,7 @@
 
   // 隱藏數字輸入框的預設spinner
   &[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield; // Firefox
 
     &::-webkit-outer-spin-button,
@@ -522,12 +542,14 @@
 
 // Status badge styles
 .statusBadge {
+  display: inline-block;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
 }
 
 .statusActive {
@@ -741,11 +763,130 @@
     tbody td {
       padding: 8px 6px;
       font-size: 11px;
-
-      &:nth-child(2),
-      &:nth-child(3) {
-        font-size: 10px;
-      }
     }
   }
+}
+
+// 錯誤狀態樣式
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  margin: 20px;
+
+  span {
+    margin-bottom: 16px;
+    font-size: 16px;
+  }
+}
+
+// 空資料狀態樣式
+.noData {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  margin: 20px;
+
+  span {
+    margin-bottom: 16px;
+    font-size: 16px;
+  }
+}
+
+// 重試和刷新按鈕樣式
+.retryButton, .refreshButton {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--accent-color-dark, #0056b3);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 操作按鈕容器
+.actionsCell {
+  text-align: center !important;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionButton {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 表格頭內容和排序樣式
+.headerContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+}
+
+.sorted {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.sortIcon {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.actionsHeader {
+  text-align: center;
 }

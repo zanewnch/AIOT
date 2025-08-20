@@ -13,7 +13,7 @@ import { injectable } from 'inversify';
 import { DroneCommandModel } from '../../models/DroneCommandModel.js';
 
 @injectable()
-export class DroneCommandQueriesRepository {
+export class DroneCommandQueriesRepo {
   
   findAll = async (limit = 100): Promise<DroneCommandModel[]> => {
     return await DroneCommandModel.findAll({

@@ -105,35 +105,35 @@
         
         <div class="header">
             <h1>🛣️ AIOT 路由配置分析</h1>
-            <p>Kong Gateway & Consul 服務發現配置檔案解析</p>
+            <p>API Gateway & Consul 服務發現配置檔案解析</p>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showConfig('kong-main')">Kong 主要配置</button>
-            <button class="tab" onclick="showConfig('kong-k8s')">Kong Kubernetes</button>
+            <button class="tab active" onclick="showConfig('kong-main')">API Gateway 主要配置</button>
+            <button class="tab" onclick="showConfig('kong-k8s')">API Gateway Kubernetes</button>
             <button class="tab" onclick="showConfig('consul-main')">Consul 主要配置</button>
             <button class="tab" onclick="showConfig('consul-k8s')">Consul Kubernetes</button>
             <button class="tab" onclick="showConfig('consul-rbac')">Consul RBAC 服務</button>
             <button class="tab" onclick="showConfig('consul-drone')">Consul Drone 服務</button>
         </div>
 
-        <!-- Kong 主要配置 -->
+        <!-- API Gateway 主要配置 -->
         <div class="config-section active" id="kong-main">
-            <div class="config-title">Kong Gateway 聲明式配置 (kong.yaml)</div>
+            <div class="config-title">API Gateway 聲明式配置 (kong.yaml)</div>
             <div class="config-content" id="kong-main-content">載入中...</div>
             <div class="explanation-area">
                 <div class="explanation-title">📝 配置說明區域</div>
-                <p>這裡可以加入你對 Kong 路由邏輯的解釋...</p>
+                <p>這裡可以加入你對 API Gateway 路由邏輯的解釋...</p>
             </div>
         </div>
 
-        <!-- Kong Kubernetes 配置 -->
+        <!-- API Gateway Kubernetes 配置 -->
         <div class="config-section" id="kong-k8s">
-            <div class="config-title">Kong Kubernetes 部署配置</div>
+            <div class="config-title">API Gateway Kubernetes 部署配置</div>
             <div class="config-content" id="kong-k8s-content">載入中...</div>
             <div class="explanation-area">
                 <div class="explanation-title">📝 配置說明區域</div>
-                <p>這裡可以加入你對 Kong Kubernetes 部署的解釋...</p>
+                <p>這裡可以加入你對 API Gateway Kubernetes 部署的解釋...</p>
             </div>
         </div>
 

@@ -22,10 +22,10 @@ const logger = createLogger('DroneStatusQueriesRepository');
  * 
  * 專門處理無人機狀態資料的查詢操作，遵循 CQRS 模式
  * 
- * @class DroneStatusQueriesRepository
+ * @class DroneStatusQueriesRepo
  */
 @injectable()
-export class DroneStatusQueriesRepository {
+export class DroneStatusQueriesRepo {
     /**
      * 取得所有無人機狀態資料
      *
@@ -245,6 +245,43 @@ export class DroneStatusQueriesRepository {
             return exists;
         } catch (error) {
             logger.error('Error checking drone serial existence:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 分頁查詢無人機狀態列表（統一架構）
+     * @param pageSize 每頁數量
+     * @param offset 偏移量
+     * @param sortBy 排序欄位
+     * @param sortOrder 排序方向
+     * @returns 無人機狀態列表
+     */
+    findPaginatedUnified = async (
+        pageSize: number,
+        offset: number,
+        sortBy: string = 'id',
+        sortOrder: 'ASC' | 'DESC' = 'DESC'
+    ): Promise<DroneStatusAttributes[]> => {
+        try {
+            logger.debug(`Finding drone statuses with pagination`, {
+                pageSize,
+                offset,
+                sortBy,
+                sortOrder
+            });
+
+            const droneStatuses = await DroneStatusModel.findAll({
+                limit: pageSize,
+                offset,
+                order: [[sortBy, sortOrder]]
+            });
+
+            const results = droneStatuses.map(item => item.toJSON() as DroneStatusAttributes);
+            logger.debug(`Found ${results.length} drone statuses with pagination`);
+            return results;
+        } catch (error) {
+            logger.error('Error finding drone statuses with pagination:', error);
             throw error;
         }
     }

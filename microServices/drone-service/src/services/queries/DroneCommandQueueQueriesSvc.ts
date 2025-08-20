@@ -20,6 +20,7 @@ import type {
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
+import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
 
 const logger = createLogger('DroneCommandQueueQueriesSvc');
 
@@ -357,6 +358,68 @@ export class DroneCommandQueueQueriesSvc {
             return nextCommand;
         } catch (error) {
             throw error;
+        }
+    }
+
+    /**
+     * 分頁查詢無人機指令佇列列表
+     * 
+     * @param params 分頁參數
+     * @returns 分頁無人機指令佇列結果
+     */
+    public async getDroneCommandQueuesPaginated(params: PaginationParams): Promise<PaginatedResult<DroneCommandQueueAttributes>> {
+        try {
+            logger.debug('Getting drone command queues with pagination', params);
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'id',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'name', 'priority', 'status', 'createdAt', 'updatedAt']
+            });
+
+            // 獲取所有數據（模擬，實際應該從資料庫分頁查詢）
+            const allQueues = await this.getAllDroneCommandQueues();
+            const total = allQueues.length;
+
+            // 手動分頁和排序（實際應該在資料庫層面完成）
+            const sortedQueues = [...allQueues].sort((a, b) => {
+                const field = validatedParams.sortBy as keyof DroneCommandQueueAttributes;
+                const aValue = a[field];
+                const bValue = b[field];
+                
+                let comparison = 0;
+                if (aValue > bValue) comparison = 1;
+                if (aValue < bValue) comparison = -1;
+                
+                return validatedParams.sortOrder === 'ASC' ? comparison : -comparison;
+            });
+
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            const paginatedQueues = sortedQueues.slice(offset, offset + validatedParams.pageSize);
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                paginatedQueues,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully fetched drone command queues with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching drone command queues with pagination:', error);
+            throw new Error('Failed to fetch drone command queues with pagination');
         }
     }
 }

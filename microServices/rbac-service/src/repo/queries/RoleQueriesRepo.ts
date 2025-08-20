@@ -145,6 +145,65 @@ export class RoleQueriesRepository {
   }
 
   /**
+   * 分頁查詢角色列表
+   * @param limit 每頁數量
+   * @param offset 偏移量
+   * @param sortBy 排序欄位
+   * @param sortOrder 排序方向
+   * @param includePermissions 是否包含關聯的權限資料
+   * @param includeUsers 是否包含關聯的用戶資料
+   * @returns 角色列表
+   */
+  findPaginated = async (
+    limit: number,
+    offset: number,
+    sortBy: string = 'id',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
+    includePermissions: boolean = false,
+    includeUsers: boolean = false
+  ): Promise<RoleModel[]> => {
+    try {
+      logger.debug(`Finding roles with pagination`, {
+        limit,
+        offset,
+        sortBy,
+        sortOrder,
+        includePermissions,
+        includeUsers
+      });
+      
+      const includes = [];
+      if (includePermissions) {
+        includes.push({
+          model: PermissionModel,
+          as: 'permissions',
+          through: { attributes: [] }
+        });
+      }
+      if (includeUsers) {
+        includes.push({
+          model: UserModel,
+          as: 'users',
+          through: { attributes: [] }
+        });
+      }
+
+      const roles = await RoleModel.findAll({
+        include: includes.length > 0 ? includes : undefined,
+        limit,
+        offset,
+        order: [[sortBy, sortOrder]]
+      });
+
+      logger.debug(`Found ${roles.length} roles with pagination`);
+      return roles;
+    } catch (error) {
+      logger.error('Error finding roles with pagination:', error);
+      throw error;
+    }
+  }
+
+  /**
    * 檢查角色是否存在
    * @param name 角色名稱
    * @returns 是否存在

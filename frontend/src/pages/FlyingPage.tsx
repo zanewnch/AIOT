@@ -11,15 +11,17 @@
  * @since 2025-08-04
  */
 
-import React, { useRef, useState } from "react"; // 引入 React 核心庫和 Hooks
+import React, { useRef, useState, useCallback } from "react"; // 引入 React 核心庫和 Hooks
 import { useRealFlyLogic } from "../hooks/useRealFlyLogic";
 import { useSimulateFlyLogic } from "../hooks/useSimulateFlyLogic";
 import { DronePositionQuery } from "../hooks/useDronePositionQuery";
 import { DroneCommandQuery } from "../hooks/useDroneCommandQuery";
 import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
+import { useDroneWebSocket } from "../hooks/useDroneWebSocket";
 import FlyingPageHeader from "../components/flying/FlyingPageHeader";
 import DroneStatusPanel from "../components/flying/DroneStatusPanel";
 import FlightControlPanel from "../components/flying/FlightControlPanel";
+import { createLogger } from "../configs/loggerConfig";
 
 // 檢查是否啟用模擬模式
 const ENABLE_SIMULATE_MODE =
@@ -62,6 +64,9 @@ interface FlyingPageProps {
  * ```
  */
 const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
+  // 日誌記錄器
+  const logger = createLogger('FlyingPage');
+  
   // 地圖容器的引用
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -78,9 +83,63 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
   const commandQuery = new DroneCommandQuery();
   const statusQuery = new DroneStatusQuery();
   
-  const { data: dronePositions = [], isLoading: positionsLoading } = positionQuery.useLatest();
-  const { data: activeCommands = [], isLoading: commandsLoading } = commandQuery.useLatestDroneCommands();
-  const { data: droneStatuses = [], isLoading: statusLoading } = statusQuery.useAll();
+  const { data: dronePositions = [], isLoading: positionsLoading, refetch: refetchPositions } = positionQuery.useLatest();
+  const { data: activeCommands = [], isLoading: commandsLoading, refetch: refetchCommands } = commandQuery.useLatestDroneCommands();
+  const { data: droneStatuses = [], isLoading: statusLoading, refetch: refetchStatus } = statusQuery.useAll();
+
+  // WebSocket 即時更新回調函數
+  const handlePositionUpdate = useCallback((position: any) => {
+    logger.info('飛行頁面收到位置更新', { droneId: position.drone_id, position });
+    
+    // 刷新位置資料查詢（樂觀更新）
+    refetchPositions();
+  }, [refetchPositions, logger]);
+
+  const handleStatusUpdate = useCallback((status: any) => {
+    logger.info('飛行頁面收到狀態更新', { droneId: status.drone_id, status: status.current_status });
+    
+    // 刷新狀態資料查詢
+    refetchStatus();
+  }, [refetchStatus, logger]);
+
+  const handleCommandResponse = useCallback((response: any) => {
+    logger.info('飛行頁面收到指令響應', { 
+      droneId: response.drone_id, 
+      command: response.command_type,
+      status: response.status 
+    });
+    
+    // 刷新指令資料查詢
+    refetchCommands();
+    
+    // 飛行控制專用：記錄控制指令響應
+    if (response.command_type && ['takeoff', 'land', 'move', 'rotate'].includes(response.command_type)) {
+      logger.info('收到飛行控制指令響應', { 
+        command: response.command_type, 
+        status: response.status,
+        droneId: response.drone_id 
+      });
+    }
+  }, [refetchCommands, logger]);
+
+  const handleWebSocketError = useCallback((error: string) => {
+    logger.error('飛行頁面 WebSocket 錯誤', { error });
+  }, [logger]);
+
+  // WebSocket 連接（只在真實模式下啟用）
+  const { isConnected: wsConnected, sendCommand } = useDroneWebSocket(
+    {
+      onPositionUpdate: handlePositionUpdate,
+      onStatusUpdate: handleStatusUpdate,
+      onCommandResponse: handleCommandResponse,
+      onError: handleWebSocketError,
+    },
+    {
+      subscribeToPositions: !isSimulateMode, // 只在真實模式下訂閱
+      subscribeToStatus: !isSimulateMode,
+      subscribeToCommands: !isSimulateMode,
+    }
+  );
 
   // 選擇當前使用的邏輯
   const currentLogic = isSimulateMode ? simulateFlyLogic : realFlyLogic;
@@ -109,14 +168,16 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
         {/* 主要內容區域 */}
         <div className="space-y-6">
           {/* 第一行：地圖 + 無人機狀態 */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-auto lg:h-[520px]">
             {/* 地圖容器 - 完全照抄 MapPage 邏輯 */}
-            <div className="col-span-1 lg:col-span-3 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden">
-              <div className="relative">
+            <div className="col-span-1 lg:col-span-3 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden flex flex-col">
+              <div className="relative flex-1 min-h-[300px]">
                 <div
                   ref={mapRef}
-                  className="w-full h-64 sm:h-96 lg:h-[500px]"
-                  style={{ minHeight: "300px" }}
+                  className="absolute inset-0 w-full h-full"
+                  style={{ 
+                    minHeight: "300px"
+                  }}
                 />
 
                 {/* 載入覆蓋層 - 改善動畫 */}
@@ -166,6 +227,7 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
               activeCommands={activeCommands}
               markersCount={realFlyLogic.markersCount}
               realModeLoading={realModeLoading}
+              wsConnected={wsConnected}
             />
 
           </div>
@@ -178,6 +240,8 @@ const FlyingPage: React.FC<FlyingPageProps> = ({ className }) => {
             simulateDroneStats={simulateFlyLogic.droneStats}
             simulateFlyLogic={simulateFlyLogic}
             realFlyLogic={realFlyLogic}
+            wsConnected={wsConnected}
+            sendCommand={sendCommand}
           />
         </div>
       </div>

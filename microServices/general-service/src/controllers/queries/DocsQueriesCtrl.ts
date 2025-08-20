@@ -47,7 +47,7 @@ export class DocsController {
         { name: 'MySQL', url: 'mysql://aiot-mysql:3306', description: '主要資料庫' },
         { name: 'Redis', url: 'redis://aiot-redis:6379', description: '快取服務' },
         // { name: 'RabbitMQ', url: 'amqp://aiot-rabbitmq:5672', description: '訊息佇列' }, // 已移除
-        { name: 'Kong', url: 'http://aiot-gateway:8000', description: 'API 閘道' }
+        { name: 'API Gateway', url: 'http://aiot-gateway:8000', description: 'API 閘道' }
     ];
 
     constructor() {}

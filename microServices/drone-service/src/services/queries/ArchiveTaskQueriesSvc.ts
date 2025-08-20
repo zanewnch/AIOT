@@ -25,7 +25,7 @@ import type {
     IArchiveTaskRepository,
     ArchiveTaskQueryOptions
 } from '../../types/repositories/IArchiveTaskRepository.js';
-import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
+import { ArchiveTaskQueriesRepo } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -43,23 +43,23 @@ import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 @injectable()
 export class ArchiveTaskQueriesSvc {
     private readonly logger = createLogger('ArchiveTaskQueriesSvc');
-    private readonly queriesRepository: ArchiveTaskQueriesRepository;
-    private readonly commandsRepository: ArchiveTaskCommandsRepository;
-    private readonly repository: IArchiveTaskRepository; // 組合介面
+    private readonly queriesRepo: ArchiveTaskQueriesRepo;
+    private readonly commandsRepo: ArchiveTaskCommandsRepo;
+    private repo: IArchiveTaskRepo; // 組合介面
 
     constructor(
-        @inject(TYPES.ArchiveTaskQueriesRepository) queriesRepository: ArchiveTaskQueriesRepository,
-        @inject(TYPES.ArchiveTaskCommandsRepository) commandsRepository: ArchiveTaskCommandsRepository
+        @inject(TYPES.ArchiveTaskQueriesRepo) queriesRepo: ArchiveTaskQueriesRepo,
+        @inject(TYPES.ArchiveTaskCommandsRepository) commandsRepo: ArchiveTaskCommandsRepository
     ) {
-        this.queriesRepository = queriesRepository;
-        this.commandsRepository = commandsRepository;
+        this.queriesRepo = queriesRepo;
+        this.commandsRepo = commandsRepo;
         
         // 創建組合repository
         this.repository = Object.assign(
             Object.create(Object.getPrototypeOf(this.queriesRepository)),
             this.queriesRepository,
             this.commandsRepository
-        ) as IArchiveTaskRepository;
+        ) as IArchiveTaskRepo;
     }
 
     /**

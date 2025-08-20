@@ -124,6 +124,52 @@ export class PermissionQueriesRepository {
   }
 
   /**
+   * 分頁查詢權限列表
+   * @param limit 每頁數量
+   * @param offset 偏移量
+   * @param sortBy 排序欄位
+   * @param sortOrder 排序方向
+   * @param includeRoles 是否包含關聯的角色資料
+   * @returns 權限列表
+   */
+  findPaginated = async (
+    limit: number,
+    offset: number,
+    sortBy: string = 'id',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
+    includeRoles: boolean = false
+  ): Promise<PermissionModel[]> => {
+    try {
+      logger.debug(`Finding permissions with pagination`, {
+        limit,
+        offset,
+        sortBy,
+        sortOrder,
+        includeRoles
+      });
+      
+      const include = includeRoles ? [{
+        model: RoleModel,
+        as: 'roles',
+        through: { attributes: [] }
+      }] : undefined;
+
+      const permissions = await PermissionModel.findAll({
+        include,
+        limit,
+        offset,
+        order: [[sortBy, sortOrder]]
+      });
+
+      logger.debug(`Found ${permissions.length} permissions with pagination`);
+      return permissions;
+    } catch (error) {
+      logger.error('Error finding permissions with pagination:', error);
+      throw error;
+    }
+  }
+
+  /**
    * 檢查權限是否存在
    * @param name 權限名稱
    * @returns 是否存在

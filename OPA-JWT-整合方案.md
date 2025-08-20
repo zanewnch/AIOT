@@ -3,13 +3,13 @@
 ## 🚨 當前問題分析
 
 ### 發現的問題
-1. **Kong 有 JWT secret 但沒有 JWT 插件**
+1. **API Gateway 有 JWT secret 但沒有 JWT 插件**
 2. **OPA 策略假設 JWT 已解析但實際沒有**
 3. **認證流程不完整**
 
 ## 🔧 完整解決方案
 
-### 1. Kong JWT 插件配置
+### 1. API Gateway JWT 插件配置
 
 **創建 JWT 插件配置檔案**：`infrastructure/kong/jwt-plugins.yaml`
 
@@ -52,7 +52,7 @@ plugins:
 ```javascript
 // 應該生成這種格式的 JWT
 const jwtPayload = {
-  iss: "aiot-jwt-issuer",        // 對應 Kong consumer key
+  iss: "aiot-jwt-issuer",        // 對應 API Gateway consumer key
   sub: user.id,                  // 用戶 ID
   username: user.username,       // 用戶名
   roles: user.roles,             // 用戶角色
@@ -67,7 +67,7 @@ const jwtPayload = {
 **修正 `gateway_policy.rego`**：
 
 ```rego
-# 從 Kong JWT 插件提取的用戶信息
+# 從 API Gateway JWT 插件提取的用戶信息
 user_id := input.headers["x-consumer-custom-id"]
 user_claims := json.unmarshal(input.headers["x-consumer-claims"])
 user_roles := user_claims.roles
@@ -116,9 +116,9 @@ fetch('/api/rbac/users', {
 });
 ```
 
-#### 📋 步驟 4：Kong 驗證 JWT
+#### 📋 步驟 4：API Gateway 驗證 JWT
 ```
-Kong JWT Plugin → 驗證 JWT signature → 提取用戶信息 → 設置 headers
+API Gateway JWT Plugin → 驗證 JWT signature → 提取用戶信息 → 設置 headers
 ```
 
 #### 📋 步驟 5：OPA 檢查權限
@@ -146,7 +146,7 @@ curl -X POST http://localhost:8001/config \
 
 2. **修改 RBAC Service JWT 生成邏輯**
    - 使用正確的 JWT payload 格式
-   - 確保 `iss` 匹配 Kong consumer key
+   - 確保 `iss` 匹配 API Gateway consumer key
 
 3. **更新 OPA 策略**
    - 修正用戶信息提取邏輯
@@ -190,8 +190,8 @@ curl -X POST http://localhost:8181/v1/data/aiot/gateway/allow \
 
 完成後的認證流程：
 1. ✅ 用戶成功登入並獲得有效 JWT
-2. ✅ Kong JWT 插件驗證 JWT signature
-3. ✅ Kong 提取用戶信息並設置 headers
+2. ✅ API Gateway JWT 插件驗證 JWT signature
+3. ✅ API Gateway 提取用戶信息並設置 headers
 4. ✅ OPA 根據用戶角色檢查權限
 5. ✅ 授權通過，API 請求到達後端服務
 

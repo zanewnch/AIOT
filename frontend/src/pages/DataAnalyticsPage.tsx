@@ -16,6 +16,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useGetLatestCommandsArchive } from "../hooks/useDroneCommandArchiveQuery";
 import { DronePositionsArchiveQuery } from "../hooks/useDronePositionsArchiveQuery";
 import { DroneStatusArchiveQuery } from "../hooks/useDroneStatusArchiveQuery";
+import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
+import { DronePositionQuery } from "../hooks/useDronePositionQuery";
 import type { DronePositionArchive } from "../types/dronePositionsArchive";
 
 interface DataAnalyticsPageProps {
@@ -52,7 +54,7 @@ interface BatteryDataPoint {
  * 提供各種圖表和分析工具的專業視覺化介面
  */
 const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
-  const [selectedChart, setSelectedChart] = useState<'performance' | 'heatmap' | 'battery' | 'statistics'>('performance');
+  const [selectedChart, setSelectedChart] = useState<'operations' | 'flight' | 'power' | 'drones' | 'archive'>('operations');
   const [timeRange, setTimeRange] = useState<'1h' | '6h' | '24h' | '7d'>('1h');
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -83,6 +85,13 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
   const statusQuery = new DroneStatusArchiveQuery();
   const { isLoading: statusLoading } = statusQuery.useLatest();
 
+  // 新增：查詢當前無人機狀態和位置（用於無人機狀態分析）
+  const currentStatusQuery = new DroneStatusQuery();
+  const { data: currentStatusData = [], isLoading: currentStatusLoading } = currentStatusQuery.useAll();
+  
+  const currentPositionQuery = new DronePositionQuery();
+  const { data: currentPositionData = [], isLoading: currentPositionLoading } = currentPositionQuery.useAll();
+
   // 轉換真實資料格式
   const performanceData: PerformanceDataPoint[] = commandsArchiveData.map(cmd => {
     // 計算執行時間（毫秒）
@@ -112,7 +121,7 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
     speed: pos.speed || 0
   }));
 
-  // 從位置資料中提取電量資訊，因為狀態歸檔沒有電量欄位
+  // 從位置資料中提取電量資訊，使用正確的欄位名稱
   const batteryData: BatteryDataPoint[] = positionsData
     .filter((pos: DronePositionArchive) => (pos.batteryLevel !== undefined && pos.batteryLevel !== null))
     .map((pos: DronePositionArchive) => ({
@@ -123,7 +132,7 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
     }));
 
   // 載入狀態
-  const isLoading = commandsLoading || positionsLoading || statusLoading;
+  const isLoading = commandsLoading || positionsLoading || statusLoading || currentStatusLoading || currentPositionLoading;
 
 
 
@@ -282,9 +291,9 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
 
   // 更新圖表
   useEffect(() => {
-    if (selectedChart === 'performance') {
+    if (selectedChart === 'operations') {
       drawPerformanceChart();
-    } else if (selectedChart === 'heatmap') {
+    } else if (selectedChart === 'flight') {
       drawHeatmap();
     }
   }, [selectedChart, performanceData, flightPathData]);
@@ -353,14 +362,15 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
           {/* 圖表類型選擇 */}
           <div className="flex bg-gray-700 rounded-lg p-1">
             {[
-              { id: 'performance', icon: '📊', label: '效能' },
-              { id: 'heatmap', icon: '🔥', label: '熱力圖' },
-              { id: 'battery', icon: '🔋', label: '電量' },
-              { id: 'statistics', icon: '📈', label: '統計' }
+              { id: 'operations', icon: '⚡', label: '運營效率' },
+              { id: 'flight', icon: '🛩️', label: '飛行性能' },
+              { id: 'power', icon: '🔋', label: '電力管理' },
+              { id: 'drones', icon: '🚁', label: '無人機狀態' },
+              { id: 'archive', icon: '📊', label: '歷史統計' }
             ].map((chart) => (
               <button
                 key={chart.id}
-                onClick={() => setSelectedChart(chart.id as any)}
+                onClick={() => setSelectedChart(chart.id as 'operations' | 'flight' | 'power' | 'drones' | 'archive')}
                 className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                   selectedChart === chart.id
                     ? 'bg-blue-600 text-white'
@@ -441,15 +451,16 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
       <div className="bg-gray-800 rounded-xl border border-gray-700">
         <div className="p-4 border-b border-gray-700">
           <h3 className="text-lg font-semibold text-gray-100">
-            {selectedChart === 'performance' && '指令執行效能趨勢'}
-            {selectedChart === 'heatmap' && '飛行密度熱力圖'}
-            {selectedChart === 'battery' && '電量消耗分析'}
-            {selectedChart === 'statistics' && '統計報表'}
+            {selectedChart === 'operations' && '運營效率分析 - 任務完成率與設備利用率'}
+            {selectedChart === 'flight' && '飛行性能分析 - 軌跡熱力圖與飛行統計'}
+            {selectedChart === 'power' && '電力管理分析 - 電量趨勢與耗電預測'}
+            {selectedChart === 'drones' && '無人機狀態分析 - 設備狀態與健康監控'}
+            {selectedChart === 'archive' && '歷史資料分析 - 趨勢統計與性能評估'}
           </h3>
         </div>
 
         <div className="p-4">
-          {selectedChart === 'performance' && (
+          {selectedChart === 'operations' && (
             <div className="space-y-4">
               {performanceData.length > 0 ? (
                 <>
@@ -476,15 +487,15 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="text-6xl mb-4">📊</div>
-                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無性能資料</h3>
-                  <p className="text-sm text-gray-500">執行一些無人機指令後，性能分析圖表將顯示在這裡</p>
+                  <div className="text-6xl mb-4">⚡</div>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無運營資料</h3>
+                  <p className="text-sm text-gray-500">執行一些無人機任務後，運營效率分析圖表將顯示在這裡</p>
                 </div>
               )}
             </div>
           )}
 
-          {selectedChart === 'heatmap' && (
+          {selectedChart === 'flight' && (
             <div className="space-y-4">
               {flightPathData.length > 0 ? (
                 <>
@@ -500,15 +511,15 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="text-6xl mb-4">🔥</div>
+                  <div className="text-6xl mb-4">🛩️</div>
                   <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無飛行路徑資料</h3>
-                  <p className="text-sm text-gray-500">無人機開始飛行後，飛行密度熱力圖將顯示在這裡</p>
+                  <p className="text-sm text-gray-500">無人機開始飛行後，飛行性能分析將顯示在這裡</p>
                 </div>
               )}
             </div>
           )}
 
-          {selectedChart === 'battery' && (
+          {selectedChart === 'power' && (
             <div className="space-y-6">
               {batteryData.length > 0 ? (
                 <>
@@ -541,44 +552,62 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
                   {/* 預測分析 */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-gray-700/50 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-100 mb-3">消耗分析</h4>
+                      <h4 className="text-md font-semibold text-gray-100 mb-3">電量統計</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">平均消耗率</span>
-                          <span className="text-gray-100">{stats.avgConsumptionRate.toFixed(2)}%/min</span>
+                          <span className="text-gray-400">當前電量</span>
+                          <span className="text-gray-100">{stats.currentBattery.toFixed(0)}%</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">預估剩餘時間</span>
+                          <span className="text-gray-400">平均電量消耗</span>
+                          <span className="text-gray-100">{stats.avgConsumptionRate.toFixed(1)}% /分</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">預估剩餘飛行時間</span>
                           <span className="text-gray-100">{stats.estimatedFlightTime.toFixed(0)} 分鐘</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">建議返航時間</span>
-                          <span className="text-yellow-300">{Math.max(0, stats.estimatedFlightTime - 10).toFixed(0)} 分鐘後</span>
+                          <span className="text-yellow-300">{Math.max(0, stats.estimatedFlightTime - 10).toFixed(0)} 分鐘內</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="bg-gray-700/50 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-100 mb-3">電量預警</h4>
+                      <h4 className="text-md font-semibold text-gray-100 mb-3">安全監控</h4>
                       <div className="space-y-2">
-                        {stats.currentBattery <= 20 && (
-                          <div className="flex items-center gap-2 text-red-300">
-                            <span>🚨</span>
-                            <span className="text-sm">電量嚴重不足，請立即降落</span>
+                        {stats.currentBattery <= 15 && (
+                          <div className="flex items-center gap-2 text-red-400">
+                            <span>🔴</span>
+                            <span className="text-sm font-semibold">緊急狀態：電量嚴重不足，必須立即降落</span>
                           </div>
                         )}
-                        {stats.currentBattery <= 30 && stats.currentBattery > 20 && (
+                        {stats.currentBattery > 15 && stats.currentBattery <= 25 && (
                           <div className="flex items-center gap-2 text-orange-300">
-                            <span>⚠️</span>
-                            <span className="text-sm">電量偏低，建議準備返航</span>
+                            <span>🟡</span>
+                            <span className="text-sm">警告：電量偏低，建議準備返航</span>
                           </div>
                         )}
-                        {stats.currentBattery > 30 && (
-                          <div className="flex items-center gap-2 text-green-300">
-                            <span>✅</span>
-                            <span className="text-sm">電量充足，可繼續飛行</span>
+                        {stats.currentBattery > 25 && stats.currentBattery <= 40 && (
+                          <div className="flex items-center gap-2 text-yellow-300">
+                            <span>🟠</span>
+                            <span className="text-sm">注意：電量正常，建議規劃返航路線</span>
                           </div>
                         )}
+                        {stats.currentBattery > 40 && (
+                          <div className="flex items-center gap-2 text-green-400">
+                            <span>🟢</span>
+                            <span className="text-sm">正常：電量充足，可安全繼續飛行</span>
+                          </div>
+                        )}
+                        
+                        {/* 額外的安全提示 */}
+                        <div className="mt-3 pt-2 border-t border-gray-600">
+                          <div className="text-xs text-gray-400 space-y-1">
+                            <div>• 低電量模式將在 20% 時自動啟用</div>
+                            <div>• 系統建議保留 10% 電量做緊急降落</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -586,14 +615,262 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <div className="text-6xl mb-4">🔋</div>
-                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無電量資料</h3>
-                  <p className="text-sm text-gray-500">無人機開始運作後，電量分析將顯示在這裡</p>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無電力資料</h3>
+                  <p className="text-sm text-gray-500">無人機開始運作後，電力管理分析將顯示在這裡</p>
                 </div>
               )}
             </div>
           )}
 
-          {selectedChart === 'statistics' && (
+          {selectedChart === 'drones' && (
+            <div className="space-y-6">
+              {(() => {
+                // 如果沒有實際資料，使用模擬資料來展示功能
+                const hasRealData = currentStatusData.length > 0 || currentPositionData.length > 0;
+                const displayStatusData = hasRealData ? currentStatusData : [
+                  { id: 1, drone_id: 1, current_status: 'active', current_battery_level: 85, current_altitude: 120, current_speed: 5.2, is_connected: true, last_seen: new Date() },
+                  { id: 2, drone_id: 2, current_status: 'flying', current_battery_level: 67, current_altitude: 95, current_speed: 8.1, is_connected: true, last_seen: new Date() },
+                  { id: 3, drone_id: 3, current_status: 'inactive', current_battery_level: 23, current_altitude: 0, current_speed: 0, is_connected: false, last_seen: new Date(Date.now() - 300000) },
+                  { id: 4, drone_id: 4, current_status: 'maintenance', current_battery_level: 45, current_altitude: 0, current_speed: 0, is_connected: true, last_seen: new Date() },
+                  { id: 5, drone_id: 5, current_status: 'flying', current_battery_level: 78, current_altitude: 150, current_speed: 6.8, is_connected: true, last_seen: new Date() }
+                ];
+                const displayPositionData = hasRealData ? currentPositionData : [
+                  { drone_id: 1, latitude: 25.033964, longitude: 121.564468 },
+                  { drone_id: 2, latitude: 25.047924, longitude: 121.517081 },
+                  { drone_id: 5, latitude: 25.021175, longitude: 121.535885 }
+                ];
+                
+                return hasRealData || displayStatusData.length > 0 ? (
+                <>
+                  {/* 無人機狀態統計 */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* 狀態分布圓餅圖 */}
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-100 mb-4">無人機狀態分布</h4>
+                      <div className="space-y-3">
+                        {(() => {
+                          const statusCounts = displayStatusData.reduce((acc: Record<string, number>, drone: any) => {
+                            const status = drone.current_status || drone.status || 'unknown';
+                            acc[status] = (acc[status] || 0) + 1;
+                            return acc;
+                          }, {});
+
+                          const totalDrones = Object.values(statusCounts).reduce((sum: number, count: number) => sum + count, 0);
+                          const statusLabels: Record<string, string> = {
+                            'active': '活躍',
+                            'inactive': '待機',
+                            'flying': '飛行中',
+                            'maintenance': '維護中',
+                            'emergency': '緊急狀態',
+                            'unknown': '未知'
+                          };
+
+                          const statusColors: Record<string, string> = {
+                            'active': 'bg-green-500',
+                            'inactive': 'bg-gray-500',
+                            'flying': 'bg-blue-500',
+                            'maintenance': 'bg-yellow-500',
+                            'emergency': 'bg-red-500',
+                            'unknown': 'bg-gray-400'
+                          };
+
+                          return Object.entries(statusCounts).map(([status, count]) => {
+                            const percentage = totalDrones > 0 ? (count / totalDrones * 100) : 0;
+                            return (
+                              <div key={status} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-3 h-3 rounded-full ${statusColors[status] || 'bg-gray-400'}`}></div>
+                                  <span className="text-gray-300">{statusLabels[status] || status}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-400">{count} 台</span>
+                                  <span className="text-sm font-semibold text-gray-100">{percentage.toFixed(1)}%</span>
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* 電量分布統計 */}
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-100 mb-4">電量分布統計</h4>
+                      <div className="space-y-3">
+                        {(() => {
+                          const batteryRanges = [
+                            { min: 80, max: 100, label: '充足 (80-100%)', color: 'bg-green-500' },
+                            { min: 50, max: 79, label: '良好 (50-79%)', color: 'bg-blue-500' },
+                            { min: 30, max: 49, label: '中等 (30-49%)', color: 'bg-yellow-500' },
+                            { min: 15, max: 29, label: '偏低 (15-29%)', color: 'bg-orange-500' },
+                            { min: 0, max: 14, label: '不足 (0-14%)', color: 'bg-red-500' }
+                          ];
+
+                          const batteryCounts = batteryRanges.map(range => {
+                            const count = displayStatusData.filter((drone: any) => {
+                              const battery = drone.current_battery_level || drone.battery_level || 0;
+                              return battery >= range.min && battery <= range.max;
+                            }).length;
+                            return { ...range, count };
+                          });
+
+                          const totalDrones = batteryCounts.reduce((sum, range) => sum + range.count, 0);
+
+                          return batteryCounts.map(range => {
+                            const percentage = totalDrones > 0 ? (range.count / totalDrones * 100) : 0;
+                            return (
+                              <div key={`${range.min}-${range.max}`} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-3 h-3 rounded-full ${range.color}`}></div>
+                                  <span className="text-gray-300">{range.label}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-400">{range.count} 台</span>
+                                  <span className="text-sm font-semibold text-gray-100">{percentage.toFixed(1)}%</span>
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 無人機詳細狀態列表 */}
+                  <div className="bg-gray-700/50 rounded-lg p-4">
+                    <h4 className="text-md font-semibold text-gray-100 mb-4">無人機狀態詳情</h4>
+                    
+                    {/* 除錯資訊 - 暫時顯示以了解資料結構 */}
+                    {!hasRealData && (
+                      <div className="mb-4 p-2 bg-blue-900/30 rounded text-xs border border-blue-500/30">
+                        <div className="text-blue-300 text-center">
+                          ⚠️ 目前顯示模擬資料 - 當有實際無人機連線時將顯示真實資料
+                        </div>
+                      </div>
+                    )}
+                    
+                    {hasRealData && currentStatusData.length > 0 && (
+                      <div className="mb-4 p-2 bg-gray-800 rounded text-xs">
+                        <details className="text-gray-300">
+                          <summary className="cursor-pointer text-yellow-400">除錯：資料結構檢視</summary>
+                          <pre className="mt-2 overflow-auto">
+                            Status Data Sample: {JSON.stringify(currentStatusData[0], null, 2)}
+                          </pre>
+                          {currentPositionData.length > 0 && (
+                            <pre className="mt-2 overflow-auto">
+                              Position Data Sample: {JSON.stringify(currentPositionData[0], null, 2)}
+                            </pre>
+                          )}
+                        </details>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {displayStatusData.slice(0, 9).map((drone: any, index: number) => {
+                        const position = displayPositionData.find((pos: any) => pos.drone_id === drone.drone_id);
+                        
+                        // 嘗試不同的欄位名稱組合
+                        const batteryLevel = drone.current_battery_level || drone.battery_level || 0;
+                        const status = drone.current_status || drone.status || 'unknown';
+                        const droneId = drone.drone_id || drone.id || index;
+                        
+                        return (
+                          <div key={drone.id || index} className="bg-gray-600/50 rounded-lg p-3 border border-gray-600">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-gray-100">無人機 #{droneId}</span>
+                                <div className={`w-2 h-2 rounded-full ${
+                                  status === 'flying' ? 'bg-blue-500' :
+                                  status === 'active' ? 'bg-green-500' :
+                                  status === 'maintenance' ? 'bg-yellow-500' :
+                                  status === 'emergency' ? 'bg-red-500' : 'bg-gray-500'
+                                }`}></div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">電量</span>
+                                <span className={`font-semibold ${
+                                  batteryLevel > 50 ? 'text-green-400' :
+                                  batteryLevel > 20 ? 'text-yellow-400' : 'text-red-400'
+                                }`}>{batteryLevel}%</span>
+                              </div>
+                              
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">高度</span>
+                                <span className="text-gray-200">
+                                  {(drone.current_altitude || drone.altitude || 0)?.toFixed?.(1) || '--'}m
+                                </span>
+                              </div>
+                              
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">速度</span>
+                                <span className="text-gray-200">
+                                  {(drone.current_speed || drone.speed || 0)?.toFixed?.(1) || '--'}m/s
+                                </span>
+                              </div>
+                              
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">連線</span>
+                                <span className={`font-semibold ${
+                                  (drone.is_connected !== undefined ? drone.is_connected : true) ? 'text-green-400' : 'text-red-400'
+                                }`}>
+                                  {(drone.is_connected !== undefined ? drone.is_connected : true) ? '已連線' : '離線'}
+                                </span>
+                              </div>
+                              
+                              {position && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-400">位置</span>
+                                  <span className="text-gray-200 text-xs">
+                                    {position.latitude?.toFixed(4)}, {position.longitude?.toFixed(4)}
+                                  </span>
+                                </div>
+                              )}
+                              
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">最後活動</span>
+                                <span className="text-gray-200">
+                                  {(drone.last_seen || drone.updatedAt) ? 
+                                    new Date(drone.last_seen || drone.updatedAt).toLocaleTimeString('zh-TW').slice(0, 5) : 
+                                    '--'
+                                  }
+                                </span>
+                              </div>
+                              
+                              {/* 顯示原始資料以除錯 */}
+                              <div className="flex justify-between text-orange-300">
+                                <span className="text-gray-400">狀態</span>
+                                <span className="text-xs">{status}</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {displayStatusData.length > 9 && (
+                      <div className="mt-4 text-center">
+                        <span className="text-sm text-gray-400">
+                          顯示 9 台，共 {displayStatusData.length} 台無人機 {!hasRealData ? '(模擬資料)' : ''}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="text-6xl mb-4">🚁</div>
+                    <h3 className="text-lg font-semibold text-gray-300 mb-2">暫無無人機狀態資料</h3>
+                    <p className="text-sm text-gray-500">無人機上線後，狀態分析將顯示在這裡</p>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {selectedChart === 'archive' && (
             <div className="space-y-6">
               {hasAnyData ? (
                 <>

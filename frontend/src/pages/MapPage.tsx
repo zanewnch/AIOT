@@ -11,12 +11,13 @@
  * @since 2025-08-04
  */
 
-import React, { useRef, useState } from "react"; // 引入 React 核心庫和 Hooks
+import React, { useRef, useState, useCallback } from "react"; // 引入 React 核心庫和 Hooks
 import { useRealMapLogic } from "../hooks/useRealMapLogic";
 import { useSimulateMapLogic } from "../hooks/useSimulateMapLogic";
 // 移除重複的地圖載入器 import，ConditionalMapContainer 已經處理了載入邏輯
 import { DronePositionQuery } from "../hooks/useDronePositionQuery";
 import { DroneStatusQuery } from "../hooks/useDroneStatusQuery";
+import { useDroneWebSocket } from "../hooks/useDroneWebSocket";
 
 // 檢查是否啟用模擬模式
 const ENABLE_SIMULATE_MODE =
@@ -70,8 +71,40 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
   const droneStatusQuery = new DroneStatusQuery();
 
   // 獲取真實無人機數據
-  const { data: dronePositions = [], isLoading: positionsLoading } = dronePositionQuery.useLatest();
-  const { data: droneStatuses = [], isLoading: statusesLoading } = droneStatusQuery.useAll();
+  const { data: dronePositions = [], isLoading: positionsLoading, refetch: refetchPositions } = dronePositionQuery.useLatest();
+  const { data: droneStatuses = [], isLoading: statusesLoading, refetch: refetchStatuses } = droneStatusQuery.useAll();
+
+  // 🔴 WebSocket 即時更新處理
+  const handlePositionUpdate = useCallback((position: any) => {
+    console.log('地圖頁面收到位置更新:', position);
+    // 觸發位置數據重新獲取以更新地圖顯示
+    refetchPositions();
+  }, [refetchPositions]);
+
+  const handleStatusUpdate = useCallback((status: any) => {
+    console.log('地圖頁面收到狀態更新:', status);
+    // 觸發狀態數據重新獲取
+    refetchStatuses();
+  }, [refetchStatuses]);
+
+  const handleWebSocketError = useCallback((error: string) => {
+    console.error('地圖頁面 WebSocket 錯誤:', error);
+  }, []);
+
+  // 🌐 WebSocket 連接 - 只在真實模式下使用
+  const { 
+    connectionStatus, 
+    isConnected: wsConnected, 
+    error: wsError 
+  } = useDroneWebSocket({
+    onPositionUpdate: !isSimulateMode ? handlePositionUpdate : undefined,
+    onStatusUpdate: !isSimulateMode ? handleStatusUpdate : undefined,
+    onError: handleWebSocketError,
+  }, {
+    subscribeToPositions: !isSimulateMode, // 只在真實模式下訂閱
+    subscribeToStatus: !isSimulateMode,
+    subscribeToCommands: false, // 地圖頁面不需要指令響應
+  });
 
   // 根據模式選擇對應的 Hook
   const realMapLogic = useRealMapLogic(mapRef);

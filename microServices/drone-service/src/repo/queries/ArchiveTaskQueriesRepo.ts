@@ -15,7 +15,7 @@ import { ArchiveTaskQueryOptions } from '../../types/repositories/IArchiveTaskRe
 import { Op, WhereOptions } from 'sequelize';
 
 @injectable()
-export class ArchiveTaskQueriesRepository {
+export class ArchiveTaskQueriesRepo {
   
   findAll = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
     const where: WhereOptions = {};

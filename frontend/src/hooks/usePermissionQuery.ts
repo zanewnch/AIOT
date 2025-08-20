@@ -18,6 +18,7 @@ import type {
   TableError,
   PermissionUpdateRequest
 } from '../types/table';
+import type { PaginationParams, PaginatedResponse } from '../types/pagination';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('PermissionQuery');
@@ -43,30 +44,62 @@ export class PermissionQuery {
   }
   
   /**
-   * 取得所有權限數據
+   * 取得所有權限數據（支援分頁）
    */
-  useAllPermissionData() {
+  useAllPermissionData(paginationParams?: PaginationParams) {
+    const queryKey = paginationParams 
+      ? [...this.PERMISSION_QUERY_KEYS.LIST, 'paginated', paginationParams]
+      : this.PERMISSION_QUERY_KEYS.LIST;
+
     return useQuery({
-      queryKey: this.PERMISSION_QUERY_KEYS.LIST,
-      queryFn: async (): Promise<Permission[]> => {
+      queryKey,
+      queryFn: async (): Promise<Permission[] | PaginatedResponse<Permission>> => {
         try {
-          logger.debug('Fetching permissions from API');
+          logger.debug('Fetching permissions from API', { paginationParams });
           
-          const result = await apiClient.getWithResult<Permission[]>('/rbac/permissions');
+          // 構建查詢參數
+          const queryParams = new URLSearchParams();
+          if (paginationParams) {
+            queryParams.append('page', paginationParams.page.toString());
+            queryParams.append('pageSize', paginationParams.pageSize.toString());
+            if (paginationParams.sortBy) {
+              queryParams.append('sortBy', paginationParams.sortBy);
+            }
+            if (paginationParams.sortOrder) {
+              queryParams.append('sortOrder', paginationParams.sortOrder);
+            }
+          }
+
+          const url = `/rbac/permissions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+          const result = await apiClient.getWithResult<Permission[] | PaginatedResponse<Permission>>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
-          logger.info(`Successfully fetched ${result.data?.length || 0} permissions`);
-          
-          // 處理 304 Not Modified 或空資料的情況
-          if (result.data === undefined || result.data === null) {
-            logger.warn('Received empty response, returning empty array');
-            return [];
+          if (paginationParams) {
+            // 分頁模式：返回分頁數據
+            const paginatedData = result.data as PaginatedResponse<Permission>;
+            logger.info(`Successfully fetched paginated permissions`, {
+              page: paginatedData.page,
+              pageSize: paginatedData.pageSize,
+              total: paginatedData.total,
+              dataLength: paginatedData.data.length
+            });
+            return paginatedData;
+          } else {
+            // 非分頁模式：返回權限列表
+            const permissions = result.data as Permission[];
+            logger.info(`Successfully fetched ${permissions?.length || 0} permissions`);
+            
+            // 處理 304 Not Modified 或空資料的情況
+            if (permissions === undefined || permissions === null) {
+              logger.warn('Received empty response, returning empty array');
+              return [];
+            }
+            
+            return permissions || [];
           }
-          
-          return result.data || [];
         } catch (error: any) {
           logger.error('Failed to fetch permissions:', error);
           

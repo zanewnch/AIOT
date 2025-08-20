@@ -34,5 +34,5 @@ ENV HTTP_PORT=3054
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3054/health || exit 1
 
-# 開發環境啟動命令 - 使用 HTTP server 與 Kong 通訊
+# 開發環境啟動命令 - 使用 HTTP server 與 API Gateway 通訊
 CMD ["npm", "run", "dev"]

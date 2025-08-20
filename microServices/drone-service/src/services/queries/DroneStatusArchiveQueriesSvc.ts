@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/DroneStatusArchiveQueriesRepo.js';
+import { DroneStatusArchiveQueriesRepo } from '../../repo/queries/DroneStatusArchiveQueriesRepo.js';
 import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/DroneStatusArchiveCommandsRepo.js';
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusArchiveAttributes } from '../../models/DroneStatusArchiveModel.js';
@@ -35,23 +35,23 @@ const logger = createLogger('DroneStatusArchiveQueriesSvc');
  */
 @injectable()
 export class DroneStatusArchiveQueriesSvc {
-    private archiveRepository: IDroneStatusArchiveRepository;
-    private queriesRepository: DroneStatusArchiveQueriesRepository;
-    private commandsRepository: DroneStatusArchiveCommandsRepository;
+    private archiveRepo: IDroneStatusArchiveRepo;
+    private queriesRepo: DroneStatusArchiveQueriesRepo;
+    private commandsRepo: DroneStatusArchiveCommandsRepo;
 
     constructor(
-        @inject(TYPES.DroneStatusArchiveQueriesRepository) queriesRepository: DroneStatusArchiveQueriesRepository,
-        @inject(TYPES.DroneStatusArchiveCommandsRepository) commandsRepository: DroneStatusArchiveCommandsRepository
+        @inject(TYPES.DroneStatusArchiveQueriesRepo) queriesRepo: DroneStatusArchiveQueriesRepo,
+        @inject(TYPES.DroneStatusArchiveCommandsRepository) commandsRepo: DroneStatusArchiveCommandsRepository
     ) {
-        this.queriesRepository = queriesRepository;
-        this.commandsRepository = commandsRepository;
+        this.queriesRepo = queriesRepo;
+        this.commandsRepo = commandsRepo;
         
         // 創建組合repository來滿足IDroneStatusArchiveRepository接口
-        this.archiveRepository = Object.assign(
+        this.archiveRepo = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDroneStatusArchiveRepository;
+        ) as IDroneStatusArchiveRepo;
     }
 
     /**

@@ -39,11 +39,11 @@ export class DroneStatusCommandsSvc {
         @inject(TYPES.DroneStatusQueriesSvc)
         private readonly queryService: DroneStatusQueriesSvc
     ) {
-        // Initialize repository directly for now since it's not in DI container yet
-        this.droneStatusRepository = new DroneStatusCommandsRepository();
+        // Initialize repo directly for now since it's not in DI container yet
+        this.droneStatusRepo = new DroneStatusCommandsRepository();
     }
 
-    private readonly droneStatusRepository: DroneStatusCommandsRepository;
+    private readonly droneStatusRepo: DroneStatusCommandsRepo;
 
     /**
      * 建立新的無人機狀態資料

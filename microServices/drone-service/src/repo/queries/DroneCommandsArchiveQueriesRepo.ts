@@ -28,7 +28,7 @@ const logger = createLogger('DroneCommandsArchiveQueriesRepository');
  * @class DroneCommandsArchiveQueriesRepository
  */
 @injectable()
-export class DroneCommandsArchiveQueriesRepository {
+export class DroneCommandsArchiveQueriesRepo {
     /**
      * 取得所有指令歷史歸檔資料
      *

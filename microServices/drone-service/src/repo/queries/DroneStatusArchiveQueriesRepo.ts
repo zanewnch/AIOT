@@ -26,7 +26,7 @@ import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
  * @class DroneStatusArchiveQueriesRepository
  */
 @injectable()
-export class DroneStatusArchiveQueriesRepository {
+export class DroneStatusArchiveQueriesRepo {
     private readonly logger = createLogger('DroneStatusArchiveQueriesRepository');
 
     /**

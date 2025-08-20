@@ -36,25 +36,25 @@ const logger = createLogger('DroneStatusArchiveCommandsSvc');
  */
 @injectable()
 export class DroneStatusArchiveCommandsSvc {
-    private commandsRepository: DroneStatusArchiveCommandsRepository;
-    private queriesRepository: DroneStatusArchiveQueriesRepository;
-    private archiveRepository: IDroneStatusArchiveRepository; // 組合介面
+    private commandsRepo: DroneStatusArchiveCommandsRepo;
+    private queriesRepo: DroneStatusArchiveQueriesRepo;
+    private archiveRepo: IDroneStatusArchiveRepo; // 組合介面
     private queryService: DroneStatusArchiveQueriesSvc;
 
     constructor(
-        @inject(TYPES.DroneStatusArchiveCommandsRepository) commandsRepository: DroneStatusArchiveCommandsRepository,
-        @inject(TYPES.DroneStatusArchiveQueriesRepository) queriesRepository: DroneStatusArchiveQueriesRepository,
+        @inject(TYPES.DroneStatusArchiveCommandsRepository) commandsRepo: DroneStatusArchiveCommandsRepository,
+        @inject(TYPES.DroneStatusArchiveQueriesRepository) queriesRepo: DroneStatusArchiveQueriesRepository,
         @inject(TYPES.DroneStatusArchiveQueriesSvc) queryService: DroneStatusArchiveQueriesSvc
     ) {
-        this.commandsRepository = commandsRepository;
-        this.queriesRepository = queriesRepository;
+        this.commandsRepo = commandsRepo;
+        this.queriesRepo = queriesRepo;
         
         // 創建組合repository
-        this.archiveRepository = Object.assign(
+        this.archiveRepo = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDroneStatusArchiveRepository;
+        ) as IDroneStatusArchiveRepo;
         
         this.queryService = queryService;
     }

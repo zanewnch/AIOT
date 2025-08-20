@@ -42,14 +42,14 @@ import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 @injectable()
 export class ArchiveTaskCommandsSvc {
     private readonly logger = createLogger('ArchiveTaskCommandsSvc');
-    private readonly repository: IArchiveTaskRepository; // 組合介面
+    private repo: IArchiveTaskRepo; // 組合介面
 
     constructor(
         @inject(TYPES.ArchiveTaskCommandsRepository) 
-        private readonly commandsRepository: ArchiveTaskCommandsRepository,
+        private readonly commandsRepo: ArchiveTaskCommandsRepository,
         
         @inject(TYPES.ArchiveTaskQueriesRepository) 
-        private readonly queriesRepository: ArchiveTaskQueriesRepository,
+        private readonly queriesRepo: ArchiveTaskQueriesRepository,
         
         @inject(TYPES.ArchiveTaskQueriesSvc) 
         private readonly queryService: ArchiveTaskQueriesSvc
@@ -59,7 +59,7 @@ export class ArchiveTaskCommandsSvc {
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IArchiveTaskRepository;
+        ) as IArchiveTaskRepo;
     }
 
     /**

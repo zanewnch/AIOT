@@ -13,13 +13,14 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { DroneStatusQueriesRepository } from '../../repo/queries/DroneStatusQueriesRepo.js';
+import { DroneStatusQueriesRepo } from '../../repo/queries/DroneStatusQueriesRepo.js';
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
+import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
 
 const logger = createLogger('DroneStatusQueriesSvc');
 
@@ -34,12 +35,12 @@ const logger = createLogger('DroneStatusQueriesSvc');
  */
 @injectable()
 export class DroneStatusQueriesSvc {
-    private droneStatusRepository: DroneStatusQueriesRepository;
+    private droneStatusRepo: DroneStatusQueriesRepo;
 
     constructor(
-        @inject(TYPES.DroneStatusQueriesRepository) droneStatusRepository: DroneStatusQueriesRepository
+        @inject(TYPES.DroneStatusQueriesRepo) droneStatusRepo: DroneStatusQueriesRepo
     ) {
-        this.droneStatusRepository = droneStatusRepository;
+        this.droneStatusRepo = droneStatusRepo;
     }
 
     /**
@@ -48,7 +49,7 @@ export class DroneStatusQueriesSvc {
     getAllDroneStatuses = async (): Promise<DroneStatusAttributes[]> => {
         try {
             logger.info('Getting all drone status data');
-            const droneStatuses = await this.droneStatusRepository.findAll();
+            const droneStatuses = await this.droneStatusRepo.findAll();
 
             logger.info(`Retrieved ${droneStatuses.length} drone status records`);
             return droneStatuses;
@@ -67,7 +68,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drone status data by ID', { id });
-            const droneStatus = await this.droneStatusRepository.findById(id);
+            const droneStatus = await this.droneStatusRepo.findById(id);
 
             if (!droneStatus) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機狀態資料`);
@@ -90,7 +91,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drone status data by serial', { droneSerial });
-            const droneStatus = await this.droneStatusRepository.findByDroneSerial(droneSerial);
+            const droneStatus = await this.droneStatusRepo.findByDroneSerial(droneSerial);
 
             if (!droneStatus) {
                 throw new Error(`找不到序號為 ${droneSerial} 的無人機資料`);
@@ -113,7 +114,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drones by status', { status });
-            const droneStatuses = await this.droneStatusRepository.findByStatus(status);
+            const droneStatuses = await this.droneStatusRepo.findByStatus(status);
 
             logger.info(`Retrieved ${droneStatuses.length} drones with status ${status}`);
             return droneStatuses;
@@ -132,7 +133,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drones by owner', { ownerUserId });
-            const droneStatuses = await this.droneStatusRepository.findByOwner(ownerUserId);
+            const droneStatuses = await this.droneStatusRepo.findByOwner(ownerUserId);
 
             logger.info(`Retrieved ${droneStatuses.length} drones for owner ${ownerUserId}`);
             return droneStatuses;
@@ -151,7 +152,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drones by manufacturer', { manufacturer });
-            const droneStatuses = await this.droneStatusRepository.findByManufacturer(manufacturer);
+            const droneStatuses = await this.droneStatusRepo.findByManufacturer(manufacturer);
 
             logger.info(`Retrieved ${droneStatuses.length} drones from manufacturer ${manufacturer}`);
             return droneStatuses;
@@ -165,7 +166,7 @@ export class DroneStatusQueriesSvc {
      */
     isDroneSerialExists = async (droneSerial: string, excludeId?: number): Promise<boolean> => {
         try {
-            const existingDrone = await this.droneStatusRepository.findByDroneSerial(droneSerial);
+            const existingDrone = await this.droneStatusRepo.findByDroneSerial(droneSerial);
 
             if (!existingDrone) {
                 return false;
@@ -198,7 +199,7 @@ export class DroneStatusQueriesSvc {
 
             // 並行查詢各狀態的數量
             const promises = Object.values(DroneStatus).map(async (status) => {
-                const drones = await this.droneStatusRepository.findByStatus(status);
+                const drones = await this.droneStatusRepo.findByStatus(status);
                 return { status, count: drones.length };
             });
 
@@ -221,7 +222,7 @@ export class DroneStatusQueriesSvc {
     getTotalDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting total drone count');
-            const droneStatuses = await this.droneStatusRepository.findAll();
+            const droneStatuses = await this.droneStatusRepo.findAll();
             const count = droneStatuses.length;
             
             logger.info(`Total drone count: ${count}`);
@@ -237,7 +238,7 @@ export class DroneStatusQueriesSvc {
     getActiveDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting active drone count');
-            const activeDrones = await this.droneStatusRepository.findByStatus(DroneStatus.ACTIVE);
+            const activeDrones = await this.droneStatusRepo.findByStatus(DroneStatus.ACTIVE);
             const count = activeDrones.length;
             
             logger.info(`Active drone count: ${count}`);
@@ -253,7 +254,7 @@ export class DroneStatusQueriesSvc {
     getFlyingDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting flying drone count');
-            const flyingDrones = await this.droneStatusRepository.findByStatus(DroneStatus.FLYING);
+            const flyingDrones = await this.droneStatusRepo.findByStatus(DroneStatus.FLYING);
             const count = flyingDrones.length;
             
             logger.info(`Flying drone count: ${count}`);
@@ -269,7 +270,7 @@ export class DroneStatusQueriesSvc {
     getMaintenanceDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting maintenance drone count');
-            const maintenanceDrones = await this.droneStatusRepository.findByStatus(DroneStatus.MAINTENANCE);
+            const maintenanceDrones = await this.droneStatusRepo.findByStatus(DroneStatus.MAINTENANCE);
             const count = maintenanceDrones.length;
             
             logger.info(`Maintenance drone count: ${count}`);
@@ -285,7 +286,7 @@ export class DroneStatusQueriesSvc {
     getInactiveDroneCount = async (): Promise<number> => {
         try {
             logger.info('Getting inactive drone count');
-            const inactiveDrones = await this.droneStatusRepository.findByStatus(DroneStatus.INACTIVE);
+            const inactiveDrones = await this.droneStatusRepo.findByStatus(DroneStatus.INACTIVE);
             const count = inactiveDrones.length;
             
             logger.info(`Inactive drone count: ${count}`);
@@ -305,7 +306,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Getting drones by model', { model });
-            const droneStatuses = await this.droneStatusRepository.findAll();
+            const droneStatuses = await this.droneStatusRepo.findAll();
             const filteredDrones = droneStatuses.filter((drone: any) => drone.model === model);
 
             logger.info(`Retrieved ${filteredDrones.length} drones with model ${model}`);
@@ -325,7 +326,7 @@ export class DroneStatusQueriesSvc {
             }
 
             logger.info('Searching drones', { searchTerm });
-            const allDrones = await this.droneStatusRepository.findAll();
+            const allDrones = await this.droneStatusRepo.findAll();
             const searchResults = allDrones.filter((drone: any) => 
                 drone.drone_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 drone.drone_serial.toLowerCase().includes(searchTerm.toLowerCase())
@@ -335,6 +336,62 @@ export class DroneStatusQueriesSvc {
             return searchResults;
         } catch (error) {
             throw error;
+        }
+    }
+
+    /**
+     * 分頁查詢無人機狀態列表
+     * 
+     * @param params 分頁參數
+     * @returns 分頁無人機狀態結果
+     */
+    public async getDroneStatusesPaginated(params: PaginationParams): Promise<PaginatedResult<DroneStatusAttributes>> {
+        try {
+            logger.debug('Getting drone statuses with pagination', params);
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'id',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'drone_name', 'drone_serial', 'status', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據
+            const [droneStatuses, total] = await Promise.all([
+                this.droneStatusRepo.findPaginatedUnified(
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.droneStatusRepo.count()
+            ]);
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                droneStatuses,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully fetched drone statuses with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching drone statuses with pagination:', error);
+            throw new Error('Failed to fetch drone statuses with pagination');
         }
     }
 }

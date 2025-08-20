@@ -64,21 +64,21 @@ start_infrastructure() {
     fi
 }
 
-# 啟動 Kong Gateway
+# 啟動 API Gateway
 start_gateway() {
-    print_message $BLUE "🌐 啟動 Kong API Gateway..."
+    print_message $BLUE "🌐 啟動 API Gateway..."
     cd "$PROJECT_ROOT/infrastructure/docker"
     docker-compose -f docker-compose.yml -p $PROJECT_NAME up -d kong
     
-    print_message $GREEN "✅ Kong Gateway 已啟動"
+    print_message $GREEN "✅ API Gateway 已啟動"
     
-    # 等待 Kong 服務就緒
+    # 等待 API Gateway 服務就緒
     sleep 5
     if curl -f http://localhost:8001/ > /dev/null 2>&1; then
-        print_message $GREEN "✅ Kong Admin API 可用: http://localhost:8001"
-        print_message $GREEN "✅ Kong Proxy 可用: http://localhost:8000"
+        print_message $GREEN "✅ API Gateway Admin API 可用: http://localhost:8001"
+        print_message $GREEN "✅ API Gateway Proxy 可用: http://localhost:8000"
     else
-        print_message $YELLOW "⚠️ Kong 服務可能尚未完全就緒"
+        print_message $YELLOW "⚠️ API Gateway 服務可能尚未完全就緒"
     fi
 }
 
@@ -138,8 +138,8 @@ start_all() {
     
     print_message $GREEN "🎉 AIOT 微服務架構啟動完成!"
     print_message $BLUE "📋 服務端點:"
-    echo "  🌐 Kong Gateway (API 入口): http://localhost:8000"
-    echo "  🔧 Kong Admin API: http://localhost:8001"
+    echo "  🌐 API Gateway (API 入口): http://localhost:8000"
+    echo "  🔧 API Gateway Admin API: http://localhost:8001"
     echo "  🏛️  Consul UI: http://localhost:8500"
     echo "  🐰 RabbitMQ Management: http://localhost:15672 (admin/admin)"
     echo "  🔐 RBAC Service: http://localhost:3001"
@@ -203,7 +203,7 @@ show_help() {
     echo ""
     echo "命令:"
     echo "  start-infra         啟動基礎設施服務 (Consul, 數據庫等)"
-    echo "  start-gateway       啟動 Kong API Gateway"
+    echo "  start-gateway       啟動 API Gateway"
     echo "  start-services      啟動微服務"
     echo "  start-monitoring    啟動監控服務"
     echo "  start-all           啟動所有服務"

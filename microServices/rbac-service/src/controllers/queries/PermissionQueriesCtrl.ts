@@ -38,21 +38,49 @@ export class PermissionQueries {
     }
 
     /**
-     * 獲取所有權限列表
+     * 獲取所有權限列表（支援分頁）
      * @route GET /api/rbac/permissions
+     * @query page - 頁碼（從 1 開始）
+     * @query pageSize - 每頁數量
+     * @query sortBy - 排序欄位
+     * @query sortOrder - 排序方向（ASC/DESC）
      */
     public getPermissions = async (req: Request, res: Response): Promise<void> => {
         try {
-            logRequest(req, 'Fetching all permissions', 'info');
-            logger.debug('Getting all permissions from service');
+            logRequest(req, 'Fetching permissions with pagination', 'info');
+            logger.debug('Getting permissions from service with pagination');
 
-            const permissions = await this.permissionService.getAllPermissions();
-            const result = ResResult.success('權限列表獲取成功', permissions);
+            // 解析分頁參數
+            const page = parseInt(req.query.page as string) || 1;
+            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const sortBy = (req.query.sortBy as string) || 'id';
+            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
+
+            const paginationParams = { page, pageSize, sortBy, sortOrder };
+
+            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
+            if (!req.query.page && !req.query.pageSize) {
+                // 向後兼容：沒有分頁參數時返回所有數據
+                const permissions = await this.permissionService.getAllPermissions();
+                const result = ResResult.success('權限列表獲取成功', permissions);
+                res.status(result.status).json(result);
+                logger.info('Successfully fetched all permissions (no pagination)', {count: permissions.length});
+                return;
+            }
+
+            // 使用分頁查詢
+            const paginatedResult = await this.permissionService.getPermissionsPaginated(paginationParams);
+            const result = ResResult.success('權限列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);
-            logger.info('Successfully fetched all permissions', {count: permissions.length});
+            logger.info('Successfully fetched permissions with pagination', {
+                page: paginatedResult.page,
+                pageSize: paginatedResult.pageSize,
+                total: paginatedResult.total,
+                dataCount: paginatedResult.data.length
+            });
         } catch (error) {
-            logger.error('Error fetching all permissions', {error});
+            logger.error('Error fetching permissions', {error});
             const result = ResResult.internalError('獲取權限列表失敗');
             res.status(result.status).json(result);
         }

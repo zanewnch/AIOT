@@ -44,21 +44,21 @@ export interface ArchiveOperationResult {
  */
 @injectable()
 export class DroneCommandsArchiveCommandsSvc {
-    private commandsRepository: DroneCommandsArchiveCommandsRepository;
-    private queriesRepository: DroneCommandsArchiveQueriesRepository;
-    private archiveRepository: IDroneCommandsArchiveRepository; // 組合介面
+    private commandsRepo: DroneCommandsArchiveCommandsRepo;
+    private queriesRepo: DroneCommandsArchiveQueriesRepo;
+    private archiveRepo: IDroneCommandsArchiveRepo; // 組合介面
     private queryService: DroneCommandsArchiveQueriesSvc;
 
     constructor() {
-        this.commandsRepository = new DroneCommandsArchiveCommandsRepository();
-        this.queriesRepository = new DroneCommandsArchiveQueriesRepository();
+        this.commandsRepo = new DroneCommandsArchiveCommandsRepository();
+        this.queriesRepo = new DroneCommandsArchiveQueriesRepository();
         
         // 創建組合repository
-        this.archiveRepository = Object.assign(
+        this.archiveRepo = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDroneCommandsArchiveRepository;
+        ) as IDroneCommandsArchiveRepo;
         
         this.queryService = new DroneCommandsArchiveQueriesSvc();
     }
@@ -280,7 +280,7 @@ export class DroneCommandsArchiveCommandsSvc {
             logger.info('Archive operation completed', { 
                 beforeDate,
                 batchSize,
-                note: 'Implementation needed when active command repository is available'
+                note: 'Implementation needed when active command repo is available'
             });
 
             // 返回模擬結果

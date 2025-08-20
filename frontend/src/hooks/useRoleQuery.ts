@@ -21,6 +21,7 @@ import type {
   RoleUpdateRequest,
   RoleToPermission
 } from '../types/table';
+import type { PaginationParams, PaginatedResponse } from '../types/pagination';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('RoleQuery');
@@ -51,21 +52,53 @@ export class RoleQuery {
   /**
    * 角色數據查詢 Hook
    */
-  useRoleData() {
+  useRoleData(paginationParams?: PaginationParams) {
+    const queryKey = paginationParams 
+      ? [...this.ROLE_QUERY_KEYS.LIST, 'paginated', paginationParams]
+      : this.ROLE_QUERY_KEYS.LIST;
+
     return useQuery({
-      queryKey: this.ROLE_QUERY_KEYS.LIST,
-      queryFn: async (): Promise<Role[]> => {
+      queryKey,
+      queryFn: async (): Promise<Role[] | PaginatedResponse<Role>> => {
         try {
-          logger.debug('Fetching roles from API');
+          logger.debug('Fetching roles from API', { paginationParams });
           
-          const result = await apiClient.getWithResult<Role[]>('/rbac/roles');
+          // 構建查詢參數
+          const queryParams = new URLSearchParams();
+          if (paginationParams) {
+            queryParams.append('page', paginationParams.page.toString());
+            queryParams.append('pageSize', paginationParams.pageSize.toString());
+            if (paginationParams.sortBy) {
+              queryParams.append('sortBy', paginationParams.sortBy);
+            }
+            if (paginationParams.sortOrder) {
+              queryParams.append('sortOrder', paginationParams.sortOrder);
+            }
+          }
+
+          const url = `/rbac/roles${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+          const result = await apiClient.getWithResult<Role[] | PaginatedResponse<Role>>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
-          logger.info(`Successfully fetched ${result.data?.length || 0} roles`);
-          return result.data || [];
+          if (paginationParams) {
+            // 分頁模式：返回分頁數據
+            const paginatedData = result.data as PaginatedResponse<Role>;
+            logger.info(`Successfully fetched paginated roles`, {
+              page: paginatedData.page,
+              pageSize: paginatedData.pageSize,
+              total: paginatedData.total,
+              dataLength: paginatedData.data.length
+            });
+            return paginatedData;
+          } else {
+            // 非分頁模式：返回角色列表
+            const roles = result.data as Role[];
+            logger.info(`Successfully fetched ${roles?.length || 0} roles`);
+            return roles || [];
+          }
         } catch (error: any) {
           logger.error('Failed to fetch roles:', error);
           

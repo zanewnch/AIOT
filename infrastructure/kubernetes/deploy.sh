@@ -131,8 +131,8 @@ kubectl get services -n aiot
 
 echo ""
 echo -e "${GREEN}🌐 訪問信息：${NC}"
-echo "API Gateway (Kong): http://localhost:30000"
-echo "Kong Admin: http://localhost:30001"
+echo "API Gateway (API Gateway): http://localhost:30000"
+echo "API Gateway Admin: http://localhost:30001"
 echo "Consul UI: kubectl port-forward -n aiot svc/consul-service 8500:8500"
 echo "RabbitMQ Management: kubectl port-forward -n aiot svc/rabbitmq-service 15672:15672"
 

@@ -19,7 +19,7 @@ import type {
     DroneCommandSummary
 } from '../../types/services/IDroneCommandService.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
-import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQueriesRepo.js';
+import { DroneCommandQueriesRepo } from '../../repo/queries/DroneCommandQueriesRepo.js';
 import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
@@ -39,20 +39,20 @@ const logger = createLogger('DroneCommandQueriesSvc');
  */
 @injectable()
 export class DroneCommandQueriesSvc {
-    private commandRepository: IDroneCommandRepository;
-    private queriesRepository: DroneCommandQueriesRepository;
-    private commandsRepository: DroneCommandCommandsRepository;
+    private commandRepo: IDroneCommandRepo;
+    private queriesRepo: DroneCommandQueriesRepo;
+    private commandsRepo: DroneCommandCommandsRepo;
 
     constructor() {
-        this.queriesRepository = new DroneCommandQueriesRepository();
-        this.commandsRepository = new DroneCommandCommandsRepository();
+        this.queriesRepo = new DroneCommandQueriesRepo();
+        this.commandsRepo = new DroneCommandCommandsRepository();
         
         // 創建組合repository來滿足IDroneCommandRepository接口
-        this.commandRepository = Object.assign(
+        this.commandRepo = Object.assign(
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDroneCommandRepository;
+        ) as IDroneCommandRepo;
     }
 
     /**
