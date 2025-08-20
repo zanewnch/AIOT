@@ -3,7 +3,7 @@
 /**
  * @fileoverview RBAC HTTP 伺服器啟動程式
  *
- * 此檔案負責啟動 RBAC 服務的 HTTP 伺服器，用於與 Kong Gateway 通訊
+ * 此檔案負責啟動 RBAC 服務的 HTTP 伺服器，用於與 API Gateway 通訊
  * 包括：
  * - 載入環境變數配置
  * - 創建 HTTP 伺服器實例
@@ -26,7 +26,7 @@ import http from 'http';
  * HTTP 伺服器類別
  *
  * 此類別負責管理 RBAC 服務的 HTTP 伺服器生命週期，包括：
- * - HTTP 伺服器的啟動和關閉（Kong 通訊）
+ * - HTTP 伺服器的啟動和關閉（API Gateway 通訊）
  * - 資料庫連線管理
  * - 優雅關閉機制的實現
  *
@@ -96,11 +96,11 @@ class HttpServer {
             await this.httpApp.initialize();
             console.log('✅ HTTP application initialized');
 
-            // 啟動 HTTP 服務器（Kong 通訊）
+            // 啟動 HTTP 服務器（API Gateway 通訊）
             const httpPort = process.env.HTTP_PORT || 3051;
             this.httpServer = http.createServer(this.httpApp.app);
             this.httpServer.listen(httpPort, '0.0.0.0', () => {
-                console.log(`🌐 RBAC HTTP server ready on port ${httpPort} (Kong communication)`);
+                console.log(`🌐 RBAC HTTP server ready on port ${httpPort} (API Gateway communication)`);
             });
 
         } catch (err) {

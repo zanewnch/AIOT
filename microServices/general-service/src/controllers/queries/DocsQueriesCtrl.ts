@@ -47,7 +47,7 @@ export class DocsController {
         { name: 'MySQL', url: 'mysql://aiot-mysql:3306', description: '主要資料庫' },
         { name: 'Redis', url: 'redis://aiot-redis:6379', description: '快取服務' },
         // { name: 'RabbitMQ', url: 'amqp://aiot-rabbitmq:5672', description: '訊息佇列' }, // 已移除
-        { name: 'Kong', url: 'http://aiot-kong:8000', description: 'API 閘道' }
+        { name: 'Kong', url: 'http://aiot-gateway:8000', description: 'API 閘道' }
     ];
 
     constructor() {}
@@ -90,7 +90,7 @@ export class DocsController {
                 layers: [
                     {
                         name: 'API Gateway Layer',
-                        services: ['Kong Gateway'],
+                        services: ['API Gateway'],
                         description: '統一 API 入口點，處理路由、認證、限流等'
                     },
                     {
@@ -105,7 +105,7 @@ export class DocsController {
                     }
                 ],
                 dataFlow: [
-                    'Client → Kong Gateway → Microservices',
+                    'Client → API Gateway → Microservices',
                     'Microservices ↔ Redis (Cache)',
                     'Microservices ↔ MySQL (Persistence)',
                     // 'Microservices → RabbitMQ (Async Processing)' // 已移除
@@ -417,7 +417,7 @@ export class DocsController {
         // 定義允許訪問的文件路徑映射（安全考慮）
         const allowedFiles: Record<string, string> = {
             'docker-compose.yml': '/home/user/GitHub/AIOT/infrastructure/docker/docker-compose.yml',
-            'kong.yaml': '/home/user/GitHub/AIOT/infrastructure/kong/kong.yaml',
+            'gateway.yaml': '/home/user/GitHub/AIOT/infrastructure/kong/gateway.yaml',
             'prometheus.yml': '/home/user/GitHub/AIOT/infrastructure/monitoring/prometheus.yml',
             'nginx.conf': '/home/user/GitHub/AIOT/infrastructure/opa/server/nginx.conf',
             'package.json': '/home/user/GitHub/AIOT/microServices/general/package.json',
@@ -466,8 +466,8 @@ export class DocsController {
                 category: 'Infrastructure'
             },
             {
-                name: 'kong.yaml',
-                description: 'Kong API Gateway 配置',
+                name: 'gateway.yaml',
+                description: 'API Gateway 配置',
                 category: 'Infrastructure'
             },
             {

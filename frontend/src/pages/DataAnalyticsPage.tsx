@@ -84,13 +84,25 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
   const { isLoading: statusLoading } = statusQuery.useLatest();
 
   // 轉換真實資料格式
-  const performanceData: PerformanceDataPoint[] = commandsArchiveData.map(cmd => ({
-    timestamp: new Date(cmd.issued_at),
-    command_type: cmd.command_type,
-    execution_time: cmd.getExecutionTime() || 0,
-    wait_time: cmd.getWaitTime() || 0,
-    success: cmd.status === 'completed'
-  }));
+  const performanceData: PerformanceDataPoint[] = commandsArchiveData.map(cmd => {
+    // 計算執行時間（毫秒）
+    const executionTime = cmd.executed_at && cmd.completed_at 
+      ? new Date(cmd.completed_at).getTime() - new Date(cmd.executed_at).getTime()
+      : 0;
+    
+    // 計算等待時間（毫秒）
+    const waitTime = cmd.executed_at 
+      ? new Date(cmd.executed_at).getTime() - new Date(cmd.issued_at).getTime()
+      : 0;
+    
+    return {
+      timestamp: new Date(cmd.issued_at),
+      command_type: cmd.command_type,
+      execution_time: executionTime,
+      wait_time: waitTime,
+      success: cmd.status === 'completed'
+    };
+  });
 
   const flightPathData: FlightPathPoint[] = positionsData.map((pos: DronePositionArchive) => ({
     lat: pos.latitude,
@@ -102,7 +114,7 @@ const DataAnalyticsPage: React.FC<DataAnalyticsPageProps> = ({ className }) => {
 
   // 從位置資料中提取電量資訊，因為狀態歸檔沒有電量欄位
   const batteryData: BatteryDataPoint[] = positionsData
-    .filter((pos: DronePositionArchive) => pos.batteryLevel !== undefined)
+    .filter((pos: DronePositionArchive) => (pos.batteryLevel !== undefined && pos.batteryLevel !== null))
     .map((pos: DronePositionArchive) => ({
       timestamp: new Date(pos.timestamp),
       battery_level: pos.batteryLevel || 0,

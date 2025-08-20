@@ -87,14 +87,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone/statuses/archive');
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive');
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch all status archives');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch all status archives', { error });
           const tableError: TableError = {
@@ -137,14 +136,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.LATEST_STATUS_ARCHIVES,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone/statuses/archive');
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive');
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch latest status archives');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch latest status archives', { error });
           const tableError: TableError = {
@@ -192,14 +190,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_CHANGE_STATISTICS,
       queryFn: async (): Promise<StatusChangeStatistics> => {
         try {
-          const response = await apiClient.get('/drone/statuses/archive/statistics');
-          const result = ReqResult.fromResponse<StatusChangeStatistics>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: StatusChangeStatistics}>('/drone/statuses/archive/statistics');
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch status change statistics');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch status change statistics', { error });
           const tableError: TableError = {
@@ -248,14 +245,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVE_BY_ID(id),
       queryFn: async (): Promise<DroneStatusArchive> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/archive/${id}`);
-          const result = ReqResult.fromResponse<DroneStatusArchive>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive}>(`/drone/statuses/archive/${id}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch status archive with ID: ${id}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch status archive with ID: ${id}`, { error });
           const tableError: TableError = {
@@ -281,14 +277,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/archive/drone/${droneId}`);
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/drone/${droneId}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch status archives for drone ID: ${droneId}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch status archives for drone ID: ${droneId}`, { error });
           const tableError: TableError = {
@@ -314,14 +309,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_STATUS(status),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/archive/drone/${status}`);
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/status/${status}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch status archives with status: ${status}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch status archives with status: ${status}`, { error });
           const tableError: TableError = {
@@ -347,14 +341,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_USER(userId),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/archive/drone/${userId}`);
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/user/${userId}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch status archives for user ID: ${userId}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch status archives for user ID: ${userId}`, { error });
           const tableError: TableError = {
@@ -380,14 +373,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_REASON(reason),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/archive/drone/${reason}`);
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/reason/${reason}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch status archives with reason: ${reason}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch status archives with reason: ${reason}`, { error });
           const tableError: TableError = {
@@ -413,14 +405,13 @@ export class DroneStatusArchiveQuery {
       queryKey: ['droneStatusArchive', 'dateRange', dateRange],
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone/statuses/archive/time-range', { params: dateRange! });
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive/time-range', { params: dateRange! });
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch status archives by date range');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch status archives by date range', { error, dateRange });
           const tableError: TableError = {
@@ -446,14 +437,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.LATEST_STATUS_ARCHIVE_BY_DRONE(droneId),
       queryFn: async (): Promise<DroneStatusArchive | null> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/archive/drone/${droneId}`);
-          const result = ReqResult.fromResponse<DroneStatusArchive | null>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive | null}>(`/drone/statuses/archive/drone/${droneId}/latest`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch latest status archive for drone ID: ${droneId}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch latest status archive for drone ID: ${droneId}`, { error });
           const tableError: TableError = {
@@ -481,14 +471,13 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_TRANSITION,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const response = await apiClient.get('/drone/statuses/archive', { params: query! });
-          const result = ReqResult.fromResponse<DroneStatusArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive', { params: query! });
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch status archives by transition');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch status archives by transition', { error, query });
           const tableError: TableError = {
@@ -544,14 +533,13 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async (data: CreateStatusArchiveRequest): Promise<DroneStatusArchive> => {
         try {
-          const response = await apiClient.post('/drone/statuses/archive', data);
-          const result = ReqResult.fromResponse<DroneStatusArchive>(response);
+          const apiResponse = await apiClient.post<{status: number; message: string; data: DroneStatusArchive}>('/drone/statuses/archive', data);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to create status archive');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to create status archive', { error, data });
           const tableError: TableError = {
@@ -586,14 +574,13 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateStatusArchiveRequest }): Promise<DroneStatusArchive> => {
         try {
-          const response = await apiClient.put(`/drone/statuses/archive/${id}`, data);
-          const result = ReqResult.fromResponse<DroneStatusArchive>(response);
+          const apiResponse = await apiClient.put<{status: number; message: string; data: DroneStatusArchive}>(`/drone/statuses/archive/${id}`, data);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to update status archive with ID: ${id}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to update status archive with ID: ${id}`, { error, data });
           const tableError: TableError = {
@@ -628,11 +615,10 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const response = await apiClient.delete(`/drone/statuses/archive/${id}`);
-          const result = ReqResult.fromResponse(response);
+          const apiResponse = await apiClient.delete<{status: number; message: string}>(`/drone/statuses/archive/${id}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to delete status archive with ID: ${id}`);
           }
         } catch (error: any) {
           logger.error(`Failed to delete status archive with ID: ${id}`, { error });

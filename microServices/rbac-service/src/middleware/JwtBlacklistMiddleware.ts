@@ -1,7 +1,7 @@
 /**
  * @fileoverview JWT 黑名單檢查中間件
  * 
- * 此中間件在 Kong JWT 驗證之後執行，檢查 token 是否在黑名單中
+ * 此中間件在 API Gateway JWT 驗證之後執行，檢查 token 是否在黑名單中
  * 如果 token 已被加入黑名單（如登出後），則拒絕請求
  * 
  * @author AIOT Team
@@ -33,8 +33,8 @@ export class JwtBlacklistMiddleware {
     /**
      * 檢查 JWT token 是否在黑名單中的中間件
      * 
-     * 此中間件應該在 Kong JWT 驗證之後執行，因為：
-     * 1. Kong 已經驗證了 token 的有效性和簽名
+     * 此中間件應該在 API Gateway JWT 驗證之後執行，因為：
+     * 1. API Gateway 已經驗證了 token 的有效性和簽名
      * 2. 我們只需要檢查 token 是否被主動撤銷（黑名單）
      * 
      * @param req Express 請求對象

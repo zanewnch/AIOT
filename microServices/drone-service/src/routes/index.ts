@@ -53,8 +53,8 @@ export class RouteManager {
             this.registerHealthRoutes(app);
             console.log('✅ Health routes registered');
 
-            // 註冊路由，符合 Kong strip_path 配置
-            // Kong: /api/drone → strip_path=true → 轉發到 / (去掉 /api/drone)
+            // 註冊路由，符合 API Gateway strip_path 配置
+            // API Gateway: /api/drone → strip_path=true → 轉發到 / (去掉 /api/drone)
             app.use('/archive-tasks', this.archiveTaskRoutes.getRouter());
             console.log('✅ Archive task routes registered at /archive-tasks');
 

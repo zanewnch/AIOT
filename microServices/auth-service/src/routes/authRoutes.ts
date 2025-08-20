@@ -17,7 +17,7 @@
 import { Router } from 'express';
 import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
-import { KongHeadersMiddleware } from '../middleware/KongHeadersMiddleware.js';
+import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
 import { JwtBlacklistMiddleware } from '../middleware/JwtBlacklistMiddleware.js';
 import { container } from '../container/container.js';
 import { TYPES } from '../container/types.js';
@@ -26,7 +26,7 @@ import { TYPES } from '../container/types.js';
  * 認證路由類別
  * 
  * 負責配置和管理所有認證相關的路由端點
- * 使用 Kong Headers 中間件來獲取用戶信息，由 Express.js Gateway 層進行認證和授權
+ * 使用 API Gateway Headers 中間件來獲取用戶信息，由 Express.js Gateway 層進行認證和授權
  */
 class AuthRoutes {
   private router: Router;
@@ -60,9 +60,9 @@ class AuthRoutes {
    * 設定認證路由 - RESTful 設計
    */
   private setupAuthRoutes = (): void => {
-    // 在開發環境中啟用 Kong headers 調試
+    // 在開發環境中啟用 API Gateway headers 調試
     if (process.env.NODE_ENV === 'development') {
-      this.router.use(KongHeadersMiddleware.debugHeaders);
+      this.router.use(ApiGatewayHeadersMiddleware.debugHeaders);
     }
     
     // POST /api/auth - 使用者登入 (不需要認證)
@@ -85,7 +85,7 @@ class AuthRoutes {
             });
           }
 
-          // 解析 JWT (不驗證簽名，因為 Kong 已經驗證過了)
+          // 解析 JWT (不驗證簽名，因為 API Gateway 已經驗證過了)
           const base64Payload = authToken.split('.')[1];
           const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString());
           
@@ -99,7 +99,7 @@ class AuthRoutes {
             level: 8,        // 若 payload 未提供則使用預設值
             sessionId: payload.session.session_id,
             isAuthenticated: true,
-            authMethod: 'kong-jwt'
+            authMethod: 'gateway-jwt'
           };
 
           res.json({
@@ -129,7 +129,7 @@ class AuthRoutes {
     // PUT /api/auth - 更新認證信息 (預留，需要 JWT 認證)
     this.router.put(this.ROUTES.AUTH,
       JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
-      KongHeadersMiddleware.extractUserInfo,
+      ApiGatewayHeadersMiddleware.extractUserInfo,
       (req, res, next) => {
         // TODO: 實現密碼變更等功能
         res.status(501).json({

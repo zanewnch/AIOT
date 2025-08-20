@@ -19,7 +19,7 @@ import type { IDronePositionsArchiveQueries } from '../types/controllers/queries
 import type { IDronePositionsArchiveCommands } from '../types/controllers/commands/IDronePositionsArchiveCommands.js';
 import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
-import { KongHeadersMiddleware } from '../middleware/KongHeadersMiddleware.js';
+import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
 
 /**
  * 無人機位置路由類別
@@ -54,36 +54,36 @@ export class DronePositionRoutes {
 
     /**
      * 設定查詢路由 (GET 操作)
-     * 使用 Kong Headers 中間件獲取用戶信息，由 Express.js Gateway 處理權限驗證
+     * 使用 API Gateway Headers 中間件獲取用戶信息，由 Express.js Gateway 處理權限驗證
      */
     private setupQueryRoutes(): void {
         // 獲取所有無人機位置 - 權限由 Express.js Gateway 處理
         this.router.get('/', 
-            KongHeadersMiddleware.extractUserInfo,
+            ApiGatewayHeadersMiddleware.extractUserInfo,
             (req, res, next) => this.dronePositionQueries.getAllDronePositions(req, res, next)
         );
 
-        // 根據無人機 ID 獲取最新位置 - 權限由 Kong + JWT 處理
+        // 根據無人機 ID 獲取最新位置 - 權限由 API Gateway + JWT 處理
         this.router.get('/latest/:droneId', 
-            KongHeadersMiddleware.extractUserInfo,
+            ApiGatewayHeadersMiddleware.extractUserInfo,
             (req, res, next) => this.dronePositionQueries.getLatestDronePosition(req, res, next)
         );
 
-        // 根據無人機 ID 獲取位置資料 - 權限由 Kong + JWT 處理
+        // 根據無人機 ID 獲取位置資料 - 權限由 API Gateway + JWT 處理
         this.router.get('/drone/:droneId', 
-            KongHeadersMiddleware.extractUserInfo,
+            ApiGatewayHeadersMiddleware.extractUserInfo,
             (req, res, next) => this.dronePositionQueries.getDronePositionsByDroneId(req, res, next)
         );
 
-        // 根據時間範圍獲取位置資料 - 權限由 Kong + JWT 處理
+        // 根據時間範圍獲取位置資料 - 權限由 API Gateway + JWT 處理
         this.router.get('/time-range', 
-            KongHeadersMiddleware.extractUserInfo,
+            ApiGatewayHeadersMiddleware.extractUserInfo,
             (req, res, next) => this.dronePositionQueries.getDronePositionsByTimeRange(req, res, next)
         );
 
-        // 根據 ID 獲取無人機位置 - 權限由 Kong + JWT 處理
+        // 根據 ID 獲取無人機位置 - 權限由 API Gateway + JWT 處理
         this.router.get('/:id', 
-            KongHeadersMiddleware.extractUserInfo,
+            ApiGatewayHeadersMiddleware.extractUserInfo,
             (req, res, next) => this.dronePositionQueries.getDronePositionById(req, res, next)
         );
     }

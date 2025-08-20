@@ -36,9 +36,9 @@ npm run dev
 docker-compose up docs-service
 ```
 
-### 通過 Kong Gateway 訪問
-- `http://localhost:8000/docs` - 通過 Kong 訪問文檔服務
-- `http://localhost:8000/` - 根路徑通過 Kong 訪問
+### 通過 API Gateway 訪問
+- `http://localhost:8000/docs` - 通過 API Gateway 訪問文檔服務
+- `http://localhost:8000/` - 根路徑通過 API Gateway 訪問
 
 ## 架構說明
 

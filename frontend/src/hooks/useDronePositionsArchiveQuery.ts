@@ -15,6 +15,7 @@ import {
   DronePositionArchive,
   CreatePositionArchiveRequest,
   BulkCreatePositionArchivesRequest,
+  UpdatePositionArchiveRequest,
   TimeRangeQuery,
   GeoBoundsQuery,
   TrajectoryQuery,
@@ -61,14 +62,13 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVES,
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const response = await apiClient.get('/drone/positions/archive');
-          const result = ReqResult.fromResponse<DronePositionArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive[]}>('/drone/positions/archive');
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch all position archives');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch all position archives', { error });
           const tableError: TableError = {
@@ -94,14 +94,13 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.LATEST_POSITION_ARCHIVES,
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const response = await apiClient.get('/drone/positions/archive');
-          const result = ReqResult.fromResponse<DronePositionArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive[]}>('/drone/positions/archive');
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to fetch latest position archives');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to fetch latest position archives', { error });
           const tableError: TableError = {
@@ -128,14 +127,13 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVE_BY_ID(id),
       queryFn: async (): Promise<DronePositionArchive> => {
         try {
-          const response = await apiClient.get(`/drone/positions/archive/${id}`);
-          const result = ReqResult.fromResponse<DronePositionArchive>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive}>(`/drone/positions/archive/${id}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch position archive with ID: ${id}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch position archive with ID: ${id}`, { error });
           const tableError: TableError = {
@@ -161,14 +159,13 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVES_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const response = await apiClient.get(`/drone/positions/archive/drone/${droneId}`);
-          const result = ReqResult.fromResponse<DronePositionArchive[]>(response);
+          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive[]}>(`/drone/positions/archive/drone/${droneId}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to fetch position archives for drone ID: ${droneId}`);
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error(`Failed to fetch position archives for drone ID: ${droneId}`, { error });
           const tableError: TableError = {
@@ -195,14 +192,13 @@ export class DronePositionsArchiveQuery {
     return useMutation({
       mutationFn: async (data: CreatePositionArchiveRequest): Promise<DronePositionArchive> => {
         try {
-          const response = await apiClient.post('/drone/positions/archive', data);
-          const result = ReqResult.fromResponse<DronePositionArchive>(response);
+          const apiResponse = await apiClient.post<{status: number; message: string; data: DronePositionArchive}>('/drone/positions/archive', data);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || 'Failed to create position archive');
           }
           
-          return result.unwrap();
+          return apiResponse.data;
         } catch (error: any) {
           logger.error('Failed to create position archive', { error, data });
           const tableError: TableError = {
@@ -225,6 +221,44 @@ export class DronePositionsArchiveQuery {
   }
 
   /**
+   * 更新位置歷史歸檔
+   */
+  useUpdate() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+      mutationFn: async ({ id, data }: { id: string; data: UpdatePositionArchiveRequest }): Promise<DronePositionArchive> => {
+        try {
+          const response = await apiClient.put<{status: number; message: string; data: DronePositionArchive}>(`/drone/positions/archive/${id}`, data);
+          
+          if (response.status !== 200) {
+            throw new Error(response.message || 'Failed to update position archive');
+          }
+          
+          return response.data;
+        } catch (error: any) {
+          logger.error(`Failed to update position archive with ID: ${id}`, { error, data });
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || `Failed to update position archive with ID: ${id}`,
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
+        }
+      },
+      onSuccess: (data, variables) => {
+        queryClient.setQueryData(
+          this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVE_BY_ID(variables.id),
+          data
+        );
+        queryClient.invalidateQueries({ queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVES });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.LATEST_POSITION_ARCHIVES });
+      },
+      retry: 2,
+    });
+  }
+
+  /**
    * 刪除位置歷史歸檔
    */
   useDelete() {
@@ -233,11 +267,10 @@ export class DronePositionsArchiveQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const response = await apiClient.delete(`/drone/positions/archive/${id}`);
-          const result = ReqResult.fromResponse(response);
+          const apiResponse = await apiClient.delete<{status: number; message: string}>(`/drone/positions/archive/${id}`);
           
-          if (result.isError()) {
-            throw new Error(result.message);
+          if (apiResponse.status !== 200) {
+            throw new Error(apiResponse.message || `Failed to delete position archive with ID: ${id}`);
           }
         } catch (error: any) {
           logger.error(`Failed to delete position archive with ID: ${id}`, { error });

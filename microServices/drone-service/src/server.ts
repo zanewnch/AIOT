@@ -3,7 +3,7 @@
 /**
  * @fileoverview Drone 服務 HTTP 伺服器啟動程式
  *
- * 此檔案負責啟動 Drone 服務的 HTTP 伺服器，用於與 Kong Gateway 通訊
+ * 此檔案負責啟動 Drone 服務的 HTTP 伺服器，用於與 API Gateway 通訊
  * 包括：
  * - 載入環境變數配置
  * - 創建 HTTP 伺服器實例

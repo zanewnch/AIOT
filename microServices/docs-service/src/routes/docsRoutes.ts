@@ -38,10 +38,10 @@ export class DocsRoutes {
     };
 
     // 先註冊精確匹配的路由
-    // 根路徑直接顯示主頁 (Kong會將 /docs 截掉，所以這裡是 /)
+    // 根路徑直接顯示主頁 (API Gateway會將 /docs 截掉，所以這裡是 /)
     this.router.get('/', DocsController.getHomepage);
     
-    // 也支援 /docs 路徑 (如果沒有通過Kong直接訪問)
+    // 也支援 /docs 路徑 (如果沒有通過API Gateway直接訪問)
     this.router.get('/docs', DocsController.getHomepage);
     
     // RBAC 路由重定向到實際的 API 端點

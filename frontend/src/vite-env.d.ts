@@ -32,18 +32,18 @@
  * @example
  * ```typescript
  * // 在元件中使用環境變數
- * const apiUrl = import.meta.env.VITE_API_URL;
- * console.log('API URL:', apiUrl);
+ * const apiUrl = import.meta.env.VITE_API_BASE_URL;
+ * console.log('API Base URL:', apiUrl);
  * ```
  */
 interface ImportMetaEnv {
   /** 
-   * API 服務網址
+   * API 基礎服務網址
    * 
-   * 定義後端 API 服務的完整網址，用於前端應用程式與後端服務的通訊。
-   * 這個變數應該在 .env 檔案中設定，例如：VITE_API_URL=https://api.example.com
+   * 定義後端 API 服務的基礎網址，用於前端應用程式與後端服務的通訊。
+   * 這個變數應該在 .env 檔案中設定，例如：VITE_API_BASE_URL=http://localhost:8000/api
    */
-  readonly VITE_API_URL: string
+  readonly VITE_API_BASE_URL: string
 }
 
 /**
@@ -57,7 +57,7 @@ interface ImportMetaEnv {
  * ```typescript
  * // TypeScript 現在能夠正確推斷 env 的類型
  * const env = import.meta.env; // 類型為 ImportMetaEnv
- * const apiUrl = env.VITE_API_URL; // 類型為 string
+ * const apiUrl = env.VITE_API_BASE_URL; // 類型為 string
  * ```
  */
 interface ImportMeta {

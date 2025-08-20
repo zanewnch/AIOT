@@ -669,6 +669,45 @@ export class DroneCommandQuery {
       }
     });
   }
+
+  /**
+   * 更新指令 - Mutation
+   */
+  useUpdate() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+      mutationFn: async ({ id, data }: { id: number; data: Partial<DroneCommand> }): Promise<DroneCommand> => {
+        try {
+          logger.debug(`Updating drone command with ID: ${id}`, data);
+          
+          const response = await apiClient.put(`/drone/commands/${id}`, data);
+          const result = ReqResult.fromResponse<DroneCommand>(response);
+          
+          if (result.isError()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully updated drone command with ID: ${id}`);
+          return result.unwrap();
+        } catch (error: any) {
+          logger.error(`Failed to update drone command with ID: ${id}:`, error);
+          
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Update failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.DRONE_COMMANDS });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMAND_QUERY_KEYS.LATEST_COMMANDS });
+      },
+      retry: 1,
+    });
+  }
 }
 
 // 創建單例實例
@@ -720,5 +759,8 @@ export const useExecuteCommand = () =>
 
 export const useCancelCommand = () => 
   droneCommandQuery.useCancelCommand();
+
+export const useUpdateDroneCommand = () => 
+  droneCommandQuery.useUpdate();
 
 export default droneCommandQuery;

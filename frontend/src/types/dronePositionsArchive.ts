@@ -35,6 +35,18 @@ export interface BulkCreatePositionArchivesRequest {
   archives: CreatePositionArchiveRequest[];
 }
 
+export interface UpdatePositionArchiveRequest {
+  droneId?: string;
+  latitude?: number;
+  longitude?: number;
+  altitude?: number;
+  heading?: number;
+  speed?: number;
+  batteryLevel?: number;
+  timestamp?: string;
+  batchId?: string;
+}
+
 export interface TimeRangeQuery {
   startTime: string;
   endTime: string;

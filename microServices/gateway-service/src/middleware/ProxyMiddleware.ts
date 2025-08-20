@@ -200,7 +200,7 @@ export class ProxyMiddleware {
                     'x-forwarded-for': req.ip,
                     'x-forwarded-proto': req.protocol,
                     'x-gateway-service': 'aiot-gateway',
-                    // 添加用戶信息 headers 給下游服務（Kong 格式）
+                    // 添加用戶信息 headers 給下游服務（API Gateway 格式）
                     ...(req.user && {
                         'x-consumer-id': req.user.id?.toString(),
                         'x-consumer-username': req.user.username,
@@ -279,7 +279,7 @@ export class ProxyMiddleware {
                     'x-forwarded-for': req.ip,
                     'x-forwarded-proto': req.protocol,
                     'x-gateway-service': 'aiot-gateway',
-                    // 添加用戶信息 headers 給下游服務（Kong 格式）
+                    // 添加用戶信息 headers 給下游服務（API Gateway 格式）
                     ...(req.user && {
                         'x-consumer-id': req.user.id?.toString(),
                         'x-consumer-username': req.user.username,

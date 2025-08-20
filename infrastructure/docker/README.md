@@ -4,7 +4,7 @@
 
 ### 🚀 主要配置
 - **`docker-compose.yml`** - 微服務架構配置（推薦使用）
-  - 包含 Kong Gateway + Consul 服務發現
+  - 包含 API Gateway + Consul 服務發現
   - 支援 RBAC、Drone、FeSetting 三個微服務
   - 包含完整的基礎設施服務（MySQL、MongoDB、Redis、RabbitMQ）
   - 支援監控服務（Prometheus、Grafana）
@@ -39,7 +39,7 @@ docker-compose up -d
 # 1. 啟動基礎設施
 ./manage-microservices.sh start-infra
 
-# 2. 啟動 Kong Gateway
+# 2. 啟動 API Gateway
 ./manage-microservices.sh start-gateway
 
 # 3. 啟動微服務
@@ -77,8 +77,8 @@ docker-compose up -d
 
 | 服務 | 端點 | 說明 |
 |------|------|------|
-| Kong Gateway | http://localhost:8000 | API 統一入口 |
-| Kong Admin | http://localhost:8001 | Kong 管理界面 |
+| API Gateway | http://localhost:8000 | API 統一入口 |
+| API Gateway Admin | http://localhost:8001 | API Gateway 管理界面 |
 | Consul UI | http://localhost:8500 | 服務發現界面 |
 | RBAC Service | http://localhost:3001 | 認證授權服務 |
 | Drone Service | http://localhost:3002 | 無人機管理服務 |
@@ -105,9 +105,9 @@ docker-compose up -d
 ./manage-microservices.sh logs [service-name]
 ```
 
-### Kong 配置問題
+### API Gateway 配置問題
 ```bash
-# 檢查 Kong 配置
+# 檢查 API Gateway 配置
 curl http://localhost:8001/
 
 # 重新加載配置

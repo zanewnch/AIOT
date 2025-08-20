@@ -335,6 +335,45 @@ export class DroneCommandArchiveQuery {
       refetchInterval: 30 * 1000, // 自動刷新每30秒
     });
   }
+
+  /**
+   * 更新指令歷史歸檔 - Mutation
+   */
+  useUpdate() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+      mutationFn: async ({ id, data }: { id: number; data: Partial<DroneCommandArchive> }): Promise<DroneCommandArchive> => {
+        try {
+          logger.debug(`Updating drone command archive with ID: ${id}`, data);
+          
+          const response = await apiClient.put(`/drone/commands-archive/${id}`, data);
+          const result = ReqResult.fromResponse<DroneCommandArchive>(response);
+          
+          if (!result.isSuccess()) {
+            throw new Error(result.message);
+          }
+          
+          logger.info(`Successfully updated drone command archive with ID: ${id}`);
+          return result.data!;
+        } catch (error: any) {
+          logger.error(`Failed to update drone command archive with ID: ${id}:`, error);
+          
+          const tableError: TableError = {
+            message: error.response?.data?.message || error.message || 'Update failed',
+            status: error.response?.status,
+            details: error.response?.data,
+          };
+          throw tableError;
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMANDS_ARCHIVE_QUERY_KEYS.DRONE_COMMANDS_ARCHIVE });
+        queryClient.invalidateQueries({ queryKey: this.DRONE_COMMANDS_ARCHIVE_QUERY_KEYS.DRONE_COMMANDS_ARCHIVE_LATEST });
+      },
+      retry: 1,
+    });
+  }
 }
 
 // 創建單例實例
@@ -356,5 +395,8 @@ export const useGetLatestCommandsArchive = (limit?: number) =>
 // NOTE: 暫時停用後端API調用，但保持導出以避免編譯錯誤
 export const useGetCommandsArchiveByTimeRange = (query: TimeRangeQuery) => 
   droneCommandArchiveQuery.useGetCommandsArchiveByTimeRange(query);
+
+export const useUpdateDroneCommandArchive = () => 
+  droneCommandArchiveQuery.useUpdate();
 
 export default droneCommandArchiveQuery;

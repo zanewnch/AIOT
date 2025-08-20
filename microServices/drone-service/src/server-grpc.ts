@@ -27,7 +27,7 @@ import http from 'http';
  *
  * 此類別負責管理 Drone 服務的雙協議伺服器生命週期，包括：
  * - gRPC 伺服器的啟動和關閉（微服務間通訊）
- * - HTTP 伺服器的啟動和關閉（Kong 通訊）
+ * - HTTP 伺服器的啟動和關閉（API Gateway 通訊）
  * - 資料庫連線管理
  * - RabbitMQ 連線管理
  * - 優雅關閉機制的實現
@@ -114,11 +114,11 @@ class Server {
             await this.httpApp.initialize();
             console.log('✅ HTTP application initialized');
 
-            // 啟動 HTTP 服務器（Kong 通訊）
+            // 啟動 HTTP 服務器（API Gateway 通訊）
             const httpPort = process.env.HTTP_PORT || 3052;
             this.httpServer = http.createServer(this.httpApp.app);
             this.httpServer.listen(httpPort, '0.0.0.0', () => {
-                console.log(`🌐 Drone HTTP server ready on port ${httpPort} (Kong communication)`);
+                console.log(`🌐 Drone HTTP server ready on port ${httpPort} (API Gateway communication)`);
             });
 
             // 啟動 gRPC 服務器（微服務間通訊）

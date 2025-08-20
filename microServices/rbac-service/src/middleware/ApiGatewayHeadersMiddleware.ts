@@ -1,10 +1,10 @@
 /**
- * @fileoverview Kong Headers 中間件
+ * @fileoverview API Gateway Headers 中間件
  * 
- * 此中間件從 Kong Gateway 傳遞的 headers 中提取用戶信息，
+ * 此中間件從 API Gateway 傳遞的 headers 中提取用戶信息，
  * 替代原本的 JWT 認證中間件。Express.js Gateway 已經完成了認證和授權檢查。
  * 
- * @module KongHeadersMiddleware
+ * @module ApiGatewayHeadersMiddleware
  * @author AIOT Team
  * @version 1.0.0
  */
@@ -12,12 +12,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { createLogger } from '../configs/loggerConfig.js';
 
-const logger = createLogger('KongHeadersMiddleware');
+const logger = createLogger('ApiGatewayHeadersMiddleware');
 
 /**
- * 從 Kong headers 提取的用戶信息介面
+ * 從 API Gateway headers 提取的用戶信息介面
  */
-export interface KongUserInfo {
+export interface ApiGatewayUserInfo {
   id: string;
   username: string;
   roles: string[];
@@ -29,26 +29,26 @@ export interface KongUserInfo {
 }
 
 /**
- * 擴展 Express Request 介面以包含 Kong 用戶信息
+ * 擴展 Express Request 介面以包含 API Gateway 用戶信息
  */
 declare global {
   namespace Express {
     interface Request {
-      kongUser?: KongUserInfo;
-      user?: KongUserInfo; // 保持向後兼容
+      gatewayUser?: ApiGatewayUserInfo;
+      user?: ApiGatewayUserInfo; // 保持向後兼容
     }
   }
 }
 
 /**
- * Kong Headers 中間件類別
+ * API Gateway Headers 中間件類別
  */
-export class KongHeadersMiddleware {
+export class ApiGatewayHeadersMiddleware {
   
   /**
-   * Kong 設置的標準 headers
+   * API Gateway 設置的標準 headers
    */
-  private static readonly KONG_HEADERS = {
+  private static readonly GATEWAY_HEADERS = {
     USER_ID: 'x-user-id',
     USERNAME: 'x-username', 
     ROLES: 'x-user-roles',
@@ -70,19 +70,19 @@ export class KongHeadersMiddleware {
         return next();
       }
 
-      // 從 Kong headers 提取用戶信息
-      const userId = req.headers[KongHeadersMiddleware.KONG_HEADERS.USER_ID] as string;
-      const username = req.headers[KongHeadersMiddleware.KONG_HEADERS.USERNAME] as string;
-      const rolesHeader = req.headers[KongHeadersMiddleware.KONG_HEADERS.ROLES] as string;
-      const permissionsHeader = req.headers[KongHeadersMiddleware.KONG_HEADERS.PERMISSIONS] as string;
-      const departmentId = req.headers[KongHeadersMiddleware.KONG_HEADERS.DEPARTMENT_ID] as string;
-      const level = req.headers[KongHeadersMiddleware.KONG_HEADERS.LEVEL] as string;
-      const sessionId = req.headers[KongHeadersMiddleware.KONG_HEADERS.SESSION_ID] as string;
-      const authMethod = req.headers[KongHeadersMiddleware.KONG_HEADERS.AUTH_METHOD] as string;
+      // 從 API Gateway headers 提取用戶信息
+      const userId = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.USER_ID] as string;
+      const username = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.USERNAME] as string;
+      const rolesHeader = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.ROLES] as string;
+      const permissionsHeader = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.PERMISSIONS] as string;
+      const departmentId = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.DEPARTMENT_ID] as string;
+      const level = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.LEVEL] as string;
+      const sessionId = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.SESSION_ID] as string;
+      const authMethod = req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.AUTH_METHOD] as string;
 
       // 檢查必要的用戶信息是否存在
       if (!userId || !username) {
-        logger.warn('Missing required user headers from Kong', { 
+        logger.warn('Missing required user headers from API Gateway', { 
           path: req.path,
           method: req.method,
           headers: {
@@ -104,7 +104,7 @@ export class KongHeadersMiddleware {
       const permissions = permissionsHeader ? permissionsHeader.split(',').map(p => p.trim()) : [];
 
       // 構建用戶信息對象
-      const kongUser: KongUserInfo = {
+      const gatewayUser: ApiGatewayUserInfo = {
         id: userId,
         username: username,
         roles: roles,
@@ -112,26 +112,26 @@ export class KongHeadersMiddleware {
         departmentId: departmentId ? parseInt(departmentId, 10) : 1,
         level: level ? parseInt(level, 10) : 1,
         sessionId: sessionId,
-        ipAddress: req.ip || req.headers[KongHeadersMiddleware.KONG_HEADERS.IP_ADDRESS] as string
+        ipAddress: req.ip || req.headers[ApiGatewayHeadersMiddleware.GATEWAY_HEADERS.IP_ADDRESS] as string
       };
 
       // 將用戶信息添加到 request 對象
-      req.kongUser = kongUser;
-      req.user = kongUser; // 保持向後兼容
+      req.gatewayUser = gatewayUser;
+      req.user = gatewayUser; // 保持向後兼容
 
-      logger.debug('User info extracted from Kong headers', {
-        userId: kongUser.id,
-        username: kongUser.username,
-        roles: kongUser.roles,
-        permissionCount: kongUser.permissions.length,
-        departmentId: kongUser.departmentId,
-        level: kongUser.level,
+      logger.debug('User info extracted from API Gateway headers', {
+        userId: gatewayUser.id,
+        username: gatewayUser.username,
+        roles: gatewayUser.roles,
+        permissionCount: gatewayUser.permissions.length,
+        departmentId: gatewayUser.departmentId,
+        level: gatewayUser.level,
         authMethod
       });
 
       next();
     } catch (error) {
-      logger.error('Error extracting user info from Kong headers:', error);
+      logger.error('Error extracting user info from API Gateway headers:', error);
       
       res.status(500).json({
         status: 500,
@@ -147,7 +147,7 @@ export class KongHeadersMiddleware {
   public static requirePermission = (requiredPermission: string) => {
     return (req: Request, res: Response, next: NextFunction): void => {
       try {
-        const user = req.kongUser || req.user;
+        const user = req.gatewayUser || req.user;
         
         if (!user) {
           logger.warn('Permission check failed - no user info', { 
@@ -212,7 +212,7 @@ export class KongHeadersMiddleware {
     
     return (req: Request, res: Response, next: NextFunction): void => {
       try {
-        const user = req.kongUser || req.user;
+        const user = req.gatewayUser || req.user;
         
         if (!user) {
           return res.status(401).json({
@@ -264,20 +264,20 @@ export class KongHeadersMiddleware {
   };
 
   /**
-   * 記錄 Kong headers 的調試中間件
+   * 記錄 API Gateway headers 的調試中間件
    */
   public static debugHeaders = (req: Request, res: Response, next: NextFunction): void => {
     if (process.env.NODE_ENV === 'development') {
-      const kongHeaders: Record<string, any> = {};
+      const gatewayHeaders: Record<string, any> = {};
       
-      Object.values(KongHeadersMiddleware.KONG_HEADERS).forEach(header => {
-        kongHeaders[header] = req.headers[header];
+      Object.values(ApiGatewayHeadersMiddleware.GATEWAY_HEADERS).forEach(header => {
+        gatewayHeaders[header] = req.headers[header];
       });
       
-      logger.debug('Kong headers received', {
+      logger.debug('API Gateway headers received', {
         path: req.path,
         method: req.method,
-        kongHeaders
+        gatewayHeaders
       });
     }
     

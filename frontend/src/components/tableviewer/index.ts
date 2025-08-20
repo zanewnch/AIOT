@@ -1,58 +1,43 @@
 /**
- * @fileoverview 表格視圖組件索引文件
+ * @fileoverview 統一表格視圖組件索引文件
  * 
- * 此文件提供表格視圖組件的統一導出，包括：
- * - RTK 表格視圖組件
- * - 權限表格視圖組件
- * - 角色表格視圖組件
- * - 用戶表格視圖組件
- * - 角色權限關聯表格視圖組件
- * - 用戶角色關聯表格視圖組件
- * - 歸檔任務表格視圖組件
- * - 無人機指令表格視圖組件
- * - 無人機指令歷史歸檔表格視圖組件
- * - 無人機位置歷史歸檔表格視圖組件
- * - 無人機狀態歷史歸檔表格視圖組件
- * - 無人機狀態表格視圖組件
- * - 使用者偏好設定表格視圖組件
+ * 此文件提供重構後的統一表格視圖組件導出，包括：
+ * - 統一的 TableViewer 容器組件
+ * - 配置驅動的 GenericTableViewer 組件
+ * - 表格配置文件
  * 
- * 此文件作為模組的入口點，簡化了其他組件的導入操作。
+ * 重構後的架構特點：
+ * - 配置驅動：所有表格通過配置文件統一管理
+ * - 統一邏輯：共用數據載入、排序、編輯等邏輯
+ * - 懶加載支援：歸檔表格組件按需載入
+ * - 更少代碼：移除了 15+ 個單獨的表格組件
  * 
  * @author AIOT 開發團隊
  * @since 2024-01-01
+ * @version 2.0.0 - 統一表格架構重構版本
  */
 
+// 導出主要的表格視圖容器組件
+export { TableViewer } from './TableViewer';
 
-// 導出權限表格視圖組件 - 提供權限管理的表格視圖
-export { PermissionTableView } from './PermissionTableView';
+// 導出通用表格視圖組件（供高階使用）
+export { GenericTableViewer } from './GenericTableViewer';
 
-// 導出角色表格視圖組件 - 提供角色管理的表格視圖
-export { RoleTableView } from './RoleTableView';
-
-// 導出用戶表格視圖組件 - 提供用戶管理的表格視圖
-export { UserTableView } from './UserTableView';
-
-// 導出角色權限關聯表格視圖組件 - 提供角色與權限關聯關係的表格視圖
-export { RoleToPermissionTableView } from './RoleToPermissionTableView';
-
-// 導出用戶角色關聯表格視圖組件 - 提供用戶與角色關聯關係的表格視圖
-export { UserToRoleTableView } from './UserToRoleTableView';
-
-// 導出無人機指令表格視圖組件 - 提供無人機指令管理的表格視圖
-export { DroneCommandTableView } from './DroneCommandTableView';
-
-// 注意：以下組件使用懶加載方式，不在此處靜態導出以避免代碼分割衝突：
-// - ArchiveTaskTableView（在 TableViewer.tsx 中懶加載）
-// - DroneCommandsArchiveTableView（在 TableViewer.tsx 中懶加載）
-// - DronePositionsArchiveTableView（在 TableViewer.tsx 中懶加載）
-// - DroneStatusArchiveTableView（在 TableViewer.tsx 中懶加載）
-
-// 導出無人機位置表格視圖組件 - 提供無人機位置管理的表格視圖
-export { DronePositionTableView } from './DronePositionTableView';
-
-// 導出無人機狀態表格視圖組件 - 提供無人機狀態管理的表格視圖
-export { DroneStatusTableView } from './DroneStatusTableView';
-
-
-// 導出使用者偏好設定表格視圖組件 - 提供使用者偏好設定的表格視圖
-export { UserPreferenceTableView } from './UserPreferenceTableView';
+// 注意：以下個別表格組件已被統一的配置驅動架構取代：
+// 
+// 原有組件 -> 新架構對應
+// PermissionTableView -> TableViewer + permission 配置
+// RoleTableView -> TableViewer + role 配置
+// UserTableView -> TableViewer + user 配置
+// RoleToPermissionTableView -> TableViewer + roletopermission 配置
+// UserToRoleTableView -> TableViewer + usertorole 配置
+// DronePositionTableView -> TableViewer + DronePosition 配置
+// DroneStatusTableView -> TableViewer + DroneStatus 配置
+// DroneCommandTableView -> TableViewer + DroneCommand 配置
+// UserPreferenceTableView -> TableViewer + UserPreference 配置
+// ArchiveTaskTableView -> TableViewer + ArchiveTask 配置（懶加載）
+// DronePositionsArchiveTableView -> TableViewer + DronePositionsArchive 配置（懶加載）
+// DroneStatusArchiveTableView -> TableViewer + DroneStatusArchive 配置（懶加載）
+// DroneCommandsArchiveTableView -> TableViewer + DroneCommandsArchive 配置（懶加載）
+//
+// 所有表格現在通過統一的 TableViewer 組件和 tableConfigs.ts 配置文件管理

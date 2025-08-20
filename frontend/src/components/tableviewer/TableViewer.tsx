@@ -1,68 +1,28 @@
 /**
- * @fileoverview 表格視圖容器組件
+ * @fileoverview 統一表格視圖容器組件
  *
- * 此組件提供表格視圖的容器功能，包括：
+ * 此組件提供配置驅動的表格視圖功能，包括：
  * - 表格切換標籤管理
- * - 各個子表格組件的協調
+ * - 統一的表格渲染邏輯
+ * - 懶加載支援
  * - 統一的表格標題和記錄數量顯示
- * - 通知系統整合
- * - 表格數據長度計算
+ * - 配置驅動的表格管理
  *
  * @author AIOT 開發團隊
  * @since 2024-01-01
  */
 
-import React, { useRef, useEffect, useCallback, Suspense, lazy } from "react"; // 引入 React
-import clsx from "clsx"; // 引入 clsx 用於條件性類名處理
-import { useTableUIStore, TableType } from "../../stores"; // 引入 Zustand stores 和類型
-import LoadingSpinner from "../common/LoadingSpinner"; // 引入 Loading 組件
-
-// 🚀 立即加載的核心表格組件（高頻使用）
-import {
-  PermissionTableView, // 權限表格視圖組件
-  RoleTableView, // 角色表格視圖組件
-  UserTableView, // 用戶表格視圖組件
-  RoleToPermissionTableView, // 角色權限關聯表格視圖組件
-  UserToRoleTableView, // 用戶角色關聯表格視圖組件
-  DroneCommandTableView, // 無人機指令表格視圖組件
-  DronePositionTableView, // 無人機位置表格視圖組件
-  DroneStatusTableView, // 無人機狀態表格視圖組件
-  UserPreferenceTableView, // 使用者偏好設定表格視圖組件
-} from "."; // 引入表格組件
-
-// 🔄 懶加載的歸檔表格組件（低頻使用）
-const ArchiveTaskTableView = lazy(() => 
-  import("./ArchiveTaskTableView").then(module => ({
-    default: module.ArchiveTaskTableView
-  }))
-);
-
-const DroneCommandsArchiveTableView = lazy(() => 
-  import("./DroneCommandsArchiveTableView").then(module => ({
-    default: module.DroneCommandsArchiveTableView
-  }))
-);
-
-const DronePositionsArchiveTableView = lazy(() => 
-  import("./DronePositionsArchiveTableView").then(module => ({
-    default: module.DronePositionsArchiveTableView
-  }))
-);
-
-const DroneStatusArchiveTableView = lazy(() => 
-  import("./DroneStatusArchiveTableView").then(module => ({
-    default: module.DroneStatusArchiveTableView
-  }))
-);
-import styles from "../../styles/TableViewer.module.scss"; // 引入表格樣式
-import { createLogger } from "../../configs/loggerConfig"; // 引入日誌配置
+import React, { useRef, useEffect, useCallback, Suspense } from "react";
+import clsx from "clsx";
+import { useTableUIStore, TableType } from "../../stores";
+import LoadingSpinner from "../common/LoadingSpinner";
+import { GenericTableViewer } from "./GenericTableViewer";
+import { getTableConfig, getAllTableConfigs } from "../../configs/tableConfigs";
+import styles from "../../styles/TableViewer.module.scss";
+import { createLogger } from "../../configs/loggerConfig";
 
 /**
  * 表格視圖容器組件的屬性介面
- *
- * 定義表格視圖容器組件可接受的屬性
- *
- * @interface TableViewerProps
  */
 interface TableViewerProps {
   /** 可選的自定義 CSS 類名，用於自定義外觀樣式 */
@@ -70,73 +30,14 @@ interface TableViewerProps {
 }
 
 /**
- * 表格類型常量定義
- * 
- * 定義系統中所有可用的表格類型標識符，用於統一管理和切換不同的表格視圖
- * 
- * @const
- */
-const TABLE_TYPES = {
-  PERMISSION: "permission",
-  ROLE: "role",
-  ROLE_TO_PERMISSION: "roletopermission",
-  USER: "user",
-  USER_TO_ROLE: "usertorole",
-  DRONE_POSITION: "DronePosition",
-  DRONE_STATUS: "DroneStatus",
-  DRONE_COMMAND: "DroneCommand",
-  DRONE_POSITIONS_ARCHIVE: "DronePositionsArchive",
-  DRONE_STATUS_ARCHIVE: "DroneStatusArchive",
-  DRONE_COMMANDS_ARCHIVE: "DroneCommandsArchive",
-  ARCHIVE_TASK: "ArchiveTask",
-  USER_PREFERENCE: "UserPreference",
-} as const;
-
-/**
- * 表格配置陣列
- *
- * 定義每個表格的顯示標題和視圖名稱，用於標籤切換和標題顯示。
- * 使用陣列結構提供更好的可讀性和維護性，支援動態渲染和順序管理
- * 
- * @type {Array<{viewName: string, title: string}>}
- * @readonly
- */
-const viewItems = [
-  { viewName: TABLE_TYPES.PERMISSION, title: "Permission Table" }, // 權限表格配置
-  { viewName: TABLE_TYPES.ROLE, title: "Role Table" }, // 角色表格配置
-  {
-    viewName: TABLE_TYPES.ROLE_TO_PERMISSION,
-    title: "Role to Permission Table",
-  }, // 角色權限關聯表格配置
-  { viewName: TABLE_TYPES.USER, title: "User Table" }, // 用戶表格配置
-  { viewName: TABLE_TYPES.USER_TO_ROLE, title: "User to Role Table" }, // 用戶角色關聯表格配置
-  { viewName: TABLE_TYPES.DRONE_POSITION, title: "Drone Position Table" }, // 無人機位置表格配置
-  { viewName: TABLE_TYPES.DRONE_STATUS, title: "Drone Status Table" }, // 無人機狀態表格配置
-  { viewName: TABLE_TYPES.DRONE_COMMAND, title: "Drone Command Table" }, // 無人機命令表格配置
-  {
-    viewName: TABLE_TYPES.DRONE_POSITIONS_ARCHIVE,
-    title: "Drone Positions Archive Table",
-  }, // 無人機位置歸檔表格配置
-  {
-    viewName: TABLE_TYPES.DRONE_STATUS_ARCHIVE,
-    title: "Drone Status Archive Table",
-  }, // 無人機狀態歸檔表格配置
-  {
-    viewName: TABLE_TYPES.DRONE_COMMANDS_ARCHIVE,
-    title: "Drone Commands Archive Table",
-  }, // 無人機命令歸檔表格配置
-  { viewName: TABLE_TYPES.ARCHIVE_TASK, title: "Archive Task Table" }, // 歸檔任務表格配置
-  { viewName: TABLE_TYPES.USER_PREFERENCE, title: "User Preference Table" }, // 用戶偏好表格配置
-];
-
-/**
  * TableViewer 組件專用的日誌記錄器
- * 
- * 用於記錄表格切換、用戶互動等重要操作的日誌資訊
- * 
- * @const
  */
 const logger = createLogger("TableViewer");
+
+/**
+ * 獲取表格配置列表（從配置文件）
+ */
+const viewItems = getAllTableConfigs();
 
 /**
  * 表格視圖容器組件
@@ -355,15 +256,16 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
    * @returns 對應的表格組件 JSX 元素
    */
   const renderCurrentTable = () => {
+    const config = getTableConfig(activeTable);
+    
+    if (!config) {
+      return <div className={styles.noData}>No table configuration found</div>;
+    }
+
     /**
      * 渲染懶加載表格組件
-     * 
-     * 使用 Suspense 包裝懶加載組件，提供加載狀態和錯誤邊界處理
-     * 
-     * @param Component - 懶加載的 React 組件
-     * @returns 包裝後的 JSX 元素
      */
-    const renderLazyTable = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+    const renderLazyTable = (config: any) => (
       <Suspense 
         fallback={
           <div className={styles.tableLoadingContainer}>
@@ -372,44 +274,17 @@ export const TableViewer: React.FC<TableViewerProps> = ({ className }) => {
           </div>
         }
       >
-        <Component />
+        <GenericTableViewer config={config} />
       </Suspense>
     );
 
-    switch (activeTable) {
-      // 🚀 立即加載的核心表格（高頻使用）
-      case TABLE_TYPES.PERMISSION:
-        return <PermissionTableView />; // 渲染權限表格視圖
-      case TABLE_TYPES.ROLE:
-        return <RoleTableView />; // 渲染角色表格視圖
-      case TABLE_TYPES.USER:
-        return <UserTableView />; // 渲染用戶表格視圖
-      case TABLE_TYPES.ROLE_TO_PERMISSION:
-        return <RoleToPermissionTableView />; // 渲染角色權限關聯表格視圖
-      case TABLE_TYPES.USER_TO_ROLE:
-        return <UserToRoleTableView />; // 渲染用戶角色關聯表格視圖
-      case TABLE_TYPES.DRONE_POSITION:
-        return <DronePositionTableView />; // 渲染無人機位置表格視圖
-      case TABLE_TYPES.DRONE_STATUS:
-        return <DroneStatusTableView />; // 渲染無人機狀態表格視圖
-      case TABLE_TYPES.DRONE_COMMAND:
-        return <DroneCommandTableView />; // 渲染無人機命令表格視圖
-      case TABLE_TYPES.USER_PREFERENCE:
-        return <UserPreferenceTableView />; // 渲染用戶偏好表格視圖
-      
-      // 🔄 懶加載的歸檔表格組件（低頻使用）
-      case TABLE_TYPES.DRONE_POSITIONS_ARCHIVE:
-        return renderLazyTable(DronePositionsArchiveTableView); // 懶加載無人機位置歸檔表格視圖
-      case TABLE_TYPES.DRONE_STATUS_ARCHIVE:
-        return renderLazyTable(DroneStatusArchiveTableView); // 懶加載無人機狀態歸檔表格視圖
-      case TABLE_TYPES.DRONE_COMMANDS_ARCHIVE:
-        return renderLazyTable(DroneCommandsArchiveTableView); // 懶加載無人機命令歸檔表格視圖
-      case TABLE_TYPES.ARCHIVE_TASK:
-        return renderLazyTable(ArchiveTaskTableView); // 懶加載歸檔任務表格視圖
-        
-      default:
-        return <div className={styles.noData}>No table selected</div>; // 無選中表格時的提示
+    // 如果是懶加載表格，使用 Suspense 包裝
+    if (config.isLazy) {
+      return renderLazyTable(config);
     }
+
+    // 否則直接渲染
+    return <GenericTableViewer config={config} />;
   };
 
   // 計算當前表格的索引位置

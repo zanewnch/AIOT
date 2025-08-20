@@ -44,7 +44,7 @@ export const createApp = (): express.Application => {
   // 
   // 安全性說明：
   // 這個服務只提供靜態文檔，沒有敏感數據，所以採用寬鬆的 CORS 政策
-  // 在生產環境中，Kong Gateway 會提供額外的安全層級控制
+  // 在生產環境中，API Gateway 會提供額外的安全層級控制
   app.use(cors(config.cors));
 
   // ==============================================

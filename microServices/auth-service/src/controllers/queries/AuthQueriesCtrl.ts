@@ -2,7 +2,7 @@
  * @fileoverview AuthQueries 控制器 - 檔案層級意圖說明
  *
  * 目的：此控制器負責提供認證相關的只讀 HTTP 端點（CQRS 查詢端）。
- * - 從 Kong 或 Gateway header 取得最小化的使用者資訊
+ * - 從 API Gateway 或 Gateway header 取得最小化的使用者資訊
  * - 必要時委派 `AuthQueriesSvc` 取得資料庫中更完整的使用者資料
  * - 回傳統一的 `ResResult` 格式給前端或 Gateway
  *
@@ -25,7 +25,7 @@ const logger = createLogger('AuthQueries'); // 建立 logger 實例，標記為 
  *
  * @remarks
  * 這個類別只提供查詢 (read-only) 相關的 HTTP 端點，遵循 CQRS 的查詢端職責。
- * 控制器從 Kong 或 Gateway 的 headers 取得使用者資訊，並委派給注入的
+ * 控制器從 API Gateway 或 Gateway 的 headers 取得使用者資訊，並委派給注入的
  * `AuthQueriesSvc` 取得補充資料。此類別適合用於 TypeDoc 產生的 API 文件。
  *
  * @public
@@ -38,13 +38,13 @@ export class AuthQueries {
     } // 建構子: DI 注入完成後無其他動作
 
     /**
-     * 獲取當前使用者資訊 - 使用 Kong Headers
+     * 獲取當前使用者資訊 - 使用 API Gateway Headers
      *
      * @remarks
-     * 優先使用 `req.kongUser`，否則回落到 `req.user`。若需要會呼叫
+     * 優先使用 `req.gatewayUser`，否則回落到 `req.user`。若需要會呼叫
      * `authQueriesSvc.getUserDetails` 以取得更多資料並合併回傳。
      *
-     * @param req - Express 請求物件，應含有 `kongUser` 或 `user` 資訊
+     * @param req - Express 請求物件，應含有 `gatewayUser` 或 `user` 資訊
      * @param res - Express 回應物件
      * @param next - Express 下一個中介函式
      * @returns Promise<void>
@@ -53,11 +53,11 @@ export class AuthQueries {
         try { // 錯誤處理區塊開始
             logRequest(req, 'Get current user info request', 'info'); // 記錄此請求的基本資訊
 
-            // 從 Kong headers 獲取用戶信息（由 KongHeadersMiddleware 或 JwtMiddleware 設置）
-            const user: any = (req as any).kongUser || (req as any).user; // 優先使用 kongUser，否則回落到 req.user
+            // 從 API Gateway headers 獲取用戶信息（由 ApiGatewayHeadersMiddleware 或 JwtMiddleware 設置）
+            const user: any = (req as any).gatewayUser || (req as any).user; // 優先使用 gatewayUser，否則回落到 req.user
 
             if (!user) { // 若沒有使用者資訊，則回傳未授權
-                logger.warn(`User info request failed: No user info from Kong headers, IP: ${req.ip}`); // 紀錄警告
+                logger.warn(`User info request failed: No user info from API Gateway headers, IP: ${req.ip}`); // 紀錄警告
                 const response = ResResult.unauthorized('User information not available'); // 組出未授權回應
                 res.status(response.status).json(response.toJSON()); // 傳回 JSON 格式回應
                 return; // 終止流程
@@ -115,11 +115,11 @@ export class AuthQueries {
         try { // 錯誤處理開始
             logRequest(req, 'Authentication check request', 'info'); // 記錄請求
 
-            // 從 Kong headers 獲取用戶信息
-            const user: any = (req as any).kongUser || (req as any).user; // 同樣優先 kongUser
+            // 從 API Gateway headers 獲取用戶信息
+            const user: any = (req as any).gatewayUser || (req as any).user; // 同樣優先 gatewayUser
 
             if (!user) { // 如果沒有使用者資訊
-                logger.warn(`Authentication check failed: No user info from Kong headers, IP: ${req.ip}`); // 紀錄警告
+                logger.warn(`Authentication check failed: No user info from API Gateway headers, IP: ${req.ip}`); // 紀錄警告
                 const response = ResResult.unauthorized('Authentication required'); // 回傳未授權
                 res.status(response.status).json(response.toJSON()); // 傳回回應
                 return; // 終止
@@ -140,7 +140,7 @@ export class AuthQueries {
                 session: { // 會話相關資訊
                     sessionId: user.sessionId, // 會話 ID
                     ipAddress: user.ipAddress, // 用戶 IP
-                    authMethod: 'kong-opa' // 來源註記
+                    authMethod: 'gateway-opa' // 來源註記
                 }
             });
             res.status(response.status).json(response.toJSON()); // 傳回 JSON 結果
@@ -165,7 +165,7 @@ export class AuthQueries {
         try { // 錯誤處理開始
             logRequest(req, 'Get user permissions request', 'info'); // 記錄請求資訊
 
-            const user: any = (req as any).kongUser || (req as any).user; // 取得使用者物件
+            const user: any = (req as any).gatewayUser || (req as any).user; // 取得使用者物件
 
             if (!user) { // 若無使用者資訊則回傳未授權
                 const response = ResResult.unauthorized('Authentication required'); // 組建未授權回應

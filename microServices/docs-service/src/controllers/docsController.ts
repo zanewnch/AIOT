@@ -177,8 +177,8 @@ export class DocsController {
       // 從 ConfigMap 讀取配置檔案
       const configPath = '/app/configs';
       const configs = {
-        kongMainConfig: readConfigFile(path.join(configPath, 'kong-main.yaml')),
-        kongK8sConfig: readConfigFile(path.join(configPath, 'kong-k8s.yaml')),
+        gatewayMainConfig: readConfigFile(path.join(configPath, 'gateway-main.yaml')),
+        gatewayK8sConfig: readConfigFile(path.join(configPath, 'gateway-k8s.yaml')),
         consulMainConfig: readConfigFile(path.join(configPath, 'consul-main.json')),
         consulK8sConfig: readConfigFile(path.join(configPath, 'consul-k8s.yaml')),
         consulRbacConfig: readConfigFile(path.join(configPath, 'consul-rbac-service.json')),

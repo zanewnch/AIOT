@@ -65,7 +65,7 @@
 
 當啟動微服務架構後，可以通過以下端點訪問各個服務：
 
-- 🌐 **Kong Gateway (API 入口)**: http://localhost:8000
+- 🌐 **API Gateway (API 入口)**: http://localhost:8000
 - 🏛️ **Consul UI (服務發現)**: http://localhost:8500
 - 🔐 **RBAC Service (認證授權)**: http://localhost:3001
 - 🚁 **Drone Service (無人機管理)**: http://localhost:3002

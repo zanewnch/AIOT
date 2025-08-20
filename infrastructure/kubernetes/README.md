@@ -139,7 +139,7 @@ kubectl apply -f microservices/
 ### 網路配置
 
 - **內部通訊**：通過 Kubernetes 內建 DNS (`<service-name>.aiot.svc.cluster.local`)
-- **外部訪問**：通過 NodePort (Kong Gateway: 30000, Kong Admin: 30001)
+- **外部訪問**：通過 NodePort (API Gateway: 30000, API Gateway Admin: 30001)
 
 ## 🌐 訪問服務
 
@@ -149,7 +149,7 @@ kubectl apply -f microservices/
 # API Gateway (主要入口)
 curl http://localhost:30000
 
-# Kong Admin API
+# API Gateway Admin API
 curl http://localhost:30001
 ```
 
@@ -271,7 +271,7 @@ sudo rm -rf /mnt/k8s-storage/aiot/
 
 - [Kubernetes 官方文檔](https://kubernetes.io/docs/)
 - [Docker Compose vs Kubernetes](https://kubernetes.io/docs/concepts/workloads/)
-- [Kong Gateway on Kubernetes](https://docs.konghq.com/kubernetes-ingress-controller/)
+- [API Gateway on Kubernetes](https://docs.konghq.com/kubernetes-ingress-controller/)
 - [OPA on Kubernetes](https://www.openpolicyagent.org/docs/latest/kubernetes-introduction/)
 
 ## 🤝 貢獻

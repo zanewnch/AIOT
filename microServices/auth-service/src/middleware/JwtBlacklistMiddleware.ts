@@ -2,7 +2,7 @@
  * @fileoverview JWT 黑名單中間件 - 檔案層級意圖說明
  * 
  * 目的：此中間件提供 JWT token 黑名單檢查功能，用於管理已被撤銷或禁用的 token。
- * 在 Kong JWT 驗證之後執行，確保即使 token 簽名正確，也會被禁止使用。
+ * 在 API Gateway JWT 驗證之後執行，確保即使 token 簽名正確，也會被禁止使用。
  * 
  * **主要功能：**
  * - JWT token 黑名單檢查和驗證
@@ -17,7 +17,7 @@
  * - 自動清理過期的黑名單項目
  * 
  * **整合說明：**
- * 此中間件應在 Kong API Gateway 的 JWT 驗證之後使用，
+ * 此中間件應在 API Gateway 的 JWT 驗證之後使用，
  * 形成雙重安全檢查機制：第一層是簽名驗證，第二層是黑名單檢查。
  * 
  * @version 1.0.0
@@ -56,8 +56,8 @@ export class JwtBlacklistMiddleware {
     /**
      * 檢查 JWT token 是否在黑名單中的中間件
      * 
-     * 此中間件應該在 Kong JWT 驗證之後執行，因為：
-     * 1. Kong 已經驗證了 token 的有效性和簽名
+     * 此中間件應該在 API Gateway JWT 驗證之後執行，因為：
+     * 1. API Gateway 已經驗證了 token 的有效性和簽名
      * 2. 我們只需要檢查 token 是否被主動撤銷（黑名單）
      * 
      * @param req Express 請求對象
@@ -67,7 +67,7 @@ export class JwtBlacklistMiddleware {
     /**
      * 檢查 JWT token 是否在黑名單中的中間件
      *
-     * 此中間件應在 Kong JWT 驗證之後執行；若 token 在黑名單中，則回傳 401。
+     * 此中間件應在 API Gateway JWT 驗證之後執行；若 token 在黑名單中，則回傳 401。
      */
     static checkBlacklist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {

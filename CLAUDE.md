@@ -28,10 +28,10 @@
 - **開發環境**：使用 **Docker Compose** 進行本地開發和測試
 - **生產環境**：使用 **Kubernetes (K8s)** 進行正式部署
 - **效能限制**：由於電腦效能限制，Docker Compose 和 K8s 只能同時開啟其中一個
-- **API Gateway**：所有 microservice 預設使用 Kong API Gateway
-- **服務間通訊**：Kong 與各個 microservice 之間使用 gRPC 連線
-- **HTTP 到 gRPC 轉換**：Kong 配置了 grpc-gateway 插件，可將 HTTP 請求轉換為 gRPC
-- **健康檢查**：如有 health detection 需求，可透過 Kong 的 grpc-gateway 進行檢查
+- **API Gateway**：所有 microservice 預設使用 Express.js API Gateway
+- **服務間通訊**：API Gateway 與各個 microservice 之間使用 gRPC 連線
+- **HTTP 到 gRPC 轉換**：API Gateway 配置了 grpc-gateway 插件，可將 HTTP 請求轉換為 gRPC
+- **健康檢查**：如有 health detection 需求，可透過 API Gateway 的 grpc-gateway 進行檢查
 
 ### 環境切換指南
 
@@ -50,7 +50,7 @@ kubectl get pods            # 檢查 K8s Pod 狀態
 ### 微服務架構
 
 ```
-Kong API Gateway (Port: 8000)
+API Gateway (Port: 8000)
 ├── RBAC Service (gRPC)
 ├── Drone Service (gRPC)  
 ├── General Service (gRPC)
@@ -679,7 +679,7 @@ docker-compose down --volumes           # 完全清理開發環境
 kubectl delete -f infrastructure/kubernetes/ # 清理 K8s 部署
 
 # 健康檢查測試命令
-curl http://localhost:8000/api/health           # Kong Gateway 健康檢查
+curl http://localhost:8000/api/health           # API Gateway 健康檢查
 grpc_health_probe -addr=localhost:50051        # RBAC Service 健康檢查
 grpc_health_probe -addr=localhost:50052        # Drone Service 健康檢查
 curl http://localhost:3004/health              # Drone WebSocket 健康檢查

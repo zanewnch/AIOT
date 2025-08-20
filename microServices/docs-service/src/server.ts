@@ -18,12 +18,12 @@
  * 在 AIOT 微服務架構中，這個服務扮演以下角色：
  * 
  * ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
- * │   Kong Gateway  │    │  docs-service   │    │   TypeDoc 文檔   │
+ * │   API Gateway  │    │  docs-service   │    │   TypeDoc 文檔   │
  * │    (HTTP 層)    │───▶│   (聚合層)      │───▶│    (文件層)     │
  * └─────────────────┘    └─────────────────┘    └─────────────────┘
  *      外部訪問              統一服務              靜態文檔文件
  * 
- * • Kong Gateway: 統一入口和路由 (/docs -> docs-service)
+ * • API Gateway: 統一入口和路由 (/docs -> docs-service)
  * • docs-service: 文檔聚合和展示服務 (本文件)
  * • TypeDoc 文檔: 各微服務生成的靜態 HTML 文檔
  * 
@@ -78,7 +78,7 @@
  * 2. 運行 `npm run docs:generate` 生成 TypeDoc 文檔
  * 3. 文檔文件更新到各服務的 `/docs` 目錄
  * 4. Docker volume 即時同步到文檔服務容器
- * 5. 開發者通過 Kong Gateway 訪問統一文檔入口
+ * 5. 開發者通過 API Gateway 訪問統一文檔入口
  * 6. 文檔服務提供即時更新的技術文檔
  * 
  * ==============================================
@@ -98,7 +98,7 @@
  * @version 1.0.0
  * @since 2025-01-13
  * @architecture Microservices + API Gateway + Static Documentation
- * @deployment Docker + Kong Gateway + Volume Mounts
+ * @deployment Docker + API Gateway + Volume Mounts
  */
 
 import { createApp } from './app.js';

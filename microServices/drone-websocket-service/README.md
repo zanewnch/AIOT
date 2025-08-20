@@ -12,7 +12,7 @@
 
 ### 與其他服務的關係
 ```
-前端 WebSocket 連線 → Kong Gateway → drone-websocket-service
+前端 WebSocket 連線 → API Gateway → drone-websocket-service
 ```
 
 ## 🚀 快速開始
@@ -84,7 +84,7 @@ socket.on('drone:status:update', (data) => {
 
 ### 認證和授權
 - **認證**: 由 Express.js Gateway 統一處理
-- **WebSocket 連線**: 通過 Kong Gateway 代理，支援認證用戶
+- **WebSocket 連線**: 通過 API Gateway 代理，支援認證用戶
 - **權限控制**: 基於 Express.js Gateway 進行集中式管理
 - **無需 JWT**: 服務本身不處理認證邏輯，專注於即時通訊
 

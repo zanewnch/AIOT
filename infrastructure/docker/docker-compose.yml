@@ -540,7 +540,7 @@ services:
     logging: *default-logging
     container_name: aiot-gateway-service
     ports:
-      - "8000:8000"   # Gateway HTTP API endpoint (取代 Kong 的 8000 port)
+      - "8000:8000"   # Gateway HTTP API endpoint
     environment:
       <<: *common-env
       SERVICE_NAME: gateway-service

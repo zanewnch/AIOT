@@ -49,7 +49,7 @@ class RbacRoutes {
 
   // 路由端點常數 - 集中管理所有 API 路徑
   private readonly ROUTES = {
-    // 使用者管理路由 (Kong strip_path 後的內部路徑)
+    // 使用者管理路由 (API Gateway strip_path 後的內部路徑)
     USERS: '/users',
     USER_BY_ID: '/users/:userId',
     
@@ -91,7 +91,7 @@ class RbacRoutes {
   }
 
   /**
-   * 設定使用者管理路由 - 權限檢查由 Kong Gateway 處理
+   * 設定使用者管理路由 - 權限檢查由 API Gateway 處理
    */
   private setupUserRoutes = (): void => {
     this.router.get(this.ROUTES.USERS, (req, res) => this.userQueries.getUsers(req, res));
@@ -102,7 +102,7 @@ class RbacRoutes {
   }
 
   /**
-   * 設定角色管理路由 - 權限檢查由 Kong Gateway 處理
+   * 設定角色管理路由 - 權限檢查由 API Gateway 處理
    */
   private setupRoleRoutes = (): void => {
     this.router.get(this.ROUTES.ROLES, (req, res) => this.roleQueries.getRoles(req, res));
@@ -113,7 +113,7 @@ class RbacRoutes {
   }
 
   /**
-   * 設定權限管理路由 - 權限檢查由 Kong Gateway 處理
+   * 設定權限管理路由 - 權限檢查由 API Gateway 處理
    */
   private setupPermissionRoutes = (): void => {
     this.router.get(this.ROUTES.PERMISSIONS, (req, res) => this.permissionQueries.getPermissions(req, res));
@@ -124,7 +124,7 @@ class RbacRoutes {
   }
 
   /**
-   * 設定使用者角色關聯路由 - 權限檢查由 Kong Gateway 處理
+   * 設定使用者角色關聯路由 - 權限檢查由 API Gateway 處理
    */
   private setupUserRoleRoutes = (): void => {
     this.router.get(this.ROUTES.USER_ROLES, (req, res) => this.userToRoleQueries.getUserRoles(req, res));
@@ -135,7 +135,7 @@ class RbacRoutes {
   }
 
   /**
-   * 設定角色權限關聯路由 - 權限檢查由 Kong Gateway 處理
+   * 設定角色權限關聯路由 - 權限檢查由 API Gateway 處理
    */
   private setupRolePermissionRoutes = (): void => {
     this.router.get(this.ROUTES.ROLE_PERMISSIONS, (req, res) => this.roleToPermissionQueries.getRolePermissions(req, res));
