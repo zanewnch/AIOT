@@ -13,7 +13,7 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { UserModel } from '../../models/UserModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
+import { loggerDecorator } from '../../../../../aiot-shared-packages';
 
 const logger = createLogger('UserCommandsRepository');
 

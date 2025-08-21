@@ -12,7 +12,7 @@
  */
 
 import {Request, Response, Router} from 'express';
-import {ResResult} from '../utils/ResResult.js';
+import {ResResult} from '@aiot-shared-packages';
 
 const router = Router();
 

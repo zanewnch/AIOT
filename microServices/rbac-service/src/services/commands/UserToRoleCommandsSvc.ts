@@ -27,7 +27,8 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { UserRoleCommandsRepository } from '../../repo/commands/UserRoleCommandsRepo.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { BaseRedisService } from '@aiot/shared-packages';
+import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserToRoleQueriesSvc } from '../queries/UserToRoleQueriesSvc.js';
@@ -57,11 +58,10 @@ export interface RemoveRoleRequest {
  * 包含快取管理、資料寫入和驗證邏輯。
  */
 @injectable()
-export class UserToRoleCommandsSvc {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class UserToRoleCommandsSvc extends BaseRedisService {
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
+    private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
         @inject(TYPES.UserToRoleQueriesSvc)
@@ -69,27 +69,20 @@ export class UserToRoleCommandsSvc {
         @inject(TYPES.UserRoleCommandsRepo)
         private readonly userRoleCommandsRepository: UserRoleCommandsRepository
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for UserToRoleCommandsSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, UserToRoleCommandsSvc will fallback to database operations only:', error);
-        }
+        // 初始化 Redis 服務
+        super({
+            serviceName: 'UserToRoleCommandsSvc',
+            defaultTTL: UserToRoleCommandsSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
 
     /**
@@ -117,29 +110,25 @@ export class UserToRoleCommandsSvc {
      * @private
      */
     private clearUserRoleCache = async (userId?: number, roleId?: number): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache clear operation');
-            return; // Redis 不可用，直接返回
+        if (userId) {
+            logger.debug(`Clearing Redis cache for user roles: ${userId}`);
+            const userKey = this.getUserRolesCacheKey(userId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(userKey),
+                `clearUserRoleCache(${userId})`,
+                0
+            );
         }
-
-        try {
-            if (userId) {
-                // 清除使用者角色快取
-                logger.debug(`Clearing Redis cache for user roles: ${userId}`);
-                const userKey = this.getUserRolesCacheKey(userId);
-                await redis.del(userKey);
-            }
-            if (roleId) {
-                // 清除角色使用者快取
-                logger.debug(`Clearing Redis cache for role users: ${roleId}`);
-                const roleKey = this.getRoleUsersCacheKey(roleId);
-                await redis.del(roleKey);
-            }
-            logger.debug('User role management caches cleared successfully');
-        } catch (error) {
-            logger.warn('Failed to clear user role management cache:', error);
+        if (roleId) {
+            logger.debug(`Clearing Redis cache for role users: ${roleId}`);
+            const roleKey = this.getRoleUsersCacheKey(roleId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(roleKey),
+                `clearRoleUserCache(${roleId})`,
+                0
+            );
         }
+        logger.debug('User role management caches cleared successfully');
     }
 
     /**

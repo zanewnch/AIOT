@@ -31,7 +31,8 @@ import { TYPES } from '../../container/types.js';
 import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { BaseRedisService } from '@aiot/shared-packages';
+import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger, logPermissionCheck } from '../../configs/loggerConfig.js';
 import type {
@@ -75,9 +76,7 @@ export interface PermissionSearchCriteria {
  * @since 1.0.0
  */
 @injectable()
-export class PermissionQueriesSvc implements IPermissionQueriesService {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class PermissionQueriesSvc extends BaseRedisService implements IPermissionQueriesService {
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
@@ -87,27 +86,20 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         @inject(TYPES.UserQueriesRepo) private readonly userRepository: UserQueriesRepo,
         @inject(TYPES.PermissionQueriesRepo) private readonly permissionRepository: PermissionQueriesRepo
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for PermissionQueriesSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, PermissionQueriesSvc will fallback to database queries only:', error);
-        }
+        // 初始化 BaseRedisService
+        super({
+            serviceName: 'PermissionQueriesSvc',
+            defaultTTL: PermissionQueriesSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
 
     /**
@@ -146,24 +138,16 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @private
      */
     private async getCachedUserPermissions(userId: number): Promise<UserPermissions | null> {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            return null; // Redis 不可用，直接返回 null
-        }
-
-        try {
-            const cacheKey = this.getPermissionsCacheKey(userId);
-            const cachedData = await redis.get(cacheKey);
-
-            if (cachedData) {
-                return JSON.parse(cachedData) as UserPermissions;
-            }
-
-            return null;
-        } catch (error) {
-            logger.warn('Failed to get cached permissions:', error);
-            return null;
-        }
+        const cacheKey = this.getPermissionsCacheKey(userId);
+        
+        return await this.safeRedisOperation(
+            async (redis: RedisClientType) => {
+                const cachedData = await redis.get(cacheKey);
+                return cachedData ? JSON.parse(cachedData) as UserPermissions : null;
+            },
+            'getCachedUserPermissions',
+            null
+        );
     }
 
     /**
@@ -243,23 +227,21 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @private
      */
     private async getCachedPermission(permissionId: number): Promise<PermissionDTO | null> {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            return null; // Redis 不可用，直接返回 null
-        }
-
-        try {
-            logger.debug(`Checking Redis cache for permission ID: ${permissionId}`);
-            const key = this.getPermissionCacheKey(permissionId);
-            const cachedData = await redis.get(key);
-            if (cachedData) {
-                logger.info(`Permission ID: ${permissionId} loaded from Redis cache`);
-                return JSON.parse(cachedData);
-            }
-        } catch (error) {
-            logger.warn(`Failed to get cached permission ${permissionId}:`, error);
-        }
-        return null;
+        const key = this.getPermissionCacheKey(permissionId);
+        
+        return await this.safeRedisOperation(
+            async (redis: RedisClientType) => {
+                logger.debug(`Checking Redis cache for permission ID: ${permissionId}`);
+                const cachedData = await redis.get(key);
+                if (cachedData) {
+                    logger.info(`Permission ID: ${permissionId} loaded from Redis cache`);
+                    return JSON.parse(cachedData);
+                }
+                return null;
+            },
+            `getCachedPermission(${permissionId})`,
+            null
+        );
     }
 
     // ==================== 公開查詢方法 ====================

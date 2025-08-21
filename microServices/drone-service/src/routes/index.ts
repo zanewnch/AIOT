@@ -20,7 +20,7 @@ import {DroneStatusRoutes} from './droneStatusRoutes.js';
 import {DroneCommandRoutes} from './droneCommandRoutes.js';
 import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
 import {TYPES} from '../container/types.js';
-import {ResResult} from '../utils/ResResult.js';
+import {ResResult} from '@aiot-shared-packages';
 
 /**
  * 路由管理器類別

@@ -37,15 +37,17 @@ import { RolePermissionCommandsRepository } from '../../repo/commands/RolePermis
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 // 匯入權限查詢資料存取層，用於驗證
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
+// 匯入 BaseRedisService
+import { BaseRedisService } from '@aiot/shared-packages';
 // 匯入 Redis 客戶端配置，用於快取管理
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { getRedisClient } from '@aiot/shared-packages';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
 import { createLogger } from '../../configs/loggerConfig.js';
 // 匯入查詢服務，用於驗證操作
 import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
-import type { IRoleToPermissionQueriesService } from '../queries/RoleToPermissionQueriesSvc.js';
+import type { IRoleToPermissionQueriesService } from '../../types/index.js';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('RoleToPermissionCommandsSvc');
@@ -73,11 +75,10 @@ export interface IRoleToPermissionCommandsService {
  * @since 1.0.0
  */
 @injectable()
-export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsService {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRoleToPermissionCommandsService {
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
+    private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
         @inject(TYPES.RoleToPermissionQueriesSvc)
@@ -89,27 +90,20 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
         @inject(TYPES.PermissionQueriesRepo)
         private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for RoleToPermissionCommandsSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, RoleToPermissionCommandsSvc will fallback to database operations only:', error);
-        }
+        // 初始化 Redis 服務
+        super({
+            serviceName: 'RoleToPermissionCommandsSvc',
+            defaultTTL: RoleToPermissionCommandsSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
 
     /**
@@ -133,30 +127,26 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
      * @param roleId 角色 ID（可選）
      * @param permissionId 權限 ID（可選）
      */
-    private clearRolePermissionCache = async (roleId?: number, permissionId?: number): Promise<void> => { // 私有異步方法：清除角色權限管理相關的 Redis 快取
-        const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache clear operation');
-            return; // Redis 不可用，直接返回
+    private clearRolePermissionCache = async (roleId?: number, permissionId?: number): Promise<void> => {
+        if (roleId) {
+            logger.debug(`Clearing Redis cache for role permissions: ${roleId}`);
+            const roleKey = this.getRolePermissionsCacheKey(roleId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(roleKey),
+                `clearRolePermissionCache(${roleId})`,
+                0
+            );
         }
-
-        try { // 嘗試執行快取清除操作
-            if (roleId) { // 如果提供了角色 ID
-                // 清除角色權限快取
-                logger.debug(`Clearing Redis cache for role permissions: ${roleId}`); // 記錄清除角色權限快取的除錯日誌
-                const roleKey = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
-                await redis.del(roleKey); // 從 Redis 刪除角色權限快取
-            }
-            if (permissionId) { // 如果提供了權限 ID
-                // 清除權限角色快取
-                logger.debug(`Clearing Redis cache for permission roles: ${permissionId}`); // 記錄清除權限角色快取的除錯日誌
-                const permissionKey = this.getPermissionRolesCacheKey(permissionId); // 產生權限角色的快取鍵值
-                await redis.del(permissionKey); // 從 Redis 刪除權限角色快取
-            }
-            logger.debug('Role permission management caches cleared successfully'); // 記錄快取清除成功的除錯日誌
-        } catch (error) { // 捕獲快取清除過程中的錯誤
-            logger.warn('Failed to clear role permission management cache:', error); // 記錄快取清除失敗的警告日誌
+        if (permissionId) {
+            logger.debug(`Clearing Redis cache for permission roles: ${permissionId}`);
+            const permissionKey = this.getPermissionRolesCacheKey(permissionId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(permissionKey),
+                `clearPermissionRoleCache(${permissionId})`,
+                0
+            );
         }
+        logger.debug('Role permission management caches cleared successfully');
     }
 
     /**

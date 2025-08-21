@@ -28,7 +28,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { BaseRedisService } from '@aiot/shared-packages';
+import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationParams, PaginatedResult, PaginationUtils, RoleDTO, IRoleQueriesService } from '../../types/index.js';
@@ -47,35 +48,27 @@ const logger = createLogger('RoleQueriesSvc');
  * @since 1.0.0
  */
 @injectable()
-export class RoleQueriesSvc implements IRoleQueriesService {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesService {
     private static readonly ROLE_CACHE_PREFIX = 'role:';
+    private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
         @inject(TYPES.RoleQueriesRepo) private readonly roleRepository: RoleQueriesRepo
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for RoleQueriesSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, RoleQueriesSvc will fallback to database queries only:', error);
-        }
+        // 初始化 BaseRedisService
+        super({
+            serviceName: 'RoleQueriesSvc',
+            defaultTTL: RoleQueriesSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
 
     /**
@@ -109,23 +102,21 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * @private
      */
     private getCachedRole = async (roleId: number): Promise<RoleDTO | null> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            return null; // Redis 不可用，直接返回 null
-        }
-
-        try {
-            logger.debug(`Checking Redis cache for role ID: ${roleId}`);
-            const key = this.getRoleCacheKey(roleId);
-            const cachedData = await redis.get(key);
-            if (cachedData) {
-                logger.info(`Role ID: ${roleId} loaded from Redis cache`);
-                return JSON.parse(cachedData) as RoleDTO;
-            }
-        } catch (error) {
-            logger.warn(`Failed to get cached role ${roleId}:`, error);
-        }
-        return null;
+        const key = this.getRoleCacheKey(roleId);
+        
+        return await this.safeRedisOperation(
+            async (redis: RedisClientType) => {
+                logger.debug(`Checking Redis cache for role ID: ${roleId}`);
+                const cachedData = await redis.get(key);
+                if (cachedData) {
+                    logger.info(`Role ID: ${roleId} loaded from Redis cache`);
+                    return JSON.parse(cachedData) as RoleDTO;
+                }
+                return null;
+            },
+            `getCachedRole(${roleId})`,
+            null
+        );
     }
 
     // ==================== 公開查詢方法 ====================

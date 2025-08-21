@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneCommandQueueCommandsSvc} from '../../services/commands/DroneCommandQueueCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
-import {ResResult} from '../../utils/ResResult.js';
+import {ResResult} from '@aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
 import type {DroneCommandQueueCreationAttributes} from '../../types/services/IDroneCommandQueueService.js';

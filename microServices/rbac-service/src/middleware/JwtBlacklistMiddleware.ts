@@ -10,7 +10,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { JwtBlacklistSvc } from '../services/shared/JwtBlacklistSvc.js';
+import { JwtBlacklistSvc } from '../../../../../aiot-shared-packages';
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('JwtBlacklistMiddleware');

@@ -41,8 +41,10 @@ import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.
 // 匯入模型類型
 import { RoleModel } from '../../models/RoleModel.js';
 import { PermissionModel } from '../../models/PermissionModel.js';
+// 匯入 BaseRedisService 基礎服務
+import { BaseRedisService } from '@aiot/shared-packages';
 // 匯入 Redis 客戶端配置，用於快取管理
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { getRedisClient } from '@aiot/shared-packages';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
@@ -65,9 +67,7 @@ const logger = createLogger('RoleToPermissionQueriesSvc');
  * @since 1.0.0
  */
 @injectable()
-export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesService {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRoleToPermissionQueriesService {
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
     private static readonly DEFAULT_CACHE_TTL = 3600; // 預設快取過期時間，1 小時（3600 秒）
@@ -86,27 +86,20 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
         @inject(TYPES.PermissionQueriesRepo)
         private readonly permissionQueriesRepo: PermissionQueriesRepo // 權限查詢資料存取層，透過依賴注入
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for RoleToPermissionQueriesSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, RoleToPermissionQueriesSvc will fallback to database queries only:', error);
-        }
+        // 初始化 BaseRedisService
+        super({
+            serviceName: 'RoleToPermissionQueriesSvc',
+            defaultTTL: RoleToPermissionQueriesSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
 
     /**
@@ -158,23 +151,21 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * @param roleId 角色 ID
      */
     private getCachedRolePermissions = async (roleId: number): Promise<PermissionDTO[] | null> => { // 私有異步方法：從 Redis 快取取得角色權限
-        const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
-        if (!redis) {
-            return null; // Redis 不可用，直接返回 null
-        }
-
-        try { // 嘗試從 Redis 取得快取資料
-            logger.debug(`Checking Redis cache for role permissions: ${roleId}`); // 記錄檢查角色權限快取的除錯日誌
-            const key = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
-            const cachedData = await redis.get(key); // 從 Redis 取得角色權限快取資料
-            if (cachedData) { // 如果快取資料存在
-                logger.info(`Role permissions for ID: ${roleId} loaded from Redis cache`); // 記錄從快取載入角色權限的資訊日誌
-                return JSON.parse(cachedData); // 解析 JSON 字串並回傳權限陣列
-            }
-        } catch (error) { // 捕獲快取取得過程中的錯誤
-            logger.warn(`Failed to get cached role permissions ${roleId}:`, error); // 記錄取得角色權限快取失敗的警告日誌
-        }
-        return null; // 快取不存在或發生錯誤時回傳 null
+        const key = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
+        
+        return await this.safeRedisOperation(
+            async (redis: RedisClientType) => {
+                logger.debug(`Checking Redis cache for role permissions: ${roleId}`); // 記錄檢查角色權限快取的除錯日誌
+                const cachedData = await redis.get(key); // 從 Redis 取得角色權限快取資料
+                if (cachedData) { // 如果快取資料存在
+                    logger.info(`Role permissions for ID: ${roleId} loaded from Redis cache`); // 記錄從快取載入角色權限的資訊日誌
+                    return JSON.parse(cachedData); // 解析 JSON 字串並回傳權限陣列
+                }
+                return null; // 快取不存在時回傳 null
+            },
+            `getCachedRolePermissions(${roleId})`,
+            null // 快取不存在或發生錯誤時的預設回傳值
+        );
     }
 
     /**
@@ -183,19 +174,15 @@ export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesServi
      * @param permissions 權限列表
      */
     private cacheRolePermissions = async (roleId: number, permissions: PermissionDTO[]): Promise<void> => { // 私有異步方法：將角色權限資料快取到 Redis
-        const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache role permissions operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try { // 嘗試執行快取操作
-            logger.debug(`Caching role permissions for ID: ${roleId} in Redis`); // 記錄快取角色權限的除錯日誌
-            const key = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
-            await redis.setEx(key, RoleToPermissionQueriesSvc.DEFAULT_CACHE_TTL, JSON.stringify(permissions)); // 設定帶過期時間的角色權限快取
-        } catch (error) { // 捕獲快取過程中的錯誤
-            logger.warn(`Failed to cache role permissions ${roleId}:`, error); // 記錄角色權限快取失敗的警告日誌
-        }
+        const key = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
+        
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                logger.debug(`Caching role permissions for ID: ${roleId} in Redis`); // 記錄快取角色權限的除錯日誌
+                await redis.setEx(key, RoleToPermissionQueriesSvc.DEFAULT_CACHE_TTL, JSON.stringify(permissions)); // 設定帶過期時間的角色權限快取
+            },
+            `cacheRolePermissions(${roleId})` // 操作名稱用於日誌記錄
+        );
     }
 
     /**

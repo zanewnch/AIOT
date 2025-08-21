@@ -29,7 +29,8 @@ import { TYPES } from '../../container/types.js';
 import { RoleCommandsRepository } from '../../repo/commands/RoleCommandsRepo.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { BaseRedisService } from '@aiot/shared-packages';
+import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { RoleQueriesSvc } from '../queries/RoleQueriesSvc.js';
@@ -73,9 +74,7 @@ export interface IRoleCommandsService {
  * @since 1.0.0
  */
 @injectable()
-export class RoleCommandsSvc implements IRoleCommandsService {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsService {
     private static readonly ROLE_CACHE_PREFIX = 'role:';
     private static readonly ALL_ROLES_KEY = 'roles:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -85,28 +84,22 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         @inject(TYPES.RoleCommandsRepo) private readonly roleCommandsRepository: RoleCommandsRepository,
         @inject(TYPES.RoleQueriesRepo) private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for RoleCommandsSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, RoleCommandsSvc will fallback to database operations only:', error);
-        }
+        // 初始化 Redis 服務
+        super({
+            serviceName: 'RoleCommandsSvc',
+            defaultTTL: RoleCommandsSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
+
 
     /**
      * 產生角色快取鍵值
@@ -138,29 +131,25 @@ export class RoleCommandsSvc implements IRoleCommandsService {
      * @private
      */
     private cacheAllRoles = async (roles: RoleDTO[]): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache all roles operation');
-            return; // Redis 不可用，直接返回
-        }
+        logger.debug('Caching all roles in Redis');
+        
+        // 快取所有角色列表
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                await redis.setEx(
+                    RoleCommandsSvc.ALL_ROLES_KEY,
+                    RoleCommandsSvc.DEFAULT_CACHE_TTL,
+                    JSON.stringify(roles)
+                );
+            },
+            'cacheAllRoles:list'
+        );
 
-        try {
-            logger.debug('Caching all roles in Redis');
-            await redis.setEx(
-                RoleCommandsSvc.ALL_ROLES_KEY,
-                RoleCommandsSvc.DEFAULT_CACHE_TTL,
-                JSON.stringify(roles)
-            );
-
-            // 同時快取每個單獨的角色
-            for (const role of roles) {
-                const key = this.getRoleCacheKey(role.id);
-                await redis.setEx(key, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(role));
-            }
-            logger.debug('Roles cached successfully');
-        } catch (error) {
-            logger.warn('Failed to cache roles:', error);
-        }
+        // 同時快取每個單獨的角色
+        const individualCachePromises = roles.map(role => this.cacheRole(role));
+        await Promise.all(individualCachePromises);
+        
+        logger.debug('Roles cached successfully');
     }
 
     /**
@@ -169,19 +158,14 @@ export class RoleCommandsSvc implements IRoleCommandsService {
      * @private
      */
     private cacheRole = async (role: RoleDTO): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache role operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try {
-            logger.debug(`Caching role ID: ${role.id} in Redis`);
-            const key = this.getRoleCacheKey(role.id);
-            await redis.setEx(key, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(role));
-        } catch (error) {
-            logger.warn(`Failed to cache role ${role.id}:`, error);
-        }
+        logger.debug(`Caching role ID: ${role.id} in Redis`);
+        const key = this.getRoleCacheKey(role.id);
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                await redis.setEx(key, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(role));
+            },
+            `cacheRole(${role.id})`
+        );
     }
 
     /**
@@ -190,26 +174,24 @@ export class RoleCommandsSvc implements IRoleCommandsService {
      * @private
      */
     private clearRoleManagementCache = async (roleId?: number): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache clear operation');
-            return; // Redis 不可用，直接返回
+        if (roleId) {
+            logger.debug(`Clearing Redis cache for role ID: ${roleId}`);
+            const key = this.getRoleCacheKey(roleId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(key),
+                `clearRoleCache(${roleId})`,
+                0
+            );
         }
 
-        try {
-            if (roleId) {
-                // 清除單個角色快取
-                logger.debug(`Clearing Redis cache for role ID: ${roleId}`);
-                const key = this.getRoleCacheKey(roleId);
-                await redis.del(key);
-            }
-
-            // 總是清除所有角色列表快取
-            await redis.del(RoleCommandsSvc.ALL_ROLES_KEY);
-            logger.debug('Role management caches cleared successfully');
-        } catch (error) {
-            logger.warn('Failed to clear role management cache:', error);
-        }
+        // 清除所有角色列表快取
+        await this.safeRedisOperation(
+            async (redis: RedisClientType) => await redis.del(RoleCommandsSvc.ALL_ROLES_KEY),
+            'clearAllRolesCache',
+            0
+        );
+        
+        logger.debug('Role management caches cleared successfully');
     }
 
     // ==================== 公開命令方法 ====================

@@ -31,7 +31,8 @@ import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { BaseRedisService } from '@aiot/shared-packages';
+import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 
@@ -86,9 +87,7 @@ export interface CacheOptions {
  * 包含快取管理、資料轉換和驗證邏輯。
  */
 @injectable()
-export class UserToRoleQueriesSvc {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class UserToRoleQueriesSvc extends BaseRedisService {
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
     private static readonly DEFAULT_CACHE_TTL = 3600;
@@ -101,27 +100,20 @@ export class UserToRoleQueriesSvc {
         @inject(TYPES.RoleQueriesRepo)
         private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for UserToRoleQueriesSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, UserToRoleQueriesSvc will fallback to database queries only:', error);
-        }
+        // 初始化 BaseRedisService
+        super({
+            serviceName: 'UserToRoleQueriesSvc',
+            defaultTTL: UserToRoleQueriesSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
 
     /**
@@ -178,23 +170,21 @@ export class UserToRoleQueriesSvc {
      * @private
      */
     private getCachedUserRoles = async (userId: number): Promise<RoleDTO[] | null> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            return null; // Redis 不可用，直接返回 null
-        }
-
-        try {
-            logger.debug(`Checking Redis cache for user roles: ${userId}`);
-            const key = this.getUserRolesCacheKey(userId);
-            const cachedData = await redis.get(key);
-            if (cachedData && typeof cachedData === 'string') {
-                logger.info(`User roles for ID: ${userId} loaded from Redis cache`);
-                return JSON.parse(cachedData);
-            }
-        } catch (error) {
-            logger.warn(`Failed to get cached user roles ${userId}:`, error);
-        }
-        return null;
+        const key = this.getUserRolesCacheKey(userId);
+        
+        return await this.safeRedisOperation(
+            async (redis: RedisClientType) => {
+                logger.debug(`Checking Redis cache for user roles: ${userId}`);
+                const cachedData = await redis.get(key);
+                if (cachedData && typeof cachedData === 'string') {
+                    logger.info(`User roles for ID: ${userId} loaded from Redis cache`);
+                    return JSON.parse(cachedData);
+                }
+                return null;
+            },
+            `getCachedUserRoles(${userId})`,
+            null
+        );
     }
 
     /**
@@ -204,19 +194,15 @@ export class UserToRoleQueriesSvc {
      * @private
      */
     private cacheUserRoles = async (userId: number, roles: RoleDTO[]): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache user roles operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try {
-            logger.debug(`Caching user roles for ID: ${userId} in Redis`);
-            const key = this.getUserRolesCacheKey(userId);
-            await redis.setEx(key, UserToRoleQueriesSvc.DEFAULT_CACHE_TTL, JSON.stringify(roles));
-        } catch (error) {
-            logger.warn(`Failed to cache user roles ${userId}:`, error);
-        }
+        const key = this.getUserRolesCacheKey(userId);
+        
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                logger.debug(`Caching user roles for ID: ${userId} in Redis`);
+                await redis.setEx(key, UserToRoleQueriesSvc.DEFAULT_CACHE_TTL, JSON.stringify(roles));
+            },
+            `cacheUserRoles(${userId})`
+        );
     }
 
     /**

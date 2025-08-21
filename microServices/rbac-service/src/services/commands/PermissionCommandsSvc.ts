@@ -28,19 +28,35 @@ import { TYPES } from '../../container/types.js';
 import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepo.js';
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
-import { getRedisClient } from '../../configs/redisConfig.js';
-import type { RedisClientType } from 'redis';
+import { BaseRedisService, getRedisClient } from '@aiot/shared-packages';
 import { createLogger } from '../../configs/loggerConfig.js';
+import type { RedisClientType } from 'redis';
 import type {
-    IPermissionCommandsService
-} from '../../types/services/IPermissionCommandsService.js';
-import type {
-    UserPermissions,
-    CacheOptions,
-    PermissionDTO,
-    CreatePermissionRequest,
-    UpdatePermissionRequest
-} from '../../types/services/IPermissionService.js';
+    PermissionDTO
+} from '../../types/index.js';
+
+// 定義缺少的介面
+interface UserPermissions {
+    userId: number;
+    permissions: PermissionDTO[];
+    roles: string[];
+}
+
+interface CreatePermissionRequest {
+    name: string;
+    description?: string;
+}
+
+interface UpdatePermissionRequest {
+    name?: string;
+    description?: string;
+}
+
+interface IPermissionCommandsService {
+    createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO>;
+    updatePermission(permissionId: number, updateData: UpdatePermissionRequest): Promise<PermissionDTO | null>;
+    deletePermission(permissionId: number): Promise<boolean>;
+}
 import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc.js';
 
 const logger = createLogger('PermissionCommandsSvc');
@@ -56,9 +72,7 @@ const logger = createLogger('PermissionCommandsSvc');
  * @since 1.0.0
  */
 @injectable()
-export class PermissionCommandsSvc implements IPermissionCommandsService {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class PermissionCommandsSvc extends BaseRedisService implements IPermissionCommandsService {
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
@@ -70,28 +84,22 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         @inject(TYPES.PermissionCommandsRepo) private readonly permissionCommandsRepository: PermissionCommandsRepository,
         @inject(TYPES.PermissionQueriesRepo) private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for PermissionCommandsSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, PermissionCommandsSvc will fallback to database operations only:', error);
-        }
+        // 初始化 Redis 服務
+        super({
+            serviceName: 'PermissionCommandsSvc',
+            defaultTTL: PermissionCommandsSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     *
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
+
 
     /**
      * 生成使用者權限快取鍵值
@@ -134,22 +142,13 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         permissions: UserPermissions,
         ttl = PermissionCommandsSvc.DEFAULT_CACHE_TTL
     ): Promise<void> {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache set operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try {
-            const cacheKey = this.getPermissionsCacheKey(userId);
-            await redis.setEx(
-                cacheKey,
-                ttl,
-                JSON.stringify(permissions)
-            );
-        } catch (error) {
-            logger.warn('Failed to cache permissions:', error);
-        }
+        const cacheKey = this.getPermissionsCacheKey(userId);
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                await redis.setEx(cacheKey, ttl, JSON.stringify(permissions));
+            },
+            'setCachedUserPermissions'
+        );
     }
 
     /**
@@ -167,36 +166,6 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         };
     }
 
-    /**
-     * 快取所有權限
-     * @param permissions 權限列表
-     * @private
-     */
-    private cacheAllPermissions = async (permissions: PermissionDTO[]): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache all permissions operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try {
-            logger.debug('Caching all permissions in Redis');
-            await redis.setEx(
-                PermissionCommandsSvc.ALL_PERMISSIONS_KEY,
-                PermissionCommandsSvc.DEFAULT_CACHE_TTL,
-                JSON.stringify(permissions)
-            );
-
-            // 同時快取每個單獨的權限
-            for (const permission of permissions) {
-                const key = this.getPermissionCacheKey(permission.id);
-                await redis.setEx(key, PermissionCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(permission));
-            }
-            logger.debug('Permissions cached successfully');
-        } catch (error) {
-            logger.warn('Failed to cache permissions:', error);
-        }
-    }
 
     /**
      * 快取單一權限
@@ -204,19 +173,14 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @private
      */
     private cachePermission = async (permission: PermissionDTO): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache permission operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try {
-            logger.debug(`Caching permission ID: ${permission.id} in Redis`);
-            const key = this.getPermissionCacheKey(permission.id);
-            await redis.setEx(key, PermissionCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(permission));
-        } catch (error) {
-            logger.warn(`Failed to cache permission ${permission.id}:`, error);
-        }
+        logger.debug(`Caching permission ID: ${permission.id} in Redis`);
+        const key = this.getPermissionCacheKey(permission.id);
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                await redis.setEx(key, PermissionCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(permission));
+            },
+            `cachePermission(${permission.id})`
+        );
     }
 
     /**
@@ -225,26 +189,24 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @private
      */
     private clearPermissionManagementCache = async (permissionId?: number): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache clear operation');
-            return; // Redis 不可用，直接返回
+        if (permissionId) {
+            logger.debug(`Clearing Redis cache for permission ID: ${permissionId}`);
+            const key = this.getPermissionCacheKey(permissionId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(key),
+                `clearPermissionCache(${permissionId})`,
+                0
+            );
         }
 
-        try {
-            if (permissionId) {
-                // 清除單個權限快取
-                logger.debug(`Clearing Redis cache for permission ID: ${permissionId}`);
-                const key = this.getPermissionCacheKey(permissionId);
-                await redis.del(key);
-            }
-
-            // 總是清除所有權限列表快取
-            await redis.del(PermissionCommandsSvc.ALL_PERMISSIONS_KEY);
-            logger.debug('Permission management caches cleared successfully');
-        } catch (error) {
-            logger.warn('Failed to clear permission management cache:', error);
-        }
+        // 清除所有權限列表快取
+        await this.safeRedisOperation(
+            async (redis: RedisClientType) => await redis.del(PermissionCommandsSvc.ALL_PERMISSIONS_KEY),
+            'clearAllPermissionsCache',
+            0
+        );
+        
+        logger.debug('Permission management caches cleared successfully');
     }
 
     // ==================== 公開命令方法 ====================
@@ -254,21 +216,21 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @param userId 使用者 ID
      */
     public clearUserPermissionsCache = async (userId: number): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache clear operation');
-            return; // Redis 不可用，直接返回
-        }
+        const permissionsCacheKey = this.getPermissionsCacheKey(userId);
+        const rolesCacheKey = this.getRolesCacheKey(userId);
 
-        try {
-            const permissionsCacheKey = this.getPermissionsCacheKey(userId);
-            const rolesCacheKey = this.getRolesCacheKey(userId);
-
-            await redis.del(permissionsCacheKey);
-            await redis.del(rolesCacheKey);
-        } catch (error) {
-            logger.warn('Failed to clear permissions cache:', error);
-        }
+        await Promise.all([
+            this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(permissionsCacheKey),
+                'clearUserPermissionsCache',
+                0
+            ),
+            this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(rolesCacheKey),
+                'clearUserRolesCache',
+                0
+            )
+        ]);
     }
 
     /**

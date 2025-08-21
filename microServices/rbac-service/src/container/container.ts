@@ -38,7 +38,7 @@ import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissi
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 
 // JWT 安全服務
-import { JwtBlacklistSvc } from '../services/shared/JwtBlacklistSvc.js';
+import { JwtBlacklistSvc } from '../../../../../aiot-shared-packages';
 
 // Repository 導入
 import { UserQueriesRepo } from '../repo/queries/UserQueriesRepo.js';

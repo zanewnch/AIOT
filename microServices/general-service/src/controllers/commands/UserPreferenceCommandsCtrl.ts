@@ -15,9 +15,9 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { UserPreferenceCommandsSvc } from '../../services/commands/UserPreferenceCommandsSvc.js';
-import { ControllerResult } from '../../utils/ControllerResult.js';
+import { ResResult } from '@aiot/shared-packages';
 import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
+// LoggerDecorator will be updated separately - temporarily keeping pattern import
 import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from '../../models/UserPreferenceModel.js';
 
 /**
@@ -46,13 +46,15 @@ export class UserPreferenceCommandsCtrl {
 
             // 基本驗證
             if (!preferenceData.userId || typeof preferenceData.userId !== 'number') {
-                ControllerResult.badRequest(res, '用戶 ID 為必填項且必須為數字');
+                const result = ResResult.badRequest('用戶 ID 為必填項且必須為數字');
+                res.status(result.status).json(result);
                 return;
             }
 
             const createdPreference = await this.userPreferenceCommandsSvc.createUserPreference(preferenceData);
             
-            ControllerResult.created(res, createdPreference, '用戶偏好設定創建成功');
+            const result = ResResult.created('用戶偏好設定創建成功', createdPreference);
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -69,19 +71,22 @@ export class UserPreferenceCommandsCtrl {
 
             // 基本驗證
             if (!Array.isArray(preferencesData)) {
-                ControllerResult.badRequest(res, '請求體必須為陣列格式');
+                const result = ResResult.badRequest('請求體必須為陣列格式');
+                res.status(result.status).json(result);
                 return;
             }
 
             if (preferencesData.length === 0) {
-                ControllerResult.badRequest(res, '請求陣列不能為空');
+                const result = ResResult.badRequest('請求陣列不能為空');
+                res.status(result.status).json(result);
                 return;
             }
 
             // 驗證每個項目的 user_id
             const invalidItems = preferencesData.filter(item => !item.userId || typeof item.userId !== 'number');
             if (invalidItems.length > 0) {
-                ControllerResult.badRequest(res, '所有項目的用戶 ID 必須為有效數字');
+                const result = ResResult.badRequest('所有項目的用戶 ID 必須為有效數字');
+                res.status(result.status).json(result);
                 return;
             }
 

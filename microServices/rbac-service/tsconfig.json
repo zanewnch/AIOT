@@ -17,7 +17,12 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "isolatedModules": true,
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@aiot/shared-packages": ["../../../../../aiot-shared-packages/index"],
+      "@aiot/shared-packages/*": ["../../../../../aiot-shared-packages/*"]
+    }
   },
   "include": [
     "src/**/*.ts",

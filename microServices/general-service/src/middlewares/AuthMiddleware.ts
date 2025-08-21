@@ -10,7 +10,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { ControllerResult } from '../utils/ControllerResult.js';
+import { ResResult } from '@aiot/shared-packages';
 
 /**
  * JWT Payload 介面
@@ -43,7 +43,8 @@ export function verifyToken(req: Request, res: Response, next: NextFunction): vo
   const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
 
   if (!token) {
-    ControllerResult.unauthorized(res, 'Access token required');
+    const result = ResResult.unauthorized('Access token required');
+    res.status(result.status).json(result);
     return;
   }
 
@@ -52,7 +53,8 @@ export function verifyToken(req: Request, res: Response, next: NextFunction): vo
     req.user = decoded;
     next();
   } catch (error) {
-    ControllerResult.unauthorized(res, 'Invalid or expired token');
+    const result = ResResult.unauthorized('Invalid or expired token');
+    res.status(result.status).json(result);
   }
 }
 
@@ -62,14 +64,16 @@ export function verifyToken(req: Request, res: Response, next: NextFunction): vo
 export function requireRole(allowedRoles: string | string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      ControllerResult.unauthorized(res, 'Authentication required');
+      const result = ResResult.unauthorized('Authentication required');
+      res.status(result.status).json(result);
       return;
     }
 
     const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
     
     if (!roles.includes(req.user.role)) {
-      ControllerResult.forbidden(res, 'Insufficient permissions');
+      const result = ResResult.forbidden('Insufficient permissions');
+      res.status(result.status).json(result);
       return;
     }
 

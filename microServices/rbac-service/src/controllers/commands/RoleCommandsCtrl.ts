@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import type {IRoleCommandsService} from '../../services/commands/RoleCommandsSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from '../../utils/ResResult';
+import {ResResult} from '../../../../../aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('RoleCommandsCtrl');

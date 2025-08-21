@@ -36,7 +36,8 @@ import { TYPES } from '../../container/types.js';
 import { UserCommandsRepository } from '../../repo/commands/UserCommandsRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
-import { getRedisClient } from '../../configs/redisConfig.js';
+import { BaseRedisService } from '@aiot/shared-packages';
+import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserQueriesSvc } from '../queries/UserQueriesSvc.js';
@@ -66,9 +67,7 @@ export interface UpdateUserRequest {
  * 使用者命令服務類別
  */
 @injectable()
-export class UserCommandsSvc {
-    private redisClient: RedisClientType | null;
-    private isRedisAvailable: boolean;
+export class UserCommandsSvc extends BaseRedisService {
     private static readonly USER_CACHE_PREFIX = 'user:';
     private static readonly ALL_USERS_KEY = 'users:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -82,28 +81,22 @@ export class UserCommandsSvc {
         @inject(TYPES.UserCommandsRepo) private readonly userCommandsRepository: UserCommandsRepository,
         @inject(TYPES.UserQueriesSvc) private readonly userQueriesSvc: UserQueriesSvc
     ) {
-        // 在 constructor 中初始化 Redis 連線
-        try {
-            this.redisClient = getRedisClient();
-            this.isRedisAvailable = true;
-            logger.info('Redis client initialized successfully for UserCommandsSvc');
-        } catch (error) {
-            this.redisClient = null;
-            this.isRedisAvailable = false;
-            logger.warn('Redis not available, UserCommandsSvc will fallback to database operations only:', error);
-        }
+        // 初始化 Redis 服務
+        super({
+            serviceName: 'UserCommandsSvc',
+            defaultTTL: UserCommandsSvc.DEFAULT_CACHE_TTL,
+            enableDebugLogs: false,
+            logger: logger
+        });
     }
 
     /**
-     * 取得 Redis 客戶端
-     * 若 Redis 不可用則返回 null
-     * 
-     * @returns Redis 客戶端實例或 null
-     * @private
+     * 實作抽象方法：提供 Redis 客戶端工廠函式
      */
-    private getRedisClient(): RedisClientType | null {
-        return this.isRedisAvailable ? this.redisClient : null;
+    protected getRedisClientFactory() {
+        return getRedisClient;
     }
+
 
     /**
      * 產生使用者快取鍵值
@@ -169,26 +162,24 @@ export class UserCommandsSvc {
      * @private
      */
     private clearUserManagementCache = async (userId?: number): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache clear operation');
-            return; // Redis 不可用，直接返回
+        if (userId) {
+            logger.debug(`Clearing Redis cache for user ID: ${userId}`);
+            const key = this.getUserCacheKey(userId);
+            await this.safeRedisOperation(
+                async (redis: RedisClientType) => await redis.del(key),
+                `clearUserCache(${userId})`,
+                0
+            );
         }
 
-        try {
-            if (userId) {
-                // 清除單個使用者快取
-                logger.debug(`Clearing Redis cache for user ID: ${userId}`);
-                const key = this.getUserCacheKey(userId);
-                await redis.del(key);
-            }
-
-            // 總是清除所有使用者列表快取
-            await redis.del(UserCommandsSvc.ALL_USERS_KEY);
-            logger.debug('User management caches cleared successfully');
-        } catch (error) {
-            logger.warn('Failed to clear user management cache:', error);
-        }
+        // 清除所有使用者列表快取
+        await this.safeRedisOperation(
+            async (redis: RedisClientType) => await redis.del(UserCommandsSvc.ALL_USERS_KEY),
+            'clearAllUsersCache',
+            0
+        );
+        
+        logger.debug('User management caches cleared successfully');
     }
 
     /**
@@ -197,19 +188,14 @@ export class UserCommandsSvc {
      * @private
      */
     private cacheUser = async (user: UserDTO): Promise<void> => {
-        const redis = this.getRedisClient();
-        if (!redis) {
-            logger.debug('Redis not available, skipping cache user operation');
-            return; // Redis 不可用，直接返回
-        }
-
-        try {
-            logger.debug(`Caching user ID: ${user.id} in Redis`);
-            const key = this.getUserCacheKey(user.id);
-            await redis.setEx(key, UserCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(user));
-        } catch (error) {
-            logger.warn(`Failed to cache user ${user.id}:`, error);
-        }
+        logger.debug(`Caching user ID: ${user.id} in Redis`);
+        const key = this.getUserCacheKey(user.id);
+        await this.safeRedisWrite(
+            async (redis: RedisClientType) => {
+                await redis.setEx(key, UserCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(user));
+            },
+            `cacheUser(${user.id})`
+        );
     }
 
     /**

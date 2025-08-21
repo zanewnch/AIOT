@@ -18,7 +18,7 @@ import { UserPreferenceRoutes } from './userPreferenceRoutes.js';
 import { DocsRoutes } from './docsRoutes.js';
 import { HealthRoutes } from './healthRoutes.js';
 import { TYPES } from '../container/types.js';
-import { ControllerResult } from '../utils/ControllerResult.js';
+import { ResResult } from '@aiot/shared-packages';
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('RouteManager');
@@ -80,7 +80,8 @@ export class RouteManager {
         app.use('*', (req, res) => {
             logger.warn(`Route not found: ${req.method} ${req.originalUrl}`);
             
-            ControllerResult.error(res, 'Route not found', 404, 'ROUTE_NOT_FOUND');
+            const result = ResResult.notFound('Route not found');
+            res.status(result.status).json(result);
         });
     }
 }

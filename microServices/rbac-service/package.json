@@ -22,6 +22,7 @@
     "docs:watch-scss": "sass --watch src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css"
   },
   "dependencies": {
+    "@aiot/shared-packages": "file:../../aiot-shared-packages",
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "@types/amqplib": "^0.10.7",
@@ -44,7 +45,7 @@
     "express": "^4.21.2",
     "grpc-tools": "^1.12.4",
     "http-errors": "~1.6.3",
-    "inversify": "^7.7.0",
+    "inversify": "^7.9.0",
     "jade": "^0.29.0",
     "js-yaml": "^3.14.1",
     "jsonwebtoken": "^9.0.2",
@@ -55,7 +56,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pug": "^3.0.3",
-    "redis": "^5.6.0",
+    "redis": "^5.8.2",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
