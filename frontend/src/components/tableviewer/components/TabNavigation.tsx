@@ -11,7 +11,7 @@
 import React from "react";
 import clsx from "clsx";
 import { TableType } from "../../../stores";
-import { getAllTableConfigs } from "../../../configs/tableConfigs";
+import { getAllTableConfigs } from "../../../configs"";
 import styles from "../../../styles/TableViewer.module.scss";
 
 export interface TabNavigationProps {

@@ -264,6 +264,36 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
         })
     );
 
+    /**
+     * Scheduler 服務路由 (需要管理員權限)
+     */
+    router.use('/scheduler',
+        AuthMiddleware.requireAdmin(),
+        proxyMiddleware.createDynamicProxy({
+            target: 'scheduler-service',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 3001,
+            timeout: 30000,
+            retries: 3
+        })
+    );
+
+    /**
+     * Archive Processor 服務路由 (需要管理員權限)
+     */
+    router.use('/archive',
+        AuthMiddleware.requireAdmin(),
+        proxyMiddleware.createDynamicProxy({
+            target: 'archive-processor-service',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 3005,
+            timeout: 60000, // 較長超時時間，因為歸檔處理可能需要更多時間
+            retries: 2
+        })
+    );
+
     // ==========================================================================
     // WebSocket 代理路由
     // ==========================================================================

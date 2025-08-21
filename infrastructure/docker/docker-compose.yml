@@ -49,6 +49,16 @@ x-common-env: &common-env
   DRONE_WEBSOCKET_SERVICE_HOST: aiot-drone-websocket-service
   DRONE_WEBSOCKET_SERVICE_PORT: 3004
   DRONE_WEBSOCKET_SERVICE_URL: http://aiot-drone-websocket-service:3004
+  
+  # Scheduler 服務
+  SCHEDULER_SERVICE_HOST: aiot-scheduler-service
+  SCHEDULER_SERVICE_PORT: 3001
+  SCHEDULER_SERVICE_URL: http://aiot-scheduler-service:3001
+  
+  # Archive Processor 服務
+  ARCHIVE_PROCESSOR_SERVICE_HOST: aiot-archive-processor-service
+  ARCHIVE_PROCESSOR_SERVICE_PORT: 3005
+  ARCHIVE_PROCESSOR_SERVICE_URL: http://aiot-archive-processor-service:3005
 
 services:
   # ==========================================================================
@@ -532,6 +542,115 @@ services:
       timeout: 10s
       retries: 3
 
+  # Scheduler 微服務 (定時任務排程器)
+  scheduler-service:
+    build:
+      context: ../../microServices/scheduler-service
+      dockerfile: Dockerfile.dev
+    logging: *default-logging
+    container_name: aiot-scheduler-service
+    ports:
+      - "3001:3001"   # HTTP API endpoint
+    environment:
+      <<: *common-env
+      SERVICE_NAME: scheduler-service
+      PORT: 3001
+      NODE_ENV: development
+      # 資料庫配置 (使用 Drone 資料庫存放 archive_tasks 表)
+      DB_HOST: aiot-drone-mysql
+      DB_PORT: 3306
+      DB_NAME: drone_db
+      # 日誌設定
+      LOG_LEVEL: info
+      LOG_DIR: ./logs
+      # 排程設定
+      CRON_ARCHIVE_DAILY: "0 2 * * *"
+      CRON_CLEANUP_EXPIRED: "0 4 * * *"
+      TIMEZONE: Asia/Taipei
+      # 監控設定
+      THRESHOLD_CPU_WARNING: 70
+      THRESHOLD_CPU_CRITICAL: 90
+      THRESHOLD_MEMORY_WARNING: 80
+      THRESHOLD_MEMORY_CRITICAL: 95
+    volumes:
+      - ../../microServices/scheduler-service:/app
+      - /app/node_modules
+      - scheduler_logs:/app/logs
+    networks:
+      - aiot-network
+    depends_on:
+      consul:
+        condition: service_healthy
+      aiot-drone-mysql:
+        condition: service_healthy
+      aiot-redis:
+        condition: service_started
+      aiot-rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      # 檢查 Scheduler 微服務的 HTTP API 端點健康狀態
+      # 確保排程服務正常運行，可以處理定時任務排程和觸發
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Archive Processor 微服務 (歸檔處理器)
+  archive-processor-service:
+    build:
+      context: ../../microServices/archive-processor-service
+      dockerfile: Dockerfile.dev
+    logging: *default-logging
+    container_name: aiot-archive-processor-service
+    ports:
+      - "3005:3005"   # HTTP API endpoint
+    environment:
+      <<: *common-env
+      SERVICE_NAME: archive-processor-service
+      PORT: 3005
+      NODE_ENV: development
+      # 資料庫配置 (使用 Drone 資料庫)
+      DB_HOST: aiot-drone-mysql
+      DB_PORT: 3306
+      DB_NAME: drone_db
+      # 日誌設定
+      LOG_LEVEL: info
+      LOG_DIR: ./logs
+      # 處理器設定
+      CONCURRENCY_LIMIT: 3
+      MAX_RETRY_ATTEMPTS: 3
+      RETRY_DELAY: 300000
+      # 批量處理設定
+      DEFAULT_BATCH_SIZE: 1000
+      BATCH_DELAY_MS: 100
+      CLEANUP_MAX_EXECUTION_HOURS: 2
+    volumes:
+      - ../../microServices/archive-processor-service:/app
+      - /app/node_modules
+      - archive_processor_logs:/app/logs
+    networks:
+      - aiot-network
+    depends_on:
+      consul:
+        condition: service_healthy
+      aiot-drone-mysql:
+        condition: service_healthy
+      aiot-redis:
+        condition: service_started
+      aiot-rabbitmq:
+        condition: service_healthy
+      scheduler-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      # 檢查 Archive Processor 微服務的 HTTP API 端點健康狀態
+      # 確保歸檔處理服務正常運行，可以處理 RabbitMQ 歸檔任務
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Gateway API 服務 (Express.js API Gateway)
   gateway-service:
     build:
@@ -679,6 +798,13 @@ volumes:
     driver: local
   consul_data:
     driver: local
+  # 新增微服務日誌持久化
+  scheduler_logs:
+    driver: local
+    name: aiot_scheduler_logs
+  archive_processor_logs:
+    driver: local
+    name: aiot_archive_processor_logs
   prometheus_data:
     driver: local
   grafana_data:

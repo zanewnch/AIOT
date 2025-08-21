@@ -1,0 +1,29 @@
+# ==================================================
+# Archive Processor Service - Development Dockerfile
+# ==================================================
+
+FROM node:18-alpine
+
+# 設定工作目錄
+WORKDIR /app
+
+# 複製 package 文件
+COPY package*.json ./
+
+# 安裝依賴（包括開發依賴）
+RUN npm install
+
+# 複製原始碼
+COPY . .
+
+# 建立日誌目錄
+RUN mkdir -p /app/logs
+
+# 設定環境變數
+ENV NODE_ENV=development
+
+# 暴露端口
+EXPOSE 3005
+
+# 啟動命令 - 使用 ts-node-dev 支援 hot reload
+CMD ["npm", "run", "dev"]

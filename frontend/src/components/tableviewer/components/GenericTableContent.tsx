@@ -35,7 +35,7 @@
 import React from 'react';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { PaginationControls } from '../../common/PaginationControls';
-import { TableConfig } from '../../../configs/tableConfigs';
+import { TableConfig } from "../../../configs"';
 import { useTableData, useTableEdit, useEditModal } from '../hooks';
 import { EditModal } from '.';
 import { createLogger } from '../../../configs/loggerConfig';

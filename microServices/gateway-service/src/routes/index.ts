@@ -41,6 +41,8 @@ export function createMainRoutes(): Router {
                 drone: '/api/drone/*',
                 general: '/api/general/*',
                 docs: '/api/docs/*',
+                scheduler: '/api/scheduler/*',
+                archive: '/api/archive/*',
                 websocket: '/socket.io/*'
             },
             documentation: '/api/docs',

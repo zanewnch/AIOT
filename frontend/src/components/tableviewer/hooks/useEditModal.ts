@@ -8,7 +8,7 @@
  */
 
 import { useMemo } from 'react';
-import { TableConfig } from '../../../configs/tableConfigs';
+import { TableConfig } from "../../../configs"';
 
 interface UseEditModalProps {
   config: TableConfig;

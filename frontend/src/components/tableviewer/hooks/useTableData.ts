@@ -9,7 +9,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useTableUIStore } from '../../../stores';
-import { TableConfig } from '../../../configs/tableConfigs';
+import { TableConfig } from "../../../configs"';
 import { usePagination } from '../../../hooks/usePagination';
 import { PaginationParams } from '../../../types/pagination';
 import { createLogger } from '../../../configs/loggerConfig';

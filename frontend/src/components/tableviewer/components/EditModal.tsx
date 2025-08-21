@@ -8,7 +8,7 @@
  */
 
 import React from "react";
-import { TableConfig } from "../../../configs/tableConfigs";
+import { TableConfig } from "../../../configs"";
 import styles from "../../../styles/TableViewer.module.scss";
 
 interface EditModalProps {

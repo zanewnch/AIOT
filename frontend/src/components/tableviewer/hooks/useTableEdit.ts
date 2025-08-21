@@ -8,7 +8,7 @@
  */
 
 import { useTableUIStore } from '../../../stores';
-import { TableConfig } from '../../../configs/tableConfigs';
+import { TableConfig } from "../../../configs"';
 import { createLogger } from '../../../configs/loggerConfig';
 
 interface UseTableEditProps {

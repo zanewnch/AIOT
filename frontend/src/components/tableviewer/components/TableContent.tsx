@@ -10,7 +10,7 @@
 
 import React, { Suspense } from "react";
 import { TableType } from "../../../stores";
-import { getTableConfig } from "../../../configs/tableConfigs";
+import { getTableConfig } from "../../../configs"";
 import { GenericTableContent } from "./GenericTableContent";
 import LoadingSpinner from "../../common/LoadingSpinner";
 import styles from "../../../styles/TableViewer.module.scss";

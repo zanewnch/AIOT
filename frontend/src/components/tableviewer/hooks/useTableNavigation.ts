@@ -9,7 +9,7 @@
 
 import { useCallback } from 'react';
 import { TableType, useTableUIStore } from '../../../stores';
-import { getAllTableConfigs } from '../../../configs/tableConfigs';
+import { getAllTableConfigs } from "../../../configs"';
 import { createLogger } from '../../../configs/loggerConfig';
 
 interface UseTableNavigationProps {
