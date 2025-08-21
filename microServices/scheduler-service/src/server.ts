@@ -15,7 +15,7 @@
 import 'reflect-metadata';
 import 'dotenv/config';
 import { Container } from 'inversify';
-import express, { Express } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -91,8 +91,8 @@ class SchedulerServer {
     this.container.bind<ArchiveScheduler>('ArchiveScheduler').to(ArchiveScheduler).inSingletonScope();
 
     // 資料庫連線介面綁定
-    this.container.bind('DatabaseConnection').toDynamicValue((context) => {
-      return context.container.get<DatabaseService>('DatabaseService');
+    this.container.bind('DatabaseConnection').toDynamicValue((context: any) => {
+      return context.container.get('DatabaseService');
     }).inSingletonScope();
   }
 
@@ -127,7 +127,7 @@ class SchedulerServer {
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
     // 請求日誌
-    this.app.use((req, res, next) => {
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
       const start = Date.now();
       res.on('finish', () => {
         const duration = Date.now() - start;
@@ -149,7 +149,7 @@ class SchedulerServer {
    */
   private setupRoutes(): void {
     // 健康檢查端點
-    this.app.get('/health', async (req, res) => {
+    this.app.get('/health', async (_req: Request, res: Response) => {
       try {
         const monitoringService = this.container.get<MonitoringService>('MonitoringService');
         const health = await monitoringService.getHealthStatus();
@@ -172,7 +172,7 @@ class SchedulerServer {
     });
 
     // 系統指標端點
-    this.app.get('/metrics', async (req, res) => {
+    this.app.get('/metrics', async (_req: Request, res: Response) => {
       try {
         const monitoringService = this.container.get<MonitoringService>('MonitoringService');
         const [systemMetrics, taskMetrics] = await Promise.all([
@@ -192,7 +192,7 @@ class SchedulerServer {
     });
 
     // 排程狀態端點
-    this.app.get('/schedule/status', async (req, res) => {
+    this.app.get('/schedule/status', async (_req: Request, res: Response) => {
       try {
         const scheduler = this.container.get<ArchiveScheduler>('ArchiveScheduler');
         const status = scheduler.getStatus();
@@ -204,7 +204,7 @@ class SchedulerServer {
     });
 
     // 手動觸發歸檔端點
-    this.app.post('/schedule/trigger', async (req, res) => {
+    this.app.post('/schedule/trigger', async (req: Request, res: Response) => {
       try {
         const { jobType } = req.body;
         const scheduler = this.container.get<ArchiveScheduler>('ArchiveScheduler');
@@ -222,7 +222,7 @@ class SchedulerServer {
     });
 
     // 警報端點
-    this.app.get('/alerts', async (req, res) => {
+    this.app.get('/alerts', async (_req: Request, res: Response) => {
       try {
         const monitoringService = this.container.get<MonitoringService>('MonitoringService');
         const alerts = monitoringService.getActiveAlerts();
@@ -234,7 +234,7 @@ class SchedulerServer {
     });
 
     // 根路由
-    this.app.get('/', (req, res) => {
+    this.app.get('/', (_req: Request, res: Response) => {
       res.json({
         service: 'AIOT Scheduler Service',
         version: process.env.npm_package_version || '1.0.0',
@@ -255,7 +255,7 @@ class SchedulerServer {
    */
   private setupErrorHandling(): void {
     // 404 處理
-    this.app.use((req, res) => {
+    this.app.use((req: Request, res: Response) => {
       res.status(404).json({
         error: 'Not Found',
         message: `Route ${req.method} ${req.path} not found`
@@ -263,7 +263,7 @@ class SchedulerServer {
     });
 
     // 全局錯誤處理
-    this.app.use((error: any, req: any, res: any, next: any) => {
+    this.app.use((error: any, req: Request, res: Response, _next: NextFunction) => {
       this.logger.error('Unhandled error', {
         error: error.message,
         stack: error.stack,
@@ -336,11 +336,9 @@ class SchedulerServer {
           case 'EACCES':
             this.logger.error(`Port ${port} requires elevated privileges`);
             process.exit(1);
-            break;
           case 'EADDRINUSE':
             this.logger.error(`Port ${port} is already in use`);
             process.exit(1);
-            break;
           default:
             throw error;
         }

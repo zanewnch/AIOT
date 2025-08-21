@@ -1,492 +1,456 @@
 /**
- * @fileoverview 歸檔處理器
+ * @fileoverview 歸檔處理器 - 新架構實作
  * 
- * 負責處理 RabbitMQ 中的歸檔任務，執行數據歸檔和清理操作
+ * 【設計意圖 (Intention)】
+ * 這是一個專門處理數據歸檔和清理任務的核心處理器，設計目的：
+ * 1. 異步處理大量歷史數據的歸檔操作，避免阻塞主要業務流程
+ * 2. 提供分批處理機制，防止大數據量操作導致資料庫鎖定或記憶體溢出
+ * 3. 實現兩階段清理策略：先標記為已歸檔，後物理刪除，確保數據安全
+ * 4. 支援併發控制和失敗重試，保證系統穩定性和數據一致性
+ * 
+ * 【實作架構 (Implementation Architecture)】
+ * - 使用 RabbitMQ Consumer 模式接收 Scheduler 發送的歸檔任務
+ * - 採用 p-limit 控制併發處理數量，防止資源過載
+ * - 透過資料庫事務確保歸檔操作的原子性
+ * - 實作詳細的日誌記錄和錯誤處理機制
+ * - 支援處理進度追蹤和狀態回報
  */
 
 import { injectable, inject } from 'inversify';
 import pLimit from 'p-limit';
 import { Logger } from 'winston';
-import { ArchiveTaskMessage, CleanupTaskMessage, TaskResultMessage, TaskType, ScheduleStatus } from '../types/processor.types';
-
-export interface DatabaseConnection {
-  query(sql: string, params?: any[]): Promise<any[]>;
-  transaction<T>(callback: (connection: any) => Promise<T>): Promise<T>;
-  batchInsert(tableName: string, records: Record<string, any>[], batchSize?: number): Promise<number>;
-  batchDelete(tableName: string, condition: string, params?: any[], batchSize?: number): Promise<number>;
-}
-
-export interface RabbitMQService {
-  publishTaskResult(result: TaskResultMessage): Promise<boolean>;
-  publishDelayed<T>(routingKey: string, message: T, delay: number, options?: any): Promise<boolean>;
-}
-
-export interface ArchiveTaskRepository {
-  findById(id: number): Promise<any>;
-  update(id: number, data: any): Promise<any>;
-}
+import { 
+  ArchiveTaskMessage, 
+  CleanupTaskMessage, 
+  TaskResultMessage, 
+  TaskType, 
+  ScheduleStatus,
+  DatabaseConnection,
+  RabbitMQService,
+  ArchiveTaskRepo
+} from '../types/processor.types';
+import { TYPES } from '../container/types';
+import { config } from '../configs/environment';
 
 @injectable()
 export class ArchiveProcessor {
-  private concurrencyLimit = pLimit(3); // 限制併發處理數量
+  // 【實作策略】使用 p-limit 限制併發處理數量，防止資源過載和資料庫連線耗盡
+  private concurrencyLimit = pLimit(config.processor.concurrency);
+  
+  // 【狀態追蹤】標記處理器當前是否正在處理任務，用於健康檢查和監控
   private isProcessing = false;
 
   constructor(
-    @inject('DatabaseConnection') private database: DatabaseConnection,
-    @inject('RabbitMQService') private rabbitMQService: RabbitMQService,
-    @inject('ArchiveTaskRepository') private archiveTaskRepo: ArchiveTaskRepository,
-    @inject('Logger') private logger: Logger
+    @inject(TYPES.DatabaseConnection) private database: DatabaseConnection,
+    @inject(TYPES.RabbitMQService) private rabbitMQService: RabbitMQService,
+    @inject(TYPES.ArchiveTaskRepo) private archiveTaskRepo: ArchiveTaskRepo,
+    @inject(TYPES.Logger) private logger: Logger
   ) {}
 
   /**
-   * 處理歸檔任務
+   * 處理歸檔任務 - 核心方法
+   * 
+   * @param message - 歸檔任務訊息，包含任務ID、批次資訊、日期範圍等
+   * @returns 處理結果包含總記錄數、處理記錄數和執行時間
    */
-  async processArchiveTask(message: ArchiveTaskMessage): Promise<void> {
+  async processArchiveTask(message: ArchiveTaskMessage): Promise<{
+    totalRecords: number;
+    processedRecords: number;
+    executionTime: number;
+  }> {
     return this.concurrencyLimit(async () => {
       const startTime = Date.now();
-      let task: any = null;
+      let totalRecords = 0;
+      let processedRecords = 0;
 
       try {
+        this.isProcessing = true;
+        
         this.logger.info('Starting archive task processing', {
           taskId: message.taskId,
           jobType: message.jobType,
-          batchId: message.batchId
+          batchId: message.batchId,
+          dateRange: `${message.dateRangeStart} to ${message.dateRangeEnd}`
         });
 
-        // 獲取任務記錄
-        task = await this.archiveTaskRepo.findById(parseInt(message.taskId));
+        // 查找或創建任務記錄
+        let task = await this.archiveTaskRepo.findByTaskId(message.taskId);
         if (!task) {
-          throw new Error(`Archive task not found: ${message.taskId}`);
+          task = await this.archiveTaskRepo.create({
+            task_id: message.taskId,
+            job_type: message.jobType,
+            status: 'running',
+            batch_id: message.batchId,
+            started_at: new Date()
+          });
+        } else {
+          // 更新任務為運行狀態
+          await this.archiveTaskRepo.update(task.id, {
+            status: 'running',
+            started_at: new Date()
+          });
         }
 
-        // 標記任務開始
-        await task.markAsStarted();
-
         // 執行歸檔處理
-        const result = await this.executeArchive(message, task);
+        const result = await this.executeArchive(message);
+        totalRecords = result.totalRecords;
+        processedRecords = result.processedRecords;
 
-        // 標記任務完成
-        await task.markAsCompleted(result.totalRecords, result.archivedRecords);
-
-        // 發送成功結果
-        await this.publishResult({
-          taskId: message.taskId,
-          taskType: TaskType.ARCHIVE,
-          status: ScheduleStatus.COMPLETED,
-          totalRecords: result.totalRecords,
-          processedRecords: result.archivedRecords,
-          executionTime: Math.round((Date.now() - startTime) / 1000),
-          completedAt: new Date(),
-          metadata: {
-            jobType: message.jobType,
-            batchId: message.batchId
-          }
+        // 更新任務完成狀態
+        await this.archiveTaskRepo.update(task.id, {
+          status: 'completed',
+          total_records: totalRecords,
+          processed_records: processedRecords,
+          completed_at: new Date()
         });
 
         this.logger.info('Archive task completed successfully', {
           taskId: message.taskId,
-          totalRecords: result.totalRecords,
-          archivedRecords: result.archivedRecords,
+          totalRecords,
+          processedRecords,
           executionTime: Date.now() - startTime
         });
+
+        return {
+          totalRecords,
+          processedRecords,
+          executionTime: Date.now() - startTime
+        };
 
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        
-        // 標記任務失敗
-        if (task) {
-          await task.markAsFailed(errorMessage);
-        }
-
-        // 發送失敗結果
-        await this.publishResult({
-          taskId: message.taskId,
-          taskType: TaskType.ARCHIVE,
-          status: ScheduleStatus.FAILED,
-          errorMessage,
-          executionTime: Math.round((Date.now() - startTime) / 1000),
-          completedAt: new Date(),
-          metadata: {
-            jobType: message.jobType,
-            batchId: message.batchId
-          }
-        });
-
         this.logger.error('Archive task failed', {
           taskId: message.taskId,
-          error: errorMessage,
-          executionTime: Date.now() - startTime
+          error: error.message,
+          stack: error.stack
         });
 
+        // 更新任務失敗狀態
+        const task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        if (task) {
+          await this.archiveTaskRepo.update(task.id, {
+            status: 'failed',
+            error_message: error.message,
+            completed_at: new Date()
+          });
+        }
+
         throw error;
+      } finally {
+        this.isProcessing = false;
       }
-    });
-  }
-
-  /**
-   * 執行歸檔操作
-   */
-  private async executeArchive(message: ArchiveTaskMessage, task: any): Promise<{
-    totalRecords: number;
-    archivedRecords: number;
-  }> {
-    const { jobType, batchId, dateRangeStart, dateRangeEnd, batchSize } = message;
-    const { tableName, archiveTableName } = message.metadata || {};
-
-    if (!tableName || !archiveTableName) {
-      throw new Error('Missing table names in message metadata');
-    }
-
-    // 查詢需要歸檔的總記錄數
-    const totalRecords = await this.countRecordsToArchive(tableName, dateRangeStart, dateRangeEnd);
-    
-    if (totalRecords === 0) {
-      this.logger.info('No records to archive', { taskId: message.taskId, tableName });
-      return { totalRecords: 0, archivedRecords: 0 };
-    }
-
-    await task.updateProgress(0, totalRecords);
-
-    let archivedRecords = 0;
-    let offset = 0;
-
-    // 批量處理歸檔
-    while (offset < totalRecords) {
-      const currentBatchSize = Math.min(batchSize, totalRecords - offset);
-      
-      this.logger.debug('Processing archive batch', {
-        taskId: message.taskId,
-        offset,
-        batchSize: currentBatchSize,
-        progress: `${archivedRecords}/${totalRecords}`
-      });
-
-      const batchResult = await this.processBatch({
-        tableName,
-        archiveTableName,
-        dateRangeStart,
-        dateRangeEnd,
-        batchSize: currentBatchSize,
-        offset,
-        batchId,
-        jobType
-      });
-
-      archivedRecords += batchResult.processed;
-      offset += currentBatchSize;
-
-      // 更新進度
-      await task.updateProgress(archivedRecords);
-
-      // 批次間短暫暫停，避免資源過度使用
-      if (offset < totalRecords) {
-        await this.delay(100);
-      }
-    }
-
-    return { totalRecords, archivedRecords };
-  }
-
-  /**
-   * 處理單個批次
-   */
-  private async processBatch(params: {
-    tableName: string;
-    archiveTableName: string;
-    dateRangeStart: Date;
-    dateRangeEnd: Date;
-    batchSize: number;
-    offset: number;
-    batchId: string;
-    jobType: string;
-  }): Promise<{ processed: number }> {
-    const { tableName, archiveTableName, dateRangeStart, dateRangeEnd, batchSize, offset, batchId, jobType } = params;
-
-    return await this.database.transaction(async (connection) => {
-      // 1. 查詢待歸檔的數據
-      const selectSql = `
-        SELECT * FROM ${tableName} 
-        WHERE createdAt >= ? AND createdAt <= ? 
-          AND (archived_at IS NULL)
-        ORDER BY id ASC
-        LIMIT ? OFFSET ?
-      `;
-
-      const records = await this.database.query(selectSql, [dateRangeStart, dateRangeEnd, batchSize, offset]);
-      
-      if (records.length === 0) {
-        return { processed: 0 };
-      }
-
-      // 2. 準備歸檔記錄
-      const archiveRecords = records.map(record => ({
-        ...record,
-        original_id: record.id,
-        archived_at: new Date(),
-        archive_batch_id: batchId
-      }));
-
-      // 移除 id 欄位，讓歸檔表自動生成新的 ID
-      archiveRecords.forEach(record => delete record.id);
-
-      // 3. 插入到歸檔表
-      await this.database.batchInsert(archiveTableName, archiveRecords);
-
-      // 4. 標記原始記錄為已歸檔
-      const recordIds = records.map(r => r.id);
-      const updateSql = `
-        UPDATE ${tableName} 
-        SET archived_at = NOW(), archive_batch_id = ?
-        WHERE id IN (${recordIds.map(() => '?').join(',')})
-      `;
-
-      await this.database.query(updateSql, [batchId, ...recordIds]);
-
-      // 5. 安排延遲清理任務 (7天後物理刪除)
-      await this.scheduleCleanupTask(tableName, jobType, batchId, recordIds);
-
-      return { processed: records.length };
     });
   }
 
   /**
    * 處理清理任務
    */
-  async processCleanupTask(message: CleanupTaskMessage): Promise<void> {
+  async processCleanupTask(message: CleanupTaskMessage): Promise<{
+    totalRecords: number;
+    processedRecords: number;
+    executionTime: number;
+  }> {
     return this.concurrencyLimit(async () => {
       const startTime = Date.now();
+      let totalRecords = 0;
+      let processedRecords = 0;
 
       try {
+        this.isProcessing = true;
+
         this.logger.info('Starting cleanup task processing', {
           taskId: message.taskId,
+          jobType: message.jobType,
           tableName: message.tableName,
           cleanupType: message.cleanupType
         });
 
-        let result: { deletedRecords: number };
-
-        if (message.cleanupType === 'physical_delete') {
-          result = await this.executePhysicalDelete(message);
+        // 查找或創建任務記錄
+        let task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        if (!task) {
+          task = await this.archiveTaskRepo.create({
+            task_id: message.taskId,
+            job_type: message.jobType,
+            status: 'running',
+            started_at: new Date()
+          });
         } else {
-          result = await this.executeMarkArchived(message);
+          await this.archiveTaskRepo.update(task.id, {
+            status: 'running',
+            started_at: new Date()
+          });
         }
 
-        // 發送成功結果
-        await this.publishResult({
-          taskId: message.taskId,
-          taskType: TaskType.CLEANUP,
-          status: ScheduleStatus.COMPLETED,
-          processedRecords: result.deletedRecords,
-          executionTime: Math.round((Date.now() - startTime) / 1000),
-          completedAt: new Date(),
-          metadata: {
-            tableName: message.tableName,
-            cleanupType: message.cleanupType
-          }
+        // 執行清理處理
+        const result = await this.executeCleanup(message);
+        totalRecords = result.totalRecords;
+        processedRecords = result.processedRecords;
+
+        // 更新任務完成狀態
+        await this.archiveTaskRepo.update(task.id, {
+          status: 'completed',
+          total_records: totalRecords,
+          processed_records: processedRecords,
+          completed_at: new Date()
         });
 
         this.logger.info('Cleanup task completed successfully', {
           taskId: message.taskId,
-          deletedRecords: result.deletedRecords,
+          totalRecords,
+          processedRecords,
           executionTime: Date.now() - startTime
         });
+
+        return {
+          totalRecords,
+          processedRecords,
+          executionTime: Date.now() - startTime
+        };
 
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        
-        // 發送失敗結果
-        await this.publishResult({
-          taskId: message.taskId,
-          taskType: TaskType.CLEANUP,
-          status: ScheduleStatus.FAILED,
-          errorMessage,
-          executionTime: Math.round((Date.now() - startTime) / 1000),
-          completedAt: new Date(),
-          metadata: {
-            tableName: message.tableName,
-            cleanupType: message.cleanupType
-          }
-        });
-
         this.logger.error('Cleanup task failed', {
           taskId: message.taskId,
-          error: errorMessage,
-          executionTime: Date.now() - startTime
+          error: error.message
         });
 
+        const task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        if (task) {
+          await this.archiveTaskRepo.update(task.id, {
+            status: 'failed',
+            error_message: error.message,
+            completed_at: new Date()
+          });
+        }
+
         throw error;
+      } finally {
+        this.isProcessing = false;
       }
     });
   }
 
   /**
-   * 執行物理刪除
+   * 執行歸檔處理
    */
-  private async executePhysicalDelete(message: CleanupTaskMessage): Promise<{ deletedRecords: number }> {
-    const { tableName, dateThreshold, batchSize } = message;
+  private async executeArchive(message: ArchiveTaskMessage): Promise<{
+    totalRecords: number;
+    processedRecords: number;
+  }> {
+    let totalRecords = 0;
+    let processedRecords = 0;
 
-    const condition = `
-      archived_at IS NOT NULL 
-      AND archived_at < ?
-    `;
-
-    const deletedRecords = await this.database.batchDelete(
-      tableName,
-      condition,
-      [dateThreshold],
-      batchSize
-    );
-
-    this.logger.info('Physical delete completed', {
-      taskId: message.taskId,
-      tableName,
-      deletedRecords,
-      dateThreshold: dateThreshold.toISOString()
-    });
-
-    return { deletedRecords };
-  }
-
-  /**
-   * 執行標記歸檔
-   */
-  private async executeMarkArchived(message: CleanupTaskMessage): Promise<{ deletedRecords: number }> {
-    const { tableName, dateThreshold, batchSize } = message;
-
-    const updateSql = `
-      UPDATE ${tableName} 
-      SET archived_at = NOW() 
-      WHERE archived_at IS NULL 
-        AND createdAt < ?
-      LIMIT ?
-    `;
-
-    let totalMarked = 0;
-    let hasMore = true;
-
-    while (hasMore) {
-      const result = await this.database.query(updateSql, [dateThreshold, batchSize]) as any;
-      const markedCount = result.affectedRows || 0;
-      
-      totalMarked += markedCount;
-      hasMore = markedCount === batchSize;
-
-      if (hasMore) {
-        await this.delay(50);
-      }
-    }
-
-    this.logger.info('Mark as archived completed', {
-      taskId: message.taskId,
-      tableName,
-      markedRecords: totalMarked,
-      dateThreshold: dateThreshold.toISOString()
-    });
-
-    return { deletedRecords: totalMarked };
-  }
-
-  /**
-   * 計算需要歸檔的記錄數
-   */
-  private async countRecordsToArchive(tableName: string, startDate: Date, endDate: Date): Promise<number> {
-    const sql = `
-      SELECT COUNT(*) as count 
-      FROM ${tableName} 
-      WHERE createdAt >= ? AND createdAt <= ? 
-        AND (archived_at IS NULL)
-    `;
-
-    const result = await this.database.query(sql, [startDate, endDate]);
-    return result[0]?.count || 0;
-  }
-
-  /**
-   * 安排清理任務
-   */
-  private async scheduleCleanupTask(
-    tableName: string, 
-    jobType: string, 
-    batchId: string, 
-    recordIds: number[]
-  ): Promise<void> {
-    const cleanupMessage: CleanupTaskMessage = {
-      taskId: `cleanup_${batchId}_${Date.now()}`,
-      taskType: TaskType.CLEANUP,
-      jobType: jobType as any,
-      tableName,
-      cleanupType: 'physical_delete',
-      dateThreshold: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天後
-      batchSize: 1000,
-      priority: 3,
-      retryCount: 0,
-      maxRetries: 2,
-      createdAt: new Date(),
-      metadata: {
-        originalBatchId: batchId,
-        recordCount: recordIds.length
-      }
-    };
-
-    // 發送延遲7天的清理任務
-    await this.rabbitMQService.publishDelayed(
-      'delayed.cleanup',
-      cleanupMessage,
-      7 * 24 * 60 * 60 * 1000 // 7天延遲
-    );
-
-    this.logger.info('Scheduled cleanup task', {
-      cleanupTaskId: cleanupMessage.taskId,
-      originalBatchId: batchId,
-      tableName,
-      recordCount: recordIds.length,
-      scheduledFor: cleanupMessage.dateThreshold.toISOString()
-    });
-  }
-
-  /**
-   * 發送任務結果
-   */
-  private async publishResult(result: TaskResultMessage): Promise<void> {
     try {
-      await this.rabbitMQService.publishTaskResult(result);
-    } catch (error) {
-      this.logger.error('Failed to publish task result', {
-        error,
-        taskId: result.taskId,
-        status: result.status
+      return await this.database.transaction(async (connection) => {
+        // 根據 jobType 確定要處理的表
+        const tableConfig = this.getTableConfig(message.jobType);
+        
+        // 計算總記錄數
+        const countSql = `
+          SELECT COUNT(*) as total 
+          FROM ${tableConfig.sourceTable} 
+          WHERE ${tableConfig.dateColumn} >= ? 
+          AND ${tableConfig.dateColumn} <= ?
+          AND archived_at IS NULL
+        `;
+        
+        const countResult = await this.database.query(countSql, [
+          message.dateRangeStart,
+          message.dateRangeEnd
+        ]);
+        
+        totalRecords = countResult[0]?.total || 0;
+
+        this.logger.info('Archive operation started', {
+          taskId: message.taskId,
+          sourceTable: tableConfig.sourceTable,
+          archiveTable: tableConfig.archiveTable,
+          totalRecords,
+          batchSize: message.batchSize
+        });
+
+        // 分批處理記錄
+        let offset = 0;
+        const batchSize = message.batchSize || config.processor.defaultBatchSize;
+
+        while (offset < totalRecords) {
+          const batchResult = await this.processBatch(
+            message,
+            tableConfig,
+            offset,
+            batchSize
+          );
+          
+          processedRecords += batchResult;
+          offset += batchSize;
+
+          this.logger.debug('Batch processed', {
+            taskId: message.taskId,
+            batchProcessed: batchResult,
+            totalProcessed: processedRecords,
+            totalRecords,
+            progress: `${Math.round((processedRecords / totalRecords) * 100)}%`
+          });
+
+          // 避免長時間運行的事務
+          if (offset % (batchSize * 10) === 0) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+
+        return { totalRecords, processedRecords };
       });
-      // 不重新拋出錯誤，避免影響任務完成狀態
+    } catch (error) {
+      this.logger.error('Archive execution failed', {
+        taskId: message.taskId,
+        error: error.message,
+        totalRecords,
+        processedRecords
+      });
+      throw error;
     }
   }
 
   /**
-   * 延遲函數
+   * 執行清理處理
    */
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private async executeCleanup(message: CleanupTaskMessage): Promise<{
+    totalRecords: number;
+    processedRecords: number;
+  }> {
+    let totalRecords = 0;
+    let processedRecords = 0;
+
+    try {
+      const condition = `created_at <= ? AND archived_at IS NOT NULL`;
+      const params = [message.dateThreshold];
+
+      if (message.cleanupType === 'mark_archived') {
+        // 標記為已歸檔
+        const updateSql = `UPDATE ${message.tableName} SET archived_at = NOW() WHERE ${condition} AND archived_at IS NULL`;
+        const result = await this.database.query(updateSql, params);
+        processedRecords = (result as any).affectedRows || 0;
+        totalRecords = processedRecords;
+      } else if (message.cleanupType === 'physical_delete') {
+        // 物理刪除
+        processedRecords = await this.database.batchDelete(
+          message.tableName,
+          condition,
+          params,
+          message.batchSize
+        );
+        totalRecords = processedRecords;
+      }
+
+      return { totalRecords, processedRecords };
+    } catch (error) {
+      this.logger.error('Cleanup execution failed', {
+        taskId: message.taskId,
+        error: error.message
+      });
+      throw error;
+    }
   }
 
   /**
-   * 獲取處理器狀態
+   * 處理單一批次
    */
-  getStatus(): {
-    isProcessing: boolean;
-    pendingTasks: number;
-    concurrencyLimit: number;
-  } {
-    return {
-      isProcessing: this.isProcessing,
-      pendingTasks: this.concurrencyLimit.pendingCount,
-      concurrencyLimit: this.concurrencyLimit.limit
+  private async processBatch(
+    message: ArchiveTaskMessage,
+    tableConfig: any,
+    offset: number,
+    batchSize: number
+  ): Promise<number> {
+    try {
+      // 選取一批記錄
+      const selectSql = `
+        SELECT * FROM ${tableConfig.sourceTable}
+        WHERE ${tableConfig.dateColumn} >= ?
+        AND ${tableConfig.dateColumn} <= ?
+        AND archived_at IS NULL
+        ORDER BY ${tableConfig.dateColumn}
+        LIMIT ? OFFSET ?
+      `;
+
+      const records = await this.database.query(selectSql, [
+        message.dateRangeStart,
+        message.dateRangeEnd,
+        batchSize,
+        offset
+      ]);
+
+      if (records.length === 0) {
+        return 0;
+      }
+
+      // 插入到歸檔表
+      const insertedCount = await this.database.batchInsert(
+        tableConfig.archiveTable,
+        records,
+        batchSize
+      );
+
+      // 標記原記錄為已歸檔
+      const recordIds = records.map((r: any) => r.id);
+      const updateSql = `
+        UPDATE ${tableConfig.sourceTable}
+        SET archived_at = NOW()
+        WHERE id IN (${recordIds.map(() => '?').join(',')})
+      `;
+      
+      await this.database.query(updateSql, recordIds);
+
+      return insertedCount;
+    } catch (error) {
+      this.logger.error('Batch processing failed', {
+        taskId: message.taskId,
+        offset,
+        batchSize,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 獲取表配置
+   */
+  private getTableConfig(jobType: string) {
+    const configs = {
+      'positions': {
+        sourceTable: 'drone_positions',
+        archiveTable: 'drone_positions_archive',
+        dateColumn: 'created_at'
+      },
+      'commands': {
+        sourceTable: 'drone_commands',
+        archiveTable: 'drone_commands_archive',
+        dateColumn: 'created_at'
+      },
+      'status': {
+        sourceTable: 'drone_status',
+        archiveTable: 'drone_status_archive',
+        dateColumn: 'created_at'
+      }
     };
+
+    const config = configs[jobType];
+    if (!config) {
+      throw new Error(`Unknown job type: ${jobType}`);
+    }
+
+    return config;
   }
 
   /**
-   * 設置併發限制
+   * 健康檢查
    */
-  setConcurrencyLimit(limit: number): void {
-    this.concurrencyLimit = pLimit(limit);
-    this.logger.info('Concurrency limit updated', { newLimit: limit });
+  isHealthy(): boolean {
+    return !this.isProcessing; // 簡單的健康檢查
+  }
+
+  /**
+   * 獲取處理狀態
+   */
+  getStatus(): { isProcessing: boolean } {
+    return { isProcessing: this.isProcessing };
   }
 }

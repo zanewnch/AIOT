@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "lib": ["ES2022", "dom"],
+    "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -26,11 +26,8 @@
     "paths": {
       "@/*": ["src/*"],
       "@/types/*": ["src/types/*"],
-      "@/config/*": ["src/config/*"],
+      "@/processors/*": ["src/processors/*"],
       "@/services/*": ["src/services/*"],
-      "@/schedulers/*": ["src/schedulers/*"],
-      "@/models/*": ["src/models/*"],
-      "@/repositories/*": ["src/repositories/*"],
       "@/utils/*": ["src/utils/*"]
     }
   },

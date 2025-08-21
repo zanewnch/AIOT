@@ -59,3 +59,34 @@ export interface TaskResultMessage {
   completedAt: Date;
   metadata?: Record<string, any>;
 }
+
+/**
+ * 資料庫連線介面
+ * 定義資料庫操作的基本方法
+ */
+export interface DatabaseConnection {
+  query(sql: string, params?: any[]): Promise<any[]>;
+  transaction<T>(callback: (connection: any) => Promise<T>): Promise<T>;
+  batchInsert(tableName: string, records: Record<string, any>[], batchSize?: number): Promise<number>;
+  batchDelete(tableName: string, condition: string, params?: any[], batchSize?: number): Promise<number>;
+}
+
+/**
+ * RabbitMQ 服務介面
+ * 定義訊息隊列操作的基本方法
+ */
+export interface RabbitMQService {
+  publishTaskResult(result: TaskResultMessage): Promise<boolean>;
+  publishDelayed<T>(routingKey: string, message: T, delay: number, options?: any): Promise<boolean>;
+}
+
+/**
+ * 歸檔任務儲存庫介面
+ * 定義歸檔任務數據操作的基本方法
+ */
+export interface ArchiveTaskRepo {
+  findById(id: number): Promise<any>;
+  findByTaskId(taskId: string): Promise<any>;
+  create(data: any): Promise<any>;
+  update(id: number, data: any): Promise<any>;
+}
