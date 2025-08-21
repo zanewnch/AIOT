@@ -17,7 +17,7 @@ import {Request, Response} from 'express';
 import {ArchiveTaskQueriesSvc} from '../../services/queries/ArchiveTaskQueriesSvc.js';
 import {ArchiveJobType, ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
-import {ResResult} from '@aiot-shared-packages';
+import {ResResult} from '@aiot/shared-packages';
 import type {IArchiveTaskQueriesCtrl} from '../../types/controllers/queries/IArchiveTaskQueriesCtrl.js';
 import {TYPES} from '../../container/types.js';
 

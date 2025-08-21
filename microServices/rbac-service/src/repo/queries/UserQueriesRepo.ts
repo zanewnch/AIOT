@@ -1,5 +1,5 @@
 /**
- * @fileoverview 使用者查詢 Repository - CQRS 查詢端
+ * @fileoverview 使用者查詢 Repo - CQRS 查詢端
  * 
  * 專門處理使用者資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -19,7 +19,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
 const logger = createLogger('UserQueriesRepo');
 
 /**
- * 使用者查詢 Repository 實現類別 - CQRS 查詢端
+ * 使用者查詢 Repo 實現類別 - CQRS 查詢端
  * 
  * 專門處理使用者資料的查詢操作，遵循 CQRS 模式
  * 
@@ -121,22 +121,30 @@ export class UserQueriesRepo {
     }
 
     /**
-     * 查詢所有使用者
+     * 查詢所有使用者（使用分頁方法以統一介面）
+     * 
+     * **設計意圖說明：**
+     * 此方法原採用直接的 Sequelize findAll 查詢，現已重構為使用 findPaginated 統一介面。
+     * 重構動機與效益：
+     * 1. **架構一致性**：與 Permission 和 Role Repository 保持統一的查詢模式
+     * 2. **代碼重複消除**：避免在多個方法中重複資料庫查詢邏輯
+     * 3. **查詢優化集中化**：所有效能調優和索引優化都在 findPaginated 中統一處理
+     * 4. **日誌記錄統一**：查詢日誌、錯誤處理都使用相同的格式和邏輯
+     * 5. **未來擴展性**：輕鬆支援排序欄位變更、條件篩選等需求
+     * 
+     * 實現細節：使用 Number.MAX_SAFE_INTEGER 作為 limit 以確保取得全部使用者記錄
      * 
      * @returns {Promise<UserModel[]>} 所有使用者模型的陣列
      * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
      */
     findAll = async (): Promise<UserModel[]> => {
-        try {
-            logger.info('Finding all users');
-            const users = await UserModel.findAll();
-            
-            logger.info(`Found ${users.length} users`);
-            return users;
-        } catch (error) {
-            logger.error('Error finding all users:', error);
-            throw error;
-        }
+        // 統一使用 findPaginated 方法，設定極大值來模擬查詢全部
+        return this.findPaginated(
+            Number.MAX_SAFE_INTEGER, // 使用極大值作為 limit
+            0, // offset 為 0
+            'id', // 按 ID 排序
+            'DESC' // 降序排列
+        );
     }
 
     /**

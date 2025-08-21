@@ -1,5 +1,5 @@
 /**
- * @fileoverview 角色權限關聯查詢 Repository - CQRS 查詢端
+ * @fileoverview 角色權限關聯查詢 Repo - CQRS 查詢端
  * 
  * 專門處理角色權限關聯資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -20,7 +20,7 @@ import type { PaginationParams, PaginatedResult } from '../../types/PaginationTy
 const logger = createLogger('RolePermissionQueriesRepo');
 
 /**
- * 角色權限關聯查詢 Repository 實現類別 - CQRS 查詢端
+ * 角色權限關聯查詢 Repo 實現類別 - CQRS 查詢端
  * 
  * 專門處理角色權限關聯資料的查詢操作，遵循 CQRS 模式
  * 
@@ -58,27 +58,31 @@ export class RolePermissionQueriesRepo {
   }
 
   /**
-   * 查詢所有角色權限關聯
+   * 查詢所有角色權限關聯（使用分頁方法以統一介面）
+   * 
+   * **設計意圖說明：**
+   * 此方法從獨立的資料庫查詢實現重構為使用 findPaginated 統一介面。
+   * 重構的戰略目標：
+   * 1. **關聯查詢標準化**：角色-權限關聯查詢與其他 Repository 使用統一模式
+   * 2. **include 邏輯統一**：所有 Sequelize include 操作都在 findPaginated 中處理
+   * 3. **排序策略一致**：確保關聯資料的排序行為在各查詢方法間保持一致
+   * 4. **查詢效能監控**：統一的 logger 和效能追蹤機制
+   * 5. **交易處理整合**：未來如需支援交易查詢，只需在 findPaginated 中實現
+   * 
+   * 架構優勢：通過 PaginationParams 物件傳遞參數，提供更清晰的介面
+   * 
    * @returns 角色權限關聯列表
    */
   findAll = async (): Promise<RolePermissionModel[]> => {
-    try {
-      logger.debug('Finding all role permissions');
-      
-      const rolePermissions = await RolePermissionModel.findAll({
-        include: [
-          { model: RoleModel, as: 'role' },
-          { model: PermissionModel, as: 'permission' }
-        ],
-        order: [['createdAt', 'DESC']]
-      });
-
-      logger.debug(`Found ${rolePermissions.length} role permissions`);
-      return rolePermissions;
-    } catch (error) {
-      logger.error('Error finding all role permissions:', error);
-      throw error;
-    }
+    // 統一使用 findPaginated 方法，設定極大值來模擬查詢全部
+    const params: PaginationParams = {
+      page: 1,
+      pageSize: Number.MAX_SAFE_INTEGER,
+      sortBy: 'createdAt',
+      sortOrder: 'DESC'
+    };
+    const paginatedResult = await this.findPaginated(params);
+    return paginatedResult.data;
   }
 
   /**

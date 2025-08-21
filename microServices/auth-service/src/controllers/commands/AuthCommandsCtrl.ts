@@ -24,7 +24,7 @@ import {inject, injectable} from 'inversify'; // Inversify DI 裝飾器
 import {NextFunction, Request, Response} from 'express'; // Express 型別
 import {AuthCommandsSvc} from '../../services/commands/AuthCommandsSvc.js'; // 命令服務介面/實作
 import {createLogger, logAuthEvent, logRequest} from '../../configs/loggerConfig.js'; // 日誌與事件記錄函式
-import {ResResult} from '@aiot-shared-packages'; // 統一 API 回應封裝
+import {ResResult} from '@aiot/shared-packages'; // 統一 API 回應封裝
 import {TYPES} from '../../container/types.js'; // DI container key
 import {JwtBlacklistMiddleware} from '../../middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
 

@@ -32,7 +32,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 // 匯入角色權限命令資料存取層
-import { RolePermissionCommandsRepository } from '../../repo/commands/RolePermissionCommandsRepo.js';
+import { RolePermissionCommandsRepo } from '../../repo/commands/RolePermissionCommandsRepo.js';
 // 匯入角色查詢資料存取層，用於驗證
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 // 匯入權限查詢資料存取層，用於驗證
@@ -47,21 +47,11 @@ import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 // 匯入查詢服務，用於驗證操作
 import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
-import type { IRoleToPermissionQueriesService } from '../../types/index.js';
+import type { IRoleToPermissionQueriesService, IRoleToPermissionCommandsService } from '../../types/index.js';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('RoleToPermissionCommandsSvc');
 
-/**
- * 角色權限關聯命令服務介面
- * 定義所有命令相關的方法
- */
-export interface IRoleToPermissionCommandsService {
-    assignPermissionsToRole(roleId: number, permissionIds: number[]): Promise<void>;
-    removePermissionFromRole(roleId: number, permissionId: number): Promise<boolean>;
-    removeAllPermissionsFromRole(roleId: number): Promise<number>;
-    removeAllRolesFromPermission(permissionId: number): Promise<number>;
-}
 
 /**
  * 角色權限關聯命令服務實現類別
@@ -84,7 +74,7 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
         @inject(TYPES.RoleToPermissionQueriesSvc)
         private readonly roleToPermissionQueriesSvc: IRoleToPermissionQueriesService,
         @inject(TYPES.RolePermissionCommandsRepo)
-        private readonly rolePermissionCommandsRepository: RolePermissionCommandsRepository,
+        private readonly rolePermissionCommandsRepo: RolePermissionCommandsRepo,
         @inject(TYPES.RoleQueriesRepo)
         private readonly roleQueriesRepo: RoleQueriesRepo,
         @inject(TYPES.PermissionQueriesRepo)
@@ -189,7 +179,7 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
                 try { // 嘗試為當前權限分配給角色
                     const whereCondition = { roleId, permissionId };
                     const defaults = { roleId, permissionId };
-                    const [, created] = await this.rolePermissionCommandsRepository.findOrCreate(whereCondition, defaults); // 調用角色權限命令資料存取層的尋找或建立方法
+                    const [, created] = await this.rolePermissionCommandsRepo.findOrCreate(whereCondition, defaults); // 調用角色權限命令資料存取層的尋找或建立方法
                     if (created) { // 如果成功建立了新的角色權限關聯
                         successfullyAssigned.push(permissionId); // 將權限 ID 加入成功分配列表
                         logger.debug(`Permission ${permissionId} assigned to role ${roleId}`); // 記錄權限分配成功的除錯日誌
@@ -247,7 +237,7 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
             }
 
             // 撤銷權限
-            const removed = await this.rolePermissionCommandsRepository.deleteByRoleAndPermission(roleId, permissionId); // 調用角色權限命令資料存取層刪除角色權限關聯
+            const removed = await this.rolePermissionCommandsRepo.deleteByRoleAndPermission(roleId, permissionId); // 調用角色權限命令資料存取層刪除角色權限關聯
 
             if (removed) { // 如果成功撤銷了權限
                 // 清除相關快取
@@ -291,7 +281,7 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
             const permissionIds = currentPermissions.map(p => p.id); // 提取所有權限的 ID 列表，用於後續快取清理
 
             // 撤銷所有權限
-            const removedCount = await this.rolePermissionCommandsRepository.deleteByRoleId(roleId); // 調用角色權限命令資料存取層批次刪除角色的所有權限關聯
+            const removedCount = await this.rolePermissionCommandsRepo.deleteByRoleId(roleId); // 調用角色權限命令資料存取層批次刪除角色的所有權限關聯
 
             if (removedCount > 0) { // 如果成功撤銷了至少一個權限
                 // 清除相關快取
@@ -336,7 +326,7 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
             const roleIds = currentRoles.map(r => r.id); // 提取所有角色的 ID 列表，用於後續快取清理
 
             // 撤銷所有角色
-            const removedCount = await this.rolePermissionCommandsRepository.deleteByPermissionId(permissionId); // 調用角色權限命令資料存取層批次刪除權限的所有角色關聯
+            const removedCount = await this.rolePermissionCommandsRepo.deleteByPermissionId(permissionId); // 調用角色權限命令資料存取層批次刪除權限的所有角色關聯
 
             if (removedCount > 0) { // 如果成功撤銷了至少一個角色
                 // 清除相關快取

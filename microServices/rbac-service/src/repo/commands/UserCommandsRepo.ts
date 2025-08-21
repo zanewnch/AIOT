@@ -1,5 +1,5 @@
 /**
- * @fileoverview 使用者命令 Repository - CQRS 命令端
+ * @fileoverview 使用者命令 Repo - CQRS 命令端
  * 
  * 專門處理使用者資料的寫入操作，遵循 CQRS 模式的命令端原則。
  * 只包含寫入相關的操作方法，不包含任何查詢操作。
@@ -13,19 +13,19 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { UserModel } from '../../models/UserModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { loggerDecorator } from '../../../../../aiot-shared-packages';
+import { loggerDecorator } from '@aiot/shared-packages';
 
-const logger = createLogger('UserCommandsRepository');
+const logger = createLogger('UserCommandsRepo');
 
 /**
- * 使用者命令 Repository 實現類別 - CQRS 命令端
+ * 使用者命令 Repo 實現類別 - CQRS 命令端
  * 
  * 專門處理使用者資料的寫入操作，遵循 CQRS 模式
  * 
- * @class UserCommandsRepository
+ * @class UserCommandsRepo
  */
 @injectable()
-export class UserCommandsRepository {
+export class UserCommandsRepo {
     /**
      * 建立新的使用者記錄
      * 

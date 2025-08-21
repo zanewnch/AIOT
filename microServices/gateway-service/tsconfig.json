@@ -19,7 +19,12 @@
     "isolatedModules": true,
     "typeRoots": ["./node_modules/@types"],
     "lib": ["ES2020", "DOM"],
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@aiot/shared-packages": ["../../../aiot-shared-packages/index"],
+      "@aiot/shared-packages/*": ["../../../aiot-shared-packages/*"]
+    }
   },
   "include": [
     "src/**/*.ts",

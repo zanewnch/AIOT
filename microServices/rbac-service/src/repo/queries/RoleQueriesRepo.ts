@@ -1,5 +1,5 @@
 /**
- * @fileoverview 角色查詢 Repository - CQRS 查詢端
+ * @fileoverview 角色查詢 Repo - CQRS 查詢端
  * 
  * 專門處理角色資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -22,7 +22,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
 const logger = createLogger('RoleQueriesRepo');
 
 /**
- * 角色查詢 Repository 實現類別 - CQRS 查詢端
+ * 角色查詢 Repo 實現類別 - CQRS 查詢端
  * 
  * 專門處理角色資料的查詢操作，遵循 CQRS 模式
  * 
@@ -103,7 +103,19 @@ export class RoleQueriesRepo {
   }
 
   /**
-   * 查詢所有角色
+   * 查詢所有角色（使用分頁方法以統一介面）
+   * 
+   * **設計意圖說明：**
+   * 此方法從原本的獨立實現重構為使用 findPaginated 統一介面。
+   * 重構的核心價值：
+   * 1. **代碼複用最大化**：消除與 findPaginated 的重複邏輯
+   * 2. **查詢行為統一**：確保所有角色查詢都使用相同的排序和篩選機制  
+   * 3. **維護成本降低**：資料庫查詢優化只需在 findPaginated 中進行一次
+   * 4. **功能擴展簡化**：新增 include 關聯、複雜篩選等只需修改一處
+   * 5. **接口一致性**：與其他 Repository 方法保持統一的實現模式
+   * 
+   * 技術實現：透過 Number.MAX_SAFE_INTEGER 確保取得所有記錄，同時保持分頁介面
+   * 
    * @param includePermissions 是否包含關聯的權限資料
    * @param includeUsers 是否包含關聯的使用者資料
    * @returns 角色列表
@@ -112,36 +124,15 @@ export class RoleQueriesRepo {
     includePermissions: boolean = false, 
     includeUsers: boolean = false
   ): Promise<RoleModel[]> => {
-    try {
-      logger.debug(`Finding all roles, includePermissions: ${includePermissions}, includeUsers: ${includeUsers}`);
-      
-      const includes = [];
-      if (includePermissions) {
-        includes.push({
-          model: PermissionModel,
-          as: 'permissions',
-          through: { attributes: [] }
-        });
-      }
-      if (includeUsers) {
-        includes.push({
-          model: UserModel,
-          as: 'users',
-          through: { attributes: [] }
-        });
-      }
-
-      const roles = await RoleModel.findAll({
-        include: includes.length > 0 ? includes : undefined,
-        order: [['name', 'ASC']]
-      });
-
-      logger.debug(`Found ${roles.length} roles`);
-      return roles;
-    } catch (error) {
-      logger.error('Error finding all roles:', error);
-      throw error;
-    }
+    // 統一使用 findPaginated 方法，設定極大值來模擬查詢全部
+    return this.findPaginated(
+      Number.MAX_SAFE_INTEGER, // 使用極大值作為 limit
+      0, // offset 為 0
+      'name', // 按名稱排序
+      'ASC', // 升序排列
+      includePermissions,
+      includeUsers
+    );
   }
 
   /**

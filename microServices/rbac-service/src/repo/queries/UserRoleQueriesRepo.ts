@@ -1,5 +1,5 @@
 /**
- * @fileoverview 使用者角色關聯查詢 Repository - CQRS 查詢端
+ * @fileoverview 使用者角色關聯查詢 Repo - CQRS 查詢端
  * 
  * 專門處理使用者角色關聯資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -19,7 +19,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
 const logger = createLogger('UserRoleQueriesRepo');
 
 /**
- * 使用者角色關聯查詢 Repository 實現類別 - CQRS 查詢端
+ * 使用者角色關聯查詢 Repo 實現類別 - CQRS 查詢端
  * 
  * 專門處理使用者角色關聯資料的查詢操作，遵循 CQRS 模式
  * 

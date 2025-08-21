@@ -38,19 +38,19 @@ import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissi
 import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 
 // JWT 安全服務
-import { JwtBlacklistSvc } from '../../../../../aiot-shared-packages';
+import { JwtBlacklistSvc } from '@aiot/shared-packages';
 
-// Repository 導入
+// Repo 導入
 import { UserQueriesRepo } from '../repo/queries/UserQueriesRepo.js';
 import { PermissionQueriesRepo } from '../repo/queries/PermissionQueriesRepo.js';
 import { RoleQueriesRepo } from '../repo/queries/RoleQueriesRepo.js';
 import { UserRoleQueriesRepo } from '../repo/queries/UserRoleQueriesRepo.js';
 import { RolePermissionQueriesRepo } from '../repo/queries/RolePermissionQueriesRepo.js';
-import { UserCommandsRepository } from '../repo/commands/UserCommandsRepo.js';
-import { PermissionCommandsRepository } from '../repo/commands/PermissionCommandsRepo.js';
-import { RoleCommandsRepository } from '../repo/commands/RoleCommandsRepo.js';
-import { UserRoleCommandsRepository } from '../repo/commands/UserRoleCommandsRepo.js';
-import { RolePermissionCommandsRepository } from '../repo/commands/RolePermissionCommandsRepo.js';
+import { UserCommandsRepo } from '../repo/commands/UserCommandsRepo.js';
+import { PermissionCommandsRepo } from '../repo/commands/PermissionCommandsRepo.js';
+import { RoleCommandsRepo } from '../repo/commands/RoleCommandsRepo.js';
+import { UserRoleCommandsRepo } from '../repo/commands/UserRoleCommandsRepo.js';
+import { RolePermissionCommandsRepo } from '../repo/commands/RolePermissionCommandsRepo.js';
 
 /**
  * 創建並配置 RBAC 服務的 IoC 容器
@@ -164,7 +164,7 @@ export function createContainer(): Container {
     .to(RoleToPermissionQueries)
     .inSingletonScope();
 
-  // ===== Repository 註冊 =====
+  // ===== Repo 註冊 =====
   
   // Queries Repositories
   container.bind<UserQueriesRepo>(TYPES.UserQueriesRepo)
@@ -188,24 +188,24 @@ export function createContainer(): Container {
     .inSingletonScope();
 
   // Commands Repositories
-  container.bind<UserCommandsRepository>(TYPES.UserCommandsRepo)
-    .to(UserCommandsRepository)
+  container.bind<UserCommandsRepo>(TYPES.UserCommandsRepo)
+    .to(UserCommandsRepo)
     .inSingletonScope();
 
-  container.bind<PermissionCommandsRepository>(TYPES.PermissionCommandsRepo)
-    .to(PermissionCommandsRepository)
+  container.bind<PermissionCommandsRepo>(TYPES.PermissionCommandsRepo)
+    .to(PermissionCommandsRepo)
     .inSingletonScope();
 
-  container.bind<RoleCommandsRepository>(TYPES.RoleCommandsRepo)
-    .to(RoleCommandsRepository)
+  container.bind<RoleCommandsRepo>(TYPES.RoleCommandsRepo)
+    .to(RoleCommandsRepo)
     .inSingletonScope();
 
-  container.bind<UserRoleCommandsRepository>(TYPES.UserRoleCommandsRepo)
-    .to(UserRoleCommandsRepository)
+  container.bind<UserRoleCommandsRepo>(TYPES.UserRoleCommandsRepo)
+    .to(UserRoleCommandsRepo)
     .inSingletonScope();
 
-  container.bind<RolePermissionCommandsRepository>(TYPES.RolePermissionCommandsRepo)
-    .to(RolePermissionCommandsRepository)
+  container.bind<RolePermissionCommandsRepo>(TYPES.RolePermissionCommandsRepo)
+    .to(RolePermissionCommandsRepo)
     .inSingletonScope();
 
   console.log('✅ RBAC IoC Container configured with RBAC services and repositories');

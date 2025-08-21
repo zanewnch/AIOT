@@ -21,7 +21,13 @@ export type { UserDTO, UserCacheOptions, IUserQueriesService } from './UserTypes
 export type { 
   PermissionDTO, 
   RolePermissionAssignmentDTO, 
-  IRoleToPermissionQueriesService 
+  IRoleToPermissionQueriesService,
+  CreatePermissionRequest,
+  UpdatePermissionRequest,
+  IPermissionCommandsService,
+  UserPermissions,
+  CacheOptions,
+  IPermissionQueriesService
 } from './PermissionTypes';
 
 // 會話相關類型

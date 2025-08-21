@@ -17,7 +17,7 @@
 
 import { UserCommandsSvc, CreateUserRequest } from '../../../src/services/commands/UserCommandsSvc.js';
 import { UserQueriesSvc, UserDTO } from '../../../src/services/queries/UserQueriesSvc.js';
-import { UserCommandsRepository } from '../../../src/repo/commands/rbac/UserCommandsRepo.js';
+import { UserCommandsRepo } from '../../../src/repo/commands/rbac/UserCommandsRepo.js';
 import { UserModel } from '../../../src/models/rbac/UserModel.js';
 import bcrypt from 'bcrypt';
 import type { RedisClientType } from 'redis';
@@ -51,7 +51,7 @@ jest.mock('../../../src/models/rbac/UserModel.js');
 describe('UserCommandsSvc', () => {
     let service: UserCommandsSvc;
     let mockUserQueriesSvc: jest.Mocked<UserQueriesSvc>;
-    let mockUserCommandsRepository: jest.Mocked<UserCommandsRepository>;
+    let mockUserCommandsRepo: jest.Mocked<UserCommandsRepo>;
     let mockRedisClient: jest.Mocked<RedisClientType>;
     let mockUserModel: jest.Mocked<typeof UserModel>;
 
@@ -74,8 +74,8 @@ describe('UserCommandsSvc', () => {
             validateUserCredentials: jest.fn(),
         } as any;
 
-        // Mock UserCommandsRepository
-        mockUserCommandsRepository = {
+        // Mock UserCommandsRepo
+        mockUserCommandsRepo = {
             create: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
@@ -107,7 +107,7 @@ describe('UserCommandsSvc', () => {
         service = new UserCommandsSvc(mockUserQueriesSvc);
         
         // Manually set private properties for testing
-        (service as any).userCommandsRepository = mockUserCommandsRepository;
+        (service as any).userCommandsRepo = mockUserCommandsRepo;
         (UserModel as any) = mockUserModel;
     });
 
@@ -143,14 +143,14 @@ describe('UserCommandsSvc', () => {
             mockUserQueriesSvc.getUserByEmail.mockResolvedValue(null);
             mockBcrypt.genSalt.mockResolvedValue('salt');
             mockBcrypt.hash.mockResolvedValue(hashedPassword);
-            mockUserCommandsRepository.create.mockResolvedValue(createdUser as any);
+            mockUserCommandsRepo.create.mockResolvedValue(createdUser as any);
 
             const result = await service.createUser(createRequest);
 
             expect(result.success).toBe(true);
             expect(result.user).toBeDefined();
             expect(result.user?.username).toBe('testuser');
-            expect(mockUserCommandsRepository.create).toHaveBeenCalledWith({
+            expect(mockUserCommandsRepo.create).toHaveBeenCalledWith({
                 username: createRequest.username,
                 email: createRequest.email,
                 password_hash: hashedPassword,
@@ -182,7 +182,7 @@ describe('UserCommandsSvc', () => {
 
             expect(result.success).toBe(false);
             expect(result.message).toContain('使用者名稱已存在');
-            expect(mockUserCommandsRepository.create).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.create).not.toHaveBeenCalled();
         });
 
         it('應該在電子郵件已存在時返回錯誤', async () => {
@@ -209,7 +209,7 @@ describe('UserCommandsSvc', () => {
 
             expect(result.success).toBe(false);
             expect(result.message).toContain('電子郵件已存在');
-            expect(mockUserCommandsRepository.create).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.create).not.toHaveBeenCalled();
         });
 
         it('應該在密碼加密失敗時處理錯誤', async () => {
@@ -257,14 +257,14 @@ describe('UserCommandsSvc', () => {
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
             mockUserQueriesSvc.getUserByEmail.mockResolvedValue(null); // email 不衝突
-            mockUserCommandsRepository.update.mockResolvedValue(updatedUser as any);
+            mockUserCommandsRepo.update.mockResolvedValue(updatedUser as any);
             mockRedisClient.del.mockResolvedValue(1);
 
             const result = await service.updateUser(userId, updateData);
 
             expect(result.success).toBe(true);
             expect(result.user).toBeDefined();
-            expect(mockUserCommandsRepository.update).toHaveBeenCalledWith(userId, updateData);
+            expect(mockUserCommandsRepo.update).toHaveBeenCalledWith(userId, updateData);
             expect(mockRedisClient.del).toHaveBeenCalledWith(`user:${userId}`);
         });
 
@@ -278,7 +278,7 @@ describe('UserCommandsSvc', () => {
 
             expect(result.success).toBe(false);
             expect(result.message).toContain('使用者不存在');
-            expect(mockUserCommandsRepository.update).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.update).not.toHaveBeenCalled();
         });
 
         it('應該在新電子郵件已被使用時返回錯誤', async () => {
@@ -329,14 +329,14 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.delete.mockResolvedValue(true);
+            mockUserCommandsRepo.delete.mockResolvedValue(true);
             mockRedisClient.del.mockResolvedValue(1);
 
             const result = await service.deleteUser(userId);
 
             expect(result.success).toBe(true);
             expect(result.message).toContain('使用者刪除成功');
-            expect(mockUserCommandsRepository.delete).toHaveBeenCalledWith(userId);
+            expect(mockUserCommandsRepo.delete).toHaveBeenCalledWith(userId);
             expect(mockRedisClient.del).toHaveBeenCalledWith(`user:${userId}`);
         });
 
@@ -348,7 +348,7 @@ describe('UserCommandsSvc', () => {
 
             expect(result.success).toBe(false);
             expect(result.message).toContain('使用者不存在');
-            expect(mockUserCommandsRepository.delete).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.delete).not.toHaveBeenCalled();
         });
     });
 
@@ -376,11 +376,11 @@ describe('UserCommandsSvc', () => {
             const newHashedPassword = 'hashedNewPassword';
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.findById.mockResolvedValue(userWithPassword as any);
+            mockUserCommandsRepo.findById.mockResolvedValue(userWithPassword as any);
             mockBcrypt.compare.mockResolvedValue(true);
             mockBcrypt.genSalt.mockResolvedValue('salt');
             mockBcrypt.hash.mockResolvedValue(newHashedPassword);
-            mockUserCommandsRepository.update.mockResolvedValue(userWithPassword as any);
+            mockUserCommandsRepo.update.mockResolvedValue(userWithPassword as any);
             mockRedisClient.del.mockResolvedValue(1);
 
             const result = await service.changePassword(userId, currentPassword, newPassword);
@@ -389,7 +389,7 @@ describe('UserCommandsSvc', () => {
             expect(result.message).toContain('密碼更新成功');
             expect(mockBcrypt.compare).toHaveBeenCalledWith(currentPassword, 'hashedOldPassword');
             expect(mockBcrypt.hash).toHaveBeenCalledWith(newPassword, 'salt');
-            expect(mockUserCommandsRepository.update).toHaveBeenCalledWith(userId, {
+            expect(mockUserCommandsRepo.update).toHaveBeenCalledWith(userId, {
                 password_hash: newHashedPassword
             });
         });
@@ -415,14 +415,14 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.findById.mockResolvedValue(userWithPassword as any);
+            mockUserCommandsRepo.findById.mockResolvedValue(userWithPassword as any);
             mockBcrypt.compare.mockResolvedValue(false);
 
             const result = await service.changePassword(userId, currentPassword, newPassword);
 
             expect(result.success).toBe(false);
             expect(result.message).toContain('目前密碼錯誤');
-            expect(mockUserCommandsRepository.update).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.update).not.toHaveBeenCalled();
         });
 
         it('應該在使用者不存在時返回錯誤', async () => {
@@ -457,14 +457,14 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.update.mockResolvedValue(activatedUser as any);
+            mockUserCommandsRepo.update.mockResolvedValue(activatedUser as any);
             mockRedisClient.del.mockResolvedValue(1);
 
             const result = await service.activateUser(userId);
 
             expect(result.success).toBe(true);
             expect(result.user?.is_active).toBe(true);
-            expect(mockUserCommandsRepository.update).toHaveBeenCalledWith(userId, {
+            expect(mockUserCommandsRepo.update).toHaveBeenCalledWith(userId, {
                 is_active: true
             });
         });
@@ -487,7 +487,7 @@ describe('UserCommandsSvc', () => {
 
             expect(result.success).toBe(true);
             expect(result.message).toContain('使用者已經是啟用狀態');
-            expect(mockUserCommandsRepository.update).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.update).not.toHaveBeenCalled();
         });
     });
 
@@ -512,14 +512,14 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.update.mockResolvedValue(deactivatedUser as any);
+            mockUserCommandsRepo.update.mockResolvedValue(deactivatedUser as any);
             mockRedisClient.del.mockResolvedValue(1);
 
             const result = await service.deactivateUser(userId);
 
             expect(result.success).toBe(true);
             expect(result.user?.is_active).toBe(false);
-            expect(mockUserCommandsRepository.update).toHaveBeenCalledWith(userId, {
+            expect(mockUserCommandsRepo.update).toHaveBeenCalledWith(userId, {
                 is_active: false
             });
         });
@@ -542,7 +542,7 @@ describe('UserCommandsSvc', () => {
 
             expect(result.success).toBe(true);
             expect(result.message).toContain('使用者已經是停用狀態');
-            expect(mockUserCommandsRepository.update).not.toHaveBeenCalled();
+            expect(mockUserCommandsRepo.update).not.toHaveBeenCalled();
         });
     });
 
@@ -568,7 +568,7 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.update.mockResolvedValue(updatedUser as any);
+            mockUserCommandsRepo.update.mockResolvedValue(updatedUser as any);
             mockRedisClient.del.mockResolvedValue(1);
 
             await service.updateUser(userId, updateData);
@@ -589,7 +589,7 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.delete.mockResolvedValue(true);
+            mockUserCommandsRepo.delete.mockResolvedValue(true);
             mockRedisClient.del.mockResolvedValue(1);
 
             await service.deleteUser(userId);
@@ -618,7 +618,7 @@ describe('UserCommandsSvc', () => {
             };
 
             mockUserQueriesSvc.getUserById.mockResolvedValue(existingUser);
-            mockUserCommandsRepository.update.mockResolvedValue(updatedUser as any);
+            mockUserCommandsRepo.update.mockResolvedValue(updatedUser as any);
             mockRedisClient.del.mockRejectedValue(new Error('Redis connection failed'));
 
             const result = await service.updateUser(userId, updateData);

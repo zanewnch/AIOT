@@ -33,7 +33,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserCommandsRepository } from '../../repo/commands/UserCommandsRepo.js';
+import { UserCommandsRepo } from '../../repo/commands/UserCommandsRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
 import { BaseRedisService } from '@aiot/shared-packages';
@@ -42,26 +42,10 @@ import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserQueriesSvc } from '../queries/UserQueriesSvc.js';
 import type { UserDTO } from '../queries/UserQueriesSvc.js';
+import type { CreateUserRequest, UpdateUserRequest } from '../../types/index.js';
 
 const logger = createLogger('UserCommandsSvc');
 
-/**
- * 建立使用者請求物件
- */
-export interface CreateUserRequest {
-    username: string;
-    email: string;
-    password: string; // 明文密碼，將被加密
-}
-
-/**
- * 更新使用者請求物件
- */
-export interface UpdateUserRequest {
-    username?: string;
-    email?: string;
-    password?: string; // 明文密碼，將被加密
-}
 
 /**
  * 使用者命令服務類別
@@ -78,7 +62,7 @@ export class UserCommandsSvc extends BaseRedisService {
      * 初始化使用者命令服務，設定資料存取層和查詢服務實例
      */
     constructor(
-        @inject(TYPES.UserCommandsRepo) private readonly userCommandsRepository: UserCommandsRepository,
+        @inject(TYPES.UserCommandsRepo) private readonly userCommandsRepo: UserCommandsRepo,
         @inject(TYPES.UserQueriesSvc) private readonly userQueriesSvc: UserQueriesSvc
     ) {
         // 初始化 Redis 服務
@@ -236,7 +220,7 @@ export class UserCommandsSvc extends BaseRedisService {
             const passwordHash = await this.hashPassword(userData.password);
 
             // 建立使用者
-            const user = await this.userCommandsRepository.create({
+            const user = await this.userCommandsRepo.create({
                 username: trimmedUsername,
                 email: trimmedEmail,
                 passwordHash
@@ -322,7 +306,7 @@ export class UserCommandsSvc extends BaseRedisService {
             }
 
             // 更新使用者
-            const updatedUser = await this.userCommandsRepository.update(userId, updatePayload);
+            const updatedUser = await this.userCommandsRepo.update(userId, updatePayload);
             if (!updatedUser) {
                 logger.warn(`User update failed - user not found for ID: ${userId}`);
                 return null;
@@ -367,7 +351,7 @@ export class UserCommandsSvc extends BaseRedisService {
             }
 
             // 刪除使用者
-            const deleted = await this.userCommandsRepository.delete(userId);
+            const deleted = await this.userCommandsRepo.delete(userId);
             if (deleted) {
                 // 清除快取
                 await this.clearUserManagementCache(userId);

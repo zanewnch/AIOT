@@ -22,7 +22,7 @@ import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 
 // JWT 安全服務
-import { JwtBlacklistSvc } from '@aiot-shared-packages';
+import { JwtBlacklistSvc } from '@aiot/shared-packages';
 
 /**
  * 創建並配置 Auth 服務的 IoC 容器

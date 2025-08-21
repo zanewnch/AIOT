@@ -36,13 +36,12 @@ import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger, logPermissionCheck } from '../../configs/loggerConfig.js';
 import type {
-    IPermissionQueriesService
-} from '../../types/services/IPermissionQueriesService.js';
-import type {
+    PermissionDTO,
     UserPermissions,
     CacheOptions,
-    PermissionDTO
-} from '../../types/services/IPermissionService.js';
+    IPermissionQueriesService
+} from '../../types/index.js';
+
 import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
 
 const logger = createLogger('PermissionQueriesSvc');
@@ -78,13 +77,12 @@ export interface PermissionSearchCriteria {
 @injectable()
 export class PermissionQueriesSvc extends BaseRedisService implements IPermissionQueriesService {
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
-    private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.UserQueriesRepo) private readonly userRepository: UserQueriesRepo,
-        @inject(TYPES.PermissionQueriesRepo) private readonly permissionRepository: PermissionQueriesRepo
+        @inject(TYPES.UserQueriesRepo) private readonly userRepo: UserQueriesRepo,
+        @inject(TYPES.PermissionQueriesRepo) private readonly permissionRepo: PermissionQueriesRepo
     ) {
         // 初始化 BaseRedisService
         super({
@@ -112,15 +110,6 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
         return `${PermissionQueriesSvc.PERMISSIONS_CACHE_PREFIX}${userId}`;
     }
 
-    /**
-     * 生成使用者角色快取鍵值
-     * @param userId 使用者 ID
-     * @returns 角色快取鍵值
-     * @private
-     */
-    private getRolesCacheKey(userId: number): string {
-        return `${PermissionQueriesSvc.ROLES_CACHE_PREFIX}${userId}`;
-    }
 
     /**
      * 產生權限快取鍵值
@@ -159,7 +148,7 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
     private async fetchUserPermissionsFromDB(userId: number): Promise<UserPermissions | null> {
         try {
             logger.debug(`Querying database for user ${userId} with roles and permissions`);
-            const user = await this.userRepository.findByIdWithRolesAndPermissions(userId);
+            const user = await this.userRepo.findByIdWithRolesAndPermissions(userId);
 
             if (!user) {
                 logger.warn(`User ${userId} not found in database`);
@@ -436,7 +425,7 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
      */
     public async permissionExists(permissionName: string): Promise<boolean> {
         try {
-            return await this.permissionRepository.exists(permissionName);
+            return await this.permissionRepo.exists(permissionName);
         } catch (error) {
             logger.error('Failed to check permission existence:', error);
             return false;
@@ -468,7 +457,7 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
 
             // 快取不存在，從資料庫取得
             logger.debug(`Fetching permission ID: ${permissionId} from database`);
-            const permission = await this.permissionRepository.findById(permissionId);
+            const permission = await this.permissionRepo.findById(permissionId);
             if (!permission) {
                 logger.warn(`Permission not found for ID: ${permissionId}`);
                 return null;
@@ -509,13 +498,13 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
             
             // 獲取總數和分頁數據
             const [permissions, total] = await Promise.all([
-                this.permissionRepository.findPaginated(
+                this.permissionRepo.findPaginated(
                     validatedParams.pageSize, 
                     offset, 
                     validatedParams.sortBy, 
                     validatedParams.sortOrder
                 ),
-                this.permissionRepository.count()
+                this.permissionRepo.count()
             ]);
 
             // 轉換為 DTO
@@ -559,7 +548,7 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
             }
 
             // 從資料庫查找
-            const permission = await this.permissionRepository.findByName(name.trim());
+            const permission = await this.permissionRepo.findByName(name.trim());
             if (!permission) {
                 logger.warn(`Permission not found for name: ${name}`);
                 return null;
@@ -610,14 +599,14 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
             // 獲取總數和分頁數據 (假設 repository 有對應方法)
             const searchPattern = `%${namePattern.trim()}%`;
             const [permissions, total] = await Promise.all([
-                this.permissionRepository.findByNamePatternPaginated(
+                this.permissionRepo.findByNamePatternPaginated(
                     searchPattern,
                     validatedParams.pageSize, 
                     offset, 
                     validatedParams.sortBy, 
                     validatedParams.sortOrder
                 ),
-                this.permissionRepository.countByNamePattern(searchPattern)
+                this.permissionRepo.countByNamePattern(searchPattern)
             ]);
 
             // 轉換為 DTO
@@ -682,14 +671,14 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
             // 獲取總數和分頁數據 (假設 repository 有對應方法)
             const searchPattern = `%${descriptionPattern.trim()}%`;
             const [permissions, total] = await Promise.all([
-                this.permissionRepository.findByDescriptionPatternPaginated(
+                this.permissionRepo.findByDescriptionPatternPaginated(
                     searchPattern,
                     validatedParams.pageSize, 
                     offset, 
                     validatedParams.sortBy, 
                     validatedParams.sortOrder
                 ),
-                this.permissionRepository.countByDescriptionPattern(searchPattern)
+                this.permissionRepo.countByDescriptionPattern(searchPattern)
             ]);
 
             // 轉換為 DTO
@@ -758,7 +747,7 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
             
             // 獲取總數和分頁數據 (假設 repository 有對應方法)
             const [permissions, total] = await Promise.all([
-                this.permissionRepository.findByDateRangePaginated(
+                this.permissionRepo.findByDateRangePaginated(
                     startDate,
                     endDate,
                     validatedParams.pageSize, 
@@ -766,7 +755,7 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
                     validatedParams.sortBy, 
                     validatedParams.sortOrder
                 ),
-                this.permissionRepository.countByDateRange(startDate, endDate)
+                this.permissionRepo.countByDateRange(startDate, endDate)
             ]);
 
             // 轉換為 DTO
@@ -826,14 +815,14 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
             
             // 獲取總數和分頁數據 (假設 repository 有對應方法)
             const [permissions, total] = await Promise.all([
-                this.permissionRepository.searchPaginated(
+                this.permissionRepo.searchPaginated(
                     criteria,
                     validatedParams.pageSize, 
                     offset, 
                     validatedParams.sortBy, 
                     validatedParams.sortOrder
                 ),
-                this.permissionRepository.countByCriteria(criteria)
+                this.permissionRepo.countByCriteria(criteria)
             ]);
 
             // 轉換為 DTO
@@ -859,6 +848,28 @@ export class PermissionQueriesSvc extends BaseRedisService implements IPermissio
         } catch (error) {
             logger.error('Error searching permissions with criteria:', error);
             throw new Error('Failed to search permissions with criteria');
+        }
+    }
+
+    /**
+     * 檢查使用者是否有特定權限
+     * 
+     * @param userId 使用者 ID
+     * @param permission 權限名稱
+     * @param options 快取選項
+     * @returns 是否有權限
+     */
+    public async hasPermission(userId: number, permission: string, options: CacheOptions = {}): Promise<boolean> {
+        try {
+            const userPermissions = await this.getUserPermissions(userId, options);
+            if (!userPermissions) {
+                return false;
+            }
+
+            return userPermissions.permissions.includes(permission);
+        } catch (error) {
+            logger.error(`Error checking permission ${permission} for user ${userId}:`, error);
+            return false;
         }
     }
 }

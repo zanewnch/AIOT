@@ -7,7 +7,7 @@
 
 import { RedisClientType } from 'redis';
 import { loggerConfig } from '../configs/loggerConfig.js';
-import { BaseRedisService, getRedisClient } from '@aiot-shared-packages';
+import { BaseRedisService, getRedisClient } from '@aiot/shared-packages';
 
 /**
  * JWT 黑名單服務類別

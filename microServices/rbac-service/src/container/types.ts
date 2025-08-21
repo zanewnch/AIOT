@@ -434,54 +434,54 @@ export const TYPES = {
    */
   JwtBlacklistSvc: Symbol.for('JwtBlacklistSvc'),
 
-  // ===== Repository Types =====
+  // ===== Repo Types =====
   /**
-   * 使用者查詢 Repository 類型
+   * 使用者查詢 Repo 類型
    */
   UserQueriesRepo: Symbol.for('UserQueriesRepo'),
 
   /**
-   * 權限查詢 Repository 類型
+   * 權限查詢 Repo 類型
    */
   PermissionQueriesRepo: Symbol.for('PermissionQueriesRepo'),
 
   /**
-   * 角色查詢 Repository 類型
+   * 角色查詢 Repo 類型
    */
   RoleQueriesRepo: Symbol.for('RoleQueriesRepo'),
 
   /**
-   * 使用者角色查詢 Repository 類型
+   * 使用者角色查詢 Repo 類型
    */
   UserRoleQueriesRepo: Symbol.for('UserRoleQueriesRepo'),
 
   /**
-   * 角色權限查詢 Repository 類型
+   * 角色權限查詢 Repo 類型
    */
   RolePermissionQueriesRepo: Symbol.for('RolePermissionQueriesRepo'),
 
   /**
-   * 使用者命令 Repository 類型
+   * 使用者命令 Repo 類型
    */
   UserCommandsRepo: Symbol.for('UserCommandsRepo'),
 
   /**
-   * 權限命令 Repository 類型
+   * 權限命令 Repo 類型
    */
   PermissionCommandsRepo: Symbol.for('PermissionCommandsRepo'),
 
   /**
-   * 角色命令 Repository 類型
+   * 角色命令 Repo 類型
    */
   RoleCommandsRepo: Symbol.for('RoleCommandsRepo'),
 
   /**
-   * 使用者角色命令 Repository 類型
+   * 使用者角色命令 Repo 類型
    */
   UserRoleCommandsRepo: Symbol.for('UserRoleCommandsRepo'),
 
   /**
-   * 角色權限命令 Repository 類型
+   * 角色權限命令 Repo 類型
    */
   RolePermissionCommandsRepo: Symbol.for('RolePermissionCommandsRepo')
 } as const;

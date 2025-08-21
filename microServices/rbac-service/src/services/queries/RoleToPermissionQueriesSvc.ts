@@ -331,7 +331,7 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         try {
             logger.info('Getting role-permission associations with pagination', params);
 
-            // 使用 Repository 的安全分頁方法
+            // 使用 Repo 的安全分頁方法
             const paginatedResult = await this.rolePermissionQueriesRepo.findPaginated(params);
 
             // 轉換為簡化的 DTO 格式

@@ -127,3 +127,189 @@ export interface IRoleToPermissionQueriesService {
      */
     getAllRolePermissions(params?: import('./PaginationTypes').PaginationParams): Promise<import('./PaginationTypes').PaginatedResult<RolePermissionAssignmentDTO>>;
 }
+
+// ======================== 權限命令操作類型 ========================
+
+/**
+ * 創建權限請求介面
+ * 
+ * 定義創建新權限所需的資料結構
+ * 
+ * @interface CreatePermissionRequest
+ * @example
+ * ```typescript
+ * const createRequest: CreatePermissionRequest = {
+ *   name: 'user:read',
+ *   description: '查看用戶信息'
+ * };
+ * ```
+ */
+export interface CreatePermissionRequest {
+    /** 權限名稱，必須唯一，建議使用命名空間格式（如 user:read） */
+    name: string;
+    
+    /** 權限描述，用於用戶界面顯示（可選） */
+    description?: string;
+}
+
+/**
+ * 更新權限請求介面
+ * 
+ * 定義更新權限資料所需的資料結構，所有欄位都是可選的
+ * 
+ * @interface UpdatePermissionRequest
+ * @example
+ * ```typescript
+ * const updateRequest: UpdatePermissionRequest = {
+ *   description: '更新後的權限描述'
+ * };
+ * ```
+ */
+export interface UpdatePermissionRequest {
+    /** 新的權限名稱（可選） */
+    name?: string;
+    
+    /** 新的權限描述（可選） */
+    description?: string;
+}
+
+/**
+ * 權限命令服務介面
+ * 
+ * 定義權限相關寫操作的標準介面
+ * 
+ * @interface IPermissionCommandsService
+ * @example
+ * ```typescript
+ * class PermissionCommandsSvc implements IPermissionCommandsService {
+ *   async createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO> {
+ *     // 實現邏輯
+ *   }
+ * }
+ * ```
+ */
+export interface IPermissionCommandsService {
+    /**
+     * 創建新權限
+     * 
+     * @param permissionData - 權限創建請求資料
+     * @returns Promise<PermissionDTO> 創建成功的權限資料
+     * @throws {Error} 當權限名稱已存在或創建失敗時
+     */
+    createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO>;
+    
+    /**
+     * 更新權限資料
+     * 
+     * @param permissionId - 權限 ID
+     * @param updateData - 權限更新請求資料
+     * @returns Promise<PermissionDTO | null> 更新後的權限資料或 null（如果不存在）
+     * @throws {Error} 當權限不存在或更新失敗時
+     */
+    updatePermission(permissionId: number, updateData: UpdatePermissionRequest): Promise<PermissionDTO | null>;
+    
+    /**
+     * 刪除權限
+     * 
+     * @param permissionId - 權限 ID
+     * @returns Promise<boolean> 是否刪除成功
+     * @throws {Error} 當權限不存在或刪除失敗時
+     */
+    deletePermission(permissionId: number): Promise<boolean>;
+}
+
+// ======================== 用戶權限相關類型 ========================
+
+/**
+ * 用戶權限資料傳輸物件
+ * 
+ * 用於表示用戶擁有的權限和角色信息的完整資料結構
+ * 
+ * @interface UserPermissions
+ * @example
+ * ```typescript
+ * const userPermissions: UserPermissions = {
+ *   userId: 1,
+ *   username: 'admin',
+ *   permissions: ['user:read', 'user:write', 'role:manage'],
+ *   roles: ['admin', 'moderator'],
+ *   lastUpdated: 1692518400000
+ * };
+ * ```
+ */
+export interface UserPermissions {
+    /** 用戶 ID */
+    userId: number;
+    
+    /** 用戶名稱 */
+    username: string;
+    
+    /** 用戶擁有的權限名稱列表 */
+    permissions: string[];
+    
+    /** 用戶擁有的角色名稱列表 */
+    roles: string[];
+    
+    /** 最後更新時間戳 */
+    lastUpdated: number;
+}
+
+/**
+ * 快取選項介面
+ * 
+ * 定義快取相關操作的配置選項
+ * 
+ * @interface CacheOptions
+ * @example
+ * ```typescript
+ * const options: CacheOptions = {
+ *   ttl: 3600,        // 1小時
+ *   forceRefresh: true // 強制刷新
+ * };
+ * ```
+ */
+export interface CacheOptions {
+    /** 快取存活時間（秒），可選 */
+    ttl?: number;
+    
+    /** 是否強制刷新快取，忽略現有快取，可選 */
+    forceRefresh?: boolean;
+}
+
+/**
+ * 權限查詢服務介面
+ * 
+ * 定義權限相關查詢操作的標準介面
+ * 
+ * @interface IPermissionQueriesService
+ * @example
+ * ```typescript
+ * class PermissionQueriesSvc implements IPermissionQueriesService {
+ *   async getUserPermissions(userId: number, options?: CacheOptions): Promise<UserPermissions | null> {
+ *     // 實現邏輯
+ *   }
+ * }
+ * ```
+ */
+export interface IPermissionQueriesService {
+    /**
+     * 獲取用戶的所有權限和角色信息
+     * 
+     * @param userId - 用戶 ID
+     * @param options - 快取選項，可選
+     * @returns Promise<UserPermissions | null> 用戶權限信息或 null（如果不存在）
+     * @throws {Error} 當用戶不存在或查詢失敗時
+     */
+    getUserPermissions(userId: number, options?: CacheOptions): Promise<UserPermissions | null>;
+    
+    /**
+     * 檢查用戶是否擁有特定權限
+     * 
+     * @param userId - 用戶 ID
+     * @param permission - 權限名稱
+     * @param options - 快取選項，可選
+     * @returns Promise<boolean> 用戶是否擁有該權限
+     * @throws {Error} 當用戶不存在或查詢失敗時
+     */
+    hasPermission(userId: number, permission: string, options?: CacheOptions): Promise<boolean>;
+}

@@ -2,7 +2,7 @@
 
 ## 概述
 
-這個目錄包含了正確實作的 Decorator Pattern 設計模式，用於為 RBAC Service 的 Controller、Service、Repository 和 gRPC Service 提供日誌功能。
+這個目錄包含了正確實作的 Decorator Pattern 設計模式，用於為 RBAC Service 的 Controller、Service、Repo 和 gRPC Service 提供日誌功能。
 
 **重要**：這不是 TypeScript 的 `@decorator` 語法糖，而是真正的設計模式實現。
 
@@ -117,23 +117,23 @@ export const createAuthQueriesSvc = (userRepo: UserQueriesRepo) => {
 };
 ```
 
-### 5. Repository 裝飾
+### 5. Repo 裝飾
 
 ```typescript
-import { createLoggedRepository } from '../patterns/LoggerDecorator.js';
+import { createLoggedRepo } from '../patterns/LoggerDecorator.js';
 
 @injectable()
 class UserCommandsRepo {
     constructor() {}
     
     create = async (userData: any): Promise<any> => {
-        // Repository 邏輯
+        // Repo 邏輯
     }
 }
 
 // 使用裝飾器包裝
 export const createUserCommandsRepo = () => {
-    return createLoggedRepository(
+    return createLoggedRepo(
         new UserCommandsRepo(), 
         'UserCommandsRepo'
     );
@@ -186,7 +186,7 @@ import { Container } from 'inversify';
 import { 
     createLoggedController, 
     createLoggedService, 
-    createLoggedRepository,
+    createLoggedRepo,
     createLoggedAuthService,
     createLoggedPermissionService,
     createLoggedGrpcService
@@ -196,7 +196,7 @@ const container = new Container();
 
 // Repositories
 container.bind(TYPES.UserCommandsRepo).toDynamicValue(() => {
-    return createLoggedRepository(
+    return createLoggedRepo(
         new UserCommandsRepo(),
         'UserCommandsRepo'
     );
@@ -302,7 +302,7 @@ const authServiceOptions = {
 };
 ```
 
-### Repository 配置
+### Repo 配置
 ```typescript
 const repositoryOptions = {
     logExecutionTime: true,
@@ -355,7 +355,7 @@ const repositoryOptions = {
 1. **Authentication Controller** - 使用 `createLoggedController` 並啟用 `logAuthEvent`
 2. **Permission Service** - 使用 `createLoggedPermissionService` 並啟用 `logPermissionCheck`
 3. **User/Role Management** - 使用 `createLoggedController` 並啟用完整日誌
-4. **Repository** - 使用 `createLoggedRepository` 並設定 `logLevel: 'debug'`
+4. **Repo** - 使用 `createLoggedRepo` 並設定 `logLevel: 'debug'`
 5. **gRPC Service** - 使用 `createLoggedGrpcService`
 6. **敏感操作** - 使用 `DecoratorChain` 進行多層日誌配置
 

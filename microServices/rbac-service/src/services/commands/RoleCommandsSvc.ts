@@ -26,7 +26,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { RoleCommandsRepository } from '../../repo/commands/RoleCommandsRepo.js';
+import { RoleCommandsRepo } from '../../repo/commands/RoleCommandsRepo.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
 import { BaseRedisService } from '@aiot/shared-packages';
@@ -35,33 +35,10 @@ import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { RoleQueriesSvc } from '../queries/RoleQueriesSvc.js';
 import type { RoleDTO, CacheOptions } from '../queries/RoleQueriesSvc.js';
+import type { CreateRoleRequest, UpdateRoleRequest, IRoleCommandsService } from '../../types/index.js';
 
 const logger = createLogger('RoleCommandsSvc');
 
-/**
- * 建立角色請求物件
- */
-export interface CreateRoleRequest {
-    name: string;
-    displayName?: string;
-}
-
-/**
- * 更新角色請求物件
- */
-export interface UpdateRoleRequest {
-    name?: string;
-    displayName?: string;
-}
-
-/**
- * 角色命令服務介面
- */
-export interface IRoleCommandsService {
-    createRole(roleData: CreateRoleRequest): Promise<RoleDTO>;
-    updateRole(roleId: number, updateData: UpdateRoleRequest): Promise<RoleDTO | null>;
-    deleteRole(roleId: number): Promise<boolean>;
-}
 
 /**
  * 角色命令服務實現類別
@@ -81,7 +58,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
 
     constructor(
         @inject(TYPES.RoleQueriesSvc) private readonly queryService: RoleQueriesSvc,
-        @inject(TYPES.RoleCommandsRepo) private readonly roleCommandsRepository: RoleCommandsRepository,
+        @inject(TYPES.RoleCommandsRepo) private readonly roleCommandsRepo: RoleCommandsRepo,
         @inject(TYPES.RoleQueriesRepo) private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
         // 初始化 Redis 服務
@@ -216,7 +193,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
             }
 
             // 建立角色
-            const role = await this.roleCommandsRepository.create({
+            const role = await this.roleCommandsRepo.create({
                 name: roleData.name.trim(),
                 displayName: roleData.displayName?.trim() || roleData.name.trim()
             });
@@ -275,7 +252,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
             }
 
             // 更新角色
-            const updatedRole = await this.roleCommandsRepository.update(roleId, updatePayload);
+            const updatedRole = await this.roleCommandsRepo.update(roleId, updatePayload);
             if (!updatedRole) {
                 logger.warn(`Role update failed - role not found for ID: ${roleId}`);
                 return null;
@@ -320,7 +297,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
             }
 
             // 刪除角色
-            const deleted = await this.roleCommandsRepository.delete(roleId);
+            const deleted = await this.roleCommandsRepo.delete(roleId);
             if (deleted) {
                 // 清除快取
                 await this.clearRoleManagementCache(roleId);

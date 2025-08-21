@@ -92,7 +92,8 @@ export class UserPreferenceCommandsCtrl {
 
             const createdPreferences = await this.userPreferenceCommandsSvc.bulkCreateUserPreferences(preferencesData);
             
-            ControllerResult.created(res, createdPreferences, `成功批量創建 ${createdPreferences.length} 個用戶偏好設定`);
+            const result = ResResult.created(`成功批量創建 ${createdPreferences.length} 個用戶偏好設定`, createdPreferences);
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -109,7 +110,8 @@ export class UserPreferenceCommandsCtrl {
 
             // ID 驗證
             if (isNaN(id) || id <= 0) {
-                ControllerResult.badRequest(res, '無效的偏好設定 ID');
+                const result = ResResult.badRequest('無效的偏好設定 ID');
+                res.status(result.status).json(result);
                 return;
             }
 
@@ -117,13 +119,15 @@ export class UserPreferenceCommandsCtrl {
 
             // 檢查是否有更新資料
             if (Object.keys(updateData).length === 0) {
-                ControllerResult.badRequest(res, '更新資料不能為空');
+                const result = ResResult.badRequest('更新資料不能為空');
+                res.status(result.status).json(result);
                 return;
             }
 
             const updatedPreference = await this.userPreferenceCommandsSvc.updateUserPreference(id, updateData);
             
-            ControllerResult.success(res, updatedPreference, '用戶偏好設定更新成功');
+            const result = ResResult.success('用戶偏好設定更新成功', updatedPreference);
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -140,7 +144,7 @@ export class UserPreferenceCommandsCtrl {
 
             // 用戶 ID 驗證
             if (isNaN(userId) || userId <= 0) {
-                ControllerResult.badRequest(res, '無效的用戶 ID');
+                const result = ResResult.badRequest('無效的用戶 ID');
                 return;
             }
 
@@ -148,13 +152,15 @@ export class UserPreferenceCommandsCtrl {
 
             // 檢查是否有更新資料
             if (Object.keys(updateData).length === 0) {
-                ControllerResult.badRequest(res, '更新資料不能為空');
+                const result = ResResult.badRequest('更新資料不能為空');
+                res.status(result.status).json(result);
                 return;
             }
 
             const updatedPreference = await this.userPreferenceCommandsSvc.updateUserPreferenceByUserId(userId, updateData);
             
-            ControllerResult.success(res, updatedPreference, '用戶偏好設定更新成功');
+            const result = ResResult.success('用戶偏好設定更新成功', updatedPreference);
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -171,13 +177,15 @@ export class UserPreferenceCommandsCtrl {
 
             // ID 驗證
             if (isNaN(id) || id <= 0) {
-                ControllerResult.badRequest(res, '無效的偏好設定 ID');
+                const result = ResResult.badRequest('無效的偏好設定 ID');
+                res.status(result.status).json(result);
                 return;
             }
 
             const deleted = await this.userPreferenceCommandsSvc.deleteUserPreference(id);
             
-            ControllerResult.success(res, { deleted }, '用戶偏好設定刪除成功');
+            const result = ResResult.success('用戶偏好設定刪除成功', { deleted });
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -194,13 +202,14 @@ export class UserPreferenceCommandsCtrl {
 
             // 用戶 ID 驗證
             if (isNaN(userId) || userId <= 0) {
-                ControllerResult.badRequest(res, '無效的用戶 ID');
+                const result = ResResult.badRequest('無效的用戶 ID');
                 return;
             }
 
             const deleted = await this.userPreferenceCommandsSvc.deleteUserPreferenceByUserId(userId);
             
-            ControllerResult.success(res, { deleted }, '用戶偏好設定刪除成功');
+            const result = ResResult.success('用戶偏好設定刪除成功', { deleted });
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -217,7 +226,7 @@ export class UserPreferenceCommandsCtrl {
 
             // 用戶 ID 驗證
             if (isNaN(userId) || userId <= 0) {
-                ControllerResult.badRequest(res, '無效的用戶 ID');
+                const result = ResResult.badRequest('無效的用戶 ID');
                 return;
             }
 
@@ -225,13 +234,14 @@ export class UserPreferenceCommandsCtrl {
 
             // 檢查是否有資料
             if (Object.keys(preferenceData).length === 0) {
-                ControllerResult.badRequest(res, '偏好設定資料不能為空');
+                const result = ResResult.badRequest('偏好設定資料不能為空');
                 return;
             }
 
             const upsertedPreference = await this.userPreferenceCommandsSvc.upsertUserPreference(userId, preferenceData);
             
-            ControllerResult.success(res, upsertedPreference, '用戶偏好設定操作成功');
+            const result = ResResult.success('用戶偏好設定操作成功', upsertedPreference);
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);
@@ -266,13 +276,14 @@ export class UserPreferenceCommandsCtrl {
 
             // 用戶 ID 驗證
             if (isNaN(userId) || userId <= 0) {
-                ControllerResult.badRequest(res, '無效的用戶 ID');
+                const result = ResResult.badRequest('無效的用戶 ID');
                 return;
             }
 
             const resetPreference = await this.userPreferenceCommandsSvc.resetUserPreferenceToDefault(userId);
             
-            ControllerResult.success(res, resetPreference, '用戶偏好設定已重置為預設值');
+            const result = ResResult.success('用戶偏好設定已重置為預設值', resetPreference);
+            res.status(result.status).json(result);
 
         } catch (error) {
             next(error);

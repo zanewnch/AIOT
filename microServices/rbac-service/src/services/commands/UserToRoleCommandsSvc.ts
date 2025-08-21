@@ -26,30 +26,16 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserRoleCommandsRepository } from '../../repo/commands/UserRoleCommandsRepo.js';
+import { UserRoleCommandsRepo } from '../../repo/commands/UserRoleCommandsRepo.js';
 import { BaseRedisService } from '@aiot/shared-packages';
 import { getRedisClient } from '@aiot/shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserToRoleQueriesSvc } from '../queries/UserToRoleQueriesSvc.js';
+import type { AssignRolesRequest, RemoveRoleRequest } from '../../types/index.js';
 
 const logger = createLogger('UserToRoleCommandsSvc');
 
-/**
- * 角色分配請求物件
- */
-export interface AssignRolesRequest {
-    userId: number;
-    roleIds: number[];
-}
-
-/**
- * 角色撤銷請求物件
- */
-export interface RemoveRoleRequest {
-    userId: number;
-    roleId: number;
-}
 
 /**
  * 使用者角色關聯命令服務類別
@@ -67,7 +53,7 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         @inject(TYPES.UserToRoleQueriesSvc)
         private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc,
         @inject(TYPES.UserRoleCommandsRepo)
-        private readonly userRoleCommandsRepository: UserRoleCommandsRepository
+        private readonly userRoleCommandsRepo: UserRoleCommandsRepo
     ) {
         // 初始化 Redis 服務
         super({
@@ -170,7 +156,7 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
             const successfullyAssigned: number[] = [];
             for (const roleId of roleIds) {
                 try {
-                    const [, created] = await this.userRoleCommandsRepository.findOrCreate(
+                    const [, created] = await this.userRoleCommandsRepo.findOrCreate(
                         { userId, roleId },
                         { userId, roleId }
                     );
@@ -232,7 +218,7 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
             }
 
             // 撤銷角色
-            const removed = await this.userRoleCommandsRepository.deleteByUserAndRole(userId, roleId);
+            const removed = await this.userRoleCommandsRepo.deleteByUserAndRole(userId, roleId);
 
             if (removed) {
                 // 清除相關快取
@@ -277,7 +263,7 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
             const roleIds = currentRoles.map(r => r.id);
 
             // 撤銷所有角色
-            const removedCount = await this.userRoleCommandsRepository.deleteByUserId(userId);
+            const removedCount = await this.userRoleCommandsRepo.deleteByUserId(userId);
 
             if (removedCount > 0) {
                 // 清除相關快取
@@ -323,7 +309,7 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
             const userIds = currentUsers.map(u => u.id);
 
             // 撤銷所有使用者
-            const removedCount = await this.userRoleCommandsRepository.deleteByRoleId(roleId);
+            const removedCount = await this.userRoleCommandsRepo.deleteByRoleId(roleId);
 
             if (removedCount > 0) {
                 // 清除相關快取

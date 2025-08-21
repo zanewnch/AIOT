@@ -1,5 +1,5 @@
 /**
- * @fileoverview 權限查詢 Repository - CQRS 查詢端
+ * @fileoverview 權限查詢 Repo - CQRS 查詢端
  * 
  * 專門處理權限資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -23,7 +23,7 @@ import type { PermissionSearchCriteria } from '../../services/queries/Permission
 const logger = createLogger('PermissionQueriesRepo');
 
 /**
- * 權限查詢 Repository 實現類別 - CQRS 查詢端
+ * 權限查詢 Repo 實現類別 - CQRS 查詢端
  * 
  * 專門處理權限資料的查詢操作，遵循 CQRS 模式
  * 
@@ -97,31 +97,31 @@ export class PermissionQueriesRepo {
   }
 
   /**
-   * 查詢所有權限
+   * 查詢所有權限（使用分頁方法以統一介面）
+   * 
+   * **設計意圖說明：**
+   * 此方法原本是獨立的查詢實現，現在重構為使用 findPaginated 統一介面。
+   * 這樣做的目的是：
+   * 1. **消除重複代碼**：避免維護兩套相似的查詢邏輯
+   * 2. **統一查詢介面**：所有查詢都使用相同的分頁機制
+   * 3. **提升可維護性**：只需在一個地方修改查詢邏輯
+   * 4. **增強擴展性**：future 可輕鬆添加排序、篩選功能
+   * 5. **保持向後兼容**：對調用方完全透明，不影響現有業務邏輯
+   * 
+   * 實現策略：使用 Number.MAX_SAFE_INTEGER 作為 limit 來模擬查詢全部資料
+   * 
    * @param includeRoles 是否包含關聯的角色資料
    * @returns 權限列表
    */
   findAll = async (includeRoles: boolean = false): Promise<PermissionModel[]> => {
-    try {
-      logger.debug(`Finding all permissions, includeRoles: ${includeRoles}`);
-      
-      const include = includeRoles ? [{
-        model: RoleModel,
-        as: 'roles',
-        through: { attributes: [] }
-      }] : undefined;
-
-      const permissions = await PermissionModel.findAll({
-        include,
-        order: [['name', 'ASC']]
-      });
-
-      logger.debug(`Found ${permissions.length} permissions`);
-      return permissions;
-    } catch (error) {
-      logger.error('Error finding all permissions:', error);
-      throw error;
-    }
+    // 統一使用 findPaginated 方法，設定極大值來模擬查詢全部
+    return this.findPaginated(
+      Number.MAX_SAFE_INTEGER, // 使用極大值作為 limit
+      0, // offset 為 0
+      'name', // 按名稱排序
+      'ASC', // 升序排列
+      includeRoles
+    );
   }
 
   /**

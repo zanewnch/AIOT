@@ -18,7 +18,7 @@
 import 'dotenv/config'; // 載入環境變數配置檔案（.env）
 import { RbacGrpcServer } from './grpc/rbacGrpcServer.js'; // 導入 gRPC 服務器
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { redisConfig } from '@aiot-shared-packages'; // Redis 快取配置
+import { redisConfig } from '@aiot/shared-packages'; // Redis 快取配置
 
 /**
  * gRPC 伺服器類別

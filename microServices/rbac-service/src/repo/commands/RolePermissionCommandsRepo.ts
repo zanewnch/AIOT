@@ -1,5 +1,5 @@
 /**
- * @fileoverview 角色權限關聯命令 Repository - CQRS 命令端
+ * @fileoverview 角色權限關聯命令 Repo - CQRS 命令端
  * 
  * 專門處理角色權限關聯資料的寫入操作，遵循 CQRS 模式的命令端原則。
  * 只包含寫入相關的操作方法，不包含任何查詢操作。
@@ -16,17 +16,17 @@ import { createLogger } from '../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
 import { Op } from 'sequelize';
 
-const logger = createLogger('RolePermissionCommandsRepository');
+const logger = createLogger('RolePermissionCommandsRepo');
 
 /**
- * 角色權限關聯命令 Repository 實現類別 - CQRS 命令端
+ * 角色權限關聯命令 Repo 實現類別 - CQRS 命令端
  * 
  * 專門處理角色權限關聯資料的寫入操作，遵循 CQRS 模式
  * 
- * @class RolePermissionCommandsRepository
+ * @class RolePermissionCommandsRepo
  */
 @injectable()
-export class RolePermissionCommandsRepository {
+export class RolePermissionCommandsRepo {
   /**
    * 建立角色權限關聯
    * @param rolePermissionData 角色權限關聯資料

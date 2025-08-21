@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneStatusCommandsSvc} from '../../services/commands/DroneStatusCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
-import {ResResult} from '@aiot-shared-packages';
+import {ResResult} from '@aiot/shared-packages';
 import {TYPES} from '../../container/types.js';
 import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
 import type {DroneStatus, DroneStatusCreationAttributes} from '../../models/DroneStatusModel.js';

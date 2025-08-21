@@ -53,7 +53,7 @@ export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesServ
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.RoleQueriesRepo) private readonly roleRepository: RoleQueriesRepo
+        @inject(TYPES.RoleQueriesRepo) private readonly roleRepo: RoleQueriesRepo
     ) {
         // 初始化 BaseRedisService
         super({
@@ -144,7 +144,7 @@ export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesServ
 
             // 快取不存在，從資料庫取得
             logger.debug(`Fetching role ID: ${roleId} from database`);
-            const role = await this.roleRepository.findById(roleId);
+            const role = await this.roleRepo.findById(roleId);
             if (!role) {
                 logger.warn(`Role not found for ID: ${roleId}`);
                 return null;
@@ -175,7 +175,7 @@ export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesServ
             }
 
             // 從資料庫查找
-            const role = await this.roleRepository.findByName(roleName.trim());
+            const role = await this.roleRepo.findByName(roleName.trim());
             if (!role) {
                 logger.warn(`Role not found for name: ${roleName}`);
                 return null;
@@ -196,7 +196,7 @@ export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesServ
      */
     public roleExists = async (roleName: string): Promise<boolean> => {
         try {
-            return await this.roleRepository.exists(roleName);
+            return await this.roleRepo.exists(roleName);
         } catch (error) {
             logger.error('Failed to check role existence:', error);
             return false;
@@ -228,13 +228,13 @@ export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesServ
             
             // 獲取總數和分頁數據
             const [roles, total] = await Promise.all([
-                this.roleRepository.findPaginated(
+                this.roleRepo.findPaginated(
                     validatedParams.pageSize, 
                     offset, 
                     validatedParams.sortBy, 
                     validatedParams.sortOrder
                 ),
-                this.roleRepository.count()
+                this.roleRepo.count()
             ]);
 
             // 轉換為 DTO

@@ -25,38 +25,20 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepo.js';
+import { PermissionCommandsRepo } from '../../repo/commands/PermissionCommandsRepo.js';
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 import { BaseRedisService, getRedisClient } from '@aiot/shared-packages';
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { RedisClientType } from 'redis';
 import type {
-    PermissionDTO
+    PermissionDTO,
+    CreatePermissionRequest,
+    UpdatePermissionRequest,
+    IPermissionCommandsService,
+    UserPermissions
 } from '../../types/index.js';
 
-// 定義缺少的介面
-interface UserPermissions {
-    userId: number;
-    permissions: PermissionDTO[];
-    roles: string[];
-}
-
-interface CreatePermissionRequest {
-    name: string;
-    description?: string;
-}
-
-interface UpdatePermissionRequest {
-    name?: string;
-    description?: string;
-}
-
-interface IPermissionCommandsService {
-    createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO>;
-    updatePermission(permissionId: number, updateData: UpdatePermissionRequest): Promise<PermissionDTO | null>;
-    deletePermission(permissionId: number): Promise<boolean>;
-}
 import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc.js';
 
 const logger = createLogger('PermissionCommandsSvc');
@@ -81,7 +63,7 @@ export class PermissionCommandsSvc extends BaseRedisService implements IPermissi
 
     constructor(
         @inject(TYPES.PermissionQueriesSvc) private readonly queryService: PermissionQueriesSvc,
-        @inject(TYPES.PermissionCommandsRepo) private readonly permissionCommandsRepository: PermissionCommandsRepository,
+        @inject(TYPES.PermissionCommandsRepo) private readonly permissionCommandsRepo: PermissionCommandsRepo,
         @inject(TYPES.PermissionQueriesRepo) private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
         // 初始化 Redis 服務
@@ -274,7 +256,7 @@ export class PermissionCommandsSvc extends BaseRedisService implements IPermissi
             }
 
             // 建立權限
-            const permission = await this.permissionCommandsRepository.create({
+            const permission = await this.permissionCommandsRepo.create({
                 name: permissionData.name.trim(),
                 description: permissionData.description?.trim()
             });
@@ -333,7 +315,7 @@ export class PermissionCommandsSvc extends BaseRedisService implements IPermissi
             }
 
             // 更新權限
-            const updatedPermission = await this.permissionCommandsRepository.update(permissionId, updatePayload);
+            const updatedPermission = await this.permissionCommandsRepo.update(permissionId, updatePayload);
             if (!updatedPermission) {
                 logger.warn(`Permission update failed - permission not found for ID: ${permissionId}`);
                 return null;
@@ -378,7 +360,7 @@ export class PermissionCommandsSvc extends BaseRedisService implements IPermissi
             }
 
             // 刪除權限
-            const deleted = await this.permissionCommandsRepository.delete(permissionId);
+            const deleted = await this.permissionCommandsRepo.delete(permissionId);
             if (deleted) {
                 // 清除快取
                 await this.clearPermissionManagementCache(permissionId);

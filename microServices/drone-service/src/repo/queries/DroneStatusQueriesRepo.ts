@@ -27,25 +27,32 @@ const logger = createLogger('DroneStatusQueriesRepo');
 @injectable()
 export class DroneStatusQueriesRepo {
     /**
-     * 取得所有無人機狀態資料
+     * 取得所有無人機狀態資料（使用分頁方法以統一介面）
+     *
+     * **設計意圖說明：**
+     * 此方法原本是獨立的 Sequelize 查詢實現，現已重構為使用 findPaginated 統一介面。
+     * Drone 服務特定的重構考量：
+     * 1. **IoT 資料查詢統一**：無人機狀態、位置、命令等查詢都使用相同的分頁模式
+     * 2. **即時性與分頁兼容**：保持原有的 limit 參數，同時利用分頁機制的排序功能  
+     * 3. **資料量管理**：無人機狀態資料可能大量增長，統一分頁有助於效能控制
+     * 4. **返回格式一致**：通過 .data 取出純資料陣列，保持與原介面完全相同
+     * 5. **監控與日誌整合**：利用 findPaginated 的統一日誌記錄機制
+     * 
+     * 實現策略：將 limit 參數直接對應到 PaginationParams.limit，保持向後兼容性
      *
      * @param {number} limit 限制筆數，預設為 100
      * @returns {Promise<DroneStatusAttributes[]>} 無人機狀態資料陣列
      */
     findAll = async (limit: number = 100): Promise<DroneStatusAttributes[]> => {
-        try {
-            logger.info('Fetching all drone status data');
-            const droneStatuses = await DroneStatusModel.findAll({
-                order: [['createdAt', 'DESC']],
-                limit
-            });
-
-            logger.info(`Successfully fetched ${droneStatuses.length} drone status records`);
-            return droneStatuses.map(item => item.toJSON() as DroneStatusAttributes);
-        } catch (error) {
-            logger.error('Error fetching all drone status data', { error });
-            throw error;
-        }
+        // 統一使用 findPaginated 方法，只返回 data 部分以保持相同介面
+        const params: PaginationParams = {
+            page: 1,
+            limit: limit,
+            sortBy: 'createdAt',
+            sortOrder: 'DESC'
+        };
+        const paginatedResult = await this.findPaginated(params);
+        return paginatedResult.data;
     }
 
     /**
