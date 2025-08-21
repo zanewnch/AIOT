@@ -31,5 +31,5 @@ export const TYPES = {
   ArchiveConsumer: Symbol.for('ArchiveConsumer'),
   
   // 應用程式服務
-  Application: Symbol.for('Application')
+  App: Symbol.for('App')
 } as const;

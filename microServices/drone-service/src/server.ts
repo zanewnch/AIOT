@@ -16,40 +16,68 @@
  */
 
 import 'dotenv/config';
+import 'reflect-metadata';
+import { ContainerUtils } from './container/container.js';
+import { TYPES } from './container/types.js';
 import { App } from './app.js';
+import { injectable, inject } from 'inversify';
 import http from 'http';
 
 /**
- * HTTP 伺服器啟動邏輯
+ * HTTP 伺服器管理類 (使用 InversifyJS 依賴注入)
  */
-async function main() {
-  try {
-    console.log('🚀 Starting Drone Service HTTP server...');
-    
-    // 建立應用程式實例
-    const app = new App();
-    
-    // 初始化應用程式
-    await app.initialize();
-    
-    // 建立 HTTP 伺服器
-    const port = process.env.HTTP_PORT || 3052;
-    const httpServer = http.createServer(app.app);
-    
-    // 啟動伺服器
-    httpServer.listen(port, () => {
-      console.log(`✅ Drone Service HTTP server is running on port ${port}`);
-      console.log(`📚 Docs available at: http://localhost:${port}/api/docs`);
-      console.log(`🏥 Health check at: http://localhost:${port}/health`);
-    });
+@injectable()
+export class DroneHttpServer {
+  private httpServer?: http.Server;
 
-    // 優雅關閉處理
-    const gracefulShutdown = async (signal: string) => {
-      console.log(`\n🛑 Received ${signal}, shutting down HTTP server gracefully...`);
+  constructor(
+    @inject(TYPES.App) private app: App
+  ) {}
+
+  /**
+   * 啟動 HTTP 伺服器
+   */
+  async start(): Promise<void> {
+    try {
+      console.log('🚀 Starting Drone Service HTTP server...');
       
-      httpServer.close(async () => {
+      // 初始化應用程式
+      await this.app.initialize();
+      
+      // 建立 HTTP 伺服器
+      const port = process.env.HTTP_PORT || 3052;
+      this.httpServer = http.createServer(this.app.app);
+      
+      // 啟動伺服器
+      await new Promise<void>((resolve) => {
+        this.httpServer!.listen(port, () => {
+          console.log(`✅ Drone Service HTTP server is running on port ${port}`);
+          console.log(`📚 Docs available at: http://localhost:${port}/api/docs`);
+          console.log(`🏥 Health check at: http://localhost:${port}/health`);
+          resolve();
+        });
+      });
+
+      // 註冊關閉事件處理器
+      process.on('SIGTERM', () => this.gracefulShutdown('SIGTERM'));
+      process.on('SIGINT', () => this.gracefulShutdown('SIGINT'));
+      
+    } catch (error) {
+      console.error('❌ Failed to start Drone Service HTTP server:', error);
+      process.exit(1);
+    }
+  }
+
+  /**
+   * 優雅關閉處理
+   */
+  private async gracefulShutdown(signal: string): Promise<void> {
+    console.log(`\n🛑 Received ${signal}, shutting down HTTP server gracefully...`);
+    
+    if (this.httpServer) {
+      this.httpServer.close(async () => {
         try {
-          await app.shutdown();
+          await this.app.shutdown();
           console.log('✅ HTTP server graceful shutdown completed');
           process.exit(0);
         } catch (error) {
@@ -57,14 +85,22 @@ async function main() {
           process.exit(1);
         }
       });
-    };
+    } else {
+      process.exit(0);
+    }
+  }
+}
 
-    // 註冊關閉事件處理器
-    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-    
+/**
+ * 主程式啟動邏輯
+ */
+async function main(): Promise<void> {
+  try {
+    // 使用 IoC 容器獲取伺服器實例
+    const server = ContainerUtils.get<DroneHttpServer>(TYPES.DroneHttpServer);
+    await server.start();
   } catch (error) {
-    console.error('❌ Failed to start Drone Service HTTP server:', error);
+    console.error('❌ Unhandled error in main:', error);
     process.exit(1);
   }
 }

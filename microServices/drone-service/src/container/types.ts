@@ -277,6 +277,11 @@ export const TYPES = {
    */
   HTTPServer: Symbol.for('HTTPServer'),
 
+  /**
+   * Drone HTTP 伺服器類型
+   */
+  DroneHttpServer: Symbol.for('DroneHttpServer'),
+
   // ===== 資料庫和外部服務 =====
   /**
    * Sequelize 資料庫連線類型
@@ -292,6 +297,11 @@ export const TYPES = {
    * RabbitMQ 管理器類型
    */
   RabbitMQManager: Symbol.for('RabbitMQManager'),
+
+  /**
+   * Consul 配置服務類型
+   */
+  ConsulConfig: Symbol.for('ConsulConfig'),
 
   // ===== Commands Controllers =====
   /**

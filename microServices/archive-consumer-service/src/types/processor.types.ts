@@ -76,8 +76,12 @@ export interface DatabaseConnection {
  * 定義訊息隊列操作的基本方法
  */
 export interface RabbitMQService {
+  initialize(): Promise<void>;
+  startConsumer(messageHandler: (message: any) => Promise<void>): Promise<void>;
   publishTaskResult(result: TaskResultMessage): Promise<boolean>;
   publishDelayed<T>(routingKey: string, message: T, delay: number, options?: any): Promise<boolean>;
+  close(): Promise<void>;
+  isHealthy(): boolean;
 }
 
 /**

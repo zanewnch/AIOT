@@ -11,12 +11,7 @@
 
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { TYPES, DroneEventType } from '../container/types.js';
-import type {
-  IDroneEventHandler,
-  IWebSocketService,
-  IWebSocketAuthMiddleware
-} from '../types/websocket-interfaces.js';
+import { TYPES } from '../container/types.js';
 
 // 無人機服務實現導入
 import { DronePositionQueriesSvc } from '../services/queries/DronePositionQueriesSvc.js';
@@ -58,12 +53,6 @@ import { DronePositionsArchiveCommandsSvc } from '../services/commands/DronePosi
 import { DroneStatusArchiveQueriesSvc } from '../services/queries/DroneStatusArchiveQueriesSvc.js';
 import { DroneStatusArchiveCommandsSvc } from '../services/commands/DroneStatusArchiveCommandsSvc.js';
 
-// WebSocket 服務（如果存在）
-// import { WebSocketService } from '../configs/websocket/service.js';
-// import { WebSocketAuthMiddleware } from '../../../../packages/WebSocketAuthMiddleware.js';
-// import { DronePositionEventHandler } from '../websocket/DronePositionEventHandler.js';
-// import { DroneStatusEventHandler } from '../websocket/DroneStatusEventHandler.js';
-// import { DroneCommandEventHandler } from '../websocket/DroneCommandEventHandler.js';
 
 // 控制器導入
 import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesCtrl.js';
@@ -179,11 +168,35 @@ export function createContainer(): Container {
     container.bind(TYPES.DroneRealtimeRoutes).to(DroneRealtimeRoutes).inSingletonScope();
     container.bind(TYPES.RouteManager).to(RouteManager).inSingletonScope();
 
-    // TODO: 註冊 WebSocket 服務（當實現後取消註釋）
-    // container.bind(TYPES.WebSocketService).to(WebSocketService).inSingletonScope();
-    // container.bind(TYPES.DronePositionEventHandler).to(DronePositionEventHandler).inSingletonScope();
-    // container.bind(TYPES.DroneStatusEventHandler).to(DroneStatusEventHandler).inSingletonScope();
-    // container.bind(TYPES.DroneCommandEventHandler).to(DroneCommandEventHandler).inSingletonScope();
+    // === 基礎設施服務 ===
+    // 數據庫連接
+    container.bind(TYPES.DatabaseConnection).toDynamicValue(() => {
+        const { createSequelizeInstance } = require('../configs/dbConfig.js');
+        return createSequelizeInstance();
+    }).inSingletonScope();
+
+    // RabbitMQ 管理器
+    container.bind(TYPES.RabbitMQManager).toDynamicValue(() => {
+        const { RabbitMQManager } = require('../configs/rabbitmqConfig.js');
+        return new RabbitMQManager();
+    }).inSingletonScope();
+
+    // Consul 配置
+    container.bind(TYPES.ConsulConfig).toDynamicValue(() => {
+        const { ConsulConfig } = require('../configs/consulConfig.js');
+        return new ConsulConfig();
+    }).inSingletonScope();
+
+    // === 應用程式核心 ===
+    // App 類 - 使用依賴注入
+    const { App } = require('../app.js');
+    container.bind(TYPES.App).to(App).inSingletonScope();
+
+    // DroneHttpServer 類 - HTTP 伺服器管理
+    const { DroneHttpServer } = require('../server.js');
+    container.bind(TYPES.DroneHttpServer).to(DroneHttpServer).inSingletonScope();
+
+    // WebSocket 服務已移至 drone-websocket-service
 
     return container;
 }

@@ -16,28 +16,28 @@
 
 import 'reflect-metadata'; // InversifyJS 需要的元數據反射
 import express from 'express'; // Express 框架，用於建立 HTTP 伺服器應用程式
-import { Server as HTTPServer } from 'http'; // HTTP 伺服器
+import { injectable, inject } from 'inversify'; // InversifyJS 依賴注入裝飾器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
-import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件配置
 import { redisConfig } from './configs/redisConfig.js'; // Redis 連線配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
-import { container, ContainerUtils } from './container/container.js';
-import { TYPES, DroneEventType } from './container/types.js';
-// Consul 服務註冊
+import { ContainerUtils } from './container/container.js';
+import { TYPES } from './container/types.js';
+// 業務服務類型
+import { RabbitMQManager } from './configs/rabbitmqConfig.js';
 import { ConsulConfig } from './configs/consulConfig.js';
-import type {
-    IDroneEventHandler,
-    IWebSocketService,
-    IWebSocketAuthMiddleware
-} from './types/websocket-interfaces.js';
+// WebSocket 功能已遷移到 drone-websocket-service
+// import type {
+//     IDroneEventHandler,
+//     IWebSocketService,
+//     IWebSocketAuthMiddleware
+// } from './types/websocket-interfaces.js';
 import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
 import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
 
 /**
- * Express 應用程式配置類別
+ * Express 應用程式配置類別 (重構版 - 使用 InversifyJS 依賴注入)
  *
  * 此類別是 AIOT 系統的核心應用程式類別，負責管理整個 Express 應用程式的生命週期，包括：
  *
@@ -49,26 +49,33 @@ import { DronePositionCommandsSvc } from './services/commands/DronePositionComma
  * - 錯誤處理機制的配置
  *
  * **外部服務整合：**
- * - 資料庫連線管理（Sequelize ORM）
+ * - 資料庫連線管理（Sequelize ORM）- 透過依賴注入
  * - Redis 快取服務連線
- * - RabbitMQ 訊息佇列服務連線
+ * - RabbitMQ 訊息佇列服務連線 - 透過依賴注入
+ * - Consul 服務註冊 - 透過依賴注入
  *
  * **生命週期管理：**
  * - 應用程式初始化流程
  * - 優雅關閉機制
  * - 資源清理和連線釋放
  *
+ * **重構改進：**
+ * - 使用 InversifyJS 進行依賴注入，提升可測試性
+ * - 移除直接實例化依賴的構造方式
+ * - 統一通過 IoC 容器管理所有外部服務
+ *
  * @class App
  * @example
  * ```typescript
- * const app = new App();
+ * // 透過容器創建 App 實例
+ * const app = container.get<App>(TYPES.App);
  * await app.initialize();
- * // 使用 app.app 作為 HTTP 伺服器的處理器
  * ```
  *
  * @since 1.0.0
  * @public
  */
+@injectable()
 export class App {
     /**
      * Express 應用程式實例
@@ -79,104 +86,45 @@ export class App {
     public app: express.Application;
 
     /**
-     * Sequelize 資料庫 ORM 實例
-     * 用於管理資料庫連線和資料模型操作
-     * @private
-     * @type {any}
-     */
-    private sequelize: any;
-
-    /**
-     * RabbitMQ 訊息佇列管理器實例
-     * 用於處理非同步訊息和任務佇列
-     * @private
-     * @type {RabbitMQManager}
-     */
-    private rabbitMQManager: RabbitMQManager;
-
-    /**
-     * WebSocket 服務實例（透過 IoC 容器取得）
-     * 用於處理 Socket.IO 連線和即時通訊
-     * @private
-     * @type {IWebSocketService | null}
-     */
-    private webSocketService: IWebSocketService | null = null;
-
-    /**
-     * 無人機事件處理器工廠函數（透過 IoC 容器取得）
-     * 用於根據事件類型獲取對應的處理器
-     * @private
-     * @type {(type: DroneEventType) => IDroneEventHandler | null}
-     */
-    private droneEventHandlerFactory: ((type: DroneEventType) => IDroneEventHandler) | null = null;
-
-    /**
-     * Consul 服務註冊實例
-     * @private
-     * @type {ConsulConfig}
-     */
-    private consulConfig: ConsulConfig;
-
-    /**
-     * 建構函式 - 初始化 Express 應用程式
+     * 建構函式 - 使用依賴注入初始化 Express 應用程式
      *
-     * 執行以下初始化步驟：
-     * 1. 建立 Express 應用程式實例
-     * 2. 初始化 RabbitMQ 管理器
-     * 3. 設定 Sequelize 資料庫連線
-     * 4. 配置 Passport JWT 身份驗證
-     * 5. 設定基本的 Express 中間件
+     * **重構改進：**
+     * - 透過 InversifyJS 注入所有外部依賴
+     * - 移除手動實例化依賴的方式
+     * - 提高可測試性和鬆耦合度
      *
      * @constructor
+     * @param {any} sequelize - Sequelize 資料庫 ORM 實例（透過依賴注入）
+     * @param {RabbitMQManager} rabbitMQManager - RabbitMQ 訊息佇列管理器（透過依賴注入）  
+     * @param {ConsulConfig} consulConfig - Consul 服務註冊配置（透過依賴注入）
      * @throws {Error} 當任何初始化步驟失敗時拋出錯誤
      */
-    constructor() {
+    constructor(
+        @inject(TYPES.DatabaseConnection) private sequelize: any,
+        @inject(TYPES.RabbitMQManager) private rabbitMQManager: RabbitMQManager,
+        @inject(TYPES.ConsulConfig) private consulConfig: ConsulConfig
+    ) {
         this.app = express(); // 建立 Express 應用程式實例
-        this.rabbitMQManager = new RabbitMQManager(); // 初始化 RabbitMQ 管理器
-        this.consulConfig = new ConsulConfig(); // 初始化 Consul 配置
 
         // 執行基本配置設定
-        this.setupSequelize(); // 設定 Sequelize 資料庫連線
-        this.setupMiddleware(); // 設定基本中間件
+        this.setupMiddleware(); // 設定基本中間件  
         this.initializeBusinessServices(); // 初始化業務服務實例
     }
 
     /**
-     * 初始化業務服務實例（簡化版）
+     * 初始化業務服務實例
      * 
-     * 暫時移除 WebSocket 相關的複雜初始化，專注於 HTTP API
+     * WebSocket 功能已移到獨立的 drone-websocket-service，
+     * 此服務專注於 HTTP API 和資料處理功能
      *
      * @private
      */
     private initializeBusinessServices(): void {
-        console.log('🔧 Initializing business services (simplified)...');
-
-        try {
-            // 暫時跳過 WebSocket 服務初始化
-            // 專注於 HTTP API 功能
-            this.webSocketService = null;
-            this.droneEventHandlerFactory = null;
-
-            console.log('✅ Business services initialized (simplified)');
-        } catch (error) {
-            console.error('❌ Failed to initialize business services:', error);
-            throw error;
-        }
+        console.log('🔧 Initializing business services...');
+        console.log('ℹ️  WebSocket functionality moved to drone-websocket-service');
+        console.log('✅ Business services initialized');
     }
 
-    /**
-     * 初始化 Sequelize 資料庫連線
-     *
-     * 建立 Sequelize ORM 實例，用於管理資料庫連線和資料模型操作。
-     * 此方法在建構函式中同步執行，實際的資料庫連線會在 initialize() 方法中建立。
-     *
-     * @private
-     * @method setupSequelize
-     * @returns {void}
-     */
-    private setupSequelize(): void {
-        this.sequelize = createSequelizeInstance(); // 建立 Sequelize 實例
-    }
 
     /**
      * 初始化 RabbitMQ 連線
@@ -273,49 +221,6 @@ export class App {
         this.app.use(ErrorHandleMiddleware.handle); // 註冊全域錯誤處理中間件
     }
 
-    /**
-     * 初始化 WebSocket 服務（使用 IoC 容器）
-     *
-     * 此方法需要在 HTTP 伺服器建立後呼叫，用於初始化 WebSocket 管理器和事件處理器
-     * WebSocket 服務和事件處理器已透過 IoC 容器管理，只需要傳入 HTTP 伺服器
-     *
-     * @param {HTTPServer} httpServer - HTTP 伺服器實例
-     * @returns {Promise<void>} 初始化完成的 Promise
-     */
-    async initializeWebSocket(httpServer: HTTPServer): Promise<void> {
-        try {
-            console.log('🔧 Initializing WebSocket services with IoC container...');
-
-            // WebSocket 服務已透過容器取得，只需要初始化 HTTP 伺服器
-            if (!this.webSocketService) {
-                throw new Error('WebSocket service not initialized from IoC container');
-            }
-
-            // 注意: WebSocket 服務的 HTTP 伺服器初始化需要在服務實現中處理
-            // 這個方法呼叫將在接口中定義 initialize 方法後使用
-
-            // 取得認證中間件
-            const authMiddleware = ContainerUtils.get<IWebSocketAuthMiddleware>(TYPES.WebSocketAuthMiddleware);
-            this.webSocketService.setupMiddleware(authMiddleware.createMiddleware());
-
-            // 使用 Factory Provider 設定事件處理
-            if (!this.droneEventHandlerFactory) {
-                throw new Error('Drone event handler factory not initialized from IoC container');
-            }
-
-            // TODO: 創建事件設置器並設定處理邏輯
-            // const eventSetup = new DroneEventSetup(this.droneEventHandlerFactory);
-            this.webSocketService.setupEventHandlers((socket: any, namespace: string) => {
-                // TODO: 實現事件處理邏輯
-                console.log('Socket connected:', socket.id, 'namespace:', namespace);
-            });
-
-            console.log('✅ WebSocket services initialized via IoC container');
-        } catch (error) {
-            console.error('❌ WebSocket initialization failed:', error);
-            throw error;
-        }
-    }
 
     /**
      * 初始化應用程式
@@ -335,7 +240,7 @@ export class App {
      * - 註冊所有 API 路由
      * - 設定錯誤處理中間件
      *
-     * **注意：** WebSocket 初始化需要在 HTTP 伺服器建立後單獨呼叫 initializeWebSocket()
+     * **注意：** WebSocket 功能已移到獨立的 drone-websocket-service
      *
      * @public
      * @async
@@ -347,8 +252,6 @@ export class App {
      * ```typescript
      * const app = new App();
      * await app.initialize();
-     * const httpServer = http.createServer(app.app);
-     * await app.initializeWebSocket(httpServer);
      * console.log('Application ready to serve requests');
      * ```
      */
@@ -414,11 +317,6 @@ export class App {
                 await this.consulConfig.deregisterService();
             }
 
-            // 步驟 2：// 步驟 0：關閉 WebSocket 服務（先關閉即時連線）
-            if (this.webSocketService) {
-                console.log('📡 Closing WebSocket connections...');
-                await this.webSocketService.shutdown();
-            }
 
             // 步驟 1：關閉 RabbitMQ 連線
             console.log('🔌 Closing RabbitMQ connection...');
@@ -479,59 +377,6 @@ export class App {
         return this.sequelize; // 返回 Sequelize 實例
     }
 
-    /**
-     * 獲取 WebSocket 服務實例
-     *
-     * 提供對 WebSocket 服務的外部存取，用於即時通訊操作。
-     *
-     * @public
-     * @method getWebSocketService
-     * @returns {WebSocketService | null} WebSocket 服務實例或 null
-     *
-     * @example
-     * ```typescript
-     * const wsService = app.getWebSocketService();
-     * if (wsService) {
-     *   wsService.broadcastDronePosition('drone1', positionData);
-     * }
-     * ```
-     */
-    getWebSocketService(): IWebSocketService | null {
-        return this.webSocketService; // 返回 WebSocket 服務實例
-    }
-
-    /**
-     * 獲取無人機事件處理器工廠函數
-     *
-     * 提供對無人機事件處理器工廠的外部存取。
-     *
-     * @public
-     * @method getDroneEventHandlerFactory
-     * @returns {(type: DroneEventType) => IDroneEventHandler | null} 無人機事件處理器工廠函數或 null
-     */
-    getDroneEventHandlerFactory(): ((type: DroneEventType) => IDroneEventHandler) | null {
-        return this.droneEventHandlerFactory; // 返回無人機事件處理器工廠函數
-    }
-
-    /**
-     * 根據事件類型獲取無人機事件處理器 (Factory Provider 輔助方法)
-     *
-     * @public
-     * @method getDroneEventHandler
-     * @param {DroneEventType} eventType - 事件類型
-     * @returns {IDroneEventHandler | null} 無人機事件處理器實例或 null
-     */
-    getDroneEventHandler(eventType: DroneEventType): IDroneEventHandler | null {
-        if (!this.droneEventHandlerFactory) {
-            return null;
-        }
-        try {
-            return this.droneEventHandlerFactory(eventType);
-        } catch (error) {
-            console.error(`Failed to get handler for event type: ${eventType}`, error);
-            return null;
-        }
-    }
 
     /**
      * 無人機命令服務已重構為 CQRS 模式

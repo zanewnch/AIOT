@@ -73,7 +73,7 @@ export interface EnvironmentConfig {
 function loadConfig(): EnvironmentConfig {
   const config: EnvironmentConfig = {
     service: {
-      name: process.env.SERVICE_NAME || 'archive-processor-service',
+      name: process.env.SERVICE_NAME || 'archive-consumer-service',
       port: parseInt(process.env.PORT || '3007', 10),
       nodeEnv: process.env.NODE_ENV || 'development'
     },
@@ -91,7 +91,7 @@ function loadConfig(): EnvironmentConfig {
       url: process.env.RABBITMQ_URL || 'amqp://localhost:5672',
       exchange: process.env.RABBITMQ_EXCHANGE || 'aiot.scheduler',
       queues: {
-        archiveProcessor: process.env.RABBITMQ_QUEUE_ARCHIVE_PROCESSOR || 'archive-processor',
+        archiveProcessor: process.env.RABBITMQ_QUEUE_ARCHIVE_PROCESSOR || 'archive-consumer',
         taskResult: process.env.RABBITMQ_QUEUE_TASK_RESULT || 'task-result'
       },
       prefetch: parseInt(process.env.RABBITMQ_PREFETCH || '5', 10),

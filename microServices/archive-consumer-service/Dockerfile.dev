@@ -1,5 +1,5 @@
 # ==================================================
-# Archive Processor Service - Development Dockerfile
+# Archive Consumer Service - Development Dockerfile
 # ==================================================
 
 FROM node:18-alpine

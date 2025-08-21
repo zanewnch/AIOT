@@ -30,6 +30,7 @@ import { RabbitMQService } from '../services/RabbitMQService';
 import { ArchiveTaskRepoImpl } from '../services/ArchiveTaskRepoImpl';
 import { ArchiveProcessor } from '../processors/ArchiveProcessor';
 import { ArchiveConsumer } from '../consumers/ArchiveConsumer';
+import { App } from '../app';
 
 /**
  * 建立並配置 DI 容器
@@ -72,6 +73,11 @@ export function createContainer(): Container {
   // === 消費者服務 ===
   container.bind<ArchiveConsumer>(TYPES.ArchiveConsumer)
     .to(ArchiveConsumer)
+    .inSingletonScope();
+
+  // === 應用程式服務 ===
+  container.bind<App>(TYPES.App)
+    .to(App)
     .inSingletonScope();
 
   return container;

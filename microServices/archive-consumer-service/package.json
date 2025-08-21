@@ -1,7 +1,7 @@
 {
-  "name": "archive-processor-service",
+  "name": "archive-consumer-service",
   "version": "1.0.0",
-  "description": "AIOT 歸檔處理服務 - 負責執行歸檔和清理任務",
+  "description": "AIOT 歸檔消費者服務 - 負責消費和處理歸檔任務",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
@@ -45,8 +45,8 @@
   },
   "keywords": [
     "archive",
-    "processor",
-    "cleanup",
+    "consumer",
+    "rabbitmq",
     "microservice",
     "aiot"
   ],
