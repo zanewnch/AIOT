@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module UserToRoleQueries
+ * @module UserToRoleQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -19,7 +19,7 @@ import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('UserToRoleQueries');
+const logger = createLogger('UserToRoleQueriesCtrl');
 
 /**
  * 使用者角色關聯查詢控制器類別
@@ -27,11 +27,11 @@ const logger = createLogger('UserToRoleQueries');
  * 專門處理使用者角色關聯相關的查詢請求，包含列表查詢、詳情查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class UserToRoleQueries
+ * @class UserToRoleQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class UserToRoleQueries {
+export class UserToRoleQueriesCtrl {
     constructor(
         @inject(TYPES.UserToRoleQueriesSvc) private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc
     ) {

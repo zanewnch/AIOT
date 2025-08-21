@@ -14,7 +14,7 @@ import { createClient, RedisClientType } from 'redis';
 import { createHash } from 'crypto';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('JwtBlacklistService');
+const logger = createLogger('JwtBlacklistSvc');
 
 /**
  * JWT 黑名單管理服務
@@ -22,7 +22,7 @@ const logger = createLogger('JwtBlacklistService');
  * 負責管理已失效的 JWT token，防止登出後的 token 被重複使用
  */
 @injectable()
-export class JwtBlacklistService {
+export class JwtBlacklistSvc {
     private redisClient: RedisClientType;
     private readonly keyPrefix = 'jwt_blacklist:';
 

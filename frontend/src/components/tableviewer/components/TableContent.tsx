@@ -11,7 +11,7 @@
 import React, { Suspense } from "react";
 import { TableType } from "../../../stores";
 import { getTableConfig } from "../../../configs/tableConfigs";
-import { GenericTableViewer } from "../GenericTableViewer";
+import { GenericTableContent } from "./GenericTableContent";
 import LoadingSpinner from "../../common/LoadingSpinner";
 import styles from "../../../styles/TableViewer.module.scss";
 
@@ -43,11 +43,11 @@ export const TableContent: React.FC<TableContentProps> = ({ activeTable }) => {
         }
       >
         {/* 🎯 實際表格組件：傳入配置進行渲染 */}
-        <GenericTableViewer config={config} />
+        <GenericTableContent config={config} />
       </Suspense>
     );
   }
 
   // ⚡ 一般渲染：小型表格直接渲染，無需懶載入
-  return <GenericTableViewer config={config} />;
+  return <GenericTableContent config={config} />;
 };

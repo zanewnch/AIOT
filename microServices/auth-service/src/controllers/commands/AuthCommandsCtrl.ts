@@ -1,5 +1,5 @@
 /**
- * @fileoverview AuthCommands 控制器 - 檔案層級意圖說明
+ * @fileoverview AuthCommandsCtrl 控制器 - 檔案層級意圖說明
  *
  * 目的：此控制器負責處理所有寫入/命令型的認證 API 端點，遵循 CQRS 的命令端模式。
  * - 負責處理使用者登入、登出等會改變系統狀態的操作
@@ -28,7 +28,7 @@ import {ResResult} from '../../utils/ResResult'; // 統一 API 回應封裝
 import {TYPES} from '../../container/types.js'; // DI container key
 import {JwtBlacklistMiddleware} from '../../middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
 
-const logger = createLogger('AuthCommands'); // 建立 module 專屬 logger
+const logger = createLogger('AuthCommandsCtrl'); // 建立 module 專屬 logger
 
 /**
  * 認證命令控制器類別 - 處理所有認證相關的命令型操作
@@ -49,20 +49,20 @@ const logger = createLogger('AuthCommands'); // 建立 module 專屬 logger
  * - 詳細的認證事件記錄
  * - IP 地址和 User Agent 追蹤
  *
- * @class AuthCommands
+ * @class AuthCommandsCtrl
  * @example
  * ```typescript
  * // 透過 Inversify 容器注入使用
- * const authController = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
+ * const authController = container.get<AuthCommandsCtrl>(TYPES.AuthCommandsCtrl);
  * ```
  *
  * @since 1.0.0
  * @public
  */
 @injectable() // 標記可注入
-export class AuthCommands { // 控制器類別
+export class AuthCommandsCtrl { // 控制器類別
     /**
-     * AuthCommands 控制器建構函數
+     * AuthCommandsCtrl 控制器建構函數
      *
      * 透過 Inversify 依賴注入機制注入所需的服務實例。
      *

@@ -33,12 +33,12 @@
  */
 
 import React from 'react';
-import LoadingSpinner from '../common/LoadingSpinner';
-import { PaginationControls } from '../common/PaginationControls';
-import { TableConfig } from '../../configs/tableConfigs';
-import { useTableData, useTableEdit, useEditModal } from './hooks';
-import { EditModal } from './components';
-import { createLogger } from '../../configs/loggerConfig';
+import LoadingSpinner from '../../common/LoadingSpinner';
+import { PaginationControls } from '../../common/PaginationControls';
+import { TableConfig } from '../../../configs/tableConfigs';
+import { useTableData, useTableEdit, useEditModal } from '../hooks';
+import { EditModal } from '.';
+import { createLogger } from '../../../configs/loggerConfig';
 import styles from '../../styles/TableViewer.module.scss';
 
 
@@ -48,7 +48,7 @@ import styles from '../../styles/TableViewer.module.scss';
  * 
  * 此組件根據配置動態渲染表格，提供統一的數據處理邏輯
  */
-export const GenericTableViewer: React.FC<{config: TableConfig, className?: string}> = ({ config, className }) => {
+export const GenericTableContent: React.FC<{config: TableConfig, className?: string}> = ({ config, className }) => {
   const logger = createLogger(`GenericTableViewer-${config.type}`);
   
   // 🎯 使用數據管理 Hook（支援分頁）

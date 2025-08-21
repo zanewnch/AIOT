@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module DroneCommandQueueQueries
+ * @module DroneCommandQueueQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -20,7 +20,7 @@ import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
 
-const logger = createLogger('DroneCommandQueueQueries');
+const logger = createLogger('DroneCommandQueueQueriesCtrl');
 
 /**
  * 無人機指令佇列查詢控制器類別
@@ -28,11 +28,11 @@ const logger = createLogger('DroneCommandQueueQueries');
  * 專門處理無人機指令佇列相關的查詢請求，包含取得佇列資料等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class DroneCommandQueueQueries
+ * @class DroneCommandQueueQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandQueueQueries {
+export class DroneCommandQueueQueriesCtrl {
     constructor(
         @inject(TYPES.DroneCommandQueueQueriesSvc) private readonly queryService: DroneCommandQueueQueriesSvc
     ) {
@@ -56,17 +56,8 @@ export class DroneCommandQueueQueries {
 
             const paginationParams = { page, pageSize, sortBy, sortOrder };
 
-            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
-            if (!req.query.page && !req.query.pageSize) {
-                // 向後兼容：沒有分頁參數時返回所有數據
-                const queues = await this.queryService.getAllDroneCommandQueues();
-                const result = ResResult.success('無人機指令佇列獲取成功', queues);
-                res.status(result.status).json(result);
-                return;
-            }
-
-            // 使用分頁查詢
-            const paginatedResult = await this.queryService.getDroneCommandQueuesPaginated(paginationParams);
+            // 統一使用分頁查詢（方法現在總是返回分頁結果）
+            const paginatedResult = await this.queryService.getAllDroneCommandQueues(paginationParams);
             const result = ResResult.success('無人機指令佇列獲取成功', paginatedResult);
 
             res.status(result.status).json(result);

@@ -12,15 +12,14 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
 import type {
     CommandStatistics,
     CommandTypeStatistics,
     DroneCommandSummary
 } from '../../types/services/IDroneCommandService.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
-import { DroneCommandQueriesRepo } from '../../repo/queries/DroneCommandQueriesRepo.js';
-import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -39,21 +38,10 @@ const logger = createLogger('DroneCommandQueriesSvc');
  */
 @injectable()
 export class DroneCommandQueriesSvc {
-    private commandRepo: IDroneCommandRepo;
-    private queriesRepo: DroneCommandQueriesRepo;
-    private commandsRepo: DroneCommandCommandsRepo;
-
-    constructor() {
-        this.queriesRepo = new DroneCommandQueriesRepo();
-        this.commandsRepo = new DroneCommandCommandsRepository();
-        
-        // 創建組合repository來滿足IDroneCommandRepository接口
-        this.commandRepo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
-        ) as IDroneCommandRepo;
-    }
+    constructor(
+        @inject(TYPES.DroneCommandQueriesRepo)
+        private readonly commandRepo: IDroneCommandRepository
+    ) {}
 
     /**
      * 取得所有無人機指令

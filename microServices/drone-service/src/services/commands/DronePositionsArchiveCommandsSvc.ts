@@ -12,10 +12,9 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
 import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
-import { DronePositionsArchiveCommandsRepository } from '../../repo/commands/DronePositionsArchiveCommandsRepo.js';
-import { DronePositionsArchiveQueriesRepository } from '../../repo/queries/DronePositionsArchiveQueriesRepo.js';
 import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { DronePositionsArchiveQueriesSvc } from '../queries/DronePositionsArchiveQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -34,24 +33,12 @@ const logger = createLogger('DronePositionsArchiveCommandsSvc');
  */
 @injectable()
 export class DronePositionsArchiveCommandsSvc {
-    private commandsRepo: DronePositionsArchiveCommandsRepo;
-    private queriesRepo: DronePositionsArchiveQueriesRepo;
-    private archiveRepo: IDronePositionsArchiveRepo; // 組合介面
-    private queryService: DronePositionsArchiveQueriesSvc;
-
-    constructor() {
-        this.commandsRepo = new DronePositionsArchiveCommandsRepository();
-        this.queriesRepo = new DronePositionsArchiveQueriesRepository();
-        
-        // 創建組合repository
-        this.archiveRepo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
-        ) as IDronePositionsArchiveRepo;
-        
-        this.queryService = new DronePositionsArchiveQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DronePositionsArchiveCommandsRepository)
+        private readonly archiveRepo: IDronePositionsArchiveRepository,
+        @inject(TYPES.DronePositionsArchiveQueriesSvc)
+        private readonly queryService: DronePositionsArchiveQueriesSvc
+    ) {}
 
     /**
      * 建立新的位置歷史歸檔記錄
@@ -68,7 +55,7 @@ export class DronePositionsArchiveCommandsSvc {
                 throw new Error('無效的座標資料');
             }
 
-            const createdArchive = await this.archiveRepository.create(data);
+            const createdArchive = await this.archiveRepo.create(data);
 return createdArchive;
         } catch (error) {
             throw error;
@@ -99,7 +86,7 @@ return createdArchive;
                 }
             }
 
-            const createdArchives = await this.archiveRepository.bulkCreate(dataArray);
+            const createdArchives = await this.archiveRepo.bulkCreate(dataArray);
 return createdArchives;
         } catch (error) {
             throw error;
@@ -133,7 +120,7 @@ return createdArchives;
                 }
             }
 
-            const updatedArchive = await this.archiveRepository.update(id, data);
+            const updatedArchive = await this.archiveRepo.update(id, data);
 
             if (updatedArchive) {
 } else {
@@ -161,7 +148,7 @@ return createdArchives;
                 throw new Error('指定的位置歷史歸檔不存在');
             }
 
-            await this.archiveRepository.delete(id);
+            await this.archiveRepo.delete(id);
 return true;
         } catch (error) {
             throw error;
@@ -178,7 +165,7 @@ return true;
                 throw new Error('無效的刪除日期');
             }
 
-            const deletedCount = await this.archiveRepository.deleteBeforeDate(beforeDate);
+            const deletedCount = await this.archiveRepo.deleteBeforeDate(beforeDate);
 return deletedCount;
         } catch (error) {
             throw error;
@@ -201,7 +188,7 @@ return deletedCount;
                 throw new Error('指定的歸檔批次不存在');
             }
 
-            const deletedCount = await this.archiveRepository.deleteBatch(batchId);
+            const deletedCount = await this.archiveRepo.deleteBatch(batchId);
 return deletedCount;
         } catch (error) {
             throw error;
@@ -231,7 +218,7 @@ if (!ids || ids.length === 0) {
             let deletedCount = 0;
             for (const id of ids) {
                 try {
-                    await this.archiveRepository.delete(id);
+                    await this.archiveRepo.delete(id);
                     deletedCount++;
                 } catch (error) {
 }
@@ -376,7 +363,7 @@ if (!oldBatchId || oldBatchId.trim() === '') {
             let updatedCount = 0;
             for (const archive of oldBatchData) {
                 try {
-                    const updated = await this.archiveRepository.update(archive.id, {
+                    const updated = await this.archiveRepo.update(archive.id, {
                         archive_batch_id: newBatchId
                     });
                     if (updated) {

@@ -24,10 +24,11 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { UserRoleQueriesRepository } from '../../repo/queries/UserRoleQueriesRepo.js';
-import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo.js';
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
+import { UserRoleQueriesRepo } from '../../repo/queries/UserRoleQueriesRepo.js';
+import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
+import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
@@ -86,39 +87,41 @@ export interface CacheOptions {
  */
 @injectable()
 export class UserToRoleQueriesSvc {
-    private userRoleQueriesRepository: UserRoleQueriesRepository;
-    private userQueriesRepository: UserQueriesRepository;
-    private roleQueriesRepository: RoleQueriesRepository;
-    
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
     private static readonly DEFAULT_CACHE_TTL = 3600;
 
     constructor(
-        userRoleQueriesRepository: UserRoleQueriesRepository = new UserRoleQueriesRepository(),
-        userQueriesRepository: UserQueriesRepository = new UserQueriesRepository(),
-        roleQueriesRepository: RoleQueriesRepository = new RoleQueriesRepository()
+        @inject(TYPES.UserRoleQueriesRepo)
+        private readonly userRoleQueriesRepo: UserRoleQueriesRepo,
+        @inject(TYPES.UserQueriesRepo)
+        private readonly userQueriesRepo: UserQueriesRepo,
+        @inject(TYPES.RoleQueriesRepo)
+        private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
-        this.userRoleQueriesRepository = userRoleQueriesRepository;
-        this.userQueriesRepository = userQueriesRepository;
-        this.roleQueriesRepository = roleQueriesRepository;
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for UserToRoleQueriesSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, UserToRoleQueriesSvc will fallback to database queries only:', error);
+        }
     }
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -175,8 +178,12 @@ export class UserToRoleQueriesSvc {
      * @private
      */
     private getCachedUserRoles = async (userId: number): Promise<RoleDTO[] | null> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            return null; // Redis 不可用，直接返回 null
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for user roles: ${userId}`);
             const key = this.getUserRolesCacheKey(userId);
             const cachedData = await redis.get(key);
@@ -197,8 +204,13 @@ export class UserToRoleQueriesSvc {
      * @private
      */
     private cacheUserRoles = async (userId: number, roles: RoleDTO[]): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache user roles operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Caching user roles for ID: ${userId} in Redis`);
             const key = this.getUserRolesCacheKey(userId);
             await redis.setEx(key, UserToRoleQueriesSvc.DEFAULT_CACHE_TTL, JSON.stringify(roles));
@@ -218,7 +230,7 @@ export class UserToRoleQueriesSvc {
                 return false;
             }
             
-            const user = await this.userQueriesRepository.findById(userId);
+            const user = await this.userQueriesRepo.findById(userId);
             return !!user;
         } catch (error) {
             logger.error(`Error checking user existence ${userId}:`, error);
@@ -237,7 +249,7 @@ export class UserToRoleQueriesSvc {
                 return false;
             }
             
-            const role = await this.roleQueriesRepository.findById(roleId);
+            const role = await this.roleQueriesRepo.findById(roleId);
             return !!role;
         } catch (error) {
             logger.error(`Error checking role existence ${roleId}:`, error);
@@ -270,7 +282,7 @@ export class UserToRoleQueriesSvc {
             }
 
             // 驗證使用者是否存在
-            const user = await this.userQueriesRepository.findById(userId);
+            const user = await this.userQueriesRepo.findById(userId);
             if (!user) {
                 logger.warn(`User not found for ID: ${userId}`);
                 throw new Error('User not found');
@@ -278,7 +290,7 @@ export class UserToRoleQueriesSvc {
 
             // 從資料庫取得使用者角色
             logger.debug(`Fetching roles for user ID: ${userId} from database`);
-            const userRoles = await this.userRoleQueriesRepository.findByUserId(userId);
+            const userRoles = await this.userRoleQueriesRepo.findByUserId(userId);
             const roles = userRoles.map(ur => ur.role).filter(r => r !== null && r !== undefined);
             const rolesDTO = roles.map(r => this.roleModelToDTO(r!));
 
@@ -313,7 +325,7 @@ export class UserToRoleQueriesSvc {
             }
 
             // 查詢使用者角色關聯
-            const userRole = await this.userRoleQueriesRepository.findByUserAndRole(userId, roleId);
+            const userRole = await this.userRoleQueriesRepo.findByUserAndRole(userId, roleId);
             const hasRole = !!userRole;
 
             logger.debug(`User ${userId} ${hasRole ? 'has' : 'does not have'} role ${roleId}`);
@@ -340,7 +352,7 @@ export class UserToRoleQueriesSvc {
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId);
+            const role = await this.roleQueriesRepo.findById(roleId);
             if (!role) {
                 logger.warn(`Role not found for ID: ${roleId}`);
                 throw new Error('Role not found');
@@ -348,7 +360,7 @@ export class UserToRoleQueriesSvc {
 
             // 從資料庫取得角色使用者
             logger.debug(`Fetching users for role ID: ${roleId} from database`);
-            const userRoles = await this.userRoleQueriesRepository.findByRoleId(roleId);
+            const userRoles = await this.userRoleQueriesRepo.findByRoleId(roleId);
             const users = userRoles.map(ur => ur.user).filter(u => u !== null && u !== undefined);
             const usersDTO = users.map(u => this.userModelToDTO(u!));
 
@@ -373,7 +385,7 @@ export class UserToRoleQueriesSvc {
             logger.info('Getting all user-role associations');
 
             // 從資料庫取得所有使用者角色關聯，不包含關聯的使用者和角色資訊以避免關聯錯誤
-            const userRoles = await this.userRoleQueriesRepository.findAll();
+            const userRoles = await this.userRoleQueriesRepo.findAll();
 
             // 轉換為簡化的 DTO 格式
             const userRolesDTO = userRoles.map((ur: any) => ({
@@ -408,7 +420,7 @@ export class UserToRoleQueriesSvc {
                 return false;
             }
 
-            const association = await this.userRoleQueriesRepository.findByUserAndRole(userId, roleId);
+            const association = await this.userRoleQueriesRepo.findByUserAndRole(userId, roleId);
             return !!association;
         } catch (error) {
             logger.error(`Error finding user-role association ${userId}-${roleId}:`, error);

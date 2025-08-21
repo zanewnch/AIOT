@@ -50,55 +50,43 @@ export class RoleQuery {
   }
 
   /**
-   * 角色數據查詢 Hook
+   * 角色數據查詢 Hook (統一使用分頁)
    */
-  useRoleData(paginationParams?: PaginationParams) {
-    const queryKey = paginationParams 
-      ? [...this.ROLE_QUERY_KEYS.LIST, 'paginated', paginationParams]
-      : this.ROLE_QUERY_KEYS.LIST;
+  useRoleData(paginationParams: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }) {
+    const queryKey = [...this.ROLE_QUERY_KEYS.LIST, 'paginated', paginationParams];
 
     return useQuery({
       queryKey,
-      queryFn: async (): Promise<Role[] | PaginatedResponse<Role>> => {
+      queryFn: async (): Promise<PaginatedResponse<Role>> => {
         try {
           logger.debug('Fetching roles from API', { paginationParams });
           
           // 構建查詢參數
           const queryParams = new URLSearchParams();
-          if (paginationParams) {
-            queryParams.append('page', paginationParams.page.toString());
-            queryParams.append('pageSize', paginationParams.pageSize.toString());
-            if (paginationParams.sortBy) {
-              queryParams.append('sortBy', paginationParams.sortBy);
-            }
-            if (paginationParams.sortOrder) {
-              queryParams.append('sortOrder', paginationParams.sortOrder);
-            }
+          queryParams.append('page', paginationParams.page.toString());
+          queryParams.append('pageSize', paginationParams.pageSize.toString());
+          if (paginationParams.sortBy) {
+            queryParams.append('sortBy', paginationParams.sortBy);
+          }
+          if (paginationParams.sortOrder) {
+            queryParams.append('sortOrder', paginationParams.sortOrder);
           }
 
-          const url = `/rbac/roles${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-          const result = await apiClient.getWithResult<Role[] | PaginatedResponse<Role>>(url);
+          const url = `/rbac/roles?${queryParams.toString()}`;
+          const result = await apiClient.getWithResult<PaginatedResponse<Role>>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
           }
           
-          if (paginationParams) {
-            // 分頁模式：返回分頁數據
-            const paginatedData = result.data as PaginatedResponse<Role>;
-            logger.info(`Successfully fetched paginated roles`, {
-              page: paginatedData.page,
-              pageSize: paginatedData.pageSize,
-              total: paginatedData.total,
-              dataLength: paginatedData.data.length
-            });
-            return paginatedData;
-          } else {
-            // 非分頁模式：返回角色列表
-            const roles = result.data as Role[];
-            logger.info(`Successfully fetched ${roles?.length || 0} roles`);
-            return roles || [];
-          }
+          const paginatedData = result.data as PaginatedResponse<Role>;
+          logger.info(`Successfully fetched paginated roles`, {
+            page: paginatedData.page,
+            pageSize: paginatedData.pageSize,
+            total: paginatedData.total,
+            dataLength: paginatedData.data.length
+          });
+          return paginatedData;
         } catch (error: any) {
           logger.error('Failed to fetch roles:', error);
           
@@ -227,10 +215,13 @@ export class RoleQuery {
  */
 export const roleQuery = new RoleQuery();
 export const useRoleQuery = () => roleQuery;
-export const useAllRoles = () => roleQuery.useAll();
-export const useRoleById = (id: string) => roleQuery.useById(id);
-export const useRolePermissions = () => roleQuery.useRolePermissions();
-export const useCreateRole = () => roleQuery.useCreate();
-export const useUpdateRole = () => roleQuery.useUpdate();
-export const useDeleteRole = () => roleQuery.useDelete();
-export const useAssignPermissionsToRole = () => roleQuery.useAssignPermissions();
+
+// 便利 hooks - 直接使用對應的方法
+export const useRoles = (paginationParams?: PaginationParams) => 
+  roleQuery.useRoleData(paginationParams);
+export const useRolePermissions = (roleId: number, enabled?: boolean) => 
+  roleQuery.useRolePermissions(roleId, enabled);
+export const useAllRolePermissions = () => 
+  roleQuery.useAllRolePermissions();
+export const useUpdateRole = () => 
+  roleQuery.useUpdateRoleData();

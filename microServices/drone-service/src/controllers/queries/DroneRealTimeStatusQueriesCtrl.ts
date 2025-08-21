@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module DroneRealTimeStatusQueries
+ * @module DroneRealTimeStatusQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -19,7 +19,7 @@ import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('DroneRealTimeStatusQueries');
+const logger = createLogger('DroneRealTimeStatusQueriesCtrl');
 
 /**
  * 無人機即時狀態查詢控制器類別
@@ -27,11 +27,11 @@ const logger = createLogger('DroneRealTimeStatusQueries');
  * 專門處理無人機即時狀態相關的查詢請求，包含取得即時狀態等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class DroneRealTimeStatusQueries
+ * @class DroneRealTimeStatusQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneRealTimeStatusQueries {
+export class DroneRealTimeStatusQueriesCtrl {
     constructor(
         @inject(TYPES.DroneStatusQueriesSvc) private readonly droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc
     ) {
@@ -55,17 +55,8 @@ export class DroneRealTimeStatusQueries {
 
             const paginationParams = { page, pageSize, sortBy, sortOrder };
 
-            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
-            if (!req.query.page && !req.query.pageSize) {
-                // 向後兼容：沒有分頁參數時返回所有數據
-                const droneStatuses = await this.droneRealTimeStatusQueriesService.getAllDroneRealTimeStatuses();
-                const result = ResResult.success('無人機即時狀態資料獲取成功', droneStatuses);
-                res.status(result.status).json(result);
-                return;
-            }
-
-            // 使用分頁查詢
-            const paginatedResult = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusesPaginated(paginationParams);
+            // 統一使用分頁查詢（方法現在總是返回分頁結果）
+            const paginatedResult = await this.droneRealTimeStatusQueriesService.getAllDroneRealTimeStatuses(paginationParams);
             const result = ResResult.success('無人機即時狀態資料獲取成功', paginatedResult);
 
             res.status(result.status).json(result);

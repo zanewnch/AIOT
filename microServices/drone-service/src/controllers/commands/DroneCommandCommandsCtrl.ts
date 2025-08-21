@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除、發送指令等寫入邏輯。
  *
- * @module DroneCommandCommands
+ * @module DroneCommandCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -20,7 +20,7 @@ import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {DroneCommandCreationAttributes} from '../../models/DroneCommandModel.js';
 
-const logger = createLogger('DroneCommandCommands');
+const logger = createLogger('DroneCommandCommandsCtrl');
 
 /**
  * 無人機指令命令控制器類別
@@ -28,11 +28,11 @@ const logger = createLogger('DroneCommandCommands');
  * 專門處理無人機指令相關的命令請求，包含創建、更新、刪除、發送指令等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class DroneCommandCommands
+ * @class DroneCommandCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandCommands {
+export class DroneCommandCommandsCtrl {
     constructor(
         @inject(TYPES.DroneCommandCommandsSvc) private readonly commandService: DroneCommandCommandsSvc
     ) {
@@ -138,7 +138,7 @@ export class DroneCommandCommands {
      * 
      * @route POST /api/drone-commands/data/batch
      */
-    createCommandsBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    createCommandsCtrlBatch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commandsData: DroneCommandCreationAttributes[] = req.body;
 

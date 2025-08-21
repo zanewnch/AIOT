@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、執行、取消等寫入邏輯。
  *
- * @module ArchiveTaskCommands
+ * @module ArchiveTaskCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -27,12 +27,12 @@ import {TYPES} from '../../container/types.js';
  * 專門處理歸檔任務相關的命令請求，包含創建、執行、取消、重試等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class ArchiveTaskCommands
+ * @class ArchiveTaskCommandsCtrl
  * @since 1.0.0
  *
  * @example
  * ```typescript
- * const commands = container.get<ArchiveTaskCommands>(TYPES.ArchiveTaskCommandsCtrl);
+ * const commands = container.get<ArchiveTaskCommandsCtrl>(TYPES.ArchiveTaskCommandsCtrl);
  *
  * // 在路由中使用
  * router.post('/api/archive-tasks', commands.createTask.bind(commands));
@@ -40,8 +40,8 @@ import {TYPES} from '../../container/types.js';
  * ```
  */
 @injectable()
-export class ArchiveTaskCommands {
-    private readonly logger = createLogger('ArchiveTaskCommands');
+export class ArchiveTaskCommandsCtrl {
+    private readonly logger = createLogger('ArchiveTaskCommandsCtrl');
 
     constructor(
         @inject(TYPES.ArchiveTaskCommandsSvc) private readonly commandService: ArchiveTaskCommandsSvc

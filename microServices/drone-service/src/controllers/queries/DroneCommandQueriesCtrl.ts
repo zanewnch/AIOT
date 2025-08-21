@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module DroneCommandQueries
+ * @module DroneCommandQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -24,11 +24,11 @@ import {TYPES} from '../../container/types.js';
  * 專門處理無人機指令相關的查詢請求，包含取得指令資料、統計等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class DroneCommandQueries
+ * @class DroneCommandQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandQueries {
+export class DroneCommandQueriesCtrl {
     constructor(
         @inject(TYPES.DroneCommandQueriesSvc) private readonly queryService: DroneCommandQueriesSvc
     ) {

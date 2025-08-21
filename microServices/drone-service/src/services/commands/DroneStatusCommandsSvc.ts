@@ -14,7 +14,6 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { DroneStatusCommandsRepository } from '../../repo/commands/DroneStatusCommandsRepo.js';
 import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
 import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
@@ -37,13 +36,10 @@ const logger = createLogger('DroneStatusCommandsSvc');
 export class DroneStatusCommandsSvc {
     constructor(
         @inject(TYPES.DroneStatusQueriesSvc)
-        private readonly queryService: DroneStatusQueriesSvc
-    ) {
-        // Initialize repo directly for now since it's not in DI container yet
-        this.droneStatusRepo = new DroneStatusCommandsRepository();
-    }
-
-    private readonly droneStatusRepo: DroneStatusCommandsRepo;
+        private readonly queryService: DroneStatusQueriesSvc,
+        @inject(TYPES.DroneStatusCommandsRepository)
+        private readonly droneStatusRepo: IDroneStatusRepository
+    ) {}
 
     /**
      * 建立新的無人機狀態資料

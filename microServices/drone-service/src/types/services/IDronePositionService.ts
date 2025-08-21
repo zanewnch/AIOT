@@ -9,16 +9,20 @@
  */
 
 import type { DronePositionAttributes } from '../../models/DronePositionModel.js';
+import type { PaginationParams, PaginatedResult } from '../PaginationTypes.js';
 
 /**
  * 無人機位置查詢服務介面
  */
 export interface IDronePositionQueriesSvc {
-    getAllDronePositions(): Promise<DronePositionAttributes[]>;
+    getAllDronePositions(params?: PaginationParams): Promise<PaginatedResult<DronePositionAttributes>>;
     getDronePositionById(id: number): Promise<DronePositionAttributes | null>;
-    getDronePositionsByDroneId(droneId: string): Promise<DronePositionAttributes[]>;
-    getLatestDronePosition(): Promise<DronePositionAttributes | null>;
-    getDronePositionsByTimeRange(startDate: Date, endDate: Date): Promise<DronePositionAttributes[]>;
+    getDronePositionsByDroneId(droneId: number, limit?: number): Promise<DronePositionAttributes[]>;
+    getLatestDronePosition(droneId: number): Promise<DronePositionAttributes | null>;
+    getDronePositionsByTimeRange(droneId: number, startDate: Date, endDate: Date): Promise<DronePositionAttributes[]>;
+    getDronePositionStatistics(): Promise<{total: number}>;
+    getTotalPositionCount(): Promise<number>;
+    getPositionCountByDrone(droneId: number): Promise<number>;
 }
 
 /**

@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  * 
- * @module UserPreferenceQueries
+ * @module UserPreferenceQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -26,11 +26,11 @@ import type { PaginationParams } from '../../types/ApiResponseType.js';
  * 專門處理用戶偏好設定相關的查詢請求，包含各種查詢、搜尋和統計功能。
  * 所有方法都是唯讀操作，遵循 CQRS 模式的查詢端原則。
  * 
- * @class UserPreferenceQueries
+ * @class UserPreferenceQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class UserPreferenceQueries {
+export class UserPreferenceQueriesCtrl {
     constructor(
         @inject(TYPES.UserPreferenceQueriesSvc) 
         private readonly userPreferenceQueriesSvc: UserPreferenceQueriesSvc

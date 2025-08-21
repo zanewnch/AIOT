@@ -11,7 +11,7 @@ import { loggerConfig } from '../configs/loggerConfig.js';
 /**
  * JWT 黑名單服務類別
  */
-export class JwtBlacklistService {
+export class JwtBlacklistSvc {
     private redisClient: RedisClientType;
     private logger = loggerConfig;
     private isConnected = false;

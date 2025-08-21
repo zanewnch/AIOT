@@ -7,7 +7,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { JwtMiddleware, JwtMiddlewareOptions } from './JwtMiddleware.js';
-import { JwtBlacklistService } from '../services/JwtBlacklistService.js';
+import { JwtBlacklistSvc } from '../services/JwtBlacklistSvc.js';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
 
@@ -26,7 +26,7 @@ export interface AuthMiddlewareOptions extends JwtMiddlewareOptions {
  * 整合了 JWT 認證和黑名單檢查
  */
 export class AuthMiddleware {
-    private static blacklistService: JwtBlacklistService;
+    private static blacklistService: JwtBlacklistSvc;
     private static logger = loggerConfig;
 
     /**
@@ -34,7 +34,7 @@ export class AuthMiddleware {
      */
     public static initialize(): void {
         if (!AuthMiddleware.blacklistService) {
-            AuthMiddleware.blacklistService = new JwtBlacklistService();
+            AuthMiddleware.blacklistService = new JwtBlacklistSvc();
             AuthMiddleware.logger.info('✅ Auth middleware initialized with blacklist service');
         }
     }
@@ -275,9 +275,9 @@ export class AuthMiddleware {
 
     /**
      * 獲取黑名單服務實例
-     * @returns JwtBlacklistService 實例
+     * @returns JwtBlacklistSvc 實例
      */
-    public static getBlacklistService(): JwtBlacklistService {
+    public static getBlacklistService(): JwtBlacklistSvc {
         if (!AuthMiddleware.blacklistService) {
             AuthMiddleware.initialize();
         }

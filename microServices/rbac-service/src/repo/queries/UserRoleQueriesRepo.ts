@@ -16,17 +16,17 @@ import { UserModel } from '../../models/UserModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('UserRoleQueriesRepository');
+const logger = createLogger('UserRoleQueriesRepo');
 
 /**
  * 使用者角色關聯查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理使用者角色關聯資料的查詢操作，遵循 CQRS 模式
  * 
- * @class UserRoleQueriesRepository
+ * @class UserRoleQueriesRepo
  */
 @injectable()
-export class UserRoleQueriesRepository {
+export class UserRoleQueriesRepo {
   /**
    * 根據 ID 查詢使用者角色關聯
    * @param id 關聯 ID

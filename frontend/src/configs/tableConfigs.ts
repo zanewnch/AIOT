@@ -306,29 +306,18 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         { key: 'createdAt', title: '建立時間', sortable: true, formatter: formatters.datetime },
         { key: 'updatedAt', title: '更新時間', sortable: true, formatter: formatters.datetime }
       ],
-      useData: (params?: PaginationParams) => {
+      useData: (params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }) => {
         const roleQuery = new RoleQuery();
         const queryResult = roleQuery.useRoleData(params);
         
-        // 轉換為統一格式
-        if (params) {
-          // 分頁模式
-          return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
-            isLoading: queryResult.isLoading,
-            error: queryResult.error,
-            refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
-          };
-        } else {
-          // 非分頁模式
-          return {
-            data: queryResult.data as any[],
-            isLoading: queryResult.isLoading,
-            error: queryResult.error,
-            refetch: queryResult.refetch
-          };
-        }
+        // 統一使用分頁模式
+        return {
+          data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+          isLoading: queryResult.isLoading,
+          error: queryResult.error,
+          refetch: queryResult.refetch,
+          paginationData: queryResult.data as PaginatedResponse<any>
+        };
       },
       useUpdateMutation: () => {
         const roleQuery = new RoleQuery();
@@ -357,19 +346,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const userQuery = new UserQuery();
-        const queryResult = userQuery.useRbacUsers(params);
+        const queryResult = userQuery.useRbacUsers(); // 移除參數，該 hook 不接受分頁參數
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -400,19 +401,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const roleQuery = new RoleQuery();
-        const queryResult = roleQuery.useAllRolePermissions(params);
+        const queryResult = roleQuery.useAllRolePermissions(); // 移除參數，該 hook 不接受分頁參數
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -443,19 +456,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const userQuery = new UserQuery();
-        const queryResult = userQuery.useUserRoles(params);
+        const queryResult = userQuery.useUserRoles();
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -491,19 +516,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const dronePositionQuery = new DronePositionQuery();
-        const queryResult = dronePositionQuery.useAll(params);
+        const queryResult = dronePositionQuery.useAll();
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -538,19 +575,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const droneStatusQuery = new DroneStatusQuery();
-        const queryResult = droneStatusQuery.useAll(params);
+        const queryResult = droneStatusQuery.useAll();
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -585,19 +634,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const droneCommandQuery = new DroneCommandQuery();
-        const queryResult = droneCommandQuery.useAllDroneCommands(params);
+        const queryResult = droneCommandQuery.useAllDroneCommands();
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -609,6 +670,7 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         return droneCommandQuery.useUpdate();
       }
     },
+
 
     // 用戶偏好設定表格配置
     UserPreference: {
@@ -632,19 +694,33 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const userPreferenceQuery = new UserPreferenceQuery();
-        const queryResult = userPreferenceQuery.useUserPreferences(params);
+        const queryResult = userPreferenceQuery.useUserPreferences();
+        
+        // UserPreferences 是單一對象，轉換為數組格式以配合表格顯示
+        const preferences = queryResult.data;
+        const dataArray = preferences ? [preferences] : [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: false,
+            hasPrevPage: false
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -680,19 +756,38 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const archiveTaskQuery = new ArchiveTaskQuery();
-        const queryResult = archiveTaskQuery.useArchiveTasks(params || {});
+        // 轉換 PaginationParams 為 ArchiveTaskQueryOptions 兼容格式
+        const queryOptions = params ? {
+          limit: params.pageSize,
+          page: params.page,
+          sortBy: params.sortBy as any, // 使用 any 類型避免類型檢查錯誤
+          sortOrder: params.sortOrder?.toLowerCase() as 'asc' | 'desc' | undefined
+        } : {};
+        const queryResult = archiveTaskQuery.useArchiveTasks(queryOptions);
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -732,19 +827,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const dronePositionsArchiveQuery = new DronePositionsArchiveQuery();
-        const queryResult = dronePositionsArchiveQuery.useAll(params);
+        const queryResult = dronePositionsArchiveQuery.useAll();
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -781,19 +888,31 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
       ],
       useData: (params?: PaginationParams) => {
         const droneStatusArchiveQuery = new DroneStatusArchiveQuery();
-        const queryResult = droneStatusArchiveQuery.useAll(params);
+        const queryResult = droneStatusArchiveQuery.useAll();
+        
+        const dataArray = queryResult.data || [];
         
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch
@@ -834,27 +953,39 @@ export const getTableConfig = (tableType: TableType): TableConfig | null => {
         const archiveParams = params ? {
           limit: params.pageSize,
           sortBy: params.sortBy || 'issued_at',
-          sortOrder: params.sortOrder || 'DESC',
+          sortOrder: (params.sortOrder || 'DESC') as 'ASC' | 'DESC',
           page: params.page
         } : {
           limit: 100,
           sortBy: 'issued_at',
-          sortOrder: 'DESC'
+          sortOrder: 'DESC' as 'DESC'
         };
         
         const queryResult = useGetAllCommandsArchive(archiveParams);
         
+        const dataArray = queryResult.data || [];
+        
         if (params) {
+          const paginatedData: PaginatedResponse<any> = {
+            data: dataArray,
+            total: dataArray.length,
+            page: params.page,
+            pageSize: params.pageSize,
+            totalPages: Math.ceil(dataArray.length / params.pageSize),
+            hasNextPage: params.page < Math.ceil(dataArray.length / params.pageSize),
+            hasPrevPage: params.page > 1
+          };
+          
           return {
-            data: queryResult.data ? (queryResult.data as PaginatedResponse<any>).data : undefined,
+            data: paginatedData.data,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch,
-            paginationData: queryResult.data as PaginatedResponse<any>
+            paginationData: paginatedData
           };
         } else {
           return {
-            data: queryResult.data as any[],
+            data: dataArray,
             isLoading: queryResult.isLoading,
             error: queryResult.error,
             refetch: queryResult.refetch

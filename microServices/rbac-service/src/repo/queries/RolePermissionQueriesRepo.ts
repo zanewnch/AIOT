@@ -15,18 +15,19 @@ import { RolePermissionModel } from '../../models/RoleToPermissionModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
 import { PermissionModel } from '../../models/PermissionModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
+import type { PaginationParams, PaginatedResult } from '../../types/PaginationTypes.js';
 
-const logger = createLogger('RolePermissionQueriesRepository');
+const logger = createLogger('RolePermissionQueriesRepo');
 
 /**
  * 角色權限關聯查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理角色權限關聯資料的查詢操作，遵循 CQRS 模式
  * 
- * @class RolePermissionQueriesRepository
+ * @class RolePermissionQueriesRepo
  */
 @injectable()
-export class RolePermissionQueriesRepository {
+export class RolePermissionQueriesRepo {
   /**
    * 根據 ID 查詢角色權限關聯
    * @param id 關聯 ID
@@ -392,6 +393,52 @@ export class RolePermissionQueriesRepository {
       return roleNames;
     } catch (error) {
       logger.error(`Error getting role names for permission ${permissionId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 分頁查詢角色權限關聯
+   * @param params 分頁參數
+   * @returns 分頁的角色權限關聯結果
+   */
+  findPaginated = async (params: PaginationParams): Promise<PaginatedResult<RolePermissionModel>> => {
+    try {
+      const { page = 1, pageSize = 20, sortBy = 'createdAt', sortOrder = 'DESC' } = params;
+      const offset = (page - 1) * pageSize;
+
+      logger.debug('Finding role permissions with pagination', { page, pageSize, sortBy, sortOrder });
+
+      // 並行查詢總數和分頁數據
+      const [total, data] = await Promise.all([
+        RolePermissionModel.count(),
+        RolePermissionModel.findAll({
+          include: [
+            { model: RoleModel, as: 'role' },
+            { model: PermissionModel, as: 'permission' }
+          ],
+          order: [[sortBy, sortOrder]],
+          limit: pageSize,
+          offset
+        })
+      ]);
+
+      const totalPages = Math.ceil(total / pageSize);
+
+      const result: PaginatedResult<RolePermissionModel> = {
+        data,
+        page,
+        pageSize,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      };
+
+      logger.debug(`Found ${data.length} role permissions on page ${page}/${totalPages}`);
+      return result;
+    } catch (error) {
+      logger.error('Error finding role permissions with pagination:', error);
       throw error;
     }
   }

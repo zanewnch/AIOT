@@ -53,8 +53,6 @@ export interface StressTestResponse {
 export interface InitAllDemoResponse {
   /** RBAC 初始化結果 */
   rbac: InitResponse;
-  /** RTK 初始化結果 */
-  rtk: InitResponse;
 }
 
 /**

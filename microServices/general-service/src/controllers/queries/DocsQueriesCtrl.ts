@@ -30,11 +30,11 @@ import path from 'path';
  * - API 端點測試和驗證
  * - 服務間依賴關係圖表
  * 
- * @class DocsController
+ * @class DocsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DocsController {
+export class DocsCtrl {
     
     private readonly microservices = [
         { name: 'general', url: 'http://aiot-fesetting:8000', description: '前端設定管理服務' },

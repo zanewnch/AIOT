@@ -72,23 +72,11 @@ export {
   RoleQuery,
   roleQuery,
   useRoleQuery,
-  useAllRoles,
-  useRoleById,
+  useRoles,
   useRolePermissions,
-  useCreateRole,
-  useUpdateRole,
-  useDeleteRole,
-  useAssignPermissionsToRole
+  useAllRolePermissions,
+  useUpdateRole
 } from './useRoleQuery';
-export { 
-  RTKQuery,
-  rtkQuery,
-  useRTKQuery,
-  useRTKData,
-  useCreateRTKData,
-  useUpdateRTKData,
-  useDeleteRTKData
-} from './useRTKQuery';
 
 // 其他專用 hooks
 export * from './useArchiveTaskQuery';

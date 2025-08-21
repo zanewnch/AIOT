@@ -21,10 +21,10 @@ import { Op } from 'sequelize';
  *
  * 專門處理用戶偏好設定資料的查詢操作，遵循 CQRS 模式
  *
- * @class UserPreferenceQueriesRepository
+ * @class UserPreferenceQueriesRepo
  */
 @injectable()
-export class UserPreferenceQueriesRepository {
+export class UserPreferenceQueriesRepo {
 
     /**
      * 取得所有用戶偏好設定資料

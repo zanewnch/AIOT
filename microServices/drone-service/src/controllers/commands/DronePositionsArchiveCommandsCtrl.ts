@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
  *
- * @module DronePositionsArchiveCommands
+ * @module DronePositionsArchiveCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -20,7 +20,7 @@ import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {DronePositionsArchiveCreationAttributes} from '../../models/DronePositionsArchiveModel.js';
 
-const logger = createLogger('DronePositionsArchiveCommands');
+const logger = createLogger('DronePositionsArchiveCommandsCtrl');
 
 /**
  * 無人機位置歷史歸檔命令控制器類別
@@ -28,11 +28,11 @@ const logger = createLogger('DronePositionsArchiveCommands');
  * 專門處理無人機位置歷史歸檔相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class DronePositionsArchiveCommands
+ * @class DronePositionsArchiveCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionsArchiveCommands {
+export class DronePositionsArchiveCommandsCtrl {
     constructor(
         @inject(TYPES.DronePositionsArchiveCommandsSvc) private readonly archiveService: DronePositionsArchiveCommandsSvc
     ) {

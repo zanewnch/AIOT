@@ -449,7 +449,7 @@ export const TYPES = {
   /**
    * JWT 黑名單服務類型
    */
-  JwtBlacklistService: Symbol.for('JwtBlacklistService')
+  JwtBlacklistSvc: Symbol.for('JwtBlacklistSvc')
 } as const;
 
 /**

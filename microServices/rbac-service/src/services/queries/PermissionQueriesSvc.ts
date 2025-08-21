@@ -26,9 +26,10 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo.js';
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
+import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
+import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
@@ -46,6 +47,24 @@ import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/
 const logger = createLogger('PermissionQueriesSvc');
 
 /**
+ * 搜尋條件介面
+ */
+export interface PermissionSearchCriteria {
+    /** 名稱搜尋模式 */
+    namePattern?: string;
+    /** 描述搜尋模式 */
+    descriptionPattern?: string;
+    /** 開始日期 */
+    startDate?: Date;
+    /** 結束日期 */
+    endDate?: Date;
+    /** 包含的權限 ID 列表 */
+    includeIds?: number[];
+    /** 排除的權限 ID 列表 */
+    excludeIds?: number[];
+}
+
+/**
  * 權限查詢服務實現類別
  *
  * 專門處理權限相關的查詢請求，包含權限檢查、權限列表查詢等功能。
@@ -57,35 +76,38 @@ const logger = createLogger('PermissionQueriesSvc');
  */
 @injectable()
 export class PermissionQueriesSvc implements IPermissionQueriesService {
-    private userRepository: UserQueriesRepository;
-    private permissionRepository: PermissionQueriesRepository;
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
-    private static readonly ALL_PERMISSIONS_KEY = 'permissions:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
-    constructor() {
-        this.userRepository = new UserQueriesRepository();
-        this.permissionRepository = new PermissionQueriesRepository();
+    constructor(
+        @inject(TYPES.UserQueriesRepo) private readonly userRepository: UserQueriesRepo,
+        @inject(TYPES.PermissionQueriesRepo) private readonly permissionRepository: PermissionQueriesRepo
+    ) {
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for PermissionQueriesSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, PermissionQueriesSvc will fallback to database queries only:', error);
+        }
     }
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
-     *
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient(): RedisClientType {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -124,8 +146,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @private
      */
     private async getCachedUserPermissions(userId: number): Promise<UserPermissions | null> {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            return null; // Redis 不可用，直接返回 null
+        }
+
         try {
-            const redis = this.getRedisClient();
             const cacheKey = this.getPermissionsCacheKey(userId);
             const cachedData = await redis.get(cacheKey);
 
@@ -210,24 +236,6 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         };
     }
 
-    /**
-     * 從快取取得所有權限
-     * @private
-     */
-    private async getCachedAllPermissions(): Promise<PermissionDTO[] | null> {
-        try {
-            const redis = this.getRedisClient();
-            logger.debug('Checking Redis cache for all permissions');
-            const cachedData = await redis.get(PermissionQueriesSvc.ALL_PERMISSIONS_KEY);
-            if (cachedData) {
-                logger.info('Permissions loaded from Redis cache');
-                return JSON.parse(cachedData);
-            }
-        } catch (error) {
-            logger.warn('Failed to get cached permissions:', error);
-        }
-        return null;
-    }
 
     /**
      * 從快取取得單一權限
@@ -235,8 +243,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
      * @private
      */
     private async getCachedPermission(permissionId: number): Promise<PermissionDTO | null> {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            return null; // Redis 不可用，直接返回 null
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for permission ID: ${permissionId}`);
             const key = this.getPermissionCacheKey(permissionId);
             const cachedData = await redis.get(key);
@@ -451,32 +463,6 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
 
     // ==================== 權限管理查詢方法 ====================
 
-    /**
-     * 取得所有權限列表
-     */
-    public async getAllPermissions(): Promise<PermissionDTO[]> {
-        try {
-            logger.debug('Getting all permissions with cache support');
-
-            // 先嘗試從快取取得
-            const cachedPermissions = await this.getCachedAllPermissions();
-            if (cachedPermissions) {
-                return cachedPermissions;
-            }
-
-            // 快取不存在，從資料庫取得
-            logger.debug('Fetching permissions from database');
-            const permissions = await this.permissionRepository.findAll();
-            const permissionsDTO = permissions.map(p => this.modelToDTO(p));
-
-            logger.info(`Retrieved ${permissionsDTO.length} permissions from database`);
-
-            return permissionsDTO;
-        } catch (error) {
-            logger.error('Error fetching all permissions:', error);
-            throw new Error('Failed to fetch permissions');
-        }
-    }
 
     /**
      * 根據 ID 取得權限
@@ -517,12 +503,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
     }
 
     /**
-     * 分頁查詢權限列表
+     * 獲取所有權限列表（支持分頁）
      * 
-     * @param params 分頁參數
+     * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁權限結果
      */
-    public async getPermissionsPaginated(params: PaginationParams): Promise<PaginatedResult<PermissionDTO>> {
+    public async getAllPermissions(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<PermissionDTO>> {
         try {
             logger.debug('Getting permissions with pagination', params);
 
@@ -572,6 +558,325 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         } catch (error) {
             logger.error('Error fetching permissions with pagination:', error);
             throw new Error('Failed to fetch permissions with pagination');
+        }
+    }
+
+    /**
+     * 根據名稱查找權限
+     * @param name 權限名稱
+     * @returns 權限 DTO 或 null
+     */
+    public async getPermissionByName(name: string): Promise<PermissionDTO | null> {
+        try {
+            logger.info(`Retrieving permission by name: ${name}`);
+
+            // 驗證輸入
+            if (!name || name.trim().length === 0) {
+                logger.warn('Invalid permission name');
+                return null;
+            }
+
+            // 從資料庫查找
+            const permission = await this.permissionRepository.findByName(name.trim());
+            if (!permission) {
+                logger.warn(`Permission not found for name: ${name}`);
+                return null;
+            }
+
+            const permissionDTO = this.modelToDTO(permission);
+            logger.info(`Permission found: ${name} (ID: ${permissionDTO.id})`);
+            return permissionDTO;
+        } catch (error) {
+            logger.error(`Error fetching permission by name ${name}:`, error);
+            throw new Error('Failed to fetch permission');
+        }
+    }
+
+    /**
+     * 按名稱模糊搜尋權限（支持分頁）
+     * 
+     * @param namePattern 名稱搜尋模式
+     * @param params 分頁參數，默認 page=1, pageSize=20
+     * @returns 分頁權限結果
+     */
+    public async getPermissionsByNamePattern(
+        namePattern: string, 
+        params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'name', sortOrder: 'ASC' }
+    ): Promise<PaginatedResult<PermissionDTO>> {
+        try {
+            logger.debug('Searching permissions by name pattern', { namePattern, params });
+
+            // 驗證輸入
+            if (!namePattern || namePattern.trim().length === 0) {
+                logger.warn('Invalid name pattern');
+                throw new Error('Name pattern cannot be empty');
+            }
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'name',
+                defaultSortOrder: 'ASC',
+                allowedSortFields: ['id', 'name', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據 (假設 repository 有對應方法)
+            const searchPattern = `%${namePattern.trim()}%`;
+            const [permissions, total] = await Promise.all([
+                this.permissionRepository.findByNamePatternPaginated(
+                    searchPattern,
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.permissionRepository.countByNamePattern(searchPattern)
+            ]);
+
+            // 轉換為 DTO
+            const permissionDTOs = permissions.map(permission => this.modelToDTO(permission));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                permissionDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully searched permissions by name pattern', {
+                namePattern,
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error searching permissions by name pattern:', error);
+            throw new Error('Failed to search permissions by name pattern');
+        }
+    }
+
+    /**
+     * 按描述搜尋權限（支持分頁）
+     * 
+     * @param descriptionPattern 描述搜尋模式
+     * @param params 分頁參數，默認 page=1, pageSize=20
+     * @returns 分頁權限結果
+     */
+    public async getPermissionsByDescription(
+        descriptionPattern: string, 
+        params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'name', sortOrder: 'ASC' }
+    ): Promise<PaginatedResult<PermissionDTO>> {
+        try {
+            logger.debug('Searching permissions by description', { descriptionPattern, params });
+
+            // 驗證輸入
+            if (!descriptionPattern || descriptionPattern.trim().length === 0) {
+                logger.warn('Invalid description pattern');
+                throw new Error('Description pattern cannot be empty');
+            }
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'name',
+                defaultSortOrder: 'ASC',
+                allowedSortFields: ['id', 'name', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據 (假設 repository 有對應方法)
+            const searchPattern = `%${descriptionPattern.trim()}%`;
+            const [permissions, total] = await Promise.all([
+                this.permissionRepository.findByDescriptionPatternPaginated(
+                    searchPattern,
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.permissionRepository.countByDescriptionPattern(searchPattern)
+            ]);
+
+            // 轉換為 DTO
+            const permissionDTOs = permissions.map(permission => this.modelToDTO(permission));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                permissionDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully searched permissions by description', {
+                descriptionPattern,
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error searching permissions by description:', error);
+            throw new Error('Failed to search permissions by description');
+        }
+    }
+
+    /**
+     * 按創建時間範圍查詢權限（支持分頁）
+     * 
+     * @param startDate 開始日期
+     * @param endDate 結束日期  
+     * @param params 分頁參數，默認 page=1, pageSize=20
+     * @returns 分頁權限結果
+     */
+    public async getPermissionsByDateRange(
+        startDate: Date, 
+        endDate: Date,
+        params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'createdAt', sortOrder: 'DESC' }
+    ): Promise<PaginatedResult<PermissionDTO>> {
+        try {
+            logger.debug('Getting permissions by date range', { startDate, endDate, params });
+
+            // 驗證輸入
+            if (!startDate || !endDate) {
+                throw new Error('Start date and end date are required');
+            }
+
+            if (startDate >= endDate) {
+                throw new Error('Start date must be before end date');
+            }
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'createdAt',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'name', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據 (假設 repository 有對應方法)
+            const [permissions, total] = await Promise.all([
+                this.permissionRepository.findByDateRangePaginated(
+                    startDate,
+                    endDate,
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.permissionRepository.countByDateRange(startDate, endDate)
+            ]);
+
+            // 轉換為 DTO
+            const permissionDTOs = permissions.map(permission => this.modelToDTO(permission));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                permissionDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully fetched permissions by date range', {
+                startDate,
+                endDate,
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching permissions by date range:', error);
+            throw new Error('Failed to fetch permissions by date range');
+        }
+    }
+
+
+    /**
+     * 組合條件搜尋權限（支持分頁）
+     * 
+     * @param criteria 搜尋條件
+     * @param params 分頁參數，默認 page=1, pageSize=20
+     * @returns 分頁權限結果
+     */
+    public async searchPermissions(
+        criteria: PermissionSearchCriteria = {},
+        params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'name', sortOrder: 'ASC' }
+    ): Promise<PaginatedResult<PermissionDTO>> {
+        try {
+            logger.debug('Searching permissions with criteria', { criteria, params });
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'name',
+                defaultSortOrder: 'ASC',
+                allowedSortFields: ['id', 'name', 'createdAt', 'updatedAt']
+            });
+
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據 (假設 repository 有對應方法)
+            const [permissions, total] = await Promise.all([
+                this.permissionRepository.searchPaginated(
+                    criteria,
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.permissionRepository.countByCriteria(criteria)
+            ]);
+
+            // 轉換為 DTO
+            const permissionDTOs = permissions.map(permission => this.modelToDTO(permission));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                permissionDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully searched permissions with criteria', {
+                criteria,
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error searching permissions with criteria:', error);
+            throw new Error('Failed to search permissions with criteria');
         }
     }
 }

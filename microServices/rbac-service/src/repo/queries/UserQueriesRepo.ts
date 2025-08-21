@@ -16,17 +16,17 @@ import { RoleModel } from '../../models/RoleModel.js';
 import { PermissionModel } from '../../models/PermissionModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('UserQueriesRepository');
+const logger = createLogger('UserQueriesRepo');
 
 /**
  * 使用者查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理使用者資料的查詢操作，遵循 CQRS 模式
  * 
- * @class UserQueriesRepository
+ * @class UserQueriesRepo
  */
 @injectable()
-export class UserQueriesRepository {
+export class UserQueriesRepo {
     /**
      * 根據使用者名稱查詢使用者
      * 
@@ -179,6 +179,39 @@ export class UserQueriesRepository {
             return count;
         } catch (error) {
             logger.error('Error counting users:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 分頁查詢使用者
+     * 
+     * @param {number} limit 每頁數量
+     * @param {number} offset 偏移量
+     * @param {string} sortBy 排序欄位
+     * @param {'ASC'|'DESC'} sortOrder 排序方向
+     * @returns {Promise<UserModel[]>} 使用者列表
+     * @throws {Error} 當資料庫連線失敗或查詢操作發生錯誤時拋出異常
+     */
+    findPaginated = async (
+        limit: number, 
+        offset: number, 
+        sortBy: string = 'id', 
+        sortOrder: 'ASC' | 'DESC' = 'DESC'
+    ): Promise<UserModel[]> => {
+        try {
+            logger.info('Fetching paginated users', { limit, offset, sortBy, sortOrder });
+            
+            const users = await UserModel.findAll({
+                limit,
+                offset,
+                order: [[sortBy, sortOrder]]
+            });
+            
+            logger.info(`Retrieved ${users.length} users with pagination`);
+            return users;
+        } catch (error) {
+            logger.error('Error fetching paginated users:', error);
             throw error;
         }
     }

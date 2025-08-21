@@ -14,7 +14,7 @@ import { Request, Response, NextFunction } from 'express';
  * 無人機狀態查詢控制器介面
  */
 export interface IDroneStatusQueries {
-    getAllDroneStatuses(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getDroneStatuses(req: Request, res: Response, next: NextFunction): Promise<void>;
     getDroneStatusById(req: Request, res: Response, next: NextFunction): Promise<void>;
     getDroneStatusesByDroneId(req: Request, res: Response, next: NextFunction): Promise<void>;
     getLatestDroneStatus(req: Request, res: Response, next: NextFunction): Promise<void>;

@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module PermissionQueries
+ * @module PermissionQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -19,7 +19,7 @@ import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('PermissionQueries');
+const logger = createLogger('PermissionQueriesCtrl');
 
 /**
  * 權限查詢控制器類別
@@ -27,11 +27,11 @@ const logger = createLogger('PermissionQueries');
  * 專門處理權限相關的查詢請求，包含列表查詢、詳情查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class PermissionQueries
+ * @class PermissionQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class PermissionQueries {
+export class PermissionQueriesCtrl {
     constructor(
         @inject(TYPES.PermissionQueriesSvc) private readonly permissionService: PermissionQueriesSvc
     ) {
@@ -50,26 +50,16 @@ export class PermissionQueries {
             logRequest(req, 'Fetching permissions with pagination', 'info');
             logger.debug('Getting permissions from service with pagination');
 
-            // 解析分頁參數
+            // 解析分頁參數，設定合理預設值
             const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const pageSize = parseInt(req.query.pageSize as string) || 20;
             const sortBy = (req.query.sortBy as string) || 'id';
             const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
 
             const paginationParams = { page, pageSize, sortBy, sortOrder };
 
-            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
-            if (!req.query.page && !req.query.pageSize) {
-                // 向後兼容：沒有分頁參數時返回所有數據
-                const permissions = await this.permissionService.getAllPermissions();
-                const result = ResResult.success('權限列表獲取成功', permissions);
-                res.status(result.status).json(result);
-                logger.info('Successfully fetched all permissions (no pagination)', {count: permissions.length});
-                return;
-            }
-
-            // 使用分頁查詢
-            const paginatedResult = await this.permissionService.getPermissionsPaginated(paginationParams);
+            // 統一使用分頁查詢
+            const paginatedResult = await this.permissionService.getAllPermissions(paginationParams);
             const result = ResResult.success('權限列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);

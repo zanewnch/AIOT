@@ -4,7 +4,7 @@
 
 import type { Request, Response } from 'express';
 import { availableServices, config } from '../config/index.js';
-import { DocsGenerationService } from '../services/DocsGenerationService.js';
+import { DocsGenerationSvc } from '../services/DocsGenerationSvc.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -43,13 +43,13 @@ export class DocsController {
       steps.push('🔍 檢查文檔是否需要更新...');
       console.log(steps[steps.length - 1]);
       
-      const needsUpdate = await DocsGenerationService.checkIfDocsNeedUpdate();
+      const needsUpdate = await DocsGenerationSvc.checkIfDocsNeedUpdate();
       
       if (needsUpdate) {
         steps.push('📝 發現源代碼更新，開始生成最新文檔...');
         console.log(steps[steps.length - 1]);
         
-        const generateSuccess = await DocsGenerationService.generateAllDocs();
+        const generateSuccess = await DocsGenerationSvc.generateAllDocs();
         
         if (!generateSuccess) {
           steps.push('⚠️ 部分文檔生成失敗，但繼續顯示頁面');
@@ -117,7 +117,7 @@ export class DocsController {
   public static generateDocs = async (req: Request, res: Response): Promise<void> => {
     try {
       console.log('🔄 手動觸發文檔生成...');
-      const success = await DocsGenerationService.generateAllDocs();
+      const success = await DocsGenerationSvc.generateAllDocs();
       
       if (success) {
         res.json({
@@ -147,7 +147,7 @@ export class DocsController {
    * 獲取文檔生成狀態
    */
   public static getGenerationStatus = (req: Request, res: Response): void => {
-    const status = DocsGenerationService.getGenerationStatus();
+    const status = DocsGenerationSvc.getGenerationStatus();
     const statusArray = Array.from(status.entries()).map(([service, info]) => ({
       service,
       ...info

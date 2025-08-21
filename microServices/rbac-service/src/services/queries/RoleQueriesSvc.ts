@@ -24,44 +24,17 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
+import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
+import { PaginationParams, PaginatedResult, PaginationUtils, RoleDTO, IRoleQueriesService } from '../../types/index.js';
 
 const logger = createLogger('RoleQueriesSvc');
 
-/**
- * 角色資料傳輸物件
- */
-export interface RoleDTO {
-    id: number;
-    name: string;
-    displayName?: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-/**
- * 快取選項介面
- */
-export interface CacheOptions {
-    forceRefresh?: boolean;
-    ttl?: number;
-}
-
-/**
- * 角色查詢服務介面
- */
-export interface IRoleQueriesService {
-    getAllRoles(): Promise<RoleDTO[]>;
-    getRoleById(roleId: number): Promise<RoleDTO | null>;
-    getRoleByName(roleName: string): Promise<RoleDTO | null>;
-    roleExists(roleName: string): Promise<boolean>;
-}
 
 /**
  * 角色查詢服務實現類別
@@ -75,31 +48,34 @@ export interface IRoleQueriesService {
  */
 @injectable()
 export class RoleQueriesSvc implements IRoleQueriesService {
-    private roleRepository: RoleQueriesRepository;
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly ROLE_CACHE_PREFIX = 'role:';
-    private static readonly ALL_ROLES_KEY = 'roles:all';
-    private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
-    constructor() {
-        this.roleRepository = new RoleQueriesRepository();
+    constructor(
+        @inject(TYPES.RoleQueriesRepo) private readonly roleRepository: RoleQueriesRepo
+    ) {
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for RoleQueriesSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, RoleQueriesSvc will fallback to database queries only:', error);
+        }
     }
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
-     *
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient(): RedisClientType {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -126,24 +102,6 @@ export class RoleQueriesSvc implements IRoleQueriesService {
         };
     }
 
-    /**
-     * 從快取取得所有角色
-     * @private
-     */
-    private getCachedAllRoles = async (): Promise<RoleDTO[] | null> => {
-        try {
-            const redis = this.getRedisClient();
-            logger.debug('Checking Redis cache for all roles');
-            const cachedData = await redis.get(RoleQueriesSvc.ALL_ROLES_KEY);
-            if (cachedData) {
-                logger.info('Roles loaded from Redis cache');
-                return JSON.parse(cachedData) as RoleDTO[];
-            }
-        } catch (error) {
-            logger.warn('Failed to get cached roles:', error);
-        }
-        return null;
-    }
 
     /**
      * 從快取取得單一角色
@@ -151,8 +109,12 @@ export class RoleQueriesSvc implements IRoleQueriesService {
      * @private
      */
     private getCachedRole = async (roleId: number): Promise<RoleDTO | null> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            return null; // Redis 不可用，直接返回 null
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for role ID: ${roleId}`);
             const key = this.getRoleCacheKey(roleId);
             const cachedData = await redis.get(key);
@@ -168,32 +130,6 @@ export class RoleQueriesSvc implements IRoleQueriesService {
 
     // ==================== 公開查詢方法 ====================
 
-    /**
-     * 取得所有角色列表
-     */
-    public getAllRoles = async (): Promise<RoleDTO[]> => {
-        try {
-            logger.debug('Getting all roles with cache support');
-
-            // 先嘗試從快取取得
-            const cachedRoles = await this.getCachedAllRoles();
-            if (cachedRoles) {
-                return cachedRoles;
-            }
-
-            // 快取不存在，從資料庫取得
-            logger.debug('Fetching roles from database');
-            const roles = await this.roleRepository.findAll();
-            const rolesDTO = roles.map(r => this.modelToDTO(r));
-
-            logger.info(`Retrieved ${rolesDTO.length} roles from database`);
-
-            return rolesDTO;
-        } catch (error) {
-            logger.error('Error fetching all roles:', error);
-            throw new Error('Failed to fetch roles');
-        }
-    }
 
     /**
      * 根據 ID 取得角色
@@ -277,12 +213,12 @@ export class RoleQueriesSvc implements IRoleQueriesService {
     }
 
     /**
-     * 分頁查詢角色列表
+     * 獲取所有角色列表（支持分頁）
      * 
-     * @param params 分頁參數
+     * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁角色結果
      */
-    public async getRolesPaginated(params: PaginationParams): Promise<PaginatedResult<RoleDTO>> {
+    public async getAllRoles(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<RoleDTO>> {
         try {
             logger.debug('Getting roles with pagination', params);
 

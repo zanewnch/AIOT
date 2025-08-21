@@ -34,7 +34,7 @@ import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('UserCommands');
+const logger = createLogger('UserCommandsCtrl');
 
 /**
  * 使用者命令控制器類別 - RBAC 系統中的使用者管理命令端點
@@ -57,10 +57,10 @@ const logger = createLogger('UserCommands');
  * **依賴注入：**
  * - UserCommandsSvc: 使用者命令服務層，負責具體的業務邏輯
  *
- * @class UserCommands
+ * @class UserCommandsCtrl
  * @example
  * ```typescript
- * const userController = container.get<UserCommands>(TYPES.UserCommandsCtrl);
+ * const userController = container.get<UserCommandsCtrl>(TYPES.UserCommandsCtrl);
  * 
  * // 在 Express 路由中使用
  * app.post('/api/rbac/users', userController.createUser);
@@ -72,9 +72,9 @@ const logger = createLogger('UserCommands');
  * @public
  */
 @injectable()
-export class UserCommands {
+export class UserCommandsCtrl {
     /**
-     * UserCommands 控制器建構函數
+     * UserCommandsCtrl 控制器建構函數
      *
      * 透過 Inversify 依賴注入機制注入所需的服務實例。
      *

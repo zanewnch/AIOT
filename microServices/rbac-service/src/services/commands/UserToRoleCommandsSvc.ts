@@ -58,34 +58,38 @@ export interface RemoveRoleRequest {
  */
 @injectable()
 export class UserToRoleCommandsSvc {
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
 
     constructor(
         @inject(TYPES.UserToRoleQueriesSvc)
-        private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc
+        private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc,
+        @inject(TYPES.UserRoleCommandsRepo)
+        private readonly userRoleCommandsRepository: UserRoleCommandsRepository
     ) {
-        // Initialize repository directly for now since it's not in DI container yet
-        this.userRoleCommandsRepository = new UserRoleCommandsRepository();
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for UserToRoleCommandsSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, UserToRoleCommandsSvc will fallback to database operations only:', error);
+        }
     }
-
-    private readonly userRoleCommandsRepository: UserRoleCommandsRepository;
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database operations');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -113,8 +117,13 @@ export class UserToRoleCommandsSvc {
      * @private
      */
     private clearUserRoleCache = async (userId?: number, roleId?: number): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache clear operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             if (userId) {
                 // 清除使用者角色快取
                 logger.debug(`Clearing Redis cache for user roles: ${userId}`);

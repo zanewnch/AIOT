@@ -26,7 +26,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepo.js';
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo.js';
+import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
@@ -57,6 +57,8 @@ const logger = createLogger('PermissionCommandsSvc');
  */
 @injectable()
 export class PermissionCommandsSvc implements IPermissionCommandsService {
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
@@ -64,33 +66,31 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.PermissionQueriesSvc)
-        private readonly queryService: PermissionQueriesSvc
+        @inject(TYPES.PermissionQueriesSvc) private readonly queryService: PermissionQueriesSvc,
+        @inject(TYPES.PermissionCommandsRepo) private readonly permissionCommandsRepository: PermissionCommandsRepository,
+        @inject(TYPES.PermissionQueriesRepo) private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
-        // Initialize repositories directly for now since they're not in DI container yet
-        this.permissionCommandsRepository = new PermissionCommandsRepository();
-        this.permissionQueriesRepository = new PermissionQueriesRepository();
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for PermissionCommandsSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, PermissionCommandsSvc will fallback to database operations only:', error);
+        }
     }
-
-    private readonly permissionCommandsRepository: PermissionCommandsRepository;
-    private readonly permissionQueriesRepository: PermissionQueriesRepository;
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
-     *
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -134,10 +134,14 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         permissions: UserPermissions,
         ttl = PermissionCommandsSvc.DEFAULT_CACHE_TTL
     ): Promise<void> {
-        try {
-            const redis = this.getRedisClient();
-            const cacheKey = this.getPermissionsCacheKey(userId);
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache set operation');
+            return; // Redis 不可用，直接返回
+        }
 
+        try {
+            const cacheKey = this.getPermissionsCacheKey(userId);
             await redis.setEx(
                 cacheKey,
                 ttl,
@@ -169,8 +173,13 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @private
      */
     private cacheAllPermissions = async (permissions: PermissionDTO[]): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache all permissions operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug('Caching all permissions in Redis');
             await redis.setEx(
                 PermissionCommandsSvc.ALL_PERMISSIONS_KEY,
@@ -195,8 +204,13 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @private
      */
     private cachePermission = async (permission: PermissionDTO): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache permission operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Caching permission ID: ${permission.id} in Redis`);
             const key = this.getPermissionCacheKey(permission.id);
             await redis.setEx(key, PermissionCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(permission));
@@ -211,8 +225,13 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @private
      */
     private clearPermissionManagementCache = async (permissionId?: number): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache clear operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             if (permissionId) {
                 // 清除單個權限快取
                 logger.debug(`Clearing Redis cache for permission ID: ${permissionId}`);
@@ -235,8 +254,13 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
      * @param userId 使用者 ID
      */
     public clearUserPermissionsCache = async (userId: number): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache clear operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             const permissionsCacheKey = this.getPermissionsCacheKey(userId);
             const rolesCacheKey = this.getRolesCacheKey(userId);
 
@@ -282,7 +306,7 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
             }
 
             // 檢查權限是否已存在
-            const exists = await this.permissionQueriesRepository.exists(permissionData.name.trim());
+            const exists = await this.permissionQueriesRepo.exists(permissionData.name.trim());
             if (exists) {
                 throw new Error(`Permission with name '${permissionData.name}' already exists`);
             }
@@ -336,7 +360,7 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
 
                 // 檢查新名稱是否已被其他權限使用
                 if (updatePayload.name) {
-                    const existingPermission = await this.permissionQueriesRepository.findByName(updatePayload.name);
+                    const existingPermission = await this.permissionQueriesRepo.findByName(updatePayload.name);
                     if (existingPermission && existingPermission.id !== permissionId) {
                         throw new Error(`Permission with name '${updatePayload.name}' already exists`);
                     }
@@ -385,7 +409,7 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
             }
 
             // 檢查權限是否存在
-            const existingPermission = await this.permissionQueriesRepository.findById(permissionId);
+            const existingPermission = await this.permissionQueriesRepo.findById(permissionId);
             if (!existingPermission) {
                 logger.warn(`Permission deletion failed - permission not found for ID: ${permissionId}`);
                 return false;

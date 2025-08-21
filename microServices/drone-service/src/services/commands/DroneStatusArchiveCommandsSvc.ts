@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { DroneStatusArchiveCommandsRepository } from '../../repo/commands/DroneStatusArchiveCommandsRepo.js';
-import { DroneStatusArchiveQueriesRepository } from '../../repo/queries/DroneStatusArchiveQueriesRepo.js';
+import { DroneStatusArchiveQueriesRepo } from '../../repo/queries/DroneStatusArchiveQueriesRepo.js';
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
@@ -43,7 +43,7 @@ export class DroneStatusArchiveCommandsSvc {
 
     constructor(
         @inject(TYPES.DroneStatusArchiveCommandsRepository) commandsRepo: DroneStatusArchiveCommandsRepository,
-        @inject(TYPES.DroneStatusArchiveQueriesRepository) queriesRepo: DroneStatusArchiveQueriesRepository,
+        @inject(TYPES.DroneStatusArchiveQueriesRepo) queriesRepo: DroneStatusArchiveQueriesRepo,
         @inject(TYPES.DroneStatusArchiveQueriesSvc) queryService: DroneStatusArchiveQueriesSvc
     ) {
         this.commandsRepo = commandsRepo;

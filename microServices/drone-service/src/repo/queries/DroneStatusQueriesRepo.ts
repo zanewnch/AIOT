@@ -15,7 +15,7 @@ import { DroneStatusModel, type DroneStatusAttributes, DroneStatus } from '../..
 import type { PaginationParams, PaginatedResponse } from '../types/ApiResponseType.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('DroneStatusQueriesRepository');
+const logger = createLogger('DroneStatusQueriesRepo');
 
 /**
  * 無人機狀態查詢 Repository 實現類別 - CQRS 查詢端

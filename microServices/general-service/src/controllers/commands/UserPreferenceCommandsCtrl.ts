@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
  * 
- * @module UserPreferenceCommands
+ * @module UserPreferenceCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -26,11 +26,11 @@ import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from 
  * 專門處理用戶偏好設定相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  * 
- * @class UserPreferenceCommands
+ * @class UserPreferenceCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class UserPreferenceCommands {
+export class UserPreferenceCommandsCtrl {
     constructor(
         @inject(TYPES.UserPreferenceCommandsSvc) 
         private readonly userPreferenceCommandsSvc: UserPreferenceCommandsSvc

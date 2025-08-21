@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
  *
- * @module RoleCommands
+ * @module RoleCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -19,7 +19,7 @@ import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('RoleCommands');
+const logger = createLogger('RoleCommandsCtrl');
 
 /**
  * 角色命令控制器類別
@@ -27,11 +27,11 @@ const logger = createLogger('RoleCommands');
  * 專門處理角色相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class RoleCommands
+ * @class RoleCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class RoleCommands {
+export class RoleCommandsCtrl {
     constructor(
         @inject(TYPES.RoleCommandsSvc) private readonly roleCommandsService: IRoleCommandsService
     ) {

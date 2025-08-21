@@ -17,7 +17,7 @@
 import { UserPreferenceCommandsSvc } from '../../../src/services/commands/UserPreferenceCommandsSvc.js';
 import { UserPreferenceQueriesSvc } from '../../../src/services/queries/UserPreferenceQueriesSvc.js';
 import { UserPreferenceCommandsRepository } from '../../../src/repo/commands/UserPreferenceCommandsRepo.js';
-import { UserPreferenceQueriesRepository } from '../../../src/repo/queries/UserPreferenceQueriesRepo.js';
+import { UserPreferenceQueriesRepo } from '../../../src/repo/queries/UserPreferenceQueriesRepo.js';
 import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from '../../../src/models/UserPreferenceModel.js';
 
 // Mock logger
@@ -38,7 +38,7 @@ describe('UserPreferenceCommandsSvc', () => {
     let service: UserPreferenceCommandsSvc;
     let mockUserPreferenceQueriesSvc: jest.Mocked<UserPreferenceQueriesSvc>;
     let mockCommandsRepository: jest.Mocked<UserPreferenceCommandsRepository>;
-    let mockQueriesRepository: jest.Mocked<UserPreferenceQueriesRepository>;
+    let mockQueriesRepo: jest.Mocked<UserPreferenceQueriesRepo>;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -62,7 +62,7 @@ describe('UserPreferenceCommandsSvc', () => {
             upsert: jest.fn(),
         } as any;
 
-        mockQueriesRepository = {
+        mockQueriesRepo = {
             findById: jest.fn(),
             findByUserId: jest.fn(),
             findMany: jest.fn(),
@@ -73,7 +73,7 @@ describe('UserPreferenceCommandsSvc', () => {
         
         // Manually set private properties for testing
         (service as any).commandsRepository = mockCommandsRepository;
-        (service as any).queriesRepository = mockQueriesRepository;
+        (service as any).queriesRepository = mockQueriesRepo;
     });
 
     describe('createUserPreference', () => {

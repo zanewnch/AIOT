@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
  *
- * @module DroneRealTimeStatusCommands
+ * @module DroneRealTimeStatusCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -22,7 +22,7 @@ import type {
     DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes
 } from '../../types/services/IDroneRealTimeStatusService.js';
 
-const logger = createLogger('DroneRealTimeStatusCommands');
+const logger = createLogger('DroneRealTimeStatusCommandsCtrl');
 
 /**
  * 無人機即時狀態命令控制器類別
@@ -30,11 +30,11 @@ const logger = createLogger('DroneRealTimeStatusCommands');
  * 專門處理無人機即時狀態相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class DroneRealTimeStatusCommands
+ * @class DroneRealTimeStatusCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneRealTimeStatusCommands {
+export class DroneRealTimeStatusCommandsCtrl {
     constructor(
         @inject(TYPES.DroneStatusCommandsSvc) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsSvc
     ) {

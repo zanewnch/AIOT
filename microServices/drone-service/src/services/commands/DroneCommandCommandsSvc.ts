@@ -19,8 +19,6 @@ import type {
     BatchCommandResult
 } from '../../types/services/IDroneCommandService.js';
 import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
-import { DroneCommandCommandsRepository } from '../../repo/commands/DroneCommandCommandsRepo.js';
-import { DroneCommandQueriesRepository } from '../../repo/queries/DroneCommandQueriesRepo.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandQueriesSvc } from '../queries/DroneCommandQueriesSvc.js';
@@ -42,23 +40,10 @@ const logger = createLogger('DroneCommandCommandsSvc');
 export class DroneCommandCommandsSvc {
     constructor(
         @inject(TYPES.DroneCommandQueriesSvc)
-        private readonly queryService: DroneCommandQueriesSvc
-    ) {
-        // Initialize repositories directly for now since they're not in DI container yet
-        this.commandsRepo = new DroneCommandCommandsRepository();
-        this.queriesRepo = new DroneCommandQueriesRepository();
-        
-        // 創建組合repository
-        this.commandRepo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
-        ) as IDroneCommandRepo;
-    }
-
-    private readonly commandsRepo: DroneCommandCommandsRepo;
-    private readonly queriesRepo: DroneCommandQueriesRepo;
-    private readonly commandRepo: IDroneCommandRepo;
+        private readonly queryService: DroneCommandQueriesSvc,
+        @inject(TYPES.DroneCommandCommandsRepository)
+        private readonly commandRepository: IDroneCommandRepository
+    ) {}
 
     /**
      * 建立新的無人機指令記錄

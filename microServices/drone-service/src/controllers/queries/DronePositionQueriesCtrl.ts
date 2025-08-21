@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module DronePositionQueries
+ * @module DronePositionQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -17,10 +17,10 @@ import {NextFunction, Request, Response} from 'express';
 import {DronePositionQueriesSvc} from '../../services/queries/DronePositionQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult.js';
-import {IDronePositionQueries} from '../../types/controllers/queries/IDronePositionQueries.js';
+import {IDronePositionQueriesCtrl} from '../../types/controllers/queries/IDronePositionQueriesCtrl.js';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('DronePositionQueries');
+const logger = createLogger('DronePositionQueriesCtrl');
 
 /**
  * 無人機位置查詢控制器類別
@@ -28,11 +28,11 @@ const logger = createLogger('DronePositionQueries');
  * 專門處理無人機位置相關的查詢請求，包含取得位置資料等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class DronePositionQueries
+ * @class DronePositionQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionQueries implements IDronePositionQueries {
+export class DronePositionQueriesCtrl implements IDronePositionQueriesCtrl {
     constructor(
         @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesSvc: DronePositionQueriesSvc
     ) {
@@ -66,7 +66,7 @@ export class DronePositionQueries implements IDronePositionQueries {
             }
 
             // 使用分頁查詢
-            const paginatedResult = await this.dronePositionQueriesSvc.getDronePositionsPaginated(paginationParams);
+            const paginatedResult = await this.dronePositionQueriesSvc.getAllDronePositions(paginationParams);
             const result = ResResult.success('無人機位置資料獲取成功', paginatedResult);
 
             res.status(result.status).json(result);

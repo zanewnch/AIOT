@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserPreferenceQueriesRepository } from '../../repo/queries/UserPreferenceQueriesRepo.js';
+import { UserPreferenceQueriesRepo } from '../../repo/queries/UserPreferenceQueriesRepo.js';
 import type { UserPreferenceAttributes } from '../../models/UserPreferenceModel.js';
 import type { PaginationParams, PaginatedData } from '../../types/ApiResponseType.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
@@ -58,7 +58,7 @@ export interface UserPreferenceStatistics {
 export class UserPreferenceQueriesSvc {
     constructor(
         @inject(TYPES.UserPreferenceQueriesRepo) 
-        private readonly queriesRepository: UserPreferenceQueriesRepository
+        private readonly queriesRepository: UserPreferenceQueriesRepo
     ) {}
 
     /**

@@ -1,5 +1,5 @@
 /**
- * @fileoverview AuthQueries 控制器 - 檔案層級意圖說明
+ * @fileoverview AuthQueriesCtrl 控制器 - 檔案層級意圖說明
  *
  * 目的：此控制器負責提供認證相關的只讀 HTTP 端點（CQRS 查詢端）。
  * - 從 API Gateway 或 Gateway header 取得最小化的使用者資訊
@@ -18,7 +18,7 @@ import {createLogger, logRequest} from '../../configs/loggerConfig.js'; // 引�
 import {ResResult} from '../../utils/ResResult'; // 引入標準回應封裝工具
 import {TYPES} from '../../container/types.js'; // 引入 DI container 的型別 key
 
-const logger = createLogger('AuthQueries'); // 建立 logger 實例，標記為 AuthQueries 模組
+const logger = createLogger('AuthQueriesCtrl'); // 建立 logger 實例，標記為 AuthQueriesCtrl 模組
 
 /**
  * 認證查詢控制器類別 - 封裝所有 read-only 的認證查詢 API 方法，使用 DI 注入查詢服務。
@@ -31,7 +31,7 @@ const logger = createLogger('AuthQueries'); // 建立 logger 實例，標記為 
  * @public
  */
 @injectable()
-export class AuthQueries {
+export class AuthQueriesCtrl {
     constructor(
         @inject(TYPES.AuthQueriesSvc) private readonly authQueriesSvc: AuthQueriesSvc // 注入 AuthQueriesSvc 以獲取資料與邏輯
     ) {

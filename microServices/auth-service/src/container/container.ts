@@ -22,7 +22,7 @@ import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
 import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
 
 // JWT 安全服務
-import { JwtBlacklistService } from '../services/shared/JwtBlacklistService.js';
+import { JwtBlacklistSvc } from '../services/shared/JwtBlacklistSvc.js';
 
 /**
  * 創建並配置 Auth 服務的 IoC 容器
@@ -51,8 +51,8 @@ export function createContainer(): Container {
   // 說明: 會話查詢服務，用於驗證與查詢 session 資訊
 
   // JWT 安全服務
-  container.bind<JwtBlacklistService>(TYPES.JwtBlacklistService)
-    .to(JwtBlacklistService)
+  container.bind<JwtBlacklistSvc>(TYPES.JwtBlacklistSvc)
+    .to(JwtBlacklistSvc)
     .inSingletonScope();
   // 說明: JWT 黑名單服務，用於登出或強制失效 token
 

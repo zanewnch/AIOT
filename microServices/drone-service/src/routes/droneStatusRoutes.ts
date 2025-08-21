@@ -61,7 +61,7 @@ export class DroneStatusRoutes {
      */
     private setupQueryRoutes(): void {
         // 獲取所有無人機狀態
-        this.router.get('/', (req, res, next) => this.droneStatusQueries.getAllDroneStatuses(req, res, next));
+        this.router.get('/', (req, res, next) => this.droneStatusQueries.getDroneStatuses(req, res, next));
 
         // 獲取狀態統計資訊
         this.router.get('/statistics', (req, res, next) => this.droneStatusQueries.getDroneStatusStatistics(req, res, next));

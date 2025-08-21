@@ -44,15 +44,17 @@ export class DroneStatusQuery {
   constructor() {}
   
   /**
-   * 獲取所有無人機狀態的 Hook - 優化版本，支持背景即時更新
+   * 獲取無人機狀態分頁列表的 Hook - 安全版本，使用分頁查詢
    */
-  useAll() {
+  getAllDroneStatuses(page: number = 1, pageSize: number = 20, sortBy: string = 'id', sortOrder: 'ASC' | 'DESC' = 'DESC') {
     return useQuery({
-      queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUSES,
-      queryFn: async (): Promise<DroneStatus[]> => {
+      queryKey: [...this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUSES, page, pageSize, sortBy, sortOrder],
+      queryFn: async (): Promise<any> => {
         try {
-          const response = await apiClient.get('/drone/statuses');
-          const result = ReqResult.fromResponse<DroneStatus[]>(response);
+          const response = await apiClient.get('/drone/statuses', {
+            params: { page, pageSize, sortBy, sortOrder }
+          });
+          const result = ReqResult.fromResponse<any>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -60,16 +62,16 @@ export class DroneStatusQuery {
           
           return result.unwrap();
         } catch (error: any) {
-          logger.error('Failed to fetch all drone statuses', { error });
+          logger.error('Failed to fetch drone statuses with pagination', { error, page, pageSize });
           const tableError: TableError = {
-            message: error.response?.data?.message || error.message || 'Failed to fetch all drone statuses',
+            message: error.response?.data?.message || error.message || 'Failed to fetch drone statuses with pagination',
             status: error.response?.status,
             details: error.response?.data,
           };
           throw tableError;
         }
       },
-      staleTime: 10 * 1000, // 10秒後認為過期 (優化: 從30秒降至10秒)
+      staleTime: 10 * 1000, // 10秒後認為過期
       gcTime: 5 * 60 * 1000,
       retry: 3,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -461,7 +463,7 @@ export class DroneStatusQuery {
  * ```typescript
  * import { droneStatusQuery } from './useDroneStatusQuery';
  * 
- * const droneStatuses = droneStatusQuery.useAll();
+ * const droneStatuses = droneStatusQuery.useDroneStatuses(1, 20);
  * ```
  */
 export const droneStatusQuery = new DroneStatusQuery();
@@ -472,17 +474,21 @@ export const droneStatusQuery = new DroneStatusQuery();
 export const useDroneStatusQuery = () => droneStatusQuery;
 
 /**
- * 獲取所有無人機狀態的 Hook
+ * 獲取無人機狀態分頁列表的 Hook
  * 
- * @returns {UseQueryResult<DroneStatus[], TableError>} React Query 結果對象
+ * @param {number} page - 頁碼，預設為 1
+ * @param {number} pageSize - 每頁數量，預設為 20
+ * @param {string} sortBy - 排序欄位，預設為 'id'
+ * @param {'ASC' | 'DESC'} sortOrder - 排序方向，預設為 'DESC'
+ * @returns {UseQueryResult<any, TableError>} React Query 結果對象
  * 
  * @example
  * ```typescript
- * const { data: droneStatuses, isLoading, error } = useAllDroneStatuses();
+ * const { data: droneStatusesPage, isLoading, error } = useDroneStatuses(1, 20);
  * ```
  */
-export const useAllDroneStatuses = () => {
-  return droneStatusQuery.useAll();
+export const useAllDroneStatuses = (page?: number, pageSize?: number, sortBy?: string, sortOrder?: 'ASC' | 'DESC') => {
+  return droneStatusQuery.getAllDroneStatuses(page, pageSize, sortBy, sortOrder);
 };
 
 /**

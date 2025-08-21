@@ -23,11 +23,11 @@ import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
  *
  * 專門處理無人機狀態變更歷史資料的查詢操作，遵循 CQRS 模式
  *
- * @class DroneStatusArchiveQueriesRepository
+ * @class DroneStatusArchiveQueriesRepo
  */
 @injectable()
 export class DroneStatusArchiveQueriesRepo {
-    private readonly logger = createLogger('DroneStatusArchiveQueriesRepository');
+    private readonly logger = createLogger('DroneStatusArchiveQueriesRepo');
 
     /**
      * 取得所有無人機狀態歷史資料

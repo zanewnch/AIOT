@@ -26,6 +26,7 @@ import type {
 } from '../../types/services/IDroneRealTimeStatusService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
+import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesSvc');
 
@@ -116,15 +117,18 @@ export class DroneRealTimeStatusQueriesSvc {
     }
 
     /**
-     * 獲取所有即時狀態記錄
+     * 獲取所有即時狀態記錄（內部使用，有數量限制）
+     * @private
      */
-    getAllRealTimeStatuses = async (): Promise<DroneRealTimeStatusModel[]> => {
+    private getAllRealTimeStatusesInternal = async (limit: number = 100): Promise<DroneRealTimeStatusModel[]> => {
         try {
-            logger.info('Getting all drone real-time statuses');
+            logger.info('Getting all drone real-time statuses (limited)');
             const result = await this.repo.findAll();
             
-            logger.info(`Retrieved ${result.length} drone real-time status records`);
-            return result;
+            // 應用限制以防止過大查詢
+            const limitedResult = result.slice(0, limit);
+            logger.info(`Retrieved ${limitedResult.length} drone real-time status records (limited to ${limit})`);
+            return limitedResult;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(`獲取即時狀態記錄列表失敗: ${errorMessage}`);
@@ -259,6 +263,7 @@ export class DroneRealTimeStatusQueriesSvc {
 
             logger.info('Checking low battery drones', { threshold });
             const allDrones = await this.repo.findAll();
+            const allDrones = await this.getAllRealTimeStatusesInternal();
             const lowBatteryDrones = allDrones.filter(drone => 
                 drone.current_battery_level <= threshold
             );
@@ -270,9 +275,69 @@ export class DroneRealTimeStatusQueriesSvc {
         }
     }
 
-    // 實現外部介面方法
-    getAllDroneRealTimeStatuses = async (): Promise<DroneRealTimeStatusAttributes[]> => {
-        return await this.getAllRealTimeStatuses();
+    /**
+     * 獲取所有無人機即時狀態（支持分頁）
+     * 
+     * @param params 分頁參數，默認 page=1, pageSize=20
+     * @returns 分頁無人機即時狀態結果
+     */
+    public async getAllDroneRealTimeStatuses(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<DroneRealTimeStatusAttributes>> {
+        try {
+            logger.debug('Getting drone real-time statuses with pagination', params);
+
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 10,
+                maxPageSize: 100,
+                defaultSortBy: 'id',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'drone_id', 'current_status', 'current_battery_level', 'last_seen', 'createdAt', 'updatedAt']
+            });
+
+            // 獲取所有數據（模擬，實際應該從資料庫分頁查詢）
+            const allStatuses = await this.getAllRealTimeStatusesInternal();
+            const total = allStatuses.length;
+
+            // 手動分頁和排序（實際應該在資料庫層面完成）
+            const sortedStatuses = [...allStatuses].sort((a, b) => {
+                const field = validatedParams.sortBy as keyof DroneRealTimeStatusModel;
+                const aValue = a[field];
+                const bValue = b[field];
+                
+                let comparison = 0;
+                if (aValue > bValue) comparison = 1;
+                if (aValue < bValue) comparison = -1;
+                
+                return validatedParams.sortOrder === 'ASC' ? comparison : -comparison;
+            });
+
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            const paginatedStatuses = sortedStatuses.slice(offset, offset + validatedParams.pageSize);
+
+            // 轉換為外部屬性格式
+            const convertedStatuses = paginatedStatuses.map(status => this.convertToExternalAttributes(status.toJSON()));
+
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                convertedStatuses,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
+
+            logger.info('Successfully fetched drone real-time statuses with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Error fetching drone real-time statuses with pagination:', error);
+            throw new Error('Failed to fetch drone real-time statuses with pagination');
+        }
     }
 
     getDroneRealTimeStatusById = async (id: number): Promise<DroneRealTimeStatusAttributes | null> => {
@@ -352,7 +417,7 @@ export class DroneRealTimeStatusQueriesSvc {
             logger.debug('Getting drone real-time statuses with pagination', params);
 
             // 模擬分頁實現（實際應該在 repository 層實現）
-            const allStatuses = await this.getAllRealTimeStatuses();
+            const allStatuses = await this.getAllRealTimeStatusesInternal();
             const total = allStatuses.length;
 
             const page = params.page || 1;

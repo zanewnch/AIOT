@@ -13,7 +13,7 @@ interface GenerationStatus {
   lastChecked: Date | null;
 }
 
-export class DocsGenerationService {
+export class DocsGenerationSvc {
   private static generationStatus = new Map<string, GenerationStatus>();
   private static globalLock = false;
 

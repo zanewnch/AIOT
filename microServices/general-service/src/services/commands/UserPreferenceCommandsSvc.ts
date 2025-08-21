@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { UserPreferenceCommandsRepository } from '../../repo/commands/UserPreferenceCommandsRepo.js';
-import { UserPreferenceQueriesRepository } from '../../repo/queries/UserPreferenceQueriesRepo.js';
+import { UserPreferenceQueriesRepo } from '../../repo/queries/UserPreferenceQueriesRepo.js';
 import type { UserPreferenceAttributes, UserPreferenceCreationAttributes } from '../../models/UserPreferenceModel.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
@@ -46,7 +46,7 @@ export class UserPreferenceCommandsSvc {
         private readonly commandsRepository: UserPreferenceCommandsRepository,
         
         @inject(TYPES.UserPreferenceQueriesRepo) 
-        private readonly queriesRepository: UserPreferenceQueriesRepository
+        private readonly queriesRepository: UserPreferenceQueriesRepo
     ) {}
 
     /**

@@ -10,7 +10,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { JwtBlacklistService } from '../services/shared/JwtBlacklistService.js';
+import { JwtBlacklistSvc } from '../services/shared/JwtBlacklistSvc.js';
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('JwtBlacklistMiddleware');
@@ -19,14 +19,14 @@ const logger = createLogger('JwtBlacklistMiddleware');
  * JWT 黑名單檢查中間件類別
  */
 export class JwtBlacklistMiddleware {
-    private static blacklistService: JwtBlacklistService;
+    private static blacklistService: JwtBlacklistSvc;
 
     /**
      * 初始化黑名單服務
      */
     static initialize(): void {
         if (!this.blacklistService) {
-            this.blacklistService = new JwtBlacklistService();
+            this.blacklistService = new JwtBlacklistSvc();
         }
     }
 

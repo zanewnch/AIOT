@@ -12,18 +12,18 @@
  */
 
 import { DroneRealTimeStatusQueriesSvc } from '../../../../../drone-websocket-service/src/services/queries/DroneRealTimeStatusQueriesSvc.js';
-import { DroneRealTimeStatusQueriesRepository } from '../../../../../drone-websocket-service/src/repo/index.js';
+import { DroneRealTimeStatusQueriesRepo } from '../../../../../drone-websocket-service/src/repo/index.js';
 import { DroneRealTimeStatus } from '../../../../../drone-websocket-service/src/models/DroneRealTimeStatusModel.js';
 import type { DroneRealTimeStatusAttributes } from '../../../../../drone-websocket-service/src/models/DroneRealTimeStatusModel.js';
 
 // Mock repository
 jest.mock('../../../../../drone-websocket-service/src/repo/index.js');
 
-const MockDroneRealTimeStatusQueriesRepository = DroneRealTimeStatusQueriesRepository as jest.MockedClass<typeof DroneRealTimeStatusQueriesRepository>;
+const MockDroneRealTimeStatusQueriesRepo = DroneRealTimeStatusQueriesRepo as jest.MockedClass<typeof DroneRealTimeStatusQueriesRepo>;
 
 describe('DroneRealTimeStatusQueriesSvc', () => {
     let service: DroneRealTimeStatusQueriesSvc;
-    let mockRepository: jest.Mocked<DroneRealTimeStatusQueriesRepository>;
+    let mockRepository: jest.Mocked<DroneRealTimeStatusQueriesRepo>;
 
     const createMockStatusData = (overrides?: Partial<DroneRealTimeStatusAttributes>): DroneRealTimeStatusAttributes => ({
         id: 1,
@@ -48,7 +48,7 @@ describe('DroneRealTimeStatusQueriesSvc', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         
-        mockRepository = new MockDroneRealTimeStatusQueriesRepository() as jest.Mocked<DroneRealTimeStatusQueriesRepository>;
+        mockRepository = new MockDroneRealTimeStatusQueriesRepo() as jest.Mocked<DroneRealTimeStatusQueriesRepo>;
         service = new DroneRealTimeStatusQueriesSvc(mockRepository);
     });
 

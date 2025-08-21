@@ -25,7 +25,7 @@ import type {
     IArchiveTaskRepository
 } from '../../types/repositories/IArchiveTaskRepository.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
-import { ArchiveTaskQueriesRepository } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
+import { ArchiveTaskQueriesRepo } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
@@ -48,8 +48,8 @@ export class ArchiveTaskCommandsSvc {
         @inject(TYPES.ArchiveTaskCommandsRepository) 
         private readonly commandsRepo: ArchiveTaskCommandsRepository,
         
-        @inject(TYPES.ArchiveTaskQueriesRepository) 
-        private readonly queriesRepo: ArchiveTaskQueriesRepository,
+        @inject(TYPES.ArchiveTaskQueriesRepo) 
+        private readonly queriesRepo: ArchiveTaskQueriesRepo,
         
         @inject(TYPES.ArchiveTaskQueriesSvc) 
         private readonly queryService: ArchiveTaskQueriesSvc

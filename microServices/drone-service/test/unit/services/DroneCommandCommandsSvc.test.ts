@@ -16,7 +16,7 @@
 import { DroneCommandCommandsSvc } from '../../../src/services/commands/DroneCommandCommandsSvc.js';
 import { DroneCommandQueriesSvc } from '../../../src/services/queries/DroneCommandQueriesSvc.js';
 import { DroneCommandCommandsRepository } from '../../../src/repo/commands/DroneCommandCommandsRepo.js';
-import { DroneCommandQueriesRepository } from '../../../src/repo/queries/DroneCommandQueriesRepo.js';
+import { DroneCommandQueriesRepo } from '../../../src/repo/queries/DroneCommandQueriesRepo.js';
 import { DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../../src/models/DroneCommandModel.js';
 import type { CommandExecutionResult, BatchCommandResult } from '../../../src/types/services/IDroneCommandService.js';
 
@@ -44,7 +44,7 @@ describe('DroneCommandCommandsSvc', () => {
     let service: DroneCommandCommandsSvc;
     let mockQueryService: jest.Mocked<DroneCommandQueriesSvc>;
     let mockCommandsRepository: jest.Mocked<DroneCommandCommandsRepository>;
-    let mockQueriesRepository: jest.Mocked<DroneCommandQueriesRepository>;
+    let mockQueriesRepo: jest.Mocked<DroneCommandQueriesRepo>;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -67,7 +67,7 @@ describe('DroneCommandCommandsSvc', () => {
             bulkCreate: jest.fn(),
         } as any;
 
-        mockQueriesRepository = {
+        mockQueriesRepo = {
             findById: jest.fn(),
             findByDroneId: jest.fn(),
             findByStatus: jest.fn(),
@@ -79,7 +79,7 @@ describe('DroneCommandCommandsSvc', () => {
         
         // Manually set private properties for testing
         (service as any).commandsRepository = mockCommandsRepository;
-        (service as any).queriesRepository = mockQueriesRepository;
+        (service as any).queriesRepository = mockQueriesRepo;
     });
 
     describe('createCommand', () => {
@@ -409,7 +409,7 @@ describe('DroneCommandCommandsSvc', () => {
                     executed_at: new Date()
                 };
 
-                mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+                mockQueriesRepo.findById.mockResolvedValue(existingCommand);
                 mockCommandsRepository.update.mockResolvedValue(updatedCommand);
 
                 const result = await service.executeCommand(commandId);
@@ -429,7 +429,7 @@ describe('DroneCommandCommandsSvc', () => {
                     status: DroneCommandStatus.COMPLETED
                 };
 
-                mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+                mockQueriesRepo.findById.mockResolvedValue(existingCommand);
 
                 const result = await service.executeCommand(commandId);
 
@@ -440,7 +440,7 @@ describe('DroneCommandCommandsSvc', () => {
 
             it('應該在找不到指令時返回錯誤', async () => {
                 const commandId = 999;
-                mockQueriesRepository.findById.mockResolvedValue(null);
+                mockQueriesRepo.findById.mockResolvedValue(null);
 
                 const result = await service.executeCommand(commandId);
 
@@ -463,7 +463,7 @@ describe('DroneCommandCommandsSvc', () => {
                     completed_at: new Date()
                 };
 
-                mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+                mockQueriesRepo.findById.mockResolvedValue(existingCommand);
                 mockCommandsRepository.update.mockResolvedValue(completedCommand);
 
                 const result = await service.completeCommand(commandId);
@@ -489,7 +489,7 @@ describe('DroneCommandCommandsSvc', () => {
                     failed_at: new Date()
                 };
 
-                mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+                mockQueriesRepo.findById.mockResolvedValue(existingCommand);
                 mockCommandsRepository.update.mockResolvedValue(failedCommand);
 
                 const result = await service.failCommand(commandId, reason);
@@ -520,7 +520,7 @@ describe('DroneCommandCommandsSvc', () => {
                     cancelled_at: new Date()
                 };
 
-                mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+                mockQueriesRepo.findById.mockResolvedValue(existingCommand);
                 mockCommandsRepository.update.mockResolvedValue(cancelledCommand);
 
                 const result = await service.cancelCommand(commandId, reason);
@@ -536,7 +536,7 @@ describe('DroneCommandCommandsSvc', () => {
                     status: DroneCommandStatus.COMPLETED
                 };
 
-                mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+                mockQueriesRepo.findById.mockResolvedValue(existingCommand);
 
                 const result = await service.cancelCommand(commandId, '用戶取消');
 
@@ -571,7 +571,7 @@ describe('DroneCommandCommandsSvc', () => {
                 updated_at: new Date()
             };
 
-            mockQueriesRepository.findById.mockResolvedValue(originalCommand);
+            mockQueriesRepo.findById.mockResolvedValue(originalCommand);
             mockCommandsRepository.create.mockResolvedValue(newCommand);
 
             const result = await service.retryFailedCommand(originalCommandId, issuedBy);
@@ -596,7 +596,7 @@ describe('DroneCommandCommandsSvc', () => {
                 status: DroneCommandStatus.COMPLETED
             };
 
-            mockQueriesRepository.findById.mockResolvedValue(existingCommand);
+            mockQueriesRepo.findById.mockResolvedValue(existingCommand);
 
             const result = await service.retryFailedCommand(commandId, issuedBy);
 

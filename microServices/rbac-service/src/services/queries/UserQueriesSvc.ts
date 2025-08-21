@@ -30,69 +30,56 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
-import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepo.js';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
+import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { UserDTO, UserCacheOptions, IUserQueriesService, PaginationParams, PaginatedResult, PaginationUtils } from '../../types/index.js';
 
 const logger = createLogger('UserQueriesSvc');
 
-/**
- * 使用者資料傳輸物件（不包含敏感資訊）
- */
-export interface UserDTO {
-    id: number;
-    username: string;
-    email: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-/**
- * 快取選項介面
- */
-export interface CacheOptions {
-    refresh?: boolean; // 是否強制重新整理快取
-}
 
 /**
  * 使用者查詢服務類別
  */
 @injectable()
-export class UserQueriesSvc {
-    private userQueriesRepository: UserQueriesRepository;
+export class UserQueriesSvc implements IUserQueriesService {
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly USER_CACHE_PREFIX = 'user:';
-    private static readonly ALL_USERS_KEY = 'users:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     /**
      * 建構函式
      * 初始化使用者查詢服務，設定資料存取層實例
-     * @param userQueriesRepository 使用者查詢資料存取層實例（可選，預設使用 UserQueriesRepository）
      */
     constructor(
-        userQueriesRepository: UserQueriesRepository = new UserQueriesRepository()
+        @inject(TYPES.UserQueriesRepo) private readonly userQueriesRepo: UserQueriesRepo
     ) {
-        this.userQueriesRepository = userQueriesRepository;
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for UserQueriesSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, UserQueriesSvc will fallback to database queries only:', error);
+        }
     }
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
+     * 若 Redis 不可用則返回 null
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -119,50 +106,6 @@ export class UserQueriesSvc {
         };
     }
 
-    /**
-     * 從快取取得所有使用者
-     * @private
-     */
-    private getCachedAllUsers = async (): Promise<UserDTO[] | null> => {
-        try {
-            const redis = this.getRedisClient();
-            logger.debug('Checking Redis cache for all users');
-            const cachedData = await redis.get(UserQueriesSvc.ALL_USERS_KEY);
-            if (cachedData) {
-                logger.info('Users loaded from Redis cache');
-                return JSON.parse(cachedData);
-            }
-        } catch (error) {
-            logger.warn('Failed to get cached users:', error);
-        }
-        return null;
-    }
-
-    /**
-     * 快取所有使用者
-     * @param users 使用者列表
-     * @private
-     */
-    private cacheAllUsers = async (users: UserDTO[]): Promise<void> => {
-        try {
-            const redis = this.getRedisClient();
-            logger.debug('Caching all users in Redis');
-            await redis.setEx(
-                UserQueriesSvc.ALL_USERS_KEY,
-                UserQueriesSvc.DEFAULT_CACHE_TTL,
-                JSON.stringify(users)
-            );
-
-            // 同時快取每個單獨的使用者
-            for (const user of users) {
-                const key = this.getUserCacheKey(user.id);
-                await redis.setEx(key, UserQueriesSvc.DEFAULT_CACHE_TTL, JSON.stringify(user));
-            }
-            logger.debug('Users cached successfully');
-        } catch (error) {
-            logger.warn('Failed to cache users:', error);
-        }
-    }
 
     /**
      * 從快取取得單一使用者
@@ -170,8 +113,12 @@ export class UserQueriesSvc {
      * @private
      */
     private getCachedUser = async (userId: number): Promise<UserDTO | null> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            return null; // Redis 不可用，直接返回 null
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Checking Redis cache for user ID: ${userId}`);
             const key = this.getUserCacheKey(userId);
             const cachedData = await redis.get(key);
@@ -202,35 +149,61 @@ export class UserQueriesSvc {
     }
 
     /**
-     * 取得所有使用者列表
-     * @param options 快取選項
+     * 獲取所有使用者列表（支持分頁）
+     * 
+     * @param params 分頁參數，默認 page=1, pageSize=20
+     * @returns 分頁使用者結果
      */
-    public getAllUsers = async (options: CacheOptions = {}): Promise<UserDTO[]> => {
+    public async getAllUsers(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<UserDTO>> {
         try {
-            logger.debug('Getting all users with cache support');
+            logger.debug('Getting users with pagination', params);
 
-            // 如果不需要刷新快取，先嘗試從快取取得
-            if (!options.refresh) {
-                const cachedUsers = await this.getCachedAllUsers();
-                if (cachedUsers) {
-                    return cachedUsers;
-                }
-            }
+            // 驗證分頁參數
+            const validatedParams = PaginationUtils.validatePaginationParams(params, {
+                defaultPage: 1,
+                defaultPageSize: 20,
+                maxPageSize: 100,
+                defaultSortBy: 'id',
+                defaultSortOrder: 'DESC',
+                allowedSortFields: ['id', 'username', 'email', 'createdAt', 'updatedAt']
+            });
 
-            // 快取不存在或需要刷新，從資料庫取得
-            logger.debug('Fetching users from database');
-            const users = await this.userQueriesRepository.findAll();
-            const usersDTO = users.map((u: UserModel) => this.modelToDTO(u));
+            // 從存儲庫獲取分頁數據
+            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
+            
+            // 獲取總數和分頁數據
+            const [users, total] = await Promise.all([
+                this.userQueriesRepo.findPaginated(
+                    validatedParams.pageSize, 
+                    offset, 
+                    validatedParams.sortBy, 
+                    validatedParams.sortOrder
+                ),
+                this.userQueriesRepo.count()
+            ]);
 
-            logger.info(`Retrieved ${usersDTO.length} users from database`);
+            // 轉換為 DTO
+            const userDTOs = users.map(user => this.modelToDTO(user));
 
-            // 更新快取
-            await this.cacheAllUsers(usersDTO);
+            // 創建分頁結果
+            const result = PaginationUtils.createPaginatedResult(
+                userDTOs,
+                total,
+                validatedParams.page,
+                validatedParams.pageSize
+            );
 
-            return usersDTO;
+            logger.info('Successfully fetched users with pagination', {
+                page: result.page,
+                pageSize: result.pageSize,
+                total: result.total,
+                totalPages: result.totalPages
+            });
+
+            return result;
         } catch (error) {
-            logger.error('Error fetching all users:', error);
-            throw new Error('Failed to fetch users');
+            logger.error('Error fetching users with pagination:', error);
+            throw new Error('Failed to fetch users with pagination');
         }
     }
 
@@ -239,7 +212,7 @@ export class UserQueriesSvc {
      * @param userId 使用者 ID
      * @param options 快取選項
      */
-    public getUserById = async (userId: number, options: CacheOptions = {}): Promise<UserDTO | null> => {
+    public getUserById = async (userId: number, options: UserCacheOptions = {}): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by ID: ${userId}`);
 
@@ -259,7 +232,7 @@ export class UserQueriesSvc {
 
             // 快取不存在或需要刷新，從資料庫取得
             logger.debug(`Fetching user ID: ${userId} from database`);
-            const user = await this.userQueriesRepository.findById(userId);
+            const user = await this.userQueriesRepo.findById(userId);
             if (!user) {
                 logger.warn(`User not found for ID: ${userId}`);
                 return null;
@@ -293,7 +266,7 @@ export class UserQueriesSvc {
             }
 
             // 從資料庫查找
-            const user = await this.userQueriesRepository.findByUsername(username.trim());
+            const user = await this.userQueriesRepo.findByUsername(username.trim());
             if (!user) {
                 logger.warn(`User not found for username: ${username}`);
                 return null;
@@ -323,7 +296,7 @@ export class UserQueriesSvc {
             }
 
             // 從資料庫查找
-            const user = await this.userQueriesRepository.findByEmail(email.trim());
+            const user = await this.userQueriesRepo.findByEmail(email.trim());
             if (!user) {
                 logger.warn(`User not found for email: ${email}`);
                 return null;
@@ -363,7 +336,7 @@ export class UserQueriesSvc {
             }
 
             // 從資料庫查找（包含密碼雜湊）
-            const user = await this.userQueriesRepository.findByUsername(username.trim());
+            const user = await this.userQueriesRepo.findByUsername(username.trim());
             if (!user) {
                 logger.warn(`User not found for username: ${username}`);
                 return null;

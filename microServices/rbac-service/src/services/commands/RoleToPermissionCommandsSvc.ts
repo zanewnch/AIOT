@@ -34,9 +34,9 @@ import { TYPES } from '../../container/types.js';
 // 匯入角色權限命令資料存取層
 import { RolePermissionCommandsRepository } from '../../repo/commands/RolePermissionCommandsRepo.js';
 // 匯入角色查詢資料存取層，用於驗證
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo.js';
+import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 // 匯入權限查詢資料存取層，用於驗證
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepo.js';
+import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 // 匯入 Redis 客戶端配置，用於快取管理
 import { getRedisClient } from '../../configs/redisConfig.js';
 // 匯入 Redis 客戶端類型定義
@@ -74,42 +74,42 @@ export interface IRoleToPermissionCommandsService {
  */
 @injectable()
 export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsService {
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
 
     constructor(
         @inject(TYPES.RoleToPermissionQueriesSvc)
-        private readonly roleToPermissionQueriesSvc: IRoleToPermissionQueriesService
+        private readonly roleToPermissionQueriesSvc: IRoleToPermissionQueriesService,
+        @inject(TYPES.RolePermissionCommandsRepo)
+        private readonly rolePermissionCommandsRepository: RolePermissionCommandsRepository,
+        @inject(TYPES.RoleQueriesRepo)
+        private readonly roleQueriesRepo: RoleQueriesRepo,
+        @inject(TYPES.PermissionQueriesRepo)
+        private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
-        // Initialize repositories directly for now since they're not in DI container yet
-        this.rolePermissionCommandsRepository = new RolePermissionCommandsRepository();
-        this.roleQueriesRepository = new RoleQueriesRepository();
-        this.permissionQueriesRepository = new PermissionQueriesRepository();
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for RoleToPermissionCommandsSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, RoleToPermissionCommandsSvc will fallback to database operations only:', error);
+        }
     }
-
-    private readonly rolePermissionCommandsRepository: RolePermissionCommandsRepository;
-    private readonly roleQueriesRepository: RoleQueriesRepository;
-    private readonly permissionQueriesRepository: PermissionQueriesRepository;
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
-     *
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => { // 私有方法：取得 Redis 客戶端實例
-        try { // 嘗試建立 Redis 連線
-            // 嘗試取得 Redis 客戶端實例
-            return getRedisClient(); // 調用 Redis 配置模組取得客戶端連線
-        } catch (error) { // 捕獲 Redis 連線錯誤
-            // 記錄警告訊息，提示將回退到資料庫查詢
-            logger.warn('Redis not available, falling back to database queries'); // 記錄 Redis 不可用的警告日誌
-            // 拋出錯誤以讓上層處理
-            throw new Error('Redis connection is not available'); // 拋出錯誤，讓呼叫方知道 Redis 連線失敗
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -134,8 +134,13 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
      * @param permissionId 權限 ID（可選）
      */
     private clearRolePermissionCache = async (roleId?: number, permissionId?: number): Promise<void> => { // 私有異步方法：清除角色權限管理相關的 Redis 快取
+        const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache clear operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try { // 嘗試執行快取清除操作
-            const redis = this.getRedisClient(); // 取得 Redis 客戶端實例
             if (roleId) { // 如果提供了角色 ID
                 // 清除角色權限快取
                 logger.debug(`Clearing Redis cache for role permissions: ${roleId}`); // 記錄清除角色權限快取的除錯日誌
@@ -172,7 +177,7 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
@@ -182,7 +187,7 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
                 if (!permissionId || permissionId <= 0) { // 檢查權限 ID 是否有效
                     throw new Error(`Invalid permission ID: ${permissionId}`); // 拋出錯誤，表示權限 ID 無效
                 }
-                const permission = await this.permissionQueriesRepository.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+                const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
                 if (!permission) { // 如果權限不存在
                     throw new Error(`Permission not found: ${permissionId}`); // 拋出錯誤，表示權限不存在
                 }
@@ -240,13 +245,13 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
 
             // 驗證權限是否存在
-            const permission = await this.permissionQueriesRepository.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+            const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
             if (!permission) { // 如果權限不存在
                 throw new Error('Permission not found'); // 拋出錯誤，表示權限不存在
             }
@@ -286,7 +291,7 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
@@ -331,7 +336,7 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSer
             }
 
             // 驗證權限是否存在
-            const permission = await this.permissionQueriesRepository.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+            const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
             if (!permission) { // 如果權限不存在
                 throw new Error('Permission not found'); // 拋出錯誤，表示權限不存在
             }

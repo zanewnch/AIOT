@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
  *
- * @module DroneCommandsArchiveCommands
+ * @module DroneCommandsArchiveCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -20,7 +20,7 @@ import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import type {DroneCommandsArchiveCreationAttributes} from '../../models/DroneCommandsArchiveModel.js';
 
-const logger = createLogger('DroneCommandsArchiveCommands');
+const logger = createLogger('DroneCommandsArchiveCommandsCtrl');
 
 /**
  * 無人機指令歷史歸檔命令控制器類別
@@ -28,11 +28,11 @@ const logger = createLogger('DroneCommandsArchiveCommands');
  * 專門處理無人機指令歷史歸檔相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class DroneCommandsArchiveCommands
+ * @class DroneCommandsArchiveCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandsArchiveCommands {
+export class DroneCommandsArchiveCommandsCtrl {
     constructor(
         @inject(TYPES.DroneCommandsArchiveCommandsSvc) private readonly commandService: DroneCommandsArchiveCommandsSvc
     ) {
@@ -44,7 +44,7 @@ export class DroneCommandsArchiveCommands {
      */
     createCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const archiveData: DroneCommandsArchiveCreationAttributes = req.body;
+            const archiveData: DroneCommandsCtrlArchiveCreationAttributes = req.body;
 
             // 基本驗證
             if (!archiveData.drone_id || typeof archiveData.drone_id !== 'number') {
@@ -75,7 +75,7 @@ export class DroneCommandsArchiveCommands {
     updateCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const updateData: Partial<DroneCommandsArchiveCreationAttributes> = req.body;
+            const updateData: Partial<DroneCommandsCtrlArchiveCreationAttributes> = req.body;
 
             if (isNaN(id)) {
                 const result = ResResult.badRequest('無效的 ID 格式');

@@ -21,7 +21,7 @@
 export { TableViewer } from './TableViewer';
 
 // 導出通用表格視圖組件（供高階使用）
-export { GenericTableViewer } from './GenericTableViewer';
+export { GenericTableContent } from './components/GenericTableContent';
 
 // 注意：以下個別表格組件已被統一的配置驅動架構取代：
 // 

@@ -27,7 +27,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { RoleCommandsRepository } from '../../repo/commands/RoleCommandsRepo.js';
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepo.js';
+import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
 import { getRedisClient } from '../../configs/redisConfig.js';
 import type { RedisClientType } from 'redis';
@@ -74,38 +74,38 @@ export interface IRoleCommandsService {
  */
 @injectable()
 export class RoleCommandsSvc implements IRoleCommandsService {
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly ROLE_CACHE_PREFIX = 'role:';
     private static readonly ALL_ROLES_KEY = 'roles:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.RoleQueriesSvc)
-        private readonly queryService: RoleQueriesSvc
+        @inject(TYPES.RoleQueriesSvc) private readonly queryService: RoleQueriesSvc,
+        @inject(TYPES.RoleCommandsRepo) private readonly roleCommandsRepository: RoleCommandsRepository,
+        @inject(TYPES.RoleQueriesRepo) private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
-        // Initialize repositories directly for now since they're not in DI container yet
-        this.roleCommandsRepository = new RoleCommandsRepository();
-        this.roleQueriesRepository = new RoleQueriesRepository();
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for RoleCommandsSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, RoleCommandsSvc will fallback to database operations only:', error);
+        }
     }
-
-    private readonly roleCommandsRepository: RoleCommandsRepository;
-    private readonly roleQueriesRepository: RoleQueriesRepository;
 
     /**
      * 取得 Redis 客戶端
-     * 嘗試建立 Redis 連線，若失敗則拋出錯誤
+     * 若 Redis 不可用則返回 null
      *
-     * @returns Redis 客戶端實例
-     * @throws Error 當 Redis 連線不可用時拋出錯誤
-     *
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -138,8 +138,13 @@ export class RoleCommandsSvc implements IRoleCommandsService {
      * @private
      */
     private cacheAllRoles = async (roles: RoleDTO[]): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache all roles operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug('Caching all roles in Redis');
             await redis.setEx(
                 RoleCommandsSvc.ALL_ROLES_KEY,
@@ -164,8 +169,13 @@ export class RoleCommandsSvc implements IRoleCommandsService {
      * @private
      */
     private cacheRole = async (role: RoleDTO): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache role operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Caching role ID: ${role.id} in Redis`);
             const key = this.getRoleCacheKey(role.id);
             await redis.setEx(key, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(role));
@@ -180,8 +190,13 @@ export class RoleCommandsSvc implements IRoleCommandsService {
      * @private
      */
     private clearRoleManagementCache = async (roleId?: number): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache clear operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             if (roleId) {
                 // 清除單個角色快取
                 logger.debug(`Clearing Redis cache for role ID: ${roleId}`);
@@ -213,7 +228,7 @@ export class RoleCommandsSvc implements IRoleCommandsService {
             }
 
             // 檢查角色是否已存在
-            const exists = await this.roleQueriesRepository.exists(roleData.name.trim());
+            const exists = await this.roleQueriesRepo.exists(roleData.name.trim());
             if (exists) {
                 throw new Error(`Role with name '${roleData.name}' already exists`);
             }
@@ -267,7 +282,7 @@ export class RoleCommandsSvc implements IRoleCommandsService {
 
                 // 檢查新名稱是否已被其他角色使用
                 if (updatePayload.name) {
-                    const existingRole = await this.roleQueriesRepository.findByName(updatePayload.name);
+                    const existingRole = await this.roleQueriesRepo.findByName(updatePayload.name);
                     if (existingRole && existingRole.id !== roleId) {
                         throw new Error(`Role with name '${updatePayload.name}' already exists`);
                     }
@@ -316,7 +331,7 @@ export class RoleCommandsSvc implements IRoleCommandsService {
             }
 
             // 檢查角色是否存在
-            const existingRole = await this.roleQueriesRepository.findById(roleId);
+            const existingRole = await this.roleQueriesRepo.findById(roleId);
             if (!existingRole) {
                 logger.warn(`Role deletion failed - role not found for ID: ${roleId}`);
                 return false;

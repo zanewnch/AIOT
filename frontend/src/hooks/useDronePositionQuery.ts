@@ -39,15 +39,17 @@ export class DronePositionQuery {
   constructor() {}
   
   /**
-   * 獲取所有無人機位置數據的 Hook
+   * 獲取無人機位置分頁數據的 Hook - 安全版本
    */
-  useAll() {
+  getAllDronePositions(page: number = 1, pageSize: number = 20, sortBy: string = 'timestamp', sortOrder: 'ASC' | 'DESC' = 'DESC') {
     return useQuery({
-      queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS,
-      queryFn: async (): Promise<DronePosition[]> => {
+      queryKey: [...this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS, page, pageSize, sortBy, sortOrder],
+      queryFn: async (): Promise<any> => {
         try {
-          const response = await apiClient.get('/drone/positions/');
-          const result = ReqResult.fromResponse<DronePosition[]>(response);
+          const response = await apiClient.get('/drone/positions/', {
+            params: { page, pageSize, sortBy, sortOrder }
+          });
+          const result = ReqResult.fromResponse<any>(response);
           
           if (result.isError()) {
             throw new Error(result.message);
@@ -55,9 +57,9 @@ export class DronePositionQuery {
           
           return result.unwrap();
         } catch (error: any) {
-          logger.error('Failed to fetch all drone positions', { error });
+          logger.error('Failed to fetch drone positions with pagination', { error, page, pageSize });
           const tableError: TableError = {
-            message: error.response?.data?.message || error.message || 'Failed to fetch all drone positions',
+            message: error.response?.data?.message || error.message || 'Failed to fetch drone positions with pagination',
             status: error.response?.status,
             details: error.response?.data,
           };
@@ -298,7 +300,8 @@ export class DronePositionQuery {
  */
 export const dronePositionQuery = new DronePositionQuery();
 export const useDronePositionsQuery = () => dronePositionQuery;
-export const useAllDronePositions = () => dronePositionQuery.useAll();
+export const useAllDronePositions = (page?: number, pageSize?: number, sortBy?: string, sortOrder?: 'ASC' | 'DESC') => 
+  dronePositionQuery.getAllDronePositions(page, pageSize, sortBy, sortOrder);
 export const useLatestDronePositions = () => dronePositionQuery.useLatest();
 export const useDronePositionById = (id: string) => dronePositionQuery.useById(id);
 export const useCreateDronePosition = () => dronePositionQuery.useCreate();

@@ -12,10 +12,9 @@
  */
 
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../container/types.js';
 import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
-import { DroneCommandsArchiveCommandsRepository } from '../../repo/commands/DroneCommandsArchiveCommandsRepo.js';
-import { DroneCommandsArchiveQueriesRepository } from '../../repo/queries/DroneCommandsArchiveQueriesRepo.js';
 import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
 import { DroneCommandsArchiveQueriesSvc } from '../queries/DroneCommandsArchiveQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -44,24 +43,12 @@ export interface ArchiveOperationResult {
  */
 @injectable()
 export class DroneCommandsArchiveCommandsSvc {
-    private commandsRepo: DroneCommandsArchiveCommandsRepo;
-    private queriesRepo: DroneCommandsArchiveQueriesRepo;
-    private archiveRepo: IDroneCommandsArchiveRepo; // 組合介面
-    private queryService: DroneCommandsArchiveQueriesSvc;
-
-    constructor() {
-        this.commandsRepo = new DroneCommandsArchiveCommandsRepository();
-        this.queriesRepo = new DroneCommandsArchiveQueriesRepository();
-        
-        // 創建組合repository
-        this.archiveRepo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
-        ) as IDroneCommandsArchiveRepo;
-        
-        this.queryService = new DroneCommandsArchiveQueriesSvc();
-    }
+    constructor(
+        @inject(TYPES.DroneCommandsArchiveCommandsRepository)
+        private readonly archiveRepo: IDroneCommandsArchiveRepository,
+        @inject(TYPES.DroneCommandsArchiveQueriesSvc)
+        private readonly queryService: DroneCommandsArchiveQueriesSvc
+    ) {}
 
     /**
      * 創建新的指令歷史歸檔資料
@@ -92,7 +79,7 @@ export class DroneCommandsArchiveCommandsSvc {
                 }
             }
 
-            const archive = await this.archiveRepository.insert(data);
+            const archive = await this.archiveRepo.insert(data);
             logger.info('Successfully created command archive', { id: archive.id });
 
             return archive;
@@ -145,7 +132,7 @@ export class DroneCommandsArchiveCommandsSvc {
                 throw new Error('無法修改關鍵歷史資料欄位');
             }
 
-            const updatedArchive = await this.archiveRepository.update(id, data);
+            const updatedArchive = await this.archiveRepo.update(id, data);
 
             if (updatedArchive) {
                 logger.info('Successfully updated command archive', { id });
@@ -187,7 +174,7 @@ export class DroneCommandsArchiveCommandsSvc {
                 executedAt: existingArchive.executed_at
             });
 
-            await this.archiveRepository.delete(id);
+            await this.archiveRepo.delete(id);
             
             logger.info('Successfully deleted command archive', { id });
             

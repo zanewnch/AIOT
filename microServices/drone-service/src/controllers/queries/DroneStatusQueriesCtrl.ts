@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module DroneStatusQueries
+ * @module DroneStatusQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -19,7 +19,7 @@ import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('DroneStatusQueries');
+const logger = createLogger('DroneStatusQueriesCtrl');
 
 /**
  * 無人機狀態查詢控制器類別
@@ -27,45 +27,36 @@ const logger = createLogger('DroneStatusQueries');
  * 專門處理無人機狀態相關的查詢請求，包含取得無人機狀態資料等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class DroneStatusQueries
+ * @class DroneStatusQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneStatusQueries {
+export class DroneStatusQueriesCtrl {
     constructor(
         @inject(TYPES.DroneStatusQueriesSvc) private readonly droneStatusService: DroneStatusQueriesSvc
     ) {
     }
 
     /**
-     * 取得所有無人機狀態資料（支援分頁）
+     * 取得無人機狀態資料（分頁查詢）
      * @route GET /api/drone-status/data
-     * @query page - 頁碼（從 1 開始）
-     * @query pageSize - 每頁數量
-     * @query sortBy - 排序欄位
-     * @query sortOrder - 排序方向（ASC/DESC）
+     * @query page - 頁碼（從 1 開始，預設 1）
+     * @query pageSize - 每頁數量（預設 20，最大 100）
+     * @query sortBy - 排序欄位（預設 id）
+     * @query sortOrder - 排序方向（ASC/DESC，預設 DESC）
      */
-    getAllDroneStatuses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getDroneStatuses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             // 解析分頁參數
             const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const pageSize = parseInt(req.query.pageSize as string) || 20;
             const sortBy = (req.query.sortBy as string) || 'id';
             const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
 
             const paginationParams = { page, pageSize, sortBy, sortOrder };
 
-            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
-            if (!req.query.page && !req.query.pageSize) {
-                // 向後兼容：沒有分頁參數時返回所有數據
-                const droneStatuses = await this.droneStatusService.getAllDroneStatuses();
-                const result = ResResult.success('無人機狀態資料獲取成功', droneStatuses);
-                res.status(result.status).json(result);
-                return;
-            }
-
-            // 使用分頁查詢
-            const paginatedResult = await this.droneStatusService.getDroneStatusesPaginated(paginationParams);
+            // 統一使用分頁查詢
+            const paginatedResult = await this.droneStatusService.getAllDroneStatuses(paginationParams);
             const result = ResResult.success('無人機狀態資料獲取成功', paginatedResult);
 
             res.status(result.status).json(result);

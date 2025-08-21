@@ -37,23 +37,6 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
         @inject(TYPES.DronePositionQueriesRepo) private readonly dronePositionRepo: DronePositionQueriesRepo
     ) {}
 
-    /**
-     * 取得所有無人機位置資料
-     *
-     * @returns {Promise<DronePositionAttributes[]>} 無人機位置資料陣列
-     * @throws {Error} 當資料取得失敗時
-     */
-    getAllDronePositions = async (): Promise<DronePositionAttributes[]> => {
-        try {
-            logger.info('Getting all drone position data');
-            const dronePositions = await this.dronePositionRepository.selectAll();
-
-            logger.info(`Retrieved ${dronePositions.length} drone position records`);
-            return dronePositions;
-        } catch (error) {
-            throw new Error('無法取得無人機位置資料');
-        }
-    }
 
     /**
      * 根據 ID 取得無人機位置資料
@@ -70,7 +53,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             }
 
             logger.info('Getting drone position data by ID', { id });
-            const dronePosition = await this.dronePositionRepository.findById(id);
+            const dronePosition = await this.dronePositionRepo.findById(id);
 
             if (!dronePosition) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機位置資料`);
@@ -98,7 +81,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             }
 
             logger.info('Getting latest drone position data', { limit });
-            const dronePositions = await this.dronePositionRepository.findLatest(limit);
+            const dronePositions = await this.dronePositionRepo.findLatest(limit);
 
             logger.info(`Retrieved ${dronePositions.length} latest drone position records`);
             return dronePositions;
@@ -128,7 +111,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             }
 
             logger.info('Getting drone positions by drone ID', { droneId, limit });
-            const dronePositions = await this.dronePositionRepository.findByDroneId(droneId, limit);
+            const dronePositions = await this.dronePositionRepo.findByDroneId(droneId, limit);
 
             logger.info(`Retrieved ${dronePositions.length} positions for drone ${droneId}`);
             return dronePositions;
@@ -151,7 +134,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             }
 
             logger.info('Getting latest position for drone', { droneId });
-            const positions = await this.dronePositionRepository.findByDroneId(droneId, 1);
+            const positions = await this.dronePositionRepo.findByDroneId(droneId, 1);
             
             if (positions.length === 0) {
                 logger.info('No position found for drone', { droneId });
@@ -230,7 +213,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
                 return false;
             }
 
-            const position = await this.dronePositionRepository.findById(id);
+            const position = await this.dronePositionRepo.findById(id);
             return !!position;
         } catch (error) {
             return false;
@@ -240,21 +223,15 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
     /**
      * 取得無人機位置統計資料
      *
-     * @returns {Promise<{total: number, byDrone: Record<number, number>}>} 統計資料
+     * @returns {Promise<{total: number}>} 統計資料
      */
-    getDronePositionStatistics = async (): Promise<{total: number, byDrone: Record<number, number>}> => {
+    getDronePositionStatistics = async (): Promise<{total: number}> => {
         try {
             logger.info('Getting drone position statistics');
-            const positions = await this.dronePositionRepository.selectAll();
+            const total = await this.dronePositionRepo.count();
             
-            const byDrone: Record<number, number> = {};
-            positions.forEach(position => {
-                byDrone[position.drone_id] = (byDrone[position.drone_id] || 0) + 1;
-            });
-
             const statistics = {
-                total: positions.length,
-                byDrone
+                total
             };
 
             logger.info('Successfully retrieved drone position statistics', { statistics });
@@ -272,8 +249,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
     getTotalPositionCount = async (): Promise<number> => {
         try {
             logger.info('Getting total position count');
-            const positions = await this.dronePositionRepository.selectAll();
-            const count = positions.length;
+            const count = await this.dronePositionRepo.count();
             
             logger.info(`Total position count: ${count}`);
             return count;
@@ -295,8 +271,7 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
             }
 
             logger.info('Getting position count by drone', { droneId });
-            const positions = await this.dronePositionRepository.findByDroneId(droneId, 999999); // 取得所有記錄來計數
-            const count = positions.length;
+            const count = await this.dronePositionRepo.countByDroneId(droneId);
             
             logger.info(`Position count for drone ${droneId}: ${count}`);
             return count;
@@ -306,44 +281,26 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
     }
 
     /**
-     * 分頁查詢無人機位置列表
+     * 獲取所有無人機位置列表（支持分頁）
      * 
-     * @param params 分頁參數
+     * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁無人機位置結果
      */
-    public async getDronePositionsPaginated(params: any): Promise<any> {
+    public async getAllDronePositions(params: any = { page: 1, pageSize: 20, sortBy: 'timestamp', sortOrder: 'DESC' }): Promise<any> {
         try {
             logger.debug('Getting drone positions with pagination', params);
 
-            // 模擬分頁實現（實際應該在 repository 層實現）
-            const allPositions = await this.dronePositionRepository.selectAll();
-            const total = allPositions.length;
-
-            const page = params.page || 1;
-            const pageSize = params.pageSize || 10;
-            const offset = (page - 1) * pageSize;
-            
-            const paginatedPositions = allPositions.slice(offset, offset + pageSize);
-            const totalPages = Math.ceil(total / pageSize);
-
-            const result = {
-                data: paginatedPositions,
-                page,
-                pageSize,
-                total,
-                totalPages,
-                hasNext: page < totalPages,
-                hasPrev: page > 1
-            };
+            // 使用 Repository 的安全分頁方法
+            const paginatedResponse = await this.dronePositionRepo.selectPagination(params);
 
             logger.info('Successfully fetched drone positions with pagination', {
-                page: result.page,
-                pageSize: result.pageSize,
-                total: result.total,
-                totalPages: result.totalPages
+                page: paginatedResponse.pagination.page,
+                limit: paginatedResponse.pagination.limit,
+                total: paginatedResponse.pagination.totalItems,
+                totalPages: paginatedResponse.pagination.totalPages
             });
 
-            return result;
+            return paginatedResponse;
         } catch (error) {
             logger.error('Error fetching drone positions with pagination:', error);
             throw new Error('Failed to fetch drone positions with pagination');

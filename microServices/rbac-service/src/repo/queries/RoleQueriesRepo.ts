@@ -19,17 +19,17 @@ import { PermissionModel } from '../../models/PermissionModel.js';
 import { UserModel } from '../../models/UserModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('RoleQueriesRepository');
+const logger = createLogger('RoleQueriesRepo');
 
 /**
  * 角色查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理角色資料的查詢操作，遵循 CQRS 模式
  * 
- * @class RoleQueriesRepository
+ * @class RoleQueriesRepo
  */
 @injectable()
-export class RoleQueriesRepository {
+export class RoleQueriesRepo {
   /**
    * 根據 ID 查詢角色
    * @param id 角色 ID

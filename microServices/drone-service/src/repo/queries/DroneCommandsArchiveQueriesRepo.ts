@@ -18,14 +18,14 @@ import { Op } from 'sequelize';
 import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 // 創建 Repository 專用的日誌記錄器
-const logger = createLogger('DroneCommandsArchiveQueriesRepository');
+const logger = createLogger('DroneCommandsArchiveQueriesRepo');
 
 /**
  * 無人機指令歷史歸檔查詢 Repository 實現類別 - CQRS 查詢端
  *
  * 專門處理無人機指令歷史歸檔資料的查詢操作，遵循 CQRS 模式
  *
- * @class DroneCommandsArchiveQueriesRepository
+ * @class DroneCommandsArchiveQueriesRepo
  */
 @injectable()
 export class DroneCommandsArchiveQueriesRepo {

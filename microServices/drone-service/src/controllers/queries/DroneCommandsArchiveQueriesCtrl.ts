@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module DroneCommandsArchiveQueries
+ * @module DroneCommandsArchiveQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -20,7 +20,7 @@ import {ResResult} from '../../utils/ResResult.js';
 import {TYPES} from '../../container/types.js';
 import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
 
-const logger = createLogger('DroneCommandsArchiveQueries');
+const logger = createLogger('DroneCommandsArchiveQueriesCtrl');
 
 /**
  * 無人機指令歷史歸檔查詢控制器類別
@@ -28,11 +28,11 @@ const logger = createLogger('DroneCommandsArchiveQueries');
  * 專門處理無人機指令歷史歸檔相關的查詢請求，包含取得指令資料、統計等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class DroneCommandsArchiveQueries
+ * @class DroneCommandsArchiveQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandsArchiveQueries {
+export class DroneCommandsArchiveQueriesCtrl {
     /**
      * 取得所有指令歷史歸檔資料
      * @route GET /api/drone-commands-archive/data

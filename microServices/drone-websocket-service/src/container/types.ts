@@ -22,7 +22,7 @@ export const TYPES = {
     DroneRealTimeStatusCommandsSvc: Symbol.for('DroneRealTimeStatusCommandsSvc'),
     
     // === 資料存取層 ===
-    DroneRealTimeStatusQueriesRepository: Symbol.for('DroneRealTimeStatusQueriesRepository'),
+    DroneRealTimeStatusQueriesRepo: Symbol.for('DroneRealTimeStatusQueriesRepo'),
     DroneRealTimeStatusCommandsRepository: Symbol.for('DroneRealTimeStatusCommandsRepository'),
     
     // === 路由層 ===

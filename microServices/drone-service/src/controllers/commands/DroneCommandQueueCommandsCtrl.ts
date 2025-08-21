@@ -5,7 +5,7 @@
  * 專注於處理所有寫入和操作相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理命令操作，包含創建、更新、刪除等寫入邏輯。
  *
- * @module DroneCommandQueueCommands
+ * @module DroneCommandQueueCommandsCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -21,7 +21,7 @@ import {TYPES} from '../../container/types.js';
 import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
 import type {DroneCommandQueueCreationAttributes} from '../../types/services/IDroneCommandQueueService.js';
 
-const logger = createLogger('DroneCommandQueueCommands');
+const logger = createLogger('DroneCommandQueueCommandsCtrl');
 
 /**
  * 無人機指令佇列命令控制器類別
@@ -29,11 +29,11 @@ const logger = createLogger('DroneCommandQueueCommands');
  * 專門處理無人機指令佇列相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  *
- * @class DroneCommandQueueCommands
+ * @class DroneCommandQueueCommandsCtrl
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandQueueCommands {
+export class DroneCommandQueueCommandsCtrl {
     constructor(
         @inject(TYPES.DroneCommandQueueCommandsSvc) private readonly commandService: DroneCommandQueueCommandsSvc
     ) {

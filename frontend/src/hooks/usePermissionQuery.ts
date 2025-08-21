@@ -44,9 +44,9 @@ export class PermissionQuery {
   }
   
   /**
-   * 取得所有權限數據（支援分頁）
+   * 獲取所有權限數據（支援分頁）
    */
-  useAllPermissionData(paginationParams?: PaginationParams) {
+  getAllPermissions(paginationParams?: PaginationParams) {
     const queryKey = paginationParams 
       ? [...this.PERMISSION_QUERY_KEYS.LIST, 'paginated', paginationParams]
       : this.PERMISSION_QUERY_KEYS.LIST;
@@ -156,8 +156,8 @@ export class PermissionQuery {
  */
 export const permissionQuery = new PermissionQuery();
 export const usePermissionQuery = () => permissionQuery;
-export const useAllPermissions = () => permissionQuery.useAll();
-export const usePermissionById = (id: string) => permissionQuery.useById(id);
-export const useCreatePermission = () => permissionQuery.useCreate();
-export const useUpdatePermission = () => permissionQuery.useUpdate();
-export const useDeletePermission = () => permissionQuery.useDelete();
+// 便利 hooks - 直接使用對應的方法
+export const usePermissions = (paginationParams?: PaginationParams) => 
+  permissionQuery.getAllPermissions(paginationParams);
+export const useUpdatePermission = () => 
+  permissionQuery.useUpdatePermissionData();

@@ -30,7 +30,7 @@ import type {
 
 // Repository 導入
 import {
-    DroneRealTimeStatusQueriesRepository,
+    DroneRealTimeStatusQueriesRepo,
     DroneRealTimeStatusCommandsRepository
 } from '@/repo';
 
@@ -56,8 +56,8 @@ export const container = new Container({
  */
 function bindRepositories(): void {
     // 實時狀態資料存取層
-    container.bind<DroneRealTimeStatusQueriesRepository>(TYPES.DroneRealTimeStatusQueriesRepository)
-        .to(DroneRealTimeStatusQueriesRepository);
+    container.bind<DroneRealTimeStatusQueriesRepo>(TYPES.DroneRealTimeStatusQueriesRepo)
+        .to(DroneRealTimeStatusQueriesRepo);
     container.bind<DroneRealTimeStatusCommandsRepository>(TYPES.DroneRealTimeStatusCommandsRepository)
         .to(DroneRealTimeStatusCommandsRepository);
 }

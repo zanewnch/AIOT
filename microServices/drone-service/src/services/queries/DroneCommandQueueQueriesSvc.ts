@@ -41,9 +41,9 @@ export class DroneCommandQueueQueriesSvc {
     }
 
     /**
-     * 取得所有無人機指令佇列
+     * 取得所有無人機指令佇列（內部使用，有數量限制）
      */
-    getAllDroneCommandQueues = async (): Promise<DroneCommandQueueAttributes[]> => {
+    private getAllDroneCommandQueuesInternal = async (limit: number = 100): Promise<DroneCommandQueueAttributes[]> => {
         try {
             logger.info('Getting all drone command queues');
 
@@ -367,7 +367,7 @@ export class DroneCommandQueueQueriesSvc {
      * @param params 分頁參數
      * @returns 分頁無人機指令佇列結果
      */
-    public async getDroneCommandQueuesPaginated(params: PaginationParams): Promise<PaginatedResult<DroneCommandQueueAttributes>> {
+    public async getAllDroneCommandQueues(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<DroneCommandQueueAttributes>> {
         try {
             logger.debug('Getting drone command queues with pagination', params);
 
@@ -382,7 +382,7 @@ export class DroneCommandQueueQueriesSvc {
             });
 
             // 獲取所有數據（模擬，實際應該從資料庫分頁查詢）
-            const allQueues = await this.getAllDroneCommandQueues();
+            const allQueues = await this.getAllDroneCommandQueuesInternal();
             const total = allQueues.length;
 
             // 手動分頁和排序（實際應該在資料庫層面完成）

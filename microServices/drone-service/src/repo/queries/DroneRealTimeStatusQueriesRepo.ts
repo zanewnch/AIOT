@@ -26,11 +26,11 @@ import { createLogger } from '../../configs/loggerConfig.js';
  *
  * 專門處理無人機即時狀態資料的查詢操作，遵循 CQRS 模式
  *
- * @class DroneRealTimeStatusQueriesRepository
+ * @class DroneRealTimeStatusQueriesRepo
  */
 @injectable()
 export class DroneRealTimeStatusQueriesRepo {
-    private readonly logger = createLogger('DroneRealTimeStatusQueriesRepository');
+    private readonly logger = createLogger('DroneRealTimeStatusQueriesRepo');
 
     /**
      * 根據 ID 查詢即時狀態記錄

@@ -43,20 +43,6 @@ export class DroneStatusQueriesSvc {
         this.droneStatusRepo = droneStatusRepo;
     }
 
-    /**
-     * 取得所有無人機狀態資料
-     */
-    getAllDroneStatuses = async (): Promise<DroneStatusAttributes[]> => {
-        try {
-            logger.info('Getting all drone status data');
-            const droneStatuses = await this.droneStatusRepo.findAll();
-
-            logger.info(`Retrieved ${droneStatuses.length} drone status records`);
-            return droneStatuses;
-        } catch (error) {
-            throw new Error('無法取得無人機狀態資料');
-        }
-    }
 
     /**
      * 根據 ID 取得無人機狀態資料
@@ -340,12 +326,12 @@ export class DroneStatusQueriesSvc {
     }
 
     /**
-     * 分頁查詢無人機狀態列表
+     * 獲取所有無人機狀態列表（支持分頁）
      * 
-     * @param params 分頁參數
+     * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁無人機狀態結果
      */
-    public async getDroneStatusesPaginated(params: PaginationParams): Promise<PaginatedResult<DroneStatusAttributes>> {
+    public async getAllDroneStatuses(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<DroneStatusAttributes>> {
         try {
             logger.debug('Getting drone statuses with pagination', params);
 

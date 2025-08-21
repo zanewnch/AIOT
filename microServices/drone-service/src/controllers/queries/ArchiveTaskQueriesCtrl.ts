@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module ArchiveTaskQueries
+ * @module ArchiveTaskQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -18,7 +18,7 @@ import {ArchiveTaskQueriesSvc} from '../../services/queries/ArchiveTaskQueriesSv
 import {ArchiveJobType, ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult.js';
-import type {IArchiveTaskQueries} from '../../types/controllers/queries/IArchiveTaskQueries.js';
+import type {IArchiveTaskQueriesCtrl} from '../../types/controllers/queries/IArchiveTaskQueriesCtrl.js';
 import {TYPES} from '../../container/types.js';
 
 /**
@@ -27,12 +27,12 @@ import {TYPES} from '../../container/types.js';
  * 專門處理歸檔任務相關的查詢請求，包含列表查詢、詳情查詢、統計資訊等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class ArchiveTaskQueries
+ * @class ArchiveTaskQueriesCtrl
  * @since 1.0.0
  *
  * @example
  * ```typescript
- * const queries = container.get<ArchiveTaskQueries>(TYPES.ArchiveTaskQueriesCtrl);
+ * const queries = container.get<ArchiveTaskQueriesCtrl>(TYPES.ArchiveTaskQueriesCtrl);
  *
  * // 在路由中使用
  * router.get('/api/archive-tasks', queries.getAllTasks.bind(queries));
@@ -40,8 +40,8 @@ import {TYPES} from '../../container/types.js';
  * ```
  */
 @injectable()
-export class ArchiveTaskQueries implements IArchiveTaskQueries {
-    private readonly logger = createLogger('ArchiveTaskQueries');
+export class ArchiveTaskQueriesCtrl implements IArchiveTaskQueriesCtrl {
+    private readonly logger = createLogger('ArchiveTaskQueriesCtrl');
 
     constructor(
         @inject(TYPES.ArchiveTaskQueriesSvc) private readonly queryService: ArchiveTaskQueriesSvc

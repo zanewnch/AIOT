@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的 HTTP API 端點。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module RoleQueries
+ * @module RoleQueriesCtrl
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -19,7 +19,7 @@ import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import {ResResult} from '../../utils/ResResult';
 import {TYPES} from '../../container/types.js';
 
-const logger = createLogger('RoleQueries');
+const logger = createLogger('RoleQueriesCtrl');
 
 /**
  * 角色查詢控制器類別
@@ -27,49 +27,39 @@ const logger = createLogger('RoleQueries');
  * 專門處理角色相關的查詢請求，包含列表查詢、詳情查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class RoleQueries
+ * @class RoleQueriesCtrl
  * @since 1.0.0
  */
 @injectable()
-export class RoleQueries {
+export class RoleQueriesCtrl {
     constructor(
         @inject(TYPES.RoleQueriesSvc) private readonly roleQueriesService: RoleQueriesSvc
     ) {
     }
 
     /**
-     * 獲取所有角色列表（支援分頁）
+     * 獲取角色列表（分頁查詢）
      * @route GET /api/rbac/roles
-     * @query page - 頁碼（從 1 開始）
-     * @query pageSize - 每頁數量
-     * @query sortBy - 排序欄位
-     * @query sortOrder - 排序方向（ASC/DESC）
+     * @query page - 頁碼（從 1 開始，預設 1）
+     * @query pageSize - 每頁數量（預設 20，最大 100）
+     * @query sortBy - 排序欄位（預設 id）
+     * @query sortOrder - 排序方向（ASC/DESC，預設 DESC）
      */
     public getRoles = async (req: Request, res: Response): Promise<void> => {
         try {
             logRequest(req, 'Fetching roles with pagination', 'info');
             logger.debug('Getting roles from service with pagination');
 
-            // 解析分頁參數
+            // 解析分頁參數，設定合理預設值
             const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const pageSize = parseInt(req.query.pageSize as string) || 20;
             const sortBy = (req.query.sortBy as string) || 'id';
             const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
 
             const paginationParams = { page, pageSize, sortBy, sortOrder };
 
-            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
-            if (!req.query.page && !req.query.pageSize) {
-                // 向後兼容：沒有分頁參數時返回所有數據
-                const roles = await this.roleQueriesService.getAllRoles();
-                const result = ResResult.success('角色列表獲取成功', roles);
-                res.status(result.status).json(result);
-                logger.info('Successfully fetched all roles (no pagination)', {count: roles.length});
-                return;
-            }
-
-            // 使用分頁查詢
-            const paginatedResult = await this.roleQueriesService.getRolesPaginated(paginationParams);
+            // 統一使用分頁查詢
+            const paginatedResult = await this.roleQueriesService.getAllRoles(paginationParams);
             const result = ResResult.success('角色列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);

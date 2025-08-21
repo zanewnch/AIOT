@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { DronePositionCommandsRepository } from '../../repo/commands/DronePositionCommandsRepo.js';
-import { DronePositionQueriesRepository } from '../../repo/queries/DronePositionQueriesRepo.js';
+import { DronePositionQueriesRepo } from '../../repo/queries/DronePositionQueriesRepo.js';
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import { DronePositionQueriesSvc } from '../queries/DronePositionQueriesSvc.js';
@@ -41,8 +41,8 @@ export class DronePositionCommandsSvc {
         @inject(TYPES.DronePositionCommandsRepository) 
         private readonly commandsRepo: DronePositionCommandsRepository,
         
-        @inject(TYPES.DronePositionQueriesRepository) 
-        private readonly queriesRepo: DronePositionQueriesRepository,
+        @inject(TYPES.DronePositionQueriesRepo) 
+        private readonly queriesRepo: DronePositionQueriesRepo,
         
         @inject(TYPES.DronePositionQueriesSvc) 
         private readonly queryService: DronePositionQueriesSvc

@@ -67,6 +67,8 @@ export interface UpdateUserRequest {
  */
 @injectable()
 export class UserCommandsSvc {
+    private redisClient: RedisClientType | null;
+    private isRedisAvailable: boolean;
     private static readonly USER_CACHE_PREFIX = 'user:';
     private static readonly ALL_USERS_KEY = 'users:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -76,42 +78,31 @@ export class UserCommandsSvc {
      * 建構函式
      * 初始化使用者命令服務，設定資料存取層和查詢服務實例
      */
-    constructor() {
-        this.userCommandsRepository = new UserCommandsRepository();
-        this.userQueriesSvc = new UserQueriesSvc();
+    constructor(
+        @inject(TYPES.UserCommandsRepo) private readonly userCommandsRepository: UserCommandsRepository,
+        @inject(TYPES.UserQueriesSvc) private readonly userQueriesSvc: UserQueriesSvc
+    ) {
+        // 在 constructor 中初始化 Redis 連線
+        try {
+            this.redisClient = getRedisClient();
+            this.isRedisAvailable = true;
+            logger.info('Redis client initialized successfully for UserCommandsSvc');
+        } catch (error) {
+            this.redisClient = null;
+            this.isRedisAvailable = false;
+            logger.warn('Redis not available, UserCommandsSvc will fallback to database operations only:', error);
+        }
     }
-    
-    private readonly userCommandsRepository: UserCommandsRepository;
-    private readonly userQueriesSvc: UserQueriesSvc;
 
     /**
      * 取得 Redis 客戶端
+     * 若 Redis 不可用則返回 null
      * 
-     * 嘗試建立 Redis 連線連接，用於快取操作
-     * 若 Redis 不可用，會記錄警告並拋出錯誤
-     * 
-     * @returns Redis 客戶端實例
-     * @throws {Error} 當 Redis 連線不可用時拋出錯誤
-     * 
-     * @example
-     * ```typescript
-     * try {
-     *   const redis = this.getRedisClient();
-     *   await redis.get('user:123');
-     * } catch (error) {
-     *   // 降級使用數據庫查詢
-     * }
-     * ```
-     * 
+     * @returns Redis 客戶端實例或 null
      * @private
      */
-    private getRedisClient = (): RedisClientType => {
-        try {
-            return getRedisClient();
-        } catch (error) {
-            logger.warn('Redis not available, falling back to database queries');
-            throw new Error('Redis connection is not available');
-        }
+    private getRedisClient(): RedisClientType | null {
+        return this.isRedisAvailable ? this.redisClient : null;
     }
 
     /**
@@ -178,8 +169,13 @@ export class UserCommandsSvc {
      * @private
      */
     private clearUserManagementCache = async (userId?: number): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache clear operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             if (userId) {
                 // 清除單個使用者快取
                 logger.debug(`Clearing Redis cache for user ID: ${userId}`);
@@ -201,8 +197,13 @@ export class UserCommandsSvc {
      * @private
      */
     private cacheUser = async (user: UserDTO): Promise<void> => {
+        const redis = this.getRedisClient();
+        if (!redis) {
+            logger.debug('Redis not available, skipping cache user operation');
+            return; // Redis 不可用，直接返回
+        }
+
         try {
-            const redis = this.getRedisClient();
             logger.debug(`Caching user ID: ${user.id} in Redis`);
             const key = this.getUserCacheKey(user.id);
             await redis.setEx(key, UserCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(user));

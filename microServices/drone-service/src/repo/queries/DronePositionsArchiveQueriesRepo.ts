@@ -22,11 +22,11 @@ import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
  *
  * 專門處理無人機位置歷史歸檔資料的查詢操作，遵循 CQRS 模式
  *
- * @class DronePositionsArchiveQueriesRepository
+ * @class DronePositionsArchiveQueriesRepo
  */
 @injectable()
 export class DronePositionsArchiveQueriesRepo {
-    private readonly logger = createLogger('DronePositionsArchiveQueriesRepository');
+    private readonly logger = createLogger('DronePositionsArchiveQueriesRepo');
 
     /**
      * 取得所有位置歷史歸檔資料

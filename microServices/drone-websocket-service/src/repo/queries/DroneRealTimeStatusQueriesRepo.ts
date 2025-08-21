@@ -20,7 +20,7 @@ import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
  * 提供無人機即時狀態的各種查詢功能
  */
 @injectable()
-export class DroneRealTimeStatusQueriesRepository {
+export class DroneRealTimeStatusQueriesRepo {
     
     /**
      * 獲取所有無人機的即時狀態

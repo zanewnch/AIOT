@@ -110,29 +110,11 @@ export interface UserToRole {
   updatedAt: string;
 }
 
-/**
- * RTK 定位資料介面
- * 
- * @interface RTKData
- * @description 定義 RTK 定位系統的資料結構
- */
-export interface RTKData {
-  /** 資料 ID */
-  id: number;
-  /** 經度 */
-  longitude: number;
-  /** 緯度 */
-  latitude: number;
-  /** 海拔高度 */
-  altitude: number;
-  /** 時間戳記 */
-  timestamp: string;
-}
 
 /**
  * 表格類型定義
  */
-export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'RTK' | 'DronePosition' | 'DroneStatus' | 'DroneCommand' | 'DronePositionsArchive' | 'DroneStatusArchive' | 'DroneCommandsArchive' | 'ArchiveTask' | 'UserPreference';
+export type TableType = 'permission' | 'role' | 'roletopermission' | 'user' | 'usertorole' | 'DronePosition' | 'DroneStatus' | 'DroneCommand' | 'DronePositionsArchive' | 'DroneStatusArchive' | 'DroneCommandsArchive' | 'ArchiveTask' | 'UserPreference';
 
 /**
  * 更新操作回應介面
@@ -164,19 +146,6 @@ export interface TableError {
   details?: any;
 }
 
-/**
- * RTK 資料更新請求介面
- */
-export interface RTKDataUpdateRequest {
-  /** 緯度 */
-  latitude: number;
-  /** 經度 */
-  longitude: number;
-  /** 海拔高度 */
-  altitude: number;
-  /** 時間戳記 */
-  timestamp: string;
-}
 
 /**
  * 權限更新請求介面

@@ -14,7 +14,7 @@ import { TYPES } from './types.js';
 
 // Repository 層 imports
 import { UserPreferenceCommandsRepository } from '../repo/commands/UserPreferenceCommandsRepo.js';
-import { UserPreferenceQueriesRepository } from '../repo/queries/UserPreferenceQueriesRepo.js';
+import { UserPreferenceQueriesRepo } from '../repo/queries/UserPreferenceQueriesRepo.js';
 
 // Service 層 imports
 import { UserPreferenceCommandsSvc } from '../services/commands/UserPreferenceCommandsSvc.js';
@@ -44,8 +44,8 @@ export function createContainer(): Container {
         .to(UserPreferenceCommandsRepository)
         .inSingletonScope();
 
-    container.bind<UserPreferenceQueriesRepository>(TYPES.UserPreferenceQueriesRepo)
-        .to(UserPreferenceQueriesRepository)
+    container.bind<UserPreferenceQueriesRepo>(TYPES.UserPreferenceQueriesRepo)
+        .to(UserPreferenceQueriesRepo)
         .inSingletonScope();
 
     // ===== Service 層註冊 =====

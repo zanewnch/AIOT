@@ -18,18 +18,19 @@ import {
 import { RoleModel } from '../../models/RoleModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
+import type { PermissionSearchCriteria } from '../../services/queries/PermissionQueriesSvc.js';
 
-const logger = createLogger('PermissionQueriesRepository');
+const logger = createLogger('PermissionQueriesRepo');
 
 /**
  * 權限查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理權限資料的查詢操作，遵循 CQRS 模式
  * 
- * @class PermissionQueriesRepository
+ * @class PermissionQueriesRepo
  */
 @injectable()
-export class PermissionQueriesRepository {
+export class PermissionQueriesRepo {
   /**
    * 根據 ID 查詢權限
    * @param id 權限 ID
@@ -341,6 +342,356 @@ export class PermissionQueriesRepository {
       return permissions;
     } catch (error) {
       logger.error(`Error searching permissions with term "${searchTerm}":`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 按名稱模糊搜尋權限（分頁）
+   * @param namePattern 名稱搜尋模式
+   * @param limit 每頁數量
+   * @param offset 偏移量
+   * @param sortBy 排序欄位
+   * @param sortOrder 排序方向
+   * @returns 權限列表
+   */
+  findByNamePatternPaginated = async (
+    namePattern: string,
+    limit: number,
+    offset: number,
+    sortBy: string = 'name',
+    sortOrder: 'ASC' | 'DESC' = 'ASC'
+  ): Promise<PermissionModel[]> => {
+    try {
+      logger.debug(`Finding permissions by name pattern with pagination`, {
+        namePattern,
+        limit,
+        offset,
+        sortBy,
+        sortOrder
+      });
+      
+      const permissions = await PermissionModel.findAll({
+        where: {
+          name: { [Op.iLike]: namePattern }
+        },
+        limit,
+        offset,
+        order: [[sortBy, sortOrder]]
+      });
+      
+      logger.debug(`Found ${permissions.length} permissions matching name pattern "${namePattern}"`);
+      return permissions;
+    } catch (error) {
+      logger.error(`Error finding permissions by name pattern "${namePattern}":`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 計算按名稱模糊搜尋的權限總數
+   * @param namePattern 名稱搜尋模式
+   * @returns 匹配的權限總數
+   */
+  countByNamePattern = async (namePattern: string): Promise<number> => {
+    try {
+      logger.debug(`Counting permissions by name pattern: ${namePattern}`);
+      
+      const count = await PermissionModel.count({
+        where: {
+          name: { [Op.iLike]: namePattern }
+        }
+      });
+      
+      logger.debug(`Found ${count} permissions matching name pattern "${namePattern}"`);
+      return count;
+    } catch (error) {
+      logger.error(`Error counting permissions by name pattern "${namePattern}":`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 按描述模糊搜尋權限（分頁）
+   * @param descriptionPattern 描述搜尋模式
+   * @param limit 每頁數量
+   * @param offset 偏移量
+   * @param sortBy 排序欄位
+   * @param sortOrder 排序方向
+   * @returns 權限列表
+   */
+  findByDescriptionPatternPaginated = async (
+    descriptionPattern: string,
+    limit: number,
+    offset: number,
+    sortBy: string = 'name',
+    sortOrder: 'ASC' | 'DESC' = 'ASC'
+  ): Promise<PermissionModel[]> => {
+    try {
+      logger.debug(`Finding permissions by description pattern with pagination`, {
+        descriptionPattern,
+        limit,
+        offset,
+        sortBy,
+        sortOrder
+      });
+      
+      const permissions = await PermissionModel.findAll({
+        where: {
+          description: { [Op.iLike]: descriptionPattern }
+        },
+        limit,
+        offset,
+        order: [[sortBy, sortOrder]]
+      });
+      
+      logger.debug(`Found ${permissions.length} permissions matching description pattern "${descriptionPattern}"`);
+      return permissions;
+    } catch (error) {
+      logger.error(`Error finding permissions by description pattern "${descriptionPattern}":`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 計算按描述模糊搜尋的權限總數
+   * @param descriptionPattern 描述搜尋模式
+   * @returns 匹配的權限總數
+   */
+  countByDescriptionPattern = async (descriptionPattern: string): Promise<number> => {
+    try {
+      logger.debug(`Counting permissions by description pattern: ${descriptionPattern}`);
+      
+      const count = await PermissionModel.count({
+        where: {
+          description: { [Op.iLike]: descriptionPattern }
+        }
+      });
+      
+      logger.debug(`Found ${count} permissions matching description pattern "${descriptionPattern}"`);
+      return count;
+    } catch (error) {
+      logger.error(`Error counting permissions by description pattern "${descriptionPattern}":`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 按創建時間範圍查詢權限（分頁）
+   * @param startDate 開始日期
+   * @param endDate 結束日期
+   * @param limit 每頁數量
+   * @param offset 偏移量
+   * @param sortBy 排序欄位
+   * @param sortOrder 排序方向
+   * @returns 權限列表
+   */
+  findByDateRangePaginated = async (
+    startDate: Date,
+    endDate: Date,
+    limit: number,
+    offset: number,
+    sortBy: string = 'createdAt',
+    sortOrder: 'ASC' | 'DESC' = 'DESC'
+  ): Promise<PermissionModel[]> => {
+    try {
+      logger.debug(`Finding permissions by date range with pagination`, {
+        startDate,
+        endDate,
+        limit,
+        offset,
+        sortBy,
+        sortOrder
+      });
+      
+      const permissions = await PermissionModel.findAll({
+        where: {
+          createdAt: {
+            [Op.between]: [startDate, endDate]
+          }
+        },
+        limit,
+        offset,
+        order: [[sortBy, sortOrder]]
+      });
+      
+      logger.debug(`Found ${permissions.length} permissions in date range ${startDate} - ${endDate}`);
+      return permissions;
+    } catch (error) {
+      logger.error(`Error finding permissions by date range ${startDate} - ${endDate}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 計算按創建時間範圍查詢的權限總數
+   * @param startDate 開始日期
+   * @param endDate 結束日期
+   * @returns 匹配的權限總數
+   */
+  countByDateRange = async (startDate: Date, endDate: Date): Promise<number> => {
+    try {
+      logger.debug(`Counting permissions by date range: ${startDate} - ${endDate}`);
+      
+      const count = await PermissionModel.count({
+        where: {
+          createdAt: {
+            [Op.between]: [startDate, endDate]
+          }
+        }
+      });
+      
+      logger.debug(`Found ${count} permissions in date range ${startDate} - ${endDate}`);
+      return count;
+    } catch (error) {
+      logger.error(`Error counting permissions by date range ${startDate} - ${endDate}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 組合條件搜尋權限（分頁）
+   * @param criteria 搜尋條件
+   * @param limit 每頁數量
+   * @param offset 偏移量
+   * @param sortBy 排序欄位
+   * @param sortOrder 排序方向
+   * @returns 權限列表
+   */
+  searchPaginated = async (
+    criteria: PermissionSearchCriteria,
+    limit: number,
+    offset: number,
+    sortBy: string = 'name',
+    sortOrder: 'ASC' | 'DESC' = 'ASC'
+  ): Promise<PermissionModel[]> => {
+    try {
+      logger.debug(`Searching permissions with criteria and pagination`, {
+        criteria,
+        limit,
+        offset,
+        sortBy,
+        sortOrder
+      });
+      
+      // 構建查詢條件
+      const whereConditions: any = {};
+      const andConditions: any[] = [];
+
+      // 名稱模糊搜尋
+      if (criteria.namePattern) {
+        andConditions.push({
+          name: { [Op.iLike]: `%${criteria.namePattern}%` }
+        });
+      }
+
+      // 描述模糊搜尋
+      if (criteria.descriptionPattern) {
+        andConditions.push({
+          description: { [Op.iLike]: `%${criteria.descriptionPattern}%` }
+        });
+      }
+
+      // 日期範圍
+      if (criteria.startDate && criteria.endDate) {
+        andConditions.push({
+          createdAt: {
+            [Op.between]: [criteria.startDate, criteria.endDate]
+          }
+        });
+      }
+
+      // 包含的 ID 列表
+      if (criteria.includeIds && criteria.includeIds.length > 0) {
+        andConditions.push({
+          id: { [Op.in]: criteria.includeIds }
+        });
+      }
+
+      // 排除的 ID 列表
+      if (criteria.excludeIds && criteria.excludeIds.length > 0) {
+        andConditions.push({
+          id: { [Op.notIn]: criteria.excludeIds }
+        });
+      }
+
+      // 如果有條件，使用 AND 邏輯
+      if (andConditions.length > 0) {
+        whereConditions[Op.and] = andConditions;
+      }
+      
+      const permissions = await PermissionModel.findAll({
+        where: whereConditions,
+        limit,
+        offset,
+        order: [[sortBy, sortOrder]]
+      });
+      
+      logger.debug(`Found ${permissions.length} permissions matching search criteria`);
+      return permissions;
+    } catch (error) {
+      logger.error(`Error searching permissions with criteria:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 計算組合條件搜尋的權限總數
+   * @param criteria 搜尋條件
+   * @returns 匹配的權限總數
+   */
+  countByCriteria = async (criteria: PermissionSearchCriteria): Promise<number> => {
+    try {
+      logger.debug(`Counting permissions by search criteria`, criteria);
+      
+      // 構建查詢條件（與 searchPaginated 相同邏輯）
+      const whereConditions: any = {};
+      const andConditions: any[] = [];
+
+      if (criteria.namePattern) {
+        andConditions.push({
+          name: { [Op.iLike]: `%${criteria.namePattern}%` }
+        });
+      }
+
+      if (criteria.descriptionPattern) {
+        andConditions.push({
+          description: { [Op.iLike]: `%${criteria.descriptionPattern}%` }
+        });
+      }
+
+      if (criteria.startDate && criteria.endDate) {
+        andConditions.push({
+          createdAt: {
+            [Op.between]: [criteria.startDate, criteria.endDate]
+          }
+        });
+      }
+
+      if (criteria.includeIds && criteria.includeIds.length > 0) {
+        andConditions.push({
+          id: { [Op.in]: criteria.includeIds }
+        });
+      }
+
+      if (criteria.excludeIds && criteria.excludeIds.length > 0) {
+        andConditions.push({
+          id: { [Op.notIn]: criteria.excludeIds }
+        });
+      }
+
+      if (andConditions.length > 0) {
+        whereConditions[Op.and] = andConditions;
+      }
+      
+      const count = await PermissionModel.count({
+        where: whereConditions
+      });
+      
+      logger.debug(`Found ${count} permissions matching search criteria`);
+      return count;
+    } catch (error) {
+      logger.error(`Error counting permissions by search criteria:`, error);
       throw error;
     }
   }

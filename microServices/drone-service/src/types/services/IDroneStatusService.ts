@@ -9,12 +9,13 @@
  */
 
 import type { DroneStatusAttributes } from '../../models/DroneStatusModel.js';
+import type { PaginationParams, PaginatedResult } from '../PaginationTypes.js';
 
 /**
  * 無人機狀態查詢服務介面
  */
 export interface IDroneStatusQueriesSvc {
-    getAllDroneStatuses(): Promise<DroneStatusAttributes[]>;
+    getAllDroneStatuses(params?: PaginationParams): Promise<PaginatedResult<DroneStatusAttributes>>;
     getDroneStatusById(id: number): Promise<DroneStatusAttributes | null>;
     getDroneStatusesByDroneId(droneId: string): Promise<DroneStatusAttributes[]>;
     getLatestDroneStatus(): Promise<DroneStatusAttributes | null>;

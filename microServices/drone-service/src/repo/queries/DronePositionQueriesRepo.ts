@@ -20,11 +20,11 @@ import { createLogger } from '../../configs/loggerConfig.js';
  *
  * 專門處理無人機位置資料的查詢操作，遵循 CQRS 模式
  *
- * @class DronePositionQueriesRepository
+ * @class DronePositionQueriesRepo
  */
 @injectable()
 export class DronePositionQueriesRepo {
-    private readonly logger = createLogger('DronePositionQueriesRepository');
+    private readonly logger = createLogger('DronePositionQueriesRepo');
 
     /**
      * 取得所有無人機位置資料
