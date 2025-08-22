@@ -1,4 +1,3 @@
-/**
  * @fileoverview 會話查詢服務實現
  * 
  * 此文件實作了會話查詢業務邏輯層，
@@ -9,7 +8,6 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
- */
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
@@ -17,9 +15,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('SessionQueriesSvc');
 
-/**
  * 會話資料介面
- */
 export interface SessionData {
     userId: number;
     username: string;
@@ -27,18 +23,14 @@ export interface SessionData {
     lastAccessedAt: Date;
 }
 
-/**
  * 會話查詢服務類別
  * 
  * 提供會話的所有查詢功能，
  * 包含會話驗證和會話資料查詢。
- */
 @injectable()
 export class SessionQueriesSvc {
     
-    /**
      * 取得使用者會話
-     */
     public getUserSession = async (token: string): Promise<SessionData | null> => {
         try {
             logger.debug('Getting user session for token');

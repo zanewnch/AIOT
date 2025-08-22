@@ -1,4 +1,3 @@
-/**
  * @fileoverview 服務層模組匯出檔案
  * 
  * 此檔案作為服務層的統一匯出入口點，提供對所有服務類別的存取。
@@ -11,7 +10,6 @@
  * @author AIOT 開發團隊
  * @version 1.0.0
  * @since 2025-07-18
- */
 
 // AuthService has been refactored to CQRS pattern - see AuthCommandsSvc and AuthQueriesSvc below
 

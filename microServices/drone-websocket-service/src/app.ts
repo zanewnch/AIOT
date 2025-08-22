@@ -16,7 +16,7 @@ import 'reflect-metadata';
 import express from 'express';
 import { Server as HTTPServer } from 'http';
 import cors from 'cors';
-import { redisConfig } from './configs/redisConfig.js';
+import { redisConfig } from 'aiot-shared-packages';
 import { createSequelizeInstance } from './configs/dbConfig.js';
 import { IntegratedWebSocketService as WebSocketService } from './configs/websocket/service.js';
 // Legacy simple service import (if needed for backward compatibility)

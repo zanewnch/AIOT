@@ -1,4 +1,3 @@
-/**
  * @fileoverview 角色權限關聯命令服務實現
  *
  * 此文件實作了角色權限關聯命令業務邏輯層，
@@ -26,7 +25,6 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
- */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -38,11 +36,12 @@ import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 // 匯入權限查詢資料存取層，用於驗證
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 // 匯入 BaseRedisService
-import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
+
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
 import { createLogger } from '../../configs/loggerConfig.js';
+import { getRedisClient } from 'aiot-shared-packages';
 // 匯入查詢服務，用於驗證操作
 import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
 import type { IRoleToPermissionQueriesService, IRoleToPermissionCommandsService } from '../../types/index.js';
@@ -51,7 +50,6 @@ import type { IRoleToPermissionQueriesService, IRoleToPermissionCommandsService 
 const logger = createLogger('RoleToPermissionCommandsSvc');
 
 
-/**
  * 角色權限關聯命令服務實現類別
  *
  * 專門處理角色權限關聯相關的命令請求，包含分配、撤銷、批量操作等功能。
@@ -61,9 +59,8 @@ const logger = createLogger('RoleToPermissionCommandsSvc');
  * @class RoleToPermissionCommandsSvc
  * @implements IRoleToPermissionCommandsService
  * @since 1.0.0
- */
 @injectable()
-export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRoleToPermissionCommandsService {
+export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsService {
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -78,42 +75,24 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
         @inject(TYPES.PermissionQueriesRepo)
         private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
-        super({
-            serviceName: 'RoleToPermissionCommandsSvc',
-            defaultTTL: RoleToPermissionCommandsSvc.DEFAULT_CACHE_TTL,
-            enableDebugLogs: false,
-            logger: logger
-        });
     }
 
-    /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
-     */
-    protected getRedisClientFactory() {
-        return getRedisClient;
-    }
 
-    /**
      * 產生角色權限快取鍵值
      * @param roleId 角色 ID
-     */
     private getRolePermissionsCacheKey = (roleId: number): string => { // 私有方法：產生角色權限快取鍵值
         return `${RoleToPermissionCommandsSvc.ROLE_PERMISSIONS_CACHE_PREFIX}${roleId}`; // 結合角色權限快取前綴和角色 ID 產生唯一的快取鍵值
     }
 
-    /**
      * 產生權限角色快取鍵值
      * @param permissionId 權限 ID
-     */
     private getPermissionRolesCacheKey = (permissionId: number): string => { // 私有方法：產生權限角色快取鍵值
         return `${RoleToPermissionCommandsSvc.PERMISSION_ROLES_CACHE_PREFIX}${permissionId}`; // 結合權限角色快取前綴和權限 ID 產生唯一的快取鍵值
     }
 
-    /**
      * 清除角色權限管理快取
      * @param roleId 角色 ID（可選）
      * @param permissionId 權限 ID（可選）
-     */
     private clearRolePermissionCache = async (roleId?: number, permissionId?: number): Promise<void> => {
         if (roleId) {
             logger.debug(`Clearing Redis cache for role permissions: ${roleId}`);
@@ -136,11 +115,9 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
         logger.debug('Role permission management caches cleared successfully');
     }
 
-    /**
      * 為角色分配權限
      * @param roleId 角色 ID
      * @param permissionIds 權限 ID 陣列
-     */
     public assignPermissionsToRole = async (roleId: number, permissionIds: number[]): Promise<void> => { // 公開異步方法：為角色分配權限
         try { // 嘗試執行權限分配操作
             logger.info(`Assigning permissions ${permissionIds.join(', ')} to role ID: ${roleId}`); // 記錄開始為角色分配權限的資訊日誌
@@ -204,11 +181,9 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
         }
     }
 
-    /**
      * 從角色撤銷權限
      * @param roleId 角色 ID
      * @param permissionId 權限 ID
-     */
     public removePermissionFromRole = async (roleId: number, permissionId: number): Promise<boolean> => { // 公開異步方法：從角色撤銷權限
         try { // 嘗試執行權限撤銷操作
             logger.info(`Removing permission ${permissionId} from role ID: ${roleId}`); // 記錄開始從角色撤銷權限的資訊日誌
@@ -254,10 +229,8 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
         }
     }
 
-    /**
      * 批次撤銷角色的所有權限
      * @param roleId 角色 ID
-     */
     public removeAllPermissionsFromRole = async (roleId: number): Promise<number> => { // 公開異步方法：批次撤銷角色的所有權限
         try { // 嘗試執行批次權限撤銷操作
             logger.info(`Removing all permissions from role ID: ${roleId}`); // 記錄開始撤銷角色所有權限的資訊日誌
@@ -299,10 +272,8 @@ export class RoleToPermissionCommandsSvc extends BaseRedisService implements IRo
         }
     }
 
-    /**
      * 批次撤銷權限的所有角色
      * @param permissionId 權限 ID
-     */
     public removeAllRolesFromPermission = async (permissionId: number): Promise<number> => { // 公開異步方法：批次撤銷權限的所有角色
         try { // 嘗試執行批次角色撤銷操作
             logger.info(`Removing all roles from permission ID: ${permissionId}`); // 記錄開始撤銷權限所有角色的資訊日誌

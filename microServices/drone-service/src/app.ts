@@ -19,7 +19,7 @@ import express from 'express'; // Express 框架，用於建立 HTTP 伺服器�
 import { injectable, inject } from 'inversify'; // InversifyJS 依賴注入裝飾器
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件配置
-import { redisConfig } from './configs/redisConfig.js'; // Redis 連線配置
+import { redisConfig } from 'aiot-shared-packages'; // Redis 連線配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
 // InversifyJS 容器和類型
 import { ContainerUtils } from './container/container.js';

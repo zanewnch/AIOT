@@ -1,4 +1,3 @@
-/**
  * @fileoverview 使用者角色關聯命令服務實現
  *
  * 此文件實作了使用者角色關聯命令業務邏輯層，
@@ -21,29 +20,27 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
- */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { UserRoleCommandsRepo } from '../../repo/commands/UserRoleCommandsRepo.js';
-import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
+
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { getRedisClient } from 'aiot-shared-packages';
 import { UserToRoleQueriesSvc } from '../queries/UserToRoleQueriesSvc.js';
 import type { AssignRolesRequest, RemoveRoleRequest } from '../../types/index.js';
 
 const logger = createLogger('UserToRoleCommandsSvc');
 
 
-/**
  * 使用者角色關聯命令服務類別
  * 
  * 提供使用者角色關聯的所有命令功能，
  * 包含快取管理、資料寫入和驗證邏輯。
- */
 @injectable()
-export class UserToRoleCommandsSvc extends BaseRedisService {
+export class UserToRoleCommandsSvc {
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -54,45 +51,27 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         @inject(TYPES.UserRoleCommandsRepo)
         private readonly userRoleCommandsRepo: UserRoleCommandsRepo
     ) {
-        super({
-            serviceName: 'UserToRoleCommandsSvc',
-            defaultTTL: UserToRoleCommandsSvc.DEFAULT_CACHE_TTL,
-            enableDebugLogs: false,
-            logger: logger
-        });
     }
 
-    /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
-     */
-    protected getRedisClientFactory() {
-        return getRedisClient;
-    }
 
-    /**
      * 產生使用者角色快取鍵值
      * @param userId 使用者 ID
      * @private
-     */
     private getUserRolesCacheKey = (userId: number): string => {
         return `${UserToRoleCommandsSvc.USER_ROLES_CACHE_PREFIX}${userId}`;
     }
 
-    /**
      * 產生角色使用者快取鍵值
      * @param roleId 角色 ID
      * @private
-     */
     private getRoleUsersCacheKey = (roleId: number): string => {
         return `${UserToRoleCommandsSvc.ROLE_USERS_CACHE_PREFIX}${roleId}`;
     }
 
-    /**
      * 清除使用者角色管理快取
      * @param userId 使用者 ID（可選）
      * @param roleId 角色 ID（可選）
      * @private
-     */
     private clearUserRoleCache = async (userId?: number, roleId?: number): Promise<void> => {
         if (userId) {
             logger.debug(`Clearing Redis cache for user roles: ${userId}`);
@@ -115,11 +94,9 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         logger.debug('User role management caches cleared successfully');
     }
 
-    /**
      * 為使用者分配角色
      * @param request 角色分配請求
      * @returns 分配操作完成的 Promise
-     */
     public assignRolesToUser = async (request: AssignRolesRequest): Promise<void> => {
         try {
             const { userId, roleIds } = request;
@@ -185,11 +162,9 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 從使用者撤銷角色
      * @param request 角色撤銷請求
      * @returns 撤銷操作的結果（true 表示成功撤銷，false 表示角色本來就不屬於該使用者）
-     */
     public removeRoleFromUser = async (request: RemoveRoleRequest): Promise<boolean> => {
         try {
             const { userId, roleId } = request;
@@ -236,11 +211,9 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 批次撤銷使用者的所有角色
      * @param userId 使用者 ID
      * @returns 實際撤銷的角色數量
-     */
     public removeAllRolesFromUser = async (userId: number): Promise<number> => {
         try {
             logger.info(`Removing all roles from user ID: ${userId}`);
@@ -282,11 +255,9 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 批次撤銷角色的所有使用者
      * @param roleId 角色 ID
      * @returns 實際撤銷的使用者數量
-     */
     public removeAllUsersFromRole = async (roleId: number): Promise<number> => {
         try {
             logger.info(`Removing all users from role ID: ${roleId}`);
@@ -328,12 +299,10 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 為使用者分配單一角色（便利方法）
      * @param userId 使用者 ID
      * @param roleId 角色 ID
      * @returns 分配操作完成的 Promise
-     */
     public assignRoleToUser = async (userId: number, roleId: number): Promise<void> => {
         await this.assignRolesToUser({
             userId,
@@ -341,12 +310,10 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         });
     }
 
-    /**
      * 批次更新使用者角色（先清除所有角色，再分配新角色）
      * @param userId 使用者 ID
      * @param roleIds 新的角色 ID 陣列
      * @returns 更新操作完成的 Promise
-     */
     public updateUserRoles = async (userId: number, roleIds: number[]): Promise<void> => {
         try {
             logger.info(`Updating roles for user ID: ${userId} to [${roleIds.join(', ')}]`);

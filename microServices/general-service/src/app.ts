@@ -21,7 +21,7 @@ import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; 
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 // import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器 - 已移除
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
-import { redisConfig } from './configs/redisConfig.js'; // Redis 快取配置
+import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
 import { RouteManager } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型

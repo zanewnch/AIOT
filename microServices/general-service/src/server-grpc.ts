@@ -19,7 +19,7 @@ import 'dotenv/config'; // 載入環境變數配置檔案（.env）
 import { GeneralGrpcServer } from './grpc/generalGrpcServer.js'; // 導入 gRPC 服務器
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 // import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 配置 - 已移除
-import { redisConfig } from './configs/redisConfig.js'; // Redis 配置
+import { redisConfig } from 'aiot-shared-packages'; // Redis 配置
 
 /**
  * gRPC 伺服器類別

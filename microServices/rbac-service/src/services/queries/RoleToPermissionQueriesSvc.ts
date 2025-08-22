@@ -1,4 +1,3 @@
-/**
  * @fileoverview 角色權限關聯查詢服務實現
  *
  * 此文件實作了角色權限關聯查詢業務邏輯層，
@@ -27,7 +26,6 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
- */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -42,11 +40,12 @@ import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.
 import { RoleModel } from '../../models/RoleModel.js';
 import { PermissionModel } from '../../models/PermissionModel.js';
 // 匯入 BaseRedisService 基礎服務
-import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
+
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
 import { createLogger } from '../../configs/loggerConfig.js';
+import { getRedisClient } from 'aiot-shared-packages';
 // 匯入統一的類型定義
 import { PermissionDTO, RoleDTO, IRoleToPermissionQueriesService, RolePermissionAssignmentDTO, PaginationParams, PaginatedResult } from '../../types/index.js';
 
@@ -54,7 +53,6 @@ import { PermissionDTO, RoleDTO, IRoleToPermissionQueriesService, RolePermission
 const logger = createLogger('RoleToPermissionQueriesSvc');
 
 
-/**
  * 角色權限關聯查詢服務實現類別
  *
  * 專門處理角色權限關聯相關的查詢請求，包含權限檢查、權限列表查詢等功能。
@@ -63,19 +61,16 @@ const logger = createLogger('RoleToPermissionQueriesSvc');
  * @class RoleToPermissionQueriesSvc
  * @implements IRoleToPermissionQueriesService
  * @since 1.0.0
- */
 @injectable()
-export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRoleToPermissionQueriesService {
+export class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesService {
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
     private static readonly DEFAULT_CACHE_TTL = 3600; // 預設快取過期時間，1 小時（3600 秒）
 
-    /**
      * 建構函式 - 使用依賴注入
      * @param rolePermissionQueriesRepo 角色權限查詢資料存取層
      * @param roleQueriesRepo 角色查詢資料存取層
      * @param permissionQueriesRepo 權限查詢資料存取層
-     */
     constructor( // 建構函式，使用 InversifyJS 依賴注入初始化角色權限關聯查詢服務
         @inject(TYPES.RolePermissionQueriesRepo)
         private readonly rolePermissionQueriesRepo: RolePermissionQueriesRepo, // 角色權限查詢資料存取層，透過依賴注入
@@ -84,41 +79,23 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         @inject(TYPES.PermissionQueriesRepo)
         private readonly permissionQueriesRepo: PermissionQueriesRepo // 權限查詢資料存取層，透過依賴注入
     ) {
-        super({
-            serviceName: 'RoleToPermissionQueriesSvc',
-            defaultTTL: RoleToPermissionQueriesSvc.DEFAULT_CACHE_TTL,
-            enableDebugLogs: false,
-            logger: logger
-        });
     }
 
-    /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
-     */
-    protected getRedisClientFactory() {
-        return getRedisClient;
-    }
 
-    /**
      * 產生角色權限快取鍵值
      * @param roleId 角色 ID
-     */
     private getRolePermissionsCacheKey(roleId: number): string { // 私有方法：產生角色權限快取鍵值
         return `${RoleToPermissionQueriesSvc.ROLE_PERMISSIONS_CACHE_PREFIX}${roleId}`; // 結合角色權限快取前綴和角色 ID 產生唯一的快取鍵值
     }
 
-    /**
      * 產生權限角色快取鍵值
      * @param permissionId 權限 ID
-     */
     private getPermissionRolesCacheKey(permissionId: number): string { // 私有方法：產生權限角色快取鍵值
         return `${RoleToPermissionQueriesSvc.PERMISSION_ROLES_CACHE_PREFIX}${permissionId}`; // 結合權限角色快取前綴和權限 ID 產生唯一的快取鍵值
     }
 
-    /**
      * 將權限模型轉換為 DTO
      * @param model 權限模型
-     */
     private permissionModelToDTO(model: PermissionModel): PermissionDTO { // 私有方法：將權限模型轉換為資料傳輸物件
         return { // 建立並回傳權限 DTO 物件，不包含內部實作細節
             id: model.id, // 權限 ID
@@ -129,10 +106,8 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         };
     }
 
-    /**
      * 將角色模型轉換為 DTO
      * @param model 角色模型
-     */
     private roleModelToDTO(model: RoleModel): RoleDTO { // 私有方法：將角色模型轉換為資料傳輸物件
         return { // 建立並回傳角色 DTO 物件，不包含內部實作細節
             id: model.id, // 角色 ID
@@ -143,10 +118,8 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         };
     }
 
-    /**
      * 從快取取得角色權限
      * @param roleId 角色 ID
-     */
     private getCachedRolePermissions = async (roleId: number): Promise<PermissionDTO[] | null> => { // 私有異步方法：從 Redis 快取取得角色權限
         const key = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
         
@@ -165,11 +138,9 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         );
     }
 
-    /**
      * 快取角色權限
      * @param roleId 角色 ID
      * @param permissions 權限列表
-     */
     private cacheRolePermissions = async (roleId: number, permissions: PermissionDTO[]): Promise<void> => { // 私有異步方法：將角色權限資料快取到 Redis
         const key = this.getRolePermissionsCacheKey(roleId); // 產生角色權限的快取鍵值
         
@@ -182,10 +153,8 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         );
     }
 
-    /**
      * 取得角色的所有權限
      * @param roleId 角色 ID
-     */
     public getRolePermissions = async (roleId: number): Promise<PermissionDTO[]> => { // 公開異步方法：取得角色的所有權限
         try { // 嘗試執行角色權限取得操作
             logger.info(`Getting permissions for role ID: ${roleId}`); // 記錄開始取得角色權限的資訊日誌
@@ -243,11 +212,9 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         }
     }
 
-    /**
      * 檢查角色是否具有特定權限
      * @param roleId 角色 ID
      * @param permissionId 權限 ID
-     */
     public roleHasPermission = async (roleId: number, permissionId: number): Promise<boolean> => { // 公開異步方法：檢查角色是否具有特定權限
         try { // 嘗試執行角色權限檢查操作
             logger.debug(`Checking if role ${roleId} has permission ${permissionId}`); // 記錄檢查角色權限的除錯日誌
@@ -269,10 +236,8 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         }
     }
 
-    /**
      * 取得權限的所有角色
      * @param permissionId 權限 ID
-     */
     public getPermissionRoles = async (permissionId: number): Promise<RoleDTO[]> => { // 公開異步方法：取得權限的所有角色
         try { // 嘗試執行權限角色取得操作
             logger.info(`Getting roles for permission ID: ${permissionId}`); // 記錄開始取得權限角色的資訊日誌
@@ -320,10 +285,8 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         }
     }
 
-    /**
      * 獲取所有角色權限關聯數據（支持分頁）
      * 只回傳基本的關聯信息，避免 Sequelize 模型關聯錯誤
-     */
     public getAllRolePermissions = async (params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'createdAt', sortOrder: 'DESC' }): Promise<PaginatedResult<RolePermissionAssignmentDTO>> => {
         try {
             logger.info('Getting role-permission associations with pagination', params);

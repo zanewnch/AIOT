@@ -1,4 +1,3 @@
-/**
  * @fileoverview 使用者查詢服務實現
  *
  * 此文件實作了使用者查詢業務邏輯層，
@@ -27,7 +26,6 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
- */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -35,58 +33,39 @@ import { TYPES } from '../../container/types.js';
 import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
-import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
+
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { getRedisClient } from 'aiot-shared-packages';
 import { UserDTO, UserCacheOptions, IUserQueriesService, PaginationParams, PaginatedResult, PaginationUtils } from '../../types/index.js';
 
 const logger = createLogger('UserQueriesSvc');
 
 
-/**
  * 使用者查詢服務類別
- */
 @injectable()
-export class UserQueriesSvc extends BaseRedisService implements IUserQueriesService {
+export class UserQueriesSvc implements IUserQueriesService {
     private static readonly USER_CACHE_PREFIX = 'user:';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
-    /**
      * 建構函式
      * 初始化使用者查詢服務，設定資料存取層實例
-     */
     constructor(
         @inject(TYPES.UserQueriesRepo) private readonly userQueriesRepo: UserQueriesRepo
     ) {
-        super({
-            serviceName: 'UserQueriesSvc',
-            defaultTTL: UserQueriesSvc.DEFAULT_CACHE_TTL,
-            enableDebugLogs: false,
-            logger: logger
-        });
     }
 
-    /**
-     * Redis 客戶端工廠函式
-     */
-    protected getRedisClientFactory() {
-        return getRedisClient;
-    }
 
-    /**
      * 產生使用者快取鍵值
      * @param userId 使用者 ID
      * @private
-     */
     private getUserCacheKey = (userId: number): string => {
         return `${UserQueriesSvc.USER_CACHE_PREFIX}${userId}`;
     }
 
-    /**
      * 將模型轉換為 DTO（過濾敏感資訊）
      * @param model 使用者模型
      * @private
-     */
     private modelToDTO = (model: UserModel): UserDTO => {
         return {
             id: model.id,
@@ -98,11 +77,9 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
     }
 
 
-    /**
      * 從快取取得單一使用者
      * @param userId 使用者 ID
      * @private
-     */
     private getCachedUser = async (userId: number): Promise<UserDTO | null> => {
         // Redis 功能暫時停用
         // const key = this.getUserCacheKey(userId);
@@ -110,11 +87,9 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         return null;
     }
 
-    /**
      * 快取單一使用者
      * @param user 使用者資料
      * @private
-     */
     private cacheUser = async (user: UserDTO): Promise<void> => {
         const key = this.getUserCacheKey(user.id);
         
@@ -127,12 +102,10 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         );
     }
 
-    /**
      * 獲取所有使用者列表（支持分頁）
      * 
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁使用者結果
-     */
     public async getAllUsers(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<UserDTO>> {
         try {
             logger.debug('Getting users with pagination', params);
@@ -186,11 +159,9 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 根據 ID 取得使用者
      * @param userId 使用者 ID
      * @param options 快取選項
-     */
     public getUserById = async (userId: number, options: UserCacheOptions = {}): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by ID: ${userId}`);
@@ -230,10 +201,8 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 根據使用者名稱查找使用者
      * @param username 使用者名稱
-     */
     public getUserByUsername = async (username: string): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by username: ${username}`);
@@ -260,10 +229,8 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 根據電子郵件查找使用者
      * @param email 電子郵件
-     */
     public getUserByEmail = async (email: string): Promise<UserDTO | null> => {
         try {
             logger.info(`Retrieving user by email: ${email}`);
@@ -290,20 +257,16 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 驗證密碼
      * @param password 明文密碼
      * @param hash 密碼雜湊
-     */
     public verifyPassword = async (password: string, hash: string): Promise<boolean> => {
         return bcrypt.compare(password, hash);
     }
 
-    /**
      * 根據使用者名稱取得完整使用者資料（包含密碼雜湊，用於登入驗證）
      * @param username 使用者名稱
      * @internal 此方法僅供內部使用，不暴露密碼雜湊給外部
-     */
     public getUserWithPasswordByUsername = async (username: string): Promise<UserModel | null> => {
         try {
             logger.debug(`Getting user with password for username: ${username}`);
@@ -329,10 +292,8 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 檢查使用者是否存在
      * @param userId 使用者 ID
-     */
     public userExists = async (userId: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if user exists: ${userId}`);
@@ -352,11 +313,9 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 檢查使用者名稱是否存在
      * @param username 使用者名稱
      * @param excludeUserId 排除的使用者 ID（用於更新時檢查重複）
-     */
     public usernameExists = async (username: string, excludeUserId?: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if username exists: ${username}`);
@@ -375,11 +334,9 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
         }
     }
 
-    /**
      * 檢查電子郵件是否存在
      * @param email 電子郵件
      * @param excludeUserId 排除的使用者 ID（用於更新時檢查重複）
-     */
     public emailExists = async (email: string, excludeUserId?: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if email exists: ${email}`);

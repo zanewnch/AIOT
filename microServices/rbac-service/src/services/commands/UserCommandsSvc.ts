@@ -1,4 +1,3 @@
-/**
  * @fileoverview 使用者命令服務實現
  *
  * 此文件實作了使用者命令業務邏輯層，
@@ -28,7 +27,6 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
- */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -36,50 +34,34 @@ import { TYPES } from '../../container/types.js';
 import { UserCommandsRepo } from '../../repo/commands/UserCommandsRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
-import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
+
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { getRedisClient } from 'aiot-shared-packages';
 import { UserQueriesSvc } from '../queries/UserQueriesSvc.js';
-import type { UserDTO } from '../queries/UserQueriesSvc.js';
-import type { CreateUserRequest, UpdateUserRequest } from '../../types/index.js';
+import { getRedisClient } from 'aiot-shared-packages';
+import type { UserDTO, CreateUserRequest, UpdateUserRequest } from '../../types/index.js';
 
 const logger = createLogger('UserCommandsSvc');
 
 
-/**
  * 使用者命令服務類別
- */
 @injectable()
-export class UserCommandsSvc extends BaseRedisService {
+export class UserCommandsSvc {
     private static readonly USER_CACHE_PREFIX = 'user:';
     private static readonly ALL_USERS_KEY = 'users:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
     private static readonly BCRYPT_SALT_ROUNDS = 10;
 
-    /**
      * 建構函式
      * 初始化使用者命令服務，設定資料存取層和查詢服務實例
-     */
     constructor(
         @inject(TYPES.UserCommandsRepo) private readonly userCommandsRepo: UserCommandsRepo,
         @inject(TYPES.UserQueriesSvc) private readonly userQueriesSvc: UserQueriesSvc
     ) {
-        super({
-            serviceName: 'UserCommandsSvc',
-            defaultTTL: UserCommandsSvc.DEFAULT_CACHE_TTL,
-            enableDebugLogs: false,
-            logger: logger
-        });
     }
 
-    /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
-     */
-    protected getRedisClientFactory() {
-        return getRedisClient;
-    }
 
-    /**
      * 產生使用者快取鍵值
      * 
      * 根據使用者 ID 生成統一的 Redis 快取鍵值
@@ -95,12 +77,10 @@ export class UserCommandsSvc extends BaseRedisService {
      * ```
      * 
      * @private
-     */
     private getUserCacheKey = (userId: number): string => {
         return `${UserCommandsSvc.USER_CACHE_PREFIX}${userId}`;
     }
 
-    /**
      * 將模型轉換為 DTO（過濾敏感資訊）
      * 
      * 將內部使用者模型轉換為安全的數據傳輸物件
@@ -117,7 +97,6 @@ export class UserCommandsSvc extends BaseRedisService {
      * ```
      * 
      * @private
-     */
     private modelToDTO = (model: UserModel): UserDTO => {
         return {
             id: model.id,
@@ -128,20 +107,60 @@ export class UserCommandsSvc extends BaseRedisService {
         };
     }
 
-    /**
      * 加密密碼
      * @param password 明文密碼
      * @private
-     */
     private hashPassword = async (password: string): Promise<string> => {
         return bcrypt.hash(password, UserCommandsSvc.BCRYPT_SALT_ROUNDS);
     }
 
     /**
+     * 安全執行 Redis 操作
+     * @param operation Redis 操作函式
+     * @param operationName 操作名稱
+     * @param fallbackValue 操作失敗時的預設返回值
+     * @private
+     */
+    private safeRedisOperation = async <T>(
+        operation: (redis: RedisClientType) => Promise<T>,
+        operationName: string,
+        fallbackValue: T
+    ): Promise<T> => {
+        try {
+            const redis = getRedisClient();
+            const result = await operation(redis);
+            logger.debug(`Redis operation ${operationName} completed successfully`);
+            return result;
+        } catch (error) {
+            logger.warn(`Redis operation ${operationName} failed:`, error);
+            return fallbackValue;
+        }
+    }
+
+    /**
+     * 安全執行 Redis 寫入操作
+     * @param operation Redis 寫入操作函式
+     * @param operationName 操作名稱
+     * @private
+     */
+    private safeRedisWrite = async (
+        operation: (redis: RedisClientType) => Promise<void>,
+        operationName: string
+    ): Promise<boolean> => {
+        try {
+            const redis = getRedisClient();
+            await operation(redis);
+            logger.debug(`Redis write operation ${operationName} completed successfully`);
+            return true;
+        } catch (error) {
+            logger.warn(`Redis write operation ${operationName} failed:`, error);
+            return false;
+        }
+    }
+
      * 清除使用者管理快取
      * @param userId 使用者 ID（可選）
      * @private
-     */
     private clearUserManagementCache = async (userId?: number): Promise<void> => {
         if (userId) {
             logger.debug(`Clearing Redis cache for user ID: ${userId}`);
@@ -163,11 +182,9 @@ export class UserCommandsSvc extends BaseRedisService {
         logger.debug('User management caches cleared successfully');
     }
 
-    /**
      * 快取單一使用者
      * @param user 使用者資料
      * @private
-     */
     private cacheUser = async (user: UserDTO): Promise<void> => {
         logger.debug(`Caching user ID: ${user.id} in Redis`);
         const key = this.getUserCacheKey(user.id);
@@ -179,10 +196,8 @@ export class UserCommandsSvc extends BaseRedisService {
         );
     }
 
-    /**
      * 建立新使用者
      * @param userData 使用者資料
-     */
     public createUser = async (userData: CreateUserRequest): Promise<UserDTO> => {
         try {
             logger.info(`Creating new user: ${userData.username}`);
@@ -241,11 +256,9 @@ export class UserCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 更新使用者
      * @param userId 使用者 ID
      * @param updateData 更新資料
-     */
     public updateUser = async (userId: number, updateData: UpdateUserRequest): Promise<UserDTO | null> => {
         try {
             logger.info(`Updating user ID: ${userId}`);
@@ -327,10 +340,8 @@ export class UserCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 刪除使用者
      * @param userId 使用者 ID
-     */
     public deleteUser = async (userId: number): Promise<boolean> => {
         try {
             logger.info(`Deleting user ID: ${userId}`);
@@ -365,11 +376,9 @@ export class UserCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 驗證使用者登入
      * @param username 使用者名稱
      * @param password 密碼
-     */
     public validateUserLogin = async (username: string, password: string): Promise<UserDTO | null> => {
         try {
             logger.info(`Validating login for user: ${username}`);
@@ -403,11 +412,9 @@ export class UserCommandsSvc extends BaseRedisService {
         }
     }
 
-    /**
      * 驗證密碼
      * @param password 明文密碼
      * @param hash 密碼雜湊
-     */
     public verifyPassword = async (password: string, hash: string): Promise<boolean> => {
         return this.userQueriesSvc.verifyPassword(password, hash);
     }
