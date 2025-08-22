@@ -16,9 +16,11 @@
  */
 
 import 'dotenv/config'; // 載入環境變數配置檔案（.env）
-import { RbacGrpcServer } from './grpc/rbacGrpcServer.js'; // 導入 gRPC 服務器
+import { AuthGrpcServer } from './grpc/authGrpcServer.js'; // 導入 gRPC 服務器
+import { container } from './container/container.js'; // InversifyJS 容器
+import { TYPES } from './container/types.js'; // 依賴注入類型
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { redisConfig } from '@aiot/shared-packages'; // Redis 快取配置
+import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
 
 /**
  * gRPC 伺服器類別
@@ -35,9 +37,9 @@ class GrpcServer {
     /**
      * gRPC 服務器實例
      * @private
-     * @type {RbacGrpcServer}
+     * @type {AuthGrpcServer}
      */
-    private grpcServer: RbacGrpcServer;
+    private grpcServer: AuthGrpcServer;
 
     /**
      * Sequelize 資料庫實例
@@ -50,7 +52,7 @@ class GrpcServer {
      * 建構函式 - 初始化 gRPC 伺服器實例
      */
     constructor() {
-        this.grpcServer = new RbacGrpcServer();
+        this.grpcServer = container.get<AuthGrpcServer>(TYPES.AuthGrpcServer);
         this.sequelize = createSequelizeInstance();
         this.setupShutdownHandlers();
     }

@@ -22,7 +22,6 @@
     "docs:watch-scss": "sass --watch src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css"
   },
   "dependencies": {
-    "@aiot/shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "@types/amqplib": "^0.10.7",
@@ -34,6 +33,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/redis": "^4.0.10",
     "@types/socket.io": "^3.0.1",
+    "aiot-shared-packages": "github:zanewnch/aiot-shared-packages",
     "amqplib": "^0.10.3",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",

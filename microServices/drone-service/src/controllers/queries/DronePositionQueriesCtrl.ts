@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DronePositionQueriesSvc} from '../../services/queries/DronePositionQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
-import {ResResult} from '@aiot/shared-packages';
+import {ResResult} from 'aiot-shared-packages';
 import {IDronePositionQueriesCtrl} from '../../types/controllers/queries/IDronePositionQueriesCtrl.js';
 import {TYPES} from '../../container/types.js';
 

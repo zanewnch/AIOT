@@ -15,11 +15,10 @@
  */
 
 import { Router } from 'express';
-import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
-import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
+import { inject, injectable } from 'inversify';
+import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthCommandsCtrl } from '../controllers/commands/AuthCommandsCtrl.js';
 import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
-import { JwtBlacklistMiddleware } from '../middleware/JwtBlacklistMiddleware.js';
-import { container } from '../container/container.js';
 import { TYPES } from '../container/types.js';
 
 /**
@@ -28,10 +27,9 @@ import { TYPES } from '../container/types.js';
  * 負責配置和管理所有認證相關的路由端點
  * 使用 API Gateway Headers 中間件來獲取用戶信息，由 Express.js Gateway 層進行認證和授權
  */
+@injectable()
 class AuthRoutes {
   private router: Router;
-  private authQueries: AuthQueries;
-  private authCommands: AuthCommands;
   // private authMiddleware: AuthMiddleware;
 
   // RESTful 路由設計 - 使用 HTTP 方法區分功能
@@ -39,12 +37,11 @@ class AuthRoutes {
     AUTH: '/'  // /api/auth 被 Gateway strip_path 後變成 /
   } as const;
 
-  constructor() {
+  constructor(
+    @inject(TYPES.AuthQueriesCtrl) private authQueries: AuthQueriesCtrl,
+    @inject(TYPES.AuthCommandsCtrl) private authCommands: AuthCommandsCtrl
+  ) {
     this.router = Router();
-    this.authQueries = container.get<AuthQueries>(TYPES.AuthQueriesCtrl);
-    this.authCommands = container.get<AuthCommands>(TYPES.AuthCommandsCtrl);
-    // this.authMiddleware = new AuthMiddleware();
-    
     this.setupAuthRoutes();
   }
 
@@ -70,19 +67,19 @@ class AuthRoutes {
       (req, res, next) => this.authCommands.login(req, res, next)
     );
     
-    // GET /api/auth - 獲取當前使用者資訊 (需要 JWT 認證)
+    // GET /api/auth - 獲取當前使用者資訊 (由 Gateway 處理 JWT 認證)
     this.router.get(this.ROUTES.AUTH,
-      JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
-      (req, res, next) => {
+      (req, res, next): void => {
         // 從 Cookie 中獲取 JWT 並解析用戶信息
         try {
           const authToken = req.cookies?.auth_token;
           if (!authToken) {
-            return res.status(401).json({
+            res.status(401).json({
               status: 401,
               message: 'Authentication token not found',
               data: null
             });
+            return;
           }
 
           // 解析 JWT (不驗證簽名，因為 API Gateway 已經驗證過了)
@@ -120,17 +117,15 @@ class AuthRoutes {
       }
     );
     
-    // DELETE /api/auth - 使用者登出 (需要 JWT 認證)
+    // DELETE /api/auth - 使用者登出 (由 Gateway 處理 JWT 認證)
     this.router.delete(this.ROUTES.AUTH,
-      JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
       (req, res, next) => this.authCommands.logout(req, res, next)
     );
 
-    // PUT /api/auth - 更新認證信息 (預留，需要 JWT 認證)
+    // PUT /api/auth - 更新認證信息 (預留，由 Gateway 處理 JWT 認證)
     this.router.put(this.ROUTES.AUTH,
-      JwtBlacklistMiddleware.checkBlacklist, // 檢查 JWT 是否在黑名單中
       ApiGatewayHeadersMiddleware.extractUserInfo,
-      (req, res, next) => {
+      (req, res, next): void => {
         // TODO: 實現密碼變更等功能
         res.status(501).json({
           status: 501,
@@ -152,6 +147,13 @@ class AuthRoutes {
 }
 
 /**
- * 匯出認證路由實例
+ * 匯出 AuthRoutes 類別
  */
-export const router = new AuthRoutes().getRouter();
+export { AuthRoutes };
+
+/**
+ * 匯出認證路由實例（透過容器獲取）
+ */
+import { container } from '../container/container.js';
+
+export const router = container.get<AuthRoutes>(TYPES.AuthRoutes).getRouter();

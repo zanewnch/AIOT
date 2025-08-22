@@ -19,7 +19,7 @@
 import 'dotenv/config'; // 載入環境變數配置檔案（.env）
 import { App } from './app.js'; // 導入 HTTP Express 應用程式
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { redisConfig } from '@aiot/shared-packages'; // Redis 快取配置
+import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
 import http from 'http';
 
 /**
@@ -46,7 +46,7 @@ class HttpServer {
      * @private
      * @type {http.Server}
      */
-    private httpServer: http.Server;
+    private httpServer!: http.Server;
 
     /**
      * Sequelize 資料庫實例
@@ -97,7 +97,7 @@ class HttpServer {
             console.log('✅ HTTP application initialized');
 
             // 啟動 HTTP 服務器（Gateway 通訊）
-            const httpPort = process.env.HTTP_PORT || 3055;
+            const httpPort = Number(process.env.HTTP_PORT) || 3055;
             this.httpServer = http.createServer(this.httpApp.app);
             this.httpServer.listen(httpPort, '0.0.0.0', () => {
                 console.log(`🌐 Auth HTTP server ready on port ${httpPort} (Gateway communication)`);

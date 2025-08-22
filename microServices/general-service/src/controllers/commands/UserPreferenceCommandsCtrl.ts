@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { UserPreferenceCommandsSvc } from '../../services/commands/UserPreferenceCommandsSvc.js';
-import { ResResult } from '@aiot/shared-packages';
+import { ResResult } from 'aiot-shared-packages';
 import { TYPES } from '../../container/types.js';
 // LoggerDecorator will be updated separately - temporarily keeping pattern import
 import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from '../../models/UserPreferenceModel.js';

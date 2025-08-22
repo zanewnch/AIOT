@@ -31,8 +31,8 @@ import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
-import { BaseRedisService } from '@aiot/shared-packages';
-import { getRedisClient } from '@aiot/shared-packages';
+import { BaseRedisService } from 'aiot-shared-packages';
+import { getRedisClient } from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 

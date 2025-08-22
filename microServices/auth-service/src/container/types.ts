@@ -447,9 +447,25 @@ export const TYPES = {
 
   // ===== JWT 和安全服務 =====
   /**
+   * Logger 服務類型
+   */
+  Logger: Symbol.for('Logger'),
+  
+  /**
    * JWT 黑名單服務類型
    */
-  JwtBlacklistSvc: Symbol.for('JwtBlacklistSvc')
+  JwtBlacklistService: Symbol.for('JwtBlacklistService'),
+
+  // ===== gRPC 和路由服務 =====
+  /**
+   * Auth gRPC 服務器類型
+   */
+  AuthGrpcServer: Symbol.for('AuthGrpcServer'),
+
+  /**
+   * Auth 路由類型
+   */
+  AuthRoutes: Symbol.for('AuthRoutes')
 } as const;
 
 /**

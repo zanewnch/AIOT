@@ -28,7 +28,7 @@ import { TYPES } from '../../container/types.js';
 import { PermissionCommandsRepo } from '../../repo/commands/PermissionCommandsRepo.js';
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
-import { BaseRedisService, getRedisClient } from '@aiot/shared-packages';
+import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { RedisClientType } from 'redis';
 import type {

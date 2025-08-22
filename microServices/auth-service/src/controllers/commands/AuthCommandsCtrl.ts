@@ -24,9 +24,8 @@ import {inject, injectable} from 'inversify'; // Inversify DI 裝飾器
 import {NextFunction, Request, Response} from 'express'; // Express 型別
 import {AuthCommandsSvc} from '../../services/commands/AuthCommandsSvc.js'; // 命令服務介面/實作
 import {createLogger, logAuthEvent, logRequest} from '../../configs/loggerConfig.js'; // 日誌與事件記錄函式
-import {ResResult} from '@aiot/shared-packages'; // 統一 API 回應封裝
+import {ResResult} from 'aiot-shared-packages'; // 統一 API 回應封裝
 import {TYPES} from '../../container/types.js'; // DI container key
-import {JwtBlacklistMiddleware} from '../../middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
 
 const logger = createLogger('AuthCommandsCtrl'); // 建立 module 專屬 logger
 
@@ -253,9 +252,8 @@ export class AuthCommandsCtrl { // 控制器類別
                 // 呼叫 logout 時僅傳遞 token（示範 LogoutRequest 為簡化版本）
                 await this.authCommandsSvc.logout({ token });
 
-                const blacklisted = await JwtBlacklistMiddleware.addCurrentTokenToBlacklist(req, 'logout');
-
-                if (blacklisted) { logger.info(`JWT token successfully added to blacklist for user: ${username}`); } else { logger.warn(`Failed to add JWT token to blacklist for user: ${username}`); }
+                // JWT 黑名單功能已移至 Gateway 層統一處理
+                logger.info(`User logout processed, JWT blacklist managed by Gateway: ${username}`);
             } else {
                 logger.warn(`Logout attempted without valid token for user: ${username}`);
             }

@@ -432,7 +432,7 @@ export const TYPES = {
   /**
    * JWT 黑名單服務類型
    */
-  JwtBlacklistSvc: Symbol.for('JwtBlacklistSvc'),
+  JwtBlacklistService: Symbol.for('JwtBlacklistService'),
 
   // ===== Repo Types =====
   /**

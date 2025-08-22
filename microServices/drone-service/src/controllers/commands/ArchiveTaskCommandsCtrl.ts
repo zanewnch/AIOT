@@ -18,7 +18,7 @@ import {CreateArchiveTaskRequest} from '../../types/services/IArchiveTaskService
 import {ArchiveTaskCommandsSvc} from '../../services/commands/ArchiveTaskCommandsSvc.js';
 import {ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
-import {ResResult} from '@aiot/shared-packages';
+import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 /**

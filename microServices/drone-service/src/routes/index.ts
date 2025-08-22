@@ -21,7 +21,7 @@ import {DroneCommandRoutes} from './droneCommandRoutes.js';
 import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
 import docsRoutes from './docsRoutes.js';
 import {TYPES} from '../container/types.js';
-import {ResResult} from '@aiot/shared-packages';
+import {ResResult} from 'aiot-shared-packages';
 
 /**
  * 路由管理器類別

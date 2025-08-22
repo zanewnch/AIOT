@@ -14,7 +14,6 @@
 - ✅ **Drone Service** - 無人機服務測試
 - ✅ **RBAC Service** - 權限控制服務測試  
 - ✅ **General Service** - 通用服務測試
-- ✅ **Docs Service** - 文檔服務測試
 - ✅ **Drone WebSocket Service** - 無人機 WebSocket 服務測試
 
 ## 🏗️ 測試架構
@@ -31,9 +30,6 @@ test/
 │   ├── general-service/
 │   │   ├── controllers/      # 通用控制器測試
 │   │   └── services/         # 通用服務測試
-│   ├── docs-service/
-│   │   ├── controllers/      # 文檔控制器測試
-│   │   └── services/         # 文檔生成服務測試
 │   └── drone-websocket-service/
 │       └── services/         # WebSocket 服務測試
 ├── integration/              # 整合測試
@@ -41,7 +37,6 @@ test/
 │   │   ├── auth.integration.test.ts
 │   │   ├── drone.integration.test.ts
 │   │   ├── rbac.integration.test.ts
-│   │   ├── docs.integration.test.ts
 │   │   └── drone-websocket.integration.test.ts
 │   └── setup/                # 測試環境設定
 │       └── testSetup.ts      # 整合測試框架

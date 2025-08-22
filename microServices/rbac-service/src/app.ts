@@ -19,10 +19,10 @@ import express from 'express'; // Express 框架，用於建立 HTTP 伺服器�
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
-import { redisConfig } from '@aiot/shared-packages'; // Redis 快取配置
+import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
 import { registerRoutes } from './routes/index.js'; // 統一路由管理
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
-import { JwtBlacklistMiddleware } from './middleware/JwtBlacklistMiddleware.js'; // JWT 黑名單中間件
+// JWT 黑名單中間件已移除 - 統一由 Gateway 層處理
 // InversifyJS 容器和類型
 import { container } from './container/container.js';
 // Consul 服務註冊
@@ -200,10 +200,8 @@ export class App {
             this.redis = redisConfig;
             console.log('✅ Redis connection established');
 
-            // 初始化 JWT 黑名單服務
-            console.log('🔐 Initializing JWT blacklist service...');
-            JwtBlacklistMiddleware.initialize();
-            console.log('✅ JWT blacklist service initialized');
+            // JWT 黑名單功能已移至 Gateway 層統一處理
+            console.log('🔐 JWT blacklist managed by Gateway layer');
 
             console.log('✅ All external services initialized');
         } catch (error) {

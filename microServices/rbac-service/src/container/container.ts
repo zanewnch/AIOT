@@ -38,7 +38,7 @@ import { RoleToPermissionCommandsCtrl } from '../controllers/commands/RoleToPerm
 import { RoleToPermissionQueriesCtrl } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 
 // JWT 安全服務
-import { JwtBlacklistService } from '@aiot/shared-packages';
+import { JwtBlacklistService } from 'aiot-shared-packages';
 
 // Repo 導入
 import { UserQueriesRepo } from '../repo/queries/UserQueriesRepo.js';
@@ -113,7 +113,7 @@ export function createContainer(): Container {
     .inSingletonScope();
 
   // JWT 安全服務
-  container.bind<JwtBlacklistService>(TYPES.JwtBlacklistSvc)
+  container.bind<JwtBlacklistService>(TYPES.JwtBlacklistService)
     .to(JwtBlacklistService)
     .inSingletonScope();
 

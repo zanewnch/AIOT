@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneRealTimeStatusQueriesSvc} from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
-import {ResResult} from '@aiot/shared-packages';
+import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesCtrl');

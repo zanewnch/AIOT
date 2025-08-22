@@ -16,18 +16,10 @@
 // AuthService has been refactored to CQRS pattern - see AuthCommandsSvc and AuthQueriesSvc below
 // NOTE: This index file re-exports CQRS services to provide a single import surface for other modules.
 
-// 匯出角色基礎存取控制初始化服務，負責設定權限系統
-export { RbacInitService } from './RbacInitService.js';
-
-// 匯出 CQRS 模式的使用者服務
-export { UserQueriesSvc } from './queries/UserQueriesSvc.js';
-export { UserCommandsSvc } from './commands/UserCommandsSvc.js';
-
 // 匯出 CQRS 模式的認證服務
 export { AuthQueriesSvc } from './queries/AuthQueriesSvc.js';
 export { AuthCommandsSvc } from './commands/AuthCommandsSvc.js';
 
 // 匯出 CQRS 模式的會話服務
 export { SessionQueriesSvc } from './queries/SessionQueriesSvc.js';
-export { SessionCommandsSvc } from './commands/SessionCommandsSvc.js';
 

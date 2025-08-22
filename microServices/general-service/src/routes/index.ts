@@ -19,7 +19,7 @@ import { DocsRoutes } from './docsRoutes.js';
 import { HealthRoutes } from './healthRoutes.js';
 import simpleDocsRoutes from './simpleDocsRoutes.js';
 import { TYPES } from '../container/types.js';
-import { ResResult } from '@aiot/shared-packages';
+import { ResResult } from 'aiot-shared-packages';
 import { createLogger } from '../configs/loggerConfig.js';
 
 const logger = createLogger('RouteManager');

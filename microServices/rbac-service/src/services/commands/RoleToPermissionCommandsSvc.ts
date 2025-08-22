@@ -38,9 +38,9 @@ import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 // 匯入權限查詢資料存取層，用於驗證
 import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.js';
 // 匯入 BaseRedisService
-import { BaseRedisService } from '@aiot/shared-packages';
+import { BaseRedisService } from 'aiot-shared-packages';
 // 匯入 Redis 客戶端配置，用於快取管理
-import { getRedisClient } from '@aiot/shared-packages';
+import { getRedisClient } from 'aiot-shared-packages';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器

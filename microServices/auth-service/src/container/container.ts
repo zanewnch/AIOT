@@ -18,11 +18,15 @@ import { AuthQueriesSvc } from '../services/queries/AuthQueriesSvc.js';
 import { SessionQueriesSvc } from '../services/queries/SessionQueriesSvc.js';
 
 // 認證控制器
-import { AuthCommands } from '../controllers/commands/AuthCommandsCtrl.js';
-import { AuthQueries } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthCommandsCtrl } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
+
+// gRPC 和路由服務
+import { AuthGrpcServer } from '../grpc/authGrpcServer.js';
+import { AuthRoutes } from '../routes/authRoutes.js';
 
 // JWT 安全服務
-import { JwtBlacklistSvc } from '@aiot/shared-packages';
+import { JwtBlacklistService } from 'aiot-shared-packages';
 
 /**
  * 創建並配置 Auth 服務的 IoC 容器
@@ -50,21 +54,29 @@ export function createContainer(): Container {
     .inSingletonScope();
   // 說明: 會話查詢服務，用於驗證與查詢 session 資訊
 
-  // JWT 安全服務
-  container.bind<JwtBlacklistSvc>(TYPES.JwtBlacklistSvc)
-    .to(JwtBlacklistSvc)
-    .inSingletonScope();
-  // 說明: JWT 黑名單服務，用於登出或強制失效 token
+  // 說明: JWT 黑名單服務不使用 DI，直接在 middleware 中實例化
 
   // ===== 認證控制器註冊 =====
   
   // 認證控制器
-  container.bind<AuthCommands>(TYPES.AuthCommandsCtrl)
-    .to(AuthCommands)
+  container.bind<AuthCommandsCtrl>(TYPES.AuthCommandsCtrl)
+    .to(AuthCommandsCtrl)
     .inSingletonScope();
   
-  container.bind<AuthQueries>(TYPES.AuthQueriesCtrl)
-    .to(AuthQueries)
+  container.bind<AuthQueriesCtrl>(TYPES.AuthQueriesCtrl)
+    .to(AuthQueriesCtrl)
+    .inSingletonScope();
+
+  // ===== gRPC 和路由服務註冊 =====
+  
+  // Auth gRPC 服務器
+  container.bind<AuthGrpcServer>(TYPES.AuthGrpcServer)
+    .to(AuthGrpcServer)
+    .inSingletonScope();
+  
+  // Auth 路由
+  container.bind<AuthRoutes>(TYPES.AuthRoutes)
+    .to(AuthRoutes)
     .inSingletonScope();
 
   console.log('✅ Auth IoC Container configured with authentication services only');

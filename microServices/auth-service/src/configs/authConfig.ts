@@ -11,7 +11,7 @@ import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-
 // 匯入用戶模型進行資料庫操作
 import { UserModel } from '../models/UserModel.js';
 // 匯入 JWT 負載類型定義
-// import { JwtPayload } from '@aiot/shared-packages/AuthMiddleware.js';
+// import { JwtPayload } from 'aiot-shared-packages/AuthMiddleware.js';
 
 // 臨時定義 JwtPayload 介面
 export interface JwtPayload {
@@ -69,7 +69,7 @@ export const setupPassportJWT = (): void => {
   passport.use(new JwtStrategy(jwtOptions, async (payload: JwtPayload, done: VerifiedCallback) => {
     try {
       // 嘗試使用 JWT 負載中的主題（用戶 ID）在資料庫中查找用戶
-      const user = await UserModel.findByPk(payload.sub);
+      const user = await UserModel.findByPk((payload as any).sub);
       // 如果用戶存在，身份驗證成功 - 返回用戶物件
       if (user) return done(null, user);
       // 如果未找到用戶，身份驗證失敗 - 返回 false

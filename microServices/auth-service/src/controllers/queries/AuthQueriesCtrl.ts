@@ -15,7 +15,7 @@ import {inject, injectable} from 'inversify'; // 引入 Inversify 的 DI 裝飾�
 import {NextFunction, Request, Response} from 'express'; // 引入 Express 的型別定義
 import {AuthQueriesSvc} from '../../services/queries/AuthQueriesSvc.js'; // 引入查詢服務介面/實作
 import {createLogger, logRequest} from '../../configs/loggerConfig.js'; // 引入 logger 設定與請求記錄 helper
-import {ResResult} from '@aiot/shared-packages'; // 引入標準回應封裝工具
+import {ResResult} from 'aiot-shared-packages'; // 引入標準回應封裝工具
 import {TYPES} from '../../container/types.js'; // 引入 DI container 的型別 key
 
 const logger = createLogger('AuthQueriesCtrl'); // 建立 logger 實例，標記為 AuthQueriesCtrl 模組

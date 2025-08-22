@@ -35,7 +35,7 @@ declare global {
   namespace Express {
     interface Request {
       gatewayUser?: ApiGatewayUserInfo;
-      user?: ApiGatewayUserInfo; // 保持向後兼容
+      user?: any; // 兼容所有用戶類型
     }
   }
 }
@@ -100,11 +100,12 @@ export class ApiGatewayHeadersMiddleware {
           }
         });
         
-        return res.status(401).json({
+        res.status(401).json({
           status: 401,
           message: 'Authentication required - missing user information',
           data: null
         });
+        return;
       }
 
   // 解析角色和權限（可能是逗號分隔的字符串或單一值）
@@ -163,36 +164,37 @@ export class ApiGatewayHeadersMiddleware {
             requiredPermission 
           });
           
-          return res.status(401).json({
+          res.status(401).json({
             status: 401,
             message: 'Authentication required',
             data: null
           });
+          return;
         }
 
         // 檢查是否有超級權限
-        if (user.permissions.includes('*')) {
+        if ((user as any).permissions.includes('*')) {
           logger.debug('Permission granted - superuser', {
-            userId: user.id,
+            userId: (user as any).id,
             requiredPermission
           });
           return next();
         }
 
         // 檢查特定權限
-        if (user.permissions.includes(requiredPermission)) {
+        if ((user as any).permissions.includes(requiredPermission)) {
           logger.debug('Permission granted', {
-            userId: user.id,
+            userId: (user as any).id,
             requiredPermission
           });
           return next();
         }
 
         logger.warn('Permission denied', {
-          userId: user.id,
-          username: user.username,
+          userId: (user as any).id,
+          username: (user as any).username,
           requiredPermission,
-          userPermissions: user.permissions
+          userPermissions: (user as any).permissions
         });
 
         res.status(403).json({
@@ -223,35 +225,36 @@ export class ApiGatewayHeadersMiddleware {
         const user = req.gatewayUser || req.user;
         
         if (!user) {
-          return res.status(401).json({
+          res.status(401).json({
             status: 401,
             message: 'Authentication required',
             data: null
           });
+          return;
         }
 
         // 檢查是否有超級權限
-        if (user.roles.includes('superadmin')) {
+        if ((user as any).roles.includes('superadmin')) {
           return next();
         }
 
         // 檢查是否有任一所需角色
-        const hasRequiredRole = rolesArray.some(role => user.roles.includes(role));
+        const hasRequiredRole = rolesArray.some(role => (user as any).roles.includes(role));
         
         if (hasRequiredRole) {
           logger.debug('Role check passed', {
-            userId: user.id,
+            userId: (user as any).id,
             requiredRoles: rolesArray,
-            userRoles: user.roles
+            userRoles: (user as any).roles
           });
           return next();
         }
 
         logger.warn('Role check failed', {
-          userId: user.id,
-          username: user.username,
+          userId: (user as any).id,
+          username: (user as any).username,
           requiredRoles: rolesArray,
-          userRoles: user.roles
+          userRoles: (user as any).roles
         });
 
         res.status(403).json({

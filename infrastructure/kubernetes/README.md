@@ -30,7 +30,6 @@ kubernetes/
 │   ├── drone-service.yaml
 │   ├── drone-websocket-service.yaml
 │   ├── general-service.yaml
-│   └── docs-service.yaml
 ├── deploy.sh            # 自動部署腳本
 └── README.md            # 本文件
 ```
