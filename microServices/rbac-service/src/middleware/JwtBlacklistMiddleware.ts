@@ -19,14 +19,14 @@ const logger = createLogger('JwtBlacklistMiddleware');
  * JWT 黑名單檢查中間件類別
  */
 export class JwtBlacklistMiddleware {
-    private static blacklistService: JwtBlacklistSvc;
+    private static blacklistService: JwtBlacklistService;
 
     /**
      * 初始化黑名單服務
      */
     static initialize(): void {
         if (!this.blacklistService) {
-            this.blacklistService = new JwtBlacklistSvc();
+            this.blacklistService = new JwtBlacklistService();
         }
     }
 
