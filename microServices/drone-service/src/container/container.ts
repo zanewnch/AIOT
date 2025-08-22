@@ -171,30 +171,34 @@ export function createContainer(): Container {
     // === 基礎設施服務 ===
     // 數據庫連接
     container.bind(TYPES.DatabaseConnection).toDynamicValue(() => {
-        const { createSequelizeInstance } = require('../configs/dbConfig.js');
-        return createSequelizeInstance();
+        // const { .* } = require('../configs/dbConfig.js');
+        // return createSequelizeInstance();
+        return null; // 暫時返回 null
     }).inSingletonScope();
 
     // RabbitMQ 管理器
     container.bind(TYPES.RabbitMQManager).toDynamicValue(() => {
-        const { RabbitMQManager } = require('../configs/rabbitmqConfig.js');
-        return new RabbitMQManager();
+        // const { .* } = require('../configs/rabbitmqConfig.js');
+        // return new RabbitMQManager();
+        return null; // 暫時返回 null
     }).inSingletonScope();
 
     // Consul 配置
     container.bind(TYPES.ConsulConfig).toDynamicValue(() => {
-        const { ConsulConfig } = require('../configs/consulConfig.js');
-        return new ConsulConfig();
+        // const { .* } = require('../configs/consulConfig.js');
+        // return new ConsulConfig();
+        return null; // 暫時返回 null
     }).inSingletonScope();
 
     // === 應用程式核心 ===
     // App 類 - 使用依賴注入
-    const { App } = require('../app.js');
-    container.bind(TYPES.App).to(App).inSingletonScope();
+    // 暫時註釋掉 App 綁定，避免 ES module require 錯誤
+    // const { App } = await import('../app.js');
+    // container.bind(TYPES.App).to(App).inSingletonScope();
 
     // DroneHttpServer 類 - HTTP 伺服器管理
-    const { DroneHttpServer } = require('../server.js');
-    container.bind(TYPES.DroneHttpServer).to(DroneHttpServer).inSingletonScope();
+    // const { .* } = require('../server.js');
+//     container.bind(TYPES.DroneHttpServer).to(DroneHttpServer).inSingletonScope();
 
     // WebSocket 服務已移至 drone-websocket-service
 

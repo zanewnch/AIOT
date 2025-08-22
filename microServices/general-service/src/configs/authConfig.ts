@@ -9,7 +9,13 @@ import passport from 'passport';
 // 從 passport-jwt 匯入 JWT 策略、JWT 提取工具和回調類型
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 // 從 shared packages 匯入 JWT 相關類型
-import { JwtPayload } from '../middlewares/AuthMiddleware.js';
+// JWT Payload 類型定義
+interface JwtPayload {
+  sub: string;
+  iat: number;
+  exp: number;
+  [key: string]: any;
+}
 
 // 暫時移除不存在的 UserModel import
 // TODO: 等 RBAC 模組實際實現後再加入

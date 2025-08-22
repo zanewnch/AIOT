@@ -21,9 +21,9 @@ import { UserPreferenceCommandsSvc } from '../services/commands/UserPreferenceCo
 import { UserPreferenceQueriesSvc } from '../services/queries/UserPreferenceQueriesSvc.js';
 
 // Controller 層 imports
-import { UserPreferenceCommands } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
-import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
-import { DocsController } from '../controllers/queries/DocsQueriesCtrl.js';
+import { UserPreferenceCommandsCtrl } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
+import { UserPreferenceQueriesCtrl } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
+import { DocsQueriesCtrl } from '../controllers/queries/DocsQueriesCtrl.js';
 
 // Routes 層 imports
 import { UserPreferenceRoutes } from '../routes/userPreferenceRoutes.js';
@@ -58,20 +58,20 @@ export function createContainer(): Container {
         .inSingletonScope();
 
     // ===== Controller 層註冊 =====
-    container.bind<UserPreferenceCommands>(TYPES.UserPreferenceCommandsCtrl)
-        .to(UserPreferenceCommands)
+    container.bind<UserPreferenceCommandsCtrl>(TYPES.UserPreferenceCommandsCtrl)
+        .to(UserPreferenceCommandsCtrl)
         .inSingletonScope();
 
-    container.bind<UserPreferenceQueries>(TYPES.UserPreferenceQueriesCtrl)
-        .to(UserPreferenceQueries)
+    container.bind<UserPreferenceQueriesCtrl>(TYPES.UserPreferenceQueriesCtrl)
+        .to(UserPreferenceQueriesCtrl)
         .inSingletonScope();
 
     /**
      * 動態文檔 Controller
      * 處理微服務架構文檔展示（EJS 渲染、服務狀態監控）
      */
-    container.bind<DocsController>(TYPES.DocsController)
-        .to(DocsController)
+    container.bind<DocsQueriesCtrl>(TYPES.DocsController)
+        .to(DocsQueriesCtrl)
         .inSingletonScope();
 
     // ===== Routes 層註冊 =====

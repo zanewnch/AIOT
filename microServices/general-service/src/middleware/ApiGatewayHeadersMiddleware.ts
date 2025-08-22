@@ -30,12 +30,10 @@ export interface ApiGatewayUserInfo {
 /**
  * 擴展 Express Request 類型以包含 API Gateway 用戶信息
  */
-declare global {
-    namespace Express {
-        interface Request {
-            gatewayUser?: ApiGatewayUserInfo;
-            user?: ApiGatewayUserInfo; // 保持向後兼容
-        }
+declare module 'express-serve-static-core' {
+    interface Request {
+        gatewayUser?: ApiGatewayUserInfo;
+        user?: any; // 保持向後兼容，允許任何用戶類型
     }
 }
 
@@ -60,22 +58,24 @@ export class ApiGatewayHeadersMiddleware {
             
             if (!consumerUsername || !consumerId) {
                 logger.warn(`JWT authentication failed - missing API Gateway consumer headers for path: ${req.path}`);
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication required - JWT verification failed',
                     error: 'JWT_AUTH_FAILED'
                 });
+        return;
             }
 
             // 從 Cookie 中獲取 JWT 並解析用戶信息
             const authToken = req.cookies?.auth_token;
             if (!authToken) {
                 logger.warn(`Authentication token not found in cookies for path: ${req.path}`);
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication token not found',
                     error: 'TOKEN_NOT_FOUND'
                 });
+        return;
             }
 
             // 解析 JWT payload (不驗證簽名，因為 API Gateway 已經驗證過了)
@@ -103,11 +103,12 @@ export class ApiGatewayHeadersMiddleware {
 
         } catch (error) {
             logger.error('JWT user extraction error:', error);
-            return res.status(401).json({
+            res.status(401).json({
                 status: 401,
                 message: 'Invalid authentication token',
                 error: 'INVALID_TOKEN'
             });
+        return;
         }
     };
 
@@ -120,10 +121,11 @@ export class ApiGatewayHeadersMiddleware {
             const userInfo = req.gatewayUser;
 
             if (!userInfo) {
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication required'
                 });
+        return;
             }
 
             if (userInfo.roles.includes('superadmin') || userInfo.roles.includes(requiredRole)) {
@@ -131,11 +133,12 @@ export class ApiGatewayHeadersMiddleware {
             }
 
             logger.warn(`Role check failed for user ${userInfo.username}: required ${requiredRole}`);
-            return res.status(403).json({
+            res.status(403).json({
                 status: 403,
                 message: 'Insufficient role',
                 required: requiredRole
             });
+        return;
         };
     };
 

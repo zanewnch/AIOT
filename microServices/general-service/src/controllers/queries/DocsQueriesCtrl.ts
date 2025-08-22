@@ -16,7 +16,7 @@ import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { ControllerResult } from '../../utils/ControllerResult.js';
 import { TYPES } from '../../container/types.js';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
+import { logger } from "../../patterns/LoggerDecorator.js";
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
@@ -34,7 +34,7 @@ import path from 'path';
  * @since 1.0.0
  */
 @injectable()
-export class DocsCtrl {
+export class DocsQueriesCtrl {
     
     private readonly microservices = [
         { name: 'general', url: 'http://aiot-fesetting:8000', description: '前端設定管理服務' },

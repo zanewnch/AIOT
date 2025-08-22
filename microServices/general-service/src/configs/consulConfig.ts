@@ -50,7 +50,7 @@ export class ConsulConfig {
             await axios.put(`${this.consulUrl}/v1/agent/service/register`, this.serviceConfig);
             console.log(`✅ Auth service registered to Consul: ${this.serviceConfig.name}@${this.serviceConfig.address}:${this.serviceConfig.port}`);
         } catch (error) {
-            console.error('❌ Failed to register auth service to Consul:', error.message);
+            console.error('❌ Failed to register auth service to Consul:', (error as any).message);
             // 不要因為 Consul 註冊失敗而停止服務
         }
     }
@@ -63,7 +63,7 @@ export class ConsulConfig {
             await axios.put(`${this.consulUrl}/v1/agent/service/deregister/${this.serviceConfig.id}`);
             console.log(`✅ Auth service deregistered from Consul: ${this.serviceConfig.id}`);
         } catch (error) {
-            console.error('❌ Failed to deregister auth service from Consul:', error.message);
+            console.error('❌ Failed to deregister auth service from Consul:', (error as any).message);
         }
     }
 
@@ -75,7 +75,7 @@ export class ConsulConfig {
             const response = await axios.get(`${this.consulUrl}/v1/health/service/${this.serviceConfig.name}`);
             return response.data.length > 0;
         } catch (error) {
-            console.error('❌ Consul health check failed:', error.message);
+            console.error('❌ Consul health check failed:', (error as any).message);
             return false;
         }
     }

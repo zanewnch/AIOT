@@ -31,12 +31,10 @@ export interface ApiGatewayUserInfo {
 /**
  * 擴展 Express Request 介面以包含 API Gateway 用戶信息
  */
-declare global {
-  namespace Express {
-    interface Request {
-      gatewayUser?: ApiGatewayUserInfo;
-      user?: ApiGatewayUserInfo; // 保持向後兼容
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    gatewayUser?: ApiGatewayUserInfo;
+    user?: any; // 兼容所有用戶類型
   }
 }
 
@@ -163,28 +161,28 @@ export class ApiGatewayHeadersMiddleware {
         }
 
         // 檢查是否有超級權限
-        if (user.permissions.includes('*')) {
+        if ((user as any).permissions.includes('*')) {
           logger.debug('Permission granted - superuser', {
-            userId: user.id,
+            userId: (user as any).id,
             requiredPermission
           });
           return next();
         }
 
         // 檢查特定權限
-        if (user.permissions.includes(requiredPermission)) {
+        if ((user as any).permissions.includes(requiredPermission)) {
           logger.debug('Permission granted', {
-            userId: user.id,
+            userId: (user as any).id,
             requiredPermission
           });
           return next();
         }
 
         logger.warn('Permission denied', {
-          userId: user.id,
-          username: user.username,
+          userId: (user as any).id,
+          username: (user as any).username,
           requiredPermission,
-          userPermissions: user.permissions
+          userPermissions: (user as any).permissions
         });
 
         res.status(403).json({
@@ -223,27 +221,27 @@ export class ApiGatewayHeadersMiddleware {
         }
 
         // 檢查是否有超級權限
-        if (user.roles.includes('superadmin')) {
+        if ((user as any).roles.includes('superadmin')) {
           return next();
         }
 
         // 檢查是否有任一所需角色
-        const hasRequiredRole = rolesArray.some(role => user.roles.includes(role));
+        const hasRequiredRole = rolesArray.some(role => (user as any).roles.includes(role));
         
         if (hasRequiredRole) {
           logger.debug('Role check passed', {
-            userId: user.id,
+            userId: (user as any).id,
             requiredRoles: rolesArray,
-            userRoles: user.roles
+            userRoles: (user as any).roles
           });
           return next();
         }
 
         logger.warn('Role check failed', {
-          userId: user.id,
-          username: user.username,
+          userId: (user as any).id,
+          username: (user as any).username,
           requiredRoles: rolesArray,
-          userRoles: user.roles
+          userRoles: (user as any).roles
         });
 
         res.status(403).json({

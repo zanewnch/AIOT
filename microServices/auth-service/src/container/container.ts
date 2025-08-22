@@ -25,8 +25,8 @@ import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
 import { AuthGrpcServer } from '../grpc/authGrpcServer.js';
 import { AuthRoutes } from '../routes/authRoutes.js';
 
-// JWT 安全服務
-import { JwtBlacklistService } from 'aiot-shared-packages';
+// JWT 安全服務 - 已移除，由 API Gateway 統一處理
+// import { JwtBlacklistService } from 'aiot-shared-packages';
 
 /**
  * 創建並配置 Auth 服務的 IoC 容器

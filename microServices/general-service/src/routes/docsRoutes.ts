@@ -18,7 +18,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router } from 'express';
 import { TYPES } from '../container/types.js';
-import { DocsController } from '../controllers/queries/DocsQueriesCtrl.js';
+import { DocsQueriesCtrl } from '../controllers/queries/DocsQueriesCtrl.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**
@@ -33,7 +33,7 @@ export class DocsRoutes {
 
     constructor(
         @inject(TYPES.DocsController) 
-        private readonly docsController: DocsController
+        private readonly docsController: DocsQueriesCtrl
     ) {
         this.router = Router();
         this.setupRoutes();

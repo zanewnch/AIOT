@@ -15,8 +15,8 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router } from 'express';
 import { TYPES } from '../container/types.js';
-import { UserPreferenceCommands } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
-import { UserPreferenceQueries } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
+import { UserPreferenceCommandsCtrl } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
+import { UserPreferenceQueriesCtrl } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
 
@@ -32,9 +32,9 @@ export class UserPreferenceRoutes {
 
     constructor(
         @inject(TYPES.UserPreferenceCommandsCtrl) 
-        private readonly commandsController: UserPreferenceCommands,
+        private readonly commandsController: UserPreferenceCommandsCtrl,
         @inject(TYPES.UserPreferenceQueriesCtrl) 
-        private readonly queriesController: UserPreferenceQueries
+        private readonly queriesController: UserPreferenceQueriesCtrl
     ) {
         this.router = Router();
         this.setupRoutes();

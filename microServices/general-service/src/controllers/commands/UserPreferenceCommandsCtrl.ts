@@ -40,7 +40,7 @@ export class UserPreferenceCommandsCtrl {
      * 創建新的用戶偏好設定
      * @route POST /api/user-preferences
      */
-    createUserPreference = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    createUserPreference = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const preferenceData: UserPreferenceCreationAttributes = req.body;
 
@@ -59,13 +59,13 @@ export class UserPreferenceCommandsCtrl {
         } catch (error) {
             next(error);
         }
-    }, 'createUserPreference')
+    }
 
     /**
      * 批量創建用戶偏好設定
      * @route POST /api/user-preferences/bulk
      */
-    bulkCreateUserPreferences = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    bulkCreateUserPreferences = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const preferencesData: UserPreferenceCreationAttributes[] = req.body;
 
@@ -98,8 +98,8 @@ export class UserPreferenceCommandsCtrl {
         } catch (error) {
             next(error);
         }
-    }, 'bulkCreateUserPreferences')
 
+    }
     /**
      * 根據 ID 更新用戶偏好設定
      * @route PUT /api/user-preferences/:id

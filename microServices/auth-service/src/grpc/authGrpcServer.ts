@@ -1,262 +1,30 @@
-/**
- * @fileoverview Auth gRPC 服務器實作
- * 
- * 此文件實作 Auth 服務的 gRPC 服務器，提供：
- * - 認證相關 gRPC 端點
- * - 登入/登出功能
- * - 健康檢查
- * 
- * @module gRPC/AuthGrpcServer
- * @version 1.0.0
- * @author AIOT Team
- */
-
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import * as grpc from '@grpc/grpc-js';
-import * as protoLoader from '@grpc/proto-loader';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../container/types.js';
-import { AuthCommandsCtrl } from '../controllers/commands/AuthCommandsCtrl.js';
-import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-/**
- * Auth gRPC 服務器類別
- */
 @injectable()
 export class AuthGrpcServer {
   private server: grpc.Server;
+  private readonly port: number;
 
-  constructor(
-    @inject(TYPES.AuthCommandsCtrl) private authCommands: AuthCommandsCtrl,
-    @inject(TYPES.AuthQueriesCtrl) private authQueries: AuthQueriesCtrl
-  ) {
+  constructor() {
+    this.port = Number(process.env.GRPC_PORT) || 50055;
     this.server = new grpc.Server({
       'grpc.keepalive_time_ms': 30000,
       'grpc.keepalive_timeout_ms': 5000,
       'grpc.keepalive_permit_without_calls': 1,
       'grpc.http2.max_pings_without_data': 0,
       'grpc.http2.min_time_between_pings_ms': 10000,
-      'grpc.http2.min_ping_interval_without_data_ms': 300000,
-      'grpc.max_connection_idle_ms': 300000,
-      'grpc.max_connection_age_ms': 30000,
-      'grpc.max_connection_age_grace_ms': 5000
     });
     
-    this.loadProtoAndAddService();
+    console.log('⚠️ Auth gRPC service not implemented yet, only HTTP endpoints available');
   }
 
-  /**
-   * 載入 proto 文件並添加服務
-   */
-  private loadProtoAndAddService(): void {
-    const PROTO_PATH = path.join(__dirname, '../../proto/rbac.proto');
-    const HEALTH_PROTO_PATH = path.join(__dirname, '../../proto/health.proto');
-    const PROTO_DIR = path.join(__dirname, '../../proto');
-    
-    const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-      keepCase: true,
-      longs: String,
-      enums: String,
-      defaults: true,
-      oneofs: true,
-      includeDirs: [PROTO_DIR],
-    });
-
-    // 載入健康檢查 proto
-    const healthPackageDefinition = protoLoader.loadSync(HEALTH_PROTO_PATH, {
-      keepCase: true,
-      longs: String,
-      enums: String,
-      defaults: true,
-      oneofs: true,
-      includeDirs: [PROTO_DIR],
-    });
-
-    const rbacProto = grpc.loadPackageDefinition(packageDefinition) as any;
-    const healthProto = grpc.loadPackageDefinition(healthPackageDefinition) as any;
-
-    this.server.addService(rbacProto.rbac.RbacService.service, {
-      // 認證方法
-      CheckAuth: this.checkAuth,
-      Login: this.login,
-      Logout: this.logout,
-    });
-
-    // 添加健康檢查服務
-    this.server.addService(healthProto.grpc.health.v1.Health.service, {
-      Check: this.healthCheck,
-      Watch: this.healthWatch,
-    });
+  async start(): Promise<void> {
+    console.log('⚠️ Auth gRPC server skipped - using HTTP only');
   }
 
-  /**
-   * 將 Express 控制器轉換為 gRPC 回調格式
-   */
-  private async executeControllerMethod(
-    controllerMethod: (req: any, res: any) => Promise<void>,
-    request: any,
-    callback: grpc.sendUnaryData<any>
-  ): Promise<void> {
-    try {
-      // 模擬 Express req/res 物件
-      const mockReq = {
-        body: request,
-        params: request,
-        query: request,
-      };
-
-      let responseData: any;
-      const mockRes = {
-        json: (data: any) => {
-          responseData = data;
-        },
-        status: (code: number) => ({
-          json: (data: any) => {
-            responseData = { ...data, statusCode: code };
-          }
-        })
-      };
-
-      await controllerMethod(mockReq, mockRes);
-      
-      // 轉換為 gRPC 格式回應
-      callback(null, {
-        success: responseData?.status === 200,
-        message: responseData?.message || '',
-        ...responseData?.data,
-      });
-    } catch (error) {
-      console.error('gRPC method execution error:', error);
-      callback({
-        code: grpc.status.INTERNAL,
-        message: 'Internal server error',
-      });
-    }
-  }
-
-
-  /**
-   * 啟動 gRPC 服務器
-   */
-  public start(port: number = 50051): void {
-    this.server.bindAsync(
-      `0.0.0.0:${port}`,
-      grpc.ServerCredentials.createInsecure(),
-      (error, boundPort) => {
-        if (error) {
-          console.error('Failed to start gRPC server:', error);
-          return;
-        }
-        
-        console.log(`Auth gRPC server running on port ${boundPort}`);
-        this.server.start();
-      }
-    );
-  }
-
-  /**
-   * 健康檢查方法
-   */
-  private healthCheck = (call: any, callback: grpc.sendUnaryData<any>): void => {
-    callback(null, { status: 1 }); // 1 = SERVING
-  }
-
-  /**
-   * 健康檢查監聽方法
-   */
-  private healthWatch = (call: any): void => {
-    call.write({ status: 1 }); // 1 = SERVING
-  }
-
-  // ========== 認證方法 ==========
-  private checkAuth = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> => {
-    try {
-      // 簡化實現：直接檢查認證狀態
-      const response = {
-        user: {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        authenticated: true,
-        message: 'Authentication valid',
-        roles: ['admin'],
-        permissions: ['all']
-      };
-      
-      callback(null, response);
-    } catch (error) {
-      callback({
-        code: grpc.status.INTERNAL,
-        message: 'Authentication check failed',
-      });
-    }
-  }
-
-  private login = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> => {
-    try {
-      const { username, password } = call.request;
-      
-      // 簡化實現：檢查管理員帳號
-      if (username === 'admin' && password === 'admin') {
-        const response = {
-          user: {
-            id: 1,
-            username: 'admin',
-            email: 'admin@example.com',
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          success: true,
-          message: 'Login successful',
-          token: 'mock-jwt-token-' + Date.now()
-        };
-        
-        callback(null, response);
-      } else {
-        callback({
-          code: grpc.status.UNAUTHENTICATED,
-          message: 'Invalid username or password',
-        });
-      }
-    } catch (error) {
-      callback({
-        code: grpc.status.INTERNAL,
-        message: 'Login failed',
-      });
-    }
-  }
-
-  private logout = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> => {
-    try {
-      const response = {
-        success: true,
-        message: 'Logout successful'
-      };
-      
-      callback(null, response);
-    } catch (error) {
-      callback({
-        code: grpc.status.INTERNAL,
-        message: 'Logout failed',
-      });
-    }
-  }
-
-  /**
-   * 停止 gRPC 服務器
-   */
-  public stop(): void {
-    this.server.tryShutdown(() => {
-      console.log('Auth gRPC server stopped');
-    });
+  async shutdown(): Promise<void> {
+    console.log('Auth gRPC server shutdown (not started)');
   }
 }

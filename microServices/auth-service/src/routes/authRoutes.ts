@@ -153,7 +153,6 @@ export { AuthRoutes };
 
 /**
  * 匯出認證路由實例（透過容器獲取）
+ * 注意：為避免循環依賴，不在此處直接獲取容器實例
+ * 請在 app.ts 中通過容器獲取 AuthRoutes 實例
  */
-import { container } from '../container/container.js';
-
-export const router = container.get<AuthRoutes>(TYPES.AuthRoutes).getRouter();

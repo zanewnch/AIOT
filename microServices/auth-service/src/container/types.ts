@@ -454,7 +454,6 @@ export const TYPES = {
   /**
    * JWT 黑名單服務類型
    */
-  JwtBlacklistService: Symbol.for('JwtBlacklistService'),
 
   // ===== gRPC 和路由服務 =====
   /**

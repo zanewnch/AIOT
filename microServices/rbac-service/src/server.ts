@@ -46,7 +46,7 @@ class HttpServer {
      * @private
      * @type {http.Server}
      */
-    private httpServer: http.Server;
+    private httpServer!: http.Server;
 
     /**
      * Sequelize 資料庫實例
@@ -97,7 +97,7 @@ class HttpServer {
             console.log('✅ HTTP application initialized');
 
             // 啟動 HTTP 服務器（API Gateway 通訊）
-            const httpPort = process.env.HTTP_PORT || 3051;
+            const httpPort = Number(process.env.HTTP_PORT) || 3051;
             this.httpServer = http.createServer(this.httpApp.app);
             this.httpServer.listen(httpPort, '0.0.0.0', () => {
                 console.log(`🌐 RBAC HTTP server ready on port ${httpPort} (API Gateway communication)`);
