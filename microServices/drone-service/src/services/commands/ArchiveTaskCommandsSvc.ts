@@ -56,9 +56,9 @@ export class ArchiveTaskCommandsSvc {
     ) {
         // 創建組合repository，支持完整的IArchiveTaskRepository接口
         this.repository = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
+            Object.create(Object.getPrototypeOf(this.commandsRepo)),
+            this.commandsRepo,
+            this.queriesRepo
         ) as IArchiveTaskRepo;
     }
 

@@ -55,10 +55,10 @@ export class ArchiveTaskQueriesSvc {
         this.commandsRepo = commandsRepo;
         
         // 創建組合repository
-        this.repository = Object.assign(
-            Object.create(Object.getPrototypeOf(this.queriesRepository)),
-            this.queriesRepository,
-            this.commandsRepository
+        this.repo = Object.assign(
+            Object.create(Object.getPrototypeOf(this.queriesRepo)),
+            this.queriesRepo,
+            this.commandsRepo
         ) as IArchiveTaskRepo;
     }
 
@@ -71,7 +71,7 @@ export class ArchiveTaskQueriesSvc {
     getTaskById = async (id: number): Promise<ArchiveTaskModel | null> => {
         try {
             this.logger.debug('根據 ID 獲取歸檔任務', { taskId: id });
-            return await this.repository.findById(id);
+            return await this.repo.findById(id);
         } catch (error) {
             this.logger.error('獲取歸檔任務失敗', { taskId: id, error: (error as Error).message });
             throw error;
@@ -87,7 +87,7 @@ export class ArchiveTaskQueriesSvc {
     getAllTasks = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
         try {
             this.logger.debug('獲取所有歸檔任務', { options });
-            return await this.repository.findAll(options);
+            return await this.repo.findAll(options);
         } catch (error) {
             this.logger.error('獲取歸檔任務列表失敗', { options, error: (error as Error).message });
             throw error;
@@ -104,7 +104,7 @@ export class ArchiveTaskQueriesSvc {
     getTasksByStatus = async (status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> => {
         try {
             this.logger.debug('根據狀態獲取歸檔任務', { status, limit });
-            return await this.repository.findByStatus(status, limit);
+            return await this.repo.findByStatus(status, limit);
         } catch (error) {
             this.logger.error('根據狀態獲取歸檔任務失敗', {
                 status,
@@ -124,7 +124,7 @@ export class ArchiveTaskQueriesSvc {
     getTasksByBatchId = async (batchId: string): Promise<ArchiveTaskModel[]> => {
         try {
             this.logger.debug('根據批次 ID 獲取歸檔任務', { batchId });
-            return await this.repository.findByBatchId(batchId);
+            return await this.repo.findByBatchId(batchId);
         } catch (error) {
             this.logger.error('根據批次 ID 獲取歸檔任務失敗', {
                 batchId,
@@ -161,17 +161,17 @@ export class ArchiveTaskQueriesSvc {
                 commandTasks,
                 statusTasks
             ] = await Promise.all([
-                this.repository.count(),
-                this.repository.count({ status: ArchiveTaskStatus.PENDING }),
-                this.repository.count({ status: ArchiveTaskStatus.RUNNING }),
-                this.repository.count({ status: ArchiveTaskStatus.COMPLETED }),
-                this.repository.count({ status: ArchiveTaskStatus.FAILED }),
-                this.repository.count({ dateRangeStart: todayStart }),
-                this.repository.count({ dateRangeStart: weekStart }),
-                this.repository.count({ dateRangeStart: monthStart }),
-                this.repository.count({ jobType: 'POSITIONS' as any }),
-                this.repository.count({ jobType: 'COMMANDS' as any }),
-                this.repository.count({ jobType: 'STATUS' as any })
+                this.repo.count(),
+                this.repo.count({ status: ArchiveTaskStatus.PENDING }),
+                this.repo.count({ status: ArchiveTaskStatus.RUNNING }),
+                this.repo.count({ status: ArchiveTaskStatus.COMPLETED }),
+                this.repo.count({ status: ArchiveTaskStatus.FAILED }),
+                this.repo.count({ dateRangeStart: todayStart }),
+                this.repo.count({ dateRangeStart: weekStart }),
+                this.repo.count({ dateRangeStart: monthStart }),
+                this.repo.count({ jobType: 'POSITIONS' as any }),
+                this.repo.count({ jobType: 'COMMANDS' as any }),
+                this.repo.count({ jobType: 'STATUS' as any })
             ]);
 
             const statistics: ArchiveTaskStatistics = {

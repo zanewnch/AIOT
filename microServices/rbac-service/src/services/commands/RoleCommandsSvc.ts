@@ -29,8 +29,7 @@ import { TYPES } from '../../container/types.js';
 import { RoleCommandsRepo } from '../../repo/commands/RoleCommandsRepo.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
-import { BaseRedisService } from 'aiot-shared-packages';
-import { getRedisClient } from 'aiot-shared-packages';
+import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { RoleQueriesSvc } from '../queries/RoleQueriesSvc.js';
@@ -51,7 +50,7 @@ const logger = createLogger('RoleCommandsSvc');
  * @since 1.0.0
  */
 @injectable()
-export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsService {
+export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsService
     private static readonly ROLE_CACHE_PREFIX = 'role:';
     private static readonly ALL_ROLES_KEY = 'roles:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
@@ -61,7 +60,6 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
         @inject(TYPES.RoleCommandsRepo) private readonly roleCommandsRepo: RoleCommandsRepo,
         @inject(TYPES.RoleQueriesRepo) private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
-        // 初始化 Redis 服務
         super({
             serviceName: 'RoleCommandsSvc',
             defaultTTL: RoleCommandsSvc.DEFAULT_CACHE_TTL,
@@ -71,7 +69,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
     }
 
     /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
+     * Redis 客戶端工廠函式
      */
     protected getRedisClientFactory() {
         return getRedisClient;
@@ -110,19 +108,13 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
     private cacheAllRoles = async (roles: RoleDTO[]): Promise<void> => {
         logger.debug('Caching all roles in Redis');
         
-        // 快取所有角色列表
         await this.safeRedisWrite(
             async (redis: RedisClientType) => {
-                await redis.setEx(
-                    RoleCommandsSvc.ALL_ROLES_KEY,
-                    RoleCommandsSvc.DEFAULT_CACHE_TTL,
-                    JSON.stringify(roles)
-                );
+                await redis.setEx(RoleCommandsSvc.ALL_ROLES_KEY, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(roles));
             },
-            'cacheAllRoles:list'
+            'cacheAllRoles'
         );
 
-        // 同時快取每個單獨的角色
         const individualCachePromises = roles.map(role => this.cacheRole(role));
         await Promise.all(individualCachePromises);
         
@@ -200,9 +192,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
 
             const roleDTO = this.modelToDTO(role);
 
-            // 更新快取
             await this.cacheRole(roleDTO);
-            // 清除所有角色列表快取，強制下次重新載入
             await this.clearRoleManagementCache();
 
             logger.info(`Role created successfully: ${roleData.name} (ID: ${roleDTO.id})`);
@@ -260,9 +250,7 @@ export class RoleCommandsSvc extends BaseRedisService implements IRoleCommandsSe
 
             const roleDTO = this.modelToDTO(updatedRole);
 
-            // 更新快取
             await this.cacheRole(roleDTO);
-            // 清除所有角色列表快取
             await this.clearRoleManagementCache();
 
             logger.info(`Role updated successfully: ID ${roleId}`);

@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import type {IRoleCommandsService} from '../../services/commands/RoleCommandsSvc.js';
+import type {IRoleCommandsService} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';

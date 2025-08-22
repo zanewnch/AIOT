@@ -9,7 +9,7 @@ import { Router, Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ResResult } from '../utils/ResResult.js';
-import { loggerConfig } from '../configs/loggerConfig.js';
+import logger from '../configs/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -117,7 +117,7 @@ router.get('/docs', (req: Request, res: Response) => {
         res.render('rbac-docs', serviceInfo);
 
     } catch (error) {
-        loggerConfig.error('文檔頁面生成失敗:', error);
+        logger.error('文檔頁面生成失敗:', error);
         return ResResult.serverError(res, '文檔載入失敗');
     }
 });
@@ -161,7 +161,7 @@ router.get('/typedoc', (req: Request, res: Response) => {
         }
 
     } catch (error) {
-        loggerConfig.error('TypeDoc 文檔載入失敗:', error);
+        logger.error('TypeDoc 文檔載入失敗:', error);
         return ResResult.serverError(res, 'TypeDoc 文檔載入失敗');
     }
 });

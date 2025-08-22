@@ -20,6 +20,8 @@ import { DroneGrpcServer } from './grpc/droneGrpcServer.js'; // 導入 gRPC 服�
 import { App } from './app.js'; // 導入 HTTP Express 應用程式
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
 import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 配置
+import { ContainerUtils } from './container/container.js'; // IoC 容器
+import { TYPES } from './container/types.js'; // 依賴類型定義
 import http from 'http';
 
 /**
@@ -76,7 +78,7 @@ class Server {
      */
     constructor() {
         this.grpcServer = new DroneGrpcServer();
-        this.httpApp = new App();
+        this.httpApp = ContainerUtils.get<App>(TYPES.App); // 使用 IoC 容器獲取 App 實例
         this.sequelize = createSequelizeInstance();
         this.rabbitMQManager = new RabbitMQManager();
         this.setupShutdownHandlers();

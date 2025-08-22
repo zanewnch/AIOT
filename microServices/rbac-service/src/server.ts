@@ -19,7 +19,7 @@
 import 'dotenv/config'; // 載入環境變數配置檔案（.env）
 import { App } from './app.js'; // 導入 HTTP Express 應用程式
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
+// import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
 import http from 'http';
 
 /**

@@ -156,3 +156,10 @@ export { AuthRoutes };
  * 注意：為避免循環依賴，不在此處直接獲取容器實例
  * 請在 app.ts 中通過容器獲取 AuthRoutes 實例
  */
+
+// 為了與 routes/index.ts 兼容，導出一個臨時 router
+import { Router } from 'express';
+export const router = Router();
+router.get('/temp', (req, res) => {
+  res.json({ message: 'Auth routes - use container to get AuthRoutes instance' });
+});

@@ -28,8 +28,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import type { RoleModel } from '../../models/RoleModel.js';
-import { BaseRedisService } from 'aiot-shared-packages';
-import { getRedisClient } from 'aiot-shared-packages';
+// // import { BaseRedisService } from 'aiot-shared-packages'; // 暫時停用
+// import { getRedisClient } from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationParams, PaginatedResult, PaginationUtils, RoleDTO, IRoleQueriesService } from '../../types/index.js';
@@ -48,28 +48,22 @@ const logger = createLogger('RoleQueriesSvc');
  * @since 1.0.0
  */
 @injectable()
-export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesService {
+export class RoleQueriesSvc { // extends BaseRedisService implements IRoleQueriesService {
     private static readonly ROLE_CACHE_PREFIX = 'role:';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
         @inject(TYPES.RoleQueriesRepo) private readonly roleRepo: RoleQueriesRepo
     ) {
-        // 初始化 BaseRedisService
-        super({
-            serviceName: 'RoleQueriesSvc',
-            defaultTTL: RoleQueriesSvc.DEFAULT_CACHE_TTL,
-            enableDebugLogs: false,
-            logger: logger
-        });
+        // Redis 功能暫時停用
     }
 
     /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
+     * Redis 客戶端工廠函式（暫時停用）
      */
-    protected getRedisClientFactory() {
-        return getRedisClient;
-    }
+    // protected getRedisClientFactory() {
+    //     return getRedisClient;
+    // }
 
     /**
      * 產生角色快取鍵值
@@ -104,19 +98,8 @@ export class RoleQueriesSvc extends BaseRedisService implements IRoleQueriesServ
     private getCachedRole = async (roleId: number): Promise<RoleDTO | null> => {
         const key = this.getRoleCacheKey(roleId);
         
-        return await this.safeRedisOperation(
-            async (redis: RedisClientType) => {
-                logger.debug(`Checking Redis cache for role ID: ${roleId}`);
-                const cachedData = await redis.get(key);
-                if (cachedData) {
-                    logger.info(`Role ID: ${roleId} loaded from Redis cache`);
-                    return JSON.parse(cachedData) as RoleDTO;
-                }
-                return null;
-            },
-            `getCachedRole(${roleId})`,
-            null
-        );
+        // Redis 功能暫時停用
+        return null;
     }
 
     // ==================== 公開查詢方法 ====================

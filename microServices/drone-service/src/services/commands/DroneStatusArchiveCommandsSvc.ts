@@ -51,9 +51,9 @@ export class DroneStatusArchiveCommandsSvc {
         
         // 創建組合repository
         this.archiveRepo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
+            Object.create(Object.getPrototypeOf(this.commandsRepo)),
+            this.commandsRepo,
+            this.queriesRepo
         ) as IDroneStatusArchiveRepo;
         
         this.queryService = queryService;

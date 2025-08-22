@@ -18,7 +18,7 @@
 import 'dotenv/config'; // 載入環境變數配置檔案（.env）
 import { RbacGrpcServer } from './grpc/rbacGrpcServer.js'; // 導入 gRPC 服務器
 import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連線配置
-import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
+// import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
 
 /**
  * gRPC 伺服器類別
@@ -79,9 +79,9 @@ class GrpcServer {
             await this.sequelize.sync();
             console.log('✅ Database synced (gRPC server)');
 
-            // 連線 Redis
-            await redisConfig.connect();
-            console.log('✅ Redis connected (gRPC server)');
+            // Redis 功能暫時停用
+            // await redisConfig.connect();
+            // console.log('✅ Redis connected (gRPC server)');
 
             // 啟動 gRPC 服務器（微服務間通訊）
             const grpcPort = process.env.GRPC_PORT || 50051;
@@ -103,9 +103,9 @@ class GrpcServer {
             console.log('🔗 Closing gRPC server...');
             this.grpcServer.stop();
 
-            // 關閉 Redis 連線
-            console.log('🔴 Closing Redis connection...');
-            await redisConfig.disconnect();
+            // Redis 功能暫時停用
+            // console.log('🔴 Closing Redis connection...');
+            // await redisConfig.disconnect();
 
             // 關閉資料庫連線
             console.log('🗄️ Closing database connection...');

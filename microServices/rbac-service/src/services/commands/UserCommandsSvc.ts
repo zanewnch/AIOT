@@ -36,8 +36,7 @@ import { TYPES } from '../../container/types.js';
 import { UserCommandsRepo } from '../../repo/commands/UserCommandsRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
-import { BaseRedisService } from 'aiot-shared-packages';
-import { getRedisClient } from 'aiot-shared-packages';
+import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserQueriesSvc } from '../queries/UserQueriesSvc.js';
@@ -65,7 +64,6 @@ export class UserCommandsSvc extends BaseRedisService {
         @inject(TYPES.UserCommandsRepo) private readonly userCommandsRepo: UserCommandsRepo,
         @inject(TYPES.UserQueriesSvc) private readonly userQueriesSvc: UserQueriesSvc
     ) {
-        // 初始化 Redis 服務
         super({
             serviceName: 'UserCommandsSvc',
             defaultTTL: UserCommandsSvc.DEFAULT_CACHE_TTL,
@@ -80,7 +78,6 @@ export class UserCommandsSvc extends BaseRedisService {
     protected getRedisClientFactory() {
         return getRedisClient;
     }
-
 
     /**
      * 產生使用者快取鍵值
@@ -228,7 +225,7 @@ export class UserCommandsSvc extends BaseRedisService {
 
             const userDTO = this.modelToDTO(user);
 
-            // 更新快取
+            // 更新快取 (暫時停用)
             await this.cacheUser(userDTO);
             // 清除所有使用者列表快取，強制下次重新載入
             await this.clearUserManagementCache();

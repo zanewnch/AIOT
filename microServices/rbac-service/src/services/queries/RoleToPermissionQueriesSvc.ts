@@ -42,9 +42,7 @@ import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.
 import { RoleModel } from '../../models/RoleModel.js';
 import { PermissionModel } from '../../models/PermissionModel.js';
 // 匯入 BaseRedisService 基礎服務
-import { BaseRedisService } from 'aiot-shared-packages';
-// 匯入 Redis 客戶端配置，用於快取管理
-import { getRedisClient } from 'aiot-shared-packages';
+import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 // 匯入日誌記錄器
@@ -86,7 +84,6 @@ export class RoleToPermissionQueriesSvc extends BaseRedisService implements IRol
         @inject(TYPES.PermissionQueriesRepo)
         private readonly permissionQueriesRepo: PermissionQueriesRepo // 權限查詢資料存取層，透過依賴注入
     ) {
-        // 初始化 BaseRedisService
         super({
             serviceName: 'RoleToPermissionQueriesSvc',
             defaultTTL: RoleToPermissionQueriesSvc.DEFAULT_CACHE_TTL,

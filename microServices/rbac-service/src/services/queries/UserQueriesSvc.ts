@@ -35,8 +35,7 @@ import { TYPES } from '../../container/types.js';
 import { UserQueriesRepo } from '../../repo/queries/UserQueriesRepo.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
-import { BaseRedisService } from 'aiot-shared-packages';
-import { getRedisClient } from 'aiot-shared-packages';
+import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserDTO, UserCacheOptions, IUserQueriesService, PaginationParams, PaginatedResult, PaginationUtils } from '../../types/index.js';
@@ -59,7 +58,6 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
     constructor(
         @inject(TYPES.UserQueriesRepo) private readonly userQueriesRepo: UserQueriesRepo
     ) {
-        // 初始化 BaseRedisService
         super({
             serviceName: 'UserQueriesSvc',
             defaultTTL: UserQueriesSvc.DEFAULT_CACHE_TTL,
@@ -69,7 +67,7 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
     }
 
     /**
-     * 實作抽象方法：提供 Redis 客戶端工廠函式
+     * Redis 客戶端工廠函式
      */
     protected getRedisClientFactory() {
         return getRedisClient;
@@ -106,21 +104,10 @@ export class UserQueriesSvc extends BaseRedisService implements IUserQueriesServ
      * @private
      */
     private getCachedUser = async (userId: number): Promise<UserDTO | null> => {
-        const key = this.getUserCacheKey(userId);
-        
-        return await this.safeRedisOperation(
-            async (redis: RedisClientType) => {
-                logger.debug(`Checking Redis cache for user ID: ${userId}`);
-                const cachedData = await redis.get(key);
-                if (cachedData) {
-                    logger.info(`User ID: ${userId} loaded from Redis cache`);
-                    return JSON.parse(cachedData);
-                }
-                return null;
-            },
-            `getCachedUser(${userId})`,
-            null
-        );
+        // Redis 功能暫時停用
+        // const key = this.getUserCacheKey(userId);
+        // return await this.safeRedisOperation(...);
+        return null;
     }
 
     /**

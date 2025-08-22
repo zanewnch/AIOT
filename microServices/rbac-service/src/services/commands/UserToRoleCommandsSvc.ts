@@ -27,8 +27,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { UserRoleCommandsRepo } from '../../repo/commands/UserRoleCommandsRepo.js';
-import { BaseRedisService } from 'aiot-shared-packages';
-import { getRedisClient } from 'aiot-shared-packages';
+import { BaseRedisService, getRedisClient } from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { UserToRoleQueriesSvc } from '../queries/UserToRoleQueriesSvc.js';
@@ -55,7 +54,6 @@ export class UserToRoleCommandsSvc extends BaseRedisService {
         @inject(TYPES.UserRoleCommandsRepo)
         private readonly userRoleCommandsRepo: UserRoleCommandsRepo
     ) {
-        // 初始化 Redis 服務
         super({
             serviceName: 'UserToRoleCommandsSvc',
             defaultTTL: UserToRoleCommandsSvc.DEFAULT_CACHE_TTL,

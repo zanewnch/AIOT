@@ -66,7 +66,6 @@ export class PermissionCommandsSvc extends BaseRedisService implements IPermissi
         @inject(TYPES.PermissionCommandsRepo) private readonly permissionCommandsRepo: PermissionCommandsRepo,
         @inject(TYPES.PermissionQueriesRepo) private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
-        // 初始化 Redis 服務
         super({
             serviceName: 'PermissionCommandsSvc',
             defaultTTL: PermissionCommandsSvc.DEFAULT_CACHE_TTL,

@@ -49,9 +49,9 @@ export class DronePositionCommandsSvc {
     ) {
         // 創建組合repository
         this.dronePositionRepo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
+            Object.create(Object.getPrototypeOf(this.commandsRepo)),
+            this.commandsRepo,
+            this.queriesRepo
         ) as IDronePositionRepo;
     }
 

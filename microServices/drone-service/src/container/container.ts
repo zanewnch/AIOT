@@ -28,6 +28,11 @@ import { DroneCommandQueueCommandsSvc } from '../services/commands/DroneCommandQ
 // Repository 層導入
 import { DronePositionQueriesRepo } from '../repo/queries/DronePositionQueriesRepo.js';
 import { DronePositionCommandsRepository } from '../repo/commands/DronePositionCommandsRepo.js';
+
+// 配置模組導入
+import { createSequelizeInstance } from '../configs/dbConfig.js';
+import { RabbitMQManager } from '../configs/rabbitmqConfig.js';
+import { ConsulConfig } from '../configs/consulConfig.js';
 import { DroneStatusQueriesRepo } from '../repo/queries/DroneStatusQueriesRepo.js';
 import { DroneStatusCommandsRepository } from '../repo/commands/DroneStatusCommandsRepo.js';
 import { DroneRealTimeStatusQueriesRepo } from '../repo/queries/DroneRealTimeStatusQueriesRepo.js';
@@ -81,6 +86,9 @@ import { DroneStatusRoutes } from '../routes/droneStatusRoutes.js';
 import { DroneCommandRoutes } from '../routes/droneCommandRoutes.js';
 import { DroneRealtimeRoutes } from '../routes/droneRealtimeRoutes.js';
 import { RouteManager } from '../routes/index.js';
+
+// 應用程式導入
+import { App } from '../app.js';
 
 /**
  * 建立和配置 IoC 容器
@@ -171,30 +179,22 @@ export function createContainer(): Container {
     // === 基礎設施服務 ===
     // 數據庫連接
     container.bind(TYPES.DatabaseConnection).toDynamicValue(() => {
-        // const { .* } = require('../configs/dbConfig.js');
-        // return createSequelizeInstance();
-        return null; // 暫時返回 null
+        return createSequelizeInstance();
     }).inSingletonScope();
 
     // RabbitMQ 管理器
     container.bind(TYPES.RabbitMQManager).toDynamicValue(() => {
-        // const { .* } = require('../configs/rabbitmqConfig.js');
-        // return new RabbitMQManager();
-        return null; // 暫時返回 null
+        return new RabbitMQManager();
     }).inSingletonScope();
 
     // Consul 配置
     container.bind(TYPES.ConsulConfig).toDynamicValue(() => {
-        // const { .* } = require('../configs/consulConfig.js');
-        // return new ConsulConfig();
-        return null; // 暫時返回 null
+        return new ConsulConfig();
     }).inSingletonScope();
 
     // === 應用程式核心 ===
     // App 類 - 使用依賴注入
-    // 暫時註釋掉 App 綁定，避免 ES module require 錯誤
-    // const { App } = await import('../app.js');
-    // container.bind(TYPES.App).to(App).inSingletonScope();
+    container.bind(TYPES.App).to(App).inSingletonScope();
 
     // DroneHttpServer 類 - HTTP 伺服器管理
     // const { .* } = require('../server.js');
