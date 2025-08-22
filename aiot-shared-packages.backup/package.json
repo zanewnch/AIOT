@@ -1,0 +1,38 @@
+{
+  "name": "@aiot/shared-packages",
+  "version": "1.0.0",
+  "description": "AIOT 項目共用套件 - Redis 服務、工具函式、型別定義等",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "aiot",
+    "shared",
+    "redis",
+    "microservices",
+    "typescript"
+  ],
+  "author": "AIOT Team",
+  "license": "MIT",
+  "dependencies": {
+    "redis": "^5.8.2",
+    "inversify": "^6.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "peerDependencies": {
+    "redis": "^5.8.2",
+    "inversify": "^6.0.0"
+  }
+}
