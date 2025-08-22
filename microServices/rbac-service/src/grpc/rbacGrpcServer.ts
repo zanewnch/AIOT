@@ -17,16 +17,16 @@ import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { container } from '../container/container.js';
 import { TYPES } from '../container/types.js';
-import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
-import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
-import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
-import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
-import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
-import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
-import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
-import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
-import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
-import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+import { UserQueriesCtrl } from '../controllers/queries/UserQueriesCtrl.js';
+import { UserCommandsCtrl } from '../controllers/commands/UserCommandsCtrl.js';
+import { RoleQueriesCtrl } from '../controllers/queries/RoleQueriesCtrl.js';
+import { RoleCommandsCtrl } from '../controllers/commands/RoleCommandsCtrl.js';
+import { PermissionQueriesCtrl } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { PermissionCommandsCtrl } from '../controllers/commands/PermissionCommandsCtrl.js';
+import { UserToRoleQueriesCtrl } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { UserToRoleCommandsCtrl } from '../controllers/commands/UserToRoleCommandsCtrl.js';
+import { RoleToPermissionQueriesCtrl } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { RoleToPermissionCommandsCtrl } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -38,16 +38,16 @@ const __dirname = path.dirname(__filename);
  */
 export class RbacGrpcServer {
   private server: grpc.Server;
-  private userQueries: UserQueries;
-  private userCommands: UserCommands;
-  private roleQueries: RoleQueries;
-  private roleCommands: RoleCommands;
-  private permissionQueries: PermissionQueries;
-  private permissionCommands: PermissionCommands;
-  private userToRoleQueries: UserToRoleQueries;
-  private userToRoleCommands: UserToRoleCommands;
-  private roleToPermissionQueries: RoleToPermissionQueries;
-  private roleToPermissionCommands: RoleToPermissionCommands;
+  private userQueries: UserQueriesCtrl;
+  private userCommands: UserCommandsCtrl;
+  private roleQueries: RoleQueriesCtrl;
+  private roleCommands: RoleCommandsCtrl;
+  private permissionQueries: PermissionQueriesCtrl;
+  private permissionCommands: PermissionCommandsCtrl;
+  private userToRoleQueries: UserToRoleQueriesCtrl;
+  private userToRoleCommands: UserToRoleCommandsCtrl;
+  private roleToPermissionQueries: RoleToPermissionQueriesCtrl;
+  private roleToPermissionCommands: RoleToPermissionCommandsCtrl;
 
   constructor() {
     this.server = new grpc.Server({
@@ -63,16 +63,16 @@ export class RbacGrpcServer {
     });
     
     // 注入依賴
-    this.userQueries = container.get<UserQueries>(TYPES.UserQueriesCtrl);
-    this.userCommands = container.get<UserCommands>(TYPES.UserCommandsCtrl);
-    this.roleQueries = container.get<RoleQueries>(TYPES.RoleQueriesCtrl);
-    this.roleCommands = container.get<RoleCommands>(TYPES.RoleCommandsCtrl);
-    this.permissionQueries = container.get<PermissionQueries>(TYPES.PermissionQueriesCtrl);
-    this.permissionCommands = container.get<PermissionCommands>(TYPES.PermissionCommandsCtrl);
-    this.userToRoleQueries = container.get<UserToRoleQueries>(TYPES.UserToRoleQueriesCtrl);
-    this.userToRoleCommands = container.get<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl);
-    this.roleToPermissionQueries = container.get<RoleToPermissionQueries>(TYPES.RoleToPermissionQueriesCtrl);
-    this.roleToPermissionCommands = container.get<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl);
+    this.userQueries = container.get<UserQueriesCtrl>(TYPES.UserQueriesCtrl);
+    this.userCommands = container.get<UserCommandsCtrl>(TYPES.UserCommandsCtrl);
+    this.roleQueries = container.get<RoleQueriesCtrl>(TYPES.RoleQueriesCtrl);
+    this.roleCommands = container.get<RoleCommandsCtrl>(TYPES.RoleCommandsCtrl);
+    this.permissionQueries = container.get<PermissionQueriesCtrl>(TYPES.PermissionQueriesCtrl);
+    this.permissionCommands = container.get<PermissionCommandsCtrl>(TYPES.PermissionCommandsCtrl);
+    this.userToRoleQueries = container.get<UserToRoleQueriesCtrl>(TYPES.UserToRoleQueriesCtrl);
+    this.userToRoleCommands = container.get<UserToRoleCommandsCtrl>(TYPES.UserToRoleCommandsCtrl);
+    this.roleToPermissionQueries = container.get<RoleToPermissionQueriesCtrl>(TYPES.RoleToPermissionQueriesCtrl);
+    this.roleToPermissionCommands = container.get<RoleToPermissionCommandsCtrl>(TYPES.RoleToPermissionCommandsCtrl);
 
     this.loadProtoAndAddService();
   }

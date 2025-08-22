@@ -16,16 +16,16 @@
  */
 
 import { Router } from 'express';
-import { UserQueries } from '../controllers/queries/UserQueriesCtrl.js';
-import { UserCommands } from '../controllers/commands/UserCommandsCtrl.js';
-import { RoleQueries } from '../controllers/queries/RoleQueriesCtrl.js';
-import { RoleCommands } from '../controllers/commands/RoleCommandsCtrl.js';
-import { PermissionQueries } from '../controllers/queries/PermissionQueriesCtrl.js';
-import { PermissionCommands } from '../controllers/commands/PermissionCommandsCtrl.js';
-import { UserToRoleQueries } from '../controllers/queries/UserToRoleQueriesCtrl.js';
-import { UserToRoleCommands } from '../controllers/commands/UserToRoleCommandsCtrl.js';
-import { RoleToPermissionQueries } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
-import { RoleToPermissionCommands } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+import { UserQueriesCtrl } from '../controllers/queries/UserQueriesCtrl.js';
+import { UserCommandsCtrl } from '../controllers/commands/UserCommandsCtrl.js';
+import { RoleQueriesCtrl } from '../controllers/queries/RoleQueriesCtrl.js';
+import { RoleCommandsCtrl } from '../controllers/commands/RoleCommandsCtrl.js';
+import { PermissionQueriesCtrl } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { PermissionCommandsCtrl } from '../controllers/commands/PermissionCommandsCtrl.js';
+import { UserToRoleQueriesCtrl } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { UserToRoleCommandsCtrl } from '../controllers/commands/UserToRoleCommandsCtrl.js';
+import { RoleToPermissionQueriesCtrl } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { RoleToPermissionCommandsCtrl } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import { container } from '../container/container.js';
 import { TYPES } from '../container/types.js';
 
@@ -36,16 +36,16 @@ import { TYPES } from '../container/types.js';
  */
 class RbacRoutes {
   private router: Router;
-  private userQueries: UserQueries;
-  private userCommands: UserCommands;
-  private roleQueries: RoleQueries;
-  private roleCommands: RoleCommands;
-  private permissionQueries: PermissionQueries;
-  private permissionCommands: PermissionCommands;
-  private userToRoleQueries: UserToRoleQueries;
-  private userToRoleCommands: UserToRoleCommands;
-  private roleToPermissionQueries: RoleToPermissionQueries;
-  private roleToPermissionCommands: RoleToPermissionCommands;
+  private userQueries: UserQueriesCtrl;
+  private userCommands: UserCommandsCtrl;
+  private roleQueries: RoleQueriesCtrl;
+  private roleCommands: RoleCommandsCtrl;
+  private permissionQueries: PermissionQueriesCtrl;
+  private permissionCommands: PermissionCommandsCtrl;
+  private userToRoleQueries: UserToRoleQueriesCtrl;
+  private userToRoleCommands: UserToRoleCommandsCtrl;
+  private roleToPermissionQueries: RoleToPermissionQueriesCtrl;
+  private roleToPermissionCommands: RoleToPermissionCommandsCtrl;
 
   // 路由端點常數 - 集中管理所有 API 路徑
   private readonly ROUTES = {

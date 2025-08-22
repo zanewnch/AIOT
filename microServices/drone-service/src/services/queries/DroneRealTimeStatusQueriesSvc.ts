@@ -262,7 +262,6 @@ export class DroneRealTimeStatusQueriesSvc {
             }
 
             logger.info('Checking low battery drones', { threshold });
-            const allDrones = await this.repo.findAll();
             const allDrones = await this.getAllRealTimeStatusesInternal();
             const lowBatteryDrones = allDrones.filter(drone => 
                 drone.current_battery_level <= threshold
