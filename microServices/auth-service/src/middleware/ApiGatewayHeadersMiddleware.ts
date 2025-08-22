@@ -31,12 +31,10 @@ export interface ApiGatewayUserInfo {
 /**
  * 擴展 Express Request 介面以包含 API Gateway 用戶信息
  */
-declare global {
-  namespace Express {
-    interface Request {
-      gatewayUser?: ApiGatewayUserInfo;
-      user?: any; // 兼容所有用戶類型
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    gatewayUser?: ApiGatewayUserInfo;
+    user?: any; // 兼容所有用戶類型
   }
 }
 
