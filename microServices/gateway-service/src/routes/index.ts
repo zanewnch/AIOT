@@ -9,6 +9,7 @@ import { Router } from 'express';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
 
+
 /**
  * 創建主要的 Gateway 路由器
  * @returns Express Router
@@ -19,7 +20,7 @@ export function createMainRoutes(): Router {
     /**
      * Gateway Service 根端點
      */
-    router.get('/', (req, res) => {
+    router.get('/', (_req, res) => {
         const gatewayInfo = {
             service: 'AIOT API Gateway',
             version: '1.0.0',
@@ -55,7 +56,7 @@ export function createMainRoutes(): Router {
     /**
      * 簡單健康檢查端點
      */
-    router.get('/health', (req, res) => {
+    router.get('/health', (_req, res) => {
         const healthInfo = {
             status: 'healthy',
             service: 'gateway-service',
@@ -72,11 +73,12 @@ export function createMainRoutes(): Router {
     });
 
     /**
-     * API 文件重導向端點
+     * 文檔路由說明：
+     * 使用分散式文檔架構，每個微服務提供自己的文檔，
+     * Gateway 提供統一的文檔中心和代理功能
+     * 統一文檔首頁：/api/docs
+     * 各服務文檔：/api/docs/{service-name}/{docs|typedoc}
      */
-    router.get('/docs', (req, res) => {
-        res.redirect('/api/docs/');
-    });
 
     // 記錄路由初始化
     loggerConfig.info('✅ Main Gateway routes initialized');

@@ -8,6 +8,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * 設定 Express 中間件
@@ -16,6 +18,15 @@ import cors from 'cors';
  * @param app Express 應用程式實例
  */
 export const setupExpressMiddleware = (app: express.Application): void => {
+    // 獲取當前檔案目錄
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    // 設定視圖引擎和靜態檔案
+    app.set('view engine', 'ejs');
+    app.set('views', path.join(__dirname, '../views'));
+    app.use('/static', express.static(path.join(__dirname, '../public')));
+
     // CORS 配置 - 允許跨域請求
     app.use(cors({
         origin: ['http://localhost:3000', 'http://localhost:8000'],

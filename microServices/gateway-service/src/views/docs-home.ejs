@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIOT 微服務文檔中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .service-description {
+            color: #4a5568;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .service-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .doc-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .doc-button.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .doc-button.secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .doc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .doc-button:hover.primary {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .doc-button:hover.secondary {
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-buttons {
+                flex-direction: column;
+            }
+            
+            .doc-button {
+                width: 100%;
+            }
+        }
+
+        /* 特殊效果 */
+        .service-card:nth-child(1) .service-icon { color: #e53e3e; }
+        .service-card:nth-child(2) .service-icon { color: #3182ce; }
+        .service-card:nth-child(3) .service-icon { color: #38a169; }
+        .service-card:nth-child(4) .service-icon { color: #d69e2e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚁 AIOT 微服務文檔中心</h1>
+            <p>分散式文檔架構 - 選擇服務查看文檔</p>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid">
+            <!-- RBAC Service -->
+            <div class="service-card">
+                <div class="service-icon">🔐</div>
+                <div class="service-title">RBAC Service</div>
+                <div class="service-description">
+                    權限控制與使用者管理服務<br>
+                    用戶管理 • 角色管理 • 權限控制
+                </div>
+                <div class="service-buttons">
+                    <a href="/api/docs/rbac/docs" class="doc-button primary">
+                        📖 服務說明
+                    </a>
+                    <a href="/api/docs/rbac/typedoc" class="doc-button secondary">
+                        🔧 技術文檔
+                    </a>
+                </div>
+            </div>
+
+            <!-- Drone Service -->
+            <div class="service-card">
+                <div class="service-icon">🚁</div>
+                <div class="service-title">Drone Service</div>
+                <div class="service-description">
+                    無人機控制與監控服務<br>
+                    飛行控制 • 位置追蹤 • 狀態監控
+                </div>
+                <div class="service-buttons">
+                    <a href="/api/docs/drone/docs" class="doc-button primary">
+                        📖 服務說明
+                    </a>
+                    <a href="/api/docs/drone/typedoc" class="doc-button secondary">
+                        🔧 技術文檔
+                    </a>
+                </div>
+            </div>
+
+            <!-- General Service -->
+            <div class="service-card">
+                <div class="service-icon">⚙️</div>
+                <div class="service-title">General Service</div>
+                <div class="service-description">
+                    通用功能與系統管理服務<br>
+                    系統設定 • 資料處理 • 工具函數
+                </div>
+                <div class="service-buttons">
+                    <a href="/api/docs/general/docs" class="doc-button primary">
+                        📖 服務說明
+                    </a>
+                    <a href="/api/docs/general/typedoc" class="doc-button secondary">
+                        🔧 技術文檔
+                    </a>
+                </div>
+            </div>
+
+            <!-- Auth Service -->
+            <div class="service-card">
+                <div class="service-icon">🔑</div>
+                <div class="service-title">Auth Service</div>
+                <div class="service-description">
+                    身份驗證與授權服務<br>
+                    JWT 驗證 • Token 管理 • 密碼安全
+                </div>
+                <div class="service-buttons">
+                    <a href="/api/docs/auth/docs" class="doc-button primary">
+                        📖 服務說明
+                    </a>
+                    <a href="/api/docs/auth/typedoc" class="doc-button secondary">
+                        🔧 技術文檔
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🏗️ AIOT Development Team</p>
+            <p>版本 1.0.0 | <%= new Date().getFullYear() %></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - AIOT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .architecture-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid;
+        }
+
+        .service-card:nth-child(1) { border-left-color: #e53e3e; }
+        .service-card:nth-child(2) { border-left-color: #3182ce; }
+        .service-card:nth-child(3) { border-left-color: #38a169; }
+        .service-card:nth-child(4) { border-left-color: #d69e2e; }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .service-card:nth-child(1) .service-icon { background: #e53e3e; }
+        .service-card:nth-child(2) .service-icon { background: #3182ce; }
+        .service-card:nth-child(3) .service-icon { background: #38a169; }
+        .service-card:nth-child(4) .service-icon { background: #d69e2e; }
+
+        .service-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .service-description {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .service-features {
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        .service-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .doc-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .doc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .info-item h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info-item p {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .usage-examples {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .usage-examples h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .example-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+
+        .status-available { background: #38a169; }
+        .status-unavailable { background: #e53e3e; }
+        .status-unknown { background: #a0aec0; }
+        .status-planned { background: #d69e2e; }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .service-status-badges {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-badge.docs-available {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.docs-unavailable {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-badge.typedoc-available {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .status-badge.typedoc-unavailable {
+            background: #fbb6ce;
+            color: #553c9a;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚁 <%= title %></h1>
+            <p><%= description %></p>
+            <div class="architecture-badge">
+                📚 <%= architecture %>
+            </div>
+            <% if (typeof stats !== 'undefined') { %>
+            <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <div class="stat-item">
+                    <strong><%= stats.availableServices %>/<%= stats.totalServices %></strong> 服務可用
+                </div>
+                <div class="stat-item">
+                    <strong><%= stats.servicesWithDocs %></strong> 提供服務說明
+                </div>
+                <div class="stat-item">
+                    <strong><%= stats.servicesWithTypedoc %></strong> 提供技術文檔
+                </div>
+            </div>
+            <% } %>
+            <% if (typeof lastCheck !== 'undefined') { %>
+            <div style="margin-top: 10px; font-size: 0.8rem; color: #666;">
+                最後檢查時間: <%= new Date(lastCheck).toLocaleString('zh-TW') %>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid">
+            <% services.forEach(function(service, index) { %>
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <%= service.icon || (index === 0 ? '🔐' : index === 1 ? '🚁' : index === 2 ? '⚙️' : '🔑') %>
+                    </div>
+                    <div>
+                        <div class="service-name">
+                            <%= service.name %>
+                            <span class="status-indicator status-<%= service.status || 'planned' %>"></span>
+                        </div>
+                    </div>
+                </div>
+                <p class="service-description"><%= service.description %></p>
+                
+                <div class="service-features">
+                    <% service.features.forEach(function(feature) { %>
+                    <span class="feature-tag"><%= feature %></span>
+                    <% }); %>
+                </div>
+
+                <% if (typeof service.docsAvailable !== 'undefined') { %>
+                <div class="service-status-badges">
+                    <span class="status-badge <%= service.docsAvailable ? 'docs-available' : 'docs-unavailable' %>">
+                        📖 服務說明 <%= service.docsAvailable ? '✓' : '✗' %>
+                    </span>
+                    <span class="status-badge <%= service.typedocAvailable ? 'typedoc-available' : 'typedoc-unavailable' %>">
+                        🔧 技術文檔 <%= service.typedocAvailable ? '✓' : '✗' %>
+                    </span>
+                </div>
+                <% } %>
+
+                <div class="service-links">
+                    <a href="<%= service.endpoints.serviceInfo %>" 
+                       class="doc-btn btn-primary"
+                       <% if (typeof service.docsAvailable !== 'undefined' && !service.docsAvailable) { %>
+                       style="opacity: 0.5; pointer-events: none;"
+                       <% } %>>
+                        📖 服務說明
+                    </a>
+                    <a href="<%= service.endpoints.technicalDocs %>" 
+                       class="doc-btn btn-secondary"
+                       <% if (typeof service.typedocAvailable !== 'undefined' && !service.typedocAvailable) { %>
+                       style="opacity: 0.5; pointer-events: none;"
+                       <% } %>>
+                        🔧 技術文檔
+                    </a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <!-- Documentation Types Info -->
+        <div class="info-section">
+            <h2 style="color: #2d3748; margin-bottom: 20px; text-align: center;">📋 文檔類型說明</h2>
+            <div class="info-grid">
+                <% documentationTypes.forEach(function(docType) { %>
+                <div class="info-item">
+                    <h3>📄 <%= docType.type %></h3>
+                    <p><%= docType.description %></p>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div class="info-section">
+            <h2 style="color: #2d3748; margin-bottom: 20px; text-align: center;">🛠️ 使用方式</h2>
+            <div class="usage-examples">
+                <h3>存取模式：<%= usage.accessPattern %></h3>
+                <% usage.examples.forEach(function(example) { %>
+                <div class="example-item"><%= example %></div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Gateway Features -->
+        <div class="info-section">
+            <h2 style="color: #2d3748; margin-bottom: 20px; text-align: center;">🌟 Gateway 功能特色</h2>
+            <div class="info-grid">
+                <% gatewayFeatures.forEach(function(feature) { %>
+                <div class="info-item">
+                    <h3>✨ <%= feature %></h3>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🕒 最後更新時間：<%= new Date(timestamp).toLocaleString('zh-TW') %></p>
+            <p>💡 版本：<%= version %> | 🏗️ AIOT Development Team</p>
+            <% if (typeof error !== 'undefined') { %>
+            <div style="margin-top: 10px; color: #e53e3e; font-size: 0.9rem;">
+                ⚠️ <%= error %>
+            </div>
+            <% } %>
+            <div style="margin-top: 15px;">
+                <button onclick="window.location.reload()" 
+                        style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">
+                    🔄 刷新狀態
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

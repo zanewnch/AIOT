@@ -81,7 +81,7 @@ export class App {
    * 2. 載入路由（健康檢查、狀態、指標）
    * 3. 載入錯誤處理（必須在路由之後）
    */
-  private setupApplication(): void {
+  private setupApplication = (): void => {
     // 1. 載入基礎中間件
     setupMiddleware(this.app, this.logger);
 
@@ -95,7 +95,7 @@ export class App {
 
     // 3. 載入錯誤處理中間件（必須在路由之後）
     setupErrorHandling(this.app, this.logger);
-  }
+  };
 
   /**
    * 初始化應用程式
@@ -107,7 +107,7 @@ export class App {
    * - Archive Consumer 是核心功能，優先啟動確保能接收 RabbitMQ 任務
    * - 如果 Consumer 啟動失敗，整個服務應該失敗
    */
-  async initialize(): Promise<void> {
+  initialize = async (): Promise<void> => {
     try {
       this.logger.info('Initializing Archive Processor Service...');
 
@@ -122,7 +122,7 @@ export class App {
       });
       throw error;
     }
-  }
+  };
 
   /**
    * 優雅關閉應用程式
@@ -131,7 +131,7 @@ export class App {
    * 1. 停止 Archive Consumer
    * 2. 關閉資料庫連線
    */
-  async shutdown(): Promise<void> {
+  shutdown = async (): Promise<void> => {
     if (this.isShuttingDown) {
       this.logger.warn('Force shutdown initiated');
       return;
@@ -156,5 +156,5 @@ export class App {
       });
       throw error;
     }
-  }
+  };
 }

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= serviceName %> - 服務文檔</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .version {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .feature-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .feature {
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .feature h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .feature p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .endpoints {
+            list-style: none;
+            padding: 0;
+        }
+
+        .endpoints li {
+            background: #f8f9fa;
+            padding: 8px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border-left: 3px solid #28a745;
+        }
+
+        .endpoints li:hover {
+            background: #e9ecef;
+        }
+
+        .architecture {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .arch-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .arch-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .examples {
+            grid-column: 1 / -1;
+        }
+
+        .example {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .example h4 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            padding: 10px 0;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            background: #667eea;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .navigation {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            background: #667eea;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .monitoring {
+            grid-column: 1 / -1;
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .monitoring h3 {
+            color: #2d5a2d;
+            margin-bottom: 15px;
+        }
+
+        .monitoring-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .monitoring-link {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .monitoring-link:hover {
+            background: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 標題區域 -->
+        <header class="header">
+            <h1><%= serviceName %></h1>
+            <p><%= description %></p>
+            <div class="version">版本 <%= version %></div>
+        </header>
+
+        <!-- 導航連結 -->
+        <nav class="navigation">
+            <div class="nav-links">
+                <a href="/typedoc" class="nav-link">📚 API 技術文檔</a>
+                <a href="<%= monitoring.swagger %>" class="nav-link">📋 Swagger 文檔</a>
+                <a href="<%= monitoring.healthCheck %>" class="nav-link">🔍 健康檢查</a>
+                <a href="<%= monitoring.metrics %>" class="nav-link">📊 性能指標</a>
+                <a href="/api/docs" class="nav-link">🏠 回到文檔首頁</a>
+            </div>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="content">
+            <!-- 功能特性 -->
+            <section class="section">
+                <h2>🚀 核心功能</h2>
+                <div class="feature-list">
+                    <% features.forEach(feature => { %>
+                        <div class="feature">
+                            <h3><%= feature.name %></h3>
+                            <p><%= feature.description %></p>
+                            <ul class="endpoints">
+                                <% feature.endpoints.forEach(endpoint => { %>
+                                    <li><%= endpoint %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    <% }); %>
+                </div>
+            </section>
+
+            <!-- 架構資訊 -->
+            <section class="section">
+                <h2>🏗️ 服務架構</h2>
+                <div class="architecture">
+                    <div class="arch-item">
+                        <strong>設計模式</strong>
+                        <%= architecture.pattern %>
+                    </div>
+                    <div class="arch-item">
+                        <strong>資料庫</strong>
+                        <%= architecture.database %>
+                    </div>
+                    <div class="arch-item">
+                        <strong>快取</strong>
+                        <%= architecture.cache %>
+                    </div>
+                    <div class="arch-item">
+                        <strong>通訊協定</strong>
+                        <%= architecture.communication %>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 25px; margin-bottom: 15px; color: #667eea;">🔗 服務依賴</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <% architecture.dependencies.forEach(dep => { %>
+                        <span style="background: #f1f3f4; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; color: #5f6368;"><%= dep %></span>
+                    <% }); %>
+                </div>
+            </section>
+        </main>
+
+        <!-- 使用範例 -->
+        <section class="section examples">
+            <h2>💡 使用範例</h2>
+            <% examples.forEach(example => { %>
+                <div class="example">
+                    <h4><%= example.title %></h4>
+                    <ol class="steps">
+                        <% example.steps.forEach(step => { %>
+                            <li><%= step %></li>
+                        <% }); %>
+                    </ol>
+                </div>
+            <% }); %>
+        </section>
+
+        <!-- 監控資訊 -->
+        <section class="monitoring">
+            <h3>🔍 監控與維護</h3>
+            <div class="monitoring-links">
+                <a href="<%= monitoring.healthCheck %>" class="monitoring-link">健康檢查</a>
+                <a href="<%= monitoring.metrics %>" class="monitoring-link">性能指標</a>
+                <a href="/typedoc" class="monitoring-link">技術文檔</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 簡單的互動效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 點擊端點時複製到剪貼板
+            const endpoints = document.querySelectorAll('.endpoints li');
+            endpoints.forEach(endpoint => {
+                endpoint.style.cursor = 'pointer';
+                endpoint.title = '點擊複製到剪貼板';
+                
+                endpoint.addEventListener('click', function() {
+                    navigator.clipboard.writeText(this.textContent).then(() => {
+                        const original = this.style.background;
+                        this.style.background = '#d4edda';
+                        setTimeout(() => {
+                            this.style.background = original;
+                        }, 500);
+                    });
+                });
+            });
+
+            // 平滑滾動效果
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -19,12 +19,12 @@ import { createHealthRoutes } from './healthRoutes';
 import { createStatusRoutes } from './statusRoutes';
 import { createMetricsRoutes } from './metricsRoutes';
 
-export function createRoutes(
+export const createRoutes = (
   logger: Logger,
   databaseConnection: DatabaseConnection,
   rabbitMQService: RabbitMQService,
   archiveConsumer: ArchiveConsumer
-): Router {
+): Router => {
   const router = Router();
 
   // 健康檢查路由
@@ -51,4 +51,4 @@ export function createRoutes(
   });
 
   return router;
-}
+};

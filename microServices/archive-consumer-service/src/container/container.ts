@@ -40,7 +40,7 @@ import { App } from '../app';
  * - 業務邏輯服務：瞬態模式
  * - 配置對象：常數綁定
  */
-export function createContainer(): Container {
+export const createContainer = (): Container => {
   const container = new Container({
     defaultScope: 'Singleton'
   });
@@ -81,7 +81,7 @@ export function createContainer(): Container {
     .inSingletonScope();
 
   return container;
-}
+};
 
 /**
  * 建立 Winston Logger 實例
@@ -91,7 +91,7 @@ export function createContainer(): Container {
  * - 根據環境調整日誌級別
  * - 結構化日誌便於分析
  */
-function createLogger(): Logger {
+const createLogger = (): Logger => {
   const logFormat = winston.format.combine(
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss.SSS'
@@ -146,7 +146,7 @@ function createLogger(): Logger {
     transports,
     exitOnError: false
   });
-}
+};
 
 // 全域容器實例
 export const container = createContainer();

@@ -60,7 +60,7 @@ export class ArchiveConsumer {
    * - 開始監聽任務佇列
    * - 設置優雅關閉處理
    */
-  async start(): Promise<void> {
+  start = async (): Promise<void> => {
     try {
       // 檢查是否已經啟動，防止重複啟動造成資源浪費或衝突
       if (this.isRunning) {
@@ -75,8 +75,8 @@ export class ArchiveConsumer {
       await this.rabbitMQService.initialize();
 
       // 開始監聽並消費訊息，綁定 handleMessage 方法作為訊息處理器
-      // 使用 .bind(this) 確保方法內的 this 指向正確的實例
-      await this.rabbitMQService.startConsumer(this.handleMessage.bind(this));
+      // 箭頭函數自動綁定 this，所以不需要 .bind(this)
+      await this.rabbitMQService.startConsumer(this.handleMessage);
 
       // 標記服務為運行狀態
       this.isRunning = true;
@@ -105,7 +105,7 @@ export class ArchiveConsumer {
       // 重新拋出錯誤，讓上層調用者處理
       throw error;
     }
-  }
+  };
 
   /**
    * 處理收到的訊息
@@ -116,7 +116,7 @@ export class ArchiveConsumer {
    * 3. 執行任務處理邏輯
    * 4. 發送處理結果
    */
-  private async handleMessage(message: any): Promise<void> {
+  private handleMessage = async (message: any): Promise<void> => {
     // 記錄任務開始時間，用於計算執行時間
     const startTime = Date.now();
     // 增加正在處理的任務計數，用於優雅關閉時等待任務完成
@@ -200,13 +200,13 @@ export class ArchiveConsumer {
       // 無論成功或失敗都要減少處理計數器
       this.processingCount--;
     }
-  }
+  };
 
   /**
    * 處理歷史歸檔任務
    * 負責將舊的數據移轉到歸檔儲存區域
    */
-  private async processArchiveTask(task: ArchiveTaskMessage): Promise<TaskResultMessage> {
+  private processArchiveTask = async (task: ArchiveTaskMessage): Promise<TaskResultMessage> => {
     // 記錄開始處理歸檔任務的日誌，包含關鍵參數
     this.logger.info('Processing archive task', {
       taskId: task.taskId,                                          // 任務唯一識別碼
@@ -233,13 +233,13 @@ export class ArchiveConsumer {
         batchSize: task.batchSize                   // 批次大小設定
       }
     };
-  }
+  };
 
   /**
    * 處理清理任務
    * 負責清理已歸檔的數據或直接刪除過期數據
    */
-  private async processCleanupTask(task: CleanupTaskMessage): Promise<TaskResultMessage> {
+  private processCleanupTask = async (task: CleanupTaskMessage): Promise<TaskResultMessage> => {
     // 記錄開始處理清理任務的日誌，包含清理目標和方式
     this.logger.info('Processing cleanup task', {
       taskId: task.taskId,              // 任務唯一識別碼
@@ -266,13 +266,13 @@ export class ArchiveConsumer {
         cleanupType: task.cleanupType               // 重複記錄清理方式
       }
     };
-  }
+  };
 
   /**
    * 驗證訊息格式
    * 確保收到的訊息符合預期格式，防止處理錯誤的數據
    */
-  private validateMessage(message: any): void {
+  private validateMessage = (message: any): void => {
     // 檢查訊息是否存在且為物件型別
     if (!message || typeof message !== 'object') {
       throw new Error('Invalid message format: message must be an object');
@@ -296,133 +296,168 @@ export class ArchiveConsumer {
       // 驗證清理任務特定欄位
       this.validateCleanupTask(message);
     }
-  }
+  };
 
   /**
    * 驗證歸檔任務格式
+   * 檢查歸檔任務必要欄位是否完整且符合規範
    */
-  private validateArchiveTask(task: any): void {
+  private validateArchiveTask = (task: any): void => {
+    // 定義歸檔任務必須包含的欄位列表
     const required = ['jobType', 'batchId', 'dateRangeStart', 'dateRangeEnd', 'batchSize'];
     
+    // 逐一檢查每個必要欄位是否存在
     for (const field of required) {
       if (!task[field]) {
         throw new Error(`Invalid archive task: ${field} is required`);
       }
     }
 
+    // 檢查工作類型是否為支援的值
     if (!['positions', 'commands', 'status'].includes(task.jobType)) {
       throw new Error(`Invalid archive task: jobType must be one of positions, commands, status`);
     }
-  }
+  };
 
   /**
    * 驗證清理任務格式
+   * 檢查清理任務必要欄位是否完整且符合規範
    */
-  private validateCleanupTask(task: any): void {
+  private validateCleanupTask = (task: any): void => {
+    // 定義清理任務必須包含的欄位列表
     const required = ['jobType', 'tableName', 'cleanupType', 'dateThreshold', 'batchSize'];
     
+    // 逐一檢查每個必要欄位是否存在
     for (const field of required) {
       if (!task[field]) {
         throw new Error(`Invalid cleanup task: ${field} is required`);
       }
     }
 
+    // 檢查清理方式是否為支援的值
     if (!['mark_archived', 'physical_delete'].includes(task.cleanupType)) {
       throw new Error(`Invalid cleanup task: cleanupType must be mark_archived or physical_delete`);
     }
-  }
+  };
 
   /**
    * 發送任務執行結果
+   * 將任務處理結果發送回 RabbitMQ 供調度器接收
    */
-  private async sendTaskResult(result: TaskResultMessage): Promise<void> {
+  private sendTaskResult = async (result: TaskResultMessage): Promise<void> => {
     try {
+      // 嘗試發送任務結果到指定的結果佇列
       const success = await this.rabbitMQService.publishTaskResult(result);
       
+      // 如果發送失敗，記錄警告但不拋出錯誤
       if (!success) {
         this.logger.warn('Failed to publish task result to RabbitMQ', {
-          taskId: result.taskId,
-          status: result.status
+          taskId: result.taskId,    // 任務ID用於追蹤
+          status: result.status     // 任務狀態用於了解影響
         });
       }
     } catch (error: unknown) {
+      // 處理發送過程中的例外狀況
       const err = error as Error | string;
       const errorMessage = err instanceof Error ? err.message : String(err);
+      
+      // 記錄錯誤但不重新拋出，避免影響主要的任務處理流程
       this.logger.error('Error publishing task result', {
         taskId: result.taskId,
         error: errorMessage
       });
     }
-  }
+  };
 
   /**
    * 設置優雅關閉處理
+   * 註冊信號處理器，確保服務在關閉時能正確完成處理中的任務
    */
-  private setupGracefulShutdown(): void {
+  private setupGracefulShutdown = (): void => {
+    // 定義優雅關閉的處理邏輯
     const gracefulShutdown = async (signal: string) => {
+      // 記錄收到關閉信號
       this.logger.info(`Received ${signal}, starting graceful shutdown...`);
       
+      // 停止接收新的任務
       this.isRunning = false;
 
       // 等待當前處理的任務完成
-      const maxWaitTime = 30000; // 30 秒
+      const maxWaitTime = 30000; // 最長等待30秒
       const startTime = Date.now();
       
+      // 輪詢檢查是否還有任務在處理中
       while (this.processingCount > 0 && (Date.now() - startTime) < maxWaitTime) {
         this.logger.info(`Waiting for ${this.processingCount} tasks to complete...`);
+        // 每秒檢查一次
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
+      // 如果超時後仍有任務在處理，發出警告
       if (this.processingCount > 0) {
         this.logger.warn(`Force shutdown with ${this.processingCount} tasks still processing`);
       }
 
       try {
+        // 關閉 RabbitMQ 連線
         await this.rabbitMQService.close();
         this.logger.info('Archive Consumer shutdown completed');
       } catch (error: unknown) {
+        // 處理關閉過程中的錯誤
         const err = error as Error | string;
         const errorMessage = err instanceof Error ? err.message : String(err);
         this.logger.error('Error during shutdown', { error: errorMessage });
       }
 
+      // 正常退出程序
       process.exit(0);
     };
 
-    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-  }
+    // 註冊系統信號處理器
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));  // Docker stop 信號
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));    // Ctrl+C 信號
+  };
 
   /**
    * 停止消費者
+   * 手動停止服務的公開方法（非信號觸發）
    */
-  async stop(): Promise<void> {
+  stop = async (): Promise<void> => {
+    // 如果已經停止，直接返回
     if (!this.isRunning) {
       return;
     }
 
+    // 記錄開始停止
     this.logger.info('Stopping Archive Consumer...');
+    
+    // 標記為非運行狀態，停止接收新任務
     this.isRunning = false;
 
+    // 關閉 RabbitMQ 連線
     await this.rabbitMQService.close();
     
+    // 記錄停止完成
     this.logger.info('Archive Consumer stopped');
-  }
+  };
 
   /**
    * 健康檢查
+   * 檢查消費者及其依賴服務是否正常運作
    */
-  isHealthy(): boolean {
+  isHealthy = (): boolean => {
+    // 同時檢查消費者本身和 RabbitMQ 服務的健康狀態
     return this.isRunning && this.rabbitMQService.isHealthy();
-  }
+  };
 
   /**
    * 獲取狀態資訊
+   * 提供當前消費者的運行狀態供監控使用
    */
-  getStatus(): { isRunning: boolean; processingCount: number } {
+  getStatus = (): { isRunning: boolean; processingCount: number } => {
     return {
-      isRunning: this.isRunning,
-      processingCount: this.processingCount
+      isRunning: this.isRunning,              // 是否正在運行
+      processingCount: this.processingCount   // 目前處理中的任務數量
     };
-  }
+  };
 }

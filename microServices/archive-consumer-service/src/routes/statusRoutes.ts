@@ -15,7 +15,7 @@ import { Router, Request, Response } from 'express';
 import { ArchiveConsumer } from '../consumers/ArchiveConsumer';
 import { config } from '../configs/environment';
 
-export function createStatusRoutes(archiveConsumer: ArchiveConsumer): Router {
+export const createStatusRoutes = (archiveConsumer: ArchiveConsumer): Router => {
   const router = Router();
 
   /**

@@ -268,7 +268,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
   /**
    * 標記任務開始
    */
-  async markAsStarted(): Promise<void> {
+  markAsStarted = async (): Promise<void> => {
     await this.update({
       status: ArchiveTaskStatus.RUNNING,
       startedAt: new Date(),
@@ -279,7 +279,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
   /**
    * 標記任務完成
    */
-  async markAsCompleted(totalRecords: number, archivedRecords: number): Promise<void> {
+  markAsCompleted = async (totalRecords: number, archivedRecords: number): Promise<void> => {
     await this.update({
       status: ArchiveTaskStatus.COMPLETED,
       completedAt: new Date(),
@@ -292,7 +292,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
   /**
    * 標記任務失敗
    */
-  async markAsFailed(errorMessage: string, archivedRecords?: number): Promise<void> {
+  markAsFailed = async (errorMessage: string, archivedRecords?: number): Promise<void> => {
     const updateData: any = {
       status: ArchiveTaskStatus.FAILED,
       completedAt: new Date(),
@@ -309,7 +309,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
   /**
    * 更新進度
    */
-  async updateProgress(archivedRecords: number, totalRecords?: number): Promise<void> {
+  updateProgress = async (archivedRecords: number, totalRecords?: number): Promise<void> => {
     const updateData: any = { archivedRecords };
     
     if (totalRecords !== undefined) {
@@ -322,7 +322,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
   /**
    * 重置任務狀態 (用於重試)
    */
-  async reset(): Promise<void> {
+  reset = async (): Promise<void> => {
     await this.update({
       status: ArchiveTaskStatus.PENDING,
       startedAt: null,
@@ -335,7 +335,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
   /**
    * 轉換為 JSON 格式
    */
-  toSummary(): {
+  toSummary = (): {
     id: number;
     jobType: string;
     batchId: string;
@@ -345,7 +345,7 @@ export class ArchiveTaskModel extends Model<ArchiveTaskAttributes, ArchiveTaskCr
     createdAt: string;
     startedAt: string | null;
     completedAt: string | null;
-  } {
+  } => {
     return {
       id: this.id,
       jobType: this.jobType,

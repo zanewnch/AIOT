@@ -7,6 +7,7 @@
 import { injectable, inject } from 'inversify';
 import { Logger } from 'winston';
 import { createClient, RedisClientType } from 'redis';
+import { NotificationService } from './NotificationService';
 
 export interface SystemMetrics {
   cpuUsage: number;
@@ -79,7 +80,8 @@ export class MonitoringService {
 
   constructor(
     @inject('Logger') private logger: Logger,
-    @inject('RedisConfig') private redisConfig: any
+    @inject('RedisConfig') private redisConfig: any,
+    @inject('NotificationService') private notificationService?: NotificationService
   ) {
     this.initializeRedis();
   }
@@ -87,7 +89,7 @@ export class MonitoringService {
   /**
    * 初始化 Redis 連線
    */
-  private async initializeRedis(): Promise<void> {
+  private initializeRedis = async (): Promise<void> => {
     try {
       this.redis = createClient({
         url: this.redisConfig.url,
@@ -114,7 +116,7 @@ export class MonitoringService {
   /**
    * 啟動監控服務
    */
-  async start(): Promise<void> {
+  start = async (): Promise<void> => {
     try {
       // 每分鐘收集一次系統指標
       this.metricsInterval = setInterval(async () => {
@@ -140,7 +142,7 @@ export class MonitoringService {
   /**
    * 停止監控服務
    */
-  async stop(): Promise<void> {
+  stop = async (): Promise<void> => {
     try {
       if (this.metricsInterval) {
         clearInterval(this.metricsInterval);
@@ -165,7 +167,7 @@ export class MonitoringService {
   /**
    * 收集系統指標
    */
-  async collectSystemMetrics(): Promise<SystemMetrics> {
+  collectSystemMetrics = async (): Promise<SystemMetrics> => {
     try {
       const metrics: SystemMetrics = {
         cpuUsage: await this.getCpuUsage(),
@@ -202,7 +204,7 @@ export class MonitoringService {
   /**
    * 收集任務指標
    */
-  async collectTaskMetrics(taskStats: {
+  collectTaskMetrics = async (taskStats: {
     totalTasks: number;
     pendingTasks: number;
     runningTasks: number;
@@ -248,7 +250,7 @@ export class MonitoringService {
   /**
    * 執行健康檢查
    */
-  async performHealthCheck(): Promise<ServiceHealth> {
+  performHealthCheck = async (): Promise<ServiceHealth> => {
     const health: ServiceHealth = {
       status: 'healthy',
       components: {},
@@ -299,7 +301,7 @@ export class MonitoringService {
   /**
    * 獲取系統指標
    */
-  async getSystemMetrics(): Promise<SystemMetrics | null> {
+  getSystemMetrics = async (): Promise<SystemMetrics | null> => {
     try {
       if (!this.redis) return null;
 
@@ -314,7 +316,7 @@ export class MonitoringService {
   /**
    * 獲取任務指標
    */
-  async getTaskMetrics(): Promise<TaskMetrics | null> {
+  getTaskMetrics = async (): Promise<TaskMetrics | null> => {
     try {
       if (!this.redis) return null;
 
@@ -329,7 +331,7 @@ export class MonitoringService {
   /**
    * 獲取健康狀態
    */
-  async getHealthStatus(): Promise<ServiceHealth | null> {
+  getHealthStatus = async (): Promise<ServiceHealth | null> => {
     try {
       if (!this.redis) return null;
 
@@ -344,26 +346,150 @@ export class MonitoringService {
   /**
    * 獲取活動警報
    */
-  getActiveAlerts(): PerformanceAlert[] {
+  getActiveAlerts = (): PerformanceAlert[] => {
     return Array.from(this.alerts.values()).filter(alert => !alert.resolved);
   }
 
   /**
    * 解決警報
    */
-  resolveAlert(alertId: string): boolean {
+  resolveAlert = (alertId: string): boolean => {
     const alert = this.alerts.get(alertId);
     if (alert) {
       alert.resolved = true;
       this.logger.info('Alert resolved', { alertId, type: alert.type });
+      
+      // 發送警報解決通知
+      this.sendAlertResolvedNotification(alert);
+      
       return true;
     }
     return false;
   }
 
+  /**
+   * 發送警報通知
+   * 當新警報被創建時調用
+   */
+  private sendAlertNotification = async (alert: PerformanceAlert): Promise<void> => {
+    try {
+      if (!this.notificationService) {
+        this.logger.debug('通知服務未配置，跳過警報通知', { alertId: alert.id });
+        return;
+      }
+
+      await this.notificationService.sendAlertNotification(alert);
+      
+      this.logger.debug('警報通知已發送', {
+        alertId: alert.id,
+        type: alert.type,
+        severity: alert.severity
+      });
+    } catch (error) {
+      this.logger.error('發送警報通知失敗', {
+        alertId: alert.id,
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  }
+
+  /**
+   * 發送警報解決通知
+   * 當警報被標記為已解決時調用
+   */
+  private sendAlertResolvedNotification = async (alert: PerformanceAlert): Promise<void> => {
+    try {
+      if (!this.notificationService) {
+        this.logger.debug('通知服務未配置，跳過警報解決通知', { alertId: alert.id });
+        return;
+      }
+
+      // 創建一個特殊的 "resolved" 警報用於通知
+      const resolvedAlert: PerformanceAlert = {
+        ...alert,
+        id: `${alert.id}_resolved`,
+        message: `警報已解決: ${alert.message}`,
+        severity: 'warning', // 解決通知使用較低嚴重程度
+        timestamp: new Date(),
+        resolved: true
+      };
+
+      await this.notificationService.sendAlertNotification(resolvedAlert);
+      
+      this.logger.debug('警報解決通知已發送', {
+        originalAlertId: alert.id,
+        resolvedAlertId: resolvedAlert.id
+      });
+    } catch (error) {
+      this.logger.error('發送警報解決通知失敗', {
+        alertId: alert.id,
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  }
+
+  /**
+   * 設定通知服務
+   * 允許動態設定通知服務（用於測試或延遲初始化）
+   */
+  setNotificationService = (notificationService: NotificationService): void => {
+    this.notificationService = notificationService;
+    this.logger.info('通知服務已設定到監控服務');
+  }
+
+  /**
+   * 獲取通知統計
+   * 委託給通知服務獲取統計資料
+   */
+  getNotificationStats = async () => {
+    if (!this.notificationService) {
+      return null;
+    }
+    return await this.notificationService.getNotificationStats();
+  }
+
+  /**
+   * 手動測試通知
+   * 用於測試通知系統是否正常工作
+   */
+  testNotification = async (channel: 'email' | 'webhook' = 'email'): Promise<boolean> => {
+    try {
+      if (!this.notificationService) {
+        this.logger.warn('無法測試通知：通知服務未配置');
+        return false;
+      }
+
+      // 創建測試警報
+      const testAlert: PerformanceAlert = {
+        id: `test_${Date.now()}`,
+        type: 'cpu',
+        severity: 'warning',
+        message: '這是一個測試通知，用於驗證通知系統是否正常運作',
+        value: 75,
+        threshold: 70,
+        timestamp: new Date(),
+        resolved: false
+      };
+
+      await this.notificationService.sendAlertNotification(testAlert);
+      
+      this.logger.info('測試通知已發送', {
+        testAlertId: testAlert.id,
+        channel: channel
+      });
+
+      return true;
+    } catch (error) {
+      this.logger.error('測試通知失敗', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      return false;
+    }
+  }
+
   // 私有方法實現...
 
-  private async getCpuUsage(): Promise<number> {
+  private getCpuUsage = async (): Promise<number> => {
     return new Promise((resolve) => {
       const startUsage = process.cpuUsage();
       setTimeout(() => {
@@ -385,7 +511,7 @@ export class MonitoringService {
     };
   }
 
-  private async getDiskUsage(): Promise<SystemMetrics['diskUsage']> {
+  private getDiskUsage = async (): Promise<SystemMetrics['diskUsage']> => {
     // 簡化實現，實際應該使用 fs.statSync 等
     return {
       used: 50 * 1024 * 1024 * 1024, // 50GB
@@ -398,7 +524,7 @@ export class MonitoringService {
     return Date.now() - this.startTime.getTime();
   }
 
-  private async calculateTasksPerHour(): Promise<number> {
+  private calculateTasksPerHour = async (): Promise<number> => {
     // 從 Redis 歷史數據計算每小時任務數
     return 0; // 簡化實現
   }
@@ -450,9 +576,12 @@ export class MonitoringService {
 
     this.alerts.set(alertId, alert);
     this.logger.warn('Performance alert created', alert);
+    
+    // 發送通知（如果通知服務可用）
+    this.sendAlertNotification(alert);
   }
 
-  private async checkDatabaseHealth(): Promise<ServiceHealth['components'][string]> {
+  private checkDatabaseHealth = async (): Promise<ServiceHealth['components'][string]> => {
     const startTime = Date.now();
     try {
       // 實際實現應該測試資料庫連線
@@ -471,7 +600,7 @@ export class MonitoringService {
     }
   }
 
-  private async checkRabbitMQHealth(): Promise<ServiceHealth['components'][string]> {
+  private checkRabbitMQHealth = async (): Promise<ServiceHealth['components'][string]> => {
     const startTime = Date.now();
     try {
       // 實際實現應該測試 RabbitMQ 連線
@@ -490,7 +619,7 @@ export class MonitoringService {
     }
   }
 
-  private async checkRedisHealth(): Promise<ServiceHealth['components'][string]> {
+  private checkRedisHealth = async (): Promise<ServiceHealth['components'][string]> => {
     const startTime = Date.now();
     try {
       if (this.redis) {
@@ -511,7 +640,7 @@ export class MonitoringService {
     }
   }
 
-  private async checkDiskHealth(): Promise<ServiceHealth['components'][string]> {
+  private checkDiskHealth = async (): Promise<ServiceHealth['components'][string]> => {
     try {
       const diskUsage = await this.getDiskUsage();
       const status = diskUsage.percentage > 90 ? 'degraded' : 'healthy';

@@ -12,6 +12,7 @@
 
 import { Application } from 'express';
 import { router as authRoutes } from './authRoutes.js';
+import docsRoutes from './docsRoutes.js';
 
 /**
  * 註冊所有 API 路由到 Express 應用程式
@@ -40,6 +41,10 @@ export function registerRoutes(app: Application): void {
     // 註冊認證路由 - 掛載 authRoutes 到根路徑
         app.use('/', authRoutes);
         console.log('✅ Auth routes registered at /');
+
+        // 註冊文檔路由
+        app.use('/', docsRoutes);
+        console.log('✅ Documentation routes registered at /docs and /typedoc');
 
         console.log('🚀 All Auth routes registered successfully');
     } catch (error) {

@@ -17,6 +17,7 @@ import { Application } from 'express';
 import { UserPreferenceRoutes } from './userPreferenceRoutes.js';
 import { DocsRoutes } from './docsRoutes.js';
 import { HealthRoutes } from './healthRoutes.js';
+import simpleDocsRoutes from './simpleDocsRoutes.js';
 import { TYPES } from '../container/types.js';
 import { ResResult } from '@aiot/shared-packages';
 import { createLogger } from '../configs/loggerConfig.js';
@@ -58,6 +59,10 @@ export class RouteManager {
             // 註冊資訊端點路由 (API Gateway: /api/info → strip_path=true → 轉發到 /info)
             app.use('/', this.docsRoutes.getRouter());
             logger.info('✅ Info routes registered');
+
+            // 註冊統一文檔路由 (/docs 和 /typedoc)
+            app.use('/', simpleDocsRoutes);
+            logger.info('✅ Unified documentation routes registered at /docs and /typedoc');
 
             // 註冊全域錯誤處理
             this.registerGlobalErrorHandling(app);

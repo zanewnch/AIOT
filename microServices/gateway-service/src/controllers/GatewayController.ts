@@ -68,15 +68,6 @@ export class GatewayController {
             timeout: 30000,
             retries: 3
         },
-        {
-            name: 'docs-service',
-            pathPrefix: '/api/docs',
-            stripPrefix: true,
-            useGrpc: false,
-            httpPort: 3054,
-            timeout: 15000,
-            retries: 2
-        }
     ];
 
     constructor() {

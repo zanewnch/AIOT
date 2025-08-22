@@ -46,7 +46,7 @@ export class ArchiveTaskRepoImpl implements ArchiveTaskRepo {
    * - 使用索引優化查詢性能
    * - 返回完整的任務資訊
    */
-  async findById(id: number): Promise<ArchiveTask | null> {
+  findById = async (id: number): Promise<ArchiveTask | null> => {
     try {
       const sql = `
         SELECT 
@@ -72,19 +72,20 @@ export class ArchiveTaskRepoImpl implements ArchiveTaskRepo {
       });
 
       return task;
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as Error;
       this.logger.error('Failed to find archive task by ID', {
         id,
-        error: error.message
+        error: err.message
       });
       throw error;
     }
-  }
+  };
 
   /**
    * 根據任務字符串 ID 查找歷史任務
    */
-  async findByTaskId(taskId: string): Promise<ArchiveTask | null> {
+  findByTaskId = async (taskId: string): Promise<ArchiveTask | null> => {
     try {
       const sql = `
         SELECT 
@@ -102,14 +103,15 @@ export class ArchiveTaskRepoImpl implements ArchiveTaskRepo {
       }
 
       return results[0] as ArchiveTask;
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as Error;
       this.logger.error('Failed to find archive task by task ID', {
         taskId,
-        error: error.message
+        error: err.message
       });
       throw error;
     }
-  }
+  };
 
   /**
    * 更新歷史任務
@@ -119,7 +121,7 @@ export class ArchiveTaskRepoImpl implements ArchiveTaskRepo {
    * - 自動更新 updated_at 時間戳
    * - 使用事務確保數據一致性
    */
-  async update(id: number, data: Partial<Omit<ArchiveTask, 'id' | 'created_at'>>): Promise<ArchiveTask | null> {
+  update = async (id: number, data: Partial<Omit<ArchiveTask, 'id' | 'created_at'>>): Promise<ArchiveTask | null> => {
     try {
       return await this.db.transaction(async (connection) => {
         // 構建動態更新 SQL
@@ -194,20 +196,21 @@ export class ArchiveTaskRepoImpl implements ArchiveTaskRepo {
         // 返回更新後的任務
         return await this.findById(id);
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as Error;
       this.logger.error('Failed to update archive task', {
         id,
         data,
-        error: error.message
+        error: err.message
       });
       throw error;
     }
-  }
+  };
 
   /**
    * 創建新的歷史任務記錄
    */
-  async create(taskData: Omit<ArchiveTask, 'id' | 'created_at' | 'updated_at'>): Promise<ArchiveTask> {
+  create = async (taskData: Omit<ArchiveTask, 'id' | 'created_at' | 'updated_at'>): Promise<ArchiveTask> => {
     try {
       const sql = `
         INSERT INTO archive_tasks (

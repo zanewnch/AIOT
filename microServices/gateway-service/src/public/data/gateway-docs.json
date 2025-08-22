@@ -1,0 +1,168 @@
+{
+  "name": "AIOT API Gateway",
+  "version": "1.0.0",
+  "description": "Express.js API Gateway 服務，提供微服務間的統一入口和路由管理",
+  "type": "gateway",
+  "port": 8000,
+  "status": "active",
+  "features": [
+    {
+      "name": "服務發現",
+      "description": "使用 Consul 進行動態服務發現和註冊",
+      "implementation": "ConsulConfig 類別管理服務註冊和健康檢查",
+      "benefits": ["自動服務發現", "故障轉移", "負載均衡"]
+    },
+    {
+      "name": "HTTP 代理",
+      "description": "將 HTTP 請求代理到對應的微服務",
+      "implementation": "使用 http-proxy-middleware 實現請求轉發",
+      "benefits": ["統一入口", "路由管理", "請求攔截"]
+    },
+    {
+      "name": "WebSocket 代理",
+      "description": "支援 Socket.IO WebSocket 連接的代理轉發",
+      "implementation": "使用 node-http-proxy 處理 WebSocket 升級",
+      "benefits": ["即時通訊", "雙向數據傳輸", "連接池管理"]
+    },
+    {
+      "name": "認證管理",
+      "description": "統一的身份認證和授權管理",
+      "implementation": "AuthMiddleware 提供 JWT 和 Cookie 認證",
+      "benefits": ["安全性", "單點登入", "權限控制"]
+    },
+    {
+      "name": "健康檢查",
+      "description": "監控所有微服務的健康狀態",
+      "implementation": "HealthConfig 定期檢查服務可用性",
+      "benefits": ["服務監控", "故障檢測", "自動恢復"]
+    },
+    {
+      "name": "CORS 處理",
+      "description": "跨來源請求的安全管理",
+      "implementation": "配置允許的來源域名和請求方法",
+      "benefits": ["安全性", "跨域支援", "開發便利"]
+    }
+  ],
+  "routes": [
+    {
+      "path": "/",
+      "method": "GET",
+      "description": "Gateway 根端點，返回服務資訊和可用端點列表",
+      "response": "JSON 格式的 Gateway 配置資訊"
+    },
+    {
+      "path": "/health",
+      "method": "GET", 
+      "description": "簡單的健康檢查端點",
+      "response": "系統狀態、記憶體使用量、運行時間"
+    },
+    {
+      "path": "/docs/*",
+      "method": "GET",
+      "description": "內部文檔系統，提供完整的系統文檔",
+      "response": "HTML 頁面（使用 EJS 模板）"
+    },
+    {
+      "path": "/api/*",
+      "method": "ALL",
+      "description": "微服務 API 代理入口",
+      "response": "轉發到對應微服務的回應"
+    },
+    {
+      "path": "/socket.io/*",
+      "method": "ALL",
+      "description": "WebSocket 代理端點",
+      "response": "轉發到 Drone WebSocket 服務"
+    }
+  ],
+  "middleware": [
+    {
+      "name": "Express JSON",
+      "description": "解析 JSON 請求內容",
+      "config": "limit: 50mb"
+    },
+    {
+      "name": "Cookie Parser",
+      "description": "解析 HTTP Cookie",
+      "usage": "認證 token 處理"
+    },
+    {
+      "name": "CORS",
+      "description": "跨來源請求處理",
+      "config": "支援多個前端域名"
+    },
+    {
+      "name": "Morgan",
+      "description": "HTTP 請求日誌記錄",
+      "format": "combined"
+    },
+    {
+      "name": "Trust Proxy",
+      "description": "信任代理設定",
+      "purpose": "支援反向代理部署"
+    }
+  ],
+  "proxyTargets": [
+    {
+      "service": "auth-service",
+      "target": "http://aiot-auth:3001",
+      "path": "/api/auth/*",
+      "type": "HTTP"
+    },
+    {
+      "service": "rbac-service", 
+      "target": "http://aiot-rbac:3003",
+      "path": "/api/rbac/*",
+      "type": "HTTP"
+    },
+    {
+      "service": "drone-service",
+      "target": "http://aiot-drone:3002", 
+      "path": "/api/drone/*",
+      "type": "HTTP"
+    },
+    {
+      "service": "general-service",
+      "target": "http://aiot-general:3005",
+      "path": "/api/general/*", 
+      "type": "HTTP"
+    },
+    {
+      "service": "drone-websocket-service",
+      "target": "http://aiot-drone-websocket-service:3004",
+      "path": "/socket.io/*",
+      "type": "WebSocket"
+    }
+  ],
+  "configuration": {
+    "security": {
+      "trustedProxies": true,
+      "cookieAuth": true,
+      "jwtAuth": true,
+      "corsEnabled": true
+    },
+    "performance": {
+      "compressionEnabled": false,
+      "requestSizeLimit": "50mb",
+      "keepAlive": true
+    },
+    "monitoring": {
+      "healthCheck": true,
+      "consul": true,
+      "logging": "combined"
+    }
+  },
+  "deployment": {
+    "environment": "docker",
+    "port": 8000,
+    "consulEndpoint": "http://consul:8500",
+    "serviceName": "gateway-service",
+    "healthCheckInterval": "10s"
+  },
+  "documentation": {
+    "openapi": false,
+    "swagger": false,
+    "internal": true,
+    "source": "JSON + EJS"
+  }
+}

@@ -91,6 +91,3 @@ data:
   DRONE_WEBSOCKET_SERVICE_PORT: "3004"
   CORS_ORIGIN: "*"
   
-  # Docs 服務配置
-  DOCS_SERVICE_NAME: "docs-service"
-  DOCS_SERVICE_PORT: "3005"

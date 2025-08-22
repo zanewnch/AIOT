@@ -162,42 +162,42 @@ export class LoggerService {
   /**
    * 取得 winston logger 實例
    */
-  getLogger(): winston.Logger {
+  getLogger = (): winston.Logger => {
     return this.logger;
-  }
+  };
 
   /**
    * 創建子記錄器
    */
-  child(defaultMeta: object): winston.Logger {
+  child = (defaultMeta: object): winston.Logger => {
     return this.logger.child(defaultMeta);
-  }
+  };
 
   /**
    * Debug 等級日誌
    */
-  debug(message: string, meta?: object): void {
+  debug = (message: string, meta?: object): void => {
     this.logger.debug(message, meta);
-  }
+  };
 
   /**
    * Info 等級日誌
    */
-  info(message: string, meta?: object): void {
+  info = (message: string, meta?: object): void => {
     this.logger.info(message, meta);
-  }
+  };
 
   /**
    * Warn 等級日誌
    */
-  warn(message: string, meta?: object): void {
+  warn = (message: string, meta?: object): void => {
     this.logger.warn(message, meta);
-  }
+  };
 
   /**
    * Error 等級日誌
    */
-  error(message: string, meta?: object | Error): void {
+  error = (message: string, meta?: object | Error): void => {
     if (meta instanceof Error) {
       this.logger.error(message, {
         error: {
@@ -209,19 +209,19 @@ export class LoggerService {
     } else {
       this.logger.error(message, meta);
     }
-  }
+  };
 
   /**
    * HTTP 請求日誌
    */
-  http(message: string, meta?: object): void {
+  http = (message: string, meta?: object): void => {
     this.logger.http(message, meta);
-  }
+  };
 
   /**
    * 記錄任務開始
    */
-  taskStart(taskId: string, taskType: string, meta?: object): void {
+  taskStart = (taskId: string, taskType: string, meta?: object): void => {
     this.info('Task started', {
       taskId,
       taskType,
@@ -229,12 +229,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄任務完成
    */
-  taskComplete(taskId: string, taskType: string, duration: number, meta?: object): void {
+  taskComplete = (taskId: string, taskType: string, duration: number, meta?: object): void => {
     this.info('Task completed', {
       taskId,
       taskType,
@@ -243,12 +243,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄任務失敗
    */
-  taskFailed(taskId: string, taskType: string, error: Error, duration: number, meta?: object): void {
+  taskFailed = (taskId: string, taskType: string, error: Error, duration: number, meta?: object): void => {
     this.error('Task failed', {
       taskId,
       taskType,
@@ -262,12 +262,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄任務進度
    */
-  taskProgress(taskId: string, taskType: string, progress: number, total: number, meta?: object): void {
+  taskProgress = (taskId: string, taskType: string, progress: number, total: number, meta?: object): void => {
     this.info('Task progress', {
       taskId,
       taskType,
@@ -278,12 +278,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄資料庫操作
    */
-  database(operation: string, tableName: string, affectedRows: number, duration: number, meta?: object): void {
+  database = (operation: string, tableName: string, affectedRows: number, duration: number, meta?: object): void => {
     this.debug('Database operation', {
       operation,
       tableName,
@@ -292,12 +292,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄 RabbitMQ 操作
    */
-  rabbitmq(operation: 'publish' | 'consume' | 'ack' | 'nack', queue: string, messageId?: string, meta?: object): void {
+  rabbitmq = (operation: 'publish' | 'consume' | 'ack' | 'nack', queue: string, messageId?: string, meta?: object): void => {
     this.debug('RabbitMQ operation', {
       operation,
       queue,
@@ -305,12 +305,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄系統性能
    */
-  performance(metric: string, value: number, unit: string, meta?: object): void {
+  performance = (metric: string, value: number, unit: string, meta?: object): void => {
     this.info('Performance metric', {
       metric,
       value,
@@ -318,12 +318,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄安全事件
    */
-  security(event: string, severity: 'low' | 'medium' | 'high' | 'critical', meta?: object): void {
+  security = (event: string, severity: 'low' | 'medium' | 'high' | 'critical', meta?: object): void => {
     this.warn('Security event', {
       event,
       severity,
@@ -331,12 +331,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄業務事件
    */
-  business(event: string, entity: string, entityId: string | number, meta?: object): void {
+  business = (event: string, entity: string, entityId: string | number, meta?: object): void => {
     this.info('Business event', {
       event,
       entity,
@@ -345,12 +345,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄健康檢查
    */
-  health(component: string, status: 'healthy' | 'unhealthy' | 'degraded', meta?: object): void {
+  health = (component: string, status: 'healthy' | 'unhealthy' | 'degraded', meta?: object): void => {
     const level = status === 'healthy' ? 'info' : 'warn';
     this.logger.log(level, 'Health check', {
       component,
@@ -359,12 +359,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 記錄配置變更
    */
-  config(action: 'loaded' | 'updated' | 'validated', configName: string, meta?: object): void {
+  config = (action: 'loaded' | 'updated' | 'validated', configName: string, meta?: object): void => {
     this.info('Configuration event', {
       action,
       configName,
@@ -372,12 +372,12 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 
   /**
    * 添加結構化查詢
    */
-  query(queryType: 'archive' | 'cleanup' | 'stats', query: string, duration: number, meta?: object): void {
+  query = (queryType: 'archive' | 'cleanup' | 'stats', query: string, duration: number, meta?: object): void => {
     this.debug('Database query', {
       queryType,
       query: query.length > 200 ? query.substring(0, 200) + '...' : query,
@@ -386,5 +386,5 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
       ...meta
     });
-  }
+  };
 }

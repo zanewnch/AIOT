@@ -10,6 +10,7 @@
 
 import { Application } from 'express';
 import { router as rbacRoutes } from './rbacRoutes.js';
+import docsRoutes from './docsRoutes.js';
 
 /**
  * 註冊所有 API 路由到 Express 應用程式
@@ -30,6 +31,10 @@ export function registerRoutes(app: Application): void {
             });
         });
         console.log('✅ Health check route registered at /health');
+
+        // 註冊文檔路由
+        app.use('/', docsRoutes);
+        console.log('✅ Documentation routes registered at /docs and /typedoc');
 
         // 註冊 RBAC 路由
         app.use('/', rbacRoutes);

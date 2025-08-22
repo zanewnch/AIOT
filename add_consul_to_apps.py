@@ -7,7 +7,6 @@ services = [
     'rbac-service',
     'drone-service', 
     'general-service',
-    'docs-service',
     'drone-websocket-service'
 ]
 

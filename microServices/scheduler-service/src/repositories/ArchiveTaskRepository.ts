@@ -48,7 +48,7 @@ export class ArchiveTaskRepository {
   /**
    * 創建新的歸檔任務
    */
-  async create(data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> {
+  create = async (data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> => {
     try {
       const task = await ArchiveTaskModel.create(data);
       
@@ -68,7 +68,7 @@ export class ArchiveTaskRepository {
   /**
    * 根據 ID 查找任務
    */
-  async findById(id: number): Promise<ArchiveTaskModel | null> {
+  findById = async (id: number): Promise<ArchiveTaskModel | null> => {
     try {
       return await ArchiveTaskModel.findByPk(id);
     } catch (error) {
@@ -80,7 +80,7 @@ export class ArchiveTaskRepository {
   /**
    * 根據批次 ID 查找任務
    */
-  async findByBatchId(batchId: string): Promise<ArchiveTaskModel | null> {
+  findByBatchId = async (batchId: string): Promise<ArchiveTaskModel | null> => {
     try {
       return await ArchiveTaskModel.findOne({
         where: { batchId }
@@ -94,10 +94,10 @@ export class ArchiveTaskRepository {
   /**
    * 根據條件查找任務列表
    */
-  async findByFilter(
+  findByFilter = async (
     filter: ArchiveTaskFilter,
     pagination?: PaginationOptions
-  ): Promise<{ tasks: ArchiveTaskModel[]; total: number }> {
+  ): Promise<{ tasks: ArchiveTaskModel[]; total: number }> => {
     try {
       const whereConditions: WhereOptions = this.buildWhereConditions(filter);
       
@@ -126,7 +126,7 @@ export class ArchiveTaskRepository {
   /**
    * 查找待執行的任務
    */
-  async findPendingTasks(limit: number = 10): Promise<ArchiveTaskModel[]> {
+  findPendingTasks = async (limit: number = 10): Promise<ArchiveTaskModel[]> => {
     try {
       return await ArchiveTaskModel.findAll({
         where: {
@@ -144,7 +144,7 @@ export class ArchiveTaskRepository {
   /**
    * 查找執行中的任務
    */
-  async findRunningTasks(): Promise<ArchiveTaskModel[]> {
+  findRunningTasks = async (): Promise<ArchiveTaskModel[]> => {
     try {
       return await ArchiveTaskModel.findAll({
         where: {
@@ -161,7 +161,7 @@ export class ArchiveTaskRepository {
   /**
    * 查找超時的執行中任務
    */
-  async findTimeoutTasks(timeoutHours: number = 4): Promise<ArchiveTaskModel[]> {
+  findTimeoutTasks = async (timeoutHours: number = 4): Promise<ArchiveTaskModel[]> => {
     try {
       const timeoutThreshold = new Date(Date.now() - timeoutHours * 60 * 60 * 1000);
       
@@ -183,7 +183,7 @@ export class ArchiveTaskRepository {
   /**
    * 查找可重試的失敗任務
    */
-  async findRetryableTasks(maxRetries: number = 3): Promise<ArchiveTaskModel[]> {
+  findRetryableTasks = async (maxRetries: number = 3): Promise<ArchiveTaskModel[]> => {
     try {
       // 簡化查詢，先查找所有失敗的任務
       const failedTasks = await ArchiveTaskModel.findAll({
@@ -206,7 +206,7 @@ export class ArchiveTaskRepository {
   /**
    * 更新任務
    */
-  async update(id: number, data: Partial<ArchiveTaskAttributes>): Promise<ArchiveTaskModel | null> {
+  update = async (id: number, data: Partial<ArchiveTaskAttributes>): Promise<ArchiveTaskModel | null> => {
     try {
       const task = await this.findById(id);
       if (!task) {
@@ -231,11 +231,11 @@ export class ArchiveTaskRepository {
   /**
    * 批量更新任務狀態
    */
-  async updateStatus(
+  updateStatus = async (
     ids: number[], 
     status: ArchiveTaskStatus, 
     additionalData?: Partial<ArchiveTaskAttributes>
-  ): Promise<number> {
+  ): Promise<number> => {
     try {
       const updateData: any = { status, ...additionalData };
       
@@ -273,7 +273,7 @@ export class ArchiveTaskRepository {
   /**
    * 刪除任務
    */
-  async delete(id: number): Promise<boolean> {
+  delete = async (id: number): Promise<boolean> => {
     try {
       const deletedCount = await ArchiveTaskModel.destroy({
         where: { id }
@@ -296,7 +296,7 @@ export class ArchiveTaskRepository {
   /**
    * 清理舊任務記錄
    */
-  async cleanupOldTasks(daysToKeep: number = 90): Promise<number> {
+  cleanupOldTasks = async (daysToKeep: number = 90): Promise<number> => {
     try {
       const cutoffDate = new Date(Date.now() - daysToKeep * 24 * 60 * 60 * 1000);
       
@@ -327,7 +327,7 @@ export class ArchiveTaskRepository {
   /**
    * 獲取統計資訊
    */
-  async getStatistics(dateRange?: { start: Date; end: Date }): Promise<ArchiveTaskStatistics> {
+  getStatistics = async (dateRange?: { start: Date; end: Date }): Promise<ArchiveTaskStatistics> => {
     try {
       const whereConditions: WhereOptions = {};
       

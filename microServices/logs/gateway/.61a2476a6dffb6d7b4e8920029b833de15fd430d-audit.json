@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/user/GitHub/AIOT/microServices/logs/gateway/.61a2476a6dffb6d7b4e8920029b833de15fd430d-audit.json",
+    "files": [
+        {
+            "date": 1755815844476,
+            "name": "/home/user/GitHub/AIOT/microServices/logs/gateway/gateway-app-2025-08-22.log",
+            "hash": "fa3deb32ee39db782aef9f3f5d3661a6a33399ce4b30e00ba26c6cf52b509be6"
+        }
+    ],
+    "hashType": "sha256"
+}

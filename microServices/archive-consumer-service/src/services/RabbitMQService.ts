@@ -37,23 +37,24 @@ export class RabbitMQService implements IRabbitMQService {
    * - 宣告必要的 exchange 和 queue
    * - 設置錯誤處理和重連機制
    */
-  async initialize(): Promise<void> {
+  initialize = async (): Promise<void> => {
     try {
       await this.connect();
       await this.setupExchangesAndQueues();
       this.setupEventListeners();
       
       this.logger.info('RabbitMQ service initialized successfully');
-    } catch (error) {
-      this.logger.error('Failed to initialize RabbitMQ service', { error: error.message });
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error('Failed to initialize RabbitMQ service', { error: err.message });
       throw error;
     }
-  }
+  };
 
   /**
    * 建立 RabbitMQ 連線
    */
-  private async connect(): Promise<void> {
+  private connect = async (): Promise<void> => {
     this.connection = await amqp.connect(config.rabbitmq.url);
     this.channel = await this.connection.createChannel();
     
@@ -62,7 +63,7 @@ export class RabbitMQService implements IRabbitMQService {
     
     this.isConnected = true;
     this.logger.info('Connected to RabbitMQ', { url: config.rabbitmq.url });
-  }
+  };
 
   /**
    * 設置 Exchange 和 Queue
@@ -71,7 +72,7 @@ export class RabbitMQService implements IRabbitMQService {
    * - scheduler exchange: 接收排程任務
    * - task-result queue: 發送任務執行結果
    */
-  private async setupExchangesAndQueues(): Promise<void> {
+  private setupExchangesAndQueues = async (): Promise<void> => {
     if (!this.channel) throw new Error('Channel not initialized');
 
     // 宣告 exchange
@@ -100,12 +101,12 @@ export class RabbitMQService implements IRabbitMQService {
     );
 
     this.logger.info('RabbitMQ exchanges and queues setup completed');
-  }
+  };
 
   /**
    * 設置事件監聽器
    */
-  private setupEventListeners(): void {
+  private setupEventListeners = (): void => {
     if (!this.connection || !this.channel) return;
 
     this.connection.on('error', (error) => {
@@ -123,12 +124,12 @@ export class RabbitMQService implements IRabbitMQService {
     this.channel.on('error', (error) => {
       this.logger.error('RabbitMQ channel error', { error: error.message });
     });
-  }
+  };
 
   /**
    * 排程重連
    */
-  private scheduleReconnect(): void {
+  private scheduleReconnect = (): void => {
     if (this.reconnectTimer) return;
 
     this.reconnectTimer = setTimeout(async () => {
@@ -136,17 +137,18 @@ export class RabbitMQService implements IRabbitMQService {
       try {
         this.logger.info('Attempting to reconnect to RabbitMQ...');
         await this.initialize();
-      } catch (error) {
-        this.logger.error('Reconnection failed', { error: error.message });
+      } catch (error: unknown) {
+        const err = error as Error;
+        this.logger.error('Reconnection failed', { error: err.message });
         this.scheduleReconnect();
       }
     }, config.rabbitmq.reconnectDelay);
-  }
+  };
 
   /**
    * 發佈任務執行結果
    */
-  async publishTaskResult(result: TaskResultMessage): Promise<boolean> {
+  publishTaskResult = async (result: TaskResultMessage): Promise<boolean> => {
     try {
       if (!this.channel || !this.isConnected) {
         throw new Error('RabbitMQ not connected');
@@ -178,19 +180,20 @@ export class RabbitMQService implements IRabbitMQService {
       }
 
       return published;
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as Error;
       this.logger.error('Failed to publish task result', {
         taskId: result.taskId,
-        error: error.message
+        error: err.message
       });
       return false;
     }
-  }
+  };
 
   /**
    * 發佈延遲訊息
    */
-  async publishDelayed<T>(routingKey: string, message: T, delay: number, options?: any): Promise<boolean> {
+  publishDelayed = async <T>(routingKey: string, message: T, delay: number, options?: any): Promise<boolean> => {
     try {
       if (!this.channel || !this.isConnected) {
         throw new Error('RabbitMQ not connected');
@@ -219,19 +222,20 @@ export class RabbitMQService implements IRabbitMQService {
       }
 
       return published;
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as Error;
       this.logger.error('Failed to publish delayed message', {
         routingKey,
-        error: error.message
+        error: err.message
       });
       return false;
     }
-  }
+  };
 
   /**
    * 啟動消費者
    */
-  async startConsumer(messageHandler: (message: any) => Promise<void>): Promise<void> {
+  startConsumer = async (messageHandler: (message: any) => Promise<void>): Promise<void> => {
     if (!this.channel || !this.isConnected) {
       throw new Error('RabbitMQ not connected');
     }
@@ -258,10 +262,11 @@ export class RabbitMQService implements IRabbitMQService {
             messageId: msg.properties.messageId
           });
           
-        } catch (error) {
+        } catch (error: unknown) {
+          const err = error as Error;
           this.logger.error('Error processing message', {
             messageId: msg.properties.messageId,
-            error: error.message
+            error: err.message
           });
           
           // 拒絕訊息並重新排隊
@@ -273,12 +278,12 @@ export class RabbitMQService implements IRabbitMQService {
     this.logger.info('RabbitMQ consumer started', {
       queue: config.rabbitmq.queues.archiveProcessor
     });
-  }
+  };
 
   /**
    * 關閉連線
    */
-  async close(): Promise<void> {
+  close = async (): Promise<void> => {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
@@ -296,12 +301,12 @@ export class RabbitMQService implements IRabbitMQService {
 
     this.isConnected = false;
     this.logger.info('RabbitMQ service closed');
-  }
+  };
 
   /**
    * 健康檢查
    */
-  isHealthy(): boolean {
+  isHealthy = (): boolean => {
     return this.isConnected && !!this.connection && !!this.channel;
-  }
+  };
 }

@@ -46,7 +46,7 @@ import { config } from './configs/environment';
 /**
  * HTTP 伺服器啟動邏輯
  */
-async function main() {
+const main = async (): Promise<void> => {
   try {
     console.log('🚀 Starting Archive Consumer Service HTTP server...');
     
@@ -109,7 +109,7 @@ async function main() {
     console.error('❌ Failed to start Archive Consumer Service HTTP server:', error);
     process.exit(1);
   }
-}
+};
 
 // 啟動伺服器
 main().catch((error) => {

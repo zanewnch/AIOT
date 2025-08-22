@@ -50,7 +50,7 @@ export class RabbitMQService {
   /**
    * 初始化 RabbitMQ 連線和設定
    */
-  async initialize(): Promise<void> {
+  initialize = async (): Promise<void> => {
     try {
       await this.connect();
       await this.setupExchangesAndQueues();
@@ -64,7 +64,7 @@ export class RabbitMQService {
   /**
    * 建立連線
    */
-  private async connect(): Promise<void> {
+  private connect = async (): Promise<void> => {
     try {
       this.connection = await amqp.connect(this.config.url, {
         heartbeat: this.config.heartbeat || 60
@@ -96,7 +96,7 @@ export class RabbitMQService {
   /**
    * 設定交換器和隊列
    */
-  private async setupExchangesAndQueues(): Promise<void> {
+  private setupExchangesAndQueues = async (): Promise<void> => {
     if (!this.channel) {
       throw new Error('Channel not available');
     }
@@ -329,7 +329,7 @@ export class RabbitMQService {
   /**
    * 發布任務結果
    */
-  async publishTaskResult(result: TaskResultMessage): Promise<boolean> {
+  publishTaskResult = async (result: TaskResultMessage): Promise<boolean> => {
     const routingKey = result.status === 'failed' ? 'result.failed' : 
                       result.status === 'partial' ? 'result.partial' : 
                       'result.success';
@@ -362,7 +362,7 @@ export class RabbitMQService {
   /**
    * 安排重新連線
    */
-  private async scheduleReconnect(): Promise<void> {
+  private scheduleReconnect = async (): Promise<void> => {
     const maxAttempts = this.config.maxReconnectAttempts || 10;
     const delay = this.config.reconnectDelay || 5000;
 
@@ -387,7 +387,7 @@ export class RabbitMQService {
   /**
    * 關閉連線
    */
-  async close(): Promise<void> {
+  close = async (): Promise<void> => {
     try {
       if (this.reconnectTimer) {
         clearTimeout(this.reconnectTimer);
@@ -414,14 +414,14 @@ export class RabbitMQService {
   /**
    * 檢查連線狀態
    */
-  isHealthy(): boolean {
+  isHealthy = (): boolean => {
     return this.isConnected && this.connection !== null && this.channel !== null;
   }
 
   /**
    * 獲取隊列統計信息
    */
-  async getQueueStats(queueName: string): Promise<any> {
+  getQueueStats = async (queueName: string): Promise<any> => {
     if (!this.channel) {
       throw new Error('Channel not available');
     }

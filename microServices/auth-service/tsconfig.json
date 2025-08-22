@@ -21,8 +21,8 @@
     "typeRoots": ["./node_modules/@types"],
     "baseUrl": ".",
     "paths": {
-      "@aiot/shared-packages": ["../../../aiot-shared-packages/index"],
-      "@aiot/shared-packages/*": ["../../../aiot-shared-packages/*"]
+      "@aiot/shared-packages": ["./aiot-shared-packages/index"],
+      "@aiot/shared-packages/*": ["./aiot-shared-packages/*"]
     }
   },
   "include": [

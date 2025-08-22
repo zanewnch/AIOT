@@ -1,0 +1,38 @@
+# AIOT LLM AI Engine - Development Dockerfile
+# 🤖 開發環境專用，支援 FastAPI + Hot-Reload 和 SmolLM2 推理引擎
+
+FROM python:3.11-slim as development
+
+# 設定工作目錄
+WORKDIR /app
+
+# 安裝系統依賴
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    netcat-traditional \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# 複製需求文件並安裝 Python 依賴
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 安裝開發專用依賴
+RUN pip install debugpy ipdb
+
+# 創建非 root 用戶 (安全最佳實踐)
+RUN groupadd -g 1001 aiuser && useradd -r -u 1001 -g aiuser aiuser
+RUN chown -R aiuser:aiuser /app
+USER aiuser
+
+# 開發端口 (FastAPI + Debug)
+EXPOSE 8021 5678
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:8021/health || exit 1
+
+# 開發環境啟動命令 (FastAPI 自帶 auto-reload)
+CMD ["python", "main.py"]

@@ -50,7 +50,7 @@ export class ProxyMiddleware {
     }
 
     /**
-     * 從 Consul 獲取健康的服務實例
+     * 從 Consul 獲取健康的服務實例，如果失敗則回退到預設配置
      */
     private async getServiceInstance(serviceName: string): Promise<ServiceInstance | null> {
         try {
@@ -58,12 +58,13 @@ export class ProxyMiddleware {
             const services = response.data;
             
             if (!services || services.length === 0) {
-                loggerConfig.warn(`⚠️ No healthy instances found for service: ${serviceName}`);
-                return null;
+                loggerConfig.warn(`⚠️ No healthy instances found in Consul for service: ${serviceName}, trying fallback...`);
+                return this.getFallbackServiceInstance(serviceName);
             }
 
             // 選擇第一個健康的服務實例
             const service = services[0];
+            loggerConfig.info(`✅ Found service in Consul: ${serviceName} at ${service.Service.Address}:${service.Service.Port}`);
             return {
                 address: service.Service.Address,
                 port: service.Service.Port,
@@ -71,9 +72,56 @@ export class ProxyMiddleware {
                 id: service.Service.ID
             };
         } catch (error) {
-            loggerConfig.error(`❌ Failed to get service instance for ${serviceName}:`, error.message);
-            return null;
+            loggerConfig.warn(`⚠️ Consul query failed for ${serviceName}, using fallback:`, error.message);
+            return this.getFallbackServiceInstance(serviceName);
         }
+    }
+
+    /**
+     * 回退服務實例配置（當 Consul 不可用時）
+     */
+    private getFallbackServiceInstance(serviceName: string): ServiceInstance | null {
+        const fallbackConfig: Record<string, ServiceInstance> = {
+            'rbac-service': {
+                address: process.env.RBAC_SERVICE_HOST || 'aiot-rbac-service',
+                port: parseInt(process.env.RBAC_SERVICE_PORT || '3051'),
+                service: 'rbac-service',
+                id: 'rbac-service-fallback'
+            },
+            'drone-service': {
+                address: process.env.DRONE_SERVICE_HOST || 'aiot-drone-service',
+                port: parseInt(process.env.DRONE_SERVICE_PORT || '3052'),
+                service: 'drone-service',
+                id: 'drone-service-fallback'
+            },
+            'general-service': {
+                address: process.env.GENERAL_SERVICE_HOST || 'aiot-general-service',
+                port: parseInt(process.env.GENERAL_SERVICE_PORT || '3053'),
+                service: 'general-service',
+                id: 'general-service-fallback'
+            },
+            'auth-service': {
+                address: process.env.AUTH_SERVICE_HOST || 'aiot-auth-service',
+                port: parseInt(process.env.AUTH_SERVICE_PORT || '3055'),
+                service: 'auth-service',
+                id: 'auth-service-fallback'
+            },
+            'drone-websocket-service': {
+                address: process.env.DRONE_WS_SERVICE_HOST || 'aiot-drone-websocket-service',
+                port: parseInt(process.env.DRONE_WS_SERVICE_PORT || '3004'),
+                service: 'drone-websocket-service',
+                id: 'drone-websocket-service-fallback'
+            }
+        };
+
+        const fallback = fallbackConfig[serviceName];
+        if (fallback) {
+            loggerConfig.info(`🔄 Using fallback configuration for ${serviceName}: ${fallback.address}:${fallback.port}`);
+            return fallback;
+        }
+
+        loggerConfig.error(`❌ No fallback configuration found for service: ${serviceName}`);
+        return null;
     }
 
     /**

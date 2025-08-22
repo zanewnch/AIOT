@@ -7,14 +7,18 @@ FROM node:18-alpine
 # 設定工作目錄
 WORKDIR /app
 
-# 複製 package 文件
-COPY package*.json ./
+# 安裝系統依賴
+RUN apk add --no-cache curl netcat-openbsd
 
-# 安裝依賴（包括開發依賴）
-RUN npm install
+# 先複製 shared-packages
+COPY aiot-shared-packages ./aiot-shared-packages
 
-# 複製原始碼
-COPY . .
+# 複製源代碼（包含 package.json）
+COPY microServices/archive-consumer-service .
+
+# 安裝 shared-packages 並安裝依賴
+RUN cd aiot-shared-packages && npm install && npm run build && cd .. && \
+    npm cache clean --force && npm install ./aiot-shared-packages --no-package-lock
 
 # 建立日誌目錄
 RUN mkdir -p /app/logs

@@ -16,12 +16,12 @@ import { ArchiveConsumer } from '../consumers/ArchiveConsumer';
 import { DatabaseConnection, RabbitMQService } from '../types/processor.types';
 import { config } from '../configs/environment';
 
-export function createHealthRoutes(
+export const createHealthRoutes = (
   logger: Logger,
   databaseConnection: DatabaseConnection,
   rabbitMQService: RabbitMQService,
   archiveConsumer: ArchiveConsumer
-): Router {
+): Router => {
   const router = Router();
 
   /**
@@ -69,12 +69,12 @@ export function createHealthRoutes(
 /**
  * 獲取健康狀態
  */
-async function getHealthStatus(
+const getHealthStatus = async (
   databaseConnection: DatabaseConnection,
   rabbitMQService: RabbitMQService,
   archiveConsumer: ArchiveConsumer,
   logger: Logger
-): Promise<any> {
+): Promise<any> => {
   const checks: Record<string, any> = {};
 
   try {

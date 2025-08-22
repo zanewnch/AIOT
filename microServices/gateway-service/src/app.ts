@@ -75,6 +75,11 @@ export class GatewayApp {
         // 信任代理
         this.app.set('trust proxy', true);
 
+        // 設置模板引擎和靜態文件服務
+        this.app.set('view engine', 'ejs');
+        this.app.set('views', './src/views');
+        this.app.use('/static', express.static('./src/public'));
+
         // 基礎中間件
         this.app.use(express.json({ limit: '50mb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '50mb' }));

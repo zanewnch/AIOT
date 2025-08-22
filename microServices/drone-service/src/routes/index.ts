@@ -19,6 +19,7 @@ import {DronePositionRoutes} from './dronePositionRoutes.js';
 import {DroneStatusRoutes} from './droneStatusRoutes.js';
 import {DroneCommandRoutes} from './droneCommandRoutes.js';
 import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
+import docsRoutes from './docsRoutes.js';
 import {TYPES} from '../container/types.js';
 import {ResResult} from '@aiot/shared-packages';
 
@@ -69,6 +70,10 @@ export class RouteManager {
 
             app.use('/realtime', this.droneRealtimeRoutes.getRouter());
             console.log('✅ Drone realtime routes registered at /realtime');
+
+            // 註冊文檔路由
+            app.use('/', docsRoutes);
+            console.log('✅ Documentation routes registered at /docs and /typedoc');
 
             console.log('🚀 All routes registered successfully');
         } catch (error) {

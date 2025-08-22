@@ -13,6 +13,7 @@ import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { AuthTestController } from '../controllers/AuthTestController.js';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
+import docsRoutes from './docsRoutes.js';
 
 /**
  * 創建 API 路由配置
@@ -170,6 +171,19 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
     );
 
     // ==========================================================================
+    // 文檔統一首頁路由
+    // ==========================================================================
+
+    /**
+     * 文檔中心首頁路由
+     * 提供統一的文檔入口點和服務列表
+     */
+    router.use('/docs', 
+        AuthMiddleware.optional({ logAuthEvents: false }),
+        docsRoutes
+    );
+
+    // ==========================================================================
     // 微服務代理路由
     // ==========================================================================
 
@@ -246,23 +260,6 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
         })
     );
 
-    /**
-     * Docs 服務路由 (公開訪問)
-     */
-    router.use('/docs',
-        // 文檔可以公開訪問，但如果有認證則記錄
-        AuthMiddleware.optional({
-            logAuthEvents: false
-        }),
-        proxyMiddleware.createDynamicProxy({
-            target: 'docs-service',
-            pathPrefix: '/api/docs',
-            useGrpc: false,
-            httpPort: 3054,
-            timeout: 15000,
-            retries: 2
-        })
-    );
 
     /**
      * Scheduler 服務路由 (需要管理員權限)
@@ -291,6 +288,113 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
             httpPort: 3005,
             timeout: 60000, // 較長超時時間，因為歸檔處理可能需要更多時間
             retries: 2
+        })
+    );
+
+    /**
+     * LLM 服務路由 (Django API 層，需要認證)
+     * 提供統一的 LLM 介面，包含文字生成、對話和串流功能
+     */
+    router.use('/llm',
+        AuthMiddleware.optional({
+            logAuthEvents: true,
+            checkBlacklist: false  // LLM 服務可以允許未登入用戶使用基本功能
+        }),
+        proxyMiddleware.createDynamicProxy({
+            target: 'llm-service',
+            pathPrefix: '/api',
+            useGrpc: false,
+            httpPort: 8022,
+            timeout: 120000, // LLM 推理需要更長時間
+            retries: 2
+        })
+    );
+
+    /**
+     * LLM AI Engine 直接存取路由 (僅限管理員或開發調試)
+     * 提供對底層 AI 引擎的直接存取，用於調試和高級功能
+     */
+    router.use('/ai-engine',
+        AuthMiddleware.requireAdmin(),
+        proxyMiddleware.createDynamicProxy({
+            target: 'llm-ai-engine',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 8021,
+            timeout: 120000, // AI 推理需要更長時間
+            retries: 2
+        })
+    );
+
+    // ==========================================================================
+    // 文檔代理路由 - 分散式文檔架構
+    // ==========================================================================
+
+    /**
+     * RBAC 服務文檔路由
+     * - /docs/rbac/docs - EJS 服務說明頁面
+     * - /docs/rbac/typedoc - TypeDoc 技術文檔
+     */
+    router.use('/docs/rbac',
+        AuthMiddleware.optional({ logAuthEvents: false }),
+        proxyMiddleware.createDynamicProxy({
+            target: 'rbac-service',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 3051,
+            timeout: 30000,
+            retries: 3
+        })
+    );
+
+    /**
+     * Drone 服務文檔路由
+     * - /docs/drone/docs - EJS 服務說明頁面  
+     * - /docs/drone/typedoc - TypeDoc 技術文檔
+     */
+    router.use('/docs/drone',
+        AuthMiddleware.optional({ logAuthEvents: false }),
+        proxyMiddleware.createDynamicProxy({
+            target: 'drone-service',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 3052,
+            timeout: 30000,
+            retries: 3
+        })
+    );
+
+    /**
+     * General 服務文檔路由
+     * - /docs/general/docs - EJS 服務說明頁面
+     * - /docs/general/typedoc - TypeDoc 技術文檔
+     */
+    router.use('/docs/general',
+        AuthMiddleware.optional({ logAuthEvents: false }),
+        proxyMiddleware.createDynamicProxy({
+            target: 'general-service',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 3053,
+            timeout: 30000,
+            retries: 3
+        })
+    );
+
+    /**
+     * Auth 服務文檔路由
+     * - /docs/auth/docs - EJS 服務說明頁面
+     * - /docs/auth/typedoc - TypeDoc 技術文檔
+     */
+    router.use('/docs/auth',
+        AuthMiddleware.optional({ logAuthEvents: false }),
+        proxyMiddleware.createDynamicProxy({
+            target: 'auth-service',
+            pathPrefix: '',
+            useGrpc: false,
+            httpPort: 3055,
+            timeout: 30000,
+            retries: 3
         })
     );
 

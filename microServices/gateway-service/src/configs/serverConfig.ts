@@ -55,12 +55,6 @@ export interface MicroserviceEndpoints {
         httpPort: number;
         url: string;
     };
-    /** Docs 服務配置 */
-    docs: {
-        host: string;
-        httpPort: number;
-        url: string;
-    };
     /** Drone WebSocket 服務配置 */
     droneWebsocket: {
         host: string;
@@ -129,11 +123,6 @@ export const getMicroserviceEndpoints = (): MicroserviceEndpoints => {
             grpcPort: normalizePort(process.env.GENERAL_SERVICE_PORT || '50053'),
             httpPort: normalizePort(process.env.GENERAL_HTTP_PORT || '3053'),
             url: process.env.GENERAL_SERVICE_URL || 'aiot-general-service:50053'
-        },
-        docs: {
-            host: process.env.DOCS_SERVICE_HOST || 'aiot-docs-service',
-            httpPort: normalizePort(process.env.DOCS_SERVICE_PORT || '3054'),
-            url: process.env.DOCS_SERVICE_URL || 'http://aiot-docs-service:3054'
         },
         droneWebsocket: {
             host: process.env.DRONE_WEBSOCKET_SERVICE_HOST || 'aiot-drone-websocket-service',

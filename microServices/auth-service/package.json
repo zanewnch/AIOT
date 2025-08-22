@@ -22,7 +22,7 @@
     "docs:watch-scss": "sass --watch src/styles/typedoc-custom-flex.scss:public/typedoc-custom.css"
   },
   "dependencies": {
-    "@aiot/shared-packages": "file:../../aiot-shared-packages",
+    "@aiot/shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "@types/amqplib": "^0.10.7",

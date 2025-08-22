@@ -1,0 +1,190 @@
+{
+  "overview": {
+    "title": "AIOT 微服務架構",
+    "description": "基於 Docker 和 Consul 的分布式微服務系統",
+    "totalServices": 6,
+    "communicationPattern": "HTTP + gRPC + WebSocket",
+    "serviceDiscovery": "Consul",
+    "loadBalancer": "API Gateway"
+  },
+  "services": [
+    {
+      "name": "auth-service",
+      "displayName": "認證服務",
+      "description": "提供用戶認證、JWT 管理和 Session 處理功能",
+      "port": 3001,
+      "type": "HTTP API",
+      "status": "active",
+      "technology": "Express.js + TypeScript",
+      "database": "MySQL",
+      "features": [
+        "JWT Token 管理",
+        "Cookie-based Session", 
+        "密碼加密處理",
+        "用戶登入/登出",
+        "認證狀態檢查"
+      ],
+      "endpoints": [
+        "POST /api/auth/login - 用戶登入",
+        "POST /api/auth/logout - 用戶登出",
+        "GET /api/auth/me - 獲取當前用戶資訊",
+        "POST /api/auth/refresh - 刷新 Token"
+      ],
+      "dependencies": ["gateway-service", "database"]
+    },
+    {
+      "name": "rbac-service", 
+      "displayName": "權限管理服務",
+      "description": "基於角色的存取控制（RBAC）系統，管理用戶權限和角色",
+      "port": 3003,
+      "type": "HTTP API", 
+      "status": "active",
+      "technology": "Express.js + TypeScript",
+      "database": "Redis + MySQL",
+      "features": [
+        "角色定義與管理",
+        "權限分配系統",
+        "用戶角色綁定",
+        "權限檢查中間件",
+        "動態權限更新"
+      ],
+      "endpoints": [
+        "GET /api/rbac/roles - 獲取所有角色",
+        "POST /api/rbac/roles - 創建新角色", 
+        "GET /api/rbac/permissions - 獲取權限列表",
+        "POST /api/rbac/assign - 分配用戶角色"
+      ],
+      "dependencies": ["auth-service", "redis", "database"]
+    },
+    {
+      "name": "drone-service",
+      "displayName": "無人機管理服務", 
+      "description": "無人機數據管理、指令控制和狀態監控",
+      "port": 3002,
+      "type": "HTTP API",
+      "status": "active", 
+      "technology": "Express.js + TypeScript",
+      "database": "MySQL",
+      "features": [
+        "無人機位置追蹤",
+        "指令發送與執行",
+        "即時狀態監控",
+        "歷史軌跡記錄",
+        "飛行模式控制"
+      ],
+      "endpoints": [
+        "GET /api/drone/status - 獲取無人機狀態",
+        "POST /api/drone/command - 發送控制指令",
+        "GET /api/drone/positions - 獲取位置歷史",
+        "POST /api/drone/mission - 創建飛行任務"
+      ],
+      "dependencies": ["gateway-service", "drone-websocket-service", "database"]
+    },
+    {
+      "name": "general-service",
+      "displayName": "通用服務",
+      "description": "提供共用功能和工具類 API，支援其他微服務",
+      "port": 3005,
+      "type": "HTTP API",
+      "status": "active",
+      "technology": "Express.js + TypeScript", 
+      "database": "MySQL",
+      "features": [
+        "文件上傳處理",
+        "郵件發送服務",
+        "通知系統",
+        "數據驗證工具",
+        "共用配置管理"
+      ],
+      "endpoints": [
+        "POST /api/general/upload - 文件上傳",
+        "POST /api/general/email - 發送郵件",
+        "GET /api/general/config - 獲取配置",
+        "POST /api/general/notify - 發送通知"
+      ],
+      "dependencies": ["gateway-service", "database"]
+    },
+    {
+      "name": "drone-websocket-service",
+      "displayName": "無人機即時通訊服務",
+      "description": "基於 Socket.IO 的即時數據傳輸和雙向通訊",
+      "port": 3004,
+      "type": "WebSocket",
+      "status": "active",
+      "technology": "Socket.IO + Express.js",
+      "database": "Redis",
+      "features": [
+        "即時位置更新",
+        "狀態變化通知",
+        "指令即時回饋",
+        "多客戶端廣播",
+        "連接狀態管理"
+      ],
+      "endpoints": [
+        "WebSocket /drone - 無人機數據頻道",
+        "GET /api/websocket/status - 連接狀態",
+        "GET /api/websocket/info - 服務資訊"
+      ],
+      "dependencies": ["gateway-service", "drone-service", "redis"]
+    },
+    {
+      "name": "scheduler-service", 
+      "displayName": "排程服務",
+      "description": "定時任務管理和歸檔作業的 Publisher 服務",
+      "port": 3006,
+      "type": "Publisher + HTTP API",
+      "status": "active",
+      "technology": "Express.js + node-cron + RabbitMQ",
+      "database": "MySQL",
+      "features": [
+        "定時歸檔任務",
+        "RabbitMQ 訊息發布",
+        "任務狀態監控",
+        "重試機制管理",
+        "手動任務觸發"
+      ],
+      "endpoints": [
+        "GET /api/scheduler/status - 排程狀態",
+        "POST /api/scheduler/trigger - 手動觸發",
+        "GET /api/scheduler/tasks - 任務列表",
+        "GET /api/scheduler/metrics - 執行指標"
+      ],
+      "dependencies": ["rabbitmq", "database", "archive-consumer-service"]
+    }
+  ],
+  "communication": {
+    "patterns": [
+      {
+        "type": "HTTP REST API",
+        "description": "標準的 RESTful API 通訊",
+        "services": ["auth", "rbac", "drone", "general", "docs"]
+      },
+      {
+        "type": "WebSocket",
+        "description": "即時雙向數據傳輸", 
+        "services": ["drone-websocket"]
+      },
+      {
+        "type": "Message Queue (Publisher)",
+        "description": "異步任務發布和處理",
+        "services": ["scheduler"]
+      }
+    ],
+    "flow": [
+      "Frontend → Gateway → Auth Service (認證)",
+      "Gateway → RBAC Service (權限檢查)",
+      "Gateway → Business Services (業務處理)",
+      "Gateway ↔ WebSocket Service (即時通訊)",
+      "Scheduler → RabbitMQ → Consumer (後台任務)"
+    ]
+  },
+  "infrastructure": {
+    "serviceDiscovery": "Consul",
+    "messageQueue": "RabbitMQ", 
+    "cache": "Redis",
+    "database": "MySQL",
+    "containerization": "Docker",
+    "orchestration": "Docker Compose / Kubernetes",
+    "monitoring": "自建健康檢查"
+  }
+}

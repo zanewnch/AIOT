@@ -43,7 +43,7 @@ export class DatabaseService implements DatabaseConnection {
   /**
    * 初始化資料庫連線
    */
-  async initialize(): Promise<void> {
+  initialize = async (): Promise<void> => {
     try {
       // 初始化 Sequelize ORM
       this.sequelize = new Sequelize({
@@ -95,12 +95,12 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Failed to initialize database service', error);
       throw error;
     }
-  }
+  };
 
   /**
    * 執行 SQL 查詢
    */
-  async query(sql: string, params: any[] = []): Promise<any[]> {
+  query = async (sql: string, params: any[] = []): Promise<any[]> => {
     if (!this.connection) {
       throw new Error('Database connection not initialized');
     }
@@ -112,12 +112,12 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Database query failed', { error, sql, params });
       throw error;
     }
-  }
+  };
 
   /**
    * 執行事務
    */
-  async transaction<T>(callback: (connection: mysql.Connection) => Promise<T>): Promise<T> {
+  transaction = async <T>(callback: (connection: mysql.Connection) => Promise<T>): Promise<T> => {
     if (!this.connection) {
       throw new Error('Database connection not initialized');
     }
@@ -133,16 +133,16 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Transaction failed and rolled back', error);
       throw error;
     }
-  }
+  };
 
   /**
    * 批量插入數據
    */
-  async batchInsert(
+  batchInsert = async (
     tableName: string, 
     records: Record<string, any>[], 
     batchSize: number = 1000
-  ): Promise<number> {
+  ): Promise<number> => {
     if (!records.length) return 0;
 
     let totalInserted = 0;
@@ -176,16 +176,16 @@ export class DatabaseService implements DatabaseConnection {
     }
 
     return totalInserted;
-  }
+  };
 
   /**
    * 批量更新數據
    */
-  async batchUpdate(
+  batchUpdate = async (
     tableName: string,
     updates: { condition: string; values: any[]; setClause: string }[],
     batchSize: number = 1000
-  ): Promise<number> {
+  ): Promise<number> => {
     let totalUpdated = 0;
 
     for (let i = 0; i < updates.length; i += batchSize) {
@@ -212,17 +212,17 @@ export class DatabaseService implements DatabaseConnection {
     }
 
     return totalUpdated;
-  }
+  };
 
   /**
    * 批量刪除數據
    */
-  async batchDelete(
+  batchDelete = async (
     tableName: string,
     condition: string,
     params: any[] = [],
     batchSize: number = 1000
-  ): Promise<number> {
+  ): Promise<number> => {
     let totalDeleted = 0;
     let hasMore = true;
 
@@ -256,12 +256,12 @@ export class DatabaseService implements DatabaseConnection {
     }
 
     return totalDeleted;
-  }
+  };
 
   /**
    * 檢查表是否存在
    */
-  async tableExists(tableName: string): Promise<boolean> {
+  tableExists = async (tableName: string): Promise<boolean> => {
     try {
       const sql = `
         SELECT COUNT(*) as count 
@@ -275,17 +275,17 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Failed to check table existence', { error, tableName });
       return false;
     }
-  }
+  };
 
   /**
    * 獲取表統計信息
    */
-  async getTableStats(tableName: string): Promise<{
+  getTableStats = async (tableName: string): Promise<{
     rowCount: number;
     dataLength: number;
     indexLength: number;
     autoIncrement: number | null;
-  } | null> {
+  } | null> => {
     try {
       const sql = `
         SELECT 
@@ -303,12 +303,12 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Failed to get table stats', { error, tableName });
       return null;
     }
-  }
+  };
 
   /**
    * 檢查資料庫連線健康狀態
    */
-  async isHealthy(): Promise<boolean> {
+  isHealthy = async (): Promise<boolean> => {
     try {
       if (!this.sequelize || !this.connection) {
         return false;
@@ -325,16 +325,16 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Database health check failed', error);
       return false;
     }
-  }
+  };
 
   /**
    * 獲取資料庫連線狀態
    */
-  async getConnectionStats(): Promise<{
+  getConnectionStats = async (): Promise<{
     sequelizeConnected: boolean;
     mysqlConnected: boolean;
     poolInfo?: any;
-  }> {
+  }> => {
     try {
       const stats = {
         sequelizeConnected: false,
@@ -370,12 +370,12 @@ export class DatabaseService implements DatabaseConnection {
         poolInfo: null
       };
     }
-  }
+  };
 
   /**
    * 關閉資料庫連線
    */
-  async close(): Promise<void> {
+  close = async (): Promise<void> => {
     try {
       if (this.connection) {
         await this.connection.end();
@@ -392,26 +392,26 @@ export class DatabaseService implements DatabaseConnection {
       this.logger.error('Error closing database connections', error);
       throw error;
     }
-  }
+  };
 
   /**
    * 獲取 Sequelize 實例
    */
-  getSequelize(): Sequelize | null {
+  getSequelize = (): Sequelize | null => {
     return this.sequelize;
-  }
+  };
 
   /**
    * 獲取原生 MySQL 連線
    */
-  getMySQLConnection(): mysql.Connection | null {
+  getMySQLConnection = (): mysql.Connection | null => {
     return this.connection;
-  }
+  };
 
   /**
    * 延遲函數
    */
-  private delay(ms: number): Promise<void> {
+  private delay = (ms: number): Promise<void> => {
     return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  };
 }
