@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@types/cors": "^2.8.19",
+    "aiot-shared-packages": "github:zanewnch/aiot-shared-packages",
     "@types/socket.io": "^3.0.1",
     "cors": "^2.8.5",
     "debug": "~2.6.9",

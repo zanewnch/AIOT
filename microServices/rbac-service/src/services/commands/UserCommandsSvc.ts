@@ -1,3 +1,4 @@
+/**
  * @fileoverview 使用者命令服務實現
  *
  * 此文件實作了使用者命令業務邏輯層，
@@ -412,9 +413,11 @@ export class UserCommandsSvc {
         }
     }
 
+    /**
      * 驗證密碼
      * @param password 明文密碼
      * @param hash 密碼雜湊
+     */
     public verifyPassword = async (password: string, hash: string): Promise<boolean> => {
         return this.userQueriesSvc.verifyPassword(password, hash);
     }

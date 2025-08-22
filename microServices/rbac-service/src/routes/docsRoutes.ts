@@ -9,7 +9,9 @@ import { Router, Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ResResult } from '../utils/ResResult.js';
-import logger from '../configs/logger.js';
+import { createLogger } from '../configs/loggerConfig.js';
+
+const logger = createLogger('DocsRoutes');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
