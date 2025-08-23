@@ -464,7 +464,12 @@ export const TYPES = {
   /**
    * Auth 路由類型
    */
-  AuthRoutes: Symbol.for('AuthRoutes')
+  AuthRoutes: Symbol.for('AuthRoutes'),
+
+  /**
+   * 路由註冊器類型
+   */
+  RouteRegistrar: Symbol.for('RouteRegistrar')
 } as const;
 
 /**

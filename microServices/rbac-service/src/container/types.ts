@@ -257,6 +257,22 @@ export const TYPES = {
    */
   DroneCommandEventHandlerFactory: Symbol.for('DroneCommandEventHandlerFactory'),
 
+  // ===== 路由服務 =====
+  /**
+   * 路由註冊器類型
+   */
+  RouteRegistrar: Symbol.for('RouteRegistrar'),
+
+  /**
+   * RBAC 路由類型
+   */
+  RBACRoutes: Symbol.for('RBACRoutes'),
+
+  /**
+   * 文檔路由類型
+   */
+  DocsRoutes: Symbol.for('DocsRoutes'),
+
   // ===== 應用程式核心 =====
   /**
    * Express 應用程式類型

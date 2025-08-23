@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import {
   ArchiveTask,
   ArchiveTaskStatistics,
@@ -129,7 +129,7 @@ export class ArchiveTaskQuery {
           const queryString = params.toString();
           const url = queryString ? `/drone/archive-tasks?${queryString}` : '/drone/archive-tasks';
           
-          const apiResponse = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>(url);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>(url);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch archive tasks');
@@ -189,7 +189,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_DATA,
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>('/drone/archive-tasks/data');
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>('/drone/archive-tasks/data');
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch archive tasks data');
@@ -243,7 +243,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASK_BY_ID(id),
       queryFn: async (): Promise<ArchiveTask> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask}>(`/drone/archive-tasks/${id}`);
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask}>(`/drone/archive-tasks/${id}`);
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch archive task');
@@ -275,7 +275,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_STATUS(status),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?status=${status}`);
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?status=${status}`);
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch archive tasks by status');
@@ -307,7 +307,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_TYPE(type),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?jobType=${type}`);
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?jobType=${type}`);
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch archive tasks by type');
@@ -339,7 +339,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_BATCH(batchId),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?batchId=${encodeURIComponent(batchId)}`);
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?batchId=${encodeURIComponent(batchId)}`);
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch archive tasks by batch');
@@ -371,7 +371,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASK_STATISTICS,
       queryFn: async (): Promise<ArchiveTaskStatistics> => {
         try {
-          const response = await apiClient.get<{status: number; message: string; data: ArchiveTaskStatistics}>('/drone/archive-tasks/statistics');
+          const response = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTaskStatistics}>('/drone/archive-tasks/statistics');
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to fetch archive task statistics');
@@ -432,7 +432,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (data: CreateArchiveTaskRequest): Promise<ArchiveTask> => {
         try {
-          const response = await apiClient.post<{status: number; message: string; data: ArchiveTask}>('/drone/archive-tasks', data);
+          const response = await resUtilsInstance.post<{status: number; message: string; data: ArchiveTask}>('/drone/archive-tasks', data);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to create archive task');
@@ -476,7 +476,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (data: CreateArchiveTaskRequest[]): Promise<BatchArchiveResult> => {
         try {
-          const response = await apiClient.post<{status: number; message: string; data: BatchArchiveResult}>('/drone/archive-tasks/batch', data);
+          const response = await resUtilsInstance.post<{status: number; message: string; data: BatchArchiveResult}>('/drone/archive-tasks/batch', data);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to create batch archive tasks');
@@ -555,7 +555,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (taskId: number): Promise<ArchiveTaskExecutionResult> => {
         try {
-          const response = await apiClient.post<{status: number; message: string; data: ArchiveTaskExecutionResult}>(`/drone/archive-tasks/${taskId}/execute`);
+          const response = await resUtilsInstance.post<{status: number; message: string; data: ArchiveTaskExecutionResult}>(`/drone/archive-tasks/${taskId}/execute`);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to execute archive task');
@@ -596,7 +596,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async ({ taskId, reason }: { taskId: number; reason: string }): Promise<ArchiveTask> => {
         try {
-          const response = await apiClient.post<{status: number; message: string; data: ArchiveTask}>(`/drone/archive-tasks/${taskId}/cancel`, { reason });
+          const response = await resUtilsInstance.post<{status: number; message: string; data: ArchiveTask}>(`/drone/archive-tasks/${taskId}/cancel`, { reason });
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to cancel archive task');
@@ -637,7 +637,7 @@ export class ArchiveTaskQuery {
     return useMutation({
       mutationFn: async (taskId: number): Promise<ArchiveTaskExecutionResult> => {
         try {
-          const response = await apiClient.post<{status: number; message: string; data: ArchiveTaskExecutionResult}>(`/drone/archive-tasks/${taskId}/retry`);
+          const response = await resUtilsInstance.post<{status: number; message: string; data: ArchiveTaskExecutionResult}>(`/drone/archive-tasks/${taskId}/retry`);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to retry archive task');
@@ -684,7 +684,7 @@ export class ArchiveTaskQuery {
             params.append('status', status);
           }
           
-          const response = await apiClient.delete<{status: number; message: string; data: { cleanedCount: number }}>(`/drone/archive-tasks/cleanup?${params.toString()}`);
+          const response = await resUtilsInstance.delete<{status: number; message: string; data: { cleanedCount: number }}>(`/drone/archive-tasks/cleanup?${params.toString()}`);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to cleanup archive tasks');
@@ -718,7 +718,7 @@ export class ArchiveTaskQuery {
       queryKey: this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS_BY_STATUS(ArchiveTaskStatus.RUNNING),
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?status=${ArchiveTaskStatus.RUNNING}`);
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?status=${ArchiveTaskStatus.RUNNING}`);
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch running archive tasks');
@@ -751,7 +751,7 @@ export class ArchiveTaskQuery {
       queryKey: [...this.ARCHIVE_TASK_QUERY_KEYS.ARCHIVE_TASKS, 'recent', limit],
       queryFn: async (): Promise<ArchiveTask[]> => {
         try {
-          const responseData = await apiClient.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?sortBy=createdAt&sortOrder=DESC&limit=${limit}`);
+          const responseData = await resUtilsInstance.get<{status: number; message: string; data: ArchiveTask[]}>(`/drone/archive-tasks?sortBy=createdAt&sortOrder=DESC&limit=${limit}`);
           
           if (responseData.status !== 200) {
             throw new Error(responseData.message || 'Failed to fetch recent archive tasks');
@@ -785,7 +785,7 @@ export class ArchiveTaskQuery {
         try {
           logger.debug(`Updating archive task with ID: ${id}`, data);
           
-          const response = await apiClient.put<{status: number; message: string; data: ArchiveTask}>(`/drone/archive-tasks/${id}`, data);
+          const response = await resUtilsInstance.put<{status: number; message: string; data: ArchiveTask}>(`/drone/archive-tasks/${id}`, data);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to update archive task');

@@ -31,7 +31,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {UserCommandsSvc} from '../../services/commands/UserCommandsSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('UserCommandsCtrl');
@@ -144,13 +144,13 @@ export class UserCommandsCtrl {
 
             // 基本驗證
             if (!username || !email || !password) {
-                const result = ResResult.badRequest('缺少必要的使用者資訊');
+                const result = sharedPackages.ResResult.badRequest('缺少必要的使用者資訊');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (password !== confirmPassword) {
-                const result = ResResult.badRequest('密碼和確認密碼不匹配');
+                const result = sharedPackages.ResResult.badRequest('密碼和確認密碼不匹配');
                 res.status(result.status).json(result);
                 return;
             }
@@ -164,7 +164,7 @@ export class UserCommandsCtrl {
                 password
             });
 
-            const result = ResResult.created('使用者創建成功', newUser);
+            const result = sharedPackages.ResResult.created('使用者創建成功', newUser);
             res.status(result.status).json(result);
             logger.info('Successfully created new user', {
                 userId: newUser.id,
@@ -179,10 +179,10 @@ export class UserCommandsCtrl {
 
             // 檢查是否為重複使用者錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('創建使用者失敗');
+                const result = sharedPackages.ResResult.internalError('創建使用者失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -245,7 +245,7 @@ export class UserCommandsCtrl {
             const userId = parseInt(req.params.id);
 
             if (isNaN(userId)) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -263,13 +263,13 @@ export class UserCommandsCtrl {
             const updatedUser = await this.userCommandsSvc.updateUser(userId, updateData);
 
             if (!updatedUser) {
-                const result = ResResult.notFound('使用者不存在');
+                const result = sharedPackages.ResResult.notFound('使用者不存在');
                 res.status(result.status).json(result);
                 logger.warn(`User not found for update with ID: ${userId}`);
                 return;
             }
 
-            const result = ResResult.success('使用者更新成功', updatedUser);
+            const result = sharedPackages.ResResult.success('使用者更新成功', updatedUser);
             res.status(result.status).json(result);
             logger.info('Successfully updated user', {
                 userId,
@@ -283,10 +283,10 @@ export class UserCommandsCtrl {
 
             // 檢查是否為重複使用者錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('更新使用者失敗');
+                const result = sharedPackages.ResResult.internalError('更新使用者失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -348,7 +348,7 @@ export class UserCommandsCtrl {
             const userId = parseInt(req.params.id);
 
             if (isNaN(userId)) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -359,13 +359,13 @@ export class UserCommandsCtrl {
             const deleted = await this.userCommandsSvc.deleteUser(userId);
 
             if (!deleted) {
-                const result = ResResult.notFound('使用者不存在');
+                const result = sharedPackages.ResResult.notFound('使用者不存在');
                 res.status(result.status).json(result);
                 logger.warn(`User not found for deletion with ID: ${userId}`);
                 return;
             }
 
-            const result = ResResult.success('使用者刪除成功');
+            const result = sharedPackages.ResResult.success('使用者刪除成功');
             res.status(result.status).json(result);
             logger.info('Successfully deleted user', {userId});
         } catch (error) {
@@ -373,7 +373,7 @@ export class UserCommandsCtrl {
                 userId: req.params.id,
                 error
             });
-            const result = ResResult.internalError('刪除使用者失敗');
+            const result = sharedPackages.ResResult.internalError('刪除使用者失敗');
             res.status(result.status).json(result);
         }
     }

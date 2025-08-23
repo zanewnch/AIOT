@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { DroneCommand } from '../types/droneCommand';
 import type { TableError } from '../types/table';
@@ -115,7 +115,7 @@ export class DroneCommandQueueQuery {
           if (options.created_by) params.append('created_by', options.created_by.toString());
           
           const url = `/drone/commands/queue?${params.toString()}`;
-          const result = await apiClient.getWithResult<DroneCommandQueue[]>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandQueue[]>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -164,7 +164,7 @@ export class DroneCommandQueueQuery {
           logger.debug('Fetching command queue by ID', { queueId });
           
           const url = `/drone/commands/queue/${queueId}`;
-          const result = await apiClient.getWithResult<DroneCommandQueue>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandQueue>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -200,7 +200,7 @@ export class DroneCommandQueueQuery {
           logger.debug('Fetching queue statistics');
           
           const url = '/drone/commands/queue';
-          const result = await apiClient.getWithResult<QueueStatistics>(url);
+          const result = await resUtilsInstance.getWithResult<QueueStatistics>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -236,7 +236,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Creating command queue', { queueData });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>('/drone/commands/queue', queueData);
+          const result = await resUtilsInstance.postWithResult<DroneCommandQueue>('/drone/commands/queue', queueData);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -273,7 +273,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Updating command queue', { queueId, queueData });
           
-          const result = await apiClient.putWithResult<DroneCommandQueue>(`/drone/commands/queue/${queueId}`, queueData);
+          const result = await resUtilsInstance.putWithResult<DroneCommandQueue>(`/drone/commands/queue/${queueId}`, queueData);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -311,7 +311,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Deleting command queue', { queueId });
           
-          const result = await apiClient.deleteWithResult(`/drone/commands/queue/${queueId}`);
+          const result = await resUtilsInstance.deleteWithResult(`/drone/commands/queue/${queueId}`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -347,7 +347,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Starting command queue', { queueId });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>(`/drone/commands/queue/process-next/${queueId}`);
+          const result = await resUtilsInstance.postWithResult<DroneCommandQueue>(`/drone/commands/queue/process-next/${queueId}`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -385,7 +385,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Pausing command queue', { queueId });
           
-          const result = await apiClient.postWithResult<DroneCommandQueue>(`/drone/commands/queue/${queueId}/pause`);
+          const result = await resUtilsInstance.postWithResult<DroneCommandQueue>(`/drone/commands/queue/${queueId}/pause`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -423,7 +423,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Resetting command queue', { queueId });
           
-          const result = await apiClient.deleteWithResult(`/drone/commands/queue/${queueId}`);
+          const result = await resUtilsInstance.deleteWithResult(`/drone/commands/queue/${queueId}`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -461,7 +461,7 @@ export class DroneCommandQueueQuery {
         try {
           logger.debug('Adding command to queue', { queueId, command });
           
-          const result = await apiClient.postWithResult<DroneCommand>(`/drone/commands/queue`, command);
+          const result = await resUtilsInstance.postWithResult<DroneCommand>(`/drone/commands/queue`, command);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);

@@ -15,16 +15,16 @@ import { HealthRoutes } from './healthRoutes.js';
 import { TYPES } from '@/container';
 import { createLogger } from '@/configs/loggerConfig.js';
 
-const logger = createLogger('RouteManager');
+const logger = createLogger('RouteRegistrar');
 
 /**
- * 路由管理器類別
+ * 路由註冊器類別
  * 
  * 負責註冊和管理 WebSocket 服務的輔助 API 路由
  * 使用 arrow functions 避免 this 綁定問題
  */
 @injectable()
-export class RouteManager {
+export class RouteRegistrar {
     private readonly router: Router;
 
     constructor(
@@ -227,7 +227,19 @@ export class RouteManager {
     }
 
     /**
+     * 註冊路由到 Express 應用程式
+     * 統一接口，符合其他微服務的 RouteRegistrar 模式
+     * 
+     * @param app Express 應用程式實例
+     */
+    registerRoutes(app: any): void {
+        app.use('/', this.router);
+        logger.info('🚀 WebSocket service routes registered to Express app');
+    }
+
+    /**
      * 獲取路由器實例
+     * 向後兼容方法
      */
     getRouter(): Router {
         return this.router;

@@ -9,6 +9,7 @@
  */
 
 import { ArchiveTaskModel, ArchiveTaskCreationAttributes, ArchiveTaskStatus, ArchiveJobType } from '../../models/ArchiveTaskModel.js';
+import { PaginationParams, PaginatedResponse } from '../ApiResponseType.js';
 
 export interface ArchiveTaskQueryOptions {
   status?: ArchiveTaskStatus;
@@ -38,14 +39,29 @@ export interface IArchiveTaskRepository {
   findAll(options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]>;
 
   /**
+   * 分頁查找所有歷史任務
+   */
+  findAllPaginated(params: PaginationParams): Promise<PaginatedResponse<ArchiveTaskModel>>;
+
+  /**
    * 根據狀態查找歷史任務
    */
   findByStatus(status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]>;
 
   /**
+   * 根據狀態分頁查找歷史任務
+   */
+  findByStatusPaginated(status: ArchiveTaskStatus, params: PaginationParams): Promise<PaginatedResponse<ArchiveTaskModel>>;
+
+  /**
    * 根據批次 ID 查找歷史任務
    */
   findByBatchId(batchId: string): Promise<ArchiveTaskModel[]>;
+
+  /**
+   * 根據批次 ID 分頁查找歷史任務
+   */
+  findByBatchIdPaginated(batchId: string, params: PaginationParams): Promise<PaginatedResponse<ArchiveTaskModel>>;
 
   /**
    * 統計歷史任務數量

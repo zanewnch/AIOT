@@ -5,7 +5,10 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
+import { TYPES } from '../container/types.js';
 import { ProxyMiddleware } from '../middleware/ProxyMiddleware.js';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
@@ -26,8 +29,8 @@ interface ServiceRouteConfig {
 /**
  * Gateway 控制器類別
  */
+@injectable()
 export class GatewayController {
-    private proxyMiddleware: ProxyMiddleware;
     private logger = loggerConfig;
 
     // 微服務路由配置
@@ -70,9 +73,9 @@ export class GatewayController {
         },
     ];
 
-    constructor() {
-        this.proxyMiddleware = new ProxyMiddleware();
-    }
+    constructor(
+        @inject(TYPES.ProxyMiddleware) private proxyMiddleware: ProxyMiddleware
+    ) {}
 
     /**
      * 直接從 Consul 獲取所有服務健康狀態

@@ -1,3 +1,4 @@
+/**
  * @fileoverview 使用者角色關聯查詢服務實現
  *
  * 此文件實作了使用者角色關聯查詢業務邏輯層，
@@ -20,6 +21,7 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
+ */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -32,11 +34,13 @@ import { RoleModel } from '../../models/RoleModel.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { getRedisClient } from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 
 const logger = createLogger('UserToRoleQueriesSvc');
 
+/**
  * 角色資料傳輸物件
+ */
 export interface RoleDTO {
     id: number;
     name: string;
@@ -45,7 +49,9 @@ export interface RoleDTO {
     updatedAt: Date;
 }
 
+/**
  * 使用者資料傳輸物件
+ */
 export interface UserDTO {
     id: number;
     username: string;
@@ -54,7 +60,9 @@ export interface UserDTO {
     updatedAt: Date;
 }
 
+/**
  * 使用者角色關聯基本資料傳輸物件
+ */
 export interface UserRoleBasicDTO {
     id: string;
     userId: number;
@@ -62,16 +70,22 @@ export interface UserRoleBasicDTO {
     assignedAt: string;
 }
 
+/**
  * 快取選項介面
+ */
 export interface CacheOptions {
+    /**
      * 是否刷新快取（強制從資料庫重新載入）
+     */
     refreshCache?: boolean;
 }
 
+/**
  * 使用者角色關聯查詢服務類別
- * 
+ *
  * 提供使用者角色關聯的所有查詢功能，
  * 包含快取管理、資料轉換和驗證邏輯。
+ */
 @injectable()
 export class UserToRoleQueriesSvc {
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
@@ -89,23 +103,29 @@ export class UserToRoleQueriesSvc {
     }
 
 
+    /**
      * 產生使用者角色快取鍵值
      * @param userId 使用者 ID
      * @private
+     */
     private getUserRolesCacheKey(userId: number): string {
         return `${UserToRoleQueriesSvc.USER_ROLES_CACHE_PREFIX}${userId}`;
     }
 
+    /**
      * 產生角色使用者快取鍵值
      * @param roleId 角色 ID
      * @private
+     */
     private getRoleUsersCacheKey(roleId: number): string {
         return `${UserToRoleQueriesSvc.ROLE_USERS_CACHE_PREFIX}${roleId}`;
     }
 
+    /**
      * 將角色模型轉換為 DTO
      * @param model 角色模型
      * @private
+     */
     private roleModelToDTO(model: RoleModel): RoleDTO {
         return {
             id: model.id,
@@ -116,9 +136,11 @@ export class UserToRoleQueriesSvc {
         };
     }
 
+    /**
      * 將使用者模型轉換為 DTO
      * @param model 使用者模型
      * @private
+     */
     private userModelToDTO(model: UserModel): UserDTO {
         return {
             id: model.id,
@@ -129,9 +151,11 @@ export class UserToRoleQueriesSvc {
         };
     }
 
+    /**
      * 從快取取得使用者角色
      * @param userId 使用者 ID
      * @private
+     */
     private getCachedUserRoles = async (userId: number): Promise<RoleDTO[] | null> => {
         const key = this.getUserRolesCacheKey(userId);
         
@@ -150,10 +174,12 @@ export class UserToRoleQueriesSvc {
         );
     }
 
+    /**
      * 快取使用者角色
      * @param userId 使用者 ID
      * @param roles 角色列表
      * @private
+     */
     private cacheUserRoles = async (userId: number, roles: RoleDTO[]): Promise<void> => {
         const key = this.getUserRolesCacheKey(userId);
         
@@ -166,9 +192,56 @@ export class UserToRoleQueriesSvc {
         );
     }
 
+    /**
+     * 安全執行 Redis 操作
+     * @param operation Redis 操作函式
+     * @param operationName 操作名稱
+     * @param fallbackValue 操作失敗時的預設返回值
+     * @private
+     */
+    private safeRedisOperation = async <T>(
+        operation: (redis: RedisClientType) => Promise<T>,
+        operationName: string,
+        fallbackValue: T
+    ): Promise<T> => {
+        try {
+            const redis = sharedPackages.getRedisClient();
+            const result = await operation(redis);
+            logger.debug(`Redis operation ${operationName} completed successfully`);
+            return result;
+        } catch (error) {
+            logger.warn(`Redis operation ${operationName} failed:`, error);
+            return fallbackValue;
+        }
+    }
+
+    /**
+     * 安全執行 Redis 寫入操作
+     * @param operation Redis 寫入操作函式
+     * @param operationName 操作名稱
+     * @private
+     */
+    private safeRedisWrite = async (
+        operation: (redis: RedisClientType) => Promise<void>,
+        operationName: string
+    ): Promise<boolean> => {
+        try {
+            const redis = sharedPackages.getRedisClient();
+            await operation(redis);
+            logger.debug(`Redis write operation ${operationName} completed successfully`);
+            return true;
+        } catch (error) {
+            logger.warn(`Redis write operation ${operationName} failed:`, error);
+            return false;
+        }
+    }
+
+    /**
+    /**
      * 檢查使用者是否存在
      * @param userId 使用者 ID
      * @returns 使用者是否存在
+     */
     public userExists = async (userId: number): Promise<boolean> => {
         try {
             if (!userId || userId <= 0) {
@@ -183,9 +256,11 @@ export class UserToRoleQueriesSvc {
         }
     }
 
+    /**
      * 檢查角色是否存在
      * @param roleId 角色 ID
      * @returns 角色是否存在
+     */
     public roleExists = async (roleId: number): Promise<boolean> => {
         try {
             if (!roleId || roleId <= 0) {
@@ -200,10 +275,12 @@ export class UserToRoleQueriesSvc {
         }
     }
 
+    /**
      * 取得使用者的所有角色
      * @param userId 使用者 ID
      * @param options 快取選項
      * @returns 角色 DTO 陣列
+     */
     public getUserRoles = async (userId: number, options: CacheOptions = {}): Promise<RoleDTO[]> => {
         try {
             logger.info(`Getting roles for user ID: ${userId}`);
@@ -250,10 +327,12 @@ export class UserToRoleQueriesSvc {
         }
     }
 
+    /**
      * 檢查使用者是否具有特定角色
      * @param userId 使用者 ID
      * @param roleId 角色 ID
      * @returns 使用者是否具有角色
+     */
     public userHasRole = async (userId: number, roleId: number): Promise<boolean> => {
         try {
             logger.debug(`Checking if user ${userId} has role ${roleId}`);
@@ -275,9 +354,11 @@ export class UserToRoleQueriesSvc {
         }
     }
 
+    /**
      * 取得角色的所有使用者
      * @param roleId 角色 ID
      * @returns 使用者 DTO 陣列
+     */
     public getRoleUsers = async (roleId: number): Promise<UserDTO[]> => {
         try {
             logger.info(`Getting users for role ID: ${roleId}`);
@@ -312,9 +393,11 @@ export class UserToRoleQueriesSvc {
         }
     }
 
+    /**
      * 取得所有使用者角色關聯數據
      * 只回傳基本的關聯信息，避免 Sequelize 模型關聯錯誤
      * @returns 使用者角色關聯基本 DTO 陣列
+     */
     public getAllUserRoles = async (): Promise<UserRoleBasicDTO[]> => {
         try {
             logger.info('Getting all user-role associations');
@@ -341,10 +424,12 @@ export class UserToRoleQueriesSvc {
         }
     }
 
+    /**
      * 根據使用者和角色 ID 查詢使用者角色關聯
      * @param userId 使用者 ID
      * @param roleId 角色 ID
      * @returns 使用者角色關聯是否存在
+     */
     public findUserRoleAssociation = async (userId: number, roleId: number): Promise<boolean> => {
         try {
             logger.debug(`Looking for user-role association: user ${userId}, role ${roleId}`);

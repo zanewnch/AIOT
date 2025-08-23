@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import type {IRoleToPermissionCommandsService} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('RoleToPermissionCommandsCtrl');
@@ -52,13 +52,13 @@ export class RoleToPermissionCommandsCtrl {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!permissionIds || !Array.isArray(permissionIds) || permissionIds.length === 0) {
-                const result = ResResult.badRequest('權限 ID 為必填項且必須為陣列');
+                const result = sharedPackages.ResResult.badRequest('權限 ID 為必填項且必須為陣列');
                 res.status(result.status).json(result);
                 return;
             }
@@ -70,7 +70,7 @@ export class RoleToPermissionCommandsCtrl {
             }).map(permissionId => parseInt(permissionId, 10));
 
             if (validPermissionIds.length === 0) {
-                const result = ResResult.badRequest('未提供有效的權限 ID');
+                const result = sharedPackages.ResResult.badRequest('未提供有效的權限 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -78,15 +78,15 @@ export class RoleToPermissionCommandsCtrl {
             await this.roleToPermissionService.assignPermissionsToRole(id, validPermissionIds);
 
             logger.info(`Successfully assigned permissions to role ID: ${roleId}`);
-            const result = ResResult.success('權限分配至角色成功');
+            const result = sharedPackages.ResResult.success('權限分配至角色成功');
             res.status(result.status).json(result);
         } catch (error) {
             logger.error('Error assigning permissions to role:', error);
             if (error instanceof Error && (error.message.includes('not found') || error.message.includes('Invalid'))) {
-                const result = ResResult.notFound(error.message);
+                const result = sharedPackages.ResResult.notFound(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('權限分配失敗');
+                const result = sharedPackages.ResResult.internalError('權限分配失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -107,12 +107,12 @@ export class RoleToPermissionCommandsCtrl {
 
             // 驗證輸入
             if (isNaN(roleIdNum) || roleIdNum <= 0) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
             if (isNaN(permissionIdNum) || permissionIdNum <= 0) {
-                const result = ResResult.badRequest('無效的權限 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的權限 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -121,20 +121,20 @@ export class RoleToPermissionCommandsCtrl {
 
             if (removed) {
                 logger.info(`Successfully removed permission ID: ${permissionId} from role ID: ${roleId}`);
-                const result = ResResult.success('權限從角色中移除成功');
+                const result = sharedPackages.ResResult.success('權限從角色中移除成功');
                 res.status(result.status).json(result);
             } else {
                 logger.warn(`Permission ${permissionId} was not assigned to role ${roleId}`);
-                const result = ResResult.notFound('權限分配關係不存在');
+                const result = sharedPackages.ResResult.notFound('權限分配關係不存在');
                 res.status(result.status).json(result);
             }
         } catch (error) {
             logger.error('Error removing permission from role:', error);
             if (error instanceof Error && error.message.includes('not found')) {
-                const result = ResResult.notFound(error.message);
+                const result = sharedPackages.ResResult.notFound(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('權限移除失敗');
+                const result = sharedPackages.ResResult.internalError('權限移除失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -153,7 +153,7 @@ export class RoleToPermissionCommandsCtrl {
 
             // 基本驗證
             if (!roleId || !permissionId) {
-                const result = ResResult.badRequest('角色 ID 和權限 ID 不能為空');
+                const result = sharedPackages.ResResult.badRequest('角色 ID 和權限 ID 不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -162,14 +162,14 @@ export class RoleToPermissionCommandsCtrl {
             const permissionIdNum = parseInt(permissionId, 10);
 
             if (isNaN(roleIdNum) || roleIdNum <= 0 || isNaN(permissionIdNum) || permissionIdNum <= 0) {
-                const result = ResResult.badRequest('無效的角色 ID 或權限 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID 或權限 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             await this.roleToPermissionService.assignPermissionsToRole(roleIdNum, [permissionIdNum]);
 
-            const result = ResResult.created('角色權限關聯創建成功');
+            const result = sharedPackages.ResResult.created('角色權限關聯創建成功');
             res.status(result.status).json(result);
             logger.info('Successfully created role permission association', {
                 roleId: roleIdNum,
@@ -180,10 +180,10 @@ export class RoleToPermissionCommandsCtrl {
 
             // 檢查是否為重複關聯錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('創建角色權限關聯失敗');
+                const result = sharedPackages.ResResult.internalError('創建角色權限關聯失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -204,24 +204,24 @@ export class RoleToPermissionCommandsCtrl {
             // 基本驗證
             const relationId = parseInt(id, 10);
             if (isNaN(relationId) || relationId <= 0) {
-                const result = ResResult.badRequest('無效的關聯 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的關聯 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!roleId && !permissionId) {
-                const result = ResResult.badRequest('至少需要提供角色 ID 或權限 ID 進行更新');
+                const result = sharedPackages.ResResult.badRequest('至少需要提供角色 ID 或權限 ID 進行更新');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 注意：這是一個簡化的實現，實際上角色權限關聯的更新邏輯會更複雜
-            const result = ResResult.success('角色權限關聯更新成功');
+            const result = sharedPackages.ResResult.success('角色權限關聯更新成功');
             res.status(result.status).json(result);
             logger.info('Successfully updated role permission association', {id: relationId});
         } catch (error) {
             logger.error('Error updating role permission', {error});
-            const result = ResResult.internalError('更新角色權限關聯失敗');
+            const result = sharedPackages.ResResult.internalError('更新角色權限關聯失敗');
             res.status(result.status).json(result);
         }
     }
@@ -239,18 +239,18 @@ export class RoleToPermissionCommandsCtrl {
 
             const relationId = parseInt(id, 10);
             if (isNaN(relationId) || relationId <= 0) {
-                const result = ResResult.badRequest('無效的關聯 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的關聯 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 注意：這是一個簡化的實現，實際上需要根據關聯 ID 來刪除對應的角色權限關聯
-            const result = ResResult.success('角色權限關聯刪除成功');
+            const result = sharedPackages.ResResult.success('角色權限關聯刪除成功');
             res.status(result.status).json(result);
             logger.info('Successfully deleted role permission association', {id: relationId});
         } catch (error) {
             logger.error('Error deleting role permission', {error});
-            const result = ResResult.internalError('刪除角色權限關聯失敗');
+            const result = sharedPackages.ResResult.internalError('刪除角色權限關聯失敗');
             res.status(result.status).json(result);
         }
     }

@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { DateRangeQuery } from '../types/droneCommand';
 import type {
   DroneStatusArchive,
@@ -87,7 +87,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive');
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive');
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch all status archives');
@@ -136,7 +136,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.LATEST_STATUS_ARCHIVES,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive');
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive');
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch latest status archives');
@@ -190,7 +190,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_CHANGE_STATISTICS,
       queryFn: async (): Promise<StatusChangeStatistics> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: StatusChangeStatistics}>('/drone/statuses/archive/statistics');
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: StatusChangeStatistics}>('/drone/statuses/archive/statistics');
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch status change statistics');
@@ -245,7 +245,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVE_BY_ID(id),
       queryFn: async (): Promise<DroneStatusArchive> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive}>(`/drone/statuses/archive/${id}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive}>(`/drone/statuses/archive/${id}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch status archive with ID: ${id}`);
@@ -277,7 +277,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/drone/${droneId}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/drone/${droneId}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch status archives for drone ID: ${droneId}`);
@@ -309,7 +309,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_STATUS(status),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/status/${status}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/status/${status}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch status archives with status: ${status}`);
@@ -341,7 +341,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_USER(userId),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/user/${userId}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/user/${userId}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch status archives for user ID: ${userId}`);
@@ -373,7 +373,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_REASON(reason),
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/reason/${reason}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>(`/drone/statuses/archive/reason/${reason}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch status archives with reason: ${reason}`);
@@ -405,7 +405,7 @@ export class DroneStatusArchiveQuery {
       queryKey: ['droneStatusArchive', 'dateRange', dateRange],
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive/time-range', { params: dateRange! });
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive/time-range', { params: dateRange! });
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch status archives by date range');
@@ -437,7 +437,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.LATEST_STATUS_ARCHIVE_BY_DRONE(droneId),
       queryFn: async (): Promise<DroneStatusArchive | null> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive | null}>(`/drone/statuses/archive/drone/${droneId}/latest`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive | null}>(`/drone/statuses/archive/drone/${droneId}/latest`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch latest status archive for drone ID: ${droneId}`);
@@ -471,7 +471,7 @@ export class DroneStatusArchiveQuery {
       queryKey: this.DRONE_STATUS_ARCHIVE_QUERY_KEYS.STATUS_ARCHIVES_BY_TRANSITION,
       queryFn: async (): Promise<DroneStatusArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive', { params: query! });
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DroneStatusArchive[]}>('/drone/statuses/archive', { params: query! });
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch status archives by transition');
@@ -533,7 +533,7 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async (data: CreateStatusArchiveRequest): Promise<DroneStatusArchive> => {
         try {
-          const apiResponse = await apiClient.post<{status: number; message: string; data: DroneStatusArchive}>('/drone/statuses/archive', data);
+          const apiResponse = await resUtilsInstance.post<{status: number; message: string; data: DroneStatusArchive}>('/drone/statuses/archive', data);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to create status archive');
@@ -574,7 +574,7 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateStatusArchiveRequest }): Promise<DroneStatusArchive> => {
         try {
-          const apiResponse = await apiClient.put<{status: number; message: string; data: DroneStatusArchive}>(`/drone/statuses/archive/${id}`, data);
+          const apiResponse = await resUtilsInstance.put<{status: number; message: string; data: DroneStatusArchive}>(`/drone/statuses/archive/${id}`, data);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to update status archive with ID: ${id}`);
@@ -615,7 +615,7 @@ export class DroneStatusArchiveQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const apiResponse = await apiClient.delete<{status: number; message: string}>(`/drone/statuses/archive/${id}`);
+          const apiResponse = await resUtilsInstance.delete<{status: number; message: string}>(`/drone/statuses/archive/${id}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to delete status archive with ID: ${id}`);

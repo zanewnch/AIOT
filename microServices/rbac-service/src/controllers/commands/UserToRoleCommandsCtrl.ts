@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {UserToRoleCommandsSvc} from '../../services/commands/UserToRoleCommandsSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('UserToRoleCommandsCtrl');
@@ -52,13 +52,13 @@ export class UserToRoleCommandsCtrl {
 
             // 驗證輸入
             if (isNaN(id) || id <= 0) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!roleIds || !Array.isArray(roleIds) || roleIds.length === 0) {
-                const result = ResResult.badRequest('角色 ID 為必填項且必須為陣列');
+                const result = sharedPackages.ResResult.badRequest('角色 ID 為必填項且必須為陣列');
                 res.status(result.status).json(result);
                 return;
             }
@@ -70,7 +70,7 @@ export class UserToRoleCommandsCtrl {
             }).map(roleId => parseInt(roleId, 10));
 
             if (validRoleIds.length === 0) {
-                const result = ResResult.badRequest('未提供有效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('未提供有效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -81,15 +81,15 @@ export class UserToRoleCommandsCtrl {
             });
 
             logger.info(`Successfully assigned roles to user ID: ${userId}`);
-            const result = ResResult.success('角色分配至使用者成功');
+            const result = sharedPackages.ResResult.success('角色分配至使用者成功');
             res.status(result.status).json(result);
         } catch (error) {
             logger.error('Error assigning roles to user:', error);
             if (error instanceof Error && (error.message.includes('not found') || error.message.includes('Invalid'))) {
-                const result = ResResult.notFound(error.message);
+                const result = sharedPackages.ResResult.notFound(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('角色分配失敗');
+                const result = sharedPackages.ResResult.internalError('角色分配失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -110,12 +110,12 @@ export class UserToRoleCommandsCtrl {
 
             // 驗證輸入
             if (isNaN(userIdNum) || userIdNum <= 0) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
             if (isNaN(roleIdNum) || roleIdNum <= 0) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -127,20 +127,20 @@ export class UserToRoleCommandsCtrl {
 
             if (removed) {
                 logger.info(`Successfully removed role ID: ${roleId} from user ID: ${userId}`);
-                const result = ResResult.success('角色從使用者中移除成功');
+                const result = sharedPackages.ResResult.success('角色從使用者中移除成功');
                 res.status(result.status).json(result);
             } else {
                 logger.warn(`Role ${roleId} was not assigned to user ${userId}`);
-                const result = ResResult.notFound('角色分配關係不存在');
+                const result = sharedPackages.ResResult.notFound('角色分配關係不存在');
                 res.status(result.status).json(result);
             }
         } catch (error) {
             logger.error('Error removing role from user:', error);
             if (error instanceof Error && error.message.includes('not found')) {
-                const result = ResResult.notFound(error.message);
+                const result = sharedPackages.ResResult.notFound(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('角色移除失敗');
+                const result = sharedPackages.ResResult.internalError('角色移除失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -159,7 +159,7 @@ export class UserToRoleCommandsCtrl {
 
             // 基本驗證
             if (!userId || !roleId) {
-                const result = ResResult.badRequest('使用者 ID 和角色 ID 不能為空');
+                const result = sharedPackages.ResResult.badRequest('使用者 ID 和角色 ID 不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -168,14 +168,14 @@ export class UserToRoleCommandsCtrl {
             const roleIdNum = parseInt(roleId, 10);
 
             if (isNaN(userIdNum) || userIdNum <= 0 || isNaN(roleIdNum) || roleIdNum <= 0) {
-                const result = ResResult.badRequest('無效的使用者 ID 或角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID 或角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             await this.userToRoleCommandsSvc.assignRoleToUser(userIdNum, roleIdNum);
 
-            const result = ResResult.created('使用者角色關聯創建成功');
+            const result = sharedPackages.ResResult.created('使用者角色關聯創建成功');
             res.status(result.status).json(result);
             logger.info('Successfully created user role association', {userId: userIdNum, roleId: roleIdNum});
         } catch (error) {
@@ -183,10 +183,10 @@ export class UserToRoleCommandsCtrl {
 
             // 檢查是否為重複關聯錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('創建使用者角色關聯失敗');
+                const result = sharedPackages.ResResult.internalError('創建使用者角色關聯失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -207,24 +207,24 @@ export class UserToRoleCommandsCtrl {
             // 基本驗證
             const relationId = parseInt(id, 10);
             if (isNaN(relationId) || relationId <= 0) {
-                const result = ResResult.badRequest('無效的關聯 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的關聯 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             if (!userId && !roleId) {
-                const result = ResResult.badRequest('至少需要提供使用者 ID 或角色 ID 進行更新');
+                const result = sharedPackages.ResResult.badRequest('至少需要提供使用者 ID 或角色 ID 進行更新');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 注意：這是一個簡化的實現，實際上使用者角色關聯的更新邏輯會更複雜
-            const result = ResResult.success('使用者角色關聯更新成功');
+            const result = sharedPackages.ResResult.success('使用者角色關聯更新成功');
             res.status(result.status).json(result);
             logger.info('Successfully updated user role association', {id: relationId});
         } catch (error) {
             logger.error('Error updating user role', {error});
-            const result = ResResult.internalError('更新使用者角色關聯失敗');
+            const result = sharedPackages.ResResult.internalError('更新使用者角色關聯失敗');
             res.status(result.status).json(result);
         }
     }
@@ -242,18 +242,18 @@ export class UserToRoleCommandsCtrl {
 
             const relationId = parseInt(id, 10);
             if (isNaN(relationId) || relationId <= 0) {
-                const result = ResResult.badRequest('無效的關聯 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的關聯 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
             // 注意：這是一個簡化的實現，實際上需要根據關聯 ID 來刪除對應的使用者角色關聯
-            const result = ResResult.success('使用者角色關聯刪除成功');
+            const result = sharedPackages.ResResult.success('使用者角色關聯刪除成功');
             res.status(result.status).json(result);
             logger.info('Successfully deleted user role association', {id: relationId});
         } catch (error) {
             logger.error('Error deleting user role', {error});
-            const result = ResResult.internalError('刪除使用者角色關聯失敗');
+            const result = sharedPackages.ResResult.internalError('刪除使用者角色關聯失敗');
             res.status(result.status).json(result);
         }
     }

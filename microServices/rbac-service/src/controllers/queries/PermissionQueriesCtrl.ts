@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {PermissionQueriesSvc} from '../../services/queries/PermissionQueriesSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('PermissionQueriesCtrl');
@@ -60,7 +60,7 @@ export class PermissionQueriesCtrl {
 
             // 統一使用分頁查詢
             const paginatedResult = await this.permissionService.getAllPermissions(paginationParams);
-            const result = ResResult.success('權限列表獲取成功', paginatedResult);
+            const result = sharedPackages.ResResult.success('權限列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);
             logger.info('Successfully fetched permissions with pagination', {
@@ -71,7 +71,7 @@ export class PermissionQueriesCtrl {
             });
         } catch (error) {
             logger.error('Error fetching permissions', {error});
-            const result = ResResult.internalError('獲取權限列表失敗');
+            const result = sharedPackages.ResResult.internalError('獲取權限列表失敗');
             res.status(result.status).json(result);
         }
     }
@@ -85,7 +85,7 @@ export class PermissionQueriesCtrl {
             const permissionId = parseInt(req.params.id);
 
             if (isNaN(permissionId)) {
-                const result = ResResult.badRequest('無效的權限 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的權限 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -96,13 +96,13 @@ export class PermissionQueriesCtrl {
             const permission = await this.permissionService.getPermissionById(permissionId);
 
             if (!permission) {
-                const result = ResResult.notFound('權限不存在');
+                const result = sharedPackages.ResResult.notFound('權限不存在');
                 res.status(result.status).json(result);
                 logger.warn(`Permission not found with ID: ${permissionId}`);
                 return;
             }
 
-            const result = ResResult.success('權限詳情獲取成功', permission);
+            const result = sharedPackages.ResResult.success('權限詳情獲取成功', permission);
             res.status(result.status).json(result);
             logger.info(`Successfully fetched permission by ID: ${permissionId}`);
         } catch (error) {
@@ -110,7 +110,7 @@ export class PermissionQueriesCtrl {
                 permissionId: req.params.id,
                 error
             });
-            const result = ResResult.internalError('獲取權限詳情失敗');
+            const result = sharedPackages.ResResult.internalError('獲取權限詳情失敗');
             res.status(result.status).json(result);
         }
     }

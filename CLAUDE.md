@@ -245,6 +245,47 @@ __all__ = ['User', 'Role', 'Permission']
 
 ## TypeScript 規範
 
+### 🚫 InversifyJS 容器使用規範（強制規則）
+
+**絕對禁止手動從容器獲取依賴項**
+
+```typescript
+// ❌ 絶對禁止：手動從容器獲取依賴項
+const authRoutes = container.get<AuthRoutes>(TYPES.AuthRoutes);
+const userService = container.get<UserService>(TYPES.UserService);
+
+// ✅ 正確：使用 InversifyJS 的 @injectable 和 @inject decorators
+@injectable()
+class AuthController {
+    constructor(
+        @inject(TYPES.AuthRoutes) private authRoutes: AuthRoutes,
+        @inject(TYPES.UserService) private userService: UserService
+    ) {}
+}
+
+// ✅ 正確：在路由註冊時使用 DI
+export function registerRoutes(app: Application): void {
+    // 路由類別應該已經通過 @injectable 裝飾器註冊
+    // 在需要使用時通過建構函數注入依賴項
+    app.use('/api', router);
+}
+```
+
+**核心原則：**
+1. **依賴注入優於手動獲取**：所有類別都應該通過建構函數接收依賴項
+2. **容器封裝性**：容器只應該在應用程式入口點和測試中直接存取
+3. **類型安全**：使用 `@inject(TYPES.ServiceName)` 確保編譯時期類型檢查
+4. **可測試性**：通過 DI 的程式碼更容易進行單元測試
+
+**違規偵測關鍵字：**
+- `container.get<`
+- `Container.get<`
+- `.get<`（在容器上下文中）
+
+---
+
+## TypeScript 規範
+
 ### 🚫 強制規則（無例外）
 
 #### 1. 函數定義規範

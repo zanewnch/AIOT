@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import {
   DroneStatus,
   CreateDroneStatusRequest,
@@ -51,7 +51,7 @@ export class DroneStatusQuery {
       queryKey: [...this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUSES, page, pageSize, sortBy, sortOrder],
       queryFn: async (): Promise<any> => {
         try {
-          const response = await apiClient.get('/drone/statuses', {
+          const response = await resUtilsInstance.get('/drone/statuses', {
             params: { page, pageSize, sortBy, sortOrder }
           });
           const result = ReqResult.fromResponse<any>(response);
@@ -92,7 +92,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_BY_ID(id),
       queryFn: async (): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/${id}`);
+          const response = await resUtilsInstance.get(`/drone/statuses/${id}`);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -125,7 +125,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_BY_SERIAL(serial),
       queryFn: async (): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/drone/${serial}`);
+          const response = await resUtilsInstance.get(`/drone/statuses/drone/${serial}`);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -158,7 +158,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_STATUS(status),
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/drone/${status}`);
+          const response = await resUtilsInstance.get(`/drone/statuses/drone/${status}`);
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -197,7 +197,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_OWNER(ownerId),
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/drone/${ownerId}`);
+          const response = await resUtilsInstance.get(`/drone/statuses/drone/${ownerId}`);
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -230,7 +230,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONES_BY_MANUFACTURER(manufacturer),
       queryFn: async (): Promise<DroneStatus[]> => {
         try {
-          const response = await apiClient.get(`/drone/statuses/drone/${manufacturer}`);
+          const response = await resUtilsInstance.get(`/drone/statuses/drone/${manufacturer}`);
           const result = ReqResult.fromResponse<DroneStatus[]>(response);
           
           if (result.isError()) {
@@ -263,7 +263,7 @@ export class DroneStatusQuery {
       queryKey: this.DRONE_STATUS_QUERY_KEYS.DRONE_STATUS_STATISTICS,
       queryFn: async (): Promise<DroneStatusStatistics> => {
         try {
-          const response = await apiClient.get('/drone/statuses/statistics');
+          const response = await resUtilsInstance.get('/drone/statuses/statistics');
           const result = ReqResult.fromResponse<DroneStatusStatistics>(response);
           
           if (result.isError()) {
@@ -298,7 +298,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async (data: CreateDroneStatusRequest): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.post('/drone/statuses', data);
+          const response = await resUtilsInstance.post('/drone/statuses', data);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -339,7 +339,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusRequest }): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.put(`/drone/statuses/${id}`, data);
+          const response = await resUtilsInstance.put(`/drone/statuses/${id}`, data);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -385,7 +385,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDroneStatusOnlyRequest }): Promise<DroneStatus> => {
         try {
-          const response = await apiClient.patch(`/drone/statuses/${id}`, data);
+          const response = await resUtilsInstance.patch(`/drone/statuses/${id}`, data);
           const result = ReqResult.fromResponse<DroneStatus>(response);
           
           if (result.isError()) {
@@ -428,7 +428,7 @@ export class DroneStatusQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const response = await apiClient.delete(`/drone/statuses/${id}`);
+          const response = await resUtilsInstance.delete(`/drone/statuses/${id}`);
           const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {

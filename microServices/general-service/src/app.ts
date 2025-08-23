@@ -22,7 +22,7 @@ import { createSequelizeInstance } from './configs/dbConfig.js'; // 資料庫連
 // import { RabbitMQManager } from './configs/rabbitmqConfig.js'; // RabbitMQ 訊息佇列管理器 - 已移除
 import { setupPassportJWT } from './configs/authConfig.js'; // JWT 身份驗證配置
 import { redisConfig } from 'aiot-shared-packages'; // Redis 快取配置
-import { RouteManager } from './routes/index.js'; // 統一路由管理
+import { RouteRegistrar } from './routes/index.js'; // 統一路由註冊
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件設定
 // InversifyJS 容器和類型
 import { container } from './container/container.js';
@@ -201,7 +201,7 @@ export class App {
     /**
      * 設定應用程式路由
      *
-     * 使用 RouteManager 類別註冊所有 API 路由到 Express 應用程式中。
+     * 使用 RouteRegistrar 類別註冊所有 API 路由到 Express 應用程式中。
      * 路由註冊邏輯透過 IoC 容器管理，包括：
      *
      * **基礎路由：**
@@ -221,9 +221,9 @@ export class App {
      * @returns {Promise<void>} 路由設定完成的 Promise
      */
     private async setRoutes(): Promise<void> {
-        // 使用 RouteManager 註冊所有路由
-        const routeManager = container.get<RouteManager>(TYPES.RouteManager);
-        routeManager.registerAllRoutes(this.app);
+        // 使用 RouteRegistrar 註冊所有路由
+        const routeRegistrar = container.get<RouteRegistrar>(TYPES.RouteRegistrar);
+        routeRegistrar.registerRoutes(this.app);
     }
 
     /**

@@ -10,8 +10,8 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserProfile, UserSession } from '../types/user';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   User, 
@@ -161,7 +161,7 @@ export class UserQuery {
         try {
           logger.debug('Fetching RBAC users from API');
           
-          const result = await apiClient.getWithResult<User[]>('/rbac/users');
+          const result = await resUtilsInstance.getWithResult<User[]>('/rbac/users');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -196,7 +196,7 @@ export class UserQuery {
         try {
           logger.debug('Fetching user roles from API');
           
-          const result = await apiClient.getWithResult<UserRole[]>('/rbac/user-roles');
+          const result = await resUtilsInstance.getWithResult<UserRole[]>('/rbac/user-roles');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -232,7 +232,7 @@ export class UserQuery {
         try {
           logger.debug(`Updating user with ID: ${id}`, data);
           
-          await apiClient.putWithResult(`/rbac/users/${id}`, data);
+          await resUtilsInstance.putWithResult(`/rbac/users/${id}`, data);
           
           logger.info(`Successfully updated user with ID: ${id}`);
           return { id, data };

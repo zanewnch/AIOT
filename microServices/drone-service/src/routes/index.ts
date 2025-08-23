@@ -24,14 +24,14 @@ import {TYPES} from '../container/types.js';
 import {ResResult} from 'aiot-shared-packages';
 
 /**
- * 路由管理器類別
+ * 路由註冊器類別
  *
  * 負責統一註冊所有 API 路由，使用 IoC 容器管理依賴
  *
- * @class RouteManager
+ * @class RouteRegistrar
  */
 @injectable()
-export class RouteManager {
+export class RouteRegistrar {
     constructor(
         @inject(TYPES.ArchiveTaskRoutes) private readonly archiveTaskRoutes: ArchiveTaskRoutes,
         @inject(TYPES.DronePositionRoutes) private readonly dronePositionRoutes: DronePositionRoutes,
@@ -46,7 +46,7 @@ export class RouteManager {
      *
      * @param app Express 應用程式實例
      */
-    registerAllRoutes(app: Application): void {
+    registerRoutes(app: Application): void {
         console.log('🛣️  Registering all API routes...');
 
         try {

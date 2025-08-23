@@ -1,3 +1,4 @@
+/**
  * @fileoverview 角色命令服務實現
  *
  * 此文件實作了角色命令業務邏輯層，
@@ -20,6 +21,7 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
+ */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -30,14 +32,14 @@ import type { RoleModel } from '../../models/RoleModel.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { getRedisClient } from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import { RoleQueriesSvc } from '../queries/RoleQueriesSvc.js';
-import type { RoleDTO, CacheOptions } from '../queries/RoleQueriesSvc.js';
-import type { CreateRoleRequest, UpdateRoleRequest, IRoleCommandsService } from '../../types/index.js';
+import type { RoleDTO, CacheOptions, CreateRoleRequest, UpdateRoleRequest, IRoleCommandsService } from '../../types/index.js';
 
 const logger = createLogger('RoleCommandsSvc');
 
 
+/**
  * 角色命令服務實現類別
  *
  * 專門處理角色相關的命令請求，包含創建、更新、刪除等功能。
@@ -46,6 +48,7 @@ const logger = createLogger('RoleCommandsSvc');
  * @class RoleCommandsSvc
  * @implements {IRoleCommandsService}
  * @since 1.0.0
+ */
 @injectable()
 export class RoleCommandsSvc implements IRoleCommandsService {
     private static readonly ROLE_CACHE_PREFIX = 'role:';
@@ -61,16 +64,20 @@ export class RoleCommandsSvc implements IRoleCommandsService {
 
 
 
+    /**
      * 產生角色快取鍵值
      * @param roleId 角色 ID
      * @private
+     */
     private getRoleCacheKey = (roleId: number): string => {
         return `${RoleCommandsSvc.ROLE_CACHE_PREFIX}${roleId}`;
     }
 
+    /**
      * 將模型轉換為 DTO
      * @param model 角色模型
      * @private
+     */
     private modelToDTO = (model: RoleModel): RoleDTO => {
         return {
             id: model.id,
@@ -81,9 +88,11 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         };
     }
 
+    /**
      * 快取所有角色
      * @param roles 角色列表
      * @private
+     */
     private cacheAllRoles = async (roles: RoleDTO[]): Promise<void> => {
         logger.debug('Caching all roles in Redis');
         
@@ -100,9 +109,11 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         logger.debug('Roles cached successfully');
     }
 
+    /**
      * 快取單一角色
      * @param role 角色資料
      * @private
+     */
     private cacheRole = async (role: RoleDTO): Promise<void> => {
         logger.debug(`Caching role ID: ${role.id} in Redis`);
         const key = this.getRoleCacheKey(role.id);
@@ -114,9 +125,11 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         );
     }
 
+    /**
      * 清除角色管理快取
      * @param roleId 角色 ID（可選）
      * @private
+     */
     private clearRoleManagementCache = async (roleId?: number): Promise<void> => {
         if (roleId) {
             logger.debug(`Clearing Redis cache for role ID: ${roleId}`);
@@ -138,10 +151,56 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         logger.debug('Role management caches cleared successfully');
     }
 
+    /**
+     * 安全執行 Redis 操作
+     * @param operation Redis 操作函式
+     * @param operationName 操作名稱
+     * @param fallbackValue 操作失敗時的預設返回值
+     * @private
+     */
+    private safeRedisOperation = async <T>(
+        operation: (redis: RedisClientType) => Promise<T>,
+        operationName: string,
+        fallbackValue: T
+    ): Promise<T> => {
+        try {
+            const redis = sharedPackages.getRedisClient();
+            const result = await operation(redis);
+            logger.debug(`Redis operation ${operationName} completed successfully`);
+            return result;
+        } catch (error) {
+            logger.warn(`Redis operation ${operationName} failed:`, error);
+            return fallbackValue;
+        }
+    }
+
+    /**
+     * 安全執行 Redis 寫入操作
+     * @param operation Redis 寫入操作函式
+     * @param operationName 操作名稱
+     * @private
+     */
+    private safeRedisWrite = async (
+        operation: (redis: RedisClientType) => Promise<void>,
+        operationName: string
+    ): Promise<boolean> => {
+        try {
+            const redis = sharedPackages.getRedisClient();
+            await operation(redis);
+            logger.debug(`Redis write operation ${operationName} completed successfully`);
+            return true;
+        } catch (error) {
+            logger.warn(`Redis write operation ${operationName} failed:`, error);
+            return false;
+        }
+    }
+
     // ==================== 公開命令方法 ====================
 
+    /**
      * 建立新角色
      * @param roleData 角色資料
+     */
     public createRole = async (roleData: CreateRoleRequest): Promise<RoleDTO> => {
         try {
             logger.info(`Creating new role: ${roleData.name}`);
@@ -179,9 +238,11 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         }
     }
 
+    /**
      * 更新角色
      * @param roleId 角色 ID
      * @param updateData 更新資料
+     */
     public updateRole = async (roleId: number, updateData: UpdateRoleRequest): Promise<RoleDTO | null> => {
         try {
             logger.info(`Updating role ID: ${roleId}`);
@@ -235,8 +296,10 @@ export class RoleCommandsSvc implements IRoleCommandsService {
         }
     }
 
+    /**
      * 刪除角色
      * @param roleId 角色 ID
+     */
     public deleteRole = async (roleId: number): Promise<boolean> => {
         try {
             logger.info(`Deleting role ID: ${roleId}`);

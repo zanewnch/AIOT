@@ -15,7 +15,7 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
+import { resUtilsInstance } from '../utils/ResUtils';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   Role, 
@@ -129,12 +129,12 @@ export const useOptimisticRBAC = () => {
   const rbacMutation = useMutation({
     mutationFn: async ({ type, entityId, data }: RBACOperationRequest) => {
       const endpoints = {
-        update_role: `/api/rbac/roles/${entityId}`,
-        update_permission: `/api/rbac/permissions/${entityId}`,
-        assign_permission_to_role: `/api/rbac/roles/${entityId}/permissions`,
-        remove_permission_from_role: `/api/rbac/roles/${entityId}/permissions/${data.permissionId}`,
-        assign_role_to_user: `/api/rbac/users/${entityId}/roles`,
-        remove_role_from_user: `/api/rbac/users/${entityId}/roles/${data.roleId}`,
+        update_role: `/rbac/roles/${entityId}`,
+        update_permission: `/rbac/permissions/${entityId}`,
+        assign_permission_to_role: `/rbac/roles/${entityId}/permissions`,
+        remove_permission_from_role: `/rbac/roles/${entityId}/permissions/${data.permissionId}`,
+        assign_role_to_user: `/rbac/users/${entityId}/roles`,
+        remove_role_from_user: `/rbac/users/${entityId}/roles/${data.roleId}`,
       };
 
       const methods = {
@@ -152,11 +152,11 @@ export const useOptimisticRBAC = () => {
       logger.info(`執行 RBAC 操作 ${type}`, { entityId, endpoint, data });
 
       if (method === 'POST') {
-        await apiClient.postWithResult(endpoint, data);
+        await resUtilsInstance.postWithResult(endpoint, data);
       } else if (method === 'PUT') {
-        await apiClient.putWithResult(endpoint, data);
+        await resUtilsInstance.putWithResult(endpoint, data);
       } else if (method === 'DELETE') {
-        await apiClient.deleteWithResult(endpoint);
+        await resUtilsInstance.deleteWithResult(endpoint);
       }
 
       return { type, entityId, data };

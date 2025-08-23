@@ -11,8 +11,8 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 
 const logger = createLogger('useOptimisticCommand');
@@ -133,7 +133,7 @@ export const useOptimisticCommand = () => {
         logger.info('Sending drone command', { command });
         
         // 發送到後端 API
-        const response = await apiClient.post('/drone/commands', {
+        const response = await resUtilsInstance.post('/drone/commands', {
           command_type: command.type,
           drone_id: 1, // 預設無人機 ID 為 1
           parameters: command.parameters || {},

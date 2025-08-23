@@ -22,17 +22,17 @@ import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
 import { createLogger } from '../configs/loggerConfig.js';
 
-const logger = createLogger('RouteManager');
+const logger = createLogger('RouteRegistrar');
 
 /**
- * 路由管理器類別
+ * 路由註冊器類別
  * 
  * 負責統一註冊所有 API 路由，使用 IoC 容器管理依賴
  * 
- * @class RouteManager
+ * @class RouteRegistrar
  */
 @injectable()
-export class RouteManager {
+export class RouteRegistrar {
     constructor(
         @inject(TYPES.HealthRoutes) private readonly healthRoutes: HealthRoutes,
         @inject(TYPES.UserPreferenceRoutes) private readonly userPreferenceRoutes: UserPreferenceRoutes,
@@ -44,7 +44,7 @@ export class RouteManager {
      * 
      * @param app Express 應用程式實例
      */
-    registerAllRoutes = (app: Application): void => {
+    registerRoutes = (app: Application): void => {
         logger.info('🛣️  Registering all API routes...');
 
         try {

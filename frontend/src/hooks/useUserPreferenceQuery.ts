@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import {
   UserPreferences,
   CreateUserPreferencesRequest,
@@ -46,7 +46,7 @@ export class UserPreferenceQuery {
       queryKey: this.USER_PREFERENCE_QUERY_KEYS.USER_PREFERENCES,
       queryFn: async (): Promise<UserPreferences> => {
         try {
-          const response = await apiClient.get('/general/user-preferences');
+          const response = await resUtilsInstance.get('/general/user-preferences');
           const result = ReqResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
@@ -80,7 +80,7 @@ export class UserPreferenceQuery {
     return useMutation({
       mutationFn: async (data: CreateUserPreferencesRequest): Promise<UserPreferences> => {
         try {
-          const response = await apiClient.post('/general/user-preferences', data);
+          const response = await resUtilsInstance.post('/general/user-preferences', data);
           const result = ReqResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {
@@ -118,7 +118,7 @@ export class UserPreferenceQuery {
     return useMutation({
       mutationFn: async (data: UpdateUserPreferencesRequest): Promise<UserPreferences> => {
         try {
-          const response = await apiClient.put('/general/user-preferences', data);
+          const response = await resUtilsInstance.put('/general/user-preferences', data);
           const result = ReqResult.fromResponse<UserPreferences>(response);
           
           if (result.isError()) {

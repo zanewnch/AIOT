@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { TableError } from '../types/table';
 
@@ -112,7 +112,7 @@ export class DroneCommandArchiveQuery {
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
           const url = `/drone/commands/archive?${params.toString()}`;
-          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -158,7 +158,7 @@ export class DroneCommandArchiveQuery {
           if (options.sortOrder) params.append('sortOrder', options.sortOrder);
           
           const url = `/drone/commands/archive/drone/${droneId}?${params.toString()}`;
-          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -225,7 +225,7 @@ export class DroneCommandArchiveQuery {
           if (options.page) params.append('page', options.page.toString());
           
           const url = `/drone/commands/archive/status/${status}?${params.toString()}`;
-          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -270,7 +270,7 @@ export class DroneCommandArchiveQuery {
           if (options.page) params.append('page', options.page.toString());
           
           const url = `/drone/commands/archive/command-type/${commandType}?${params.toString()}`;
-          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -310,7 +310,7 @@ export class DroneCommandArchiveQuery {
           logger.debug('Fetching latest commands archive', { limit });
           
           const url = `/drone/commands/archive?limit=${limit}&sortBy=issued_at&sortOrder=DESC`;
-          const result = await apiClient.getWithResult<DroneCommandArchive[]>(url);
+          const result = await resUtilsInstance.getWithResult<DroneCommandArchive[]>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -347,7 +347,7 @@ export class DroneCommandArchiveQuery {
         try {
           logger.debug(`Updating drone command archive with ID: ${id}`, data);
           
-          const response = await apiClient.put(`/drone/commands-archive/${id}`, data);
+          const response = await resUtilsInstance.put(`/drone/commands-archive/${id}`, data);
           const result = ReqResult.fromResponse<DroneCommandArchive>(response);
           
           if (!result.isSuccess()) {

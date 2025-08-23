@@ -8,11 +8,11 @@
  * @since 2025-08-18
  */
 
-// 請求結果處理相關
-export { ReqResult, type ApiResponseFormat } from './ReqResult';
+// 請求結果處理相關 - 從 aiot-shared-packages 導入
+export { ReqResult, ApiResponseFormat } from 'aiot-shared-packages';
 
 // HTTP 請求工具相關
-export { RequestUtils, apiClient } from './RequestUtils';
+export { ResUtils, resUtilsInstance } from './ResUtils';
 
 // Google Maps 載入器相關
 export { googleMapsLoader } from './GoogleMapsLoader';
@@ -21,10 +21,10 @@ export { googleMapsLoader } from './GoogleMapsLoader';
  * @example
  * ```typescript
  * // 使用統一導出
- * import { ReqResult, apiClient, googleMapsLoader } from '@/utils';
+ * import { ReqResult, resUtilsInstance, googleMapsLoader } from '@/utils';
  * 
  * // 使用 API 客戶端
- * const result = await apiClient.getWithResult<User[]>('/users');
+ * const result = await resUtilsInstance.getWithResult<User[]>('/users');
  * if (result.isSuccess()) {
  *   console.log('用戶列表:', result.data);
  * }

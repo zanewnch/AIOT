@@ -270,7 +270,7 @@ export class App {
      */
     private async setRoutes(): Promise<void> {
         console.log('🛣️  Setting up API routes...');
-        registerRoutes(this.app);
+        registerRoutes(this.app, container);
         console.log('✅ API routes configured');
     }
 

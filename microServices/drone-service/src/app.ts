@@ -20,7 +20,7 @@ import { injectable, inject } from 'inversify'; // InversifyJS 依賴注入裝�
 import { ErrorHandleMiddleware } from './middlewares/ErrorHandleMiddleware.js'; // 錯誤處理中間件
 import { setupExpressMiddleware } from './configs/serverConfig.js'; // Express 中間件配置
 import { redisConfig } from 'aiot-shared-packages'; // Redis 連線配置
-import { RouteManager } from './routes/index.js'; // 統一路由管理
+import { RouteRegistrar } from './routes/index.js'; // 統一路由註冊
 // InversifyJS 容器和類型
 import { ContainerUtils } from './container/container.js';
 import { TYPES } from './container/types.js';
@@ -199,9 +199,9 @@ export class App {
      * @returns {Promise<void>} 路由設定完成的 Promise
      */
     private async setRoutes(): Promise<void> {
-        // 使用 IoC 容器獲取路由管理器並註冊所有路由
-        const routeManager = ContainerUtils.get<RouteManager>(TYPES.RouteManager);
-        routeManager.registerAllRoutes(this.app);
+        // 使用 IoC 容器獲取路由註冊器並註冊所有路由
+        const routeRegistrar = ContainerUtils.get<RouteRegistrar>(TYPES.RouteRegistrar);
+        routeRegistrar.registerRoutes(this.app);
     }
 
     /**
@@ -265,10 +265,16 @@ export class App {
             await this.setupRedis(); // 建立 Redis 連線
             console.log('✅ Redis connected'); // 輸出 Redis 連線成功訊息
 
-            // 步驟 3：連線 RabbitMQ 訊息佇列服務
-            await this.setupRabbitMQ(); // 建立 RabbitMQ 連線
-            console.log('✅ RabbitMQ ready'); // 輸出 RabbitMQ 準備就緒訊息
-            this.app.locals.rabbitMQChannel = this.rabbitMQManager.getChannel(); // 將 RabbitMQ 通道設為全域變數
+            // 步驟 3：連線 RabbitMQ 訊息佇列服務（可選）
+            try {
+                await this.setupRabbitMQ(); // 建立 RabbitMQ 連線
+                console.log('✅ RabbitMQ ready'); // 輸出 RabbitMQ 準備就緒訊息
+                this.app.locals.rabbitMQChannel = this.rabbitMQManager.getChannel(); // 將 RabbitMQ 通道設為全域變數
+            } catch (rabbitmqError) {
+                console.warn('⚠️ RabbitMQ connection failed, service will run without message queue features:', rabbitmqError);
+                console.warn('⚠️ Message queue functionality will be disabled');
+                this.app.locals.rabbitMQChannel = null;
+            }
 
             // 步驟 4：設定應用程式路由
             await this.setRoutes(); // 註冊所有 API 路由

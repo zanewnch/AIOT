@@ -102,48 +102,70 @@ export class RabbitMQManager {
   }
 
   /**
-   * 建立 RabbitMQ 連接和通道
+   * 建立 RabbitMQ 連接和通道（支援重試機制）
    * 如果連接不存在則建立新連接，如果通道不存在則建立新通道
+   * @param retries 重試次數，預設為3次
+   * @param retryDelay 重試延遲（毫秒），預設為2000ms
    * @returns {Promise<any>} 返回 RabbitMQ 通道實例
    */
-  async connect(): Promise<any> {
-    try {
-      // 檢查是否已有連接，如果沒有則建立新連接
-      if (!this.connection) {
-        // 使用配置的 URL 建立 RabbitMQ 連接
-        this.connection = await amqp.connect(this.config.url);
+  async connect(retries: number = 3, retryDelay: number = 2000): Promise<any> {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        console.log(`🔄 Attempting to connect to RabbitMQ (attempt ${attempt}/${retries})...`);
         
-        // 設定連接錯誤事件監聽器
-        this.connection.on('error', (err: Error) => {
-          console.error('❌ RabbitMQ connection error:', err);
-          // 重置連接和通道為 null
-          this.connection = null;
-          this.channel = null;
-        });
+        // 檢查是否已有連接，如果沒有則建立新連接
+        if (!this.connection) {
+          // 使用配置的 URL 建立 RabbitMQ 連接
+          this.connection = await amqp.connect(this.config.url);
+          
+          // 設定連接錯誤事件監聽器
+          this.connection.on('error', (err: Error) => {
+            console.error('❌ RabbitMQ connection error:', err);
+            // 重置連接和通道為 null
+            this.connection = null;
+            this.channel = null;
+          });
+          
+          // 設定連接關閉事件監聽器
+          this.connection.on('close', () => {
+            console.log('🔌 RabbitMQ connection closed');
+            // 重置連接和通道為 null
+            this.connection = null;
+            this.channel = null;
+          });
+        }
         
-        // 設定連接關閉事件監聽器
-        this.connection.on('close', () => {
-          console.log('🔌 RabbitMQ connection closed');
-          // 重置連接和通道為 null
-          this.connection = null;
-          this.channel = null;
-        });
-      }
-      
-      // 檢查是否已有通道，如果沒有則建立新通道
-      if (!this.channel) {
-        // 從連接中建立通道
-        this.channel = await this.connection.createChannel();
-        // 設定 RabbitMQ 拓撲結構
-        await this.setupTopology();
-      }
+        // 檢查是否已有通道，如果沒有則建立新通道
+        if (!this.channel) {
+          // 從連接中建立通道
+          this.channel = await this.connection.createChannel();
+          // 設定 RabbitMQ 拓撲結構
+          await this.setupTopology();
+        }
 
-      // 返回通道實例
-      return this.channel;
-    } catch (error) {
-      console.error('❌ Failed to create RabbitMQ channel:', error);
-      throw error;
+        console.log(`✅ RabbitMQ connected successfully on attempt ${attempt}`);
+        // 返回通道實例
+        return this.channel;
+      } catch (error) {
+        lastError = error as Error;
+        console.error(`❌ RabbitMQ connection attempt ${attempt} failed:`, error);
+        
+        // 清理失敗的連接
+        this.connection = null;
+        this.channel = null;
+        
+        // 如果還有重試機會且不是最後一次，等待後重試
+        if (attempt < retries) {
+          console.log(`⏳ Waiting ${retryDelay}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
+      }
     }
+    
+    console.error(`❌ All ${retries} RabbitMQ connection attempts failed`);
+    throw lastError || new Error('Failed to connect to RabbitMQ after multiple attempts');
   }
 
   /**

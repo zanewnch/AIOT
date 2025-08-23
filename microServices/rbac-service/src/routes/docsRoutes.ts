@@ -112,7 +112,8 @@ router.get('/docs', (req: Request, res: Response) => {
 
         // 如果是 API 請求，返回 JSON
         if (req.headers.accept?.includes('application/json')) {
-            return ResResult.success(res, serviceInfo, 'RBAC 服務文檔資訊');
+            ResResult.success(res, serviceInfo, 'RBAC 服務文檔資訊');
+            return;
         }
 
         // 否則渲染 HTML 頁面
@@ -120,7 +121,7 @@ router.get('/docs', (req: Request, res: Response) => {
 
     } catch (error) {
         logger.error('文檔頁面生成失敗:', error);
-        return ResResult.serverError(res, '文檔載入失敗');
+        ResResult.serverError(res, '文檔載入失敗');
     }
 });
 
@@ -148,7 +149,8 @@ router.get('/typedoc', (req: Request, res: Response) => {
             };
 
             if (req.headers.accept?.includes('application/json')) {
-                return ResResult.notFound(res, '文檔未找到', message);
+                ResResult.notFound(res, '文檔未找到', message);
+                return;
             } else {
                 res.status(404).send(`
                     <h1>TypeDoc 文檔未找到</h1>
@@ -164,7 +166,7 @@ router.get('/typedoc', (req: Request, res: Response) => {
 
     } catch (error) {
         logger.error('TypeDoc 文檔載入失敗:', error);
-        return ResResult.serverError(res, 'TypeDoc 文檔載入失敗');
+        ResResult.serverError(res, 'TypeDoc 文檔載入失敗');
     }
 });
 

@@ -27,9 +27,10 @@ import { HealthConfig } from './configs/healthConfig.js';
 import { ErrorHandleMiddleware } from './middleware/ErrorHandleMiddleware.js';
 import { AuthMiddleware } from './middleware/AuthMiddleware.js';
 
-// Import routes
-import { createMainRoutes } from './routes/index.js';
-import { createApiRoutes, createWebSocketRoutes } from './routes/apiRoutes.js';
+// Import container and route registrar
+import { container } from './container/container.js';
+import { TYPES } from './container/types.js';
+import { RouteRegistrar } from './routes/RouteRegistrar.js';
 
 
 /**
@@ -128,16 +129,12 @@ export class GatewayApp {
 
     /**
      * 初始化路由
-     * @description 設置完整的 API Gateway 路由配置
+     * @description 使用 InversifyJS RouteRegistrar 設置完整的 API Gateway 路由配置
      */
     private initializeRoutes(): void {
-        // 主要路由（根端點、健康檢查等）
-        const mainRoutes = createMainRoutes();
-        this.app.use('/', mainRoutes);
-
-        // API 路由（包含微服務代理）
-        const apiRoutes = createApiRoutes(this.healthConfig);
-        this.app.use('/api', apiRoutes);
+        // 使用 InversifyJS 路由註冊器
+        const routeRegistrar = container.get<RouteRegistrar>(TYPES.RouteRegistrar);
+        routeRegistrar.registerRoutes(this.app);
 
         // 404 處理
         this.app.use((req: Request, res: Response, next: NextFunction) => {

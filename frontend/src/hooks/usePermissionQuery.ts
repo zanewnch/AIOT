@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   Permission, 
@@ -71,7 +71,7 @@ export class PermissionQuery {
           }
 
           const url = `/rbac/permissions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-          const result = await apiClient.getWithResult<Permission[] | PaginatedResponse<Permission>>(url);
+          const result = await resUtilsInstance.getWithResult<Permission[] | PaginatedResponse<Permission>>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -128,7 +128,7 @@ export class PermissionQuery {
         try {
           logger.debug(`Updating permission with ID: ${id}`, data);
           
-          await apiClient.putWithResult(`/rbac/permissions/${id}`, data);
+          await resUtilsInstance.putWithResult(`/rbac/permissions/${id}`, data);
           
           logger.info(`Successfully updated permission with ID: ${id}`);
           return { id, data };

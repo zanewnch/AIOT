@@ -25,11 +25,13 @@ import type {
     IArchiveTaskRepository,
     ArchiveTaskQueryOptions
 } from '../../types/repositories/IArchiveTaskRepository.js';
+import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
+
+type IArchiveTaskRepo = IArchiveTaskRepository;
 import { ArchiveTaskQueriesRepo } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 /**
  * 歸檔任務查詢 Service 實作類別
@@ -44,7 +46,7 @@ import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 export class ArchiveTaskQueriesSvc {
     private readonly logger = createLogger('ArchiveTaskQueriesSvc');
     private readonly queriesRepo: ArchiveTaskQueriesRepo;
-    private readonly commandsRepo: ArchiveTaskCommandsRepo;
+    private readonly commandsRepo: ArchiveTaskCommandsRepository;
     private repo: IArchiveTaskRepo; // 組合介面
 
     constructor(
@@ -79,57 +81,94 @@ export class ArchiveTaskQueriesSvc {
     }
 
     /**
-     * 獲取所有歸檔任務
+     * 獲取所有歸檔任務（分頁）
      *
+     * @param page - 頁數，預設為 1
+     * @param pageSize - 每頁數量，預設為 50
      * @param options - 查詢選項
-     * @returns Promise<ArchiveTaskModel[]> 歸檔任務列表
+     * @returns Promise<PaginatedResponse<ArchiveTaskModel>> 分頁歸檔任務列表
      */
-    getAllTasks = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
+    getAllTasks = async (
+        page: number = 1, 
+        pageSize: number = 50, 
+        options?: ArchiveTaskQueryOptions
+    ): Promise<PaginatedResponse<ArchiveTaskModel>> => {
         try {
-            this.logger.debug('獲取所有歸檔任務', { options });
-            return await this.repo.findAll(options);
+            this.logger.debug('獲取所有歸檔任務（分頁）', { page, pageSize, options });
+            
+            const paginationParams: PaginationParams = {
+                page,
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
+                sortBy: options?.sortBy || 'createdAt',
+                sortOrder: options?.sortOrder || 'DESC'
+            };
+            
+            return await this.repo.findAllPaginated(paginationParams);
         } catch (error) {
-            this.logger.error('獲取歸檔任務列表失敗', { options, error: (error as Error).message });
+            this.logger.error('獲取歸檔任務列表失敗', { page, pageSize, options, error: (error as Error).message });
             throw error;
         }
     }
 
     /**
-     * 根據狀態獲取歸檔任務
+     * 根據狀態獲取歸檔任務（分頁）
      *
      * @param status - 任務狀態
-     * @param limit - 限制數量（可選）
-     * @returns Promise<ArchiveTaskModel[]> 指定狀態的歸檔任務列表
+     * @param page - 頁數，預設為 1
+     * @param pageSize - 每頁數量，預設為 50
+     * @returns Promise<PaginatedResponse<ArchiveTaskModel>> 指定狀態的分頁歸檔任務列表
      */
-    getTasksByStatus = async (status: ArchiveTaskStatus, limit?: number): Promise<ArchiveTaskModel[]> => {
+    getTasksByStatus = async (
+        status: ArchiveTaskStatus, 
+        page: number = 1, 
+        pageSize: number = 50
+    ): Promise<PaginatedResponse<ArchiveTaskModel>> => {
         try {
-            this.logger.debug('根據狀態獲取歸檔任務', { status, limit });
-            return await this.repo.findByStatus(status, limit);
+            this.logger.debug('根據狀態獲取歸檔任務（分頁）', { status, page, pageSize });
+            
+            const paginationParams: PaginationParams = {
+                page,
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
+                sortBy: 'createdAt',
+                sortOrder: 'DESC'
+            };
+            
+            return await this.repo.findByStatusPaginated(status, paginationParams);
         } catch (error) {
-            this.logger.error('根據狀態獲取歸檔任務失敗', {
-                status,
-                limit,
-                error: (error as Error).message
-            });
+            this.logger.error('根據狀態獲取歸檔任務失敗', { status, page, pageSize, error: (error as Error).message });
             throw error;
         }
     }
 
     /**
-     * 根據批次 ID 獲取歸檔任務
+     * 根據批次 ID 獲取歸檔任務（分頁）
      *
      * @param batchId - 批次 ID
-     * @returns Promise<ArchiveTaskModel[]> 該批次的歸檔任務列表
+     * @param page - 頁數，預設為 1
+     * @param pageSize - 每頁數量，預設為 100（批次內任務通常不多）
+     * @returns Promise<PaginatedResponse<ArchiveTaskModel>> 該批次的分頁歸檔任務列表
      */
-    getTasksByBatchId = async (batchId: string): Promise<ArchiveTaskModel[]> => {
+    getTasksByBatchId = async (
+        batchId: string, 
+        page: number = 1, 
+        pageSize: number = 100
+    ): Promise<PaginatedResponse<ArchiveTaskModel>> => {
         try {
-            this.logger.debug('根據批次 ID 獲取歸檔任務', { batchId });
-            return await this.repo.findByBatchId(batchId);
+            this.logger.debug('根據批次 ID 獲取歸檔任務（分頁）', { batchId, page, pageSize });
+            
+            const paginationParams: PaginationParams = {
+                page,
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
+                sortBy: 'createdAt',
+                sortOrder: 'ASC'  // 批次內按創建順序
+            };
+            
+            return await this.repo.findByBatchIdPaginated(batchId, paginationParams);
         } catch (error) {
-            this.logger.error('根據批次 ID 獲取歸檔任務失敗', {
-                batchId,
-                error: (error as Error).message
-            });
+            this.logger.error('根據批次 ID 獲取歸檔任務失敗', { batchId, page, pageSize, error: (error as Error).message });
             throw error;
         }
     }

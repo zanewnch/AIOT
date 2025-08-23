@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import type {IPermissionCommandsService} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('PermissionCommandsCtrl');
@@ -47,7 +47,7 @@ export class PermissionCommandsCtrl {
 
             // 基本驗證
             if (!name || typeof name !== 'string' || name.trim().length === 0) {
-                const result = ResResult.badRequest('權限名稱不能為空');
+                const result = sharedPackages.ResResult.badRequest('權限名稱不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -60,7 +60,7 @@ export class PermissionCommandsCtrl {
                 description: description?.trim() || ''
             });
 
-            const result = ResResult.created('權限創建成功', newPermission);
+            const result = sharedPackages.ResResult.created('權限創建成功', newPermission);
             res.status(result.status).json(result);
             logger.info('Successfully created new permission', {
                 permissionId: newPermission.id,
@@ -74,10 +74,10 @@ export class PermissionCommandsCtrl {
 
             // 檢查是否為重複權限錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('創建權限失敗');
+                const result = sharedPackages.ResResult.internalError('創建權限失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -92,7 +92,7 @@ export class PermissionCommandsCtrl {
             const permissionId = parseInt(req.params.id);
 
             if (isNaN(permissionId)) {
-                const result = ResResult.badRequest('無效的權限 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的權限 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -118,7 +118,7 @@ export class PermissionCommandsCtrl {
 
             // 如果沒有任何更新資料
             if (Object.keys(updateData).length === 0) {
-                const result = ResResult.badRequest('沒有提供更新資料');
+                const result = sharedPackages.ResResult.badRequest('沒有提供更新資料');
                 res.status(result.status).json(result);
                 return;
             }
@@ -126,13 +126,13 @@ export class PermissionCommandsCtrl {
             const updatedPermission = await this.permissionService.updatePermission(permissionId, updateData);
 
             if (!updatedPermission) {
-                const result = ResResult.notFound('權限不存在');
+                const result = sharedPackages.ResResult.notFound('權限不存在');
                 res.status(result.status).json(result);
                 logger.warn(`Permission not found for update with ID: ${permissionId}`);
                 return;
             }
 
-            const result = ResResult.success('權限更新成功', updatedPermission);
+            const result = sharedPackages.ResResult.success('權限更新成功', updatedPermission);
             res.status(result.status).json(result);
             logger.info('Successfully updated permission', {
                 permissionId,
@@ -146,10 +146,10 @@ export class PermissionCommandsCtrl {
 
             // 檢查是否為重複權限錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('更新權限失敗');
+                const result = sharedPackages.ResResult.internalError('更新權限失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -164,7 +164,7 @@ export class PermissionCommandsCtrl {
             const permissionId = parseInt(req.params.id);
 
             if (isNaN(permissionId)) {
-                const result = ResResult.badRequest('無效的權限 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的權限 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -175,13 +175,13 @@ export class PermissionCommandsCtrl {
             const deleted = await this.permissionService.deletePermission(permissionId);
 
             if (!deleted) {
-                const result = ResResult.notFound('權限不存在');
+                const result = sharedPackages.ResResult.notFound('權限不存在');
                 res.status(result.status).json(result);
                 logger.warn(`Permission not found for deletion with ID: ${permissionId}`);
                 return;
             }
 
-            const result = ResResult.success('權限刪除成功');
+            const result = sharedPackages.ResResult.success('權限刪除成功');
             res.status(result.status).json(result);
             logger.info('Successfully deleted permission', {permissionId});
         } catch (error) {
@@ -192,10 +192,10 @@ export class PermissionCommandsCtrl {
 
             // 檢查是否為依賴性錯誤
             if (error instanceof Error && error.message.includes('無法刪除')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('刪除權限失敗');
+                const result = sharedPackages.ResResult.internalError('刪除權限失敗');
                 res.status(result.status).json(result);
             }
         }

@@ -25,7 +25,7 @@ import { container } from './container/container.js';
 // Consul 服務註冊
 import { ConsulConfig } from './configs/consulConfig.js';
 import { TYPES } from './container/types.js';
-import { RouteManager } from './routes/index.js';
+import { RouteRegistrar } from './routes/index.js';
 import { createLogger } from './configs/loggerConfig.js';
 // 移除 JWT 認證 - 使用 Express.js Gateway 進行集中式權限管理
 
@@ -103,14 +103,14 @@ export class App {
      */
     private setupRoutes(): void {
         try {
-            // 從 IoC 容器獲取路由管理器
-            const routeManager = container.get<RouteManager>(TYPES.RouteManager);
+            // 從 IoC 容器獲取路由註冊器
+            const routeRegistrar = container.get<RouteRegistrar>(TYPES.RouteRegistrar);
             
             // 註冊所有路由
-            this.app.use('', routeManager.getRouter());
+            routeRegistrar.registerRoutes(this.app);
             
             logger.info('Routes setup completed successfully');
-            logger.info('Route statistics', routeManager.getRouteStats());
+            logger.info('Route statistics', routeRegistrar.getRouteStats());
             
         } catch (error) {
             logger.error('Failed to setup routes', { error });

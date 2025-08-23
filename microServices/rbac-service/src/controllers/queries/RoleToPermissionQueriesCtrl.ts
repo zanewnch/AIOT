@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {RoleToPermissionQueriesSvc} from '../../services/queries/RoleToPermissionQueriesSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('RoleToPermissionQueriesCtrl');
@@ -65,7 +65,7 @@ export class RoleToPermissionQueriesCtrl {
                 const paginatedResult = await this.roleToPermissionService.getAllRolePermissions(paginationParams);
 
                 logger.info(`Successfully retrieved ${paginatedResult.data.length} role-permission associations on page ${paginatedResult.page}/${paginatedResult.totalPages}`);
-                const result = ResResult.success('角色權限關聯獲取成功', paginatedResult);
+                const result = sharedPackages.ResResult.success('角色權限關聯獲取成功', paginatedResult);
                 res.status(result.status).json(result);
                 return;
             }
@@ -77,7 +77,7 @@ export class RoleToPermissionQueriesCtrl {
             logRequest(req, `Role permissions retrieval request for ID: ${roleId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -85,15 +85,15 @@ export class RoleToPermissionQueriesCtrl {
             const permissions = await this.roleToPermissionService.getRolePermissions(id);
 
             logger.info(`Successfully retrieved ${permissions.length} permissions for role ID: ${roleId}`);
-            const result = ResResult.success('角色權限獲取成功', permissions);
+            const result = sharedPackages.ResResult.success('角色權限獲取成功', permissions);
             res.status(result.status).json(result);
         } catch (error) {
             logger.error('Error fetching role permissions:', error);
             if (error instanceof Error && error.message === 'Role not found') {
-                const result = ResResult.notFound(error.message);
+                const result = sharedPackages.ResResult.notFound(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('角色權限獲取失敗');
+                const result = sharedPackages.ResResult.internalError('角色權限獲取失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -112,7 +112,7 @@ export class RoleToPermissionQueriesCtrl {
             logRequest(req, `Role permission retrieval request for ID: ${rolePermissionId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -121,15 +121,15 @@ export class RoleToPermissionQueriesCtrl {
             const permissions = await this.roleToPermissionService.getRolePermissions(id);
 
             logger.info(`Successfully retrieved ${permissions.length} permissions for role ID: ${rolePermissionId}`);
-            const result = ResResult.success('角色權限關係獲取成功', {roleId: id, permissions});
+            const result = sharedPackages.ResResult.success('角色權限關係獲取成功', {roleId: id, permissions});
             res.status(result.status).json(result);
         } catch (error) {
             logger.error('Error fetching role permission by ID:', error);
             if (error instanceof Error && error.message === 'Role not found') {
-                const result = ResResult.notFound('角色權限關係不存在');
+                const result = sharedPackages.ResResult.notFound('角色權限關係不存在');
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('角色權限關係獲取失敗');
+                const result = sharedPackages.ResResult.internalError('角色權限關係獲取失敗');
                 res.status(result.status).json(result);
             }
         }

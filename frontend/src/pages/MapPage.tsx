@@ -72,7 +72,8 @@ const MapPage: React.FC<MapPageProps> = ({ className }) => {
 
   // 獲取真實無人機數據
   const { data: dronePositions = [], isLoading: positionsLoading, refetch: refetchPositions } = dronePositionQuery.useLatest();
-  const { data: droneStatuses = [], isLoading: statusesLoading, refetch: refetchStatuses } = droneStatusQuery.useAll();
+  const { data: droneStatusesData, isLoading: statusesLoading, refetch: refetchStatuses } = droneStatusQuery.getAllDroneStatuses();
+  const droneStatuses = droneStatusesData?.data || [];
 
   // 🔴 WebSocket 即時更新處理
   const handlePositionUpdate = useCallback((position: any) => {

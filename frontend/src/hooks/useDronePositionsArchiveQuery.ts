@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import {
   DronePositionArchive,
   CreatePositionArchiveRequest,
@@ -62,7 +62,7 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVES,
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive[]}>('/drone/positions/archive');
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DronePositionArchive[]}>('/drone/positions/archive');
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch all position archives');
@@ -94,7 +94,7 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.LATEST_POSITION_ARCHIVES,
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive[]}>('/drone/positions/archive');
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DronePositionArchive[]}>('/drone/positions/archive');
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to fetch latest position archives');
@@ -127,7 +127,7 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVE_BY_ID(id),
       queryFn: async (): Promise<DronePositionArchive> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive}>(`/drone/positions/archive/${id}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DronePositionArchive}>(`/drone/positions/archive/${id}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch position archive with ID: ${id}`);
@@ -159,7 +159,7 @@ export class DronePositionsArchiveQuery {
       queryKey: this.DRONE_POSITIONS_ARCHIVE_QUERY_KEYS.POSITION_ARCHIVES_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DronePositionArchive[]> => {
         try {
-          const apiResponse = await apiClient.get<{status: number; message: string; data: DronePositionArchive[]}>(`/drone/positions/archive/drone/${droneId}`);
+          const apiResponse = await resUtilsInstance.get<{status: number; message: string; data: DronePositionArchive[]}>(`/drone/positions/archive/drone/${droneId}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to fetch position archives for drone ID: ${droneId}`);
@@ -192,7 +192,7 @@ export class DronePositionsArchiveQuery {
     return useMutation({
       mutationFn: async (data: CreatePositionArchiveRequest): Promise<DronePositionArchive> => {
         try {
-          const apiResponse = await apiClient.post<{status: number; message: string; data: DronePositionArchive}>('/drone/positions/archive', data);
+          const apiResponse = await resUtilsInstance.post<{status: number; message: string; data: DronePositionArchive}>('/drone/positions/archive', data);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || 'Failed to create position archive');
@@ -229,7 +229,7 @@ export class DronePositionsArchiveQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdatePositionArchiveRequest }): Promise<DronePositionArchive> => {
         try {
-          const response = await apiClient.put<{status: number; message: string; data: DronePositionArchive}>(`/drone/positions/archive/${id}`, data);
+          const response = await resUtilsInstance.put<{status: number; message: string; data: DronePositionArchive}>(`/drone/positions/archive/${id}`, data);
           
           if (response.status !== 200) {
             throw new Error(response.message || 'Failed to update position archive');
@@ -267,7 +267,7 @@ export class DronePositionsArchiveQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const apiResponse = await apiClient.delete<{status: number; message: string}>(`/drone/positions/archive/${id}`);
+          const apiResponse = await resUtilsInstance.delete<{status: number; message: string}>(`/drone/positions/archive/${id}`);
           
           if (apiResponse.status !== 200) {
             throw new Error(apiResponse.message || `Failed to delete position archive with ID: ${id}`);

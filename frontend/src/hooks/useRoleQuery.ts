@@ -10,8 +10,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   Role, 
@@ -73,7 +73,7 @@ export class RoleQuery {
           }
 
           const url = `/rbac/roles?${queryParams.toString()}`;
-          const result = await apiClient.getWithResult<PaginatedResponse<Role>>(url);
+          const result = await resUtilsInstance.getWithResult<PaginatedResponse<Role>>(url);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -114,7 +114,7 @@ export class RoleQuery {
         try {
           logger.debug(`Fetching permissions for role ${roleId}`);
           
-          const result = await apiClient.getWithResult<Permission[]>(`/rbac/roles/${roleId}/permissions`);
+          const result = await resUtilsInstance.getWithResult<Permission[]>(`/rbac/roles/${roleId}/permissions`);
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -150,7 +150,7 @@ export class RoleQuery {
         try {
           logger.debug('Fetching role permissions from API');
           
-          const result = await apiClient.getWithResult<RoleToPermission[]>('/rbac/role-permissions');
+          const result = await resUtilsInstance.getWithResult<RoleToPermission[]>('/rbac/role-permissions');
           
           if (!result.isSuccess()) {
             throw new Error(result.message);
@@ -186,7 +186,7 @@ export class RoleQuery {
         try {
           logger.debug(`Updating role with ID: ${id}`, data);
           
-          await apiClient.putWithResult(`/rbac/roles/${id}`, data);
+          await resUtilsInstance.putWithResult(`/rbac/roles/${id}`, data);
           
           logger.info(`Successfully updated role with ID: ${id}`);
           return { id, data };

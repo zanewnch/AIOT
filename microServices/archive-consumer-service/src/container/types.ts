@@ -30,6 +30,9 @@ export const TYPES = {
   // 消費者相關
   ArchiveConsumer: Symbol.for('ArchiveConsumer'),
   
+  // 路由服務
+  RouteRegistrar: Symbol.for('RouteRegistrar'),
+  
   // 應用程式服務
   App: Symbol.for('App')
 } as const;

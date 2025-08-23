@@ -28,7 +28,7 @@ export const TYPES = {
     // === 路由層 ===
     // DroneRealtimeRoutes 已移除 - 微服務專注於 WebSocket 實時通信
     HealthRoutes: Symbol.for('HealthRoutes'),
-    RouteManager: Symbol.for('RouteManager'),
+    RouteRegistrar: Symbol.for('RouteRegistrar'),
     
     // === WebSocket 相關 ===
     // 整合的 WebSocket 服務和事件處理器

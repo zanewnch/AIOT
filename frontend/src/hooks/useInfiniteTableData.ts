@@ -11,8 +11,8 @@
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { TableError } from '../types/table';
 
@@ -83,7 +83,7 @@ interface InfiniteTableConfig {
  *   isLoading,
  *   paginationInfo
  * } = useInfiniteTableData<User>({
- *   endpoint: '/api/users',
+ *   endpoint: '/users',
  *   queryKey: ['users'],
  *   pageSize: 20,
  *   queryParams: { role: 'admin' }
@@ -135,7 +135,7 @@ export const useInfiniteTableData = <T = any>(config: InfiniteTableConfig) => {
           }, {} as Record<string, string>)
         });
 
-        const response = await apiClient.get(`${endpoint}?${params}`);
+        const response = await resUtilsInstance.get(`${endpoint}?${params}`);
         const result = ReqResult.fromResponse<PaginatedResponse<T>>(response);
 
         if (result.isError()) {

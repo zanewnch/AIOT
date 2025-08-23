@@ -9,8 +9,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import {
   DronePosition,
   CreateDronePositionRequest,
@@ -46,7 +46,7 @@ export class DronePositionQuery {
       queryKey: [...this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS, page, pageSize, sortBy, sortOrder],
       queryFn: async (): Promise<any> => {
         try {
-          const response = await apiClient.get('/drone/positions/', {
+          const response = await resUtilsInstance.get('/drone/positions/', {
             params: { page, pageSize, sortBy, sortOrder }
           });
           const result = ReqResult.fromResponse<any>(response);
@@ -81,7 +81,7 @@ export class DronePositionQuery {
       queryKey: this.DRONE_POSITION_QUERY_KEYS.LATEST_DRONE_POSITIONS,
       queryFn: async (): Promise<DronePosition[]> => {
         try {
-          const response = await apiClient.get('/drone/positions/');
+          const response = await resUtilsInstance.get('/drone/positions/');
           const result = ReqResult.fromResponse<DronePosition[]>(response);
           
           if (result.isError()) {
@@ -115,7 +115,7 @@ export class DronePositionQuery {
       queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITION_BY_ID(id),
       queryFn: async (): Promise<DronePosition> => {
         try {
-          const response = await apiClient.get(`/drone/data/${id}`);
+          const response = await resUtilsInstance.get(`/drone/data/${id}`);
           const result = ReqResult.fromResponse<DronePosition>(response);
           
           if (result.isError()) {
@@ -148,7 +148,7 @@ export class DronePositionQuery {
       queryKey: this.DRONE_POSITION_QUERY_KEYS.DRONE_POSITIONS_BY_DRONE_ID(droneId),
       queryFn: async (): Promise<DronePosition[]> => {
         try {
-          const response = await apiClient.get(`/drone/data/drone/${droneId}`);
+          const response = await resUtilsInstance.get(`/drone/data/drone/${droneId}`);
           const result = ReqResult.fromResponse<DronePosition[]>(response);
           
           if (result.isError()) {
@@ -182,7 +182,7 @@ export class DronePositionQuery {
     return useMutation({
       mutationFn: async (data: CreateDronePositionRequest): Promise<DronePosition> => {
         try {
-          const response = await apiClient.post('/drone/data', data);
+          const response = await resUtilsInstance.post('/drone/data', data);
           const result = ReqResult.fromResponse<DronePosition>(response);
           
           if (result.isError()) {
@@ -221,7 +221,7 @@ export class DronePositionQuery {
     return useMutation({
       mutationFn: async ({ id, data }: { id: string; data: UpdateDronePositionRequest }): Promise<DronePosition> => {
         try {
-          const response = await apiClient.put(`/drone/data/${id}`, data);
+          const response = await resUtilsInstance.put(`/drone/data/${id}`, data);
           const result = ReqResult.fromResponse<DronePosition>(response);
           
           if (result.isError()) {
@@ -266,7 +266,7 @@ export class DronePositionQuery {
     return useMutation({
       mutationFn: async (id: string): Promise<void> => {
         try {
-          const response = await apiClient.delete(`/drone/data/${id}`);
+          const response = await resUtilsInstance.delete(`/drone/data/${id}`);
           const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {

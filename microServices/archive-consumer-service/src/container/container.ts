@@ -30,6 +30,7 @@ import { RabbitMQService } from '../services/RabbitMQService';
 import { ArchiveTaskRepoImpl } from '../services/ArchiveTaskRepoImpl';
 import { ArchiveProcessor } from '../processors/ArchiveProcessor';
 import { ArchiveConsumer } from '../consumers/ArchiveConsumer';
+import { RouteRegistrar } from '../routes/RouteRegistrar';
 import { App } from '../app';
 
 /**
@@ -73,6 +74,18 @@ export const createContainer = (): Container => {
   // === 消費者服務 ===
   container.bind<ArchiveConsumer>(TYPES.ArchiveConsumer)
     .to(ArchiveConsumer)
+    .inSingletonScope();
+
+  // === 路由服務 ===
+  container.bind<RouteRegistrar>(TYPES.RouteRegistrar)
+    .toDynamicValue((context) => {
+      const logger = context.container.get<Logger>(TYPES.Logger);
+      const databaseConnection = context.container.get<DatabaseConnection>(TYPES.DatabaseConnection);
+      const rabbitMQService = context.container.get<IRabbitMQService>(TYPES.RabbitMQService);
+      const archiveConsumer = context.container.get<ArchiveConsumer>(TYPES.ArchiveConsumer);
+      
+      return new RouteRegistrar(logger, databaseConnection, rabbitMQService, archiveConsumer);
+    })
     .inSingletonScope();
 
   // === 應用程式服務 ===

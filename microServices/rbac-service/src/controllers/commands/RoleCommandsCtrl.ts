@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import type {IRoleCommandsService} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('RoleCommandsCtrl');
@@ -47,7 +47,7 @@ export class RoleCommandsCtrl {
 
             // 基本驗證
             if (!name || typeof name !== 'string' || name.trim().length === 0) {
-                const result = ResResult.badRequest('角色名稱不能為空');
+                const result = sharedPackages.ResResult.badRequest('角色名稱不能為空');
                 res.status(result.status).json(result);
                 return;
             }
@@ -60,7 +60,7 @@ export class RoleCommandsCtrl {
                 displayName: description?.trim() || undefined
             });
 
-            const result = ResResult.created('角色創建成功', newRole);
+            const result = sharedPackages.ResResult.created('角色創建成功', newRole);
             res.status(result.status).json(result);
             logger.info('Successfully created new role', {
                 roleId: newRole.id,
@@ -74,10 +74,10 @@ export class RoleCommandsCtrl {
 
             // 檢查是否為重複角色錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('創建角色失敗');
+                const result = sharedPackages.ResResult.internalError('創建角色失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -92,7 +92,7 @@ export class RoleCommandsCtrl {
             const roleId = parseInt(req.params.id);
 
             if (isNaN(roleId)) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -112,7 +112,7 @@ export class RoleCommandsCtrl {
 
             // 如果沒有任何更新資料
             if (Object.keys(updateData).length === 0) {
-                const result = ResResult.badRequest('沒有提供更新資料');
+                const result = sharedPackages.ResResult.badRequest('沒有提供更新資料');
                 res.status(result.status).json(result);
                 return;
             }
@@ -120,13 +120,13 @@ export class RoleCommandsCtrl {
             const updatedRole = await this.roleCommandsService.updateRole(roleId, updateData);
 
             if (!updatedRole) {
-                const result = ResResult.notFound('角色不存在');
+                const result = sharedPackages.ResResult.notFound('角色不存在');
                 res.status(result.status).json(result);
                 logger.warn(`Role not found for update with ID: ${roleId}`);
                 return;
             }
 
-            const result = ResResult.success('角色更新成功', updatedRole);
+            const result = sharedPackages.ResResult.success('角色更新成功', updatedRole);
             res.status(result.status).json(result);
             logger.info('Successfully updated role', {
                 roleId,
@@ -140,10 +140,10 @@ export class RoleCommandsCtrl {
 
             // 檢查是否為重複角色錯誤
             if (error instanceof Error && error.message.includes('已存在')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('更新角色失敗');
+                const result = sharedPackages.ResResult.internalError('更新角色失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -158,7 +158,7 @@ export class RoleCommandsCtrl {
             const roleId = parseInt(req.params.id);
 
             if (isNaN(roleId)) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -169,13 +169,13 @@ export class RoleCommandsCtrl {
             const deleted = await this.roleCommandsService.deleteRole(roleId);
 
             if (!deleted) {
-                const result = ResResult.notFound('角色不存在');
+                const result = sharedPackages.ResResult.notFound('角色不存在');
                 res.status(result.status).json(result);
                 logger.warn(`Role not found for deletion with ID: ${roleId}`);
                 return;
             }
 
-            const result = ResResult.success('角色刪除成功');
+            const result = sharedPackages.ResResult.success('角色刪除成功');
             res.status(result.status).json(result);
             logger.info('Successfully deleted role', {roleId});
         } catch (error) {
@@ -186,10 +186,10 @@ export class RoleCommandsCtrl {
 
             // 檢查是否為依賴性錯誤
             if (error instanceof Error && error.message.includes('無法刪除')) {
-                const result = ResResult.conflict(error.message);
+                const result = sharedPackages.ResResult.conflict(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('刪除角色失敗');
+                const result = sharedPackages.ResResult.internalError('刪除角色失敗');
                 res.status(result.status).json(result);
             }
         }

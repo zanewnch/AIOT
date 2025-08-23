@@ -13,42 +13,42 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'; // 引入 axios 核心模組和相關類型定義
-import { ReqResult, ApiResponseFormat } from './ReqResult'; // 引入統一的請求結果處理類
+import { ReqResult, ApiResponseFormat } from '@/utils'; // 引入統一的請求結果處理類
 
 /**
  * HTTP 請求工具類別
  *
  * 提供統一的 API 請求介面，包含自動認證處理、錯誤管理和響應攔截
  *
- * @class RequestUtils
+ * @class ResUtils
  * @example
  * ```typescript
- * const requestUtils = new RequestUtils('https://api.example.com');
- * const data = await requestUtils.get<User>('/users/123');
+ * const resUtils = new ResUtils('https://api.example.com');
+ * const data = await resUtils.get<User>('/users/123');
  * ```
  */
-export class RequestUtils {
+export class ResUtils {
   /**
    * axios 實例，用於發送 HTTP 請求
    * @private
    * @type {AxiosInstance}
    */
-  private apiClient: AxiosInstance;
+  private axiosInstance: AxiosInstance;
 
   /**
    * 建構函式，初始化 axios 實例和攔截器
    *
-   * @param {string} baseURL - API 的基礎 URL，預設為 'http://localhost:8010/'
+   * @param {string} baseURL - API 的基礎 URL，預設使用環境變數 VITE_API_BASE_URL 或 'http://localhost:8000/api'
    * @param {number} timeout - 請求超時時間（毫秒），預設為 10000ms
    *
    * @example
    * ```typescript
-   * const requestUtils = new RequestUtils('https://api.example.com', 5000);
+   * const resUtils = new ResUtils('https://api.example.com', 5000);
    * ```
    */
-  constructor(baseURL: string = 'http://localhost:8000/', timeout: number = 10000) {
+  constructor(baseURL: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api', timeout: number = 10000) {
     // 建立 axios 實例並設定基本配置
-    this.apiClient = axios.create({
+    this.axiosInstance = axios.create({
       baseURL, // 設定 API 基礎 URL
       timeout, // 設定請求超時時間
       withCredentials: true, // 自動包含 cookies 在請求中
@@ -72,7 +72,7 @@ export class RequestUtils {
    */
   private setupInterceptors(): void {
     // 設定請求攔截器 - 使用 httpOnly cookie，不需要手動添加 token
-    this.apiClient.interceptors.request.use(
+    this.axiosInstance.interceptors.request.use(
       (config) => {
         // cookies 會自動包含在請求中（withCredentials: true）
         // 不需要從 localStorage 獲取 token 或手動設置 Authorization header
@@ -85,7 +85,7 @@ export class RequestUtils {
     );
 
     // 設定響應攔截器，用於統一處理響應數據和錯誤
-    this.apiClient.interceptors.response.use(
+    this.axiosInstance.interceptors.response.use(
       (response) => {
         // 保持完整的響應結構，讓各方法自己決定取什麼
         return response;
@@ -124,7 +124,7 @@ export class RequestUtils {
    */
   async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 GET 請求
-    const response = await this.apiClient.get(url, config);
+    const response = await this.axiosInstance.get(url, config);
     return response.data;
   }
 
@@ -144,7 +144,7 @@ export class RequestUtils {
    */
   async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 POST 請求
-    const response = await this.apiClient.post(url, data, config);
+    const response = await this.axiosInstance.post(url, data, config);
     return response.data;
   }
 
@@ -164,7 +164,7 @@ export class RequestUtils {
    */
   async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 PUT 請求
-    const response = await this.apiClient.put(url, data, config);
+    const response = await this.axiosInstance.put(url, data, config);
     return response.data;
   }
 
@@ -183,7 +183,7 @@ export class RequestUtils {
    */
   async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 DELETE 請求
-    const response = await this.apiClient.delete(url, config);
+    const response = await this.axiosInstance.delete(url, config);
     return response.data;
   }
 
@@ -203,7 +203,7 @@ export class RequestUtils {
    */
   async patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     // 使用 axios 實例發送 PATCH 請求
-    const response = await this.apiClient.patch(url, data, config);
+    const response = await this.axiosInstance.patch(url, data, config);
     return response.data;
   }
 
@@ -271,7 +271,7 @@ export class RequestUtils {
    */
   setBaseURL(baseURL: string): void {
     // 更新 axios 實例的預設基礎 URL
-    this.apiClient.defaults.baseURL = baseURL;
+    this.axiosInstance.defaults.baseURL = baseURL;
   }
 
 
@@ -297,7 +297,7 @@ export class RequestUtils {
    */
   async getWithResult<T = any>(url: string, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
-      const response = await this.apiClient.get<ApiResponseFormat<T>>(url, config);
+      const response = await this.axiosInstance.get<ApiResponseFormat<T>>(url, config);
       return ReqResult.fromResponse(response.data);
     } catch (error) {
       return ReqResult.fromAxiosError(error);
@@ -323,7 +323,7 @@ export class RequestUtils {
    */
   async postWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
-      const response = await this.apiClient.post<ApiResponseFormat<T>>(url, data, config);
+      const response = await this.axiosInstance.post<ApiResponseFormat<T>>(url, data, config);
       return ReqResult.fromResponse(response.data);
     } catch (error) {
       return ReqResult.fromAxiosError(error);
@@ -350,7 +350,7 @@ export class RequestUtils {
    */
   async putWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
-      const response = await this.apiClient.put<ApiResponseFormat<T>>(url, data, config);
+      const response = await this.axiosInstance.put<ApiResponseFormat<T>>(url, data, config);
       return ReqResult.fromResponse(response.data);
     } catch (error) {
       return ReqResult.fromAxiosError(error);
@@ -376,7 +376,7 @@ export class RequestUtils {
    */
   async deleteWithResult<T = any>(url: string, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
-      const response = await this.apiClient.delete<ApiResponseFormat<T>>(url, config);
+      const response = await this.axiosInstance.delete<ApiResponseFormat<T>>(url, config);
       return ReqResult.fromResponse(response.data);
     } catch (error) {
       return ReqResult.fromAxiosError(error);
@@ -403,7 +403,7 @@ export class RequestUtils {
    */
   async patchWithResult<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ReqResult<T>> {
     try {
-      const response = await this.apiClient.patch<ApiResponseFormat<T>>(url, data, config);
+      const response = await this.axiosInstance.patch<ApiResponseFormat<T>>(url, data, config);
       return ReqResult.fromResponse(response.data);
     } catch (error) {
       return ReqResult.fromAxiosError(error);
@@ -412,19 +412,19 @@ export class RequestUtils {
 }
 
 /**
- * 預設的 RequestUtils 實例
+ * 預設的 ResUtils 實例
  *
- * 使用環境變數 VITE_API_BASE_URL 或預設值 'http://localhost:8010' 作為基礎 URL
- * 可以直接使用此實例進行 API 請求，無需重新建立 RequestUtils 實例
+ * 使用環境變數 VITE_API_BASE_URL 或預設值 'http://localhost:8000/api' 作為基礎 URL
+ * 可以直接使用此實例進行 API 請求，無需重新建立 ResUtils 實例
  *
  * @example
  * ```typescript
- * import { apiClient } from './RequestUtils';
+ * import { resUtilsInstance } from './ResUtils';
  *
- * const users = await apiClient.get<User[]>('/users');
+ * const users = await resUtilsInstance.get<User[]>('/users');
  * ```
  */
-export const apiClient = new RequestUtils(
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000' // 從環境變數獲取 API 基礎 URL，或使用預設值
+export const resUtilsInstance = new ResUtils(
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api' // 從環境變數獲取 API 基礎 URL，或使用預設值
 );
 

@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {UserToRoleQueriesSvc} from '../../services/queries/UserToRoleQueriesSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('UserToRoleQueriesCtrl');
@@ -54,7 +54,7 @@ export class UserToRoleQueriesCtrl {
                 const allUserRoles = await this.userToRoleQueriesSvc.getAllUserRoles();
 
                 logger.info(`Successfully retrieved ${allUserRoles.length} user-role associations`);
-                const result = ResResult.success('所有使用者角色關聯獲取成功', allUserRoles);
+                const result = sharedPackages.ResResult.success('所有使用者角色關聯獲取成功', allUserRoles);
                 res.status(result.status).json(result);
                 return;
             }
@@ -66,7 +66,7 @@ export class UserToRoleQueriesCtrl {
             logRequest(req, `User roles retrieval request for ID: ${userId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -74,15 +74,15 @@ export class UserToRoleQueriesCtrl {
             const roles = await this.userToRoleQueriesSvc.getUserRoles(id);
 
             logger.info(`Successfully retrieved ${roles.length} roles for user ID: ${userId}`);
-            const result = ResResult.success('使用者角色獲取成功', roles);
+            const result = sharedPackages.ResResult.success('使用者角色獲取成功', roles);
             res.status(result.status).json(result);
         } catch (error) {
             logger.error('Error fetching user roles:', error);
             if (error instanceof Error && error.message === 'User not found') {
-                const result = ResResult.notFound(error.message);
+                const result = sharedPackages.ResResult.notFound(error.message);
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('使用者角色獲取失敗');
+                const result = sharedPackages.ResResult.internalError('使用者角色獲取失敗');
                 res.status(result.status).json(result);
             }
         }
@@ -101,7 +101,7 @@ export class UserToRoleQueriesCtrl {
             logRequest(req, `User role retrieval request for ID: ${userRoleId}`, 'info');
 
             if (isNaN(id) || id <= 0) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -110,15 +110,15 @@ export class UserToRoleQueriesCtrl {
             const roles = await this.userToRoleQueriesSvc.getUserRoles(id);
 
             logger.info(`Successfully retrieved ${roles.length} roles for user ID: ${userRoleId}`);
-            const result = ResResult.success('使用者角色關係獲取成功', {userId: id, roles});
+            const result = sharedPackages.ResResult.success('使用者角色關係獲取成功', {userId: id, roles});
             res.status(result.status).json(result);
         } catch (error) {
             logger.error('Error fetching user role by ID:', error);
             if (error instanceof Error && error.message === 'User not found') {
-                const result = ResResult.notFound('使用者角色關係不存在');
+                const result = sharedPackages.ResResult.notFound('使用者角色關係不存在');
                 res.status(result.status).json(result);
             } else {
-                const result = ResResult.internalError('使用者角色關係獲取失敗');
+                const result = sharedPackages.ResResult.internalError('使用者角色關係獲取失敗');
                 res.status(result.status).json(result);
             }
         }

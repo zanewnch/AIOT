@@ -1,3 +1,4 @@
+/**
  * @fileoverview 角色查詢服務實現
  *
  * 此文件實作了角色查詢業務邏輯層，
@@ -20,6 +21,7 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
+ */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -35,6 +37,7 @@ import { PaginationParams, PaginatedResult, PaginationUtils, RoleDTO, IRoleQueri
 const logger = createLogger('RoleQueriesSvc');
 
 
+/**
  * 角色查詢服務實現類別
  *
  * 專門處理角色相關的查詢請求，包含角色資料查詢、存在性檢查等功能。
@@ -43,6 +46,7 @@ const logger = createLogger('RoleQueriesSvc');
  * @class RoleQueriesSvc
  * @implements {IRoleQueriesService}
  * @since 1.0.0
+ */
 @injectable()
 export class RoleQueriesSvc { // implements IRoleQueriesService {
     private static readonly ROLE_CACHE_PREFIX = 'role:';
@@ -55,16 +59,20 @@ export class RoleQueriesSvc { // implements IRoleQueriesService {
     }
 
 
+    /**
      * 產生角色快取鍵值
      * @param roleId 角色 ID
      * @private
+     */
     private getRoleCacheKey(roleId: number): string {
         return `${RoleQueriesSvc.ROLE_CACHE_PREFIX}${roleId}`;
     }
 
+    /**
      * 將模型轉換為 DTO
      * @param model 角色模型
      * @private
+     */
     private modelToDTO(model: RoleModel): RoleDTO {
         return {
             id: model.id,
@@ -76,9 +84,11 @@ export class RoleQueriesSvc { // implements IRoleQueriesService {
     }
 
 
+    /**
      * 從快取取得單一角色
      * @param roleId 角色 ID
      * @private
+     */
     private getCachedRole = async (roleId: number): Promise<RoleDTO | null> => {
         const key = this.getRoleCacheKey(roleId);
         
@@ -89,8 +99,10 @@ export class RoleQueriesSvc { // implements IRoleQueriesService {
     // ==================== 公開查詢方法 ====================
 
 
+    /**
      * 根據 ID 取得角色
      * @param roleId 角色 ID
+     */
     public getRoleById = async (roleId: number): Promise<RoleDTO | null> => {
         try {
             logger.info(`Retrieving role by ID: ${roleId}`);
@@ -125,8 +137,10 @@ export class RoleQueriesSvc { // implements IRoleQueriesService {
         }
     }
 
+    /**
      * 根據名稱查找角色
      * @param roleName 角色名稱
+     */
     public getRoleByName = async (roleName: string): Promise<RoleDTO | null> => {
         try {
             logger.info(`Retrieving role by name: ${roleName}`);
@@ -153,8 +167,10 @@ export class RoleQueriesSvc { // implements IRoleQueriesService {
         }
     }
 
+    /**
      * 檢查角色是否存在
      * @param roleName 角色名稱
+     */
     public roleExists = async (roleName: string): Promise<boolean> => {
         try {
             return await this.roleRepo.exists(roleName);
@@ -164,10 +180,12 @@ export class RoleQueriesSvc { // implements IRoleQueriesService {
         }
     }
 
+    /**
      * 獲取所有角色列表（支持分頁）
      * 
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁角色結果
+     */
     public async getAllRoles(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<RoleDTO>> {
         try {
             logger.debug('Getting roles with pagination', params);

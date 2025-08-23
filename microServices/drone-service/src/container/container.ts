@@ -85,7 +85,7 @@ import { DronePositionRoutes } from '../routes/dronePositionRoutes.js';
 import { DroneStatusRoutes } from '../routes/droneStatusRoutes.js';
 import { DroneCommandRoutes } from '../routes/droneCommandRoutes.js';
 import { DroneRealtimeRoutes } from '../routes/droneRealtimeRoutes.js';
-import { RouteManager } from '../routes/index.js';
+import { RouteRegistrar } from '../routes/index.js';
 
 // 應用程式導入
 import { App } from '../app.js';
@@ -174,7 +174,7 @@ export function createContainer(): Container {
     container.bind(TYPES.DroneStatusRoutes).to(DroneStatusRoutes).inSingletonScope();
     container.bind(TYPES.DroneCommandRoutes).to(DroneCommandRoutes).inSingletonScope();
     container.bind(TYPES.DroneRealtimeRoutes).to(DroneRealtimeRoutes).inSingletonScope();
-    container.bind(TYPES.RouteManager).to(RouteManager).inSingletonScope();
+    container.bind(TYPES.RouteRegistrar).to(RouteRegistrar).inSingletonScope();
 
     // === 基礎設施服務 ===
     // 數據庫連接
@@ -196,9 +196,11 @@ export function createContainer(): Container {
     // App 類 - 使用依賴注入
     container.bind(TYPES.App).to(App).inSingletonScope();
 
-    // DroneHttpServer 類 - HTTP 伺服器管理
-    // const { .* } = require('../server.js');
-//     container.bind(TYPES.DroneHttpServer).to(DroneHttpServer).inSingletonScope();
+    // DroneHttpServer 類 - HTTP 伺服器管理（延遲綁定以避免循環依賴）
+    container.bind(TYPES.DroneHttpServer).toDynamicValue(() => {
+        const { DroneHttpServer } = require('../server.js');
+        return new DroneHttpServer(container.get(TYPES.App));
+    }).inSingletonScope();
 
     // WebSocket 服務已移至 drone-websocket-service
 

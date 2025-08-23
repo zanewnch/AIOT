@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {RoleQueriesSvc} from '../../services/queries/RoleQueriesSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('RoleQueriesCtrl');
@@ -60,7 +60,7 @@ export class RoleQueriesCtrl {
 
             // 統一使用分頁查詢
             const paginatedResult = await this.roleQueriesService.getAllRoles(paginationParams);
-            const result = ResResult.success('角色列表獲取成功', paginatedResult);
+            const result = sharedPackages.ResResult.success('角色列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);
             logger.info('Successfully fetched roles with pagination', {
@@ -71,7 +71,7 @@ export class RoleQueriesCtrl {
             });
         } catch (error) {
             logger.error('Error fetching roles', {error});
-            const result = ResResult.internalError('獲取角色列表失敗');
+            const result = sharedPackages.ResResult.internalError('獲取角色列表失敗');
             res.status(result.status).json(result);
         }
     }
@@ -85,7 +85,7 @@ export class RoleQueriesCtrl {
             const roleId = parseInt(req.params.id);
 
             if (isNaN(roleId)) {
-                const result = ResResult.badRequest('無效的角色 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的角色 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -96,13 +96,13 @@ export class RoleQueriesCtrl {
             const role = await this.roleQueriesService.getRoleById(roleId);
 
             if (!role) {
-                const result = ResResult.notFound('角色不存在');
+                const result = sharedPackages.ResResult.notFound('角色不存在');
                 res.status(result.status).json(result);
                 logger.warn(`Role not found with ID: ${roleId}`);
                 return;
             }
 
-            const result = ResResult.success('角色詳情獲取成功', role);
+            const result = sharedPackages.ResResult.success('角色詳情獲取成功', role);
             res.status(result.status).json(result);
             logger.info(`Successfully fetched role by ID: ${roleId}`);
         } catch (error) {
@@ -110,7 +110,7 @@ export class RoleQueriesCtrl {
                 roleId: req.params.id,
                 error
             });
-            const result = ResResult.internalError('獲取角色詳情失敗');
+            const result = sharedPackages.ResResult.internalError('獲取角色詳情失敗');
             res.status(result.status).json(result);
         }
     }

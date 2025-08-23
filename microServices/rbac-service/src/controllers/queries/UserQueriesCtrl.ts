@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {UserQueriesSvc} from '../../services/queries/UserQueriesSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import {ResResult} from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 
 const logger = createLogger('UserQueriesCtrl');
@@ -60,7 +60,7 @@ export class UserQueriesCtrl {
 
             // 統一使用分頁查詢
             const paginatedResult = await this.userQueriesSvc.getAllUsers(paginationParams);
-            const result = ResResult.success('使用者列表獲取成功', paginatedResult);
+            const result = sharedPackages.ResResult.success('使用者列表獲取成功', paginatedResult);
 
             res.status(result.status).json(result);
             logger.info('Successfully fetched users with pagination', {
@@ -71,7 +71,7 @@ export class UserQueriesCtrl {
             });
         } catch (error) {
             logger.error('Error fetching users', {error});
-            const result = ResResult.internalError('獲取使用者列表失敗');
+            const result = sharedPackages.ResResult.internalError('獲取使用者列表失敗');
             res.status(result.status).json(result);
         }
     }
@@ -85,7 +85,7 @@ export class UserQueriesCtrl {
             const userId = parseInt(req.params.id);
 
             if (isNaN(userId)) {
-                const result = ResResult.badRequest('無效的使用者 ID');
+                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
                 res.status(result.status).json(result);
                 return;
             }
@@ -96,13 +96,13 @@ export class UserQueriesCtrl {
             const user = await this.userQueriesSvc.getUserById(userId);
 
             if (!user) {
-                const result = ResResult.notFound('使用者不存在');
+                const result = sharedPackages.ResResult.notFound('使用者不存在');
                 res.status(result.status).json(result);
                 logger.warn(`User not found with ID: ${userId}`);
                 return;
             }
 
-            const result = ResResult.success('使用者詳情獲取成功', user);
+            const result = sharedPackages.ResResult.success('使用者詳情獲取成功', user);
             res.status(result.status).json(result);
             logger.info(`Successfully fetched user by ID: ${userId}`);
         } catch (error) {
@@ -110,7 +110,7 @@ export class UserQueriesCtrl {
                 userId: req.params.id,
                 error
             });
-            const result = ResResult.internalError('獲取使用者詳情失敗');
+            const result = sharedPackages.ResResult.internalError('獲取使用者詳情失敗');
             res.status(result.status).json(result);
         }
     }

@@ -11,44 +11,66 @@
  */
 
 import { Application } from 'express';
-import { router as authRoutes } from './authRoutes.js';
+import { inject, injectable } from 'inversify';
+import { AuthRoutes } from './authRoutes.js';
+import { TYPES } from '../container/types.js';
 import docsRoutes from './docsRoutes.js';
 
 /**
- * 註冊所有 API 路由到 Express 應用程式
-/**
- * 註冊所有 API 路由到 Express 應用
- *
- * @remarks
- * 這個函式在應用啟動時被呼叫，會掛載健康檢查與 Auth routes。
- *
- * @param app - Express 應用實例
- * @public
+ * 路由註冊器類別
+ * 使用 InversifyJS 依賴注入管理路由註冊
  */
-export function registerRoutes(app: Application): void {
-    try {
-    // 註冊健康檢查路由 - 用於運維監控 (Liveness/Readiness)
-        app.get('/health', (req, res) => {
-            res.status(200).json({
-                status: 'healthy',
-                service: 'auth-service',
-                timestamp: new Date().toISOString(),
-                version: '1.0.0'
+@injectable()
+class RouteRegistrar {
+    constructor(
+        @inject(TYPES.AuthRoutes) private authRoutes: AuthRoutes
+    ) {}
+
+    /**
+     * 註冊所有路由到 Express 應用程式
+     * @param app Express 應用實例
+     */
+    public registerRoutes(app: Application): void {
+        try {
+            // 註冊健康檢查路由 - 用於運維監控 (Liveness/Readiness)
+            app.get('/health', (req, res) => {
+                res.status(200).json({
+                    status: 'healthy',
+                    service: 'auth-service',
+                    timestamp: new Date().toISOString(),
+                    version: '1.0.0'
+                });
             });
-        });
-        console.log('✅ Health check route registered at /health');
+            console.log('✅ Health check route registered at /health');
 
-    // 註冊認證路由 - 掛載 authRoutes 到根路徑
-        app.use('/', authRoutes);
-        console.log('✅ Auth routes registered at /');
+            // 註冊認證路由 - 掛載 AuthRoutes 到根路徑
+            app.use('/', this.authRoutes.getRouter());
+            console.log('✅ Auth routes registered at /');
 
-        // 註冊文檔路由
-        app.use('/', docsRoutes);
-        console.log('✅ Documentation routes registered at /docs and /typedoc');
+            // 註冊文檔路由
+            app.use('/', docsRoutes);
+            console.log('✅ Documentation routes registered at /docs and /typedoc');
 
-        console.log('🚀 All Auth routes registered successfully');
-    } catch (error) {
-        console.error('❌ Failed to register routes:', error);
-        throw error;
+            console.log('🚀 All Auth routes registered successfully');
+        } catch (error) {
+            console.error('❌ Failed to register routes:', error);
+            throw error;
+        }
     }
 }
+
+/**
+ * 註冊所有 API 路由到 Express 應用程式
+ * 使用容器獲取 RouteRegistrar 實例並註冊路由
+ *
+ * @param app Express 應用實例
+ * @param container InversifyJS 容器實例
+ * @public
+ */
+export function registerRoutes(app: Application, container: any): void {
+    const routeRegistrar = container.get<RouteRegistrar>(TYPES.RouteRegistrar);
+    routeRegistrar.registerRoutes(app);
+}
+
+// 匯出 RouteRegistrar 類別以供容器註冊
+export { RouteRegistrar };

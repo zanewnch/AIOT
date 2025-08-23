@@ -1,3 +1,4 @@
+/**
  * @fileoverview 權限命令服務實現
  *
  * 此文件實作了權限命令業務邏輯層，
@@ -19,6 +20,7 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
+ */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -28,9 +30,8 @@ import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepo.
 import type { PermissionModel } from '../../models/PermissionModel.js';
 
 import { createLogger } from '../../configs/loggerConfig.js';
-import { getRedisClient } from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import type { RedisClientType } from 'redis';
-import { getRedisClient } from 'aiot-shared-packages';
 import type {
     PermissionDTO,
     CreatePermissionRequest,
@@ -43,6 +44,7 @@ import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc.js';
 
 const logger = createLogger('PermissionCommandsSvc');
 
+/**
  * 權限命令服務實現類別
  *
  * 專門處理權限相關的命令請求，包含創建、更新、刪除等功能。
@@ -51,6 +53,7 @@ const logger = createLogger('PermissionCommandsSvc');
  * @class PermissionCommandsSvc
  * @implements {IPermissionCommandsService}
  * @since 1.0.0
+ */
 @injectable()
 export class PermissionCommandsSvc implements IPermissionCommandsService {
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
@@ -68,34 +71,42 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
 
 
 
+    /**
      * 生成使用者權限快取鍵值
      * @param userId 使用者 ID
      * @returns 權限快取鍵值
      * @private
+     */
     private getPermissionsCacheKey = (userId: number): string => {
         return `${PermissionCommandsSvc.PERMISSIONS_CACHE_PREFIX}${userId}`;
     }
 
+    /**
      * 生成使用者角色快取鍵值
      * @param userId 使用者 ID
      * @returns 角色快取鍵值
      * @private
+     */
     private getRolesCacheKey = (userId: number): string => {
         return `${PermissionCommandsSvc.ROLES_CACHE_PREFIX}${userId}`;
     }
 
+    /**
      * 產生權限快取鍵值
      * @param permissionId 權限 ID
      * @private
+     */
     private getPermissionCacheKey = (permissionId: number): string => {
         return `${PermissionCommandsSvc.PERMISSION_CACHE_PREFIX}${permissionId}`;
     }
 
+    /**
      * 將使用者權限資料存入快取
      * @param userId 使用者 ID
      * @param permissions 權限資料
      * @param ttl 快取時間（秒）
      * @private
+     */
     private async setCachedUserPermissions(
         userId: number,
         permissions: UserPermissions,
@@ -110,9 +121,11 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         );
     }
 
+    /**
      * 將模型轉換為 DTO
      * @param model 權限模型
      * @private
+     */
     private modelToDTO = (model: PermissionModel): PermissionDTO => {
         return {
             id: model.id,
@@ -124,9 +137,11 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
     }
 
 
+    /**
      * 快取單一權限
      * @param permission 權限資料
      * @private
+     */
     private cachePermission = async (permission: PermissionDTO): Promise<void> => {
         logger.debug(`Caching permission ID: ${permission.id} in Redis`);
         const key = this.getPermissionCacheKey(permission.id);
@@ -138,9 +153,11 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         );
     }
 
+    /**
      * 清除權限管理快取
      * @param permissionId 權限 ID（可選）
      * @private
+     */
     private clearPermissionManagementCache = async (permissionId?: number): Promise<void> => {
         if (permissionId) {
             logger.debug(`Clearing Redis cache for permission ID: ${permissionId}`);
@@ -163,6 +180,7 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
     }
 
     /**
+    /**
      * 安全執行 Redis 操作
      * @param operation Redis 操作函式
      * @param operationName 操作名稱
@@ -175,7 +193,7 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         fallbackValue: T
     ): Promise<T> => {
         try {
-            const redis = getRedisClient();
+            const redis = sharedPackages.getRedisClient();
             const result = await operation(redis);
             logger.debug(`Redis operation ${operationName} completed successfully`);
             return result;
@@ -196,7 +214,7 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         operationName: string
     ): Promise<boolean> => {
         try {
-            const redis = getRedisClient();
+            const redis = sharedPackages.getRedisClient();
             await operation(redis);
             logger.debug(`Redis write operation ${operationName} completed successfully`);
             return true;
@@ -230,9 +248,11 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         ]);
     }
 
+    /**
      * 重新整理使用者權限快取
      * @param userId 使用者 ID
      * @param options 快取選項
+     */
     public async refreshUserPermissionsCache(
         userId: number,
         options = { ttl: PermissionCommandsSvc.DEFAULT_CACHE_TTL, forceRefresh: true }
@@ -249,8 +269,10 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
 
     // ==================== 權限管理方法 ====================
 
+    /**
      * 建立新權限
      * @param permissionData 權限資料
+     */
     public createPermission = async (permissionData: CreatePermissionRequest): Promise<PermissionDTO> => {
         try {
             logger.info(`Creating new permission: ${permissionData.name}`);
@@ -290,9 +312,11 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         }
     }
 
+    /**
      * 更新權限
      * @param permissionId 權限 ID
      * @param updateData 更新資料
+     */
     public updatePermission = async (permissionId: number, updateData: UpdatePermissionRequest): Promise<PermissionDTO | null> => {
         try {
             logger.info(`Updating permission ID: ${permissionId}`);
@@ -348,8 +372,10 @@ export class PermissionCommandsSvc implements IPermissionCommandsService {
         }
     }
 
+    /**
      * 刪除權限
      * @param permissionId 權限 ID
+     */
     public deletePermission = async (permissionId: number): Promise<boolean> => {
         try {
             logger.info(`Deleting permission ID: ${permissionId}`);

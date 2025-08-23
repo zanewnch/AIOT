@@ -11,8 +11,8 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { createLogger } from '../configs/loggerConfig';
 import type { 
   ChatMessage,
@@ -64,7 +64,7 @@ export class ChatQuery {
         try {
           logger.debug('Checking LLM service health status');
           
-          const result = await apiClient.getWithResult<LLMHealthStatus>(
+          const result = await resUtilsInstance.getWithResult<LLMHealthStatus>(
             `${this.LLM_SERVICE_URL}/api/transformers/health/`
           );
           
@@ -118,7 +118,7 @@ export class ChatQuery {
             ? '/transformers/conversation/'
             : '/transformers/generate/';
           
-          const result = await apiClient.postWithResult<ChatResponse>(
+          const result = await resUtilsInstance.postWithResult<ChatResponse>(
             `${this.LLM_SERVICE_URL}${endpoint}`,
             {
               prompt: request.prompt,
@@ -167,7 +167,7 @@ export class ChatQuery {
         try {
           logger.debug('Uploading documents', { count: request.documents.length });
           
-          const result = await apiClient.postWithResult<DocumentUploadResponse>(
+          const result = await resUtilsInstance.postWithResult<DocumentUploadResponse>(
             `${this.LLM_SERVICE_URL}/api/transformers/documents/`,
             {
               documents: request.documents
@@ -216,7 +216,7 @@ export class ChatQuery {
         try {
           logger.debug('Testing LLM service connection');
           
-          const result = await apiClient.getWithResult<any>(
+          const result = await resUtilsInstance.getWithResult<any>(
             `${this.LLM_SERVICE_URL}/health/`
           );
           

@@ -90,11 +90,12 @@ export class ApiGatewayHeadersMiddleware {
           }
         });
         
-        return res.status(401).json({
+        res.status(401).json({
           status: 401,
           message: 'Authentication required - missing user information',
           data: null
         });
+        return;
       }
 
       // 解析角色和權限（可能是逗號分隔的字符串）
@@ -153,11 +154,12 @@ export class ApiGatewayHeadersMiddleware {
             requiredPermission 
           });
           
-          return res.status(401).json({
+          res.status(401).json({
             status: 401,
             message: 'Authentication required',
             data: null
           });
+          return;
         }
 
         // 檢查是否有超級權限
@@ -213,11 +215,12 @@ export class ApiGatewayHeadersMiddleware {
         const user = req.gatewayUser || req.user;
         
         if (!user) {
-          return res.status(401).json({
+          res.status(401).json({
             status: 401,
             message: 'Authentication required',
             data: null
           });
+          return;
         }
 
         // 檢查是否有超級權限

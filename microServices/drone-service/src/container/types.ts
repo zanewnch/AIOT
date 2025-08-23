@@ -565,7 +565,7 @@ export const TYPES = {
   /**
    * 路由管理器類型
    */
-  RouteManager: Symbol.for('RouteManager')
+  RouteRegistrar: Symbol.for('RouteRegistrar')
 } as const;
 
 /**

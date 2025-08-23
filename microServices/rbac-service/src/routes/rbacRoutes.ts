@@ -72,16 +72,16 @@ class RbacRoutes {
 
   constructor() {
     this.router = Router();
-    this.userQueries = container.get<UserQueries>(TYPES.UserQueriesCtrl);
-    this.userCommands = container.get<UserCommands>(TYPES.UserCommandsCtrl);
-    this.roleQueries = container.get<RoleQueries>(TYPES.RoleQueriesCtrl);
-    this.roleCommands = container.get<RoleCommands>(TYPES.RoleCommandsCtrl);
-    this.permissionQueries = container.get<PermissionQueries>(TYPES.PermissionQueriesCtrl);
-    this.permissionCommands = container.get<PermissionCommands>(TYPES.PermissionCommandsCtrl);
-    this.userToRoleQueries = container.get<UserToRoleQueries>(TYPES.UserToRoleQueriesCtrl);
-    this.userToRoleCommands = container.get<UserToRoleCommands>(TYPES.UserToRoleCommandsCtrl);
-    this.roleToPermissionQueries = container.get<RoleToPermissionQueries>(TYPES.RoleToPermissionQueriesCtrl);
-    this.roleToPermissionCommands = container.get<RoleToPermissionCommands>(TYPES.RoleToPermissionCommandsCtrl);
+    this.userQueries = container.get<UserQueriesCtrl>(TYPES.UserQueriesCtrl);
+    this.userCommands = container.get<UserCommandsCtrl>(TYPES.UserCommandsCtrl);
+    this.roleQueries = container.get<RoleQueriesCtrl>(TYPES.RoleQueriesCtrl);
+    this.roleCommands = container.get<RoleCommandsCtrl>(TYPES.RoleCommandsCtrl);
+    this.permissionQueries = container.get<PermissionQueriesCtrl>(TYPES.PermissionQueriesCtrl);
+    this.permissionCommands = container.get<PermissionCommandsCtrl>(TYPES.PermissionCommandsCtrl);
+    this.userToRoleQueries = container.get<UserToRoleQueriesCtrl>(TYPES.UserToRoleQueriesCtrl);
+    this.userToRoleCommands = container.get<UserToRoleCommandsCtrl>(TYPES.UserToRoleCommandsCtrl);
+    this.roleToPermissionQueries = container.get<RoleToPermissionQueriesCtrl>(TYPES.RoleToPermissionQueriesCtrl);
+    this.roleToPermissionCommands = container.get<RoleToPermissionCommandsCtrl>(TYPES.RoleToPermissionCommandsCtrl);
     
     this.setupUserRoutes();
     this.setupRoleRoutes();

@@ -14,7 +14,7 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
+import { resUtilsInstance } from '../utils/ResUtils';
 import { createLogger } from '../configs/loggerConfig';
 import type { User, UserUpdateRequest, UserRole, TableError } from '../types/table';
 
@@ -75,11 +75,11 @@ export const useOptimisticUser = () => {
   const userUpdateMutation = useMutation({
     mutationFn: async ({ userId, type, data }: UserOperationRequest) => {
       const endpoints = {
-        update_profile: `/api/rbac/users/${userId}`,
-        update_status: `/api/rbac/users/${userId}/status`,
-        assign_role: `/api/rbac/users/${userId}/roles`,
-        remove_role: `/api/rbac/users/${userId}/roles`,
-        update_permissions: `/api/rbac/users/${userId}/permissions`,
+        update_profile: `/rbac/users/${userId}`,
+        update_status: `/rbac/users/${userId}/status`,
+        assign_role: `/rbac/users/${userId}/roles`,
+        remove_role: `/rbac/users/${userId}/roles`,
+        update_permissions: `/rbac/users/${userId}/permissions`,
       };
 
       const methods = {
@@ -96,13 +96,13 @@ export const useOptimisticUser = () => {
       logger.info(`執行用戶操作 ${type}`, { userId, endpoint, data });
 
       if (method === 'POST') {
-        await apiClient.postWithResult(endpoint, data);
+        await resUtilsInstance.postWithResult(endpoint, data);
       } else if (method === 'PUT') {
-        await apiClient.putWithResult(endpoint, data);
+        await resUtilsInstance.putWithResult(endpoint, data);
       } else if (method === 'PATCH') {
-        await apiClient.patchWithResult(endpoint, data);
+        await resUtilsInstance.patchWithResult(endpoint, data);
       } else if (method === 'DELETE') {
-        await apiClient.deleteWithResult(endpoint);
+        await resUtilsInstance.deleteWithResult(endpoint);
       }
 
       return { userId, type, data };

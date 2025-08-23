@@ -1,3 +1,4 @@
+/**
  * @fileoverview 權限查詢服務實現
  *
  * 此文件實作了權限查詢業務邏輯層，
@@ -5,7 +6,7 @@
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
  * 功能特點：
- * - 使用者權限檢查（單一、任一、全部）
+ * - 使用者權限檢查(單一、任一、全部)
  * - 使用者角色檢查
  * - Redis 快取機制，減少資料庫查詢
  * - 批量權限查詢
@@ -22,6 +23,7 @@
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
+ */
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
@@ -32,6 +34,7 @@ import type { PermissionModel } from '../../models/PermissionModel.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger, logPermissionCheck } from '../../configs/loggerConfig.js';
+import * as sharedPackages from 'aiot-shared-packages';
 import type {
     PermissionDTO,
     UserPermissions,
@@ -43,7 +46,9 @@ import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/
 
 const logger = createLogger('PermissionQueriesSvc');
 
+/**
  * 搜尋條件介面
+ */
 export interface PermissionSearchCriteria {
     /** 名稱搜尋模式 */
     namePattern?: string;
@@ -59,6 +64,7 @@ export interface PermissionSearchCriteria {
     excludeIds?: number[];
 }
 
+/**
  * 權限查詢服務實現類別
  *
  * 專門處理權限相關的查詢請求，包含權限檢查、權限列表查詢等功能。
@@ -67,6 +73,7 @@ export interface PermissionSearchCriteria {
  * @class PermissionQueriesSvc
  * @implements {IPermissionQueriesService}
  * @since 1.0.0
+ */
 @injectable()
 export class PermissionQueriesSvc implements IPermissionQueriesService {
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
@@ -79,27 +86,55 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
     ) {
     }
 
+    /**
+     * 安全執行 Redis 操作
+     * @param operation Redis 操作函式
+     * @param operationName 操作名稱
+     * @param fallbackValue 操作失敗時的預設返回值
+     * @private
+     */
+    private safeRedisOperation = async <T>(
+        operation: (redis: RedisClientType) => Promise<T>,
+        operationName: string,
+        fallbackValue: T
+    ): Promise<T> => {
+        try {
+            const redis = sharedPackages.getRedisClient();
+            const result = await operation(redis);
+            logger.debug(`Redis operation ${operationName} completed successfully`);
+            return result;
+        } catch (error) {
+            logger.warn(`Redis operation ${operationName} failed:`, error);
+            return fallbackValue;
+        }
+    }
 
+    /**
      * 生成使用者權限快取鍵值
      * @param userId 使用者 ID
      * @returns 權限快取鍵值
      * @private
+     */
     private getPermissionsCacheKey(userId: number): string {
         return `${PermissionQueriesSvc.PERMISSIONS_CACHE_PREFIX}${userId}`;
     }
 
 
+    /**
      * 產生權限快取鍵值
      * @param permissionId 權限 ID
      * @private
+     */
     private getPermissionCacheKey(permissionId: number): string {
         return `${PermissionQueriesSvc.PERMISSION_CACHE_PREFIX}${permissionId}`;
     }
 
+    /**
      * 從快取取得使用者權限資料
      * @param userId 使用者 ID
-     * @returns 使用者權限資料或 null（當快取不存在或發生錯誤時）
+     * @returns 使用者權限資料或 null(當快取不存在或發生錯誤時)
      * @private
+     */
     private async getCachedUserPermissions(userId: number): Promise<UserPermissions | null> {
         const cacheKey = this.getPermissionsCacheKey(userId);
         
@@ -113,10 +148,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         );
     }
 
+    /**
      * 從資料庫取得使用者權限資料
      * @param userId 使用者 ID
      * @returns 使用者權限資料或 null
      * @private
+     */
     private async fetchUserPermissionsFromDB(userId: number): Promise<UserPermissions | null> {
         try {
             logger.debug(`Querying database for user ${userId} with roles and permissions`);
@@ -127,7 +164,7 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
                 return null;
             }
 
-            // 提取所有權限（來自角色）
+            // 提取所有權限(來自角色)
             const permissions = new Set<string>();
             const roles = new Set<string>();
 
@@ -166,9 +203,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
+    /**
      * 將模型轉換為 DTO
      * @param model 權限模型
      * @private
+     */
     private modelToDTO(model: PermissionModel): PermissionDTO {
         return {
             id: model.id,
@@ -180,9 +219,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
     }
 
 
+    /**
      * 從快取取得單一權限
      * @param permissionId 權限 ID
      * @private
+     */
     private async getCachedPermission(permissionId: number): Promise<PermissionDTO | null> {
         const key = this.getPermissionCacheKey(permissionId);
         
@@ -203,10 +244,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
 
     // ==================== 公開查詢方法 ====================
 
-     * 取得使用者權限資料（支援快取）
+    /**
+     * 取得使用者權限資料(支援快取)
      * @param userId 使用者 ID
      * @param options 快取選項
      * @returns 使用者權限資料或 null
+     */
     public async getUserPermissions(
         userId: number,
         options: CacheOptions = {}
@@ -237,11 +280,13 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         return permissions;
     }
 
+    /**
      * 檢查使用者是否具有特定權限
      * @param userId 使用者 ID
      * @param permissionName 權限名稱
      * @param options 快取選項
      * @returns 是否具有權限
+     */
     public async userHasPermission(
         userId: number,
         permissionName: string,
@@ -270,11 +315,13 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         return hasPermission;
     }
 
-     * 檢查使用者是否具有任一權限（OR 邏輯）
+    /**
+     * 檢查使用者是否具有任一權限(OR 邏輯)
      * @param userId 使用者 ID
      * @param permissions 權限名稱陣列
      * @param options 快取選項
      * @returns 是否具有任一權限
+     */
     public async userHasAnyPermission(
         userId: number,
         permissions: string[],
@@ -291,11 +338,13 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         );
     }
 
-     * 檢查使用者是否具有所有權限（AND 邏輯）
+    /**
+     * 檢查使用者是否具有所有權限(AND 邏輯)
      * @param userId 使用者 ID
      * @param permissions 權限名稱陣列
      * @param options 快取選項
      * @returns 是否具有所有權限
+     */
     public async userHasAllPermissions(
         userId: number,
         permissions: string[],
@@ -312,11 +361,13 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         );
     }
 
+    /**
      * 檢查使用者是否具有特定角色
      * @param userId 使用者 ID
      * @param roleName 角色名稱
      * @param options 快取選項
      * @returns 是否具有角色
+     */
     public async userHasRole(
         userId: number,
         roleName: string,
@@ -331,10 +382,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         return userPermissions.roles.includes(roleName);
     }
 
+    /**
      * 取得使用者所有權限列表
      * @param userId 使用者 ID
      * @param options 快取選項
      * @returns 權限名稱陣列
+     */
     public async getUserPermissionsList(
         userId: number,
         options = {}
@@ -343,10 +396,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         return userPermissions ? userPermissions.permissions : [];
     }
 
+    /**
      * 取得使用者所有角色列表
      * @param userId 使用者 ID
      * @param options 快取選項
      * @returns 角色名稱陣列
+     */
     public async getUserRolesList(
         userId: number,
         options = {}
@@ -355,10 +410,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         return userPermissions ? userPermissions.roles : [];
     }
 
+    /**
      * 批量取得多個使用者的權限資料
      * @param userIds 使用者 ID 陣列
      * @param options 快取選項
      * @returns 使用者權限資料陣列
+     */
     public async getBatchUserPermissions(
         userIds: number[],
         options = {}
@@ -370,9 +427,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         return Promise.all(promises);
     }
 
+    /**
      * 檢查權限是否存在於系統中
      * @param permissionName 權限名稱
      * @returns 權限是否存在
+     */
     public async permissionExists(permissionName: string): Promise<boolean> {
         try {
             return await this.permissionRepo.exists(permissionName);
@@ -385,8 +444,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
     // ==================== 權限管理查詢方法 ====================
 
 
+    /**
      * 根據 ID 取得權限
      * @param permissionId 權限 ID
+     * @returns 權限資料或 null
+     */
     public async getPermissionById(permissionId: number): Promise<PermissionDTO | null> {
         try {
             logger.info(`Retrieving permission by ID: ${permissionId}`);
@@ -421,10 +483,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
-     * 獲取所有權限列表（支持分頁）
-     * 
+    /**
+     * 獲取所有權限列表(支持分頁)
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁權限結果
+     */
     public async getAllPermissions(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<PermissionDTO>> {
         try {
             logger.debug('Getting permissions with pagination', params);
@@ -478,9 +541,11 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
+    /**
      * 根據名稱查找權限
      * @param name 權限名稱
      * @returns 權限 DTO 或 null
+     */
     public async getPermissionByName(name: string): Promise<PermissionDTO | null> {
         try {
             logger.info(`Retrieving permission by name: ${name}`);
@@ -507,11 +572,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
-     * 按名稱模糊搜尋權限（支持分頁）
-     * 
+    /**
+     * 按名稱模糊搜尋權限(支持分頁)
      * @param namePattern 名稱搜尋模式
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁權限結果
+     */
     public async getPermissionsByNamePattern(
         namePattern: string, 
         params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'name', sortOrder: 'ASC' }
@@ -577,11 +643,12 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
-     * 按描述搜尋權限（支持分頁）
-     * 
+    /**
+     * 按描述搜尋權限(支持分頁)
      * @param descriptionPattern 描述搜尋模式
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁權限結果
+     */
     public async getPermissionsByDescription(
         descriptionPattern: string, 
         params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'name', sortOrder: 'ASC' }
@@ -647,12 +714,21 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
-     * 按創建時間範圍查詢權限（支持分頁）
-     * 
+    /**
+     * 按創建時間範圍查詢權限(支持分頁)
+     * @param startDate 開始日期
+     * @param endDate 結束日期
+     * @param params 分頁參數
+     * @returns 分頁權限結果
+     */
+
+    /**
+     * 按日期範圍搜尋權限(支持分頁)
      * @param startDate 開始日期
      * @param endDate 結束日期  
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁權限結果
+     */
     public async getPermissionsByDateRange(
         startDate: Date, 
         endDate: Date,
@@ -724,11 +800,19 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
     }
 
 
-     * 組合條件搜尋權限（支持分頁）
-     * 
+    /**
+     * 組合條件搜尋權限(支持分頁)
+     * @param criteria 搜尋條件
+     * @param params 分頁參數
+     * @returns 分頁權限結果
+     */
+
+    /**
+     * 綜合搜尋權限(支持多條件搜尋和分頁)
      * @param criteria 搜尋條件
      * @param params 分頁參數，默認 page=1, pageSize=20
      * @returns 分頁權限結果
+     */
     public async searchPermissions(
         criteria: PermissionSearchCriteria = {},
         params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'name', sortOrder: 'ASC' }
@@ -787,12 +871,14 @@ export class PermissionQueriesSvc implements IPermissionQueriesService {
         }
     }
 
+    /**
      * 檢查使用者是否有特定權限
      * 
      * @param userId 使用者 ID
      * @param permission 權限名稱
      * @param options 快取選項
      * @returns 是否有權限
+     */
     public async hasPermission(userId: number, permission: string, options: CacheOptions = {}): Promise<boolean> {
         try {
             const userPermissions = await this.getUserPermissions(userId, options);

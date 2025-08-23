@@ -26,7 +26,6 @@ export type {
   UpdatePermissionRequest,
   IPermissionCommandsService,
   UserPermissions,
-  CacheOptions,
   IPermissionQueriesService
 } from './PermissionTypes';
 

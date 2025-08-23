@@ -435,8 +435,8 @@ export class RolePermissionQueriesRepo {
         pageSize,
         total,
         totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
       };
 
       logger.debug(`Found ${data.length} role permissions on page ${page}/${totalPages}`);

@@ -5,6 +5,8 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import axios, { AxiosResponse } from 'axios';
@@ -42,6 +44,7 @@ export interface ProxyConfig {
 /**
  * 微服務代理中間件類別
  */
+@injectable()
 export class ProxyMiddleware {
     private consulUrl: string;
 
@@ -468,6 +471,60 @@ export class ProxyMiddleware {
             return false;
         }
     }
+
+    /**
+     * 創建主要的代理中間件
+     * 用於處理所有 API 路由的代理請求
+     */
+    public createProxy = () => {
+        const proxyConfigs: ProxyConfig[] = [
+            {
+                target: 'rbac-service',
+                pathPrefix: '/auth',
+                useGrpc: true,
+                httpPort: 3051,
+                timeout: 30000,
+                retries: 3
+            },
+            {
+                target: 'rbac-service',
+                pathPrefix: '/rbac',
+                useGrpc: true,
+                httpPort: 3051,
+                timeout: 30000,
+                retries: 3
+            },
+            {
+                target: 'drone-service',
+                pathPrefix: '/drone',
+                useGrpc: true,
+                httpPort: 3052,
+                timeout: 30000,
+                retries: 3
+            },
+            {
+                target: 'general-service',
+                pathPrefix: '/general',
+                useGrpc: true,
+                httpPort: 3053,
+                timeout: 30000,
+                retries: 3
+            }
+        ];
+
+        return (req: Request, res: Response, next: NextFunction) => {
+            // 找到匹配的代理配置
+            const config = proxyConfigs.find(cfg => req.path.startsWith(cfg.pathPrefix));
+            
+            if (!config) {
+                next();
+                return;
+            }
+
+            // 使用現有的代理方法
+            this.proxyToService(config)(req, res, next);
+        };
+    };
 }
 
 /**

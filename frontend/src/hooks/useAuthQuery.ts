@@ -9,8 +9,8 @@
  */
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { apiClient } from '../utils/RequestUtils';
-import { ReqResult } from '../utils/ReqResult';
+import { resUtilsInstance } from '../utils/ResUtils';
+import { ReqResult } from '@/utils';
 import { LoginRequest, ExtendedLoginResponse, LogoutResponse } from '../types/auth';
 import { useAuthActions } from '../stores';
 import type { TableError } from '../types/table';
@@ -69,7 +69,7 @@ export class AuthQuery {
         try {
           setLoading(true);
           // 嘗試使用 httpOnly cookie 向後端發送驗證請求
-          const response = await apiClient.get('/auth');
+          const response = await resUtilsInstance.get('/auth');
           const result = ReqResult.fromResponse(response);
           
           if (result.isError()) {
@@ -149,7 +149,7 @@ export class AuthQuery {
       mutationKey: this.AUTH_QUERY_KEYS.LOGIN,
       mutationFn: async (loginData: LoginRequest): Promise<ExtendedLoginResponse> => {
         try {
-          const response = await apiClient.post('/auth', loginData);
+          const response = await resUtilsInstance.post('/auth', loginData);
           const result = ReqResult.fromResponse<ExtendedLoginResponse>(response);
           
           if (result.isError()) {
@@ -205,7 +205,7 @@ export class AuthQuery {
       mutationKey: this.AUTH_QUERY_KEYS.LOGOUT,
       mutationFn: async (): Promise<LogoutResponse> => {
         try {
-          const response = await apiClient.delete('/auth');
+          const response = await resUtilsInstance.delete('/auth');
           const result = ReqResult.fromResponse<LogoutResponse>(response);
           
           if (result.isError()) {

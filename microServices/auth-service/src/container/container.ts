@@ -24,6 +24,7 @@ import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
 // gRPC 和路由服務
 import { AuthGrpcServer } from '../grpc/authGrpcServer.js';
 import { AuthRoutes } from '../routes/authRoutes.js';
+import { RouteRegistrar } from '../routes/index.js';
 
 // JWT 安全服務 - 已移除，由 API Gateway 統一處理
 // import { JwtBlacklistService } from 'aiot-shared-packages';
@@ -77,6 +78,11 @@ export function createContainer(): Container {
   // Auth 路由
   container.bind<AuthRoutes>(TYPES.AuthRoutes)
     .to(AuthRoutes)
+    .inSingletonScope();
+  
+  // 路由註冊器
+  container.bind<RouteRegistrar>(TYPES.RouteRegistrar)
+    .to(RouteRegistrar)
     .inSingletonScope();
 
   console.log('✅ Auth IoC Container configured with authentication services only');

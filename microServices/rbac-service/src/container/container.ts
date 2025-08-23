@@ -52,6 +52,11 @@ import { RoleCommandsRepo } from '../repo/commands/RoleCommandsRepo.js';
 import { UserRoleCommandsRepo } from '../repo/commands/UserRoleCommandsRepo.js';
 import { RolePermissionCommandsRepo } from '../repo/commands/RolePermissionCommandsRepo.js';
 
+// 路由相關導入
+import { RouteRegistrar } from '../routes/RouteRegistrar.js';
+import { router as rbacRoutes } from '../routes/rbacRoutes.js';
+import docsRoutes from '../routes/docsRoutes.js';
+
 /**
  * 創建並配置 RBAC 服務的 IoC 容器
  * 
@@ -208,7 +213,20 @@ export function createContainer(): Container {
     .to(RolePermissionCommandsRepo)
     .inSingletonScope();
 
-  console.log('✅ RBAC IoC Container configured with RBAC services and repositories');
+  // ===== 路由服務註冊 =====
+  
+  container.bind<RouteRegistrar>(TYPES.RouteRegistrar)
+    .to(RouteRegistrar)
+    .inSingletonScope();
+
+  // 綁定路由實例
+  container.bind(TYPES.RBACRoutes)
+    .toConstantValue(rbacRoutes);
+
+  container.bind(TYPES.DocsRoutes)
+    .toConstantValue(docsRoutes);
+
+  console.log('✅ RBAC IoC Container configured with RBAC services, repositories, and routes');
   
   return container;
 }
