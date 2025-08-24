@@ -77,7 +77,7 @@ curl -s -X POST "$GATEWAY_URL/api/llm/transformers/generate/" \
 echo -e "\n${BLUE}9. 檢查服務日誌${NC}"
 echo "------------------------------------"
 echo -e "${YELLOW}AI Engine 日誌:${NC}"
-docker logs aiot-llm-ai-engine --tail=5 2>/dev/null || echo "無法獲取 AI Engine 日誌"
+docker logs aiot-llm-service --tail=5 2>/dev/null || echo "無法獲取 AI Engine 日誌"
 
 echo -e "\n${YELLOW}LLM Service 日誌:${NC}"
 docker logs aiot-llm-service --tail=5 2>/dev/null || echo "無法獲取 LLM Service 日誌"

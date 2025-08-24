@@ -44,12 +44,12 @@ class ConsulConfig:
         """
         self.consul_url = f"http://{os.getenv('CONSUL_HOST', 'consul')}:{os.getenv('CONSUL_PORT', '8500')}"
         
-        service_host = os.getenv('SERVICE_HOST', 'aiot-llm-ai-engine')
+        service_host = os.getenv('SERVICE_HOST', 'aiot-llm-service')
         service_port = int(os.getenv('PORT', '8021'))
         
         self.service_config = ServiceConfig(
-            id='llm-ai-engine',
-            name='llm-ai-engine',
+            id='llm-service',
+            name='llm-service',
             address=service_host,
             port=service_port,
             tags=[

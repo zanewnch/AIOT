@@ -302,7 +302,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
             checkBlacklist: false  // LLM 服務可以允許未登入用戶使用基本功能
         }),
         proxyMiddleware.createDynamicProxy({
-            target: 'llm-ai-engine',
+            target: 'llm-service',
             pathPrefix: '',
             useGrpc: false,
             httpPort: 8021,
@@ -318,7 +318,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
     router.use('/ai-engine',
         AuthMiddleware.requireAdmin(),
         proxyMiddleware.createDynamicProxy({
-            target: 'llm-ai-engine',
+            target: 'llm-service',
             pathPrefix: '',
             useGrpc: false,
             httpPort: 8021,

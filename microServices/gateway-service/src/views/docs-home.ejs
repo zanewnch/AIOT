@@ -302,6 +302,21 @@
 
         <!-- Services Grid -->
         <div class="services-grid">
+            <!-- API Gateway -->
+            <div class="service-card">
+                <div class="service-icon">🌐</div>
+                <div class="service-title">API Gateway</div>
+                <div class="service-description">
+                    系統核心入口點和路由服務<br>
+                    請求路由 • 認證驗證 • 負載均衡
+                </div>
+                <div class="service-buttons">
+                    <a href="/api/gateway/readme" class="doc-button primary">
+                        📖 README 文檔
+                    </a>
+                </div>
+            </div>
+
             <!-- RBAC Service -->
             <div class="service-card">
                 <div class="service-icon">🔐</div>
@@ -312,6 +327,21 @@
                 </div>
                 <div class="service-buttons">
                     <a href="/api/rbac/readme" class="doc-button primary">
+                        📖 README 文檔
+                    </a>
+                </div>
+            </div>
+
+            <!-- Auth Service -->
+            <div class="service-card">
+                <div class="service-icon">🔑</div>
+                <div class="service-title">Auth Service</div>
+                <div class="service-description">
+                    身份驗證與授權服務<br>
+                    JWT 驗證 • Token 管理 • 密碼安全
+                </div>
+                <div class="service-buttons">
+                    <a href="/api/auth/readme" class="doc-button primary">
                         📖 README 文檔
                     </a>
                 </div>
@@ -332,6 +362,21 @@
                 </div>
             </div>
 
+            <!-- Drone WebSocket -->
+            <div class="service-card">
+                <div class="service-icon">🔌</div>
+                <div class="service-title">Drone WebSocket</div>
+                <div class="service-description">
+                    無人機即時通訊服務<br>
+                    即時位置 • 狀態推送 • 雙向通訊
+                </div>
+                <div class="service-buttons">
+                    <a href="http://localhost:3004/readme" class="doc-button primary">
+                        📖 README 文檔
+                    </a>
+                </div>
+            </div>
+
             <!-- General Service -->
             <div class="service-card">
                 <div class="service-icon">⚙️</div>
@@ -347,16 +392,46 @@
                 </div>
             </div>
 
-            <!-- Auth Service -->
+            <!-- LLM Service -->
             <div class="service-card">
-                <div class="service-icon">🔑</div>
-                <div class="service-title">Auth Service</div>
+                <div class="service-icon">🤖</div>
+                <div class="service-title">LLM Service</div>
                 <div class="service-description">
-                    身份驗證與授權服務<br>
-                    JWT 驗證 • Token 管理 • 密碼安全
+                    AI 語言模型推理服務<br>
+                    對話生成 • RAG 檢索 • 自然語言
                 </div>
                 <div class="service-buttons">
-                    <a href="/api/auth/readme" class="doc-button primary">
+                    <a href="http://localhost:8021/readme" class="doc-button primary">
+                        📖 README 文檔
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scheduler Service -->
+            <div class="service-card">
+                <div class="service-icon">⏰</div>
+                <div class="service-title">Scheduler Service</div>
+                <div class="service-description">
+                    任務調度與定時作業服務<br>
+                    Cron 調度 • 任務隊列 • 故障恢復
+                </div>
+                <div class="service-buttons">
+                    <a href="http://localhost:3005/readme" class="doc-button primary">
+                        📖 README 文檔
+                    </a>
+                </div>
+            </div>
+
+            <!-- Archive Consumer -->
+            <div class="service-card">
+                <div class="service-icon">📦</div>
+                <div class="service-title">Archive Consumer</div>
+                <div class="service-description">
+                    數據歸檔處理消費者服務<br>
+                    數據歸檔 • 批量處理 • 生命周期管理
+                </div>
+                <div class="service-buttons">
+                    <a href="http://localhost:3006/readme" class="doc-button primary">
                         📖 README 文檔
                     </a>
                 </div>

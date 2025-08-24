@@ -9,6 +9,7 @@ import { Router } from 'express';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
 import docsRoutes from './docsRoutes.js';
+import readmeRoutes from './readmeRoutes.js';
 
 
 /**
@@ -84,6 +85,10 @@ export function createMainRoutes(): Router {
     // 註冊文檔路由
     router.use('/api/docs', docsRoutes);
     loggerConfig.info('✅ Documentation routes registered at /api/docs');
+
+    // 註冊 README 路由
+    router.use('/api/gateway', readmeRoutes);
+    loggerConfig.info('✅ README routes registered at /api/gateway');
 
     // 記錄路由初始化
     loggerConfig.info('✅ Main Gateway routes initialized');

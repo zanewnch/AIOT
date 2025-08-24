@@ -61,9 +61,9 @@ x-common-env: &common-env
   ARCHIVE_CONSUMER_SERVICE_URL: http://aiot-archive-consumer-service:3005
   
   # LLM AI Engine 服務
-  LLM_AI_ENGINE_HOST: aiot-llm-ai-engine
+  LLM_AI_ENGINE_HOST: aiot-llm-service
   LLM_AI_ENGINE_PORT: 8021
-  LLM_AI_ENGINE_URL: http://aiot-llm-ai-engine:8021
+  LLM_AI_ENGINE_URL: http://aiot-llm-service:8021
 
 services:
   # ==========================================================================
@@ -194,7 +194,7 @@ services:
       timeout: 5s
       retries: 5
 
-    # 共享 PostgreSQL 資料庫（用於跨服務共享数據）
+  # 共享 PostgreSQL 資料庫（用於跨服務共享数據）
   aiot-shared-postgres:
     image: postgres:15-alpine
     logging: *default-logging
@@ -608,16 +608,16 @@ services:
       retries: 3
 
   # LLM AI Engine 微服務 (FastAPI + SmolLM2)
-  llm-ai-engine:
+  llm-service:
     build:
-      context: ../../microServices/llm-ai-engine
+      context: ../../microServices/llm-service
       dockerfile: Dockerfile.dev
     logging: *default-logging
-    container_name: aiot-llm-ai-engine
+    container_name: aiot-llm-service
     ports:
       - "8021:8021"   # FastAPI AI Engine
     environment:
-      - SERVICE_NAME=llm-ai-engine
+      - SERVICE_NAME=llm-service
       - PORT=8021
       - DB_HOST=aiot-llm-postgres
       - DB_NAME=llm_ai_db
@@ -627,7 +627,7 @@ services:
       - USE_LANGCHAIN=true
       - MODEL_NAME=HuggingFaceTB/SmolLM2-135M-Instruct
     volumes:
-      - ../../microServices/llm-ai-engine:/app
+      - ../../microServices/llm-service:/app
       - llm_ai_engine_chroma:/app/chroma_db  # 持久化向量資料庫
     networks:
       - aiot-network
@@ -672,7 +672,7 @@ services:
         condition: service_healthy
       aiot-redis:
         condition: service_started
-      llm-ai-engine:
+      llm-service:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:

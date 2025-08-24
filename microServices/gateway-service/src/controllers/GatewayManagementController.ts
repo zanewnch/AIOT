@@ -321,7 +321,7 @@ export class GatewayManagementController {
                     'general-service',
                     'auth-service',
                     'drone-websocket-service',
-                    'llm-ai-engine'
+                    'llm-service'
                 ],
                 loadBalancingAlgorithms: [
                     'round-robin',

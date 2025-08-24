@@ -311,7 +311,7 @@ export class GatewayApp {
             
             // 創建 LLM WebSocket 代理實例
             this.llmWebSocketProxy = httpProxy.createProxyServer({
-                target: 'http://aiot-llm-ai-engine:8021',
+                target: 'http://aiot-llm-service:8021',
                 changeOrigin: true,
                 ws: true, // 🔑 啟用 WebSocket 支援
                 secure: false,
@@ -391,7 +391,7 @@ export class GatewayApp {
                 this.llmWebSocketProxy.web(req, res);
             });
             
-            this.logger.info('✅ node-http-proxy for LLM WebSocket initialized: /ws/* -> aiot-llm-ai-engine:8021');
+            this.logger.info('✅ node-http-proxy for LLM WebSocket initialized: /ws/* -> aiot-llm-service:8021');
             
         } catch (error) {
             this.logger.error('❌ LLM WebSocket proxy initialization failed:', error);

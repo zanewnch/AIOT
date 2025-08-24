@@ -11,6 +11,8 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { injectable, inject } from 'inversify';
 
 import { TYPES } from './container/types';
@@ -223,6 +225,34 @@ export class App {
 
     // 警報路由
     this.app.get('/alerts', this.alertsController.getAlerts);
+
+    // README 文檔路由
+    this.app.get('/readme', (_req: Request, res: Response) => {
+      const logger = this.loggerService.getLogger();
+      
+      try {
+        logger.info('📖 Serving Scheduler Service README');
+        
+        const readmePath = join(__dirname, '../../README.md');
+        const readmeContent = readFileSync(readmePath, 'utf-8');
+        
+        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+        res.send(readmeContent);
+        
+        logger.debug('✅ README content served successfully');
+        
+      } catch (error) {
+        logger.error('❌ Failed to serve README:', error);
+        
+        res.status(404).json({
+          status: 404,
+          success: false,
+          message: 'README.md not found',
+          service: 'scheduler-service',
+          timestamp: new Date().toISOString()
+        });
+      }
+    });
 
     // 根路由 - 服務資訊
     this.app.get('/', (_req: Request, res: Response) => {

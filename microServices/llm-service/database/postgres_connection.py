@@ -40,7 +40,7 @@ class PostgreSQLManager:
                 command_timeout=60,
                 server_settings={
                     'timezone': 'UTC',
-                    'application_name': 'llm-ai-engine'
+                    'application_name': 'llm-service'
                 }
             )
             logger.info("PostgreSQL connection pool created successfully")

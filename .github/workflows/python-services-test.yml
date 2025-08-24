@@ -4,13 +4,13 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'microServices/llm-ai-engine/**'
+      - 'microServices/llm-service/**'
       - 'microServices/llm-service/**'
       - '.github/workflows/python-services-test.yml'
   pull_request:
     branches: [main, develop]
     paths:
-      - 'microServices/llm-ai-engine/**'
+      - 'microServices/llm-service/**'
       - 'microServices/llm-service/**'
   workflow_dispatch:
 
@@ -27,9 +27,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - service: llm-ai-engine
+          - service: llm-service
             python-version: "3.9"
-            working-directory: microServices/llm-ai-engine
+            working-directory: microServices/llm-service
           - service: llm-service
             python-version: "3.9"
             working-directory: microServices/llm-service
@@ -87,15 +87,15 @@ jobs:
         working-directory: ${{ matrix.working-directory }}
         run: |
           echo "🐍 測試 ${{ matrix.service }} 模組導入..."
-          if [ "${{ matrix.service }}" = "llm-ai-engine" ]; then
+          if [ "${{ matrix.service }}" = "llm-service" ]; then
             python -c "
             try:
                 import sys
                 sys.path.insert(0, '.')
                 # 基本導入測試，不啟動模型
-                print('✅ llm-ai-engine 基本模組導入成功')
+                print('✅ llm-service 基本模組導入成功')
             except Exception as e:
-                print(f'❌ llm-ai-engine 導入失敗: {e}')
+                print(f'❌ llm-service 導入失敗: {e}')
                 exit(1)
             "
           elif [ "${{ matrix.service }}" = "llm-service" ]; then
@@ -116,7 +116,7 @@ jobs:
         working-directory: ${{ matrix.working-directory }}
         run: |
           echo "🧪 執行 ${{ matrix.service }} 基本功能測試..."
-          if [ "${{ matrix.service }}" = "llm-ai-engine" ]; then
+          if [ "${{ matrix.service }}" = "llm-service" ]; then
             # 基本 FastAPI 應用測試
             python -c "
             import sys

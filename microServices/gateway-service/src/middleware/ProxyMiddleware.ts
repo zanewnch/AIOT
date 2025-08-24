@@ -155,11 +155,11 @@ export class ProxyMiddleware {
                 service: 'drone-websocket-service',
                 id: 'drone-websocket-service-fallback'
             },
-            'llm-ai-engine': {
-                address: process.env.LLM_AI_ENGINE_HOST || 'aiot-llm-ai-engine',
+            'llm-service': {
+                address: process.env.LLM_AI_ENGINE_HOST || 'aiot-llm-service',
                 port: parseInt(process.env.LLM_AI_ENGINE_PORT || '8021'),
-                service: 'llm-ai-engine',
-                id: 'llm-ai-engine-fallback'
+                service: 'llm-service',
+                id: 'llm-service-fallback'
             }
         };
 
@@ -582,7 +582,7 @@ export class ProxyMiddleware {
                 retries: 3
             },
             {
-                target: 'llm-ai-engine',
+                target: 'llm-service',
                 pathPrefix: '/llm',
                 useGrpc: false,
                 timeout: 60000,

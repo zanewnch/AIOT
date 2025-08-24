@@ -18,6 +18,7 @@ import { DatabaseConnection, RabbitMQService } from '../types/processor.types';
 import { createHealthRoutes } from './healthRoutes';
 import { createStatusRoutes } from './statusRoutes';
 import { createMetricsRoutes } from './metricsRoutes';
+import { createReadmeRoutes } from './readmeRoutes';
 
 /**
  * Archive Consumer Service 路由註冊器
@@ -61,6 +62,10 @@ export class RouteRegistrar {
             router.use('/', createMetricsRoutes(this.archiveConsumer));
             this.logger.info('✅ Metrics routes registered');
 
+            // README 文檔路由
+            router.use('/', createReadmeRoutes(this.logger));
+            this.logger.info('✅ README routes registered');
+
             // 404 處理
             router.use('*', this.handle404);
 
@@ -91,7 +96,8 @@ export class RouteRegistrar {
             availableEndpoints: {
                 health: '/health',
                 status: '/status',
-                metrics: '/metrics'
+                metrics: '/metrics',
+                readme: '/readme'
             }
         });
     };

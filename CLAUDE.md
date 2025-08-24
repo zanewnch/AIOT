@@ -564,7 +564,7 @@ interface ApiResponse<T = any> {
 
 ```bash
 # FastAPI AI Engine 設置
-cd llm-ai-engine
+cd llm-service
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt

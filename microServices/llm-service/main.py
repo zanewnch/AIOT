@@ -25,12 +25,13 @@ Version: 2.0.0
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, PlainTextResponse
 import uvicorn
 import logging
 import os
 from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
+from pathlib import Path
 
 from config.llm_config import LLMConfig, DEFAULT_LLM_CONFIG
 from config.consul_config import ConsulConfig
@@ -258,6 +259,52 @@ async def health_check() -> HealthResponse:
             )
     except Exception as e:
         logger.error(f"Health check failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/readme", response_class=PlainTextResponse)
+async def get_readme() -> str:
+    """
+    獲取服務 README 文檔。
+    
+    本端點提供 markdown 格式的服務文檔，包含完整的 API 使用說明、
+    配置選項和故障排除指南。
+    
+    Returns:
+        str: README.md 文件的內容（text/markdown 格式）
+        
+    Raises:
+        HTTPException: 當 README 文件不存在時回傳 404 錯誤
+        
+    Examples:
+        ```bash
+        curl -X GET http://localhost:8021/readme
+        ```
+        
+    Note:
+        - 回應內容類型為 text/markdown; charset=utf-8
+        - 適用於文檔查看和服務說明
+    """
+    try:
+        logger.info('📖 Serving LLM Service README')
+        
+        readme_path = Path(__file__).parent / "README.md"
+        
+        if not readme_path.exists():
+            logger.error('❌ README.md file not found')
+            raise HTTPException(status_code=404, detail="README.md not found")
+            
+        readme_content = readme_path.read_text(encoding='utf-8')
+        logger.debug('✅ README content served successfully')
+        
+        return PlainTextResponse(
+            content=readme_content,
+            media_type="text/markdown; charset=utf-8"
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f'❌ Failed to serve README: {e}')
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/generate", response_model=GenerateResponse)

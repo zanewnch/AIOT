@@ -12,6 +12,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router } from 'express';
 import { HealthRoutes } from './healthRoutes.js';
+import readmeRoutes from './readmeRoutes.js';
 import { TYPES } from '@/container';
 import { createLogger } from '@/configs/loggerConfig.js';
 
@@ -44,6 +45,9 @@ export class RouteRegistrar {
 
         // 健康檢查路由 (無需 API 前綴)
         this.router.use('', this.healthRoutes.getRouter());
+
+        // README 文檔路由
+        this.router.use('', readmeRoutes);
 
         // WebSocket 相關路由 - 提供服務資訊和連線狀態
         this.setupWebSocketRoutes();

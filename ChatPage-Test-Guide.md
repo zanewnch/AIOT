@@ -74,7 +74,7 @@ LLM_SERVICE_URL: 'http://localhost:8022'
 #### 啟動 LLM 服務
 ```bash
 # 啟動 AI Engine (FastAPI)
-cd microServices/llm-ai-engine
+cd microServices/llm-service
 source venv/bin/activate
 python main.py  # 運行在 localhost:8021
 
