@@ -4,7 +4,7 @@
  * 定義所有的 RabbitMQ 隊列、交換器和路由配置
  */
 
-import { QueueConfig } from '@/types/scheduler.types';
+import { QueueConfig } from '../types/scheduler.types';
 
 /**
  * RabbitMQ 隊列名稱常數

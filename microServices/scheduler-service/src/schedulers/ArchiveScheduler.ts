@@ -24,24 +24,25 @@
 import { injectable, inject } from 'inversify';
 import * as cron from 'node-cron';
 import { Logger } from 'winston';
-import { RabbitMQService } from '@/services/RabbitMQService';
-import { ArchiveTaskRepository } from '@/repositories/ArchiveTaskRepository';
-import { ArchiveTaskModel, ArchiveJobType } from '@/models/ArchiveTaskModel';
+import { TYPES } from '../container/types';
+import { RabbitMQService } from '../services/RabbitMQService';
+import { ArchiveTaskRepository } from '../repositories/ArchiveTaskRepository';
+import { ArchiveTaskModel, ArchiveJobType } from '../models/ArchiveTaskModel';
 import { 
   ArchiveTaskMessage, 
   CleanupTaskMessage,
   TaskType 
-} from '@/types/scheduler.types';
+} from '../types/scheduler.types';
 import { 
   ARCHIVE_CONFIG, 
   CLEANUP_CONFIG,
   DEFAULT_SCHEDULES 
-} from '@/config/schedule.config';
+} from '../config/schedule.config';
 import { 
   EXCHANGES, 
   ROUTING_KEYS, 
   TASK_PRIORITIES 
-} from '@/config/queue.config';
+} from '../config/queue.config';
 
 export interface DatabaseConnection {
   query(sql: string, params?: any[]): Promise<any[]>;
@@ -53,10 +54,10 @@ export class ArchiveScheduler {
   private isRunning = false;
 
   constructor(
-    @inject('RabbitMQService') private rabbitMQService: RabbitMQService,
-    @inject('ArchiveTaskRepository') private archiveTaskRepo: ArchiveTaskRepository,
-    @inject('DatabaseConnection') private database: DatabaseConnection,
-    @inject('Logger') private logger: Logger
+    @inject(TYPES.RabbitMQService) private rabbitMQService: RabbitMQService,
+    @inject(TYPES.ArchiveTaskRepository) private archiveTaskRepo: ArchiveTaskRepository,
+    @inject(TYPES.DatabaseConnection) private database: DatabaseConnection,
+    @inject(TYPES.Logger) private logger: Logger
   ) {}
 
   /**

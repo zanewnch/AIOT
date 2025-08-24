@@ -40,7 +40,7 @@ interface MCPTool {
  */
 interface MCPToolRequest {
     name: string;
-    arguments: Record<string, any>;
+    toolArguments: Record<string, any>;
 }
 
 /**
@@ -241,7 +241,6 @@ export class MCPRoutes {
     /**
      * 獲取可用工具列表
      */
-    @LogRoute
     private getAvailableTools = async (req: Request, res: Response): Promise<void> => {
         try {
             const response = {
@@ -266,16 +265,15 @@ export class MCPRoutes {
     /**
      * 執行單個工具調用
      */
-    @LogRoute
     private executeToolCall = async (req: Request, res: Response): Promise<void> => {
         const startTime = Date.now();
         const toolName = req.params.toolName;
-        const arguments = req.body;
+        const toolArgs = req.body;
 
         try {
-            logger.info(`Executing MCP tool: ${toolName}`, { arguments });
+            logger.info(`Executing MCP tool: ${toolName}`, { toolArgs });
 
-            const result = await this.handleToolExecution(toolName, arguments);
+            const result = await this.handleToolExecution(toolName, toolArgs);
             const executionTime = Date.now() - startTime;
 
             const response: MCPToolResponse = {
@@ -308,7 +306,6 @@ export class MCPRoutes {
     /**
      * 批量工具調用
      */
-    @LogRoute
     private executeBatchToolCalls = async (req: Request, res: Response): Promise<void> => {
         const startTime = Date.now();
         const toolCalls: MCPToolRequest[] = req.body.tools || [];
@@ -318,7 +315,7 @@ export class MCPRoutes {
 
             const results = await Promise.allSettled(
                 toolCalls.map(async (toolCall) => {
-                    return await this.handleToolExecution(toolCall.name, toolCall.arguments);
+                    return await this.handleToolExecution(toolCall.name, toolCall.toolArguments);
                 })
             );
 
@@ -369,7 +366,6 @@ export class MCPRoutes {
     /**
      * 獲取 MCP 服務狀態
      */
-    @LogRoute
     private getMCPStatus = async (req: Request, res: Response): Promise<void> => {
         try {
             const status = {
@@ -399,29 +395,29 @@ export class MCPRoutes {
     /**
      * 處理工具執行邏輯
      */
-    private handleToolExecution = async (toolName: string, arguments: any): Promise<{ success: boolean; data?: any; error?: string }> => {
+    private handleToolExecution = async (toolName: string, toolArgs: any): Promise<{ success: boolean; data?: any; error?: string }> => {
         try {
             switch (toolName) {
                 case 'get_user_preferences':
-                    return await this.handleGetUserPreferences(arguments);
+                    return await this.handleGetUserPreferences(toolArgs);
                 
                 case 'create_user_preference':
-                    return await this.handleCreateUserPreference(arguments);
+                    return await this.handleCreateUserPreference(toolArgs);
                 
                 case 'update_user_preference':
-                    return await this.handleUpdateUserPreference(arguments);
+                    return await this.handleUpdateUserPreference(toolArgs);
                 
                 case 'get_preference_statistics':
-                    return await this.handleGetPreferenceStatistics(arguments);
+                    return await this.handleGetPreferenceStatistics(toolArgs);
                 
                 case 'check_user_preference_exists':
-                    return await this.handleCheckUserPreferenceExists(arguments);
+                    return await this.handleCheckUserPreferenceExists(toolArgs);
                 
                 case 'reset_user_preference':
-                    return await this.handleResetUserPreference(arguments);
+                    return await this.handleResetUserPreference(toolArgs);
                 
                 case 'delete_user_preference':
-                    return await this.handleDeleteUserPreference(arguments);
+                    return await this.handleDeleteUserPreference(toolArgs);
                 
                 default:
                     return {

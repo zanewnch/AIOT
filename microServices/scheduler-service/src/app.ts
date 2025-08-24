@@ -80,17 +80,32 @@ export class App {
       logger.info('初始化資料庫連線...');
       await this.databaseService.initialize();
 
-      // 初始化 RabbitMQ
+      // 初始化 RabbitMQ (非阻塞)
       logger.info('初始化 RabbitMQ 服務...');
-      await this.rabbitmqService.initialize();
+      try {
+        await this.rabbitmqService.initialize();
+        logger.info('✅ RabbitMQ 服務初始化成功');
+      } catch (error) {
+        logger.warn('⚠️ RabbitMQ 初始化失敗，服務將在後台重試連線', error);
+      }
 
-      // 初始化監控服務
+      // 初始化監控服務 (非阻塞)
       logger.info('初始化監控服務...');
-      await this.monitoringService.start();
+      try {
+        await this.monitoringService.start();
+        logger.info('✅ 監控服務初始化成功');
+      } catch (error) {
+        logger.warn('⚠️ 監控服務初始化失敗，將跳過監控功能', error);
+      }
 
-      // 啟動排程器
+      // 啟動排程器 (非阻塞)
       logger.info('啟動歸檔排程器...');
-      await this.archiveScheduler.start();
+      try {
+        await this.archiveScheduler.start();
+        logger.info('✅ 歸檔排程器啟動成功');
+      } catch (error) {
+        logger.warn('⚠️ 歸檔排程器啟動失敗，將跳過排程功能', error);
+      }
 
       this.isInitialized = true;
       logger.info('✅ Scheduler Service 初始化完成');

@@ -4,14 +4,16 @@
  * 負責 RabbitMQ 連線管理、消息發布和消費功能
  */
 
+import { injectable, inject } from 'inversify';
 import amqp, { Connection, Channel, Message } from 'amqplib';
 import { Logger } from 'winston';
-import { EXCHANGES, QUEUES, QUEUE_CONFIGS, RETRY_CONFIG } from '@/config/queue.config';
+import { EXCHANGES, QUEUES, QUEUE_CONFIGS, RETRY_CONFIG } from '../config/queue.config';
 import { 
   BaseScheduleTask, 
   TaskResultMessage,
   TaskType 
-} from '@/types/scheduler.types';
+} from '../types/scheduler.types';
+import { TYPES } from '../container/types';
 
 export interface RabbitMQConfig {
   url: string;
@@ -35,6 +37,7 @@ export interface ConsumeOptions {
   exclusive?: boolean;
 }
 
+@injectable()
 export class RabbitMQService {
   private connection: Connection | null = null;
   private channel: Channel | null = null;
@@ -43,8 +46,8 @@ export class RabbitMQService {
   private reconnectTimer: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: RabbitMQConfig,
-    private logger: Logger
+    @inject(TYPES.RabbitMQConfig) private config: RabbitMQConfig,
+    @inject(TYPES.Logger) private logger: Logger
   ) {}
 
   /**

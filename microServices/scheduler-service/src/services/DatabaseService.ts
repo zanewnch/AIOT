@@ -4,11 +4,12 @@
  * 提供資料庫連線管理和基本操作功能
  */
 
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { Sequelize } from 'sequelize-typescript';
-import mysql from 'mysql2/promise';
+import { Pool, Client } from 'pg';
 import { Logger } from 'winston';
-import { ArchiveTaskModel } from '@/models/ArchiveTaskModel';
+import { ArchiveTaskModel } from '../models/ArchiveTaskModel';
+import { TYPES } from '../container/types';
 
 export interface DatabaseConfig {
   host: string;
@@ -16,7 +17,7 @@ export interface DatabaseConfig {
   username: string;
   password: string;
   database: string;
-  dialect: 'mysql';
+  dialect: 'postgres';
   pool?: {
     max?: number;
     min?: number;
@@ -33,11 +34,11 @@ export interface DatabaseConnection {
 @injectable()
 export class DatabaseService implements DatabaseConnection {
   private sequelize: Sequelize | null = null;
-  private connection: mysql.Connection | null = null;
+  private connection: Pool | null = null;
 
   constructor(
-    private config: DatabaseConfig,
-    private logger: Logger
+    @inject(TYPES.DatabaseConfig) private config: DatabaseConfig,
+    @inject(TYPES.Logger) private logger: Logger
   ) {}
 
   /**
@@ -76,14 +77,17 @@ export class DatabaseService implements DatabaseConnection {
         await this.sequelize.sync({ alter: false });
       }
 
-      // 初始化原生 MySQL 連線 (用於複雜查詢)
-      this.connection = await mysql.createConnection({
+      // 初始化原生 PostgreSQL 連線 (用於複雜查詢)
+      this.connection = new Pool({
         host: this.config.host,
         port: this.config.port,
         user: this.config.username,
         password: this.config.password,
         database: this.config.database,
-        timezone: '+08:00'
+        max: this.config.pool?.max || 20,
+        min: this.config.pool?.min || 5,
+        idleTimeoutMillis: this.config.pool?.idle || 10000,
+        connectionTimeoutMillis: this.config.pool?.acquire || 30000
       });
 
       this.logger.info('Database service initialized successfully', {
@@ -106,8 +110,8 @@ export class DatabaseService implements DatabaseConnection {
     }
 
     try {
-      const [rows] = await this.connection.execute(sql, params);
-      return Array.isArray(rows) ? rows : [rows];
+      const result = await this.connection.query(sql, params);
+      return result.rows;
     } catch (error) {
       this.logger.error('Database query failed', { error, sql, params });
       throw error;
@@ -117,21 +121,24 @@ export class DatabaseService implements DatabaseConnection {
   /**
    * 執行事務
    */
-  transaction = async <T>(callback: (connection: mysql.Connection) => Promise<T>): Promise<T> => {
+  transaction = async <T>(callback: (client: Client) => Promise<T>): Promise<T> => {
     if (!this.connection) {
       throw new Error('Database connection not initialized');
     }
 
-    await this.connection.beginTransaction();
-
+    const client = await this.connection.connect();
+    
     try {
-      const result = await callback(this.connection);
-      await this.connection.commit();
+      await client.query('BEGIN');
+      const result = await callback(client);
+      await client.query('COMMIT');
       return result;
     } catch (error) {
-      await this.connection.rollback();
+      await client.query('ROLLBACK');
       this.logger.error('Transaction failed and rolled back', error);
       throw error;
+    } finally {
+      client.release();
     }
   };
 
@@ -318,7 +325,7 @@ export class DatabaseService implements DatabaseConnection {
       await this.sequelize.authenticate();
       
       // 測試原生連線
-      await this.connection.ping();
+      await this.connection.query('SELECT 1');
 
       return true;
     } catch (error) {
@@ -354,10 +361,10 @@ export class DatabaseService implements DatabaseConnection {
 
       if (this.connection) {
         try {
-          await this.connection.ping();
+          await this.connection.query('SELECT 1');
           stats.mysqlConnected = true;
         } catch (error) {
-          this.logger.warn('MySQL connection check failed', error);
+          this.logger.warn('PostgreSQL connection check failed', error);
         }
       }
 
@@ -402,9 +409,9 @@ export class DatabaseService implements DatabaseConnection {
   };
 
   /**
-   * 獲取原生 MySQL 連線
+   * 獲取原生 PostgreSQL 連線
    */
-  getMySQLConnection = (): mysql.Connection | null => {
+  getPostgresPool = (): Pool | null => {
     return this.connection;
   };
 

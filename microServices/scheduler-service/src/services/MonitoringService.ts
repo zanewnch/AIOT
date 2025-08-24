@@ -7,7 +7,10 @@
 import { injectable, inject } from 'inversify';
 import { Logger } from 'winston';
 import { createClient, RedisClientType } from 'redis';
-import { NotificationService } from './NotificationService';
+// TODO: Re-enable when NotificationService DI is fixed
+// import { NotificationService } from './NotificationService';
+import { TYPES } from '../container/types';
+import { PerformanceAlert } from '../types/monitoring.types';
 
 export interface SystemMetrics {
   cpuUsage: number;
@@ -50,16 +53,6 @@ export interface ServiceHealth {
   version: string;
 }
 
-export interface PerformanceAlert {
-  id: string;
-  type: 'cpu' | 'memory' | 'disk' | 'task_failure' | 'queue_size';
-  severity: 'warning' | 'critical';
-  message: string;
-  value: number;
-  threshold: number;
-  timestamp: Date;
-  resolved: boolean;
-}
 
 @injectable()
 export class MonitoringService {
@@ -68,6 +61,9 @@ export class MonitoringService {
   private metricsInterval: NodeJS.Timeout | null = null;
   private healthCheckInterval: NodeJS.Timeout | null = null;
   private alerts: Map<string, PerformanceAlert> = new Map();
+  
+  // TODO: Re-enable when NotificationService DI is fixed
+  // private notificationService?: NotificationService;
 
   // 性能閾值配置
   private readonly thresholds = {
@@ -79,9 +75,8 @@ export class MonitoringService {
   };
 
   constructor(
-    @inject('Logger') private logger: Logger,
-    @inject('RedisConfig') private redisConfig: any,
-    @inject('NotificationService') private notificationService?: NotificationService
+    @inject(TYPES.Logger) private logger: Logger,
+    @inject(TYPES.RedisConfig) private redisConfig: any
   ) {
     this.initializeRedis();
   }
@@ -179,7 +174,7 @@ export class MonitoringService {
 
       // 儲存到 Redis
       if (this.redis) {
-        await this.redis.setex(
+        await this.redis.setEx(
           'scheduler:metrics:system',
           300, // 5分鐘過期
           JSON.stringify(metrics)
@@ -211,7 +206,7 @@ export class MonitoringService {
     completedTasks: number;
     failedTasks: number;
     averageExecutionTime: number;
-  }): Promise<TaskMetrics> {
+  }): Promise<TaskMetrics> => {
     try {
       const metrics: TaskMetrics = {
         ...taskStats,
@@ -221,7 +216,7 @@ export class MonitoringService {
 
       // 儲存到 Redis
       if (this.redis) {
-        await this.redis.setex(
+        await this.redis.setEx(
           'scheduler:metrics:tasks',
           300, // 5分鐘過期
           JSON.stringify(metrics)
@@ -245,7 +240,7 @@ export class MonitoringService {
       this.logger.error('Failed to collect task metrics', error);
       throw error;
     }
-  }
+  };
 
   /**
    * 執行健康檢查
@@ -280,7 +275,7 @@ export class MonitoringService {
 
     // 儲存健康檢查結果
     if (this.redis) {
-      await this.redis.setex(
+      await this.redis.setEx(
         'scheduler:health',
         60, // 1分鐘過期
         JSON.stringify(health)
@@ -359,8 +354,9 @@ export class MonitoringService {
       alert.resolved = true;
       this.logger.info('Alert resolved', { alertId, type: alert.type });
       
+      // TODO: Re-enable when NotificationService DI is fixed
       // 發送警報解決通知
-      this.sendAlertResolvedNotification(alert);
+      // this.sendAlertResolvedNotification(alert);
       
       return true;
     }
@@ -371,7 +367,12 @@ export class MonitoringService {
    * 發送警報通知
    * 當新警報被創建時調用
    */
+  // TODO: Re-enable when NotificationService DI is fixed
   private sendAlertNotification = async (alert: PerformanceAlert): Promise<void> => {
+    // No-op implementation to prevent runtime errors
+    this.logger.debug('通知服務已停用，跳過警報通知', { alertId: alert.id });
+    return;
+    /*
     try {
       if (!this.notificationService) {
         this.logger.debug('通知服務未配置，跳過警報通知', { alertId: alert.id });
@@ -391,13 +392,19 @@ export class MonitoringService {
         error: error instanceof Error ? error.message : String(error)
       });
     }
+    */
   }
 
   /**
    * 發送警報解決通知
    * 當警報被標記為已解決時調用
    */
+  // TODO: Re-enable when NotificationService DI is fixed
   private sendAlertResolvedNotification = async (alert: PerformanceAlert): Promise<void> => {
+    // No-op implementation to prevent runtime errors
+    this.logger.debug('通知服務已停用，跳過警報解決通知', { alertId: alert.id });
+    return;
+    /*
     try {
       if (!this.notificationService) {
         this.logger.debug('通知服務未配置，跳過警報解決通知', { alertId: alert.id });
@@ -426,33 +433,50 @@ export class MonitoringService {
         error: error instanceof Error ? error.message : String(error)
       });
     }
+    */
   }
 
   /**
    * 設定通知服務
    * 允許動態設定通知服務（用於測試或延遲初始化）
    */
-  setNotificationService = (notificationService: NotificationService): void => {
+  // TODO: Re-enable when NotificationService DI is fixed
+  setNotificationService = (notificationService: any): void => {
+    // No-op implementation to prevent runtime errors
+    this.logger.info('通知服務已停用，無法設定通知服務');
+    /*
     this.notificationService = notificationService;
     this.logger.info('通知服務已設定到監控服務');
+    */
   }
 
   /**
    * 獲取通知統計
    * 委託給通知服務獲取統計資料
    */
+  // TODO: Re-enable when NotificationService DI is fixed
   getNotificationStats = async () => {
+    // No-op implementation to prevent runtime errors
+    this.logger.debug('通知服務已停用，無法獲取通知統計');
+    return null;
+    /*
     if (!this.notificationService) {
       return null;
     }
     return await this.notificationService.getNotificationStats();
+    */
   }
 
   /**
    * 手動測試通知
    * 用於測試通知系統是否正常工作
    */
+  // TODO: Re-enable when NotificationService DI is fixed
   testNotification = async (channel: 'email' | 'webhook' = 'email'): Promise<boolean> => {
+    // No-op implementation to prevent runtime errors
+    this.logger.info('通知服務已停用，無法測試通知', { channel });
+    return false;
+    /*
     try {
       if (!this.notificationService) {
         this.logger.warn('無法測試通知：通知服務未配置');
@@ -485,6 +509,7 @@ export class MonitoringService {
       });
       return false;
     }
+    */
   }
 
   // 私有方法實現...
@@ -577,8 +602,9 @@ export class MonitoringService {
     this.alerts.set(alertId, alert);
     this.logger.warn('Performance alert created', alert);
     
+    // TODO: Re-enable when NotificationService DI is fixed
     // 發送通知（如果通知服務可用）
-    this.sendAlertNotification(alert);
+    // this.sendAlertNotification(alert);
   }
 
   private checkDatabaseHealth = async (): Promise<ServiceHealth['components'][string]> => {

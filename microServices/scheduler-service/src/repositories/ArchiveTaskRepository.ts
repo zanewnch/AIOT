@@ -4,16 +4,17 @@
  * 提供歸檔任務的資料庫操作功能
  */
 
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { Op, WhereOptions, OrderItem } from 'sequelize';
 import { Logger } from 'winston';
+import { TYPES } from '../container/types';
 import { 
   ArchiveTaskModel, 
   ArchiveTaskAttributes,
   ArchiveTaskCreationAttributes,
   ArchiveTaskStatus,
   ArchiveJobType 
-} from '@/models/ArchiveTaskModel';
+} from '../models/ArchiveTaskModel';
 
 export interface ArchiveTaskFilter {
   jobType?: ArchiveJobType;
@@ -43,7 +44,7 @@ export interface PaginationOptions {
 
 @injectable()
 export class ArchiveTaskRepository {
-  constructor(private logger: Logger) {}
+  constructor(@inject(TYPES.Logger) private logger: Logger) {}
 
   /**
    * 創建新的歸檔任務

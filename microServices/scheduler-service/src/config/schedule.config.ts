@@ -4,7 +4,7 @@
  * 定義所有的定時任務配置和相關設定
  */
 
-import { ScheduleConfig, TaskType } from '@/types/scheduler.types';
+import { ScheduleConfig, TaskType } from '../types/scheduler.types';
 
 /**
  * 預設排程配置

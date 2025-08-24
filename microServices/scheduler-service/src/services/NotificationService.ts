@@ -18,6 +18,7 @@ import { injectable, inject } from 'inversify';
 import { Logger } from 'winston';
 import { createClient, RedisClientType } from 'redis';
 import { v4 as uuidv4 } from 'uuid';
+import { TYPES } from '../container/types';
 
 import {
   NotificationMessage,
@@ -31,7 +32,7 @@ import {
   NotificationTemplate,
   NotificationStatus
 } from '../types/NotificationTypes';
-import { PerformanceAlert } from './MonitoringService';
+import { PerformanceAlert } from '../types/monitoring.types';
 
 /**
  * NotificationService - 通知服務主類別
@@ -61,9 +62,9 @@ export class NotificationService {
   };
 
   constructor(
-    @inject('Logger') private logger: Logger,
-    @inject('RedisConfig') private redisConfig: any,
-    @inject('NotificationConfig') private notificationConfig: NotificationServiceConfig
+    @inject(TYPES.Logger) private logger: Logger,
+    @inject(TYPES.RedisConfig) private redisConfig: any,
+    @inject(TYPES.NotificationConfig) private notificationConfig: NotificationServiceConfig
   ) {
     this.config = this.notificationConfig;
     this.initializeRedis();
@@ -568,7 +569,7 @@ export class NotificationService {
   private setCooldownPeriod = async (ruleId: string, alertType: string, cooldownSeconds: number): Promise<void> => {
     try {
       const key = `${this.REDIS_KEYS.NOTIFICATIONS}:cooldown:${ruleId}:${alertType}`;
-      await this.redis.setex(key, cooldownSeconds, '1');
+      await this.redis.setEx(key, cooldownSeconds, '1');
     } catch (error) {
       this.logger.error('設置冷卻期失敗', error);
     }
@@ -578,7 +579,7 @@ export class NotificationService {
   private saveNotificationToRedis = async (notification: NotificationMessage): Promise<void> => {
     try {
       const key = `${this.REDIS_KEYS.NOTIFICATIONS}:${notification.id}`;
-      await this.redis.setex(key, 24 * 60 * 60, JSON.stringify(notification)); // 24小時過期
+      await this.redis.setEx(key, 24 * 60 * 60, JSON.stringify(notification)); // 24小時過期
     } catch (error) {
       this.logger.error('保存通知到 Redis 失敗', error);
     }
@@ -601,7 +602,7 @@ export class NotificationService {
 
   private saveNotificationQueue = async (): Promise<void> => {
     try {
-      await this.redis.setex(
+      await this.redis.setEx(
         this.REDIS_KEYS.NOTIFICATION_QUEUE,
         24 * 60 * 60,
         JSON.stringify(this.notificationQueue)
@@ -635,7 +636,7 @@ export class NotificationService {
         stats.failed++;
       }
       
-      await this.redis.setex(this.REDIS_KEYS.NOTIFICATION_STATS, 24 * 60 * 60, JSON.stringify(stats));
+      await this.redis.setEx(this.REDIS_KEYS.NOTIFICATION_STATS, 24 * 60 * 60, JSON.stringify(stats));
     } catch (error) {
       this.logger.error('更新通知統計失敗', error);
     }

@@ -9,7 +9,6 @@
 export const TYPES = {
   // 核心應用程式
   App: Symbol.for('App'),
-  SchedulerHttpServer: Symbol.for('SchedulerHttpServer'),
   
   // 基礎設施服務
   Logger: Symbol.for('Logger'),

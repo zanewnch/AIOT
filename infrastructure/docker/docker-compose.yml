@@ -591,7 +591,7 @@ services:
     ports:
       - "8021:8021"   # FastAPI AI Engine
     env_file:
-      - ../../llm-service/.env
+      - ../../microServices/llm-service/.env
     volumes:
       - ../../microServices/llm-service:/app
       - llm_ai_engine_chroma:/app/chroma_db  # 持久化向量資料庫

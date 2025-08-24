@@ -20,7 +20,6 @@ import { ArchiveTaskRepository } from '../repositories/ArchiveTaskRepository';
 
 // 應用程式導入
 import { App } from '../app';
-import { SchedulerHttpServer } from '../server';
 
 // 控制器導入
 import { HealthController } from '../controllers/HealthController';
@@ -88,12 +87,12 @@ export class ContainerUtils {
   private static bindConfigurations(container: Container): void {
     // 資料庫配置
     const databaseConfig = {
-      host: process.env.DB_HOST || 'aiot-drone-mysql',
-      port: parseInt(process.env.DB_PORT || '3306'),
+      host: process.env.DB_HOST || 'aiot-drone-postgres',
+      port: parseInt(process.env.DB_PORT || '5432'),
       username: process.env.DB_USER || 'admin',
       password: process.env.DB_PASSWORD || 'admin',
       database: process.env.DB_NAME || 'drone_db',
-      dialect: 'mysql' as const
+      dialect: 'postgres' as const
     };
 
     // RabbitMQ 配置
@@ -154,9 +153,8 @@ export class ContainerUtils {
     // 排程器
     container.bind(TYPES.ArchiveScheduler).to(ArchiveScheduler).inSingletonScope();
     
-    // 應用程式和伺服器
+    // 應用程式
     container.bind(TYPES.App).to(App).inSingletonScope();
-    container.bind(TYPES.SchedulerHttpServer).to(SchedulerHttpServer).inSingletonScope();
   }
 
   /**

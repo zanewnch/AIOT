@@ -16,8 +16,8 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # 複製需求文件並安裝 Python 依賴
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.minimal.txt ./
+RUN pip install --no-cache-dir -r requirements.minimal.txt
 
 # 安裝開發專用依賴
 RUN pip install debugpy ipdb

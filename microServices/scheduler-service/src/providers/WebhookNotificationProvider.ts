@@ -9,6 +9,7 @@
  * - 驗證 SSL 憑證和安全性設定
  */
 
+import { injectable } from 'inversify';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Logger } from 'winston';
 
@@ -28,6 +29,7 @@ import {
  * - 重試機制和錯誤處理
  * - 回應狀態驗證
  */
+@injectable()
 export class WebhookNotificationProvider implements NotificationProvider {
   public readonly name = 'WebhookNotificationProvider';
   public readonly channel = 'webhook' as const;

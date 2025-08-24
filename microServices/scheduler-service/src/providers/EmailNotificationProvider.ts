@@ -9,6 +9,7 @@
  * - 提供發送結果驗證
  */
 
+import { injectable } from 'inversify';
 import nodemailer, { Transporter, SendMailOptions } from 'nodemailer';
 import { Logger } from 'winston';
 
@@ -28,6 +29,7 @@ import {
  * - 錯誤處理和重試機制
  * - 發送狀態追蹤
  */
+@injectable()
 export class EmailNotificationProvider implements NotificationProvider {
   public readonly name = 'EmailNotificationProvider';
   public readonly channel = 'email' as const;
