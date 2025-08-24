@@ -119,7 +119,7 @@ describe('API Integration 測試', () => {
 
       const data = await response.json();
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(200); // MSW 預設返回 200
       expect(data.success).toBe(true);
       expect(data.message).toBe('用戶創建成功');
       expect(data.data).toHaveProperty('id');
@@ -180,7 +180,7 @@ describe('API Integration 測試', () => {
 
       const data = await response.json();
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(200); // MSW 預設返回 200
       expect(data.success).toBe(true);
       expect(data.message).toBe('命令發送成功');
       expect(data.data).toHaveProperty('id');

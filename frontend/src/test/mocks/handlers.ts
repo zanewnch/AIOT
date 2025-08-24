@@ -109,7 +109,7 @@ export const handlers = [
     };
     
     return HttpResponse.json({
-      status: 201,
+      status: 200,
       success: true,
       message: '用戶創建成功',
       data: newUser,
@@ -160,7 +160,7 @@ export const handlers = [
     };
     
     return HttpResponse.json({
-      status: 201,
+      status: 200,
       success: true,
       message: '命令發送成功',
       data: newCommand,

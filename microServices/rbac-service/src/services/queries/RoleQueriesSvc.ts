@@ -15,16 +15,9 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { RoleQueriesRepo } from '../../repo/queries/RoleQueriesRepo.js';
 import { TYPES } from '../../container/types.js';
-import type { RoleModel } from '../../models/RoleModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { LoggerDecorator } from 'aiot-shared-packages';
-import { PaginationRequestDto, PaginatedResult } from '../../dto/index.js';
+import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
-import {
-    RoleResponseDto,
-    RoleListResponseDto,
-    RoleStatisticsResponseDto
-} from '../../dto/index.js';
 
 const logger = createLogger('RoleQueriesSvc');
 
@@ -136,7 +129,7 @@ export class RoleQueriesSvc {
         return [];
     };
 
-    getRoleById = async (id: string) => {
+    getRoleById = async (_id: string) => {
         // Stub implementation - return null
         return null;
     };
