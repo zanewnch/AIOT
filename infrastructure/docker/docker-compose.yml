@@ -336,6 +336,8 @@ services:
     ports:
       - "50055:50055" # gRPC for inter-service communication
       - "3055:3055"   # HTTP API endpoint
+    env_file:
+      - ../../microServices/auth-service/.env
     volumes:
       - ../../microServices/auth-service/src:/app/src
       - ../../microServices/auth-service/package.json:/app/package.json
@@ -371,6 +373,8 @@ services:
     ports:
       - "50051:50051" # gRPC for inter-service communication
       - "3051:3051"   # HTTP API endpoint
+    env_file:
+      - ../../microServices/rbac-service/.env
     volumes:
       - ../../microServices/rbac-service/src:/app/src
       - ../../microServices/rbac-service/package.json:/app/package.json
@@ -406,6 +410,8 @@ services:
     ports:
       - "50052:50052" # gRPC for inter-service communication
       - "3052:3052"   # HTTP API endpoint
+    env_file:
+      - ../../microServices/drone-service/.env
     volumes:
       - ../../microServices/drone-service/src:/app/src
       - ../../microServices/drone-service/package.json:/app/package.json
@@ -442,6 +448,8 @@ services:
     container_name: aiot-drone-websocket-service
     ports:
       - "3004:3004"   # WebSocket 服務
+    env_file:
+      - ../../microServices/drone-websocket-service/.env
     volumes:
       - ../../microServices/drone-websocket-service:/app
       - /app/node_modules
@@ -473,6 +481,8 @@ services:
     ports:
       - "50053:50053" # gRPC for inter-service communication
       - "3053:3053"   # HTTP API endpoint
+    env_file:
+      - ../../microServices/general-service/.env
     volumes:
       - ../../microServices/general-service/src:/app/src
       - ../../microServices/general-service/package.json:/app/package.json
@@ -508,6 +518,8 @@ services:
     container_name: aiot-scheduler-service
     ports:
       - "3001:3001"   # HTTP API endpoint
+    env_file:
+      - ../../microServices/scheduler-service/.env
     volumes:
       - ../../microServices/scheduler-service:/app
       - /app/node_modules
@@ -541,6 +553,8 @@ services:
     container_name: aiot-archive-consumer-service
     ports:
       - "3005:3005"   # HTTP API endpoint
+    env_file:
+      - ../../microServices/archive-consumer-service/.env
     volumes:
       - ../../microServices/archive-consumer-service:/app
       - /app/node_modules
@@ -576,6 +590,8 @@ services:
     container_name: aiot-llm-service
     ports:
       - "8021:8021"   # FastAPI AI Engine
+    env_file:
+      - ../../llm-service/.env
     volumes:
       - ../../microServices/llm-service:/app
       - llm_ai_engine_chroma:/app/chroma_db  # 持久化向量資料庫
@@ -608,6 +624,8 @@ services:
     container_name: aiot-gateway-service
     ports:
       - "8000:8000"   # Gateway HTTP API endpoint
+    env_file:
+      - ../../microServices/gateway-service/.env
     volumes:
       - ../../microServices/gateway-service:/app
       - /app/node_modules
