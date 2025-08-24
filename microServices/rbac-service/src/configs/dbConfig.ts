@@ -54,47 +54,85 @@ export interface DatabaseConfig {
   dialectOptions: {
     acquireTimeout: number;
     timeout: number;
-    /** MySQL 特定配置 */
+    /** PostgreSQL 特定配置 */
     connectTimeout?: number;
-    /** 支援大數據包 */
-    supportBigNumbers?: boolean;
-    bigNumberStrings?: boolean;
+    /** SSL 配置 */
+    ssl?: boolean;
   };
 }
 
 /**
- * 獲取環境特定的連接池配置
- * 根據運行環境（開發、測試、生產）提供不同的連接池參數
+ * 微服務類型定義
+ */
+type ServiceType = 'read-heavy' | 'write-heavy' | 'balanced';
+
+/**
+ * 獲取當前微服務類型
+ * 根據服務名稱或環境變數確定服務類型
+ */
+const getServiceType = (): ServiceType => {
+  const serviceName = process.env.SERVICE_NAME || 'rbac-service';
+  
+  // RBAC 和 General Service 主要是讀取操作（用戶查詢、權限檢查）
+  if (['rbac-service', 'general-service', 'auth-service'].includes(serviceName)) {
+    return 'read-heavy';
+  }
+  
+  // Drone Service 有大量寫入操作（位置數據、狀態更新）
+  if (['drone-service', 'drone-websocket-service'].includes(serviceName)) {
+    return 'write-heavy';
+  }
+  
+  // Gateway 和其他服務保持平衡
+  return 'balanced';
+};
+
+/**
+ * 獲取針對不同服務類型和環境的連接池配置
+ * 根據微服務特性和運行環境提供優化的連接池參數
  */
 const getPoolConfig = () => {
   const env = process.env.NODE_ENV || 'development';
+  const serviceType = getServiceType();
   
-  switch (env) {
-    case 'production':
-      return {
-        max: parseInt(process.env.DB_POOL_MAX || '20'), // 生產環境：更多連接
-        min: parseInt(process.env.DB_POOL_MIN || '5'),  // 保持最小連接數
-        idle: parseInt(process.env.DB_POOL_IDLE || '10000'), // 10秒空閒超時
-        acquire: parseInt(process.env.DB_POOL_ACQUIRE || '60000'), // 60秒獲取超時
-        evict: parseInt(process.env.DB_POOL_EVICT || '1000'), // 1秒檢查間隔
-      };
-    case 'test':
-      return {
-        max: 5,   // 測試環境：較少連接
-        min: 1,   // 最小連接數
-        idle: 5000,   // 5秒空閒超時
-        acquire: 10000, // 10秒獲取超時
-        evict: 1000,    // 1秒檢查間隔
-      };
-    default: // development
-      return {
-        max: parseInt(process.env.DB_POOL_MAX || '10'), // 開發環境：中等連接數
-        min: parseInt(process.env.DB_POOL_MIN || '2'),  // 保持少量連接
-        idle: parseInt(process.env.DB_POOL_IDLE || '30000'), // 30秒空閒超時（開發時較長）
+  // 基礎配置
+  const baseConfigs = {
+    production: {
+      'read-heavy': {
+        max: parseInt(process.env.DB_POOL_MAX || '15'), // 讀取密集：較多連接用於並發查詢
+        min: parseInt(process.env.DB_POOL_MIN || '5'),  // 保持足夠的活躍連接
+        idle: parseInt(process.env.DB_POOL_IDLE || '60000'), // 60秒空閒超時（讀取操作較頻繁）
         acquire: parseInt(process.env.DB_POOL_ACQUIRE || '30000'), // 30秒獲取超時
         evict: parseInt(process.env.DB_POOL_EVICT || '1000'), // 1秒檢查間隔
-      };
-  }
+      },
+      'write-heavy': {
+        max: parseInt(process.env.DB_POOL_MAX || '20'), // 寫入密集：更多連接處理批量寫入
+        min: parseInt(process.env.DB_POOL_MIN || '8'),  // 保持較多最小連接
+        idle: parseInt(process.env.DB_POOL_IDLE || '30000'), // 30秒空閒超時（寫入後快速釋放）
+        acquire: parseInt(process.env.DB_POOL_ACQUIRE || '15000'), // 15秒獲取超時（寫入要求快速響應）
+        evict: parseInt(process.env.DB_POOL_EVICT || '500'), // 0.5秒檢查間隔（更頻繁的連接管理）
+      },
+      'balanced': {
+        max: parseInt(process.env.DB_POOL_MAX || '12'), // 平衡型：中等連接數
+        min: parseInt(process.env.DB_POOL_MIN || '4'),  // 適中的最小連接
+        idle: parseInt(process.env.DB_POOL_IDLE || '45000'), // 45秒空閒超時
+        acquire: parseInt(process.env.DB_POOL_ACQUIRE || '30000'), // 30秒獲取超時
+        evict: parseInt(process.env.DB_POOL_EVICT || '1000'), // 1秒檢查間隔
+      }
+    },
+    test: {
+      'read-heavy': { max: 8, min: 2, idle: 10000, acquire: 15000, evict: 1000 },
+      'write-heavy': { max: 10, min: 3, idle: 8000, acquire: 10000, evict: 500 },
+      'balanced': { max: 6, min: 2, idle: 10000, acquire: 15000, evict: 1000 }
+    },
+    development: {
+      'read-heavy': { max: 10, min: 3, idle: 45000, acquire: 30000, evict: 1000 },
+      'write-heavy': { max: 12, min: 4, idle: 30000, acquire: 20000, evict: 1000 },
+      'balanced': { max: 8, min: 2, idle: 40000, acquire: 30000, evict: 1000 }
+    }
+  };
+  
+  return baseConfigs[env]?.[serviceType] || baseConfigs.development.balanced;
 };
 
 /**
@@ -105,33 +143,32 @@ const getPoolConfig = () => {
  */
 export const getDatabaseConfig = (): DatabaseConfig => ({
   // 從環境變數獲取資料庫主機位址，docker 環境下使用容器名稱
-  host: process.env.DB_HOST || 'aiot-mysqldb',
+  host: process.env.DB_HOST || 'aiot-postgres',
   // 從環境變數獲取資料庫名稱，預設為 main_db
   database: process.env.DB_NAME || 'main_db',
   // 從環境變數獲取資料庫使用者名稱，預設為 admin
   username: process.env.DB_USER || 'admin',
   // 從環境變數獲取資料庫密碼，預設為 admin
   password: process.env.DB_PASSWORD || 'admin',
-  // 從環境變數獲取資料庫埠號並轉換為整數，預設為 3306（MySQL 預設埠）
-  port: parseInt(process.env.DB_PORT || '3306'),
-  // 設定資料庫類型為 MySQL
-  dialect: 'mysql',
+  // 從環境變數獲取資料庫埠號並轉換為整數，預設為 5432（PostgreSQL 預設埠）
+  port: parseInt(process.env.DB_PORT || '5432'),
+  // 設定資料庫類型為 PostgreSQL
+  dialect: 'postgres',
   // 根據環境設定日誌記錄：開發環境顯示 SQL 查詢，生產環境關閉日誌
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   
   // === Connection Pool 優化配置 ===
   pool: getPoolConfig(),
   
-  // === MySQL 特定的優化配置 ===
+  // === PostgreSQL 特定的優化配置 ===
   dialectOptions: {
     // 連接超時設定
     acquireTimeout: parseInt(process.env.DB_ACQUIRE_TIMEOUT || '60000'), // 60秒
     timeout: parseInt(process.env.DB_QUERY_TIMEOUT || '60000'), // 60秒查詢超時
     connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT || '60000'), // 60秒連接超時
     
-    // 支援大數據包（對於 AIOT 可能有大量位置數據）
-    supportBigNumbers: true,
-    bigNumberStrings: true,
+    // PostgreSQL 連接配置
+    ssl: false, // 開發環境不使用 SSL
   },
 });
 
@@ -179,41 +216,74 @@ export const createSequelizeInstance = (): Sequelize => {
 
 /**
  * 設定連接池事件監聽器
- * 監控連接池狀態，記錄重要事件
+ * 監控連接池狀態，記錄重要事件和性能指標
  * @param sequelize Sequelize 實例
  */
 const setupPoolEventListeners = (sequelize: Sequelize): void => {
   const connectionManager = sequelize.connectionManager as any;
+  const serviceName = process.env.SERVICE_NAME || 'unknown-service';
+  const serviceType = getServiceType();
   
   if (connectionManager && connectionManager.pool && typeof connectionManager.pool.on === 'function') {
-    // 連接獲取事件
+    // 連接獲取事件 - 記錄獲取時間和池狀態
     connectionManager.pool.on('acquire', (connection: any) => {
+      const poolStats = getPoolStats(sequelize);
       if (process.env.NODE_ENV === 'development') {
-        console.log(`🔗 Connection acquired: ${connection.threadId || connection.processID}`);
+        console.log(`🔗 [${serviceName}:${serviceType}] Connection acquired: ${connection.threadId || connection.processID}`);
+        console.log(`📊 Pool stats - Active: ${poolStats?.active}, Idle: ${poolStats?.idle}, Pending: ${poolStats?.pending}`);
       }
     });
 
     // 連接釋放事件
     connectionManager.pool.on('release', (connection: any) => {
       if (process.env.NODE_ENV === 'development') {
-        console.log(`🔓 Connection released: ${connection.threadId || connection.processID}`);
+        console.log(`🔓 [${serviceName}:${serviceType}] Connection released: ${connection.threadId || connection.processID}`);
       }
     });
 
-    // 連接創建事件
+    // 連接創建事件 - 重要！記錄新連接創建
     connectionManager.pool.on('create', (connection: any) => {
-      console.log(`✨ New connection created: ${connection.threadId || connection.processID}`);
+      const poolStats = getPoolStats(sequelize);
+      console.log(`✨ [${serviceName}:${serviceType}] New connection created: ${connection.threadId || connection.processID}`);
+      console.log(`📈 Pool size increased to: ${poolStats?.size}/${poolStats?.max}`);
     });
 
-    // 連接銷毀事件
+    // 連接銷毀事件 - 記錄連接池收縮
     connectionManager.pool.on('destroy', (connection: any) => {
-      console.log(`💀 Connection destroyed: ${connection.threadId || connection.processID}`);
+      const poolStats = getPoolStats(sequelize);
+      console.log(`💀 [${serviceName}:${serviceType}] Connection destroyed: ${connection.threadId || connection.processID}`);
+      console.log(`📉 Pool size decreased to: ${poolStats?.size}/${poolStats?.max}`);
     });
 
-    // 連接池錯誤事件
+    // 連接池錯誤事件 - 關鍵錯誤記錄
     connectionManager.pool.on('error', (error: any) => {
-      console.error('❌ Connection pool error:', error);
+      console.error(`❌ [${serviceName}:${serviceType}] Connection pool error:`, error);
+      const poolStats = getPoolStats(sequelize);
+      console.error(`🔍 Pool debug info:`, poolStats);
     });
+
+    // 連接超時事件（如果支持）
+    if (typeof connectionManager.pool.on === 'function') {
+      connectionManager.pool.on('timeout', () => {
+        console.warn(`⏰ [${serviceName}:${serviceType}] Connection pool timeout - consider increasing pool size`);
+      });
+    }
+  }
+
+  // 定期記錄連接池統計（僅在開發環境）
+  if (process.env.NODE_ENV === 'development') {
+    setInterval(() => {
+      const stats = getPoolStats(sequelize);
+      if (stats && (stats.active > 0 || stats.pending > 0)) {
+        console.log(`📊 [${serviceName}:${serviceType}] Pool Status:`, {
+          active: stats.active,
+          idle: stats.idle,
+          pending: stats.pending,
+          size: stats.size,
+          utilization: `${Math.round((stats.active / stats.max) * 100)}%`
+        });
+      }
+    }, 30000); // 每30秒記錄一次
   }
 };
 

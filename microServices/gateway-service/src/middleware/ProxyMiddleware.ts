@@ -12,6 +12,7 @@ import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import axios, { AxiosResponse } from 'axios';
 import { loggerConfig, logProxyRequest, logRouteEvent } from '../configs/loggerConfig.js';
 import { GatewayError } from './ErrorHandleMiddleware.js';
+import { LoadBalancerMiddleware, LoadBalancingAlgorithm } from './LoadBalancerMiddleware.js';
 
 /**
  * 服務實例介面
@@ -39,6 +40,8 @@ export interface ProxyConfig {
     timeout?: number;
     /** 重試次數 */
     retries?: number;
+    /** 負載均衡算法 */
+    loadBalancing?: LoadBalancingAlgorithm;
 }
 
 /**
@@ -47,36 +50,73 @@ export interface ProxyConfig {
 @injectable()
 export class ProxyMiddleware {
     private consulUrl: string;
+    private loadBalancer: LoadBalancerMiddleware;
 
     constructor() {
         this.consulUrl = `http://${process.env.CONSUL_HOST || 'consul'}:${process.env.CONSUL_PORT || '8500'}`;
+        this.loadBalancer = new LoadBalancerMiddleware();
     }
 
     /**
-     * 從 Consul 獲取健康的服務實例，如果失敗則回退到預設配置
+     * 從 Consul 獲取所有健康的服務實例，然後使用負載均衡選擇
      */
-    private async getServiceInstance(serviceName: string): Promise<ServiceInstance | null> {
+    private async getServiceInstance(serviceName: string, clientIp?: string, loadBalancing?: LoadBalancingAlgorithm): Promise<ServiceInstance | null> {
+        try {
+            // 獲取所有健康實例
+            const instances = await this.getAllHealthyInstances(serviceName);
+            
+            if (!instances || instances.length === 0) {
+                loggerConfig.warn(`⚠️ No healthy instances found in Consul for service: ${serviceName}, trying fallback...`);
+                const fallback = this.getFallbackServiceInstance(serviceName);
+                return fallback;
+            }
+
+            // 使用負載均衡選擇實例
+            const selectedInstance = this.loadBalancer.selectInstance(
+                serviceName, 
+                instances, 
+                clientIp, 
+                { algorithm: loadBalancing || 'health-aware' }
+            );
+
+            if (selectedInstance) {
+                loggerConfig.info(`✅ Selected service instance: ${serviceName} at ${selectedInstance.address}:${selectedInstance.port}`, {
+                    algorithm: loadBalancing || 'health-aware',
+                    totalInstances: instances.length
+                });
+            }
+
+            return selectedInstance;
+
+        } catch (error) {
+            loggerConfig.warn(`⚠️ Consul query failed for ${serviceName}, using fallback:`, error.message);
+            const fallback = this.getFallbackServiceInstance(serviceName);
+            return fallback;
+        }
+    }
+
+    /**
+     * 獲取所有健康實例
+     */
+    private async getAllHealthyInstances(serviceName: string): Promise<ServiceInstance[]> {
         try {
             const response = await axios.get(`${this.consulUrl}/v1/health/service/${serviceName}?passing=true`);
             const services = response.data;
             
             if (!services || services.length === 0) {
-                loggerConfig.warn(`⚠️ No healthy instances found in Consul for service: ${serviceName}, trying fallback...`);
-                return this.getFallbackServiceInstance(serviceName);
+                return [];
             }
 
-            // 選擇第一個健康的服務實例
-            const service = services[0];
-            loggerConfig.info(`✅ Found service in Consul: ${serviceName} at ${service.Service.Address}:${service.Service.Port}`);
-            return {
+            return services.map((service: any) => ({
                 address: service.Service.Address,
                 port: service.Service.Port,
                 service: service.Service.Service,
                 id: service.Service.ID
-            };
+            }));
+
         } catch (error) {
-            loggerConfig.warn(`⚠️ Consul query failed for ${serviceName}, using fallback:`, error.message);
-            return this.getFallbackServiceInstance(serviceName);
+            loggerConfig.debug(`Failed to get all healthy instances for ${serviceName}:`, error.message);
+            return [];
         }
     }
 
@@ -165,12 +205,17 @@ export class ProxyMiddleware {
     public createDynamicProxy(config: ProxyConfig) {
         return async (req: Request, res: Response, next: NextFunction) => {
             const startTime = Date.now();
+            let selectedInstance: ServiceInstance | null = null;
             
             try {
-                // 獲取健康的服務實例
-                const serviceInstance = await this.getServiceInstance(config.target);
+                // 獲取健康的服務實例（使用負載均衡）
+                selectedInstance = await this.getServiceInstance(
+                    config.target, 
+                    req.ip, 
+                    config.loadBalancing
+                );
                 
-                if (!serviceInstance) {
+                if (!selectedInstance) {
                     throw new GatewayError(
                         `Service ${config.target} is currently unavailable`,
                         503
@@ -178,21 +223,41 @@ export class ProxyMiddleware {
                 }
 
                 // 記錄代理請求
-                logProxyRequest(req, config.target, `Proxying request to ${config.target}`);
+                logProxyRequest(req, config.target, `Proxying request to ${config.target} (${selectedInstance.address}:${selectedInstance.port})`);
 
                 // 根據服務類型選擇代理方式
                 if (config.useGrpc) {
-                    await this.handleGrpcProxy(req, res, serviceInstance, config);
+                    await this.handleGrpcProxy(req, res, selectedInstance, config);
                 } else {
-                    await this.handleHttpProxy(req, res, serviceInstance, config);
+                    await this.handleHttpProxy(req, res, selectedInstance, config);
                 }
 
-                // 記錄路由事件
+                // 記錄路由事件和負載均衡統計
                 const responseTime = Date.now() - startTime;
+                const success = res.statusCode < 400;
+                
                 logRouteEvent(req.originalUrl, config.target, res.statusCode, responseTime);
+                
+                // 更新負載均衡統計
+                this.loadBalancer.recordRequestComplete(
+                    config.target, 
+                    selectedInstance.id, 
+                    responseTime, 
+                    success
+                );
 
             } catch (error) {
                 loggerConfig.error(`❌ Proxy error for ${config.target}:`, error);
+                
+                // 如果有選中的實例，記錄失敗
+                if (selectedInstance) {
+                    this.loadBalancer.recordRequestComplete(
+                        config.target, 
+                        selectedInstance.id, 
+                        Date.now() - startTime, 
+                        false
+                    );
+                }
                 
                 if (error instanceof GatewayError) {
                     res.status(error.statusCode).json({

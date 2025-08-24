@@ -9,8 +9,8 @@ x-logging: &default-logging
 
 x-common-env: &common-env
   NODE_ENV: development
-  # MySQL 通用配置
-  DB_PORT: 3306
+  # PostgreSQL 通用配置
+  DB_PORT: 5432
   DB_USER: admin
   DB_PASSWORD: admin
   # MongoDB 配置
@@ -110,130 +110,144 @@ services:
   # 資料庫服務 (Database Services)
   # ==========================================================================
 
-  # RBAC 微服務專用 MySQL 資料庫
-  aiot-rbac-mysql:
-    image: mysql:8.0
+  # RBAC 微服務專用 PostgreSQL 資料庫
+  aiot-rbac-postgres:
+    image: postgres:15-alpine
     logging: *default-logging
-    container_name: aiot-rbac-mysql
+    container_name: aiot-rbac-postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
-      - MYSQL_DATABASE=rbac_db
-      - TZ=Asia/Taipei
-      # 跳過時區資訊初始化以加快啟動速度
-      - MYSQL_INITDB_SKIP_TZINFO=1
+      POSTGRES_DB: rbac_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      TZ: Asia/Taipei
     volumes:
-      - mysql_rbac_data:/var/lib/mysql
+      - postgres_rbac_data:/var/lib/postgresql/data
       # RBAC 專用初始化腳本
-      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
-      - ../database/mysql/01_rbac_complete_init.sql:/docker-entrypoint-initdb.d/01_rbac_complete_init.sql:ro
+      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
     networks:
       - aiot-network
     restart: unless-stopped
     healthcheck:
-      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 檢查 PostgreSQL 資料庫連線狀態和認證功能
       # 確保 RBAC 服務的專用資料庫可以正常連線和查詢
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d rbac_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Drone 微服務專用 MySQL 資料庫
-  aiot-drone-mysql:
-    image: mysql:8.0
+  # Drone 微服務專用 PostgreSQL 資料庫
+  aiot-drone-postgres:
+    image: postgres:15-alpine
     logging: *default-logging
-    container_name: aiot-drone-mysql
+    container_name: aiot-drone-postgres
     ports:
-      - "3307:3306"
+      - "5433:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
-      - MYSQL_DATABASE=drone_db
-      - TZ=Asia/Taipei
-      # 跳過時區資訊初始化以加快啟動速度
-      - MYSQL_INITDB_SKIP_TZINFO=1
+      POSTGRES_DB: drone_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      TZ: Asia/Taipei
     volumes:
-      - mysql_drone_data:/var/lib/mysql
+      - postgres_drone_data:/var/lib/postgresql/data
       # Drone 專用初始化腳本
-      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
-      - ../database/mysql/02_drone_complete_init.sql:/docker-entrypoint-initdb.d/02_drone_complete_init.sql:ro
+      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
     networks:
       - aiot-network
     restart: unless-stopped
     healthcheck:
-      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 檢查 PostgreSQL 資料庫連線狀態和認證功能
       # 確保 Drone 服務的專用資料庫可以正常連線和查詢
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d drone_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # General 微服務專用 MySQL 資料庫
-  aiot-general-mysql:
-    image: mysql:8.0
+  # General 微服務專用 PostgreSQL 資料庫
+  aiot-general-postgres:
+    image: postgres:15-alpine
     logging: *default-logging
-    container_name: aiot-general-mysql
+    container_name: aiot-general-postgres
     ports:
-      - "3308:3306"
+      - "5434:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
-      - MYSQL_DATABASE=user_preference_db
-      - TZ=Asia/Taipei
-      # 跳過時區資訊初始化以加快啟動速度
-      - MYSQL_INITDB_SKIP_TZINFO=1
+      POSTGRES_DB: user_preference_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      TZ: Asia/Taipei
     volumes:
-      - mysql_general_data:/var/lib/mysql
+      - postgres_general_data:/var/lib/postgresql/data
       # General 專用初始化腳本
-      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
-      - ../database/mysql/03_user_preferences_init.sql:/docker-entrypoint-initdb.d/03_user_preferences_init.sql:ro
+      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
     networks:
       - aiot-network
     restart: unless-stopped
     healthcheck:
-      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 檢查 PostgreSQL 資料庫連線狀態和認證功能
       # 確保 General 服務的專用資料庫可以正常連線和查詢
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d user_preference_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # 共享 MySQL 資料庫（用於跨服務共享数據）
-  aiot-shared-mysql:
-    build:
-      context: ../database
-      dockerfile: Dockerfile.dev
+    # 共享 PostgreSQL 資料庫（用於跨服務共享数據）
+  aiot-shared-postgres:
+    image: postgres:15-alpine
     logging: *default-logging
-    container_name: aiot-shared-mysql
+    container_name: aiot-shared-postgres
     ports:
-      - "3309:3306"
+      - "5435:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
-      - MYSQL_DATABASE=main_db
-      - TZ=Asia/Taipei
-      # 跳過時區資訊初始化以加快啟動速度
-      - MYSQL_INITDB_SKIP_TZINFO=1
+      POSTGRES_DB: main_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      TZ: Asia/Taipei
     volumes:
-      - mysql_shared_data:/var/lib/mysql
+      - postgres_shared_data:/var/lib/postgresql/data
       # 基礎初始化腳本
-      - ../database/mysql/00_databases_creation.sql:/docker-entrypoint-initdb.d/00_databases_creation.sql:ro
+      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
     networks:
       - aiot-network
     restart: unless-stopped
     healthcheck:
-      # 檢查 MySQL 資料庫連線狀態和認證功能
+      # 檢查 PostgreSQL 資料庫連線狀態和認證功能
       # 確保共享資料庫可以正常連線，供跨服務數據共享使用
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d main_db"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # PostgreSQL 資料庫 (專用於 LLM AI Engine)
+  aiot-llm-postgres:
+    image: postgres:15-alpine
+    logging: *default-logging
+    container_name: aiot-llm-postgres
+    ports:
+      - "5436:5432"   # PostgreSQL (避免與系統預設 5432 衝突)
+    environment:
+      POSTGRES_DB: llm_ai_db
+      POSTGRES_USER: llm_user
+      POSTGRES_PASSWORD: llm_password_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - postgres_llm_data:/var/lib/postgresql/data
+      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - aiot-network
+    restart: unless-stopped
+    healthcheck:
+      # 檢查 PostgreSQL LLM 資料庫狀態
+      # 確保 LLM 相關的對話歷史、工具調用記錄等結構化數據可以正常儲存
+      test: ["CMD-SHELL", "pg_isready -U llm_user -d llm_ai_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   # MongoDB 資料庫
   aiot-mongodb:
@@ -307,31 +321,6 @@ services:
       timeout: 10s
       retries: 5
 
-  # PostgreSQL 資料庫 (專用於 LLM AI Engine)
-  aiot-llm-postgres:
-    image: postgres:15-alpine
-    logging: *default-logging
-    container_name: aiot-llm-postgres
-    ports:
-      - "5433:5432"   # PostgreSQL (避免與系統預設 5432 衝突)
-    environment:
-      POSTGRES_DB: llm_ai_db
-      POSTGRES_USER: llm_user
-      POSTGRES_PASSWORD: llm_password_123
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
-    volumes:
-      - postgres_llm_data:/var/lib/postgresql/data
-      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
-    networks:
-      - aiot-network
-    restart: unless-stopped
-    healthcheck:
-      # 檢查 PostgreSQL LLM 資料庫狀態
-      # 確保 LLM 相關的對話歷史、工具調用記錄等結構化數據可以正常儲存
-      test: ["CMD-SHELL", "pg_isready -U llm_user -d llm_ai_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   # ==========================================================================
   # 微服務 (Microservices)
@@ -353,7 +342,7 @@ services:
       GRPC_PORT: 50055
       HTTP_PORT: 3055
       # Auth 使用 RBAC 資料庫（共享用戶表）
-      DB_HOST: aiot-rbac-mysql
+      DB_HOST: aiot-rbac-postgres
       DB_NAME: rbac_db
     volumes:
       - ../../microServices/auth-service/src:/app/src
@@ -367,7 +356,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-rbac-mysql:
+      aiot-rbac-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -396,7 +385,7 @@ services:
       GRPC_PORT: 50051
       HTTP_PORT: 3051
       # RBAC 專用資料庫配置
-      DB_HOST: aiot-rbac-mysql
+      DB_HOST: aiot-rbac-postgres
       DB_NAME: rbac_db
     volumes:
       - ../../microServices/rbac-service/src:/app/src
@@ -410,7 +399,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-rbac-mysql:
+      aiot-rbac-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -439,7 +428,7 @@ services:
       GRPC_PORT: 50052
       HTTP_PORT: 3052
       # Drone 專用資料庫配置
-      DB_HOST: aiot-drone-mysql
+      DB_HOST: aiot-drone-postgres
       DB_NAME: drone_db
     volumes:
       - ../../microServices/drone-service/src:/app/src
@@ -453,7 +442,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-drone-mysql:
+      aiot-drone-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -494,7 +483,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-drone-mysql:
+      aiot-drone-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -523,7 +512,7 @@ services:
       GRPC_PORT: 50053
       HTTP_PORT: 3053
       # General 專用資料庫配置
-      DB_HOST: aiot-general-mysql
+      DB_HOST: aiot-general-postgres
       DB_NAME: user_preference_db
     volumes:
       - ../../microServices/general-service/src:/app/src
@@ -537,7 +526,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-general-mysql:
+      aiot-general-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -566,8 +555,8 @@ services:
       PORT: 3001
       NODE_ENV: development
       # 資料庫配置 (使用 Drone 資料庫存放 archive_tasks 表)
-      DB_HOST: aiot-drone-mysql
-      DB_PORT: 3306
+      DB_HOST: aiot-drone-postgres
+      DB_PORT: 5432
       DB_NAME: drone_db
       # 日誌設定
       LOG_LEVEL: info
@@ -590,7 +579,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-drone-mysql:
+      aiot-drone-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -620,8 +609,8 @@ services:
       PORT: 3005
       NODE_ENV: development
       # 資料庫配置 (使用 Drone 資料庫)
-      DB_HOST: aiot-drone-mysql
-      DB_PORT: 3306
+      DB_HOST: aiot-drone-postgres
+      DB_PORT: 5432
       DB_NAME: drone_db
       # 日誌設定
       LOG_LEVEL: info
@@ -643,7 +632,7 @@ services:
     depends_on:
       consul:
         condition: service_healthy
-      aiot-drone-mysql:
+      aiot-drone-postgres:
         condition: service_healthy
       aiot-redis:
         condition: service_started
@@ -846,19 +835,19 @@ services:
 # 資料持久化 (Persistent Volumes)
 # ==========================================================================
 volumes:
-  # 各微服務專用 MySQL 資料持久化
-  mysql_rbac_data:
+  # 各微服務專用 PostgreSQL 資料持久化
+  postgres_rbac_data:
     driver: local
-    name: aiot_mysql_rbac_data
-  mysql_drone_data:
+    name: aiot_postgres_rbac_data
+  postgres_drone_data:
     driver: local
-    name: aiot_mysql_drone_data
-  mysql_general_data:
+    name: aiot_postgres_drone_data
+  postgres_general_data:
     driver: local
-    name: aiot_mysql_general_data
-  mysql_shared_data:
+    name: aiot_postgres_general_data
+  postgres_shared_data:
     driver: local
-    name: aiot_mysql_shared_data
+    name: aiot_postgres_shared_data
   mongodb_data:
     driver: local
   redis_data:

@@ -14,29 +14,14 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import {
-    ArchiveTaskModel,
     ArchiveTaskStatus,
     ArchiveJobType
 } from '../../models/ArchiveTaskModel.js';
-import type {
-    ArchiveTaskStatistics
-} from '../../types/services/IArchiveTaskService.js';
-import type {
-    IArchiveTaskRepository,
-    ArchiveTaskQueryOptions
-} from '../../types/repositories/IArchiveTaskRepository.js';
-import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import {
-    ArchiveTaskResponseDto,
-    ArchiveTaskDetailResponseDto,
-    ArchiveTaskListResponseDto,
-    ArchiveTaskStatisticsResponseDto,
     PaginationRequestDto
 } from '../../dto/index.js';
 
-type IArchiveTaskRepo = IArchiveTaskRepository;
 import { ArchiveTaskQueriesRepo } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
-import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
@@ -54,22 +39,11 @@ import { DtoMapper } from '../../utils/dtoMapper.js';
 export class ArchiveTaskQueriesSvc {
     private readonly logger = createLogger('ArchiveTaskQueriesSvc');
     private readonly queriesRepo: ArchiveTaskQueriesRepo;
-    private readonly commandsRepo: ArchiveTaskCommandsRepository;
-    private repo: IArchiveTaskRepo; // 組合介面
 
     constructor(
-        @inject(TYPES.ArchiveTaskQueriesRepo) queriesRepo: ArchiveTaskQueriesRepo,
-        @inject(TYPES.ArchiveTaskCommandsRepository) commandsRepo: ArchiveTaskCommandsRepository
+        @inject(TYPES.ArchiveTaskQueriesRepo) queriesRepo: ArchiveTaskQueriesRepo
     ) {
         this.queriesRepo = queriesRepo;
-        this.commandsRepo = commandsRepo;
-        
-        // 創建組合repository
-        this.repo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.queriesRepo)),
-            this.queriesRepo,
-            this.commandsRepo
-        ) as IArchiveTaskRepo;
     }
 
     /**

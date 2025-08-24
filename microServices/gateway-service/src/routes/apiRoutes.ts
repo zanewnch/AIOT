@@ -22,8 +22,9 @@ import docsRoutes from './docsRoutes.js';
  */
 export function createApiRoutes(healthConfig: HealthConfig): Router {
     const router = Router();
-    const gatewayController = new GatewayController();
-    const proxyMiddleware = gatewayController.getProxyMiddleware();
+    const proxyMiddleware = new ProxyMiddleware();
+    const gatewayController = new GatewayController(proxyMiddleware);
+    const authTestController = new AuthTestController();
     const logger = loggerConfig;
 
     // ==========================================================================
@@ -38,7 +39,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
     /**
      * Gateway 健康檢查
      */
-    router.get('/health', async (req, res) => {
+    router.get('/health', async (_req, res) => {
         try {
             const gatewayHealth = healthConfig.getGatewayHealth();
             ResResult.success(res, gatewayHealth, 'Gateway is healthy');
@@ -51,7 +52,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
     /**
      * 系統整體健康狀態
      */
-    router.get('/health/system', async (req, res) => {
+    router.get('/health/system', async (_req, res) => {
         try {
             const systemHealth = await healthConfig.getSystemHealth();
             
@@ -135,7 +136,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
      */
     router.get('/test/public', 
         AuthMiddleware.optional({ logAuthEvents: false }),
-        AuthTestController.testPublicAccess
+        authTestController.testPublicAccess
     );
 
     /**
@@ -143,7 +144,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
      */
     router.get('/test/auth', 
         AuthMiddleware.required(),
-        AuthTestController.testAuth
+        authTestController.testAuth
     );
 
     /**
@@ -151,7 +152,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
      */
     router.get('/test/permissions', 
         AuthMiddleware.requirePermissions('drone.read'),
-        AuthTestController.testPermissions
+        authTestController.testPermissions
     );
 
     /**
@@ -159,7 +160,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
      */
     router.get('/test/admin', 
         AuthMiddleware.requireAdmin(),
-        AuthTestController.testAdminAccess
+        authTestController.testAdminAccess
     );
 
     /**
@@ -167,7 +168,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
      */
     router.get('/test/drone', 
         AuthMiddleware.requirePermissions('drone.read', 'drone.update'),
-        AuthTestController.testDroneAccess
+        authTestController.testDroneAccess
     );
 
     // ==========================================================================
@@ -406,7 +407,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
      * Drone WebSocket 服務代理
      * 注意：WebSocket 升級需要在應用程式層級處理
      */
-    router.use('/ws/drone', (req, res, next) => {
+    router.use('/ws/drone', (req, _res, next) => {
         // 這裡只是標記，實際的 WebSocket 代理在 app.ts 中處理
         req.headers['x-websocket-target'] = 'drone-websocket-service';
         next();

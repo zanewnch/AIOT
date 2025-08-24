@@ -26,11 +26,15 @@ import { HealthConfig } from './configs/healthConfig.js';
 // Import middleware
 import { ErrorHandleMiddleware } from './middleware/ErrorHandleMiddleware.js';
 import { AuthMiddleware } from './middleware/AuthMiddleware.js';
+import { RateLimitMiddleware } from './middleware/RateLimitMiddleware.js';
+import { MonitoringMiddleware } from './middleware/MonitoringMiddleware.js';
+import { LoadBalancerMiddleware } from './middleware/LoadBalancerMiddleware.js';
 
 // Import container and route registrar
 import { container } from './container/container.js';
 import { TYPES } from './container/types.js';
 import { RouteRegistrar } from './routes/RouteRegistrar.js';
+import { createManagementRoutes } from './routes/managementRoutes.js';
 
 
 /**
@@ -42,6 +46,9 @@ export class GatewayApp {
     private logger = loggerConfig;
     private consulConfig!: ConsulConfig;
     private healthConfig!: HealthConfig;
+    private rateLimitMiddleware!: RateLimitMiddleware;
+    private monitoringMiddleware!: MonitoringMiddleware;
+    private loadBalancerMiddleware!: LoadBalancerMiddleware;
     private socketIoProxy: any;
     private llmWebSocketProxy: any; // 添加 node-http-proxy 實例
 
@@ -55,6 +62,7 @@ export class GatewayApp {
         this.initializeMiddleware();
         this.initializeWebSocketProxying(); // 🔑 WebSocket 代理必須在其他路由之前
         this.initializeLLMWebSocketProxying(); // 🤖 LLM WebSocket 代理
+        this.initializeManagementRoutes(); // 🔧 管理路由
         this.initializeRoutes();
         this.initializeErrorHandling();
     }
@@ -66,8 +74,15 @@ export class GatewayApp {
         this.consulConfig = new ConsulConfig();
         this.healthConfig = new HealthConfig(this.consulConfig);
         
+        // 初始化新的中間件
+        this.rateLimitMiddleware = new RateLimitMiddleware();
+        this.monitoringMiddleware = new MonitoringMiddleware();
+        this.loadBalancerMiddleware = new LoadBalancerMiddleware();
+        
         // 初始化認證中間件
         AuthMiddleware.initialize();
+        
+        this.logger.info('✅ All middleware services initialized');
     }
 
     /**
@@ -87,6 +102,18 @@ export class GatewayApp {
         this.app.use(express.json({ limit: '50mb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '50mb' }));
         this.app.use(cookieParser());
+
+        // 監控中間件（必須在其他業務邏輯之前）
+        this.app.use(this.monitoringMiddleware.monitor());
+
+        // Rate Limiting 中間件
+        const limiters = this.rateLimitMiddleware.getDefaultGatewayLimiters();
+        
+        // 全域限制（輕量級保護）
+        this.app.use(limiters.global);
+        
+        // 慢速請求保護
+        this.app.use(limiters.slowDown);
 
         // CORS 配置
         this.app.use(cors({
@@ -127,6 +154,28 @@ export class GatewayApp {
         });
 
 
+    }
+
+    /**
+     * 初始化管理路由
+     * @description 設置 Gateway 監控、統計和管理功能的路由
+     */
+    private initializeManagementRoutes(): void {
+        try {
+            const managementRoutes = createManagementRoutes(
+                this.monitoringMiddleware,
+                this.loadBalancerMiddleware,
+                this.rateLimitMiddleware
+            );
+            
+            // 掛載管理路由到 /api/management
+            this.app.use('/api/management', managementRoutes);
+            
+            this.logger.info('✅ Management routes initialized');
+        } catch (error) {
+            this.logger.error('❌ Failed to initialize management routes:', error);
+            throw error;
+        }
     }
 
     /**
@@ -414,6 +463,27 @@ export class GatewayApp {
      */
     public getHealthConfig(): HealthConfig {
         return this.healthConfig;
+    }
+
+    /**
+     * 獲取監控中間件實例
+     */
+    public getMonitoringMiddleware(): MonitoringMiddleware {
+        return this.monitoringMiddleware;
+    }
+
+    /**
+     * 獲取負載均衡中間件實例
+     */
+    public getLoadBalancerMiddleware(): LoadBalancerMiddleware {
+        return this.loadBalancerMiddleware;
+    }
+
+    /**
+     * 獲取限流中間件實例
+     */
+    public getRateLimitMiddleware(): RateLimitMiddleware {
+        return this.rateLimitMiddleware;
     }
 
     /**

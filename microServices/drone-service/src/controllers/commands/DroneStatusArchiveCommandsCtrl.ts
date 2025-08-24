@@ -15,12 +15,10 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
 import {DroneStatusArchiveCommandsSvc} from '../../services/commands/DroneStatusArchiveCommandsSvc.js';
-import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import type {DroneStatusArchiveCreationAttributes} from '../../models/DroneStatusArchiveModel.js';
 
-const logger = createLogger('DroneStatusArchiveCommandsCtrl');
 
 /**
  * 無人機狀態歷史歸檔命令控制器類別

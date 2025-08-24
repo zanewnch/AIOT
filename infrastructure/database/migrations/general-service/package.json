@@ -1,0 +1,27 @@
+{
+  "name": "@aiot/general-service-migrations",
+  "version": "1.0.0",
+  "description": "General Service database migrations using Sequelize CLI",
+  "private": true,
+  "scripts": {
+    "migrate": "sequelize-cli db:migrate",
+    "migrate:undo": "sequelize-cli db:migrate:undo",
+    "migrate:undo:all": "sequelize-cli db:migrate:undo:all",
+    "migrate:status": "sequelize-cli db:migrate:status",
+    "migration:generate": "sequelize-cli migration:generate --name",
+    "seed": "sequelize-cli db:seed:all",
+    "seed:undo": "sequelize-cli db:seed:undo:all"
+  },
+  "dependencies": {
+    "sequelize": "^6.35.0",
+    "sequelize-cli": "^6.6.2",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

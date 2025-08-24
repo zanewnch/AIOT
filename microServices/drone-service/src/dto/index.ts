@@ -14,6 +14,7 @@ export * from './common/PaginationDto';
 
 // ===== 歸檔任務相關 DTO =====
 export * from './archiveTask/ArchiveTaskRequestDto';
+export * from './archiveTask/ArchiveTaskResponseDto';
 
 // ===== 無人機指令相關 DTO =====
 export * from './droneCommand/DroneCommandRequestDto';
