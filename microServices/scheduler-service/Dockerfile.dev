@@ -14,7 +14,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 安裝依賴（包括開發依賴）
-RUN npm install
+RUN npm install --include=dev
 
 # 複製原始碼
 COPY . .

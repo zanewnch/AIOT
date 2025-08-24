@@ -16,7 +16,7 @@ COPY microServices/rbac-service .
 RUN npm install -g nodemon tsx ts-node
 
 # 安裝依賴（包含從 GitHub 的 shared-packages）
-RUN npm install
+RUN npm install --include=dev
 
 # 開發環境使用 root 用戶以避免 volume mount 權限問題
 

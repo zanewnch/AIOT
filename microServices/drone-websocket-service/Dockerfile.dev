@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y curl netcat && rm -rf /var/lib/apt/list
 
 # 複製 package 檔案並安裝依賴
 COPY package*.json ./
-RUN npm install
+RUN npm install --include=dev
 
 # 安裝開發必要的全域套件
 RUN npm install -g nodemon tsx ts-node

@@ -4,6 +4,8 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import axios from 'axios';
 
 export interface ServiceConfig {
@@ -20,6 +22,7 @@ export interface ServiceConfig {
     };
 }
 
+@injectable()
 export class ConsulConfig {
     private consulUrl: string;
     private serviceConfig: ServiceConfig;

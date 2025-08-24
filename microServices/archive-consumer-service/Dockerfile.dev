@@ -14,7 +14,7 @@ RUN apk add --no-cache curl netcat-openbsd git
 COPY microServices/archive-consumer-service .
 
 # 安裝 shared-packages 從 GitHub
-RUN npm cache clean --force && npm install git+https://github.com/zanewnch/aiot-shared-packages.git --no-package-lock
+RUN npm cache clean --force && npm install git+https://github.com/zanewnch/aiot-shared-packages.git --no-package-lock --include=dev
 
 # 建立日誌目錄
 RUN mkdir -p /app/logs

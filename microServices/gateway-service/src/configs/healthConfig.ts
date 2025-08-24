@@ -5,8 +5,11 @@
  * @version 1.0.0
  */
 
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { ConsulConfig } from './consulConfig.js';
 import { loggerConfig, logServiceHealth } from './loggerConfig.js';
+import { TYPES } from '../container/types.js';
 
 /**
  * 健康檢查結果介面
@@ -53,13 +56,14 @@ export interface SystemHealth {
 /**
  * 健康檢查配置類別
  */
+@injectable()
 export class HealthConfig {
     private consulConfig: ConsulConfig;
     private logger = loggerConfig;
     private healthHistory: Map<string, HealthCheckResult[]> = new Map();
     private readonly MAX_HISTORY = 100; // 保留最近 100 次檢查記錄
 
-    constructor(consulConfig: ConsulConfig) {
+    constructor(@inject(TYPES.ConsulConfig) consulConfig: ConsulConfig) {
         this.consulConfig = consulConfig;
         this.startContinuousHealthChecking();
     }

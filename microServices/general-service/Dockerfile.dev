@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y curl netcat && rm -rf /var/lib/apt/list
 COPY microServices/general-service .
 
 # 安裝 shared-packages 從 GitHub
-RUN npm cache clean --force && npm install git+https://github.com/zanewnch/aiot-shared-packages.git --no-package-lock
+RUN npm cache clean --force && npm install git+https://github.com/zanewnch/aiot-shared-packages.git --no-package-lock --include=dev
 
 # 安裝開發必要的全域套件
 RUN npm install -g nodemon tsx ts-node

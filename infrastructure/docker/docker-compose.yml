@@ -60,7 +60,7 @@ x-common-env: &common-env
   ARCHIVE_CONSUMER_SERVICE_PORT: 3005
   ARCHIVE_CONSUMER_SERVICE_URL: http://aiot-archive-consumer-service:3005
   
-  # LLM AI Engine 服務
+  # LLM 服務
   LLM_AI_ENGINE_HOST: aiot-llm-service
   LLM_AI_ENGINE_PORT: 8021
   LLM_AI_ENGINE_URL: http://aiot-llm-service:8021

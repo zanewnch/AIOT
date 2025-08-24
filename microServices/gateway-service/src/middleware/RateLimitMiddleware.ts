@@ -82,7 +82,15 @@ export class RateLimitMiddleware {
             },
             standardHeaders: true,
             legacyHeaders: false,
-            skip: config.skip
+            skip: config.skip,
+            // 修復 trust proxy 警告：使用自定義 key 生成器而非依賴 IP
+            keyGenerator: (req) => {
+                // 優先使用 X-Forwarded-For，然後是 X-Real-IP，最後才是 req.ip
+                const forwarded = req.headers['x-forwarded-for'] as string;
+                const realIp = req.headers['x-real-ip'] as string;
+                const clientIp = forwarded?.split(',')[0]?.trim() || realIp || req.ip;
+                return `ip:${clientIp}`;
+            }
         });
 
         return (req: Request, res: Response, next: NextFunction) => {
@@ -148,7 +156,20 @@ export class RateLimitMiddleware {
                     retryAfter: Math.ceil(config.windowMs / 1000),
                     timestamp: new Date().toISOString()
                 },
-                keyGenerator,
+                keyGenerator: (req) => {
+                    // 生成基於用戶和 IP 的唯一鍵值
+                    const forwarded = req.headers['x-forwarded-for'] as string;
+                    const realIp = req.headers['x-real-ip'] as string;
+                    const clientIp = forwarded?.split(',')[0]?.trim() || realIp || req.ip;
+                    
+                    if (!req.user) {
+                        return `anon:${clientIp}`;
+                    } else if (req.permissions?.roles?.includes('admin')) {
+                        return `admin:${req.user.id}:${clientIp}`;
+                    } else {
+                        return `user:${req.user.id}:${clientIp}`;
+                    }
+                },
                 standardHeaders: true,
                 legacyHeaders: false
             });
@@ -182,7 +203,13 @@ export class RateLimitMiddleware {
                 retryAfter: Math.ceil(config.windowMs / 1000),
                 timestamp: new Date().toISOString()
             },
-            keyGenerator: (req) => `endpoint:${endpoint}:${req.ip}`,
+            keyGenerator: (req) => {
+                // 修復 trust proxy 警告：使用自定義 IP 提取
+                const forwarded = req.headers['x-forwarded-for'] as string;
+                const realIp = req.headers['x-real-ip'] as string;
+                const clientIp = forwarded?.split(',')[0]?.trim() || realIp || req.ip;
+                return `endpoint:${endpoint}:${clientIp}`;
+            },
             standardHeaders: true,
             legacyHeaders: false,
             skip: config.skip
