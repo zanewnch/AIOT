@@ -44,7 +44,7 @@ import { ArchiveConsumer } from './consumers/ArchiveConsumer';
 import { DatabaseConnection, RabbitMQService } from './types/processor.types';
 
 // 導入模組化的路由和中間件
-import { createRoutes } from './routes';
+import { registerRoutes } from './routes';
 import { setupMiddleware, setupErrorHandling } from './middleware';
 
 /**
@@ -86,12 +86,7 @@ export class App {
     setupMiddleware(this.app, this.logger);
 
     // 2. 載入所有路由
-    this.app.use('/', createRoutes(
-      this.logger,
-      this.databaseConnection,
-      this.rabbitMQService,
-      this.archiveConsumer
-    ));
+    registerRoutes(this.app);
 
     // 3. 載入錯誤處理中間件（必須在路由之後）
     setupErrorHandling(this.app, this.logger);

@@ -25,7 +25,7 @@ import {
 } from '../types/processor.types';
 
 // 服務實作
-import { MySQLDatabaseConnection } from '../configs/database';
+import { PostgreSQLDatabaseConnection } from '../configs/database';
 import { RabbitMQService } from '../services/RabbitMQService';
 import { ArchiveTaskRepoImpl } from '../services/ArchiveTaskRepoImpl';
 import { ArchiveProcessor } from '../processors/ArchiveProcessor';
@@ -52,7 +52,7 @@ export const createContainer = (): Container => {
   // === 資料庫服務 ===
   container.bind<DatabaseConnection>(TYPES.DatabaseConnection)
     .toDynamicValue(() => {
-      return new MySQLDatabaseConnection(config.database);
+      return new PostgreSQLDatabaseConnection(config.database);
     })
     .inSingletonScope();
 

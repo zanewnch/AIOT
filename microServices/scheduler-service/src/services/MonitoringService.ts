@@ -185,9 +185,11 @@ export class MonitoringService {
       this.checkPerformanceAlerts(metrics);
 
       // 記錄性能指標
-      this.logger.performance('cpu_usage', metrics.cpuUsage, '%');
-      this.logger.performance('memory_usage', metrics.memoryUsage.percentage, '%');
-      this.logger.performance('disk_usage', metrics.diskUsage.percentage, '%');
+      this.logger.info('System metrics collected', {
+        cpuUsage: `${metrics.cpuUsage}%`,
+        memoryUsage: `${metrics.memoryUsage.percentage}%`,
+        diskUsage: `${metrics.diskUsage.percentage}%`
+      });
 
       return metrics;
     } catch (error) {

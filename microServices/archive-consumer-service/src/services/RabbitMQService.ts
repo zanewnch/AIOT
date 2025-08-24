@@ -12,11 +12,12 @@
  * - 提供延遲訊息和任務結果發佈功能
  */
 
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import amqp, { Connection, Channel, Message } from 'amqplib';
 import { Logger } from 'winston';
 import { RabbitMQService as IRabbitMQService, TaskResultMessage } from '../types/processor.types';
 import { config } from '../configs/environment';
+import { TYPES } from '../container/types';
 
 @injectable()
 export class RabbitMQService implements IRabbitMQService {
@@ -26,7 +27,7 @@ export class RabbitMQService implements IRabbitMQService {
   private reconnectTimer: NodeJS.Timeout | null = null;
 
   constructor(
-    private readonly logger: Logger
+    @inject(TYPES.Logger) private readonly logger: Logger
   ) {}
 
   /**

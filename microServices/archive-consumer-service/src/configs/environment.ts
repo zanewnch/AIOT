@@ -80,10 +80,10 @@ function loadConfig(): EnvironmentConfig {
 
     database: {
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '3306', 10),
-      username: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'aiot_db',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USER || 'admin',
+      password: process.env.DB_PASSWORD || 'admin',
+      database: process.env.DB_NAME || 'drone_db',
       connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT || '10', 10)
     },
 

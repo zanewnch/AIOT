@@ -19,12 +19,9 @@ import cors from 'cors';
 import { redisConfig } from 'aiot-shared-packages';
 import { createSequelizeInstance } from './configs/dbConfig.js';
 import { IntegratedWebSocketService as WebSocketService } from './configs/websocket/service.js';
-// Legacy simple service import (if needed for backward compatibility)
-// import { WebSocketService as SimpleWebSocketService } from './configs/websocket/service-simple.js';
-import { container } from './container/container.js';
+import { createAppServices } from './container/container.js';
 // Consul 服務註冊
 import { ConsulConfig } from './configs/consulConfig.js';
-import { TYPES } from './container/types.js';
 import { RouteRegistrar } from './routes/index.js';
 import { createLogger } from './configs/loggerConfig.js';
 // 移除 JWT 認證 - 使用 Express.js Gateway 進行集中式權限管理
@@ -54,12 +51,18 @@ export class App {
     private webSocketService: WebSocketService | null = null;
 
     /**
+     * 路由註冊器實例
+     */
+    private routeRegistrar: RouteRegistrar | null = null;
+
+    /**
      * Sequelize 資料庫 ORM 實例
      */
     private sequelize: any;
 
     /**
      * 建構函式 - 初始化 Express 應用程式
+     * 遵循 CLAUDE.md 規範：不在建構函式中使用 container.get()
      */
     constructor() {
         this.app = express();
@@ -103,14 +106,9 @@ export class App {
      */
     private setupRoutes(): void {
         try {
-            // 從 IoC 容器獲取路由註冊器
-            const routeRegistrar = container.get<RouteRegistrar>(TYPES.RouteRegistrar);
-            
-            // 註冊所有路由
-            routeRegistrar.registerRoutes(this.app);
-            
-            logger.info('Routes setup completed successfully');
-            logger.info('Route statistics', routeRegistrar.getRouteStats());
+            // 延遲路由註冊到應用程式初始化時
+            // 避免在建構函式中使用依賴注入容器
+            logger.info('Route setup deferred to initialize() method');
             
         } catch (error) {
             logger.error('Failed to setup routes', { error });
@@ -171,8 +169,12 @@ export class App {
         try {
             logger.info('Initializing WebSocket service...');
             
-            // 使用整合的 WebSocket 服務
-            this.webSocketService = container.get<WebSocketService>(TYPES.IntegratedWebSocketService);
+            // 使用工廠函數獲取服務實例，遵循 CLAUDE.md 規範
+            if (!this.webSocketService) {
+                const services = createAppServices();
+                this.webSocketService = services.webSocketService;
+            }
+            
             await this.webSocketService.initialize(httpServer);
 
             logger.info('WebSocket service initialized successfully');
@@ -187,6 +189,10 @@ export class App {
      */
     async initialize(): Promise<void> {
         try {
+            // 初始化依賴注入服務
+            await this.initializeDependencies();
+            console.log('✅ Dependencies initialized');
+            
             // 同步資料庫結構
             await this.sequelize.sync();
             console.log('✅ Database synced');
@@ -199,6 +205,33 @@ export class App {
         } catch (err) {
             console.error('❌ App initialization failed', err);
             throw err;
+        }
+    }
+
+    /**
+     * 初始化依賴注入服務
+     */
+    private async initializeDependencies(): Promise<void> {
+        try {
+            // 使用工廠函數獲取所有需要的服務
+            const services = createAppServices();
+            this.routeRegistrar = services.routeRegistrar;
+            this.webSocketService = services.webSocketService;
+            
+            // 註冊路由
+            this.routeRegistrar.registerRoutes(this.app);
+            
+            logger.info('Dependencies initialized successfully');
+            logger.info('Route statistics', this.routeRegistrar.getRouteStats());
+            
+        } catch (error) {
+            logger.error('Failed to initialize dependencies', { error });
+            
+            // 如果依賴注入失敗，設定備用路由
+            this.setupFallbackRoutes();
+            
+            // 不拋出錯誤，允許服務以降級模式運行
+            logger.warn('Service running in degraded mode due to dependency initialization failure');
         }
     }
 
@@ -233,5 +266,12 @@ export class App {
      */
     getWebSocketService(): WebSocketService | null {
         return this.webSocketService;
+    }
+    
+    /**
+     * 獲取路由註冊器實例
+     */
+    getRouteRegistrar(): RouteRegistrar | null {
+        return this.routeRegistrar;
     }
 }

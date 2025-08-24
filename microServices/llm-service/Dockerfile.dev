@@ -16,14 +16,16 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # 複製需求文件並安裝 Python 依賴
-COPY requirements.minimal.txt ./
-RUN pip install --no-cache-dir -r requirements.minimal.txt
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 安裝開發專用依賴
 RUN pip install debugpy ipdb
 
 # 創建非 root 用戶 (安全最佳實踐)
 RUN groupadd -g 1001 aiuser && useradd -r -u 1001 -g aiuser aiuser
+# 創建用戶主目錄並設置權限 (修復 Hugging Face 快取權限問題)
+RUN mkdir -p /home/aiuser && chown -R aiuser:aiuser /home/aiuser
 RUN chown -R aiuser:aiuser /app
 USER aiuser
 

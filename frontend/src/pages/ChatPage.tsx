@@ -35,6 +35,7 @@ export const ChatPage: React.FC = () => {
   const mcpQueryMutation = useMCPQuery();
   const { data: mcpStatus } = useMCPStatus();
 
+
   // 狀態管理
   const [messages, setMessages] = useState<ChatMessageType[]>([
     {
