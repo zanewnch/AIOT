@@ -1,0 +1,325 @@
+name: Main CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: '測試模式選擇'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - quick
+        - standard
+        - full
+
+env:
+  CI: true
+  NODE_ENV: test
+  PYTHON_ENV: test
+
+jobs:
+  # 第一階段：靜態檢查 (最快速的驗證)
+  static-checks:
+    name: Static Code Analysis
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Quick syntax check for TypeScript files
+        run: |
+          echo "🔍 快速語法檢查..."
+          find . -name "*.ts" -not -path "./node_modules/*" | head -50 | while read file; do
+            if ! npx tsc --noEmit --skipLibCheck "$file" 2>/dev/null; then
+              echo "❌ TypeScript 語法錯誤: $file"
+              exit 1
+            fi
+          done
+          echo "✅ TypeScript 語法檢查通過"
+      
+      - name: Quick Python syntax check
+        run: |
+          echo "🐍 快速 Python 語法檢查..."
+          find . -name "*.py" -not -path "./node_modules/*" -not -path "./*venv*" | head -20 | while read file; do
+            if ! python -m py_compile "$file" 2>/dev/null; then
+              echo "❌ Python 語法錯誤: $file"
+              exit 1
+            fi
+          done
+          echo "✅ Python 語法檢查通過"
+      
+      - name: Collect static check results
+        run: |
+          mkdir -p ci-reports/static
+          echo "{
+            \"check_type\": \"static_analysis\",
+            \"status\": \"success\",
+            \"timestamp\": \"$(date -Iseconds)\",
+            \"checks\": {
+              \"typescript_syntax\": \"passed\",
+              \"python_syntax\": \"passed\"
+            }
+          }" > ci-reports/static/static-checks-result.json
+
+  # 第二階段：並行測試執行
+  microservices-test:
+    name: Microservices Tests
+    needs: static-checks
+    if: ${{ !failure() && (github.event.inputs.test_mode != 'quick' || github.event.inputs.test_mode == '') }}
+    uses: ./.github/workflows/microservices-test.yml
+  
+  frontend-test:
+    name: Frontend Tests  
+    needs: static-checks
+    if: ${{ !failure() && (github.event.inputs.test_mode != 'quick' || github.event.inputs.test_mode == '') }}
+    uses: ./.github/workflows/frontend-test.yml
+  
+  python-services-test:
+    name: Python Services Tests
+    needs: static-checks
+    if: ${{ !failure() && (github.event.inputs.test_mode == 'full') }}
+    uses: ./.github/workflows/python-services-test.yml
+
+  # 第三階段：測試報告生成
+  generate-test-report:
+    name: Generate Test Report
+    needs: [static-checks, microservices-test, frontend-test, python-services-test]
+    if: always()
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-artifacts/
+        continue-on-error: true
+      
+      - name: Collect and consolidate results
+        run: |
+          echo "📊 整合所有測試結果..."
+          mkdir -p ci-reports/final
+          
+          # 收集靜態檢查結果
+          if [ -f ci-reports/static/static-checks-result.json ]; then
+            cp ci-reports/static/static-checks-result.json ci-reports/final/
+          fi
+          
+          # 收集所有其他測試結果
+          find test-artifacts/ -name "*-result.json" -exec cp {} ci-reports/final/ \; 2>/dev/null || true
+          
+          # 統計總體結果
+          TOTAL_TESTS=0
+          PASSED_TESTS=0
+          FAILED_TESTS=0
+          
+          for result_file in ci-reports/final/*-result.json; do
+            if [ -f "$result_file" ]; then
+              TOTAL_TESTS=$((TOTAL_TESTS + 1))
+              if grep -q '"status": "success"' "$result_file"; then
+                PASSED_TESTS=$((PASSED_TESTS + 1))
+              else
+                FAILED_TESTS=$((FAILED_TESTS + 1))
+              fi
+            fi
+          done
+          
+          # 生成最終摘要
+          cat > ci-reports/final/summary.json << EOF
+          {
+            "total_tests": $TOTAL_TESTS,
+            "passed_tests": $PASSED_TESTS,
+            "failed_tests": $FAILED_TESTS,
+            "success_rate": $(( TOTAL_TESTS > 0 ? (PASSED_TESTS * 100) / TOTAL_TESTS : 0 )),
+            "timestamp": "$(date -Iseconds)",
+            "test_mode": "${{ github.event.inputs.test_mode || 'standard' }}"
+          }
+          EOF
+          
+          echo "✅ 測試結果整合完成"
+          echo "📊 總測試數: $TOTAL_TESTS"
+          echo "✅ 通過: $PASSED_TESTS"  
+          echo "❌ 失敗: $FAILED_TESTS"
+      
+      - name: Generate HTML Report
+        run: |
+          echo "🏗️ 生成最終 HTML 測試報告..."
+          
+          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          REPORT_FILE="ci-reports/final-report.html"
+          
+          # 讀取摘要數據
+          if [ -f ci-reports/final/summary.json ]; then
+            TOTAL=$(grep -o '"total_tests": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            PASSED=$(grep -o '"passed_tests": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            FAILED=$(grep -o '"failed_tests": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            SUCCESS_RATE=$(grep -o '"success_rate": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+          else
+            TOTAL=0; PASSED=0; FAILED=0; SUCCESS_RATE=0
+          fi
+          
+          # 生成 HTML 報告
+          cat > "$REPORT_FILE" << EOF
+          <!DOCTYPE html>
+          <html lang="zh-TW">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>AIOT CI/CD Pipeline 報告</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; }
+                  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+                  .header { background: linear-gradient(135deg, #2196F3 0%, #21CBF3 100%); color: white; padding: 40px 30px; border-radius: 12px; margin-bottom: 30px; text-align: center; box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3); }
+                  .header h1 { font-size: 32px; margin-bottom: 10px; }
+                  .header .subtitle { font-size: 16px; opacity: 0.9; }
+                  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+                  .summary-card { background: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
+                  .summary-card:hover { transform: translateY(-2px); }
+                  .summary-card.success { border-top: 4px solid #4CAF50; }
+                  .summary-card.danger { border-top: 4px solid #F44336; }
+                  .summary-card.info { border-top: 4px solid #2196F3; }
+                  .summary-card.warning { border-top: 4px solid #FF9800; }
+                  .summary-card .icon { font-size: 40px; margin-bottom: 15px; }
+                  .summary-card .number { font-size: 36px; font-weight: bold; margin: 15px 0; }
+                  .summary-card .label { font-size: 16px; color: #666; }
+                  .details { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                  .details h2 { font-size: 24px; margin-bottom: 20px; color: #333; }
+                  .test-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
+                  .test-item:last-child { border-bottom: none; }
+                  .test-name { font-weight: 500; }
+                  .test-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+                  .test-status.passed { background: #E8F5E8; color: #2E7D2E; }
+                  .test-status.failed { background: #FFEBEE; color: #C62828; }
+                  .footer { text-align: center; margin-top: 30px; padding: 20px; color: #666; }
+                  .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 15px 0; }
+                  .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); transition: width 0.3s ease; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>🚀 AIOT CI/CD Pipeline</h1>
+                      <div class="subtitle">自動化測試與部署報告 • $TIMESTAMP</div>
+                  </div>
+                  
+                  <div class="summary-grid">
+                      <div class="summary-card success">
+                          <div class="icon">✅</div>
+                          <div class="number">$PASSED</div>
+                          <div class="label">測試通過</div>
+                      </div>
+                      <div class="summary-card danger">
+                          <div class="icon">❌</div>
+                          <div class="number">$FAILED</div>
+                          <div class="label">測試失敗</div>
+                      </div>
+                      <div class="summary-card info">
+                          <div class="icon">📊</div>
+                          <div class="number">$TOTAL</div>
+                          <div class="label">總測試數</div>
+                      </div>
+                      <div class="summary-card $([ $SUCCESS_RATE -ge 80 ] && echo "success" || echo "warning")">
+                          <div class="icon">📈</div>
+                          <div class="number">$SUCCESS_RATE%</div>
+                          <div class="label">成功率</div>
+                          <div class="progress-bar">
+                              <div class="progress-fill" style="width: $SUCCESS_RATE%"></div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="details">
+                      <h2>📋 詳細測試結果</h2>
+          EOF
+          
+          # 添加詳細測試結果
+          for result_file in ci-reports/final/*-result.json; do
+            if [ -f "$result_file" ] && [ "$(basename "$result_file")" != "summary.json" ]; then
+              SERVICE_NAME=$(basename "$result_file" -result.json | sed 's/-/ /g' | sed 's/\b\w/\U&/g')
+              if grep -q '"status": "success"' "$result_file"; then
+                STATUS_CLASS="passed"
+                STATUS_TEXT="PASSED"
+              else
+                STATUS_CLASS="failed"  
+                STATUS_TEXT="FAILED"
+              fi
+              
+              cat >> "$REPORT_FILE" << EOF
+                      <div class="test-item">
+                          <div class="test-name">$SERVICE_NAME</div>
+                          <div class="test-status $STATUS_CLASS">$STATUS_TEXT</div>
+                      </div>
+          EOF
+            fi
+          done
+          
+          # 完成 HTML
+          cat >> "$REPORT_FILE" << 'EOF'
+                  </div>
+                  
+                  <div class="footer">
+                      <p>🤖 此報告由 AIOT CI/CD Pipeline 自動生成</p>
+                      <p><small>使用 GitHub Actions + act 本地執行</small></p>
+                  </div>
+              </div>
+          </body>
+          </html>
+          EOF
+          
+          echo "✅ HTML 報告生成完成: $REPORT_FILE"
+      
+      - name: Upload final report
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-ci-report
+          path: ci-reports/
+          retention-days: 30
+      
+      - name: Pipeline Summary
+        run: |
+          echo "## 🚀 AIOT CI/CD Pipeline 執行摘要" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f ci-reports/final/summary.json ]; then
+            TOTAL=$(grep -o '"total_tests": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            PASSED=$(grep -o '"passed_tests": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            FAILED=$(grep -o '"failed_tests": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            SUCCESS_RATE=$(grep -o '"success_rate": [0-9]*' ci-reports/final/summary.json | cut -d':' -f2 | tr -d ' ')
+            
+            echo "| 項目 | 數量 |" >> $GITHUB_STEP_SUMMARY
+            echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ 通過測試 | $PASSED |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ 失敗測試 | $FAILED |" >> $GITHUB_STEP_SUMMARY
+            echo "| 📊 總測試數 | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+            echo "| 📈 成功率 | $SUCCESS_RATE% |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 本地查看完整報告" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# 啟動本地服務器查看報告" >> $GITHUB_STEP_SUMMARY
+          echo "python -m http.server 8080 --directory ci-reports" >> $GITHUB_STEP_SUMMARY
+          echo "# 瀏覽器開啟: http://localhost:8080/final-report.html" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

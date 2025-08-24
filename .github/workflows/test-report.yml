@@ -1,0 +1,277 @@
+name: Generate Test Report
+
+on:
+  workflow_run:
+    workflows: ["Microservices Tests", "Frontend Tests", "Python Services Tests"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  generate-report:
+    name: Generate HTML Test Report
+    runs-on: ubuntu-22.04
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-artifacts/
+      
+      - name: Collect all test results
+        run: |
+          echo "📊 收集所有測試結果..."
+          mkdir -p ci-reports/consolidated
+          
+          # 收集微服務測試結果
+          find test-artifacts/ -name "*microservice*" -type d | while read dir; do
+            if [ -d "$dir" ]; then
+              cp -r "$dir"/* ci-reports/consolidated/ 2>/dev/null || true
+            fi
+          done
+          
+          # 收集前端測試結果  
+          find test-artifacts/ -name "*frontend*" -type d | while read dir; do
+            if [ -d "$dir" ]; then
+              cp -r "$dir"/* ci-reports/consolidated/ 2>/dev/null || true
+            fi
+          done
+          
+          # 收集 Python 服務測試結果
+          find test-artifacts/ -name "*python*" -type d | while read dir; do
+            if [ -d "$dir" ]; then
+              cp -r "$dir"/* ci-reports/consolidated/ 2>/dev/null || true
+            fi
+          done
+          
+          echo "✅ 測試結果收集完成"
+          ls -la ci-reports/consolidated/
+      
+      - name: Generate HTML report
+        run: |
+          echo "🏗️ 生成 HTML 測試報告..."
+          
+          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          REPORT_DIR="ci-reports/html-report-$(date +%Y%m%d-%H%M%S)"
+          mkdir -p "$REPORT_DIR"
+          
+          # 創建主要的 HTML 報告
+          cat > "$REPORT_DIR/index.html" << 'EOF'
+          <!DOCTYPE html>
+          <html lang="zh-TW">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>AIOT CI/CD 測試報告</title>
+              <style>
+                  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+                  .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                  .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+                  .header h1 { margin: 0; font-size: 24px; }
+                  .header .subtitle { opacity: 0.9; margin-top: 5px; }
+                  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px; }
+                  .summary-card { text-align: center; padding: 20px; border-radius: 8px; }
+                  .summary-card.success { background: #d4edda; border-left: 4px solid #28a745; }
+                  .summary-card.danger { background: #f8d7da; border-left: 4px solid #dc3545; }
+                  .summary-card.warning { background: #fff3cd; border-left: 4px solid #ffc107; }
+                  .summary-card h3 { margin: 0 0 10px 0; font-size: 18px; }
+                  .summary-card .number { font-size: 32px; font-weight: bold; margin: 10px 0; }
+                  .details { padding: 0 20px 20px; }
+                  .service-grid { display: grid; gap: 15px; }
+                  .service-item { border: 1px solid #ddd; border-radius: 6px; padding: 15px; }
+                  .service-item.success { border-left: 4px solid #28a745; background: #f8fff8; }
+                  .service-item.failed { border-left: 4px solid #dc3545; background: #fff8f8; }
+                  .service-name { font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+                  .service-status { font-size: 14px; }
+                  .timestamp { text-align: center; padding: 20px; color: #666; border-top: 1px solid #eee; }
+                  .legend { display: flex; gap: 20px; margin-bottom: 20px; }
+                  .legend-item { display: flex; align-items: center; gap: 8px; }
+                  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+                  .legend-dot.success { background: #28a745; }
+                  .legend-dot.failed { background: #dc3545; }
+                  .collapsible { cursor: pointer; user-select: none; }
+                  .collapsible:after { content: ' ▼'; }
+                  .collapsible.active:after { content: ' ▲'; }
+                  .content { max-height: 0; overflow: hidden; transition: max-height 0.2s ease-out; }
+                  .content.active { max-height: 500px; overflow: auto; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>🚀 AIOT CI/CD 測試報告</h1>
+                      <div class="subtitle">自動化測試執行結果 | TIMESTAMP_PLACEHOLDER</div>
+                  </div>
+          EOF
+          
+          # 替換時間戳記
+          sed -i "s/TIMESTAMP_PLACEHOLDER/$TIMESTAMP/g" "$REPORT_DIR/index.html"
+          
+          # 生成測試統計
+          TOTAL_SERVICES=0
+          SUCCESS_SERVICES=0
+          FAILED_SERVICES=0
+          
+          # 統計各服務狀態
+          if [ -d "ci-reports/consolidated" ]; then
+            for result_file in ci-reports/consolidated/*-result.json; do
+              if [ -f "$result_file" ]; then
+                TOTAL_SERVICES=$((TOTAL_SERVICES + 1))
+                if grep -q '"status": "success"' "$result_file" 2>/dev/null; then
+                  SUCCESS_SERVICES=$((SUCCESS_SERVICES + 1))
+                else
+                  FAILED_SERVICES=$((FAILED_SERVICES + 1))
+                fi
+              fi
+            done
+          fi
+          
+          # 計算成功率
+          if [ $TOTAL_SERVICES -gt 0 ]; then
+            SUCCESS_RATE=$(( (SUCCESS_SERVICES * 100) / TOTAL_SERVICES ))
+          else
+            SUCCESS_RATE=0
+          fi
+          
+          # 添加統計摘要到 HTML
+          cat >> "$REPORT_DIR/index.html" << EOF
+                  <div class="summary">
+                      <div class="summary-card success">
+                          <h3>✅ 成功</h3>
+                          <div class="number">$SUCCESS_SERVICES</div>
+                          <div>服務通過測試</div>
+                      </div>
+                      <div class="summary-card danger">
+                          <h3>❌ 失敗</h3>
+                          <div class="number">$FAILED_SERVICES</div>
+                          <div>服務測試失敗</div>
+                      </div>
+                      <div class="summary-card warning">
+                          <h3>📊 總計</h3>
+                          <div class="number">$TOTAL_SERVICES</div>
+                          <div>服務總數</div>
+                      </div>
+                      <div class="summary-card $([ $SUCCESS_RATE -ge 80 ] && echo "success" || echo "warning")">
+                          <h3>📈 成功率</h3>
+                          <div class="number">$SUCCESS_RATE%</div>
+                          <div>整體通過率</div>
+                      </div>
+                  </div>
+          
+                  <div class="details">
+                      <div class="legend">
+                          <div class="legend-item">
+                              <div class="legend-dot success"></div>
+                              <span>測試通過</span>
+                          </div>
+                          <div class="legend-item">
+                              <div class="legend-dot failed"></div>
+                              <span>測試失敗</span>
+                          </div>
+                      </div>
+                      
+                      <h2 class="collapsible" onclick="toggleContent('service-details')">📋 服務詳細結果</h2>
+                      <div id="service-details" class="content active">
+                          <div class="service-grid">
+          EOF
+          
+          # 添加各服務詳細結果
+          if [ -d "ci-reports/consolidated" ]; then
+            for result_file in ci-reports/consolidated/*-result.json; do
+              if [ -f "$result_file" ]; then
+                SERVICE_NAME=$(basename "$result_file" -result.json)
+                STATUS=$(grep -o '"status": "[^"]*"' "$result_file" | cut -d'"' -f4)
+                TIMESTAMP_SERVICE=$(grep -o '"timestamp": "[^"]*"' "$result_file" | cut -d'"' -f4)
+                
+                STATUS_CLASS="failed"
+                STATUS_ICON="❌"
+                if [ "$STATUS" = "success" ]; then
+                  STATUS_CLASS="success"
+                  STATUS_ICON="✅"
+                fi
+                
+                cat >> "$REPORT_DIR/index.html" << EOF
+                              <div class="service-item $STATUS_CLASS">
+                                  <div class="service-name">$STATUS_ICON $SERVICE_NAME</div>
+                                  <div class="service-status">狀態: $STATUS</div>
+                                  <div class="service-status">時間: $TIMESTAMP_SERVICE</div>
+                              </div>
+          EOF
+              fi
+            done
+          fi
+          
+          # 完成 HTML 結構
+          cat >> "$REPORT_DIR/index.html" << 'EOF'
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="timestamp">
+                      報告生成時間: TIMESTAMP_PLACEHOLDER<br>
+                      <small>🤖 由 AIOT CI/CD 系統自動生成</small>
+                  </div>
+              </div>
+              
+              <script>
+                  function toggleContent(id) {
+                      var content = document.getElementById(id);
+                      var button = content.previousElementSibling;
+                      
+                      if (content.classList.contains('active')) {
+                          content.classList.remove('active');
+                          button.classList.remove('active');
+                      } else {
+                          content.classList.add('active');
+                          button.classList.add('active');
+                      }
+                  }
+              </script>
+          </body>
+          </html>
+          EOF
+          
+          # 替換時間戳記
+          sed -i "s/TIMESTAMP_PLACEHOLDER/$TIMESTAMP/g" "$REPORT_DIR/index.html"
+          
+          # 複製到主要報告目錄
+          cp "$REPORT_DIR/index.html" ci-reports/latest-report.html
+          
+          echo "✅ HTML 測試報告生成完成: $REPORT_DIR/index.html"
+          echo "📂 最新報告: ci-reports/latest-report.html"
+      
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-test-report
+          path: ci-reports/
+          retention-days: 30
+      
+      - name: Test report summary
+        run: |
+          echo "## 🚀 AIOT CI/CD 測試報告摘要" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 測試統計" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f ci-reports/latest-report.html ]; then
+            echo "- ✅ **HTML 報告已生成**" >> $GITHUB_STEP_SUMMARY
+            echo "- 📁 **報告位置**: \`ci-reports/latest-report.html\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **HTML 報告生成失敗**" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔧 本地查看報告" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# 在專案根目錄執行" >> $GITHUB_STEP_SUMMARY
+          echo "python -m http.server 8080 --directory ci-reports" >> $GITHUB_STEP_SUMMARY
+          echo "# 然後在瀏覽器中開啟: http://localhost:8080/latest-report.html" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

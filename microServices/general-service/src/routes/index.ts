@@ -19,6 +19,7 @@ import { DocsRoutes } from './docsRoutes.js';
 import { HealthRoutes } from './healthRoutes.js';
 import { MCPRoutes } from './mcpRoutes.js';
 import simpleDocsRoutes from './simpleDocsRoutes.js';
+import readmeRoutes from './readmeRoutes.js';
 import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
 import { createLogger } from '../configs/loggerConfig.js';
@@ -65,6 +66,10 @@ export class RouteRegistrar {
             // 註冊統一文檔路由 (/docs 和 /typedoc)
             app.use('/', simpleDocsRoutes);
             logger.info('✅ Unified documentation routes registered at /docs and /typedoc');
+
+            // 註冊 README 路由
+            app.use('/', readmeRoutes);
+            logger.info('✅ README route registered at /readme');
 
             // 註冊 MCP 工具路由 (API Gateway: /api/mcp → strip_path=true → 轉發到 /api/mcp)
             app.use('/api/mcp', this.mcpRoutes.getRouter());

@@ -13,6 +13,7 @@ import { injectable, inject } from 'inversify';
 import { Application, Router } from 'express';
 import { TYPES } from '../container/types.js';
 import { RBACMCPRoutes } from './mcpRoutes.js';
+import readmeRoutes from './readmeRoutes.js';
 
 /**
  * RBAC Service 路由註冊器
@@ -50,6 +51,10 @@ export class RouteRegistrar {
             // 註冊文檔路由
             app.use('/', this.docsRoutes);
             console.log('✅ Documentation routes registered at /docs and /typedoc');
+
+            // 註冊 README 路由
+            app.use('/', readmeRoutes);
+            console.log('✅ README route registered at /readme');
 
             // 註冊 RBAC 路由
             app.use('/', this.rbacRoutes);

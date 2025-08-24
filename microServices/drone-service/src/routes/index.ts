@@ -20,6 +20,7 @@ import {DroneStatusRoutes} from './droneStatusRoutes.js';
 import {DroneCommandRoutes} from './droneCommandRoutes.js';
 import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
 import docsRoutes from './docsRoutes.js';
+import readmeRoutes from './readmeRoutes.js';
 import {TYPES} from '../container/types.js';
 import {ResResult} from 'aiot-shared-packages';
 import {DroneMCPRoutes} from './mcpRoutes.js';
@@ -80,6 +81,10 @@ export class RouteRegistrar {
             // 註冊文檔路由
             app.use('/', docsRoutes);
             console.log('✅ Documentation routes registered at /docs and /typedoc');
+
+            // 註冊 README 路由
+            app.use('/', readmeRoutes);
+            console.log('✅ README route registered at /readme');
 
             console.log('🚀 All routes registered successfully');
         } catch (error) {

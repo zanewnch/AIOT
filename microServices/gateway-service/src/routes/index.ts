@@ -8,6 +8,7 @@
 import { Router } from 'express';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
+import docsRoutes from './docsRoutes.js';
 
 
 /**
@@ -79,6 +80,10 @@ export function createMainRoutes(): Router {
      * 統一文檔首頁：/api/docs
      * 各服務文檔：/api/docs/{service-name}/{docs|typedoc}
      */
+
+    // 註冊文檔路由
+    router.use('/api/docs', docsRoutes);
+    loggerConfig.info('✅ Documentation routes registered at /api/docs');
 
     // 記錄路由初始化
     loggerConfig.info('✅ Main Gateway routes initialized');

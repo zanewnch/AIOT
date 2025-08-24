@@ -1,0 +1,118 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-test.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+env:
+  NODE_ENV: test
+  CI: true
+
+jobs:
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Load environment variables
+        run: |
+          if [ -f .env.act ]; then
+            cat .env.act >> $GITHUB_ENV
+          fi
+      
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: TypeScript type checking
+        working-directory: frontend
+        run: |
+          echo "🔍 檢查前端 TypeScript 類型..."
+          if npm run type-check; then
+            echo "✅ 前端 TypeScript 類型檢查通過"
+          else
+            echo "❌ 前端 TypeScript 類型檢查失敗"
+            exit 1
+          fi
+      
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          echo "🏗️ 建置前端應用..."
+          if npm run build; then
+            echo "✅ 前端建置成功"
+          else
+            echo "❌ 前端建置失敗"
+            exit 1
+          fi
+      
+      - name: Run unit tests
+        working-directory: frontend
+        run: |
+          echo "🧪 執行前端單元測試..."
+          if npm run test:unit; then
+            echo "✅ 前端單元測試通過"
+          else
+            echo "❌ 前端單元測試失敗"
+            exit 1
+          fi
+      
+      - name: Run integration tests
+        working-directory: frontend
+        run: |
+          echo "🔗 執行前端整合測試..."
+          if npm run test:integration; then
+            echo "✅ 前端整合測試通過"
+          else
+            echo "❌ 前端整合測試失敗"
+            exit 1
+          fi
+      
+      - name: Collect test results
+        if: always()
+        run: |
+          mkdir -p ci-reports/frontend
+          echo "{
+            \"service\": \"frontend\",
+            \"status\": \"${{ job.status }}\",
+            \"timestamp\": \"$(date -Iseconds)\",
+            \"steps\": {
+              \"typescript\": \"completed\",
+              \"build\": \"completed\",
+              \"unit_test\": \"completed\",
+              \"integration_test\": \"completed\"
+            }
+          }" > ci-reports/frontend/frontend-result.json
+      
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-test-results
+          path: |
+            ci-reports/frontend/
+            frontend/dist/
+            frontend/coverage/
+          retention-days: 7

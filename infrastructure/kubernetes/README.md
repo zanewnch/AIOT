@@ -104,7 +104,6 @@ docker build -t aiot-rbac-service:latest /home/user/GitHub/AIOT/microServices/rb
 docker build -t aiot-drone-service:latest /home/user/GitHub/AIOT/microServices/drone-service/
 docker build -t aiot-drone-websocket-service:latest /home/user/GitHub/AIOT/microServices/drone-websocket-service/
 docker build -t aiot-general-service:latest /home/user/GitHub/AIOT/microServices/general-service/
-docker build -t aiot-docs-service:latest /home/user/GitHub/AIOT/microServices/docs-service/
 
 # 部署微服務
 kubectl apply -f microservices/
@@ -127,7 +126,6 @@ kubectl apply -f microservices/
 | drone-service | drone-service-deployment | drone-service | 50052 |
 | drone-websocket-service | drone-websocket-service-deployment | drone-websocket-service | 3004 |
 | general-service | general-service-deployment | general-service | 50053 |
-| docs-service | docs-service-deployment | docs-service | 3005 |
 
 ### 存儲策略
 
@@ -163,9 +161,6 @@ kubectl port-forward -n aiot svc/consul-service 8500:8500
 kubectl port-forward -n aiot svc/rabbitmq-service 15672:15672
 # 訪問: http://localhost:15672 (admin/admin)
 
-# Docs Service
-kubectl port-forward -n aiot svc/docs-service 3005:3005
-# 訪問: http://localhost:3005
 ```
 
 ## 🔍 監控和除錯

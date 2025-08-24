@@ -152,8 +152,8 @@ export const getDatabaseConfig = (): DatabaseConfig => ({
   password: process.env.DB_PASSWORD || 'admin',
   // 從環境變數獲取資料庫埠號並轉換為整數，預設為 5432（PostgreSQL 預設埠）
   port: parseInt(process.env.DB_PORT || '5432'),
-  // 設定資料庫類型為 PostgreSQL
-  dialect: 'postgres',
+  // 設定資料庫類型，支援從環境變數切換
+  dialect: (process.env.DB_DIALECT as any) || 'postgres',
   // 根據環境設定日誌記錄：開發環境顯示 SQL 查詢，生產環境關閉日誌
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   

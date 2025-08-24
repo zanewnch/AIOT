@@ -1,0 +1,18 @@
+# act 配置文件
+# 使用 ubuntu:22.04 作為預設執行環境，提供 Node.js 和 Python 支援
+
+# 預設 Docker 映像配置
+-P ubuntu-22.04=catthehacker/ubuntu:act-22.04
+-P ubuntu-latest=catthehacker/ubuntu:act-22.04
+
+# 資源配置
+--container-architecture linux/amd64
+
+# 網路配置 - 使用 host 模式以存取本地 Docker daemon
+--container-options "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
+
+# 工作目錄掛載
+--bind
+
+# 顯示詳細輸出
+--verbose

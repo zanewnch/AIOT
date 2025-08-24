@@ -337,13 +337,11 @@ services:
       - "50055:50055" # gRPC for inter-service communication
       - "3055:3055"   # HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: auth-service
-      GRPC_PORT: 50055
-      HTTP_PORT: 3055
-      # Auth 使用 RBAC 資料庫（共享用戶表）
-      DB_HOST: aiot-rbac-postgres
-      DB_NAME: rbac_db
+      - SERVICE_NAME=auth-service
+      - HTTP_PORT=3055
+      - GRPC_PORT=50055
+      - DB_HOST=aiot-rbac-postgres
+      - DB_NAME=rbac_db
     volumes:
       - ../../microServices/auth-service/src:/app/src
       - ../../microServices/auth-service/package.json:/app/package.json
@@ -380,13 +378,11 @@ services:
       - "50051:50051" # gRPC for inter-service communication
       - "3051:3051"   # HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: rbac-service
-      GRPC_PORT: 50051
-      HTTP_PORT: 3051
-      # RBAC 專用資料庫配置
-      DB_HOST: aiot-rbac-postgres
-      DB_NAME: rbac_db
+      - SERVICE_NAME=rbac-service
+      - HTTP_PORT=3051
+      - GRPC_PORT=50051
+      - DB_HOST=aiot-rbac-postgres
+      - DB_NAME=rbac_db
     volumes:
       - ../../microServices/rbac-service/src:/app/src
       - ../../microServices/rbac-service/package.json:/app/package.json
@@ -423,13 +419,11 @@ services:
       - "50052:50052" # gRPC for inter-service communication
       - "3052:3052"   # HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: drone-service
-      GRPC_PORT: 50052
-      HTTP_PORT: 3052
-      # Drone 專用資料庫配置
-      DB_HOST: aiot-drone-postgres
-      DB_NAME: drone_db
+      - SERVICE_NAME=drone-service
+      - HTTP_PORT=3052
+      - GRPC_PORT=50052
+      - DB_HOST=aiot-drone-postgres
+      - DB_NAME=drone_db
     volumes:
       - ../../microServices/drone-service/src:/app/src
       - ../../microServices/drone-service/package.json:/app/package.json
@@ -467,14 +461,11 @@ services:
     ports:
       - "3004:3004"   # WebSocket 服務
     environment:
-      <<: *common-env
-      SERVICE_NAME: drone-websocket-service
-      SERVICE_PORT: 3004
-      # Drone 專用資料庫配置（共享 Drone DB）
-      DB_HOST: aiot-drone-mysql
-      DB_NAME: drone_db
-      # CORS 配置
-      CORS_ORIGIN: "*"
+      - SERVICE_NAME=drone-websocket-service
+      - SERVICE_PORT=3004
+      - DB_HOST=aiot-drone-postgres
+      - DB_NAME=drone_db
+      - CORS_ORIGIN=*
     volumes:
       - ../../microServices/drone-websocket-service:/app
       - /app/node_modules
@@ -507,13 +498,11 @@ services:
       - "50053:50053" # gRPC for inter-service communication
       - "3053:3053"   # HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: general-service
-      GRPC_PORT: 50053
-      HTTP_PORT: 3053
-      # General 專用資料庫配置
-      DB_HOST: aiot-general-postgres
-      DB_NAME: user_preference_db
+      - SERVICE_NAME=general-service
+      - HTTP_PORT=3053
+      - GRPC_PORT=50053
+      - DB_HOST=aiot-general-postgres
+      - DB_NAME=user_preference_db
     volumes:
       - ../../microServices/general-service/src:/app/src
       - ../../microServices/general-service/package.json:/app/package.json
@@ -550,26 +539,10 @@ services:
     ports:
       - "3001:3001"   # HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: scheduler-service
-      PORT: 3001
-      NODE_ENV: development
-      # 資料庫配置 (使用 Drone 資料庫存放 archive_tasks 表)
-      DB_HOST: aiot-drone-postgres
-      DB_PORT: 5432
-      DB_NAME: drone_db
-      # 日誌設定
-      LOG_LEVEL: info
-      LOG_DIR: ./logs
-      # 排程設定
-      CRON_ARCHIVE_DAILY: "0 2 * * *"
-      CRON_CLEANUP_EXPIRED: "0 4 * * *"
-      TIMEZONE: Asia/Taipei
-      # 監控設定
-      THRESHOLD_CPU_WARNING: 70
-      THRESHOLD_CPU_CRITICAL: 90
-      THRESHOLD_MEMORY_WARNING: 80
-      THRESHOLD_MEMORY_CRITICAL: 95
+      - SERVICE_NAME=scheduler-service
+      - PORT=3001
+      - DB_HOST=aiot-drone-postgres
+      - DB_NAME=drone_db
     volumes:
       - ../../microServices/scheduler-service:/app
       - /app/node_modules
@@ -604,25 +577,10 @@ services:
     ports:
       - "3005:3005"   # HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: archive-processor-service
-      PORT: 3005
-      NODE_ENV: development
-      # 資料庫配置 (使用 Drone 資料庫)
-      DB_HOST: aiot-drone-postgres
-      DB_PORT: 5432
-      DB_NAME: drone_db
-      # 日誌設定
-      LOG_LEVEL: info
-      LOG_DIR: ./logs
-      # 處理器設定
-      CONCURRENCY_LIMIT: 3
-      MAX_RETRY_ATTEMPTS: 3
-      RETRY_DELAY: 300000
-      # 批量處理設定
-      DEFAULT_BATCH_SIZE: 1000
-      BATCH_DELAY_MS: 100
-      CLEANUP_MAX_EXECUTION_HOURS: 2
+      - SERVICE_NAME=archive-processor-service
+      - PORT=3005
+      - DB_HOST=aiot-drone-postgres
+      - DB_NAME=drone_db
     volumes:
       - ../../microServices/archive-consumer-service:/app
       - /app/node_modules
@@ -659,28 +617,15 @@ services:
     ports:
       - "8021:8021"   # FastAPI AI Engine
     environment:
-      <<: *common-env
-      SERVICE_NAME: llm-ai-engine
-      PORT: 8021
-      # AI 模型配置
-      USE_LANGCHAIN: "true"
-      MODEL_NAME: "HuggingFaceTB/SmolLM2-135M-Instruct"
-      MAX_NEW_TOKENS: 200
-      TEMPERATURE: 0.7
-      # 設備配置 (CPU 推理)
-      DEVICE: "cpu"
-      # 資料庫配置 (PostgreSQL for structured data)
-      DB_HOST: aiot-llm-postgres
-      DB_PORT: 5432
-      DB_NAME: llm_ai_db
-      DB_USER: llm_user
-      DB_PASSWORD: llm_password_123
-      # Redis 配置 (for caching and session management)
-      REDIS_HOST: aiot-redis
-      REDIS_PORT: 6379
-      REDIS_DB: 2  # 使用不同的 DB 避免衝突
-      # Chroma 向量資料庫配置
-      CHROMA_PERSIST_DIRECTORY: "./chroma_db"
+      - SERVICE_NAME=llm-ai-engine
+      - PORT=8021
+      - DB_HOST=aiot-llm-postgres
+      - DB_NAME=llm_ai_db
+      - DB_USER=llm_user
+      - DB_PASSWORD=llm_password_123
+      - REDIS_DB=2
+      - USE_LANGCHAIN=true
+      - MODEL_NAME=HuggingFaceTB/SmolLM2-135M-Instruct
     volumes:
       - ../../microServices/llm-ai-engine:/app
       - llm_ai_engine_chroma:/app/chroma_db  # 持久化向量資料庫
@@ -714,29 +659,9 @@ services:
     ports:
       - "8000:8000"   # Gateway HTTP API endpoint
     environment:
-      <<: *common-env
-      SERVICE_NAME: gateway-service
-      PORT: 8000
-      GATEWAY_PORT: 8000
-      NODE_ENV: development
-      # Gateway 不需要資料庫配置，但需要微服務端點配置
-      # 微服務端點配置 (使用 Docker 服務名稱)
-      RBAC_SERVICE_HOST: aiot-rbac-service
-      RBAC_SERVICE_PORT: 50051
-      RBAC_HTTP_PORT: 3051
-      DRONE_SERVICE_HOST: aiot-drone-service  
-      DRONE_SERVICE_PORT: 50052
-      DRONE_HTTP_PORT: 3052
-      GENERAL_SERVICE_HOST: aiot-general-service
-      GENERAL_SERVICE_PORT: 50053
-      GENERAL_HTTP_PORT: 3053
-      DRONE_WEBSOCKET_SERVICE_HOST: aiot-drone-websocket-service
-      DRONE_WEBSOCKET_SERVICE_PORT: 3004
-      # LLM 服務配置
-      LLM_SERVICE_HOST: aiot-llm-service
-      LLM_SERVICE_PORT: 8022
-      LLM_AI_ENGINE_HOST: aiot-llm-ai-engine
-      LLM_AI_ENGINE_PORT: 8021
+      - SERVICE_NAME=gateway-service
+      - PORT=8000
+      - GATEWAY_PORT=8000
     volumes:
       - ../../microServices/gateway-service:/app
       - /app/node_modules
@@ -771,10 +696,6 @@ services:
     container_name: aiot-frontend
     ports:
       - "3000:3000"   # Vite 開發服務器
-    environment:
-      # 前端專用環境變數（不繼承微服務配置）
-      NODE_ENV: development
-      # 其他環境變數使用 .env 文件中的設定，避免衝突
     volumes:
       - ../../frontend:/app/fe
       - /app/fe/node_modules

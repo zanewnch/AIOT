@@ -15,6 +15,7 @@ import { inject, injectable } from 'inversify';
 import { AuthRoutes } from './authRoutes.js';
 import { TYPES } from '../container/types.js';
 import docsRoutes from './docsRoutes.js';
+import readmeRoutes from './readmeRoutes.js';
 import { AuthMCPRoutes } from './mcpRoutes.js';
 
 /**
@@ -56,6 +57,10 @@ class RouteRegistrar {
             // 註冊文檔路由
             app.use('/', docsRoutes);
             console.log('✅ Documentation routes registered at /docs and /typedoc');
+
+            // 註冊 README 路由
+            app.use('/', readmeRoutes);
+            console.log('✅ README route registered at /readme');
 
             console.log('🚀 All Auth routes registered successfully');
         } catch (error) {

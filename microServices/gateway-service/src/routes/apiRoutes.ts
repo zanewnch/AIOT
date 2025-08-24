@@ -293,7 +293,7 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
     );
 
     /**
-     * LLM 服務路由 (Django API 層，需要認證)
+     * LLM 服務路由 - 直接代理到 AI Engine
      * 提供統一的 LLM 介面，包含文字生成、對話和串流功能
      */
     router.use('/llm',
@@ -302,10 +302,10 @@ export function createApiRoutes(healthConfig: HealthConfig): Router {
             checkBlacklist: false  // LLM 服務可以允許未登入用戶使用基本功能
         }),
         proxyMiddleware.createDynamicProxy({
-            target: 'llm-service',
-            pathPrefix: '/api',
+            target: 'llm-ai-engine',
+            pathPrefix: '',
             useGrpc: false,
-            httpPort: 8022,
+            httpPort: 8021,
             timeout: 120000, // LLM 推理需要更長時間
             retries: 2
         })

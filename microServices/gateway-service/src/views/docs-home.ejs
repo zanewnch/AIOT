@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIOT 微服務文檔中心</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,157 +14,282 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 226, 0.3) 0%, transparent 50%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 60px 24px;
+            position: relative;
+        }
+
+        /* 動畫背景 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 30%, rgba(120, 119, 198, 0.05) 50%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .header {
             text-align: center;
-            margin-bottom: 50px;
-            color: white;
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 1;
         }
 
         .header h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #7877c6, #ff77c6, #78dbe2);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: gradient 6s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .header p {
             font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 20px;
+            color: #a0aec0;
+            margin-bottom: 30px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: 1;
         }
 
         .service-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 36px 28px;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
         }
 
         .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(120, 119, 198, 0.3);
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.3),
+                0 16px 32px rgba(120, 119, 198, 0.2);
         }
 
         .service-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotateY(10deg);
         }
 
         .service-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #2d3748;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ffffff;
+            letter-spacing: -0.025em;
         }
 
         .service-description {
-            color: #4a5568;
-            margin-bottom: 25px;
-            line-height: 1.6;
+            color: #a0aec0;
+            margin-bottom: 32px;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            font-weight: 400;
         }
 
         .service-buttons {
             display: flex;
-            gap: 15px;
             justify-content: center;
         }
 
         .doc-button {
             display: inline-flex;
             align-items: center;
-            padding: 12px 20px;
-            border-radius: 25px;
+            justify-content: center;
+            padding: 16px 32px;
+            border-radius: 16px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            min-width: 120px;
-            justify-content: center;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.025em;
         }
 
         .doc-button.primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            color: #ffffff;
+            box-shadow: 0 8px 32px rgba(120, 119, 198, 0.3);
         }
 
-        .doc-button.secondary {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            color: white;
+        .doc-button.primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
         }
 
-        .doc-button:hover {
+        .doc-button.primary:hover::before {
+            left: 100%;
+        }
+
+        .doc-button.primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .doc-button:hover.primary {
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .doc-button:hover.secondary {
-            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+            box-shadow: 0 16px 48px rgba(120, 119, 198, 0.4);
         }
 
         .footer {
             text-align: center;
-            color: white;
-            margin-top: 40px;
-            opacity: 0.8;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
         }
 
         .footer p {
-            margin-bottom: 10px;
+            color: #718096;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            font-weight: 400;
         }
 
         /* 響應式設計 */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
+            .container {
+                padding: 40px 20px;
+            }
+            
+            .header {
+                margin-bottom: 60px;
             }
             
             .services-grid {
                 grid-template-columns: 1fr;
+                gap: 24px;
             }
             
-            .service-buttons {
-                flex-direction: column;
+            .service-card {
+                padding: 28px 24px;
             }
             
             .doc-button {
                 width: 100%;
+                max-width: 280px;
             }
         }
 
-        /* 特殊效果 */
-        .service-card:nth-child(1) .service-icon { color: #e53e3e; }
-        .service-card:nth-child(2) .service-icon { color: #3182ce; }
-        .service-card:nth-child(3) .service-icon { color: #38a169; }
-        .service-card:nth-child(4) .service-icon { color: #d69e2e; }
+        /* 特殊色彩效果 */
+        .service-card:nth-child(1) .service-icon { 
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .service-card:nth-child(2) .service-icon { 
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .service-card:nth-child(3) .service-icon { 
+            background: linear-gradient(135deg, #45b7d1, #96c93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .service-card:nth-child(4) .service-icon { 
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 微動畫 */
+        .service-card {
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .service-card:nth-child(1) { animation-delay: 0.1s; }
+        .service-card:nth-child(2) { animation-delay: 0.2s; }
+        .service-card:nth-child(3) { animation-delay: 0.3s; }
+        .service-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -184,11 +311,8 @@
                     用戶管理 • 角色管理 • 權限控制
                 </div>
                 <div class="service-buttons">
-                    <a href="/api/docs/rbac/docs" class="doc-button primary">
-                        📖 服務說明
-                    </a>
-                    <a href="/api/docs/rbac/typedoc" class="doc-button secondary">
-                        🔧 技術文檔
+                    <a href="/api/rbac/readme" class="doc-button primary">
+                        📖 README 文檔
                     </a>
                 </div>
             </div>
@@ -202,11 +326,8 @@
                     飛行控制 • 位置追蹤 • 狀態監控
                 </div>
                 <div class="service-buttons">
-                    <a href="/api/docs/drone/docs" class="doc-button primary">
-                        📖 服務說明
-                    </a>
-                    <a href="/api/docs/drone/typedoc" class="doc-button secondary">
-                        🔧 技術文檔
+                    <a href="/api/drone/readme" class="doc-button primary">
+                        📖 README 文檔
                     </a>
                 </div>
             </div>
@@ -220,11 +341,8 @@
                     系統設定 • 資料處理 • 工具函數
                 </div>
                 <div class="service-buttons">
-                    <a href="/api/docs/general/docs" class="doc-button primary">
-                        📖 服務說明
-                    </a>
-                    <a href="/api/docs/general/typedoc" class="doc-button secondary">
-                        🔧 技術文檔
+                    <a href="/api/general/readme" class="doc-button primary">
+                        📖 README 文檔
                     </a>
                 </div>
             </div>
@@ -238,11 +356,8 @@
                     JWT 驗證 • Token 管理 • 密碼安全
                 </div>
                 <div class="service-buttons">
-                    <a href="/api/docs/auth/docs" class="doc-button primary">
-                        📖 服務說明
-                    </a>
-                    <a href="/api/docs/auth/typedoc" class="doc-button secondary">
-                        🔧 技術文檔
+                    <a href="/api/auth/readme" class="doc-button primary">
+                        📖 README 文檔
                     </a>
                 </div>
             </div>
