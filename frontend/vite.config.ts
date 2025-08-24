@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -82,6 +83,27 @@ export default defineConfig({
         ".ts": "ts",
         ".tsx": "tsx",
       },
+    },
+  },
+  // Vitest 測試配置
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test-setup.ts'],
+    css: true,
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'src/test-setup.ts',
+        'src/vite-env.d.ts',
+        '**/*.d.ts',
+        '**/types/**',
+        '**/test/**',
+        '**/tests/**',
+        '**/*.test.*',
+        '**/*.spec.*',
+      ],
     },
   },
 });
