@@ -73,7 +73,7 @@ export class DroneGrpcServer {
     this.server = new grpc.Server({
       'grpc.keepalive_time_ms': 30000,
       'grpc.keepalive_timeout_ms': 5000,
-      'grpc.keepalive_permit_without_calls': true,
+      'grpc.keepalive_permit_without_calls': 1,
       'grpc.http2.max_pings_without_data': 0,
       'grpc.http2.min_time_between_pings_ms': 10000,
       'grpc.http2.min_ping_interval_without_data_ms': 300000,
@@ -290,11 +290,11 @@ export class DroneGrpcServer {
 
   // ========== 無人機狀態管理方法 ==========
   private async getDroneStatuses(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneStatusQueries.getDroneStatuses.bind(this.droneStatusQueries), call.request, callback);
+    await this.executeControllerMethod(this.droneStatusQueries.getAllStatusesPaginated.bind(this.droneStatusQueries), call.request, callback);
   }
 
   private async getDroneStatusById(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneStatusQueries.getDroneStatusById.bind(this.droneStatusQueries), { id: call.request.status_id }, callback);
+    await this.executeControllerMethod(this.droneStatusQueries.getStatusesByDroneIdPaginated.bind(this.droneStatusQueries), { droneId: call.request.status_id }, callback);
   }
 
   private async createDroneStatus(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
@@ -312,11 +312,11 @@ export class DroneGrpcServer {
 
   // ========== 無人機位置管理方法 ==========
   private async getDronePositions(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.dronePositionQueries.getDronePositions.bind(this.dronePositionQueries), call.request, callback);
+    await this.executeControllerMethod(this.dronePositionQueries.getAllPositionsPaginated.bind(this.dronePositionQueries), call.request, callback);
   }
 
   private async getDronePositionById(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.dronePositionQueries.getDronePositionById.bind(this.dronePositionQueries), { id: call.request.position_id }, callback);
+    await this.executeControllerMethod(this.dronePositionQueries.getAllPositionsPaginated.bind(this.dronePositionQueries), call.request, callback);
   }
 
   private async createDronePosition(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
@@ -334,16 +334,21 @@ export class DroneGrpcServer {
 
   // ========== 無人機命令管理方法 ==========
   private async getDroneCommands(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneCommandQueries.getDroneCommands.bind(this.droneCommandQueries), call.request, callback);
+    await this.executeControllerMethod(this.droneCommandQueries.getAllCommandsPaginated.bind(this.droneCommandQueries), call.request, callback);
   }
 
   private async getDroneCommandById(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneCommandQueries.getDroneCommandById.bind(this.droneCommandQueries), { id: call.request.command_id }, callback);
+    await this.executeControllerMethod(this.droneCommandQueries.getAllCommandsPaginated.bind(this.droneCommandQueries), call.request, callback);
   }
 
   private async createDroneCommand(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
+    // Create wrapper to match expected signature (req, res) instead of (req, res, next)
+    const wrapperMethod = async (req: any, res: any): Promise<void> => {
+      return await this.droneCommandCommands.createCommand(req, res, () => {}); 
+    };
+    
     await this.executeControllerMethod(
-      this.droneCommandCommands.createDroneCommand.bind(this.droneCommandCommands), 
+      wrapperMethod, 
       call.request, 
       callback,
       {
@@ -354,8 +359,12 @@ export class DroneGrpcServer {
   }
 
   private async updateDroneCommand(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
+    const wrapperMethod = async (req: any, res: any): Promise<void> => {
+      return await this.droneCommandCommands.updateCommand(req, res, () => {}); 
+    };
+    
     await this.executeControllerMethod(
-      this.droneCommandCommands.updateDroneCommand.bind(this.droneCommandCommands), 
+      wrapperMethod, 
       { id: call.request.command_id, ...call.request }, 
       callback,
       {
@@ -366,8 +375,12 @@ export class DroneGrpcServer {
   }
 
   private async deleteDroneCommand(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
+    const wrapperMethod = async (req: any, res: any): Promise<void> => {
+      return await this.droneCommandCommands.deleteCommand(req, res, () => {}); 
+    };
+    
     await this.executeControllerMethod(
-      this.droneCommandCommands.deleteDroneCommand.bind(this.droneCommandCommands), 
+      wrapperMethod, 
       { id: call.request.command_id }, 
       callback,
       {
@@ -379,33 +392,45 @@ export class DroneGrpcServer {
 
   // ========== 無人機命令佇列管理方法 ==========
   private async getDroneCommandQueue(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneCommandQueueQueries.getDroneCommandQueue.bind(this.droneCommandQueueQueries), call.request, callback);
+    await this.executeControllerMethod(this.droneCommandQueueQueries.getAllDroneCommandQueuesPaginated.bind(this.droneCommandQueueQueries), call.request, callback);
   }
 
   private async addToCommandQueue(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneCommandQueueCommands.addToCommandQueue.bind(this.droneCommandQueueCommands), call.request, callback);
+    const wrapperMethod = async (req: any, res: any): Promise<void> => {
+      return await this.droneCommandQueueCommands.addCommandToQueue(req, res, () => {}); 
+    };
+    
+    await this.executeControllerMethod(wrapperMethod, call.request, callback);
   }
 
   private async removeFromCommandQueue(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneCommandQueueCommands.removeFromCommandQueue.bind(this.droneCommandQueueCommands), { id: call.request.queue_id }, callback);
+    const wrapperMethod = async (req: any, res: any): Promise<void> => {
+      return await this.droneCommandQueueCommands.dequeueDroneCommand(req, res, () => {}); 
+    };
+    
+    await this.executeControllerMethod(wrapperMethod, { id: call.request.queue_id }, callback);
   }
 
   // ========== 無人機即時狀態方法 ==========
   private async getDroneRealTimeStatus(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneRealTimeStatusQueries.getDroneRealTimeStatus.bind(this.droneRealTimeStatusQueries), call.request, callback);
+    await this.executeControllerMethod(this.droneRealTimeStatusQueries.getAllRealTimeStatusesPaginated.bind(this.droneRealTimeStatusQueries), call.request, callback);
   }
 
   private async updateDroneRealTimeStatus(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.droneRealTimeStatusCommands.updateDroneRealTimeStatus.bind(this.droneRealTimeStatusCommands), call.request, callback);
+    const wrapperMethod = async (req: any, res: any): Promise<void> => {
+      return await this.droneRealTimeStatusCommands.updateDroneRealTimeStatus(req, res, () => {}); 
+    };
+    
+    await this.executeControllerMethod(wrapperMethod, call.request, callback);
   }
 
   // ========== 封存任務管理方法 ==========
   private async getArchiveTasks(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.archiveTaskQueries.getArchiveTasks.bind(this.archiveTaskQueries), call.request, callback);
+    await this.executeControllerMethod(this.archiveTaskQueries.getAllTasksPaginated.bind(this.archiveTaskQueries), call.request, callback);
   }
 
   private async createArchiveTask(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void> {
-    await this.executeControllerMethod(this.archiveTaskCommands.createArchiveTask.bind(this.archiveTaskCommands), call.request, callback);
+    await this.executeControllerMethod(this.archiveTaskCommands.createTask.bind(this.archiveTaskCommands), call.request, callback);
   }
 
   /**

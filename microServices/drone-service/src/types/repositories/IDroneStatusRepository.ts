@@ -14,4 +14,9 @@ export interface IDroneStatusRepository {
   findByBatteryRange(min: number, max: number): Promise<any[]>;
   findActiveStatuses(): Promise<any[]>;
   findInactiveStatuses(): Promise<any[]>;
+  
+  // 新增缺失的方法
+  update(id: number, data: any): Promise<any>;
+  delete(id: number): Promise<void>;
+  updateStatus(id: number, status: any): Promise<any>;
 }

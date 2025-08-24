@@ -42,7 +42,8 @@ export class GatewayApp {
     private logger = loggerConfig;
     private consulConfig!: ConsulConfig;
     private healthConfig!: HealthConfig;
-    private socketIoProxy: any; // 添加 node-http-proxy 實例
+    private socketIoProxy: any;
+    private llmWebSocketProxy: any; // 添加 node-http-proxy 實例
 
     constructor() {
         this.app = express();
@@ -53,6 +54,7 @@ export class GatewayApp {
         // 初始化應用程式
         this.initializeMiddleware();
         this.initializeWebSocketProxying(); // 🔑 WebSocket 代理必須在其他路由之前
+        this.initializeLLMWebSocketProxying(); // 🤖 LLM WebSocket 代理
         this.initializeRoutes();
         this.initializeErrorHandling();
     }
@@ -251,6 +253,104 @@ export class GatewayApp {
     }
 
     /**
+     * 初始化 LLM WebSocket 代理
+     * @description 使用 node-http-proxy 實現 LLM AI Engine WebSocket 代理
+     */
+    private initializeLLMWebSocketProxying(): void {
+        try {
+            this.logger.info('🤖 Initializing node-http-proxy for LLM WebSocket...');
+            
+            // 創建 LLM WebSocket 代理實例
+            this.llmWebSocketProxy = httpProxy.createProxyServer({
+                target: 'http://aiot-llm-ai-engine:8021',
+                changeOrigin: true,
+                ws: true, // 🔑 啟用 WebSocket 支援
+                secure: false,
+                timeout: 120000, // 2 分鐘超時（AI 推理可能較慢）
+                proxyTimeout: 120000
+            });
+
+            // 監聽代理事件
+            this.llmWebSocketProxy.on('proxyReq', (proxyReq, req, res) => {
+                this.logger.info(`🤖 LLM HTTP Proxy: ${req.method} ${req.url}`);
+                
+                // 添加認證 headers
+                const authToken = (req as any).cookies?.auth_token || req.headers?.authorization;
+                if (authToken) {
+                    proxyReq.setHeader('X-Auth-Token', authToken);
+                    this.logger.debug('🔐 Added auth token to LLM HTTP request');
+                }
+                
+                // 添加用戶資訊
+                const userId = (req as any).user?.id || req.headers['x-user-id'];
+                if (userId) {
+                    proxyReq.setHeader('X-User-ID', userId);
+                }
+            });
+
+            this.llmWebSocketProxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+                this.logger.info(`🤖 LLM WebSocket Proxy: ${req.url}`);
+                
+                // 為 WebSocket 添加認證 headers
+                const authToken = req.headers?.cookie?.match(/auth_token=([^;]+)/)?.[1];
+                if (authToken) {
+                    proxyReq.setHeader('X-Auth-Token', authToken);
+                    this.logger.debug('🔐 Added auth token to LLM WebSocket request');
+                }
+                
+                // 添加用戶資訊
+                const userId = req.headers['x-user-id'];
+                if (userId) {
+                    proxyReq.setHeader('X-User-ID', userId);
+                }
+            });
+
+            this.llmWebSocketProxy.on('error', (err, req, res) => {
+                this.logger.error('❌ LLM WebSocket Proxy Error:', {
+                    error: err.message,
+                    url: req.url,
+                    method: req.method
+                });
+                
+                // 處理錯誤回應
+                if (res && typeof res.status === 'function' && !res.headersSent) {
+                    res.status(502).json({
+                        error: 'LLM WebSocket proxy error',
+                        message: err.message
+                    });
+                } else if (res && typeof res.writeHead === 'function') {
+                    try {
+                        res.writeHead(502, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({
+                            error: 'LLM WebSocket proxy error',
+                            message: err.message
+                        }));
+                    } catch (writeError) {
+                        this.logger.error('❌ Failed to write LLM error response:', writeError);
+                    }
+                }
+            });
+
+            // 代理 LLM WebSocket 請求
+            this.app.all('/ws', (req: Request, res: Response) => {
+                this.logger.info(`🤖 Proxying LLM WebSocket HTTP request: ${req.method} ${req.url}`);
+                this.llmWebSocketProxy.web(req, res);
+            });
+            
+            this.app.all('/ws/*', (req: Request, res: Response) => {
+                this.logger.info(`🤖 Proxying LLM WebSocket HTTP request: ${req.method} ${req.url}`);
+                this.llmWebSocketProxy.web(req, res);
+            });
+            
+            this.logger.info('✅ node-http-proxy for LLM WebSocket initialized: /ws/* -> aiot-llm-ai-engine:8021');
+            
+        } catch (error) {
+            this.logger.error('❌ LLM WebSocket proxy initialization failed:', error);
+            throw error;
+        }
+    }
+
+    /**
      * 初始化錯誤處理
      * @description 設置全域錯誤處理中間件
      */
@@ -331,8 +431,13 @@ export class GatewayApp {
                 
                 // 使用 node-http-proxy 處理 WebSocket 升級
                 this.socketIoProxy.ws(request, socket, head);
+            } else if (request.url?.startsWith('/ws')) {
+                this.logger.info('🤖 Proxying LLM WebSocket upgrade via node-http-proxy');
+                
+                // 使用 LLM WebSocket 代理處理升級
+                this.llmWebSocketProxy.ws(request, socket, head);
             } else {
-                this.logger.warn(`❌ Non-Socket.IO WebSocket upgrade rejected: ${request.url}`);
+                this.logger.warn(`❌ Unsupported WebSocket upgrade rejected: ${request.url}`);
                 socket.destroy();
             }
         });

@@ -8,16 +8,14 @@
  * @since 2025-08-12
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 /**
  * 無人機命令佇列查詢控制器介面
  */
 export interface IDroneCommandQueueQueries {
-    getAllQueuedCommands(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getQueuedCommandById(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getQueuedCommandsByDroneId(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getQueueStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getQueueStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getPendingDroneCommandQueues(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllDroneCommandQueuesPaginated(req: Request, res: Response): Promise<void>;
+    getDroneCommandQueuesByDroneIdPaginated(req: Request, res: Response): Promise<void>;
+    getDroneCommandQueuesByStatusPaginated(req: Request, res: Response): Promise<void>;
+    getDroneCommandQueuesByPriorityPaginated(req: Request, res: Response): Promise<void>;
 }

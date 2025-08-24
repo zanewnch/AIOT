@@ -183,14 +183,14 @@ export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
 };
 
 /**
- * API 端點常數
+ * API 端點常數 - FastAPI 直接端點
  */
 export const CHAT_API_ENDPOINTS = {
-  GENERATE: '/transformers/generate/',
-  CONVERSATION: '/transformers/conversation/',
-  STREAM: '/transformers/stream/',
-  DOCUMENTS: '/transformers/documents/',
-  HEALTH: '/transformers/health/'
+  GENERATE: '/generate',
+  CONVERSATION: '/conversational',
+  STREAM: '/stream',
+  DOCUMENTS: '/documents',
+  HEALTH: '/health'
 } as const;
 
 /**

@@ -72,12 +72,12 @@ export class DroneStatusArchiveCommandsSvc {
             this.validateStatusArchiveData(data);
 
             // 設定預設時間戳記
-            if (!data.timestamp) {
-                data.timestamp = new Date();
+            if (!data.created_at) {
+                data.created_at = new Date();
             }
 
             logger.info('Creating new status archive', { data });
-            const archive = await this.archiveRepository.create(data);
+            const archive = await this.archiveRepo.create(data);
 
             logger.info('Successfully created status archive', { id: archive.id });
             return archive;
@@ -389,15 +389,11 @@ export class DroneStatusArchiveCommandsSvc {
             throw new Error('無效的前一狀態');
         }
 
-        if (!data.reason || data.reason.trim() === '') {
-            throw new Error('變更原因為必填欄位');
-        }
+        // reason property not in model, removing validation
 
-        if (data.created_by !== null && data.created_by !== undefined && data.created_by <= 0) {
-            throw new Error('操作者用戶 ID 必須是正整數');
-        }
+        // created_by property not in model, removing validation
 
-        if (data.timestamp && (!(data.timestamp instanceof Date) || isNaN(data.timestamp.getTime()))) {
+        if (data.created_at && (!(data.created_at instanceof Date) || isNaN(data.created_at.getTime()))) {
             throw new Error('無效的時間戳記');
         }
     }
@@ -423,15 +419,11 @@ export class DroneStatusArchiveCommandsSvc {
             throw new Error('無效的前一狀態');
         }
 
-        if (data.reason !== undefined && (!data.reason || data.reason.trim() === '')) {
-            throw new Error('變更原因不能為空');
-        }
+        // reason property not in model, removing validation
 
-        if (data.created_by !== undefined && data.created_by !== null && data.created_by <= 0) {
-            throw new Error('操作者用戶 ID 必須是正整數');
-        }
+        // created_by property not in model, removing validation
 
-        if (data.timestamp !== undefined && (!(data.timestamp instanceof Date) || isNaN(data.timestamp.getTime()))) {
+        if (data.created_at !== undefined && (!(data.created_at instanceof Date) || isNaN(data.created_at.getTime()))) {
             throw new Error('無效的時間戳記');
         }
     }

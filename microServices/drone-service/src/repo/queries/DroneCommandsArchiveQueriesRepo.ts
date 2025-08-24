@@ -11,14 +11,23 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { DroneCommandsArchiveModel, type DroneCommandsArchiveAttributes } from '../../models/DroneCommandsArchiveModel.js';
-import type { PaginationParams, PaginatedResponse } from '../types/ApiResponseType.js';
+import { DroneCommandsArchiveModel } from '../../models/DroneCommandsArchiveModel.js';
+import { PaginationRequestDto } from '../../dto/index.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Op } from 'sequelize';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 // 創建 Repository 專用的日誌記錄器
 const logger = createLogger('DroneCommandsArchiveQueriesRepo');
+
+/**
+ * 統一分頁查詢結果接口
+ */
+export interface PaginatedResult<T> {
+  data: T[];
+  totalCount: number;
+  currentPage: number;
+  pageSize: number;
+}
 
 /**
  * 無人機指令歷史歸檔查詢 Repository 實現類別 - CQRS 查詢端
@@ -29,303 +38,100 @@ const logger = createLogger('DroneCommandsArchiveQueriesRepo');
  */
 @injectable()
 export class DroneCommandsArchiveQueriesRepo {
-    /**
-     * 取得所有指令歷史歸檔資料
-     *
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
-     */
-    selectAll = async (limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Fetching all drone commands archive data', { limit });
-            const archives = await DroneCommandsArchiveModel.findAll({
-                order: [['created_at', 'DESC']],
-                limit
-            });
-
-            logger.info(`Successfully fetched ${archives.length} commands archive records`);
-            return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
-        } catch (error) {
-            logger.error('Error fetching all drone commands archive data', { error });
-            throw error;
-        }
-    }
 
     /**
-     * 取得分頁指令歷史歸檔資料
-     *
-     * @param {PaginationParams} params - 分頁參數
-     * @returns {Promise<PaginatedResponse<DroneCommandsArchiveAttributes>>} 分頁歷史歸檔資料
+     * 統一分頁查詢方法
+     * 
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @param {Record<string, any>} filters - 額外篩選條件
+     * @returns {Promise<PaginatedResult<DroneCommandsArchiveModel>>} 分頁結果
      */
-    selectPagination = async (params: PaginationParams): Promise<PaginatedResponse<DroneCommandsArchiveAttributes>> => {
+    findPaginated = async (
+        pagination: PaginationRequestDto,
+        filters: Record<string, any> = {}
+    ): Promise<PaginatedResult<DroneCommandsArchiveModel>> => {
         try {
-            const { page = 1, limit = 10, sortBy = 'created_at', sortOrder = 'DESC' } = params;
-            const offset = (page - 1) * limit;
+            const { page = 1, pageSize = 20, sortBy = 'created_at', sortOrder = 'DESC', search } = pagination;
+            const offset = (page - 1) * pageSize;
 
-            logger.info('Fetching paginated drone commands archive', { page, limit, sortBy, sortOrder });
+            logger.info('Fetching paginated drone commands archive', { pagination, filters });
 
-            // 統計總數
-            const totalItems = await DroneCommandsArchiveModel.count();
-            const totalPages = Math.ceil(totalItems / limit);
+            // 建立查詢條件
+            let whereCondition: any = { ...filters };
 
-            // 取得分頁資料
-            const archives = await DroneCommandsArchiveModel.findAll({
+            // 搜尋條件 - 可以根據實際需求調整搜尋欄位
+            if (search) {
+                whereCondition = {
+                    ...whereCondition,
+                    [Op.or as any]: [
+                        { '$command_type$': { [Op.like]: `%${search}%` } },
+                        { '$status$': { [Op.like]: `%${search}%` } }
+                    ]
+                };
+            }
+
+            // 查詢分頁數據
+            const { count: totalCount, rows: data } = await DroneCommandsArchiveModel.findAndCountAll({
+                where: whereCondition,
                 order: [[sortBy, sortOrder]],
-                limit,
-                offset
+                limit: pageSize,
+                offset: offset
             });
 
-            const data = archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
-
-            const response: PaginatedResponse<DroneCommandsArchiveAttributes> = {
+            const result: PaginatedResult<DroneCommandsArchiveModel> = {
                 data,
-                pagination: {
-                    page: page,
-                    limit,
-                    totalItems,
-                    totalPages,
-                    hasNext: page < totalPages,
-                    hasPrev: page > 1
-                }
+                totalCount,
+                currentPage: page,
+                pageSize
             };
 
-            logger.info(`Successfully fetched paginated commands archive: page ${page}/${totalPages}, ${data.length} records`);
-            return response;
+            logger.info(`Successfully fetched paginated commands archive: page ${page}, ${data.length}/${totalCount} records`);
+            return result;
         } catch (error) {
-            logger.error('Error fetching paginated drone commands archive', { params, error });
+            logger.error('Error fetching paginated commands archive', { pagination, filters, error });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據 ID 取得指定指令歷史歸檔資料
-     *
-     * @param {number} id - 歸檔資料 ID
-     * @returns {Promise<DroneCommandsArchiveAttributes | null>} 指令歷史歸檔資料或 null
-     */
-    selectById = async (id: number): Promise<DroneCommandsArchiveAttributes | null> => {
-        try {
-            logger.info('Fetching drone command archive by ID', { id });
-            const archive = await DroneCommandsArchiveModel.findByPk(id);
-
-            if (archive) {
-                logger.info('Successfully fetched command archive by ID', { id });
-                return archive.toJSON() as DroneCommandsArchiveAttributes;
-            } else {
-                logger.warn('Command archive not found', { id });
-                return null;
-            }
-        } catch (error) {
-            logger.error('Error fetching drone command archive by ID', { id, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據無人機 ID 取得指令歷史歸檔資料
-     *
+     * 根據無人機 ID 分頁查詢歷史歸檔
+     * 
      * @param {number} droneId - 無人機 ID
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @returns {Promise<PaginatedResult<DroneCommandsArchiveModel>>} 分頁結果
      */
-    selectByDroneId = async (droneId: number, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Fetching drone command archives by drone ID', { droneId, limit });
-            const archives = await DroneCommandsArchiveModel.findAll({
-                where: { drone_id: droneId },
-                order: [['created_at', 'DESC']],
-                limit
-            });
-
-            logger.info(`Successfully fetched ${archives.length} commands archive records for drone`, { droneId });
-            return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
-        } catch (error) {
-            logger.error('Error fetching drone command archives by drone ID', { droneId, error });
-            throw error;
-        }
-    }
+    findByDroneIdPaginated = async (
+        droneId: number,
+        pagination: PaginationRequestDto
+    ): Promise<PaginatedResult<DroneCommandsArchiveModel>> => {
+        return this.findPaginated(pagination, { drone_id: droneId });
+    };
 
     /**
-     * 根據時間範圍取得指令歷史歸檔資料
-     *
-     * @param {Date} startTime - 開始時間
-     * @param {Date} endTime - 結束時間
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
-     */
-    selectByTimeRange = async (startTime: Date, endTime: Date, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Fetching drone command archives by time range', { startTime, endTime, limit });
-            const archives = await DroneCommandsArchiveModel.findAll({
-                where: {
-                    created_at: {
-                        [Op.between]: [startTime, endTime]
-                    }
-                },
-                order: [['created_at', 'DESC']],
-                limit
-            });
-
-            logger.info(`Successfully fetched ${archives.length} commands archive records for time range`);
-            return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
-        } catch (error) {
-            logger.error('Error fetching drone command archives by time range', { startTime, endTime, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據指令類型取得指令歷史歸檔資料
-     *
+     * 根據指令類型分頁查詢歷史歸檔
+     * 
      * @param {string} commandType - 指令類型
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @returns {Promise<PaginatedResult<DroneCommandsArchiveModel>>} 分頁結果
      */
-    selectByCommandType = async (commandType: string, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Fetching drone command archives by command type', { commandType, limit });
-            const archives = await DroneCommandsArchiveModel.findAll({
-                where: { command_type: commandType },
-                order: [['created_at', 'DESC']],
-                limit
-            });
-
-            logger.info(`Successfully fetched ${archives.length} commands archive records for command type`, { commandType });
-            return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
-        } catch (error) {
-            logger.error('Error fetching drone command archives by command type', { commandType, error });
-            throw error;
-        }
-    }
+    findByCommandTypePaginated = async (
+        commandType: string,
+        pagination: PaginationRequestDto
+    ): Promise<PaginatedResult<DroneCommandsArchiveModel>> => {
+        return this.findPaginated(pagination, { command_type: commandType });
+    };
 
     /**
-     * 根據指令狀態取得指令歷史歸檔資料
-     *
+     * 根據狀態分頁查詢歷史歸檔
+     * 
      * @param {string} status - 指令狀態
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @returns {Promise<PaginatedResult<DroneCommandsArchiveModel>>} 分頁結果
      */
-    selectByStatus = async (status: string, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Fetching drone command archives by status', { status, limit });
-            const archives = await DroneCommandsArchiveModel.findAll({
-                where: { status },
-                order: [['created_at', 'DESC']],
-                limit
-            });
-
-            logger.info(`Successfully fetched ${archives.length} commands archive records for status`, { status });
-            return archives.map(item => item.toJSON() as DroneCommandsArchiveAttributes);
-        } catch (error) {
-            logger.error('Error fetching drone command archives by status', { status, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 統計總歷史歸檔數量
-     *
-     * @returns {Promise<number>} 總歷史歸檔數量
-     */
-    count = async (): Promise<number> => {
-        try {
-            logger.info('Counting total drone commands archive');
-            const count = await DroneCommandsArchiveModel.count();
-
-            logger.info(`Total commands archive count: ${count}`);
-            return count;
-        } catch (error) {
-            logger.error('Error counting drone commands archive', { error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據無人機 ID 統計歷史歸檔數量
-     *
-     * @param {number} droneId - 無人機 ID
-     * @returns {Promise<number>} 指定無人機的歷史歸檔數量
-     */
-    countByDroneId = async (droneId: number): Promise<number> => {
-        try {
-            logger.info('Counting drone commands archive by drone ID', { droneId });
-            const count = await DroneCommandsArchiveModel.count({
-                where: { drone_id: droneId }
-            });
-
-            logger.info(`Commands archive for drone ${droneId}: ${count}`);
-            return count;
-        } catch (error) {
-            logger.error('Error counting drone commands archive by drone ID', { droneId, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據指令類型統計歷史歸檔數量
-     *
-     * @param {string} commandType - 指令類型
-     * @returns {Promise<number>} 指定類型的歷史歸檔數量
-     */
-    countByCommandType = async (commandType: string): Promise<number> => {
-        try {
-            logger.info('Counting drone commands archive by command type', { commandType });
-            const count = await DroneCommandsArchiveModel.count({
-                where: { command_type: commandType }
-            });
-
-            logger.info(`Commands archive of type ${commandType}: ${count}`);
-            return count;
-        } catch (error) {
-            logger.error('Error counting drone commands archive by command type', { commandType, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據時間範圍統計歷史歸檔數量
-     *
-     * @param {Date} startTime - 開始時間
-     * @param {Date} endTime - 結束時間
-     * @returns {Promise<number>} 指定時間範圍的歷史歸檔數量
-     */
-    countByTimeRange = async (startTime: Date, endTime: Date): Promise<number> => {
-        try {
-            logger.info('Counting drone commands archive by time range', { startTime, endTime });
-            const count = await DroneCommandsArchiveModel.count({
-                where: {
-                    created_at: {
-                        [Op.between]: [startTime, endTime]
-                    }
-                }
-            });
-
-            logger.info(`Commands archive in time range: ${count}`);
-            return count;
-        } catch (error) {
-            logger.error('Error counting drone commands archive by time range', { startTime, endTime, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據狀態統計歷史歸檔數量
-     *
-     * @param {string} status - 指令狀態
-     * @returns {Promise<number>} 指定狀態的歷史歸檔數量
-     */
-    countByStatus = async (status: string): Promise<number> => {
-        try {
-            logger.info('Counting drone commands archive by status', { status });
-            const count = await DroneCommandsArchiveModel.count({
-                where: { status }
-            });
-
-            logger.info(`Commands archive with status ${status}: ${count}`);
-            return count;
-        } catch (error) {
-            logger.error('Error counting drone commands archive by status', { status, error });
-            throw error;
-        }
-    }
+    findByStatusPaginated = async (
+        status: string,
+        pagination: PaginationRequestDto
+    ): Promise<PaginatedResult<DroneCommandsArchiveModel>> => {
+        return this.findPaginated(pagination, { status });
+    };
 }

@@ -17,6 +17,7 @@ import { Application } from 'express';
 import { UserPreferenceRoutes } from './userPreferenceRoutes.js';
 import { DocsRoutes } from './docsRoutes.js';
 import { HealthRoutes } from './healthRoutes.js';
+import { MCPRoutes } from './mcpRoutes.js';
 import simpleDocsRoutes from './simpleDocsRoutes.js';
 import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
@@ -36,7 +37,8 @@ export class RouteRegistrar {
     constructor(
         @inject(TYPES.HealthRoutes) private readonly healthRoutes: HealthRoutes,
         @inject(TYPES.UserPreferenceRoutes) private readonly userPreferenceRoutes: UserPreferenceRoutes,
-        @inject(TYPES.DocsRoutes) private readonly docsRoutes: DocsRoutes
+        @inject(TYPES.DocsRoutes) private readonly docsRoutes: DocsRoutes,
+        @inject(TYPES.MCPRoutes) private readonly mcpRoutes: MCPRoutes
     ) {}
 
     /**
@@ -63,6 +65,10 @@ export class RouteRegistrar {
             // 註冊統一文檔路由 (/docs 和 /typedoc)
             app.use('/', simpleDocsRoutes);
             logger.info('✅ Unified documentation routes registered at /docs and /typedoc');
+
+            // 註冊 MCP 工具路由 (API Gateway: /api/mcp → strip_path=true → 轉發到 /api/mcp)
+            app.use('/api/mcp', this.mcpRoutes.getRouter());
+            logger.info('✅ MCP routes registered at /api/mcp');
 
             // 註冊全域錯誤處理
             this.registerGlobalErrorHandling(app);

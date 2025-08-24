@@ -22,7 +22,7 @@ export function createDocsRoutes(): Router {
      * Drone 服務說明頁面 (EJS)
      * 提供人類可讀的服務功能介紹和使用範例
      */
-    router.get('/docs', (req, res) => {
+    router.get('/docs', (req, res, next) => {
         try {
             const serviceInfo = {
                 serviceName: 'Drone Service',
@@ -46,7 +46,7 @@ export function createDocsRoutes(): Router {
      * TypeDoc 技術文檔
      * 直接服務 TypeDoc 生成的 HTML 檔案
      */
-    router.get('/typedoc', (req, res) => {
+    router.get('/typedoc', (req, res, next) => {
         try {
             const docsPath = path.join(__dirname, '../../docs/index.html');
             
@@ -81,7 +81,7 @@ export function createDocsRoutes(): Router {
     /**
      * 文檔健康檢查
      */
-    router.get('/health', (req, res) => {
+    router.get('/health', (req, res, next) => {
         res.json({
             status: 200,
             message: 'Drone Service documentation is available',

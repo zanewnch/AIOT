@@ -156,6 +156,11 @@ class RbacRoutes {
 }
 
 /**
- * 匯出 RBAC 路由實例
+ * 建立 RBAC 路由實例的工廠函數
+ * 
+ * @returns {Router} Express 路由器實例
  */
-export const router = new RbacRoutes().getRouter();
+export const createRbacRouter = (): Router => {
+  const rbacRoutes = new RbacRoutes();
+  return rbacRoutes.getRouter();
+};

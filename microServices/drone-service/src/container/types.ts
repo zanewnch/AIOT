@@ -497,6 +497,11 @@ export const TYPES = {
   DroneCommandCommandsRepository: Symbol.for('DroneCommandCommandsRepository'),
 
   /**
+   * 無人機命令佇列查詢儲存庫類型
+   */
+  DroneCommandQueueQueriesRepo: Symbol.for('DroneCommandQueueQueriesRepo'),
+
+  /**
    * 歸檔任務查詢儲存庫類型
    */
   ArchiveTaskQueriesRepo: Symbol.for('ArchiveTaskQueriesRepo'),
@@ -565,7 +570,12 @@ export const TYPES = {
   /**
    * 路由管理器類型
    */
-  RouteRegistrar: Symbol.for('RouteRegistrar')
+  RouteRegistrar: Symbol.for('RouteRegistrar'),
+
+  /**
+   * Drone MCP 路由類型
+   */
+  DroneMCPRoutes: Symbol.for('DroneMCPRoutes')
 } as const;
 
 /**

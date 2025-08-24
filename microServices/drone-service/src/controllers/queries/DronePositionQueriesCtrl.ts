@@ -13,12 +13,13 @@
 
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {DronePositionQueriesSvc} from '../../services/queries/DronePositionQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
-import {IDronePositionQueriesCtrl} from '../../types/controllers/queries/IDronePositionQueriesCtrl.js';
+import {IDronePositionQueries} from '../../types/controllers/queries/IDronePositionQueries.js';
 import {TYPES} from '../../container/types.js';
+import {PaginationRequestDto} from '../../dto/index.js';
 
 const logger = createLogger('DronePositionQueriesCtrl');
 
@@ -32,172 +33,148 @@ const logger = createLogger('DronePositionQueriesCtrl');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionQueriesCtrl implements IDronePositionQueriesCtrl {
+export class DronePositionQueriesCtrl implements IDronePositionQueries {
     constructor(
         @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesSvc: DronePositionQueriesSvc
     ) {
     }
 
     /**
-     * 取得所有無人機位置資料（支援分頁）
-     * @route GET /api/drone-position/data
-     * @query page - 頁碼（從 1 開始）
-     * @query pageSize - 每頁數量
-     * @query sortBy - 排序欄位
-     * @query sortOrder - 排序方向（ASC/DESC）
+     * 分頁查詢所有無人機位置（新增）
+     * @route GET /api/drone-positions/data/paginated
      */
-    getAllDronePositions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getAllPositionsPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            // 解析分頁參數
-            const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 10;
-            const sortBy = (req.query.sortBy as string) || 'id';
-            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'timestamp',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const paginationParams = { page, pageSize, sortBy, sortOrder };
+            const paginatedResult = await this.dronePositionQueriesSvc.getAllPositionsPaginated(pagination);
+            const result = ResResult.fromPaginatedResponse('無人機位置分頁查詢成功', paginatedResult);
+            
+            res.status(result.status).json(result);
+        } catch (error) {
+            logger.error('分頁查詢無人機位置失敗', { error });
+            const result = ResResult.internalError('分頁查詢無人機位置失敗');
+            res.status(result.status).json(result);
+        }
+    };
 
-            // 檢查是否需要分頁（如果沒有分頁參數，使用舊的無分頁查詢）
-            if (!req.query.page && !req.query.pageSize) {
-                // 向後兼容：沒有分頁參數時返回所有數據
-                const positions = await this.dronePositionQueriesSvc.getAllDronePositions();
-                const result = ResResult.success('無人機位置資料獲取成功', positions);
+    /**
+     * 根據無人機 ID 分頁查詢位置（新增）
+     * @route GET /api/drone-positions/data/drone/:droneId/paginated
+     */
+    getPositionsByDroneIdPaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const droneId = parseInt(req.params.droneId, 10);
+
+            if (isNaN(droneId)) {
+                const result = ResResult.badRequest('無效的無人機 ID');
                 res.status(result.status).json(result);
                 return;
             }
 
-            // 使用分頁查詢
-            const paginatedResult = await this.dronePositionQueriesSvc.getAllDronePositions(paginationParams);
-            const result = ResResult.success('無人機位置資料獲取成功', paginatedResult);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'timestamp',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.dronePositionQueriesSvc.getPositionsByDroneIdPaginated(droneId, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `無人機 ${droneId} 的位置分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據無人機 ID 分頁查詢位置失敗', { error });
+            const result = ResResult.internalError('根據無人機 ID 分頁查詢位置失敗');
+            res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據 ID 取得無人機位置資料
-     * @route GET /api/drone-position/data/:id
+     * 根據 ID 取得無人機位置資料（新版統一方法）
+     * @route GET /api/drone-positions/data/:id/paginated
      */
-    getDronePositionById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getPositionByIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
 
-            // 驗證 ID
             if (isNaN(id)) {
                 const result = ResResult.badRequest('無效的 ID 格式');
                 res.status(result.status).json(result);
                 return;
             }
 
-            // 呼叫查詢服務層取得資料
-            const dronePosition = await this.dronePositionQueriesSvc.getDronePositionById(id);
+            const pagination = {
+                page: 1,
+                pageSize: 1,
+                sortBy: 'timestamp',
+                sortOrder: 'DESC' as const,
+                get offset() { return 0; }
+            } as PaginationRequestDto;
 
-            if (!dronePosition) {
-                const result = ResResult.notFound('找不到指定的無人機位置資料');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('無人機位置資料獲取成功', dronePosition);
+            const paginatedResult = await this.dronePositionQueriesSvc.getPositionsByIdPaginated(id, pagination);
+            const result = ResResult.fromPaginatedResponse('無人機位置資料獲取成功', paginatedResult);
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據無人機 ID 取得位置資料
-     * @route GET /api/drone-position/data/drone/:droneId
-     */
-    getDronePositionsByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const droneId = parseInt(req.params.droneId);
-
-            // 驗證 Drone ID
-            if (isNaN(droneId)) {
-                const result = ResResult.badRequest('無效的無人機 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const dronePositions = await this.dronePositionQueriesSvc.getDronePositionsByDroneId(droneId);
-
-            const result = ResResult.success('無人機位置資料獲取成功', dronePositions);
+            logger.error('根據 ID 查詢無人機位置失敗', { error });
+            const result = ResResult.internalError('根據 ID 查詢無人機位置失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
     /**
-     * 取得最新的無人機位置資料
-     * @route GET /api/drone-position/data/latest/:droneId
+     * 根據時間範圍分頁查詢位置（新版統一方法）
+     * @route GET /api/drone-positions/data/time-range/paginated
      */
-    getLatestDronePosition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getPositionsByTimeRangePaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const droneId = parseInt(req.params.droneId);
+            const startTime = new Date(req.query.startTime as string);
+            const endTime = new Date(req.query.endTime as string);
 
-            // 驗證 Drone ID
-            if (isNaN(droneId)) {
-                const result = ResResult.badRequest('無效的無人機 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const latestPosition = await this.dronePositionQueriesSvc.getLatestDronePosition(droneId);
-
-            if (!latestPosition) {
-                const result = ResResult.notFound('找不到該無人機的位置資料');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('最新無人機位置資料獲取成功', latestPosition);
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據時間範圍取得無人機位置資料
-     * @route GET /api/drone-position/data/timerange/:droneId
-     */
-    getDronePositionsByTimeRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const droneId = parseInt(req.params.droneId);
-            const {startTime, endTime} = req.query;
-
-            // 驗證 Drone ID
-            if (isNaN(droneId)) {
-                const result = ResResult.badRequest('無效的無人機 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            // 驗證時間參數
-            if (!startTime || !endTime) {
-                const result = ResResult.badRequest('需要提供開始時間和結束時間');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const start = new Date(startTime as string);
-            const end = new Date(endTime as string);
-
-            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
                 const result = ResResult.badRequest('無效的時間格式');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const dronePositions = await this.dronePositionQueriesSvc.getDronePositionsByTimeRange(droneId, start, end);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'timestamp',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const result = ResResult.success('無人機位置資料獲取成功', dronePositions);
+            const paginatedResult = await this.dronePositionQueriesSvc.getPositionsByTimeRangePaginated(
+                startTime, 
+                endTime, 
+                pagination
+            );
+            const result = ResResult.fromPaginatedResponse(
+                '時間範圍內的位置分頁查詢成功',
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據時間範圍分頁查詢位置失敗', { error });
+            const result = ResResult.internalError('根據時間範圍分頁查詢位置失敗');
+            res.status(result.status).json(result);
         }
-    }
+    };
+
 }

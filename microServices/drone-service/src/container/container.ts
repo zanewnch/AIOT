@@ -45,6 +45,7 @@ import { DroneCommandQueriesRepo } from '../repo/queries/DroneCommandQueriesRepo
 import { DroneCommandCommandsRepository } from '../repo/commands/DroneCommandCommandsRepo.js';
 import { DroneCommandsArchiveQueriesRepo } from '../repo/queries/DroneCommandsArchiveQueriesRepo.js';
 import { DroneCommandsArchiveCommandsRepository } from '../repo/commands/DroneCommandsArchiveCommandsRepo.js';
+import { DroneCommandQueueQueriesRepo } from '../repo/queries/DroneCommandQueueQueriesRepo.js';
 import { DronePositionsArchiveQueriesRepo } from '../repo/queries/DronePositionsArchiveQueriesRepo.js';
 import { DronePositionsArchiveCommandsRepository } from '../repo/commands/DronePositionsArchiveCommandsRepo.js';
 
@@ -86,6 +87,7 @@ import { DroneStatusRoutes } from '../routes/droneStatusRoutes.js';
 import { DroneCommandRoutes } from '../routes/droneCommandRoutes.js';
 import { DroneRealtimeRoutes } from '../routes/droneRealtimeRoutes.js';
 import { RouteRegistrar } from '../routes/index.js';
+import { DroneMCPRoutes } from '../routes/mcpRoutes.js';
 
 // 應用程式導入
 import { App } from '../app.js';
@@ -112,6 +114,7 @@ export function createContainer(): Container {
     container.bind(TYPES.DroneCommandCommandsRepository).to(DroneCommandCommandsRepository).inSingletonScope();
     container.bind(TYPES.DroneCommandsArchiveQueriesRepo).to(DroneCommandsArchiveQueriesRepo).inSingletonScope();
     container.bind(TYPES.DroneCommandsArchiveCommandsRepository).to(DroneCommandsArchiveCommandsRepository).inSingletonScope();
+    container.bind(TYPES.DroneCommandQueueQueriesRepo).to(DroneCommandQueueQueriesRepo).inSingletonScope();
     container.bind(TYPES.DronePositionsArchiveQueriesRepo).to(DronePositionsArchiveQueriesRepo).inSingletonScope();
     container.bind(TYPES.DronePositionsArchiveCommandsRepository).to(DronePositionsArchiveCommandsRepository).inSingletonScope();
 
@@ -174,6 +177,9 @@ export function createContainer(): Container {
     container.bind(TYPES.DroneStatusRoutes).to(DroneStatusRoutes).inSingletonScope();
     container.bind(TYPES.DroneCommandRoutes).to(DroneCommandRoutes).inSingletonScope();
     container.bind(TYPES.DroneRealtimeRoutes).to(DroneRealtimeRoutes).inSingletonScope();
+
+    // MCP 路由
+    container.bind<DroneMCPRoutes>(TYPES.DroneMCPRoutes).to(DroneMCPRoutes).inSingletonScope();
     container.bind(TYPES.RouteRegistrar).to(RouteRegistrar).inSingletonScope();
 
     // === 基礎設施服務 ===

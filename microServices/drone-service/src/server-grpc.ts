@@ -57,7 +57,7 @@ class Server {
      * @private
      * @type {http.Server}
      */
-    private httpServer: http.Server;
+    private httpServer!: http.Server;
 
     /**
      * Sequelize 資料庫實例

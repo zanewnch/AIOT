@@ -15,6 +15,7 @@ import { inject, injectable } from 'inversify';
 import { AuthRoutes } from './authRoutes.js';
 import { TYPES } from '../container/types.js';
 import docsRoutes from './docsRoutes.js';
+import { AuthMCPRoutes } from './mcpRoutes.js';
 
 /**
  * 路由註冊器類別
@@ -23,7 +24,8 @@ import docsRoutes from './docsRoutes.js';
 @injectable()
 class RouteRegistrar {
     constructor(
-        @inject(TYPES.AuthRoutes) private authRoutes: AuthRoutes
+        @inject(TYPES.AuthRoutes) private authRoutes: AuthRoutes,
+        @inject(TYPES.AuthMCPRoutes) private mcpRoutes: AuthMCPRoutes
     ) {}
 
     /**
@@ -46,6 +48,10 @@ class RouteRegistrar {
             // 註冊認證路由 - 掛載 AuthRoutes 到根路徑
             app.use('/', this.authRoutes.getRouter());
             console.log('✅ Auth routes registered at /');
+
+            // 註冊 MCP 路由 (供 LLM AI Engine 調用)
+            app.use('/api/mcp', this.mcpRoutes.getRouter());
+            console.log('✅ MCP routes registered at /api/mcp');
 
             // 註冊文檔路由
             app.use('/', docsRoutes);

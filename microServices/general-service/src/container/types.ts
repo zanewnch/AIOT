@@ -64,6 +64,11 @@ export const TYPES = {
   UserPreferenceRoutes: Symbol.for('UserPreferenceRoutes'),
 
   /**
+   * MCP (Model Context Protocol) 路由類型
+   */
+  MCPRoutes: Symbol.for('MCPRoutes'),
+
+  /**
    * 無人機位置查詢服務類型
    */
   DronePositionQueriesSvc: Symbol.for('DronePositionQueriesSvc'),

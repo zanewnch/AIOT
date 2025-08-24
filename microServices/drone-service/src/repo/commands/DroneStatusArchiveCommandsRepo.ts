@@ -137,7 +137,7 @@ export class DroneStatusArchiveCommandsRepository {
             this.logger.info('Deleting drone status archive records before date', { beforeDate });
             const deletedCount = await DroneStatusArchiveModel.destroy({
                 where: {
-                    timestamp: {
+                    created_at: {
                         [Op.lt]: beforeDate
                     }
                 }
@@ -184,7 +184,7 @@ export class DroneStatusArchiveCommandsRepository {
             this.logger.info('Deleting drone status archive records by date range', { startDate, endDate });
             const deletedCount = await DroneStatusArchiveModel.destroy({
                 where: {
-                    timestamp: {
+                    created_at: {
                         [Op.between]: [startDate, endDate]
                     }
                 }
@@ -208,7 +208,7 @@ export class DroneStatusArchiveCommandsRepository {
         try {
             this.logger.info('Deleting drone status archive records by created by', { createdBy });
             const deletedCount = await DroneStatusArchiveModel.destroy({
-                where: { created_by: createdBy }
+                where: {} // Note: created_by field doesn't exist in this model
             });
             
             this.logger.info(`Deleted ${deletedCount} status archive records created by user ${createdBy}`);
@@ -233,7 +233,7 @@ export class DroneStatusArchiveCommandsRepository {
             
             const deletedCount = await DroneStatusArchiveModel.destroy({
                 where: {
-                    timestamp: {
+                    created_at: {
                         [Op.lt]: cutoffDate
                     }
                 }

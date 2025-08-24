@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'transformers_service',
     'docs_service',
+    'llm.consul_integration',
 ]
 
 MIDDLEWARE = [

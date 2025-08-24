@@ -23,7 +23,7 @@ Author: AIOT Team
 Version: 2.0.0
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import uvicorn
@@ -33,6 +33,7 @@ from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
 
 from config.llm_config import LLMConfig, DEFAULT_LLM_CONFIG
+from config.consul_config import ConsulConfig
 from services.simple_ai_service import SimpleAIService
 from services.langchain_ai_service import LangChainAIService
 from models.requests import (
@@ -43,6 +44,27 @@ from models.requests import (
     GenerateResponse
 )
 
+from models.mcp_requests import (
+    NaturalLanguageQueryRequest,
+    NaturalLanguageQueryResponse,
+    MCPToolListResponse,
+    MCPStatusResponse,
+    MCPServiceStatus
+)
+
+# MCP 整合模組
+from mcp_integration.mcp_client import (
+    NaturalLanguageQueryProcessor,
+    mcp_registry,
+    initialize_mcp_services
+)
+
+# WebSocket 支援模組
+from websocket_server import (
+    initialize_websocket_handler,
+    get_websocket_handler
+)
+
 # 配置日誌系統 - 統一日誌格式，包含時間戳、模組名稱、日誌級別和訊息內容
 logging.basicConfig(
     level=logging.INFO,
@@ -50,8 +72,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 全域 AI 服務實例 - 在應用程式生命週期中保持單一實例
+# 全域實例 - 在應用程式生命週期中保持單一實例
 ai_service: Optional[Any] = None
+consul_config: Optional[ConsulConfig] = None
+mcp_processor: Optional[NaturalLanguageQueryProcessor] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -77,7 +101,10 @@ async def lifespan(app: FastAPI):
         - 透過 USE_LANGCHAIN 環境變數控制服務類型
         - 確保在應用程式關閉時正確釋放資源
     """
-    global ai_service
+    global ai_service, consul_config, mcp_processor
+    
+    # 初始化 Consul 配置
+    consul_config = ConsulConfig()
     
     # 從環境變數選擇服務類型 - 預設使用 LangChain 版本
     use_langchain = os.getenv("USE_LANGCHAIN", "true").lower() == "true"
@@ -105,10 +132,46 @@ async def lifespan(app: FastAPI):
             logger.error(f"Failed to initialize AI Service: {e}")
             raise e
     
+    # 初始化 MCP 服務
+    try:
+        logger.info("Initializing MCP services...")
+        initialize_mcp_services()
+        
+        # 創建自然語言查詢處理器
+        mcp_processor = NaturalLanguageQueryProcessor(ai_service, mcp_registry)
+        logger.info("✅ MCP services initialized successfully")
+        
+        # 記錄可用工具
+        available_tools = mcp_registry.get_available_tools()
+        logger.info(f"📊 Available MCP tools: {[tool['name'] for tool in available_tools]}")
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize MCP services: {e}")
+        logger.info("MCP functionality will be disabled")
+        mcp_processor = None
+    
+    # 初始化 WebSocket 處理器
+    try:
+        logger.info("Initializing WebSocket handler...")
+        initialize_websocket_handler(ai_service, mcp_processor)
+        logger.info("✅ WebSocket handler initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize WebSocket handler: {e}")
+    
+    # 註冊到 Consul
+    if consul_config:
+        await consul_config.register_service()
+    
     yield  # 應用程式運行期間
     
     # 關閉階段 - 清理資源
     logger.info("Shutting down SmolLM2 AI Engine...")
+    
+    # 從 Consul 註銷服務
+    if consul_config:
+        await consul_config.deregister_service()
+    
+    # 清理 AI 服務資源
     if ai_service:
         ai_service.cleanup()  # 清理 GPU 記憶體和其他資源
 
@@ -625,6 +688,412 @@ async def get_conversation_history() -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Get conversation history failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================
+# MCP (Model Context Protocol) 端點
+# ==============================================
+
+@app.post("/mcp/query", response_model=NaturalLanguageQueryResponse)
+async def natural_language_query(request: NaturalLanguageQueryRequest) -> NaturalLanguageQueryResponse:
+    """
+    自然語言查詢微服務數據庫。
+    
+    本端點允許用戶使用自然語言來操作微服務資料庫，例如：
+    - "給我看用戶 john123 的偏好設定"
+    - "把所有用戶的主題改為深色模式" 
+    - "有多少用戶使用淺色主題？"
+    
+    Args:
+        request (NaturalLanguageQueryRequest): 自然語言查詢請求
+            - query (str): 用戶的自然語言查詢
+            - use_conversation (bool): 是否使用對話記憶
+            - target_service (Optional[str]): 指定目標微服務
+            
+    Returns:
+        NaturalLanguageQueryResponse: 包含處理結果的回應
+        
+    Raises:
+        HTTPException:
+            - 503: MCP 服務不可用
+            - 400: 查詢請求無效
+            - 500: 處理過程發生錯誤
+            
+    Examples:
+        ```bash
+        curl -X POST http://localhost:8021/mcp/query \
+             -H "Content-Type: application/json" \
+             -d '{
+                 "query": "給我看用戶 admin 的偏好設定",
+                 "use_conversation": false
+             }'
+        ```
+        
+        成功回應:
+        ```json
+        {
+            "success": true,
+            "response": "用戶 admin 的偏好設定如下：主題為深色模式，語言為繁體中文...",
+            "tool_used": "get_user_preferences",
+            "service_called": "general-service",
+            "raw_result": {...}
+        }
+        ```
+    """
+    try:
+        # 檢查 MCP 處理器是否可用
+        if not mcp_processor:
+            raise HTTPException(
+                status_code=503, 
+                detail="MCP service not available. Please check if MCP services are properly initialized."
+            )
+        
+        # 驗證查詢內容
+        if not request.query or len(request.query.strip()) == 0:
+            raise HTTPException(status_code=400, detail="Query cannot be empty")
+        
+        logger.info(f"Processing natural language query: {request.query[:100]}...")
+        
+        # 處理自然語言查詢
+        result = await mcp_processor.process_query(
+            user_query=request.query,
+            use_conversation=request.use_conversation
+        )
+        
+        if result["success"]:
+            return NaturalLanguageQueryResponse(
+                success=True,
+                response=result["response"],
+                tool_used=result.get("tool_used"),
+                service_called=result.get("service_called"),
+                raw_result=result.get("tool_result")
+            )
+        else:
+            return NaturalLanguageQueryResponse(
+                success=False,
+                response="很抱歉，我無法處理這個查詢。",
+                error=result.get("error", "Unknown error occurred")
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Natural language query failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/mcp/tools", response_model=MCPToolListResponse) 
+async def get_mcp_tools() -> MCPToolListResponse:
+    """
+    獲取所有可用的 MCP 工具列表。
+    
+    本端點返回系統中註冊的所有 MCP 工具，包括工具名稱、描述、
+    參數規格和所屬服務等資訊。用於調試和工具發現。
+    
+    Returns:
+        MCPToolListResponse: 工具列表回應
+        
+    Examples:
+        ```bash
+        curl -X GET http://localhost:8021/mcp/tools
+        ```
+        
+        回應範例:
+        ```json
+        {
+            "success": true,
+            "tools": [
+                {
+                    "name": "get_user_preferences",
+                    "description": "獲取用戶偏好設定",
+                    "service": "general-service",
+                    "inputSchema": {...}
+                }
+            ],
+            "total": 5,
+            "services": ["general-service", "rbac-service"]
+        }
+        ```
+    """
+    try:
+        if not mcp_registry:
+            raise HTTPException(status_code=503, detail="MCP registry not available")
+        
+        available_tools = mcp_registry.get_available_tools()
+        services = list(set(tool.get('service', 'unknown') for tool in available_tools))
+        
+        return MCPToolListResponse(
+            success=True,
+            tools=available_tools,
+            total=len(available_tools),
+            services=services
+        )
+        
+    except Exception as e:
+        logger.error(f"Get MCP tools failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/mcp/status", response_model=MCPStatusResponse)
+async def get_mcp_status() -> MCPStatusResponse:
+    """
+    獲取 MCP 服務整體狀態。
+    
+    本端點提供 MCP 功能的健康檢查，包括各個微服務的連接狀態、
+    可用工具數量等資訊。
+    
+    Returns:
+        MCPStatusResponse: MCP 服務狀態回應
+        
+    Examples:
+        ```bash
+        curl -X GET http://localhost:8021/mcp/status
+        ```
+    """
+    try:
+        # 檢查 MCP 是否啟用
+        if not mcp_processor or not mcp_registry:
+            return MCPStatusResponse(
+                success=True,
+                mcp_enabled=False,
+                total_tools=0,
+                total_services=0,
+                services=[],
+                message="MCP services are not initialized or disabled"
+            )
+        
+        # 獲取服務資訊
+        services_info = []
+        for service_name, service_data in mcp_registry.services.items():
+            services_info.append(MCPServiceStatus(
+                service_name=service_name,
+                service_url=service_data['url'],
+                available=True,  # TODO: 實際健康檢查
+                tool_count=len(service_data['tools']),
+                last_check=None  # TODO: 實際檢查時間
+            ))
+        
+        total_tools = len(mcp_registry.get_available_tools())
+        
+        return MCPStatusResponse(
+            success=True,
+            mcp_enabled=True,
+            total_tools=total_tools,
+            total_services=len(services_info),
+            services=services_info,
+            message=f"MCP is running with {len(services_info)} services and {total_tools} tools"
+        )
+        
+    except Exception as e:
+        logger.error(f"Get MCP status failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================
+# WebSocket 端點
+# ==============================================
+
+@app.websocket("/ws")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    user_id: Optional[str] = Query(None, description="用戶ID")
+):
+    """
+    主要 WebSocket 端點。
+    
+    支援即時對話、串流生成和 MCP 自然語言查詢。
+    
+    Args:
+        websocket: WebSocket 連接
+        user_id: 可選的用戶ID，用於會話管理
+        
+    Message Types:
+        - generate: 單輪生成
+        - conversational: 對話生成 
+        - stream: 串流生成
+        - mcp_query: MCP 自然語言查詢
+        
+    Example:
+        JavaScript WebSocket 連接:
+        ```javascript
+        const ws = new WebSocket('ws://localhost:8021/ws?user_id=john123');
+        
+        ws.onopen = () => {
+            // 發送對話消息
+            ws.send(JSON.stringify({
+                type: 'conversational',
+                data: {
+                    prompt: '你好，我是小明',
+                    use_rag: false
+                },
+                user_id: 'john123',
+                conversation_id: 'conv_001'
+            }));
+        };
+        
+        ws.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            console.log('收到回應:', response);
+        };
+        ```
+        
+        MCP 自然語言查詢:
+        ```javascript
+        ws.send(JSON.stringify({
+            type: 'mcp_query',
+            data: {
+                query: '給我看用戶 admin 的偏好設定',
+                use_conversation: false
+            }
+        }));
+        ```
+    """
+    handler = get_websocket_handler()
+    if not handler:
+        await websocket.close(code=1011, reason="WebSocket service not available")
+        return
+        
+    await handler.handle_connection(websocket, user_id)
+
+@app.websocket("/ws/chat")
+async def chat_websocket_endpoint(
+    websocket: WebSocket,
+    user_id: Optional[str] = Query(None, description="用戶ID"),
+    conversation_id: Optional[str] = Query(None, description="對話ID")
+):
+    """
+    專用聊天 WebSocket 端點。
+    
+    專門處理對話生成，自動管理對話記憶。
+    
+    Args:
+        websocket: WebSocket 連接
+        user_id: 用戶ID
+        conversation_id: 對話ID
+        
+    Message Format:
+        ```json
+        {
+            "prompt": "用戶輸入的消息",
+            "use_rag": false
+        }
+        ```
+        
+    Response Format:
+        ```json
+        {
+            "type": "response",
+            "success": true,
+            "data": {
+                "response": "AI 回應內容",
+                "sources": [],
+                "model": "SmolLM2-135M"
+            },
+            "timestamp": "2024-01-01T00:00:00"
+        }
+        ```
+    """
+    handler = get_websocket_handler()
+    if not handler:
+        await websocket.close(code=1011, reason="WebSocket service not available")
+        return
+        
+    # 簡化聊天處理 - 自動設置為 conversational 模式
+    await websocket.accept()
+    connection_id = f"chat_{user_id or 'anonymous'}"
+    
+    try:
+        while True:
+            try:
+                data = await websocket.receive_json()
+                
+                # 包裝為標準消息格式
+                message_data = {
+                    "type": "conversational",
+                    "data": data,
+                    "user_id": user_id,
+                    "conversation_id": conversation_id or "default"
+                }
+                
+                # 使用標準處理器
+                from websocket_server import WebSocketMessage
+                message = WebSocketMessage(**message_data)
+                await handler._handle_conversational(connection_id, message, user_id)
+                
+            except WebSocketDisconnect:
+                logger.info(f"Chat WebSocket disconnected: {connection_id}")
+                break
+            except Exception as e:
+                logger.error(f"Chat WebSocket error: {e}")
+                await websocket.send_json({
+                    "type": "error",
+                    "success": False,
+                    "error": str(e)
+                })
+                
+    except Exception as e:
+        logger.error(f"Chat WebSocket connection error: {e}")
+
+@app.websocket("/ws/stream")
+async def stream_websocket_endpoint(
+    websocket: WebSocket,
+    user_id: Optional[str] = Query(None, description="用戶ID")
+):
+    """
+    專用串流 WebSocket 端點。
+    
+    提供即時串流文字生成。
+    
+    Args:
+        websocket: WebSocket 連接
+        user_id: 用戶ID
+        
+    Message Format:
+        ```json
+        {
+            "prompt": "用戶輸入的提示詞"
+        }
+        ```
+        
+    Response Types:
+        - stream_start: 串流開始
+        - stream_chunk: 串流區塊
+        - stream_end: 串流結束
+        - stream_error: 串流錯誤
+    """
+    handler = get_websocket_handler()
+    if not handler:
+        await websocket.close(code=1011, reason="WebSocket service not available")
+        return
+        
+    await websocket.accept()
+    connection_id = f"stream_{user_id or 'anonymous'}"
+    
+    try:
+        while True:
+            try:
+                data = await websocket.receive_json()
+                
+                # 包裝為標準消息格式
+                message_data = {
+                    "type": "stream",
+                    "data": data,
+                    "user_id": user_id
+                }
+                
+                from websocket_server import WebSocketMessage
+                message = WebSocketMessage(**message_data)
+                await handler._handle_stream(connection_id, message)
+                
+            except WebSocketDisconnect:
+                logger.info(f"Stream WebSocket disconnected: {connection_id}")
+                break
+            except Exception as e:
+                logger.error(f"Stream WebSocket error: {e}")
+                await websocket.send_json({
+                    "type": "stream_error",
+                    "success": False,
+                    "error": str(e)
+                })
+                
+    except Exception as e:
+        logger.error(f"Stream WebSocket connection error: {e}")
 
 if __name__ == "__main__":
     """

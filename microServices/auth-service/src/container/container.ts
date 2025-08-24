@@ -25,6 +25,7 @@ import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
 import { AuthGrpcServer } from '../grpc/authGrpcServer.js';
 import { AuthRoutes } from '../routes/authRoutes.js';
 import { RouteRegistrar } from '../routes/index.js';
+import { AuthMCPRoutes } from '../routes/mcpRoutes.js';
 
 // JWT 安全服務 - 已移除，由 API Gateway 統一處理
 // import { JwtBlacklistService } from 'aiot-shared-packages';
@@ -78,6 +79,11 @@ export function createContainer(): Container {
   // Auth 路由
   container.bind<AuthRoutes>(TYPES.AuthRoutes)
     .to(AuthRoutes)
+    .inSingletonScope();
+
+  // MCP 路由
+  container.bind<AuthMCPRoutes>(TYPES.AuthMCPRoutes)
+    .to(AuthMCPRoutes)
     .inSingletonScope();
   
   // 路由註冊器

@@ -23,6 +23,12 @@ export interface IDronePositionQueriesSvc {
     getDronePositionStatistics(): Promise<{total: number}>;
     getTotalPositionCount(): Promise<number>;
     getPositionCountByDrone(droneId: number): Promise<number>;
+    
+    // 新增分頁查詢方法
+    getAllPositionsPaginated(pagination: any): Promise<any>;
+    getPositionsByDroneIdPaginated(droneId: number, pagination: any): Promise<any>;
+    getPositionsByIdPaginated(id: number, pagination: any): Promise<any>;
+    getPositionsByTimeRangePaginated(startTime: Date, endTime: Date, pagination: any): Promise<any>;
 }
 
 /**

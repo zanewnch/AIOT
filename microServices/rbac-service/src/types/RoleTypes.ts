@@ -85,22 +85,26 @@ export interface CacheOptions {
  */
 export interface IRoleQueriesService {
     /**
-     * 根據角色 ID 獲取角色
+     * 根據角色 ID 獲取角色（分頁格式）
      * 
      * @param roleId - 角色 ID
-     * @returns Promise<RoleDTO | null> 角色資料或 null（如果不存在）
+     * @param page - 頁碼，預設為 1
+     * @param pageSize - 每頁數量，預設為 1
+     * @returns Promise<PaginatedResult<RoleDTO>> 分頁角色結果
      * @throws {Error} 當角色 ID 無效或資料庫查詢失敗時
      */
-    getRoleById(roleId: number): Promise<RoleDTO | null>;
+    getRoleById(roleId: number, page?: number, pageSize?: number): Promise<PaginatedResult<RoleDTO>>;
     
     /**
-     * 根據角色名稱獲取角色
+     * 根據角色名稱獲取角色（分頁格式）
      * 
      * @param roleName - 角色名稱
-     * @returns Promise<RoleDTO | null> 角色資料或 null（如果不存在）
+     * @param page - 頁碼，預設為 1
+     * @param pageSize - 每頁數量，預設為 1
+     * @returns Promise<PaginatedResult<RoleDTO>> 分頁角色結果
      * @throws {Error} 當角色名稱無效或資料庫查詢失敗時
      */
-    getRoleByName(roleName: string): Promise<RoleDTO | null>;
+    getRoleByName(roleName: string, page?: number, pageSize?: number): Promise<PaginatedResult<RoleDTO>>;
     
     /**
      * 檢查角色是否存在

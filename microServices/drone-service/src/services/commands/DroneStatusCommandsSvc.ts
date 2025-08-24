@@ -54,7 +54,7 @@ export class DroneStatusCommandsSvc {
             if (isDuplicate) {
                 throw new Error('無人機序號已存在');
             }
-const droneStatus = await this.droneStatusRepository.create(data);
+            const droneStatus = await this.droneStatusRepo.create(data);
 return droneStatus;
         } catch (error) {
             throw error;
@@ -79,7 +79,7 @@ return droneStatus;
 
             // 驗證更新資料
             if (data.drone_serial) {
-                const isDuplicate = await this.queryService.isDroneSerialExists(data.drone_serial, id);
+                const isDuplicate = await this.queryService.isDroneSerialExists(data.drone_serial);
                 if (isDuplicate) {
                     throw new Error('無人機序號已存在');
                 }
@@ -87,7 +87,7 @@ return droneStatus;
 
             // 驗證數值範圍
             this.validateNumericFields(data);
-const updatedDroneStatus = await this.droneStatusRepository.update(id, data);
+            const updatedDroneStatus = await this.droneStatusRepo.update(id, data);
 
             if (!updatedDroneStatus) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機狀態資料`);
@@ -113,7 +113,7 @@ return updatedDroneStatus;
             if (!existingDrone) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機狀態資料`);
             }
-await this.droneStatusRepository.delete(id);
+            await this.droneStatusRepo.delete(id);
 } catch (error) {
             throw error;
         }
@@ -139,7 +139,7 @@ await this.droneStatusRepository.delete(id);
             if (!existingDrone) {
                 throw new Error(`找不到 ID 為 ${id} 的無人機`);
             }
-const updatedDroneStatus = await this.droneStatusRepository.updateStatus(id, status);
+            const updatedDroneStatus = await this.droneStatusRepo.updateStatus(id, status);
 
             if (!updatedDroneStatus) {
                 throw new Error(`更新 ID 為 ${id} 的無人機狀態失敗`);

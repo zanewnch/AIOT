@@ -18,8 +18,9 @@ import {ArchiveTaskQueriesSvc} from '../../services/queries/ArchiveTaskQueriesSv
 import {ArchiveJobType, ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
-import type {IArchiveTaskQueriesCtrl} from '../../types/controllers/queries/IArchiveTaskQueriesCtrl.js';
+import type {IArchiveTaskQueries} from '../../types/controllers/queries/IArchiveTaskQueries.js';
 import {TYPES} from '../../container/types.js';
+import {PaginationRequestDto} from '../../dto/index.js';
 
 /**
  * 歸檔任務查詢 Controller 類別
@@ -40,7 +41,7 @@ import {TYPES} from '../../container/types.js';
  * ```
  */
 @injectable()
-export class ArchiveTaskQueriesCtrl implements IArchiveTaskQueriesCtrl {
+export class ArchiveTaskQueriesCtrl implements IArchiveTaskQueries {
     private readonly logger = createLogger('ArchiveTaskQueriesCtrl');
 
     constructor(
@@ -49,208 +50,140 @@ export class ArchiveTaskQueriesCtrl implements IArchiveTaskQueriesCtrl {
     }
 
     /**
-     * 獲取所有歸檔任務
-     *
-     * @param req - Express 請求對象
-     * @param res - Express 響應對象
-     *
-     * @route GET /api/archive-tasks
-     * @queries {string} [status] - 任務狀態篩選
-     * @queries {string} [jobType] - 任務類型篩選
-     * @queries {string} [batchId] - 批次ID篩選
-     * @queries {string} [createdBy] - 創建者篩選
-     * @queries {string} [sortBy] - 排序欄位
-     * @queries {string} [sortOrder] - 排序順序 (ASC|DESC)
-     * @queries {number} [limit] - 限制數量
-     * @queries {number} [offset] - 偏移量
+     * 分頁查詢所有歸檔任務（新增）
+     * @route GET /api/archive-tasks/data/paginated
      */
-    getAllTasks = async (req: Request, res: Response): Promise<void> => {
+    getAllTasksPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            this.logger.info('獲取所有歸檔任務請求', {
-                query: req.query,
-                userAgent: req.get('User-Agent')
-            });
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const {
-                status,
-                jobType,
-                batchId,
-                createdBy,
-                sortBy,
-                sortOrder,
-                limit,
-                offset
-            } = req.query;
-
-            const options: any = {};
-
-            if (status && Object.values(ArchiveTaskStatus).includes(status as ArchiveTaskStatus)) {
-                options.status = status as ArchiveTaskStatus;
-            }
-
-            if (jobType && Object.values(ArchiveJobType).includes(jobType as ArchiveJobType)) {
-                options.jobType = jobType as ArchiveJobType;
-            }
-
-            if (batchId) {
-                options.batchId = batchId as string;
-            }
-
-            if (createdBy) {
-                options.createdBy = createdBy as string;
-            }
-
-            if (sortBy) {
-                options.sortBy = sortBy as string;
-            }
-
-            if (sortOrder && ['ASC', 'DESC'].includes(sortOrder as string)) {
-                options.sortOrder = sortOrder as 'ASC' | 'DESC';
-            }
-
-            if (limit) {
-                const limitNum = parseInt(limit as string, 10);
-                if (!isNaN(limitNum) && limitNum > 0) {
-                    options.limit = limitNum;
-                }
-            }
-
-            if (offset) {
-                const offsetNum = parseInt(offset as string, 10);
-                if (!isNaN(offsetNum) && offsetNum >= 0) {
-                    options.offset = offsetNum;
-                }
-            }
-
-            const tasks = await this.queryService.getAllTasks(options);
-
-            this.logger.info('歸檔任務列表獲取成功', {
-                count: tasks.length,
-                options
-            });
-
-            const result = ResResult.success('歸檔任務列表獲取成功', tasks);
+            const paginatedResult = await this.queryService.getAllTasksPaginated(pagination);
+            const result = ResResult.fromPaginatedResponse('歸檔任務分頁查詢成功', paginatedResult);
+            
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務列表失敗', {
-                query: req.query,
-                error: (error as Error).message,
-                stack: (error as Error).stack
-            });
-
-            const result = ResResult.internalError(`獲取歸檔任務列表失敗: ${(error as Error).message}`);
+            this.logger.error('分頁查詢歸檔任務失敗', { error });
+            const result = ResResult.internalError('分頁查詢歸檔任務失敗');
             res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據 ID 獲取歸檔任務
-     *
-     * @param req - Express 請求對象
-     * @param res - Express 響應對象
-     *
-     * @route GET /api/archive-tasks/:id
-     * @param {number} id - 任務 ID
+     * 根據狀態分頁查詢歸檔任務（新增）
+     * @route GET /api/archive-tasks/data/status/:status/paginated
      */
-    getTaskById = async (req: Request, res: Response): Promise<void> => {
+    getTasksByStatusPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const taskId = parseInt(req.params.id, 10);
+            const status = req.params.status as ArchiveTaskStatus;
 
-            if (isNaN(taskId)) {
-                const result = ResResult.badRequest('無效的任務 ID');
+            if (!status || !Object.values(ArchiveTaskStatus).includes(status)) {
+                const result = ResResult.badRequest('無效的任務狀態');
                 res.status(result.status).json(result);
                 return;
             }
 
-            this.logger.info('根據 ID 獲取歸檔任務請求', {taskId});
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const task = await this.queryService.getTaskById(taskId);
+            const paginatedResult = await this.queryService.getTasksByStatusPaginated(status, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `狀態為 ${status} 的歸檔任務分頁查詢成功`, 
+                paginatedResult
+            );
+            
+            res.status(result.status).json(result);
+        } catch (error) {
+            this.logger.error('根據狀態分頁查詢歸檔任務失敗', { error });
+            const result = ResResult.internalError('根據狀態分頁查詢歸檔任務失敗');
+            res.status(result.status).json(result);
+        }
+    };
 
-            if (!task) {
-                const result = ResResult.notFound(`任務 ${taskId} 不存在`);
+    /**
+     * 根據任務類型分頁查詢歸檔任務（新增）
+     * @route GET /api/archive-tasks/data/job-type/:jobType/paginated
+     */
+    getTasksByJobTypePaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const jobType = req.params.jobType as ArchiveJobType;
+
+            if (!jobType || !Object.values(ArchiveJobType).includes(jobType)) {
+                const result = ResResult.badRequest('無效的任務類型');
                 res.status(result.status).json(result);
                 return;
             }
 
-            this.logger.info('歸檔任務獲取成功', {taskId, status: task.status});
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const result = ResResult.success('歸檔任務獲取成功', task);
+            const paginatedResult = await this.queryService.getTasksByJobTypePaginated(jobType, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `任務類型為 ${jobType} 的歸檔任務分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務失敗', {
-                taskId: req.params.id,
-                error: (error as Error).message,
-                stack: (error as Error).stack
-            });
-
-            const result = ResResult.internalError(`獲取歸檔任務失敗: ${(error as Error).message}`);
+            this.logger.error('根據任務類型分頁查詢歸檔任務失敗', { error });
+            const result = ResResult.internalError('根據任務類型分頁查詢歸檔任務失敗');
             res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 獲取歸檔任務統計資訊
-     *
-     * @param req - Express 請求對象
-     * @param res - Express 響應對象
-     *
-     * @route GET /api/archive-tasks/statistics
+     * 根據批次 ID 分頁查詢歸檔任務（新增）
+     * @route GET /api/archive-tasks/data/batch/:batchId/paginated
      */
-    getTaskStatistics = async (req: Request, res: Response): Promise<void> => {
+    getTasksByBatchIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            this.logger.info('獲取歸檔任務統計資訊請求');
+            const batchId = req.params.batchId;
 
-            const statistics = await this.queryService.getTaskStatistics();
+            if (!batchId) {
+                const result = ResResult.badRequest('批次 ID 為必填項');
+                res.status(result.status).json(result);
+                return;
+            }
 
-            this.logger.info('歸檔任務統計資訊獲取成功', {
-                totalTasks: statistics.totalTasks
-            });
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const result = ResResult.success('歸檔任務統計資訊獲取成功', statistics);
+            const paginatedResult = await this.queryService.getTasksByBatchIdPaginated(batchId, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `批次 ${batchId} 的歸檔任務分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            this.logger.error('獲取歸檔任務統計資訊失敗', {
-                error: (error as Error).message,
-                stack: (error as Error).stack
-            });
-
-            const result = ResResult.internalError(`獲取歸檔任務統計資訊失敗: ${(error as Error).message}`);
+            this.logger.error('根據批次 ID 分頁查詢歸檔任務失敗', { error });
+            const result = ResResult.internalError('根據批次 ID 分頁查詢歸檔任務失敗');
             res.status(result.status).json(result);
         }
-    }
+    };
 
-    /**
-     * 獲取歸檔任務資料（用於前端表格顯示）
-     *
-     * @param req - Express 請求對象
-     * @param res - Express 響應對象
-     *
-     * @route GET /api/archive-tasks/data
-     */
-    getTasksData = async (req: Request, res: Response): Promise<void> => {
-        try {
-            this.logger.info('獲取歸檔任務資料請求', {query: req.query});
-
-            // 使用預設的查詢選項來獲取所有任務資料
-            const tasks = await this.queryService.getAllTasks({
-                sortBy: 'createdAt',
-                sortOrder: 'DESC',
-                limit: 1000 // 限制返回數量以避免過多資料
-            });
-
-            this.logger.info('歸檔任務資料獲取成功', {count: tasks.length});
-
-            const result = ResResult.success('歸檔任務資料獲取成功', tasks);
-            res.status(result.status).json(result);
-        } catch (error) {
-            this.logger.error('獲取歸檔任務資料失敗', {
-                query: req.query,
-                error: (error as Error).message,
-                stack: (error as Error).stack
-            });
-
-            const result = ResResult.internalError(`獲取歸檔任務資料失敗: ${(error as Error).message}`);
-            res.status(result.status).json(result);
-        }
-    }
 }

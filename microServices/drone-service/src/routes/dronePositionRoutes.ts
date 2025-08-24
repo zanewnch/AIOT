@@ -57,34 +57,29 @@ export class DronePositionRoutes {
      * 使用 API Gateway Headers 中間件獲取用戶信息，由 Express.js Gateway 處理權限驗證
      */
     private setupQueryRoutes(): void {
-        // 獲取所有無人機位置 - 權限由 Express.js Gateway 處理
-        this.router.get('/', 
+        // === 分頁查詢路由 ===
+        // 分頁查詢所有無人機位置 - 權限由 Express.js Gateway 處理
+        this.router.get('/data/paginated', 
             ApiGatewayHeadersMiddleware.extractUserInfo,
-            (req, res, next) => this.dronePositionQueries.getAllDronePositions(req, res, next)
+            (req, res, next) => this.dronePositionQueries.getAllPositionsPaginated(req, res)
         );
 
-        // 根據無人機 ID 獲取最新位置 - 權限由 API Gateway + JWT 處理
-        this.router.get('/latest/:droneId', 
+        // 根據無人機 ID 分頁查詢位置 - 權限由 API Gateway + JWT 處理
+        this.router.get('/data/drone/:droneId/paginated', 
             ApiGatewayHeadersMiddleware.extractUserInfo,
-            (req, res, next) => this.dronePositionQueries.getLatestDronePosition(req, res, next)
+            (req, res, next) => this.dronePositionQueries.getPositionsByDroneIdPaginated(req, res)
         );
 
-        // 根據無人機 ID 獲取位置資料 - 權限由 API Gateway + JWT 處理
-        this.router.get('/drone/:droneId', 
+        // 根據位置 ID 分頁查詢 - 權限由 API Gateway + JWT 處理
+        this.router.get('/data/position/:id/paginated', 
             ApiGatewayHeadersMiddleware.extractUserInfo,
-            (req, res, next) => this.dronePositionQueries.getDronePositionsByDroneId(req, res, next)
+            (req, res, next) => this.dronePositionQueries.getPositionByIdPaginated(req, res)
         );
 
-        // 根據時間範圍獲取位置資料 - 權限由 API Gateway + JWT 處理
-        this.router.get('/time-range', 
+        // 根據時間範圍分頁查詢位置 - 權限由 API Gateway + JWT 處理
+        this.router.get('/data/time-range/paginated', 
             ApiGatewayHeadersMiddleware.extractUserInfo,
-            (req, res, next) => this.dronePositionQueries.getDronePositionsByTimeRange(req, res, next)
-        );
-
-        // 根據 ID 獲取無人機位置 - 權限由 API Gateway + JWT 處理
-        this.router.get('/:id', 
-            ApiGatewayHeadersMiddleware.extractUserInfo,
-            (req, res, next) => this.dronePositionQueries.getDronePositionById(req, res, next)
+            (req, res, next) => this.dronePositionQueries.getPositionsByTimeRangePaginated(req, res)
         );
     }
 
@@ -92,21 +87,20 @@ export class DronePositionRoutes {
      * 設定歸檔路由
      */
     private setupArchiveRoutes(): void {
-        // 獲取所有歷史位置記錄
-        this.router.get('/archive', (req, res, next) => this.dronePositionsArchiveQueries.getAllPositionArchives(req, res, next));
+        // === 分頁查詢歷史位置記錄 ===
+        // 分頁查詢所有歷史位置記錄
+        this.router.get('/archive/data/paginated', (req, res, next) => this.dronePositionsArchiveQueries.getAllPositionsArchivePaginated(req, res));
 
-        // 根據無人機 ID 獲取歷史位置
-        this.router.get('/archive/drone/:droneId', (req, res, next) => this.dronePositionsArchiveQueries.getPositionArchivesByDroneId(req, res, next));
+        // 根據無人機 ID 分頁查詢歷史位置
+        this.router.get('/archive/data/drone/:droneId/paginated', (req, res, next) => this.dronePositionsArchiveQueries.getPositionsArchiveByDroneIdPaginated(req, res));
 
-        // 根據時間範圍獲取歷史位置
-        this.router.get('/archive/time-range', (req, res, next) => this.dronePositionsArchiveQueries.getPositionArchivesByTimeRange(req, res, next));
+        // 根據批次 ID 分頁查詢歷史位置
+        this.router.get('/archive/data/batch/:batchId/paginated', (req, res, next) => this.dronePositionsArchiveQueries.getPositionsArchiveByBatchIdPaginated(req, res));
 
-        // 獲取軌跡資料
-        this.router.get('/archive/trajectory', (req, res, next) => this.dronePositionsArchiveQueries.getTrajectoryByDroneAndTime(req, res, next));
+        // 根據時間範圍分頁查詢歷史位置
+        this.router.get('/archive/data/time-range/paginated', (req, res, next) => this.dronePositionsArchiveQueries.getPositionsArchiveByTimeRangePaginated(req, res));
 
-        // 根據 ID 獲取歷史位置詳情
-        this.router.get('/archive/:id', (req, res, next) => this.dronePositionsArchiveQueries.getPositionArchiveById(req, res, next));
-
+        // === 命令操作路由 ===
         // 建立歷史位置記錄
         this.router.post('/archive', (req, res, next) => this.dronePositionsArchiveCommands.createPositionArchive(req, res, next));
 

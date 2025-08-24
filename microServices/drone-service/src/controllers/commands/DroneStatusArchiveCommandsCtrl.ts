@@ -53,14 +53,8 @@ export class DroneStatusArchiveCommandsCtrl {
                 return;
             }
 
-            if (!archiveData.status) {
+            if (!archiveData.current_status) {
                 const result = ResResult.badRequest('無人機狀態為必填項');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            if (!archiveData.reason || archiveData.reason.trim() === '') {
-                const result = ResResult.badRequest('變更原因為必填項');
                 res.status(result.status).json(result);
                 return;
             }

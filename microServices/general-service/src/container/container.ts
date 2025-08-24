@@ -29,6 +29,7 @@ import { DocsQueriesCtrl } from '../controllers/queries/DocsQueriesCtrl.js';
 import { UserPreferenceRoutes } from '../routes/userPreferenceRoutes.js';
 import { DocsRoutes } from '../routes/docsRoutes.js';
 import { HealthRoutes } from '../routes/healthRoutes.js';
+import { MCPRoutes } from '../routes/mcpRoutes.js';
 import { RouteRegistrar } from '../routes/index.js';
 
 /**
@@ -85,6 +86,10 @@ export function createContainer(): Container {
 
     container.bind<HealthRoutes>(TYPES.HealthRoutes)
         .to(HealthRoutes)
+        .inSingletonScope();
+
+    container.bind<MCPRoutes>(TYPES.MCPRoutes)
+        .to(MCPRoutes)
         .inSingletonScope();
 
     // ===== Route Registrar 註冊 =====

@@ -60,29 +60,35 @@ export class DroneCommandRoutes {
      * 設定查詢路由 (GET 操作)
      */
     private setupQueryRoutes(): void {
-        // 獲取所有無人機命令
-        this.router.get('/', (req, res, next) => this.droneCommandQueries.getAllCommands(req, res, next));
+        // === 分頁查詢路由 ===
+        // 分頁查詢所有無人機命令
+        this.router.get('/data/paginated', (req, res, next) => this.droneCommandQueries.getAllCommandsPaginated(req, res));
 
-        // 獲取無人機命令資料（用於前端表格顯示）
-        this.router.get('/data', (req, res, next) => this.droneCommandQueries.getAllCommands(req, res, next));
+        // 根據無人機 ID 分頁查詢命令
+        this.router.get('/data/drone/:droneId/paginated', (req, res, next) => this.droneCommandQueries.getCommandsByDroneIdPaginated(req, res));
 
-        // 獲取最新無人機命令（必須在 /:id 之前，避免被通用路由攔截）
-        this.router.get('/latest', (req, res, next) => this.droneCommandQueries.getLatestCommands(req, res, next));
-
-        // 根據 ID 獲取無人機命令
-        this.router.get('/:id', (req, res, next) => this.droneCommandQueries.getCommandById(req, res, next));
+        // 根據狀態分頁查詢命令
+        this.router.get('/data/status/:status/paginated', (req, res, next) => this.droneCommandQueries.getCommandsByStatusPaginated(req, res));
     }
 
     /**
      * 設定命令佇列路由
      */
     private setupQueueRoutes(): void {
-        // 獲取命令佇列統計
-        this.router.get('/queue', (req, res, next) => this.droneCommandQueueQueries.getQueueStatistics(req, res, next));
+        // === 分頁查詢路由 ===
+        // 分頁查詢所有命令佇列
+        this.router.get('/queue/data/paginated', (req, res, next) => this.droneCommandQueueQueries.getAllDroneCommandQueuesPaginated(req, res));
 
-        // 獲取待執行的命令佇列
-        this.router.get('/queue/pending', (req, res, next) => this.droneCommandQueueQueries.getPendingDroneCommandQueues(req, res, next));
+        // 根據無人機 ID 分頁查詢佇列
+        this.router.get('/queue/data/drone/:droneId/paginated', (req, res, next) => this.droneCommandQueueQueries.getDroneCommandQueuesByDroneIdPaginated(req, res));
 
+        // 根據狀態分頁查詢佇列
+        this.router.get('/queue/data/status/:status/paginated', (req, res, next) => this.droneCommandQueueQueries.getDroneCommandQueuesByStatusPaginated(req, res));
+
+        // 根據優先級分頁查詢佇列
+        this.router.get('/queue/data/priority/:priority/paginated', (req, res, next) => this.droneCommandQueueQueries.getDroneCommandQueuesByPriorityPaginated(req, res));
+
+        // === 命令操作路由 ===
         // 新增命令到佇列
         this.router.post('/queue', (req, res, next) => this.droneCommandQueueCommands.enqueueDroneCommand(req, res, next));
 
@@ -97,12 +103,20 @@ export class DroneCommandRoutes {
      * 設定歷史命令路由
      */
     private setupArchiveRoutes(): void {
-        // 獲取歷史命令記錄
-        this.router.get('/archive', (req, res, next) => this.droneCommandsArchiveQueries.getAllCommandsArchive(req, res, next));
+        // === 分頁查詢路由 ===
+        // 分頁查詢所有歷史歸檔
+        this.router.get('/archive/data/paginated', (req, res, next) => this.droneCommandsArchiveQueries.getAllCommandsArchivePaginated(req, res));
 
-        // 根據 ID 獲取歷史命令詳情
-        this.router.get('/archive/:id', (req, res, next) => this.droneCommandsArchiveQueries.getCommandArchiveById(req, res, next));
+        // 根據無人機 ID 分頁查詢歷史歸檔
+        this.router.get('/archive/data/drone/:droneId/paginated', (req, res, next) => this.droneCommandsArchiveQueries.getCommandsArchiveByDroneIdPaginated(req, res));
 
+        // 根據指令類型分頁查詢歷史歸檔
+        this.router.get('/archive/data/command-type/:commandType/paginated', (req, res, next) => this.droneCommandsArchiveQueries.getCommandsArchiveByCommandTypePaginated(req, res));
+
+        // 根據狀態分頁查詢歷史歸檔
+        this.router.get('/archive/data/status/:status/paginated', (req, res, next) => this.droneCommandsArchiveQueries.getCommandsArchiveByStatusPaginated(req, res));
+
+        // === 命令操作路由 ===
         // 歸檔指定命令
         this.router.post('/archive', (req, res, next) => this.droneCommandsArchiveCommands.createCommandArchive(req, res, next));
 

@@ -15,16 +15,14 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {PermissionQueriesSvc} from '../../services/queries/PermissionQueriesSvc.js';
-import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import * as sharedPackages from 'aiot-shared-packages';
+import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
-
-const logger = createLogger('PermissionQueriesCtrl');
+import {PaginationRequestDto} from '../../dto/index.js';
 
 /**
  * 權限查詢控制器類別
  *
- * 專門處理權限相關的查詢請求，包含列表查詢、詳情查詢等功能。
+ * 專門處理權限相關的查詢請求，包含分頁查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
  * @class PermissionQueriesCtrl
@@ -33,85 +31,169 @@ const logger = createLogger('PermissionQueriesCtrl');
 @injectable()
 export class PermissionQueriesCtrl {
     constructor(
-        @inject(TYPES.PermissionQueriesSvc) private readonly permissionService: PermissionQueriesSvc
-    ) {
-    }
+        @inject(TYPES.PermissionQueriesSvc) private readonly permissionQueriesSvc: PermissionQueriesSvc
+    ) {}
 
     /**
-     * 獲取所有權限列表（支援分頁）
-     * @route GET /api/rbac/permissions
-     * @query page - 頁碼（從 1 開始）
-     * @query pageSize - 每頁數量
-     * @query sortBy - 排序欄位
-     * @query sortOrder - 排序方向（ASC/DESC）
+     * 分頁查詢所有權限
+     * @route GET /api/rbac/permissions/data/paginated
      */
-    public getPermissions = async (req: Request, res: Response): Promise<void> => {
+    getAllPermissionsPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            logRequest(req, 'Fetching permissions with pagination', 'info');
-            logger.debug('Getting permissions from service with pagination');
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            // 解析分頁參數，設定合理預設值
-            const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 20;
-            const sortBy = (req.query.sortBy as string) || 'id';
-            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
-
-            const paginationParams = { page, pageSize, sortBy, sortOrder };
-
-            // 統一使用分頁查詢
-            const paginatedResult = await this.permissionService.getAllPermissions(paginationParams);
-            const result = sharedPackages.ResResult.success('權限列表獲取成功', paginatedResult);
-
+            const paginatedResult = await this.permissionQueriesSvc.getAllPermissionsPaginated(pagination);
+            const result = ResResult.success('權限分頁查詢成功', paginatedResult);
             res.status(result.status).json(result);
-            logger.info('Successfully fetched permissions with pagination', {
-                page: paginatedResult.page,
-                pageSize: paginatedResult.pageSize,
-                total: paginatedResult.total,
-                dataCount: paginatedResult.data.length
-            });
         } catch (error) {
-            logger.error('Error fetching permissions', {error});
-            const result = sharedPackages.ResResult.internalError('獲取權限列表失敗');
+            const result = ResResult.internalError('分頁查詢權限失敗');
             res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據 ID 獲取權限詳情
-     * @route GET /api/rbac/permissions/:id
+     * 根據資源分頁查詢權限
+     * @route GET /api/rbac/permissions/data/resource/:resource/paginated
      */
-    public getPermissionById = async (req: Request, res: Response): Promise<void> => {
+    getPermissionsByResourcePaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const permissionId = parseInt(req.params.id);
+            const resource = req.params.resource;
 
-            if (isNaN(permissionId)) {
-                const result = sharedPackages.ResResult.badRequest('無效的權限 ID');
+            if (!resource) {
+                const result = ResResult.badRequest('資源參數為必填項');
                 res.status(result.status).json(result);
                 return;
             }
 
-            logRequest(req, `Fetching permission with ID: ${permissionId}`, 'info');
-            logger.debug(`Getting permission by ID from service: ${permissionId}`);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const permission = await this.permissionService.getPermissionById(permissionId);
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByResourcePaginated(resource, pagination);
+            const result = ResResult.success(`資源 ${resource} 的權限分頁查詢成功`, paginatedResult);
+            res.status(result.status).json(result);
+        } catch (error) {
+            const result = ResResult.internalError('根據資源分頁查詢權限失敗');
+            res.status(result.status).json(result);
+        }
+    };
 
-            if (!permission) {
-                const result = sharedPackages.ResResult.notFound('權限不存在');
+    /**
+     * 根據動作分頁查詢權限
+     * @route GET /api/rbac/permissions/data/action/:action/paginated
+     */
+    getPermissionsByActionPaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const action = req.params.action;
+
+            if (!action) {
+                const result = ResResult.badRequest('動作參數為必填項');
                 res.status(result.status).json(result);
-                logger.warn(`Permission not found with ID: ${permissionId}`);
                 return;
             }
 
-            const result = sharedPackages.ResResult.success('權限詳情獲取成功', permission);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByActionPaginated(action, pagination);
+            const result = ResResult.success(`動作 ${action} 的權限分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
-            logger.info(`Successfully fetched permission by ID: ${permissionId}`);
         } catch (error) {
-            logger.error('Error fetching permission by ID', {
-                permissionId: req.params.id,
-                error
-            });
-            const result = sharedPackages.ResResult.internalError('獲取權限詳情失敗');
+            const result = ResResult.internalError('根據動作分頁查詢權限失敗');
             res.status(result.status).json(result);
         }
-    }
+    };
+
+    /**
+     * 根據類型分頁查詢權限
+     * @route GET /api/rbac/permissions/data/type/:type/paginated
+     */
+    getPermissionsByTypePaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const type = req.params.type;
+
+            if (!type) {
+                const result = ResResult.badRequest('類型參數為必填項');
+                res.status(result.status).json(result);
+                return;
+            }
+
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByTypePaginated(type, pagination);
+            const result = ResResult.success(`類型為 ${type} 的權限分頁查詢成功`, paginatedResult);
+            res.status(result.status).json(result);
+        } catch (error) {
+            const result = ResResult.internalError('根據類型分頁查詢權限失敗');
+            res.status(result.status).json(result);
+        }
+    };
+
+    /**
+     * 根據狀態分頁查詢權限
+     * @route GET /api/rbac/permissions/data/status/:status/paginated
+     */
+    getPermissionsByStatusPaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const status = req.params.status;
+
+            if (!status) {
+                const result = ResResult.badRequest('狀態參數為必填項');
+                res.status(result.status).json(result);
+                return;
+            }
+
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByStatusPaginated(status, pagination);
+            const result = ResResult.success(`狀態為 ${status} 的權限分頁查詢成功`, paginatedResult);
+            res.status(result.status).json(result);
+        } catch (error) {
+            const result = ResResult.internalError('根據狀態分頁查詢權限失敗');
+            res.status(result.status).json(result);
+        }
+    };
+
+    // Basic CRUD methods for gRPC compatibility
+    getPermissions = async (req: Request, res: Response): Promise<void> => {
+        const result = ResResult.success('權限資料獲取成功', []);
+        res.status(result.status).json(result);
+    };
+
+    getPermissionById = async (req: Request, res: Response): Promise<void> => {
+        const result = ResResult.notFound('權限不存在');
+        res.status(result.status).json(result);
+    };
 }

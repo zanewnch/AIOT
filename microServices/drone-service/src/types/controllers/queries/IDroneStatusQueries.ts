@@ -8,16 +8,13 @@
  * @since 2025-08-12
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 /**
  * 無人機狀態查詢控制器介面
  */
 export interface IDroneStatusQueries {
-    getDroneStatuses(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getDroneStatusById(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getDroneStatusesByDroneId(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getLatestDroneStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getDroneStatusesByTimeRange(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getDroneStatusStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllStatusesPaginated(req: Request, res: Response): Promise<void>;
+    getStatusesByStatusPaginated(req: Request, res: Response): Promise<void>;
+    getStatusesByDroneIdPaginated(req: Request, res: Response): Promise<void>;
 }

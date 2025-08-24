@@ -13,12 +13,13 @@
 
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {DroneCommandQueueQueriesSvc} from '../../services/queries/DroneCommandQueueQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
+import {PaginationRequestDto} from '../../dto/index.js';
 
 const logger = createLogger('DroneCommandQueueQueriesCtrl');
 
@@ -39,67 +40,36 @@ export class DroneCommandQueueQueriesCtrl {
     }
 
     /**
-     * 取得所有無人機指令佇列資料（支援分頁）
-     * @route GET /api/drone-command-queue/data
-     * @query page - 頁碼（從 1 開始）
-     * @query pageSize - 每頁數量
-     * @query sortBy - 排序欄位
-     * @query sortOrder - 排序方向（ASC/DESC）
+     * 分頁查詢所有指令佇列（新增統一方法）
+     * @route GET /api/drone-command-queue/data/paginated
      */
-    getAllDroneCommandQueues = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getAllDroneCommandQueuesPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            // 解析分頁參數
-            const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 10;
-            const sortBy = (req.query.sortBy as string) || 'id';
-            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const paginationParams = { page, pageSize, sortBy, sortOrder };
-
-            // 統一使用分頁查詢（方法現在總是返回分頁結果）
-            const paginatedResult = await this.queryService.getAllDroneCommandQueues(paginationParams);
-            const result = ResResult.success('無人機指令佇列獲取成功', paginatedResult);
-
+            const paginatedResult = await this.queryService.getAllDroneCommandQueuesPaginated(pagination);
+            const result = ResResult.fromPaginatedResponse('指令佇列分頁查詢成功', paginatedResult);
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據 ID 取得無人機指令佇列資料
-     * @route GET /api/drone-command-queue/data/:id
-     */
-    getDroneCommandQueueById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const id = parseInt(req.params.id);
-
-            if (isNaN(id)) {
-                const result = ResResult.badRequest('無效的 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const commandQueue = await this.queryService.getDroneCommandQueueById(id);
-
-            if (!commandQueue) {
-                const result = ResResult.notFound('找不到指定的無人機指令佇列資料');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('無人機指令佇列資料獲取成功', commandQueue);
+            logger.error('分頁查詢指令佇列失敗', { error });
+            const result = ResResult.internalError('分頁查詢指令佇列失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
     /**
-     * 根據無人機 ID 取得指令佇列
-     * @route GET /api/drone-command-queue/data/drone/:droneId
+     * 根據無人機 ID 分頁查詢指令佇列（新增統一方法）
+     * @route GET /api/drone-command-queue/data/drone/:droneId/paginated
      */
-    getDroneCommandQueueByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getDroneCommandQueuesByDroneIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
 
@@ -109,20 +79,34 @@ export class DroneCommandQueueQueriesCtrl {
                 return;
             }
 
-            const commandQueue = await this.queryService.getDroneCommandQueueByDroneId(droneId);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const result = ResResult.success('無人機指令佇列資料獲取成功', commandQueue);
+            const paginatedResult = await this.queryService.getDroneCommandQueuesByDroneIdPaginated(droneId, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `無人機 ${droneId} 的指令佇列分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據無人機 ID 分頁查詢指令佇列失敗', { error });
+            const result = ResResult.internalError('根據無人機 ID 分頁查詢指令佇列失敗');
+            res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據狀態取得指令佇列
-     * @route GET /api/drone-command-queue/data/status/:status
+     * 根據狀態分頁查詢指令佇列（新增統一方法）
+     * @route GET /api/drone-command-queue/data/status/:status/paginated
      */
-    getDroneCommandQueuesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getDroneCommandQueuesByStatusPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const status = req.params.status;
 
@@ -132,20 +116,34 @@ export class DroneCommandQueueQueriesCtrl {
                 return;
             }
 
-            const commandQueues = await this.queryService.getDroneCommandQueuesByStatus(status.trim() as DroneCommandQueueStatus);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const result = ResResult.success('無人機指令佇列資料獲取成功', commandQueues);
+            const paginatedResult = await this.queryService.getDroneCommandQueuesByStatusPaginated(status as DroneCommandQueueStatus, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `狀態為 ${status} 的指令佇列分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據狀態分頁查詢指令佇列失敗', { error });
+            const result = ResResult.internalError('根據狀態分頁查詢指令佇列失敗');
+            res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據優先級取得指令佇列
-     * @route GET /api/drone-command-queue/data/priority/:priority
+     * 根據優先級分頁查詢指令佇列（新增統一方法）
+     * @route GET /api/drone-command-queue/data/priority/:priority/paginated
      */
-    getDroneCommandQueuesByPriority = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getDroneCommandQueuesByPriorityPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const priority = parseInt(req.params.priority);
 
@@ -155,86 +153,27 @@ export class DroneCommandQueueQueriesCtrl {
                 return;
             }
 
-            const commandQueues = await this.queryService.getDroneCommandQueuesByPriority(priority);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const result = ResResult.success('無人機指令佇列資料獲取成功', commandQueues);
+            const paginatedResult = await this.queryService.getDroneCommandQueuesByPriorityPaginated(priority, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `優先級為 ${priority} 的指令佇列分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 取得待執行的指令佇列
-     * @route GET /api/drone-command-queue/data/pending
-     */
-    getPendingDroneCommandQueues = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const pendingQueues = await this.queryService.getPendingDroneCommandQueues();
-
-            const result = ResResult.success('待執行指令佇列獲取成功', pendingQueues);
+            logger.error('根據優先級分頁查詢指令佇列失敗', { error });
+            const result = ResResult.internalError('根據優先級分頁查詢指令佇列失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
-    /**
-     * 取得指令佇列統計資料
-     * @route GET /api/drone-command-queue/statistics
-     */
-    getDroneCommandQueueStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const statistics = await this.queryService.getDroneCommandQueueStatistics();
-
-            const result = ResResult.success('無人機指令佇列統計資料獲取成功', statistics);
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 取得無人機的下一個指令
-     * @route GET /api/drone-command-queue/next/:droneId
-     */
-    getNextDroneCommand = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const droneId = parseInt(req.params.droneId);
-
-            if (isNaN(droneId)) {
-                const result = ResResult.badRequest('無效的無人機 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const nextCommand = await this.queryService.getNextDroneCommand(droneId);
-
-            if (!nextCommand) {
-                const result = ResResult.notFound('沒有待執行的無人機指令');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('下一個無人機指令獲取成功', nextCommand);
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 取得佇列統計
-     * @route GET /api/drone-command-queues/statistics
-     */
-    getQueueStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const statistics = await this.queryService.getDroneCommandQueueStatistics();
-            const result = ResResult.success('佇列統計獲取成功', statistics);
-
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
 }

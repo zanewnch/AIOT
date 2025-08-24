@@ -60,23 +60,15 @@ export class DroneStatusRoutes {
      * 設定查詢路由 (GET 操作)
      */
     private setupQueryRoutes(): void {
-        // 獲取所有無人機狀態
-        this.router.get('/', (req, res, next) => this.droneStatusQueries.getDroneStatuses(req, res, next));
+        // === 分頁查詢路由 ===
+        // 分頁查詢所有無人機狀態
+        this.router.get('/data/paginated', (req, res, next) => this.droneStatusQueries.getAllStatusesPaginated(req, res));
 
-        // 獲取狀態統計資訊
-        this.router.get('/statistics', (req, res, next) => this.droneStatusQueries.getDroneStatusStatistics(req, res, next));
+        // 根據狀態分頁查詢
+        this.router.get('/data/status/:status/paginated', (req, res, next) => this.droneStatusQueries.getStatusesByStatusPaginated(req, res));
 
-        // 根據無人機 ID 獲取最新狀態
-        this.router.get('/latest/:droneId', (req, res, next) => this.droneStatusQueries.getLatestDroneStatus(req, res, next));
-
-        // 根據無人機 ID 獲取狀態資料
-        this.router.get('/drone/:droneId', (req, res, next) => this.droneStatusQueries.getDroneStatusesByDroneId(req, res, next));
-
-        // 根據時間範圍獲取狀態資料
-        this.router.get('/time-range', (req, res, next) => this.droneStatusQueries.getDroneStatusesByTimeRange(req, res, next));
-
-        // 根據 ID 獲取無人機狀態
-        this.router.get('/:id', (req, res, next) => this.droneStatusQueries.getDroneStatusById(req, res, next));
+        // 根據無人機 ID 分頁查詢狀態
+        this.router.get('/data/drone/:droneId/paginated', (req, res, next) => this.droneStatusQueries.getStatusesByDroneIdPaginated(req, res));
     }
 
     /**
@@ -84,80 +76,81 @@ export class DroneStatusRoutes {
      */
     private setupCommandRoutes(): void {
         // 建立新的無人機狀態記錄
-        this.router.post('/', (req, res, next) => this.droneStatusCommands.createDroneStatus(req, res, next));
+        this.router.post('/', (req, res, next) => this.droneStatusCommands.createDroneStatus(req, res));
 
         // 批次建立無人機狀態記錄
-        this.router.post('/batch', (req, res, next) => this.droneStatusCommands.bulkCreateDroneStatuses(req, res, next));
+        this.router.post('/batch', (req, res, next) => this.droneStatusCommands.bulkCreateDroneStatuses(req, res));
 
         // 更新無人機狀態
-        this.router.put('/:id', (req, res, next) => this.droneStatusCommands.updateDroneStatus(req, res, next));
+        this.router.put('/:id', (req, res, next) => this.droneStatusCommands.updateDroneStatus(req, res));
 
         // 刪除無人機狀態記錄
-        this.router.delete('/:id', (req, res, next) => this.droneStatusCommands.deleteDroneStatus(req, res, next));
+        this.router.delete('/:id', (req, res, next) => this.droneStatusCommands.deleteDroneStatus(req, res));
 
         // 清空指定無人機的所有狀態記錄
-        this.router.delete('/drone/:droneId', (req, res, next) => this.droneStatusCommands.clearStatusesByDroneId(req, res, next));
+        this.router.delete('/drone/:droneId', (req, res, next) => this.droneStatusCommands.clearStatusesByDroneId(req, res));
     }
 
     /**
      * 設定即時狀態路由
      */
     private setupRealtimeRoutes(): void {
-        // 獲取所有無人機的即時狀態
-        this.router.get('/realtime', (req, res, next) => this.droneRealTimeStatusQueries.getAllRealTimeStatuses(req, res, next));
+        // === 分頁查詢即時狀態路由 ===
+        // 分頁查詢所有無人機的即時狀態
+        this.router.get('/realtime/data/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getAllRealTimeStatusesPaginated(req, res));
 
-        // 根據無人機 ID 獲取即時狀態
-        this.router.get('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusByDroneId(req, res, next));
+        // 根據無人機 ID 分頁查詢即時狀態
+        this.router.get('/realtime/data/drone/:droneId/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusesByDroneIdPaginated(req, res));
 
-        // 獲取連線狀態
-        this.router.get('/realtime/connections', (req, res, next) => this.droneRealTimeStatusQueries.getConnectionStatuses(req, res, next));
+        // 根據狀態分頁查詢即時狀態
+        this.router.get('/realtime/data/status/:status/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusesByStatusPaginated(req, res));
 
-        // 獲取即時狀態統計
-        this.router.get('/realtime/statistics', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusStatistics(req, res, next));
+        // 根據連線狀態分頁查詢
+        this.router.get('/realtime/data/connection/:connection/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusesByConnectionPaginated(req, res));
 
+        // === 命令操作路由 ===
         // 更新即時狀態
-        this.router.put('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res, next));
+        this.router.put('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res));
 
         // 廣播訊息
-        this.router.post('/realtime/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res, next));
+        this.router.post('/realtime/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res));
 
         // 發送通知
-        this.router.post('/realtime/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res, next));
+        this.router.post('/realtime/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res));
 
         // 斷開無人機連線
-        this.router.delete('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res, next));
+        this.router.delete('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res));
     }
 
     /**
      * 設定歷史歸檔路由
      */
     private setupArchiveRoutes(): void {
-        // 獲取所有歷史狀態記錄
-        this.router.get('/archive', (req, res, next) => this.droneStatusArchiveQueries.getAllStatusArchives(req, res, next));
+        // === 分頁查詢歷史狀態記錄 ===
+        // 分頁查詢所有歷史狀態記錄
+        this.router.get('/archive/data/paginated', (req, res, next) => this.droneStatusArchiveQueries.getAllStatusArchivesPaginated(req, res));
 
-        // 根據無人機 ID 獲取歷史狀態
-        this.router.get('/archive/drone/:droneId', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByDroneId(req, res, next));
+        // 根據無人機 ID 分頁查詢歷史狀態
+        this.router.get('/archive/data/drone/:droneId/paginated', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByDroneIdPaginated(req, res));
 
-        // 根據時間範圍獲取歷史狀態
-        this.router.get('/archive/time-range', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByDateRange(req, res, next));
+        // 根據狀態分頁查詢歷史記錄
+        this.router.get('/archive/data/status/:status/paginated', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByStatusPaginated(req, res));
 
-        // 獲取歷史狀態統計
-        this.router.get('/archive/statistics', (req, res, next) => this.droneStatusArchiveQueries.getStatusChangeStatistics(req, res, next));
+        // 根據時間範圍分頁查詢歷史狀態
+        this.router.get('/archive/data/date-range/paginated', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchivesByDateRangePaginated(req, res));
 
-        // 根據 ID 獲取歷史狀態詳情
-        this.router.get('/archive/:id', (req, res, next) => this.droneStatusArchiveQueries.getStatusArchiveById(req, res, next));
-
+        // === 命令操作路由 ===
         // 歸檔狀態記錄
-        this.router.post('/archive', (req, res, next) => this.droneStatusArchiveCommands.archiveStatus(req, res, next));
+        this.router.post('/archive', (req, res, next) => this.droneStatusArchiveCommands.archiveStatus(req, res));
 
         // 批次歸檔狀態記錄
-        this.router.post('/archive/batch', (req, res, next) => this.droneStatusArchiveCommands.bulkArchiveStatuses(req, res, next));
+        this.router.post('/archive/batch', (req, res, next) => this.droneStatusArchiveCommands.bulkArchiveStatuses(req, res));
 
         // 刪除歷史狀態記錄
-        this.router.delete('/archive/:id', (req, res, next) => this.droneStatusArchiveCommands.deleteArchivedStatus(req, res, next));
+        this.router.delete('/archive/:id', (req, res, next) => this.droneStatusArchiveCommands.deleteArchivedStatus(req, res));
 
         // 清理舊的歷史狀態記錄
-        this.router.delete('/archive/cleanup', (req, res, next) => this.droneStatusArchiveCommands.cleanupOldArchives(req, res, next));
+        this.router.delete('/archive/cleanup', (req, res, next) => this.droneStatusArchiveCommands.cleanupOldArchives(req, res));
     }
 
     /**

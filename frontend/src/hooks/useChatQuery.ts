@@ -50,8 +50,8 @@ export class ChatQuery {
       CONVERSATION: ['chat', 'conversation'] as const,
     } as const;
 
-    // 從環境變數獲取 LLM 服務 URL，預設為本地開發環境
-    this.LLM_SERVICE_URL = import.meta.env.VITE_LLM_SERVICE_URL || 'http://localhost:8022';
+    // 從環境變數獲取 LLM 服務 URL，預設為通過 Gateway 直接存取 FastAPI
+    this.LLM_SERVICE_URL = import.meta.env.VITE_LLM_SERVICE_URL || 'http://localhost:8000/api/llm';
   }
 
   /**
@@ -65,7 +65,7 @@ export class ChatQuery {
           logger.debug('Checking LLM service health status');
           
           const result = await resUtilsInstance.getWithResult<LLMHealthStatus>(
-            `${this.LLM_SERVICE_URL}/api/transformers/health/`
+            `${this.LLM_SERVICE_URL}/health`
           );
           
           if (!result.isSuccess()) {
@@ -115,8 +115,8 @@ export class ChatQuery {
 
           // 根據是否使用對話模式選擇不同的端點
           const endpoint = request.useConversation 
-            ? '/transformers/conversation/'
-            : '/transformers/generate/';
+            ? '/conversational'
+            : '/generate';
           
           const result = await resUtilsInstance.postWithResult<ChatResponse>(
             `${this.LLM_SERVICE_URL}${endpoint}`,
@@ -168,7 +168,7 @@ export class ChatQuery {
           logger.debug('Uploading documents', { count: request.documents.length });
           
           const result = await resUtilsInstance.postWithResult<DocumentUploadResponse>(
-            `${this.LLM_SERVICE_URL}/api/transformers/documents/`,
+            `${this.LLM_SERVICE_URL}/documents`,
             {
               documents: request.documents
             }
@@ -216,8 +216,9 @@ export class ChatQuery {
         try {
           logger.debug('Testing LLM service connection');
           
+          // 直接使用 FastAPI 的健康檢查端點
           const result = await resUtilsInstance.getWithResult<any>(
-            `${this.LLM_SERVICE_URL}/health/`
+            `${this.LLM_SERVICE_URL}/health`
           );
           
           const isConnected = result.isSuccess() && result.data?.status === 'healthy';
@@ -298,6 +299,123 @@ export const useGenerateText = () => chatQuery.useGenerateText();
 export const useUploadDocuments = () => chatQuery.useUploadDocuments();
 export const useTestConnection = () => chatQuery.useTestConnection();
 export const useClearChatCache = () => chatQuery.useClearChatCache();
+
+// MCP 相關 hooks
+export const useMCPQuery = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (request: { query: string; use_conversation?: boolean }) => {
+      try {
+        logger.debug('Sending MCP natural language query', { 
+          query: request.query.substring(0, 100),
+          use_conversation: request.use_conversation
+        });
+
+        const result = await resUtilsInstance.postWithResult<any>(
+          `${chatQuery.LLM_SERVICE_URL}/mcp/query`,
+          {
+            query: request.query,
+            use_conversation: request.use_conversation || false
+          }
+        );
+        
+        if (!result.isSuccess()) {
+          throw new Error(result.message);
+        }
+        
+        logger.info('MCP query completed successfully');
+        return result.data || {
+          success: false,
+          error: 'No response data received'
+        };
+      } catch (error: any) {
+        logger.error('MCP query failed:', error);
+        
+        const errorMessage = error.response?.data?.message || error.message || 'MCP query failed';
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.info('MCP query successful', { tool_used: data.tool_used });
+      }
+    },
+    retry: 1,
+  });
+};
+
+export const useMCPTools = () => {
+  return useQuery({
+    queryKey: [...chatQuery.CHAT_QUERY_KEYS.HEALTH, 'mcp-tools'],
+    queryFn: async () => {
+      try {
+        logger.debug('Fetching MCP tools');
+        
+        const result = await resUtilsInstance.getWithResult<any>(
+          `${chatQuery.LLM_SERVICE_URL}/mcp/tools`
+        );
+        
+        if (!result.isSuccess()) {
+          throw new Error(result.message);
+        }
+        
+        logger.info('MCP tools fetched successfully', { 
+          total: result.data?.total || 0 
+        });
+        return result.data;
+      } catch (error: any) {
+        logger.error('Fetch MCP tools failed:', error);
+        throw error;
+      }
+    },
+    staleTime: 60 * 1000, // 1分鐘
+    gcTime: 5 * 60 * 1000, // 5分鐘
+    retry: 1,
+  });
+};
+
+export const useMCPStatus = () => {
+  return useQuery({
+    queryKey: [...chatQuery.CHAT_QUERY_KEYS.HEALTH, 'mcp-status'],
+    queryFn: async () => {
+      try {
+        logger.debug('Checking MCP status');
+        
+        const result = await resUtilsInstance.getWithResult<any>(
+          `${chatQuery.LLM_SERVICE_URL}/mcp/status`
+        );
+        
+        if (!result.isSuccess()) {
+          throw new Error(result.message);
+        }
+        
+        logger.info('MCP status check completed', { 
+          enabled: result.data?.mcp_enabled,
+          tools: result.data?.total_tools || 0 
+        });
+        return result.data;
+      } catch (error: any) {
+        logger.error('MCP status check failed:', error);
+        return {
+          success: false,
+          mcp_enabled: false,
+          total_tools: 0,
+          total_services: 0,
+          services: [],
+          message: 'MCP status check failed'
+        };
+      }
+    },
+    staleTime: 30 * 1000, // 30秒
+    gcTime: 2 * 60 * 1000, // 2分鐘
+    retry: 1,
+    refetchInterval: 60 * 1000, // 每分鐘檢查一次
+  });
+};
 
 // 導出 ChatQuery 類別供進階使用
 export { chatQuery };

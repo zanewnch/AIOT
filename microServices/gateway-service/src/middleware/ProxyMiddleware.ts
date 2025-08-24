@@ -114,6 +114,12 @@ export class ProxyMiddleware {
                 port: parseInt(process.env.DRONE_WS_SERVICE_PORT || '3004'),
                 service: 'drone-websocket-service',
                 id: 'drone-websocket-service-fallback'
+            },
+            'llm-ai-engine': {
+                address: process.env.LLM_AI_ENGINE_HOST || 'aiot-llm-ai-engine',
+                port: parseInt(process.env.LLM_AI_ENGINE_PORT || '8021'),
+                service: 'llm-ai-engine',
+                id: 'llm-ai-engine-fallback'
             }
         };
 
@@ -509,6 +515,13 @@ export class ProxyMiddleware {
                 httpPort: 3053,
                 timeout: 30000,
                 retries: 3
+            },
+            {
+                target: 'llm-ai-engine',
+                pathPrefix: '/llm',
+                useGrpc: false,
+                timeout: 60000,
+                retries: 2
             }
         ];
 
@@ -521,8 +534,8 @@ export class ProxyMiddleware {
                 return;
             }
 
-            // 使用現有的代理方法
-            this.proxyToService(config)(req, res, next);
+            // 使用動態代理中間件
+            this.createDynamicProxy(config)(req, res, next);
         };
     };
 }

@@ -13,12 +13,12 @@
 
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {DroneCommandsArchiveQueriesSvc} from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
-import {loggerDecorator} from '../../patterns/LoggerDecorator.js';
+import {PaginationRequestDto} from '../../dto/index.js';
 
 const logger = createLogger('DroneCommandsArchiveQueriesCtrl');
 
@@ -33,57 +33,45 @@ const logger = createLogger('DroneCommandsArchiveQueriesCtrl');
  */
 @injectable()
 export class DroneCommandsArchiveQueriesCtrl {
-    /**
-     * 取得所有指令歷史歸檔資料
-     * @route GET /api/drone-commands-archive/data
-     */
-    getAllCommandsArchive = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const limit = parseInt(req.query.limit as string) || 100;
-            const archives = await this.queryService.getAllCommandsArchive(limit);
-            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
+    
+    constructor(
+        @inject(TYPES.DroneCommandsArchiveQueriesSvc) private readonly queryService: DroneCommandsArchiveQueriesSvc
+    ) {
+    }
 
+    /**
+     * 分頁查詢所有指令歷史歸檔（新增統一方法）
+     * @route GET /api/drone-commands-archive/data/paginated
+     */
+    getAllCommandsArchivePaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.queryService.getAllCommandsArchivePaginated(pagination);
+            const result = ResResult.fromPaginatedResponse('指令歷史歸檔分頁查詢成功', paginatedResult);
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }, 'getAllCommandsArchive')
-    /**
-     * 根據 ID 取得指令歷史歸檔資料
-     * @route GET /api/drone-commands-archive/data/:id
-     */
-    getCommandArchiveById = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const id = parseInt(req.params.id);
-
-            if (isNaN(id)) {
-                const result = ResResult.badRequest('無效的指令歷史歸檔 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archive = await this.queryService.getCommandArchiveById(id);
-
-            if (!archive) {
-                const result = ResResult.notFound('找不到指定的指令歷史歸檔');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('指令歷史歸檔資料獲取成功', archive);
+            logger.error('分頁查詢指令歷史歸檔失敗', { error });
+            const result = ResResult.internalError('分頁查詢指令歷史歸檔失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }, 'getCommandArchiveById')
+    };
+
     /**
-     * 根據無人機 ID 查詢指令歷史歸檔
-     * @route GET /api/drone-commands-archive/data/drone/:droneId
+     * 根據無人機 ID 分頁查詢指令歷史歸檔（新增統一方法）
+     * @route GET /api/drone-commands-archive/data/drone/:droneId/paginated
      */
-    getCommandArchivesByDroneId = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandsArchiveByDroneIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
-            const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(droneId)) {
                 const result = ResResult.badRequest('無效的無人機 ID 格式');
@@ -91,47 +79,36 @@ export class DroneCommandsArchiveQueriesCtrl {
                 return;
             }
 
-            const archives = await this.queryService.getCommandArchivesByDroneId(droneId, limit);
-            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.queryService.getCommandsArchiveByDroneIdPaginated(droneId, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `無人機 ${droneId} 的指令歷史歸檔分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }, 'getCommandArchivesByDroneId')
-    /**
-     * 根據時間範圍查詢指令歷史歸檔
-     * @route GET /api/drone-commands-archive/data/time-range
-     */
-    getCommandArchivesByTimeRange = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const startTime = new Date(req.query.startTime as string);
-            const endTime = new Date(req.query.endTime as string);
-            const limit = parseInt(req.query.limit as string) || 100;
-
-            // 驗證日期參數
-            if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                const result = ResResult.badRequest('無效的時間格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archives = await this.queryService.getCommandArchivesByTimeRange(startTime, endTime, limit);
-            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
-
+            logger.error('根據無人機 ID 分頁查詢指令歷史歸檔失敗', { error });
+            const result = ResResult.internalError('根據無人機 ID 分頁查詢指令歷史歸檔失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }, 'getCommandArchivesByTimeRange')
+    };
+
     /**
-     * 根據指令類型查詢歷史歸檔
-     * @route GET /api/drone-commands-archive/data/command-type/:commandType
+     * 根據指令類型分頁查詢歷史歸檔（新增統一方法）
+     * @route GET /api/drone-commands-archive/data/command-type/:commandType/paginated
      */
-    getCommandArchivesByType = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandsArchiveByCommandTypePaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const commandType = req.params.commandType;
-            const limit = parseInt(req.query.limit as string) || 50;
 
             if (!commandType || typeof commandType !== 'string' || commandType.trim().length === 0) {
                 const result = ResResult.badRequest('指令類型參數不能為空');
@@ -139,22 +116,36 @@ export class DroneCommandsArchiveQueriesCtrl {
                 return;
             }
 
-            const archives = await this.queryService.getCommandArchivesByType(commandType as any, limit);
-            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.queryService.getCommandsArchiveByCommandTypePaginated(commandType, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `指令類型為 ${commandType} 的歷史歸檔分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據指令類型分頁查詢歷史歸檔失敗', { error });
+            const result = ResResult.internalError('根據指令類型分頁查詢歷史歸檔失敗');
+            res.status(result.status).json(result);
         }
-    }, 'getCommandArchivesByType')
+    };
+
     /**
-     * 根據指令狀態查詢歷史歸檔
-     * @route GET /api/drone-commands-archive/data/status/:status
+     * 根據狀態分頁查詢歷史歸檔（新增統一方法）
+     * @route GET /api/drone-commands-archive/data/status/:status/paginated
      */
-    getCommandArchivesByStatus = loggerDecorator(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getCommandsArchiveByStatusPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const status = req.params.status;
-            const limit = parseInt(req.query.limit as string) || 50;
 
             if (!status || typeof status !== 'string' || status.trim().length === 0) {
                 const result = ResResult.badRequest('狀態參數不能為空');
@@ -162,17 +153,27 @@ export class DroneCommandsArchiveQueriesCtrl {
                 return;
             }
 
-            const archives = await this.queryService.getCommandArchivesByStatus(status as any, limit);
-            const result = ResResult.success('指令歷史歸檔資料獲取成功', archives);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'created_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.queryService.getCommandsArchiveByStatusPaginated(status, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `狀態為 ${status} 的歷史歸檔分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據狀態分頁查詢歷史歸檔失敗', { error });
+            const result = ResResult.internalError('根據狀態分頁查詢歷史歸檔失敗');
+            res.status(result.status).json(result);
         }
-    }, 'getCommandArchivesByStatus')
+    };
 
-    constructor(
-        @inject(TYPES.DroneCommandsArchiveQueriesSvc) private readonly queryService: DroneCommandsArchiveQueriesSvc
-    ) {
-    }
 }

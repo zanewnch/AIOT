@@ -60,11 +60,6 @@ x-common-env: &common-env
   ARCHIVE_CONSUMER_SERVICE_PORT: 3005
   ARCHIVE_CONSUMER_SERVICE_URL: http://aiot-archive-consumer-service:3005
   
-  # LLM 服務
-  LLM_SERVICE_HOST: aiot-llm-service
-  LLM_SERVICE_PORT: 8022
-  LLM_SERVICE_URL: http://aiot-llm-service:8022
-  
   # LLM AI Engine 服務
   LLM_AI_ENGINE_HOST: aiot-llm-ai-engine
   LLM_AI_ENGINE_PORT: 8021
@@ -310,6 +305,32 @@ services:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 30s
       timeout: 10s
+      retries: 5
+
+  # PostgreSQL 資料庫 (專用於 LLM AI Engine)
+  aiot-llm-postgres:
+    image: postgres:15-alpine
+    logging: *default-logging
+    container_name: aiot-llm-postgres
+    ports:
+      - "5433:5432"   # PostgreSQL (避免與系統預設 5432 衝突)
+    environment:
+      POSTGRES_DB: llm_ai_db
+      POSTGRES_USER: llm_user
+      POSTGRES_PASSWORD: llm_password_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - postgres_llm_data:/var/lib/postgresql/data
+      - ../database/postgresql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - aiot-network
+    restart: unless-stopped
+    healthcheck:
+      # 檢查 PostgreSQL LLM 資料庫狀態
+      # 確保 LLM 相關的對話歷史、工具調用記錄等結構化數據可以正常儲存
+      test: ["CMD-SHELL", "pg_isready -U llm_user -d llm_ai_db"]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   # ==========================================================================
@@ -659,6 +680,16 @@ services:
       TEMPERATURE: 0.7
       # 設備配置 (CPU 推理)
       DEVICE: "cpu"
+      # 資料庫配置 (PostgreSQL for structured data)
+      DB_HOST: aiot-llm-postgres
+      DB_PORT: 5432
+      DB_NAME: llm_ai_db
+      DB_USER: llm_user
+      DB_PASSWORD: llm_password_123
+      # Redis 配置 (for caching and session management)
+      REDIS_HOST: aiot-redis
+      REDIS_PORT: 6379
+      REDIS_DB: 2  # 使用不同的 DB 避免衝突
       # Chroma 向量資料庫配置
       CHROMA_PERSIST_DIRECTORY: "./chroma_db"
     volumes:
@@ -669,6 +700,10 @@ services:
     depends_on:
       consul:
         condition: service_healthy
+      aiot-llm-postgres:
+        condition: service_healthy
+      aiot-redis:
+        condition: service_started
     restart: unless-stopped
     healthcheck:
       # 檢查 LLM AI Engine 的健康狀態
@@ -679,46 +714,6 @@ services:
       retries: 3
       start_period: 60s  # AI 模型載入需要較長時間
 
-  # LLM Service 微服務 (Django API 層)
-  llm-service:
-    build:
-      context: ../../microServices/llm-service
-      dockerfile: Dockerfile.dev
-    logging: *default-logging
-    container_name: aiot-llm-service
-    ports:
-      - "8022:8022"   # Django API
-    environment:
-      <<: *common-env
-      SERVICE_NAME: llm-service
-      PORT: 8022
-      # Django 配置
-      DEBUG: "True"
-      SECRET_KEY: "dev-secret-key-for-llm-service"
-      ALLOWED_HOSTS: "*"
-      # LLM AI Engine 連接配置
-      LLM_AI_ENGINE_URL: "http://aiot-llm-ai-engine:8021"
-      # SQLite 配置 (開發環境)
-      DATABASE_URL: "sqlite:///./db.sqlite3"
-    volumes:
-      - ../../microServices/llm-service:/app
-      - llm_service_db:/app  # 持久化 SQLite 資料庫
-    networks:
-      - aiot-network
-    depends_on:
-      consul:
-        condition: service_healthy
-      llm-ai-engine:
-        condition: service_healthy
-    restart: unless-stopped
-    healthcheck:
-      # 檢查 LLM Service 的健康狀態
-      # 確保 Django API 正常運行並能連接到 AI Engine
-      test: ["CMD", "curl", "-f", "http://localhost:8022/api/transformers/health/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
   # Gateway API 服務 (Express.js API Gateway)
   gateway-service:
@@ -763,8 +758,6 @@ services:
         condition: service_healthy
       aiot-redis:
         condition: service_started
-      llm-service:
-        condition: service_healthy
       llm-ai-engine:
         condition: service_healthy
     restart: unless-stopped
@@ -885,6 +878,9 @@ volumes:
   llm_ai_engine_chroma:
     driver: local
     name: aiot_llm_ai_engine_chroma
+  postgres_llm_data:
+    driver: local
+    name: aiot_postgres_llm_data
   llm_service_db:
     driver: local
     name: aiot_llm_service_db

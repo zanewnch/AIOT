@@ -499,7 +499,12 @@ export const TYPES = {
   /**
    * 角色權限命令 Repo 類型
    */
-  RolePermissionCommandsRepo: Symbol.for('RolePermissionCommandsRepo')
+  RolePermissionCommandsRepo: Symbol.for('RolePermissionCommandsRepo'),
+
+  /**
+   * RBAC MCP 路由類型
+   */
+  RBACMCPRoutes: Symbol.for('RBACMCPRoutes')
 } as const;
 
 /**

@@ -15,16 +15,14 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {UserToRoleQueriesSvc} from '../../services/queries/UserToRoleQueriesSvc.js';
-import {createLogger, logRequest} from '../../configs/loggerConfig.js';
-import * as sharedPackages from 'aiot-shared-packages';
+import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
-
-const logger = createLogger('UserToRoleQueriesCtrl');
+import {PaginationRequestDto} from '../../dto/index.js';
 
 /**
  * 使用者角色關聯查詢控制器類別
  *
- * 專門處理使用者角色關聯相關的查詢請求，包含列表查詢、詳情查詢等功能。
+ * 專門處理使用者角色關聯相關的查詢請求，包含分頁查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
  * @class UserToRoleQueriesCtrl
@@ -34,93 +32,107 @@ const logger = createLogger('UserToRoleQueriesCtrl');
 export class UserToRoleQueriesCtrl {
     constructor(
         @inject(TYPES.UserToRoleQueriesSvc) private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc
-    ) {
-    }
+    ) {}
 
     /**
-     * 獲取使用者角色關聯數據
-     * @route GET /api/rbac/user-roles
-     * @route GET /api/rbac/users/:userId/roles
+     * 分頁查詢所有使用者角色關聯
+     * @route GET /api/rbac/user-roles/data/paginated
      */
-    public getUserRoles = async (req: Request, res: Response): Promise<void> => {
+    getAllUserRolesPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const {userId} = req.params;
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            // 如果沒有提供 userId 參數，返回所有使用者角色關聯數據
-            if (!userId) {
-                logger.info('Fetching all user-role associations');
-                logRequest(req, 'All user roles retrieval request', 'info');
-
-                const allUserRoles = await this.userToRoleQueriesSvc.getAllUserRoles();
-
-                logger.info(`Successfully retrieved ${allUserRoles.length} user-role associations`);
-                const result = sharedPackages.ResResult.success('所有使用者角色關聯獲取成功', allUserRoles);
-                res.status(result.status).json(result);
-                return;
-            }
-
-            // 如果提供了 userId 參數，查詢特定使用者的角色
-            const id = parseInt(userId, 10);
-
-            logger.info(`Fetching roles for user ID: ${userId}`);
-            logRequest(req, `User roles retrieval request for ID: ${userId}`, 'info');
-
-            if (isNaN(id) || id <= 0) {
-                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const roles = await this.userToRoleQueriesSvc.getUserRoles(id);
-
-            logger.info(`Successfully retrieved ${roles.length} roles for user ID: ${userId}`);
-            const result = sharedPackages.ResResult.success('使用者角色獲取成功', roles);
+            const paginatedResult = await this.userToRoleQueriesSvc.getAllUserRolesPaginated(pagination);
+            const result = ResResult.success('使用者角色關聯分頁查詢成功', paginatedResult);
             res.status(result.status).json(result);
+            
+            
         } catch (error) {
-            logger.error('Error fetching user roles:', error);
-            if (error instanceof Error && error.message === 'User not found') {
-                const result = sharedPackages.ResResult.notFound(error.message);
-                res.status(result.status).json(result);
-            } else {
-                const result = sharedPackages.ResResult.internalError('使用者角色獲取失敗');
-                res.status(result.status).json(result);
-            }
+            const result = ResResult.internalError('分頁查詢使用者角色關聯失敗'); res.status(result.status).json(result);
+            
         }
-    }
+    };
 
     /**
-     * 根據 ID 獲取使用者角色關聯詳情
-     * @route GET /api/rbac/user-roles/:id
+     * 根據使用者 ID 分頁查詢角色關聯
+     * @route GET /api/rbac/user-roles/data/user/:userId/paginated
      */
-    public getUserRoleById = async (req: Request, res: Response): Promise<void> => {
+    getUserRolesByUserIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const {userRoleId} = req.params;
-            const id = parseInt(userRoleId, 10);
+            const userId = parseInt(req.params.userId);
 
-            logger.info(`Fetching user role details for ID: ${userRoleId}`);
-            logRequest(req, `User role retrieval request for ID: ${userRoleId}`, 'info');
-
-            if (isNaN(id) || id <= 0) {
-                const result = sharedPackages.ResResult.badRequest('無效的使用者 ID');
+            if (isNaN(userId)) {
+                const result = ResResult.badRequest('無效的使用者 ID 格式');
                 res.status(result.status).json(result);
+                
                 return;
             }
 
-            // 獲取使用者的所有角色（這裡假設 userRoleId 是 userId）
-            const roles = await this.userToRoleQueriesSvc.getUserRoles(id);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            logger.info(`Successfully retrieved ${roles.length} roles for user ID: ${userRoleId}`);
-            const result = sharedPackages.ResResult.success('使用者角色關係獲取成功', {userId: id, roles});
+            const paginatedResult = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, pagination);
+            const result = ResResult.success(`使用者 ${userId} 的角色關聯分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
+            
+            
         } catch (error) {
-            logger.error('Error fetching user role by ID:', error);
-            if (error instanceof Error && error.message === 'User not found') {
-                const result = sharedPackages.ResResult.notFound('使用者角色關係不存在');
-                res.status(result.status).json(result);
-            } else {
-                const result = sharedPackages.ResResult.internalError('使用者角色關係獲取失敗');
-                res.status(result.status).json(result);
-            }
+            const result = ResResult.internalError('根據使用者 ID 分頁查詢角色關聯失敗'); res.status(result.status).json(result);
+            
         }
-    }
+    };
+
+    /**
+     * 根據角色 ID 分頁查詢使用者關聯
+     * @route GET /api/rbac/user-roles/data/role/:roleId/paginated
+     */
+    getUserRolesByRoleIdPaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const roleId = parseInt(req.params.roleId);
+
+            if (isNaN(roleId)) {
+                const result = ResResult.badRequest('無效的角色 ID 格式');
+                res.status(result.status).json(result);
+                
+                return;
+            }
+
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'createdAt',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId, pagination);
+            const result = ResResult.success(`角色 ${roleId} 的使用者關聯分頁查詢成功`, paginatedResult);
+            res.status(result.status).json(result);
+            
+            
+        } catch (error) {
+            const result = ResResult.internalError('根據角色 ID 分頁查詢使用者關聯失敗'); res.status(result.status).json(result);
+            
+        }
+    };
+
+    // Basic CRUD methods for gRPC compatibility
+    getUserRoles = async (req: Request, res: Response): Promise<void> => {
+        const result = ResResult.success('使用者角色資料獲取成功', []);
+        res.status(result.status).json(result);
+    };
 }

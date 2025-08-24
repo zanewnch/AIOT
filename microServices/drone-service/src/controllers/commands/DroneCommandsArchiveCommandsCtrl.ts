@@ -44,7 +44,7 @@ export class DroneCommandsArchiveCommandsCtrl {
      */
     createCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const archiveData: DroneCommandsCtrlArchiveCreationAttributes = req.body;
+            const archiveData: DroneCommandsArchiveCreationAttributes = req.body;
 
             // 基本驗證
             if (!archiveData.drone_id || typeof archiveData.drone_id !== 'number') {
@@ -75,7 +75,7 @@ export class DroneCommandsArchiveCommandsCtrl {
     updateCommandArchive = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = parseInt(req.params.id);
-            const updateData: Partial<DroneCommandsCtrlArchiveCreationAttributes> = req.body;
+            const updateData: Partial<DroneCommandsArchiveCreationAttributes> = req.body;
 
             if (isNaN(id)) {
                 const result = ResResult.badRequest('無效的 ID 格式');

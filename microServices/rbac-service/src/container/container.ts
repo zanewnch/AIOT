@@ -54,8 +54,9 @@ import { RolePermissionCommandsRepo } from '../repo/commands/RolePermissionComma
 
 // 路由相關導入
 import { RouteRegistrar } from '../routes/RouteRegistrar.js';
-import { router as rbacRoutes } from '../routes/rbacRoutes.js';
+import { createRbacRouter } from '../routes/rbacRoutes.js';
 import docsRoutes from '../routes/docsRoutes.js';
+import { RBACMCPRoutes } from '../routes/mcpRoutes.js';
 
 /**
  * 創建並配置 RBAC 服務的 IoC 容器
@@ -219,14 +220,19 @@ export function createContainer(): Container {
     .to(RouteRegistrar)
     .inSingletonScope();
 
-  // 綁定路由實例
+  // 綁定路由實例 (使用工廠函數延遲創建)
   container.bind(TYPES.RBACRoutes)
-    .toConstantValue(rbacRoutes);
+    .toDynamicValue(() => createRbacRouter());
 
   container.bind(TYPES.DocsRoutes)
     .toConstantValue(docsRoutes);
 
-  console.log('✅ RBAC IoC Container configured with RBAC services, repositories, and routes');
+  // 綁定 MCP 路由
+  container.bind<RBACMCPRoutes>(TYPES.RBACMCPRoutes)
+    .to(RBACMCPRoutes)
+    .inSingletonScope();
+
+  console.log('✅ RBAC IoC Container configured with RBAC services, repositories, routes and MCP support');
   
   return container;
 }

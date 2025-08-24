@@ -8,17 +8,14 @@
  * @since 2025-08-12
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 /**
  * 無人機命令歷史查詢控制器介面
  */
 export interface IDroneCommandsArchiveQueries {
-    getAllArchivedCommands(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedCommandById(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedCommandsByDroneId(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedCommandsByTimeRange(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedCommandStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getAllCommandsArchive(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getCommandArchiveById(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllCommandsArchivePaginated(req: Request, res: Response): Promise<void>;
+    getCommandsArchiveByDroneIdPaginated(req: Request, res: Response): Promise<void>;
+    getCommandsArchiveByCommandTypePaginated(req: Request, res: Response): Promise<void>;
+    getCommandsArchiveByStatusPaginated(req: Request, res: Response): Promise<void>;
 }

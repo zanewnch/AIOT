@@ -13,81 +13,87 @@ import { injectable } from 'inversify';
 import { ArchiveTaskModel, ArchiveTaskStatus, ArchiveJobType } from '../../models/ArchiveTaskModel.js';
 import { ArchiveTaskQueryOptions } from '../../types/repositories/IArchiveTaskRepository.js';
 import { Op, WhereOptions } from 'sequelize';
+import { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
+import { PaginationRequestDto } from '../../dto/index.js';
+
+/**
+ * 統一分頁查詢結果接口
+ */
+export interface PaginatedResult<T> {
+  data: T[];
+  totalCount: number;
+  currentPage: number;
+  pageSize: number;
+}
 
 @injectable()
 export class ArchiveTaskQueriesRepo {
   
-  findAll = async (options?: ArchiveTaskQueryOptions): Promise<ArchiveTaskModel[]> => {
-    const where: WhereOptions = {};
-    
-    // 構建查詢條件
-    if (options?.status) {
-      where.status = options.status;
-    }
-    
-    if (options?.jobType) {
-      where.job_type = options.jobType;
-    }
-    
-    if (options?.dateRangeStart || options?.dateRangeEnd) {
-      where.createdAt = {};
-      if (options.dateRangeStart) {
-        (where.createdAt as any)[Op.gte] = options.dateRangeStart;
-      }
-      if (options.dateRangeEnd) {
-        (where.createdAt as any)[Op.lte] = options.dateRangeEnd;
-      }
-    }
-    
-    // 構建排序
-    const order: any[] = [];
-    if (options?.sortBy) {
-      order.push([options.sortBy, options.sortOrder || 'ASC']);
-    } else {
-      order.push(['createdAt', 'DESC']);
-    }
-    
-    return await ArchiveTaskModel.findAll({
-      where,
-      order,
-      limit: options?.limit || 100,
-      offset: options?.offset || 0
-    });
-  }
 
-  findById = async (id: number): Promise<ArchiveTaskModel | null> => {
-    return await ArchiveTaskModel.findByPk(id);
-  }
-  
-  findByStatus = async (status: ArchiveTaskStatus, limit = 100): Promise<ArchiveTaskModel[]> => {
-    return await ArchiveTaskModel.findAll({
-      where: { status },
-      order: [['createdAt', 'DESC']],
-      limit
+  /**
+   * 統一分頁查詢方法（新版）
+   */
+  findPaginated = async (
+    pagination: PaginationRequestDto,
+    filters: Record<string, any> = {}
+  ): Promise<PaginatedResult<ArchiveTaskModel>> => {
+    const whereConditions: Record<string, any> = {};
+
+    // 搜尋條件
+    if (pagination.search) {
+      whereConditions[Op.or as any] = [
+        { status: { [Op.like]: `%${pagination.search}%` } },
+        { job_type: { [Op.like]: `%${pagination.search}%` } },
+        { description: { [Op.like]: `%${pagination.search}%` } }
+      ];
+    }
+
+    // 額外過濾條件
+    Object.assign(whereConditions, filters);
+
+    const { count: totalCount, rows: data } = await ArchiveTaskModel.findAndCountAll({
+      where: whereConditions,
+      order: [[pagination.sortBy || 'createdAt', pagination.sortOrder || 'DESC']],
+      limit: pagination.pageSize || 20,
+      offset: pagination.offset
     });
-  }
-  
-  count = async (options?: ArchiveTaskQueryOptions): Promise<number> => {
-    const where: WhereOptions = {};
-    
-    if (options?.status) {
-      where.status = options.status;
-    }
-    
-    if (options?.jobType) {
-      where.job_type = options.jobType;
-    }
-    
-    if (options?.dateRangeStart || options?.dateRangeEnd) {
-      where.createdAt = {};
-      if (options.dateRangeStart) {
-        (where.createdAt as any)[Op.gte] = options.dateRangeStart;
-      }
-      if (options.dateRangeEnd) {
-        (where.createdAt as any)[Op.lte] = options.dateRangeEnd;
-      }
-    }
-    
-    return await ArchiveTaskModel.count({ where });
-  }
+
+    return {
+      data,
+      totalCount,
+      currentPage: pagination.page || 1,
+      pageSize: pagination.pageSize || 20
+    };
+  };
+
+  /**
+   * 根據狀態分頁查詢（新版）
+   */
+  findByStatusPaginated = async (
+    status: ArchiveTaskStatus,
+    pagination: PaginationRequestDto
+  ): Promise<PaginatedResult<ArchiveTaskModel>> => {
+    return this.findPaginated(pagination, { status });
+  };
+
+  /**
+   * 根據任務類型分頁查詢（新版）
+   */
+  findByJobTypePaginated = async (
+    jobType: ArchiveJobType,
+    pagination: PaginationRequestDto
+  ): Promise<PaginatedResult<ArchiveTaskModel>> => {
+    return this.findPaginated(pagination, { job_type: jobType });
+  };
+
+  /**
+   * 根據批次 ID 分頁查詢（新版）
+   */
+  findByBatchIdPaginated = async (
+    batchId: string,
+    pagination: PaginationRequestDto
+  ): Promise<PaginatedResult<ArchiveTaskModel>> => {
+    return this.findPaginated(pagination, { batch_id: batchId });
+  };
+
 }

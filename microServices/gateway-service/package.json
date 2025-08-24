@@ -16,11 +16,11 @@
     "docs:clean": "rm -rf docs"
   },
   "dependencies": {
-    "aiot-shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
+    "aiot-shared-packages": "file:../../aiot-shared-packages",
     "axios": "^1.11.0",
     "concurrently": "^8.2.2",
     "cookie-parser": "~1.4.4",

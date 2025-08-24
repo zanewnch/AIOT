@@ -12,6 +12,7 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { ArchiveTaskModel, ArchiveTaskCreationAttributes, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
 import type { IArchiveTaskRepository, ArchiveTaskQueryOptions } from '../../types/repositories/IArchiveTaskRepository.js';
+import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import { Op } from 'sequelize';
 import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
@@ -65,6 +66,80 @@ export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
       order: [['createdAt', 'DESC']]
     });
   }, 'findByBatchId')
+
+  findAllPaginated = loggerDecorator(async (params: PaginationParams): Promise<PaginatedResponse<ArchiveTaskModel>> => {
+    const { count, rows } = await ArchiveTaskModel.findAndCountAll({
+      limit: params.limit,
+      offset: params.offset,
+      order: [[params.sortBy || 'createdAt', params.sortOrder || 'DESC']]
+    });
+    
+    const currentPage = params.page || 1;
+    const pageSize = params.limit || 20;
+    const totalPages = Math.ceil(count / pageSize);
+    
+    return {
+      data: rows,
+      pagination: {
+        currentPage,
+        pageSize,
+        totalPages,
+        totalCount: count,
+        hasNext: currentPage < totalPages,
+        hasPrevious: currentPage > 1
+      }
+    };
+  }, 'findAllPaginated')
+
+  findByStatusPaginated = loggerDecorator(async (status: ArchiveTaskStatus, params: PaginationParams): Promise<PaginatedResponse<ArchiveTaskModel>> => {
+    const { count, rows } = await ArchiveTaskModel.findAndCountAll({
+      where: { status },
+      limit: params.limit,
+      offset: params.offset,
+      order: [[params.sortBy || 'createdAt', params.sortOrder || 'DESC']]
+    });
+    
+    const currentPage = params.page || 1;
+    const pageSize = params.limit || 20;
+    const totalPages = Math.ceil(count / pageSize);
+    
+    return {
+      data: rows,
+      pagination: {
+        currentPage,
+        pageSize,
+        totalPages,
+        totalCount: count,
+        hasNext: currentPage < totalPages,
+        hasPrevious: currentPage > 1
+      }
+    };
+  }, 'findByStatusPaginated')
+
+  findByBatchIdPaginated = loggerDecorator(async (batchId: string, params: PaginationParams): Promise<PaginatedResponse<ArchiveTaskModel>> => {
+    const { count, rows } = await ArchiveTaskModel.findAndCountAll({
+      where: { batch_id: batchId },
+      limit: params.limit,
+      offset: params.offset,
+      order: [[params.sortBy || 'createdAt', params.sortOrder || 'DESC']]
+    });
+    
+    const currentPage = params.page || 1;
+    const pageSize = params.limit || 20;
+    const totalPages = Math.ceil(count / pageSize);
+    
+    return {
+      data: rows,
+      pagination: {
+        currentPage,
+        pageSize,
+        totalPages,
+        totalCount: count,
+        hasNext: currentPage < totalPages,
+        hasPrevious: currentPage > 1
+      }
+    };
+  }, 'findByBatchIdPaginated')
 
   count = loggerDecorator(async (options?: ArchiveTaskQueryOptions): Promise<number> => {
     const whereClause: any = {};

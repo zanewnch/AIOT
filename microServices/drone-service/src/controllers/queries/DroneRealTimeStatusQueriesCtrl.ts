@@ -13,11 +13,13 @@
 
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {DroneRealTimeStatusQueriesSvc} from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
+import {PaginationRequestDto} from '../../dto/index.js';
+import {DroneRealTimeStatus} from '../../models/DroneRealTimeStatusModel.js';
 
 const logger = createLogger('DroneRealTimeStatusQueriesCtrl');
 
@@ -33,72 +35,41 @@ const logger = createLogger('DroneRealTimeStatusQueriesCtrl');
 @injectable()
 export class DroneRealTimeStatusQueriesCtrl {
     constructor(
-        @inject(TYPES.DroneStatusQueriesSvc) private readonly droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc
+        @inject(TYPES.DroneRealTimeStatusQueriesSvc) private readonly droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesSvc
     ) {
     }
 
     /**
-     * 取得所有無人機即時狀態資料（支援分頁）
-     * @route GET /api/drone-realtime-status/data
-     * @query page - 頁碼（從 1 開始）
-     * @query pageSize - 每頁數量
-     * @query sortBy - 排序欄位
-     * @query sortOrder - 排序方向（ASC/DESC）
+     * 分頁查詢所有即時狀態（新增統一方法）
+     * @route GET /api/drone-realtime-status/data/paginated
      */
-    getAllDroneRealTimeStatuses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getAllRealTimeStatusesPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            // 解析分頁參數
-            const page = parseInt(req.query.page as string) || 1;
-            const pageSize = parseInt(req.query.pageSize as string) || 10;
-            const sortBy = (req.query.sortBy as string) || 'id';
-            const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC';
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'last_seen',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const paginationParams = { page, pageSize, sortBy, sortOrder };
-
-            // 統一使用分頁查詢（方法現在總是返回分頁結果）
-            const paginatedResult = await this.droneRealTimeStatusQueriesService.getAllDroneRealTimeStatuses(paginationParams);
-            const result = ResResult.success('無人機即時狀態資料獲取成功', paginatedResult);
-
+            const paginatedResult = await this.droneRealTimeStatusQueriesService.getAllRealTimeStatusesPaginated(pagination);
+            const result = ResResult.fromPaginatedResponse('即時狀態分頁查詢成功', paginatedResult);
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據 ID 取得無人機即時狀態資料
-     * @route GET /api/drone-realtime-status/data/:id
-     */
-    getDroneRealTimeStatusById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const id = parseInt(req.params.id);
-
-            if (isNaN(id)) {
-                const result = ResResult.badRequest('無效的 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusById(id);
-
-            if (!droneStatus) {
-                const result = ResResult.notFound('找不到指定的無人機即時狀態資料');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('無人機即時狀態資料獲取成功', droneStatus);
+            logger.error('分頁查詢即時狀態失敗', { error });
+            const result = ResResult.internalError('分頁查詢即時狀態失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
     /**
-     * 根據無人機 ID 取得即時狀態資料
-     * @route GET /api/drone-realtime-status/data/drone/:droneId
+     * 根據無人機 ID 分頁查詢即時狀態（新增統一方法）
+     * @route GET /api/drone-realtime-status/data/drone/:droneId/paginated
      */
-    getDroneRealTimeStatusByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getRealTimeStatusesByDroneIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
 
@@ -108,70 +79,96 @@ export class DroneRealTimeStatusQueriesCtrl {
                 return;
             }
 
-            const droneStatus = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusByDroneId(droneId);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'last_seen',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            if (!droneStatus) {
-                const result = ResResult.notFound('找不到該無人機的即時狀態資料');
+            const paginatedResult = await this.droneRealTimeStatusQueriesService.getRealTimeStatusesByDroneIdPaginated(droneId, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `無人機 ${droneId} 的即時狀態分頁查詢成功`, 
+                paginatedResult
+            );
+            
+            res.status(result.status).json(result);
+        } catch (error) {
+            logger.error('根據無人機 ID 分頁查詢即時狀態失敗', { error });
+            const result = ResResult.internalError('根據無人機 ID 分頁查詢即時狀態失敗');
+            res.status(result.status).json(result);
+        }
+    };
+
+    /**
+     * 根據狀態分頁查詢即時狀態（新增統一方法）
+     * @route GET /api/drone-realtime-status/data/status/:status/paginated
+     */
+    getRealTimeStatusesByStatusPaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const status = req.params.status as DroneRealTimeStatus;
+
+            if (!status || !Object.values(DroneRealTimeStatus).includes(status)) {
+                const result = ResResult.badRequest('無效的狀態參數');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const result = ResResult.success('無人機即時狀態資料獲取成功', droneStatus);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'last_seen',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.droneRealTimeStatusQueriesService.getRealTimeStatusesByStatusPaginated(status, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `狀態為 ${status} 的即時狀態分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據狀態分頁查詢即時狀態失敗', { error });
+            const result = ResResult.internalError('根據狀態分頁查詢即時狀態失敗');
+            res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據狀態查詢無人機即時狀態
-     * @route GET /api/drone-realtime-status/data/status/:status
+     * 根據連線狀態分頁查詢即時狀態（新增統一方法）
+     * @route GET /api/drone-realtime-status/data/connected/:isConnected/paginated
      */
-    getDroneRealTimeStatusesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getRealTimeStatusesByConnectionPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const status = req.params.status;
+            const isConnected = req.params.isConnected === 'true';
 
-            if (!status || typeof status !== 'string' || status.trim().length === 0) {
-                const result = ResResult.badRequest('狀態參數不能為空');
-                res.status(result.status).json(result);
-                return;
-            }
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'last_seen',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
-            const droneStatuses = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusesByStatus(status.trim());
-
-            const result = ResResult.success('無人機即時狀態資料獲取成功', droneStatuses);
+            const paginatedResult = await this.droneRealTimeStatusQueriesService.getRealTimeStatusesByConnectionPaginated(isConnected, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `連線狀態為 ${isConnected ? '已連線' : '未連線'} 的即時狀態分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 取得活躍中的無人機即時狀態
-     * @route GET /api/drone-realtime-status/data/active
-     */
-    getActiveDroneRealTimeStatuses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const droneStatuses = await this.droneRealTimeStatusQueriesService.getActiveDroneRealTimeStatuses();
-            const result = ResResult.success('活躍無人機即時狀態資料獲取成功', droneStatuses);
+            logger.error('根據連線狀態分頁查詢即時狀態失敗', { error });
+            const result = ResResult.internalError('根據連線狀態分頁查詢即時狀態失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
-    /**
-     * 取得無人機即時狀態統計
-     * @route GET /api/drone-realtime-status/statistics
-     */
-    getDroneRealTimeStatusStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const statistics = await this.droneRealTimeStatusQueriesService.getDroneRealTimeStatusStatistics();
 
-            const result = ResResult.success('無人機即時狀態統計獲取成功', statistics);
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
 }

@@ -8,15 +8,14 @@
  * @since 2025-08-12
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 /**
  * 無人機狀態歷史查詢控制器介面
  */
 export interface IDroneStatusArchiveQueries {
-    getAllArchivedStatuses(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedStatusById(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedStatusesByDroneId(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedStatusesByTimeRange(req: Request, res: Response, next: NextFunction): Promise<void>;
-    getArchivedStatusStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllStatusArchivesPaginated(req: Request, res: Response): Promise<void>;
+    getStatusArchivesByDroneIdPaginated(req: Request, res: Response): Promise<void>;
+    getStatusArchivesByStatusPaginated(req: Request, res: Response): Promise<void>;
+    getStatusArchivesByDateRangePaginated(req: Request, res: Response): Promise<void>;
 }

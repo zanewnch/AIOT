@@ -14,10 +14,11 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import type { IDroneCommandsArchiveRepository } from '../../types/repositories/IDroneCommandsArchiveRepository.js';
+import { DroneCommandsArchiveQueriesRepo } from '../../repo/queries/DroneCommandsArchiveQueriesRepo.js';
 import type { DroneCommandsArchiveAttributes } from '../../models/DroneCommandsArchiveModel.js';
+import { PaginationRequestDto } from '../../dto/index.js';
+import { DtoMapper } from '../../utils/dtoMapper.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
 const logger = createLogger('DroneCommandsArchiveQueriesSvc');
 
@@ -34,175 +35,90 @@ const logger = createLogger('DroneCommandsArchiveQueriesSvc');
 export class DroneCommandsArchiveQueriesSvc {
     constructor(
         @inject(TYPES.DroneCommandsArchiveQueriesRepo)
-        private readonly archiveRepo: IDroneCommandsArchiveRepository
+        private readonly archiveRepo: DroneCommandsArchiveQueriesRepo
     ) {}
 
     /**
-     * 取得所有指令歷史歸檔資料
-     *
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
+     * 分頁查詢所有指令歷史歸檔（新增統一方法）
      */
-    getAllCommandsArchive = async (limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
+    getAllCommandsArchivePaginated = async (
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            logger.info('Getting all drone commands archive data', { limit });
+            logger.info('分頁查詢所有指令歷史歸檔', { pagination });
 
-            // 驗證限制參數
-            if (limit <= 0 || limit > 1000) {
-                throw new Error('Limit must be between 1 and 1000');
-            }
+            const result = await this.archiveRepo.findPaginated(pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneCommandsArchiveResponse(result);
 
-            const archives = await this.archiveRepository.selectAll(limit);
-            logger.info(`Successfully retrieved ${archives.length} commands archive records`);
-
-            return archives;
+            logger.info(`成功獲取 ${result.data.length} 個指令歷史歸檔，總共 ${result.totalCount} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('分頁查詢指令歷史歸檔失敗', { error });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據 ID 取得指定指令歷史歸檔資料
-     *
-     * @param {number} id - 歸檔資料 ID
-     * @returns {Promise<DroneCommandsArchiveAttributes | null>} 指令歷史歸檔資料或 null
+     * 根據無人機 ID 分頁查詢指令歷史歸檔（新增統一方法）
      */
-    getCommandArchiveById = async (id: number): Promise<DroneCommandsArchiveAttributes | null> => {
+    getCommandsArchiveByDroneIdPaginated = async (
+        droneId: number,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            logger.info('Getting drone command archive by ID', { id });
+            logger.info('根據無人機 ID 分頁查詢指令歷史歸檔', { droneId, pagination });
 
-            // 驗證 ID 參數
-            if (!Number.isInteger(id) || id <= 0) {
-                throw new Error('Invalid ID: must be a positive integer');
-            }
+            const result = await this.archiveRepo.findByDroneIdPaginated(droneId, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneCommandsArchiveResponse(result);
 
-            const archive = await this.archiveRepository.selectById(id);
-
-            if (archive) {
-                logger.info('Successfully retrieved command archive by ID', { id });
-            } else {
-                logger.info('Command archive not found', { id });
-            }
-
-            return archive;
+            logger.info(`成功獲取無人機 ${droneId} 的指令歷史歸檔 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('根據無人機 ID 分頁查詢指令歷史歸檔失敗', { error, droneId });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據無人機 ID 取得指令歷史歸檔資料
-     *
-     * @param {number} droneId - 無人機 ID
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
+     * 根據指令類型分頁查詢歷史歸檔（新增統一方法）
      */
-    getCommandArchivesByDroneId = async (droneId: number, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
+    getCommandsArchiveByCommandTypePaginated = async (
+        commandType: string,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            logger.info('Getting drone command archives by drone ID', { droneId, limit });
+            logger.info('根據指令類型分頁查詢歷史歸檔', { commandType, pagination });
 
-            // 驗證參數
-            if (!Number.isInteger(droneId) || droneId <= 0) {
-                throw new Error('Invalid drone ID: must be a positive integer');
-            }
-            if (limit <= 0 || limit > 1000) {
-                throw new Error('Limit must be between 1 and 1000');
-            }
+            const result = await this.archiveRepo.findByCommandTypePaginated(commandType, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneCommandsArchiveResponse(result);
 
-            const archives = await this.archiveRepository.selectByDroneId(droneId, limit);
-            logger.info(`Successfully retrieved ${archives.length} commands archive records for drone`, { droneId });
-
-            return archives;
+            logger.info(`成功獲取指令類型為 ${commandType} 的歷史歸檔 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('根據指令類型分頁查詢歷史歸檔失敗', { error, commandType });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據時間範圍取得指令歷史歸檔資料
-     *
-     * @param {Date} startTime - 開始時間
-     * @param {Date} endTime - 結束時間
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
+     * 根據狀態分頁查詢歷史歸檔（新增統一方法）
      */
-    getCommandArchivesByTimeRange = async (startTime: Date, endTime: Date, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
+    getCommandsArchiveByStatusPaginated = async (
+        status: string,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            logger.info('Getting drone command archives by time range', { startTime, endTime, limit });
+            logger.info('根據狀態分頁查詢歷史歸檔', { status, pagination });
 
-            // 驗證參數
-            if (!(startTime instanceof Date) || !(endTime instanceof Date)) {
-                throw new Error('Invalid date parameters: must be Date objects');
-            }
-            if (startTime >= endTime) {
-                throw new Error('Start time must be before end time');
-            }
-            if (limit <= 0 || limit > 1000) {
-                throw new Error('Limit must be between 1 and 1000');
-            }
+            const result = await this.archiveRepo.findByStatusPaginated(status, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneCommandsArchiveResponse(result);
 
-            const archives = await this.archiveRepository.selectByTimeRange(startTime, endTime, limit);
-            logger.info(`Successfully retrieved ${archives.length} commands archive records for time range`);
-
-            return archives;
+            logger.info(`成功獲取狀態為 ${status} 的歷史歸檔 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('根據狀態分頁查詢歷史歸檔失敗', { error, status });
             throw error;
         }
-    }
+    };
 
-    /**
-     * 根據指令類型取得指令歷史歸檔資料
-     *
-     * @param {string} commandType - 指令類型
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
-     */
-    getCommandArchivesByType = async (commandType: string, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Getting drone command archives by command type', { commandType, limit });
-
-            // 驗證參數
-            if (!commandType || typeof commandType !== 'string') {
-                throw new Error('Invalid command type: must be a non-empty string');
-            }
-            if (limit <= 0 || limit > 1000) {
-                throw new Error('Limit must be between 1 and 1000');
-            }
-
-            const archives = await this.archiveRepository.selectByCommandType(commandType, limit);
-            logger.info(`Successfully retrieved ${archives.length} commands archive records for command type`, { commandType });
-
-            return archives;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 根據指令狀態取得指令歷史歸檔資料
-     *
-     * @param {string} status - 指令狀態
-     * @param {number} limit - 限制筆數，預設為 100
-     * @returns {Promise<DroneCommandsArchiveAttributes[]>} 指令歷史歸檔資料陣列
-     */
-    getCommandArchivesByStatus = async (status: string, limit: number = 100): Promise<DroneCommandsArchiveAttributes[]> => {
-        try {
-            logger.info('Getting drone command archives by status', { status, limit });
-
-            // 驗證參數
-            if (!status || typeof status !== 'string') {
-                throw new Error('Invalid status: must be a non-empty string');
-            }
-            if (limit <= 0 || limit > 1000) {
-                throw new Error('Limit must be between 1 and 1000');
-            }
-
-            const archives = await this.archiveRepository.selectByStatus(status, limit);
-            logger.info(`Successfully retrieved ${archives.length} commands archive records for status`, { status });
-
-            return archives;
-        } catch (error) {
-            throw error;
-        }
-    }
 }

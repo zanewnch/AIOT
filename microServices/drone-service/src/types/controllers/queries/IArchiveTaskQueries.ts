@@ -8,31 +8,14 @@
  * @since 2025-08-12
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 /**
  * 歸檔任務查詢控制器介面
- * 
- * 定義所有歸檔任務查詢相關的控制器方法
  */
 export interface IArchiveTaskQueries {
-    /**
-     * 取得所有歸檔任務
-     */
-    getAllTasks(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-    /**
-     * 根據 ID 取得歸檔任務
-     */
-    getTaskById(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-    /**
-     * 取得歸檔任務統計資訊
-     */
-    getTaskStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-    /**
-     * 取得歸檔任務資料（用於前端表格顯示）
-     */
-    getTasksData(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllTasksPaginated(req: Request, res: Response): Promise<void>;
+    getTasksByStatusPaginated(req: Request, res: Response): Promise<void>;
+    getTasksByJobTypePaginated(req: Request, res: Response): Promise<void>;
+    getTasksByBatchIdPaginated(req: Request, res: Response): Promise<void>;
 }

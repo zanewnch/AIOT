@@ -13,7 +13,7 @@
  */
 
 import 'reflect-metadata';
-import { createLogger, logRequest } from '../../configs/loggerConfig.js';
+import { createLogger, logRequest } from '../configs/loggerConfig';
 import { Request, Response, NextFunction } from 'express';
 
 /**

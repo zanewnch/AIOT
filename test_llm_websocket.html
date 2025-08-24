@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM WebSocket 測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        input, textarea, button {
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.connecting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .messages {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: #f9f9f9;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        
+        .message.sent {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .message.received {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .message.system {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 LLM AI Engine WebSocket 測試</h1>
+        
+        <!-- 連接狀態 -->
+        <div id="status" class="status disconnected">未連接</div>
+        
+        <!-- 連接設定 -->
+        <div class="test-section">
+            <h3>連接設定</h3>
+            <input type="text" id="serverUrl" value="ws://localhost:8000/ws" placeholder="WebSocket 伺服器 URL">
+            <input type="text" id="userId" value="test_user" placeholder="用戶 ID (可選)">
+            <br>
+            <button id="connectBtn" onclick="connect()">連接</button>
+            <button id="disconnectBtn" onclick="disconnect()" disabled>斷開連接</button>
+        </div>
+        
+        <!-- 消息記錄 -->
+        <div class="test-section">
+            <h3>消息記錄</h3>
+            <div id="messages" class="messages"></div>
+            <button onclick="clearMessages()">清空記錄</button>
+        </div>
+        
+        <!-- 對話測試 -->
+        <div class="test-section">
+            <h3>💬 對話測試</h3>
+            <textarea id="conversationalInput" placeholder="輸入對話內容..." rows="3">你好，我是小明，請記住我的名字。</textarea>
+            <br>
+            <label>
+                <input type="checkbox" id="useRag"> 使用 RAG 檢索增強
+            </label>
+            <br>
+            <button onclick="sendConversational()">發送對話</button>
+        </div>
+        
+        <!-- 串流測試 -->
+        <div class="test-section">
+            <h3>🌊 串流生成測試</h3>
+            <textarea id="streamInput" placeholder="輸入串流生成提示詞..." rows="3">請寫一個關於人工智慧的短故事。</textarea>
+            <br>
+            <button onclick="sendStream()">開始串流生成</button>
+        </div>
+        
+        <!-- MCP 自然語言查詢測試 -->
+        <div class="test-section">
+            <h3>🔧 MCP 自然語言查詢測試</h3>
+            <textarea id="mcpInput" placeholder="輸入自然語言查詢..." rows="3">給我看用戶 admin 的偏好設定</textarea>
+            <br>
+            <label>
+                <input type="checkbox" id="mcpUseConversation"> 使用對話記憶
+            </label>
+            <br>
+            <button onclick="sendMcpQuery()">發送 MCP 查詢</button>
+        </div>
+        
+        <!-- 單輪生成測試 -->
+        <div class="test-section">
+            <h3>⚡ 單輪生成測試</h3>
+            <textarea id="generateInput" placeholder="輸入生成提示詞..." rows="3">什麼是機器學習？</textarea>
+            <br>
+            <button onclick="sendGenerate()">單輪生成</button>
+        </div>
+    </div>
+    
+    <script>
+        let ws = null;
+        let isConnected = false;
+        
+        function updateStatus(status, className) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = status;
+            statusEl.className = 'status ' + className;
+            
+            // 更新按鈕狀態
+            document.getElementById('connectBtn').disabled = isConnected;
+            document.getElementById('disconnectBtn').disabled = !isConnected;
+        }
+        
+        function addMessage(message, type = 'system') {
+            const messagesEl = document.getElementById('messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message ' + type;
+            messageEl.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            messagesEl.appendChild(messageEl);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+        
+        function clearMessages() {
+            document.getElementById('messages').innerHTML = '';
+        }
+        
+        function connect() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const userId = document.getElementById('userId').value;
+            
+            const url = userId ? `${serverUrl}?user_id=${encodeURIComponent(userId)}` : serverUrl;
+            
+            updateStatus('連接中...', 'connecting');
+            addMessage(`正在連接到: ${url}`, 'system');
+            
+            try {
+                ws = new WebSocket(url);
+                
+                ws.onopen = function(event) {
+                    isConnected = true;
+                    updateStatus('已連接', 'connected');
+                    addMessage('WebSocket 連接成功！', 'system');
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        addMessage(`收到: ${JSON.stringify(data, null, 2)}`, 'received');
+                        
+                        // 特殊處理串流消息
+                        if (data.type === 'stream_chunk' && data.data && data.data.chunk) {
+                            addMessage(`串流區塊: ${data.data.chunk}`, 'received');
+                        }
+                    } catch (e) {
+                        addMessage(`收到原始消息: ${event.data}`, 'received');
+                    }
+                };
+                
+                ws.onclose = function(event) {
+                    isConnected = false;
+                    updateStatus('已斷開連接', 'disconnected');
+                    addMessage(`連接已關閉 (代碼: ${event.code})`, 'system');
+                };
+                
+                ws.onerror = function(error) {
+                    addMessage(`WebSocket 錯誤: ${error}`, 'error');
+                    updateStatus('連接錯誤', 'disconnected');
+                };
+                
+            } catch (error) {
+                addMessage(`連接失敗: ${error.message}`, 'error');
+                updateStatus('連接失敗', 'disconnected');
+            }
+        }
+        
+        function disconnect() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+        
+        function sendMessage(message) {
+            if (!isConnected || !ws) {
+                addMessage('錯誤: 未連接到伺服器', 'error');
+                return;
+            }
+            
+            try {
+                const messageStr = JSON.stringify(message);
+                ws.send(messageStr);
+                addMessage(`發送: ${messageStr}`, 'sent');
+            } catch (error) {
+                addMessage(`發送錯誤: ${error.message}`, 'error');
+            }
+        }
+        
+        function sendConversational() {
+            const prompt = document.getElementById('conversationalInput').value;
+            const useRag = document.getElementById('useRag').checked;
+            
+            if (!prompt.trim()) {
+                addMessage('錯誤: 對話內容不能為空', 'error');
+                return;
+            }
+            
+            const message = {
+                type: 'conversational',
+                data: {
+                    prompt: prompt,
+                    use_rag: useRag
+                },
+                message_id: 'msg_' + Date.now(),
+                conversation_id: 'test_conversation'
+            };
+            
+            sendMessage(message);
+        }
+        
+        function sendStream() {
+            const prompt = document.getElementById('streamInput').value;
+            
+            if (!prompt.trim()) {
+                addMessage('錯誤: 串流提示詞不能為空', 'error');
+                return;
+            }
+            
+            const message = {
+                type: 'stream',
+                data: {
+                    prompt: prompt
+                },
+                message_id: 'stream_' + Date.now()
+            };
+            
+            sendMessage(message);
+        }
+        
+        function sendMcpQuery() {
+            const query = document.getElementById('mcpInput').value;
+            const useConversation = document.getElementById('mcpUseConversation').checked;
+            
+            if (!query.trim()) {
+                addMessage('錯誤: MCP 查詢內容不能為空', 'error');
+                return;
+            }
+            
+            const message = {
+                type: 'mcp_query',
+                data: {
+                    query: query,
+                    use_conversation: useConversation
+                },
+                message_id: 'mcp_' + Date.now(),
+                conversation_id: 'mcp_test_conversation'
+            };
+            
+            sendMessage(message);
+        }
+        
+        function sendGenerate() {
+            const prompt = document.getElementById('generateInput').value;
+            
+            if (!prompt.trim()) {
+                addMessage('錯誤: 生成提示詞不能為空', 'error');
+                return;
+            }
+            
+            const message = {
+                type: 'generate',
+                data: {
+                    prompt: prompt,
+                    use_rag: false
+                },
+                message_id: 'gen_' + Date.now()
+            };
+            
+            sendMessage(message);
+        }
+        
+        // 頁面載入時的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            addMessage('WebSocket 測試頁面已載入', 'system');
+            addMessage('點擊「連接」按鈕開始測試', 'system');
+        });
+    </script>
+</body>
+</html>

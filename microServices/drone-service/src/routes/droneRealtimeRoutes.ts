@@ -50,17 +50,18 @@ export class DroneRealtimeRoutes {
      * 設定即時狀態查詢路由 (GET 操作)
      */
     private setupQueryRoutes(): void {
-        // 獲取所有無人機的即時狀態總覽
-        this.router.get('/status', (req, res, next) => this.droneRealTimeStatusQueries.getAllRealTimeStatuses(req, res, next));
+        // === 分頁查詢即時狀態路由 ===
+        // 分頁查詢所有無人機的即時狀態
+        this.router.get('/status/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getAllRealTimeStatusesPaginated(req, res));
 
-        // 根據無人機 ID 獲取即時狀態
-        this.router.get('/status/:droneId', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusByDroneId(req, res, next));
+        // 根據無人機 ID 分頁查詢即時狀態
+        this.router.get('/status/drone/:droneId/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusesByDroneIdPaginated(req, res));
 
-        // 獲取連線狀態
-        this.router.get('/connections', (req, res, next) => this.droneRealTimeStatusQueries.getConnectionStatuses(req, res, next));
+        // 根據狀態分頁查詢即時狀態
+        this.router.get('/status/status/:status/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusesByStatusPaginated(req, res));
 
-        // 獲取即時狀態統計
-        this.router.get('/statistics', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusStatistics(req, res, next));
+        // 根據連線狀態分頁查詢
+        this.router.get('/status/connection/:connection/paginated', (req, res, next) => this.droneRealTimeStatusQueries.getRealTimeStatusesByConnectionPaginated(req, res));
     }
 
     /**
@@ -71,13 +72,13 @@ export class DroneRealtimeRoutes {
         this.router.put('/status/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res, next));
 
         // 廣播訊息到所有連線的無人機
-        this.router.post('/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res, next));
+        this.router.post('/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res));
 
         // 發送通知到指定無人機
-        this.router.post('/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res, next));
+        this.router.post('/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res));
 
         // 強制斷開無人機連線
-        this.router.delete('/connections/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res, next));
+        this.router.delete('/connections/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res));
     }
 
     /**

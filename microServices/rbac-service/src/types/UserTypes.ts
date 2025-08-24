@@ -91,22 +91,37 @@ export interface IUserQueriesService {
     getAllUsers(params?: PaginationParams): Promise<PaginatedResult<UserDTO>>;
     
     /**
-     * 根據用戶 ID 獲取用戶
+     * 根據用戶 ID 獲取用戶（分頁格式）
      * 
      * @param userId - 用戶 ID
-     * @returns Promise<UserDTO | null> 用戶資料或 null（如果不存在）
+     * @param page - 頁碼，預設為 1
+     * @param pageSize - 每頁數量，預設為 1
+     * @returns Promise<PaginatedResult<UserDTO>> 分頁用戶結果
      * @throws {Error} 當用戶 ID 無效或資料庫查詢失敗時
      */
-    getUserById(userId: number): Promise<UserDTO | null>;
+    getUserById(userId: number, page?: number, pageSize?: number): Promise<PaginatedResult<UserDTO>>;
     
     /**
-     * 根據用戶名稱獲取用戶
+     * 根據用戶名稱獲取用戶（分頁格式）
      * 
      * @param username - 用戶名稱
-     * @returns Promise<UserDTO | null> 用戶資料或 null（如果不存在）
+     * @param page - 頁碼，預設為 1
+     * @param pageSize - 每頁數量，預設為 1
+     * @returns Promise<PaginatedResult<UserDTO>> 分頁用戶結果
      * @throws {Error} 當用戶名稱無效或資料庫查詢失敗時
      */
-    getUserByUsername(username: string): Promise<UserDTO | null>;
+    getUserByUsername(username: string, page?: number, pageSize?: number): Promise<PaginatedResult<UserDTO>>;
+    
+    /**
+     * 根據電子郵件獲取用戶（分頁格式）
+     * 
+     * @param email - 電子郵件
+     * @param page - 頁碼，預設為 1
+     * @param pageSize - 每頁數量，預設為 1
+     * @returns Promise<PaginatedResult<UserDTO>> 分頁用戶結果
+     * @throws {Error} 當電子郵件無效或資料庫查詢失敗時
+     */
+    getUserByEmail(email: string, page?: number, pageSize?: number): Promise<PaginatedResult<UserDTO>>;
     
     /**
      * 檢查用戶是否存在

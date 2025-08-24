@@ -49,17 +49,18 @@ export class ArchiveTaskRoutes {
      * 設定查詢路由 (GET 操作)
      */
     private setupQueryRoutes(): void {
-        // 獲取所有歸檔任務
-        this.router.get('/', (req, res, next) => this.archiveTaskQueries.getAllTasks(req, res, next));
+        // === 分頁查詢路由 ===
+        // 分頁查詢所有歸檔任務
+        this.router.get('/data/paginated', (req, res, next) => this.archiveTaskQueries.getAllTasksPaginated(req, res));
 
-        // 獲取歸檔任務統計資訊
-        this.router.get('/statistics', (req, res, next) => this.archiveTaskQueries.getTaskStatistics(req, res, next));
+        // 根據狀態分頁查詢任務
+        this.router.get('/data/status/:status/paginated', (req, res, next) => this.archiveTaskQueries.getTasksByStatusPaginated(req, res));
 
-        // 獲取歸檔任務資料（用於前端表格顯示）
-        this.router.get('/data', (req, res, next) => this.archiveTaskQueries.getTasksData(req, res, next));
+        // 根據任務類型分頁查詢
+        this.router.get('/data/job-type/:jobType/paginated', (req, res, next) => this.archiveTaskQueries.getTasksByJobTypePaginated(req, res));
 
-        // 根據 ID 獲取歸檔任務
-        this.router.get('/:id', (req, res, next) => this.archiveTaskQueries.getTaskById(req, res, next));
+        // 根據批次 ID 分頁查詢
+        this.router.get('/data/batch/:batchId/paginated', (req, res, next) => this.archiveTaskQueries.getTasksByBatchIdPaginated(req, res));
     }
 
     /**

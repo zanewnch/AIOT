@@ -26,12 +26,20 @@ import type {
     ArchiveTaskQueryOptions
 } from '../../types/repositories/IArchiveTaskRepository.js';
 import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
+import {
+    ArchiveTaskResponseDto,
+    ArchiveTaskDetailResponseDto,
+    ArchiveTaskListResponseDto,
+    ArchiveTaskStatisticsResponseDto,
+    PaginationRequestDto
+} from '../../dto/index.js';
 
 type IArchiveTaskRepo = IArchiveTaskRepository;
 import { ArchiveTaskQueriesRepo } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskCommandsRepository } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
+import { DtoMapper } from '../../utils/dtoMapper.js';
 
 /**
  * 歸檔任務查詢 Service 實作類別
@@ -65,216 +73,86 @@ export class ArchiveTaskQueriesSvc {
     }
 
     /**
-     * 根據 ID 獲取歸檔任務
-     *
-     * @param id - 任務 ID
-     * @returns Promise<ArchiveTaskModel | null> 歸檔任務或 null
+     * 分頁查詢所有歸檔任務（新增）
      */
-    getTaskById = async (id: number): Promise<ArchiveTaskModel | null> => {
+    getAllTasksPaginated = async (
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            this.logger.debug('根據 ID 獲取歸檔任務', { taskId: id });
-            return await this.repo.findById(id);
+            this.logger.info('分頁查詢所有歸檔任務', { pagination });
+
+            const result = await this.queriesRepo.findPaginated(pagination);
+            const paginatedResponse = DtoMapper.toPaginatedArchiveTaskResponse(result);
+
+            this.logger.info(`成功獲取 ${result.data.length} 個歸檔任務，總共 ${result.totalCount} 個`);
+            return paginatedResponse;
         } catch (error) {
-            this.logger.error('獲取歸檔任務失敗', { taskId: id, error: (error as Error).message });
+            this.logger.error('分頁查詢歸檔任務失敗', { error });
             throw error;
         }
-    }
+    };
 
     /**
-     * 獲取所有歸檔任務（分頁）
-     *
-     * @param page - 頁數，預設為 1
-     * @param pageSize - 每頁數量，預設為 50
-     * @param options - 查詢選項
-     * @returns Promise<PaginatedResponse<ArchiveTaskModel>> 分頁歸檔任務列表
+     * 根據狀態分頁查詢歸檔任務（新增）
      */
-    getAllTasks = async (
-        page: number = 1, 
-        pageSize: number = 50, 
-        options?: ArchiveTaskQueryOptions
-    ): Promise<PaginatedResponse<ArchiveTaskModel>> => {
+    getTasksByStatusPaginated = async (
+        status: ArchiveTaskStatus,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            this.logger.debug('獲取所有歸檔任務（分頁）', { page, pageSize, options });
-            
-            const paginationParams: PaginationParams = {
-                page,
-                limit: pageSize,
-                offset: (page - 1) * pageSize,
-                sortBy: options?.sortBy || 'createdAt',
-                sortOrder: options?.sortOrder || 'DESC'
-            };
-            
-            return await this.repo.findAllPaginated(paginationParams);
+            this.logger.info('根據狀態分頁查詢歸檔任務', { status, pagination });
+
+            const result = await this.queriesRepo.findByStatusPaginated(status, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedArchiveTaskResponse(result);
+
+            this.logger.info(`成功獲取狀態為 ${status} 的歸檔任務 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
-            this.logger.error('獲取歸檔任務列表失敗', { page, pageSize, options, error: (error as Error).message });
+            this.logger.error('根據狀態分頁查詢歸檔任務失敗', { error, status });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據狀態獲取歸檔任務（分頁）
-     *
-     * @param status - 任務狀態
-     * @param page - 頁數，預設為 1
-     * @param pageSize - 每頁數量，預設為 50
-     * @returns Promise<PaginatedResponse<ArchiveTaskModel>> 指定狀態的分頁歸檔任務列表
+     * 根據任務類型分頁查詢歸檔任務（新增）
      */
-    getTasksByStatus = async (
-        status: ArchiveTaskStatus, 
-        page: number = 1, 
-        pageSize: number = 50
-    ): Promise<PaginatedResponse<ArchiveTaskModel>> => {
+    getTasksByJobTypePaginated = async (
+        jobType: ArchiveJobType,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            this.logger.debug('根據狀態獲取歸檔任務（分頁）', { status, page, pageSize });
-            
-            const paginationParams: PaginationParams = {
-                page,
-                limit: pageSize,
-                offset: (page - 1) * pageSize,
-                sortBy: 'createdAt',
-                sortOrder: 'DESC'
-            };
-            
-            return await this.repo.findByStatusPaginated(status, paginationParams);
+            this.logger.info('根據任務類型分頁查詢歸檔任務', { jobType, pagination });
+
+            const result = await this.queriesRepo.findByJobTypePaginated(jobType, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedArchiveTaskResponse(result);
+
+            this.logger.info(`成功獲取任務類型為 ${jobType} 的歸檔任務 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
-            this.logger.error('根據狀態獲取歸檔任務失敗', { status, page, pageSize, error: (error as Error).message });
+            this.logger.error('根據任務類型分頁查詢歸檔任務失敗', { error, jobType });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據批次 ID 獲取歸檔任務（分頁）
-     *
-     * @param batchId - 批次 ID
-     * @param page - 頁數，預設為 1
-     * @param pageSize - 每頁數量，預設為 100（批次內任務通常不多）
-     * @returns Promise<PaginatedResponse<ArchiveTaskModel>> 該批次的分頁歸檔任務列表
+     * 根據批次 ID 分頁查詢歸檔任務（新增）
      */
-    getTasksByBatchId = async (
-        batchId: string, 
-        page: number = 1, 
-        pageSize: number = 100
-    ): Promise<PaginatedResponse<ArchiveTaskModel>> => {
+    getTasksByBatchIdPaginated = async (
+        batchId: string,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            this.logger.debug('根據批次 ID 獲取歸檔任務（分頁）', { batchId, page, pageSize });
-            
-            const paginationParams: PaginationParams = {
-                page,
-                limit: pageSize,
-                offset: (page - 1) * pageSize,
-                sortBy: 'createdAt',
-                sortOrder: 'ASC'  // 批次內按創建順序
-            };
-            
-            return await this.repo.findByBatchIdPaginated(batchId, paginationParams);
+            this.logger.info('根據批次 ID 分頁查詢歸檔任務', { batchId, pagination });
+
+            const result = await this.queriesRepo.findByBatchIdPaginated(batchId, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedArchiveTaskResponse(result);
+
+            this.logger.info(`成功獲取批次 ${batchId} 的歸檔任務 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
-            this.logger.error('根據批次 ID 獲取歸檔任務失敗', { batchId, page, pageSize, error: (error as Error).message });
+            this.logger.error('根據批次 ID 分頁查詢歸檔任務失敗', { error, batchId });
             throw error;
         }
-    }
+    };
 
-    /**
-     * 獲取歸檔任務統計資訊
-     *
-     * @returns Promise<ArchiveTaskStatistics> 統計資訊
-     */
-    getTaskStatistics = async (): Promise<ArchiveTaskStatistics> => {
-        try {
-            this.logger.debug('獲取歸檔任務統計資訊');
-
-            const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const weekStart = new Date(todayStart.getTime() - 7 * 24 * 60 * 60 * 1000);
-            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-            const [
-                totalTasks,
-                pendingTasks,
-                runningTasks,
-                completedTasks,
-                failedTasks,
-                todayTasks,
-                weekTasks,
-                monthTasks,
-                positionTasks,
-                commandTasks,
-                statusTasks
-            ] = await Promise.all([
-                this.repo.count(),
-                this.repo.count({ status: ArchiveTaskStatus.PENDING }),
-                this.repo.count({ status: ArchiveTaskStatus.RUNNING }),
-                this.repo.count({ status: ArchiveTaskStatus.COMPLETED }),
-                this.repo.count({ status: ArchiveTaskStatus.FAILED }),
-                this.repo.count({ dateRangeStart: todayStart }),
-                this.repo.count({ dateRangeStart: weekStart }),
-                this.repo.count({ dateRangeStart: monthStart }),
-                this.repo.count({ jobType: 'POSITIONS' as any }),
-                this.repo.count({ jobType: 'COMMANDS' as any }),
-                this.repo.count({ jobType: 'STATUS' as any })
-            ]);
-
-            const statistics: ArchiveTaskStatistics = {
-                totalTasks,
-                pendingTasks,
-                runningTasks,
-                completedTasks,
-                failedTasks,
-                tasksByType: {
-                    [ArchiveJobType.POSITIONS]: positionTasks,
-                    [ArchiveJobType.COMMANDS]: commandTasks,
-                    [ArchiveJobType.STATUS]: statusTasks
-                },
-                todayTasks,
-                weekTasks,
-                monthTasks
-            };
-
-            this.logger.debug('歸檔任務統計資訊獲取完成', { statistics });
-            return statistics;
-        } catch (error) {
-            this.logger.error('獲取歸檔任務統計資訊失敗', { error: (error as Error).message });
-            throw error;
-        }
-    }
-
-    /**
-     * 檢查任務是否可以執行
-     *
-     * @param id - 任務 ID
-     * @returns Promise<boolean> 是否可以執行
-     */
-    canExecuteTask = async (id: number): Promise<boolean> => {
-        try {
-            const task = await this.getTaskById(id);
-            if (!task) {
-                return false;
-            }
-
-            return task.status === ArchiveTaskStatus.PENDING;
-        } catch (error) {
-            this.logger.error('檢查任務執行權限失敗', { taskId: id, error: (error as Error).message });
-            return false;
-        }
-    }
-
-    /**
-     * 檢查任務是否可以取消
-     *
-     * @param id - 任務 ID
-     * @returns Promise<boolean> 是否可以取消
-     */
-    canCancelTask = async (id: number): Promise<boolean> => {
-        try {
-            const task = await this.getTaskById(id);
-            if (!task) {
-                return false;
-            }
-
-            return task.status === ArchiveTaskStatus.PENDING ||
-                task.status === ArchiveTaskStatus.RUNNING;
-        } catch (error) {
-            this.logger.error('檢查任務取消權限失敗', { taskId: id, error: (error as Error).message });
-            return false;
-        }
-    }
 }

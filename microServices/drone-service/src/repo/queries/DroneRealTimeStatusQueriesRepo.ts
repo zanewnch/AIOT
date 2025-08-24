@@ -12,14 +12,23 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { Op } from 'sequelize';
-import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 import { 
     DroneRealTimeStatusModel, 
-    DroneRealTimeStatusAttributes,
     DroneRealTimeStatus
 } from '../../models/DroneRealTimeStatusModel.js';
 import { DroneStatusModel } from '../../models/DroneStatusModel.js';
+import { PaginationRequestDto } from '../../dto/index.js';
 import { createLogger } from '../../configs/loggerConfig.js';
+
+/**
+ * 統一分頁查詢結果接口
+ */
+export interface PaginatedResult<T> {
+  data: T[];
+  totalCount: number;
+  currentPage: number;
+  pageSize: number;
+}
 
 /**
  * 無人機即時狀態查詢 Repository 實現類別 - CQRS 查詢端
@@ -33,269 +42,98 @@ export class DroneRealTimeStatusQueriesRepo {
     private readonly logger = createLogger('DroneRealTimeStatusQueriesRepo');
 
     /**
-     * 根據 ID 查詢即時狀態記錄
+     * 統一分頁查詢方法
      * 
-     * @param id - 記錄 ID
-     * @returns Promise<DroneRealTimeStatusModel | null>
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @param {Record<string, any>} filters - 額外篩選條件
+     * @returns {Promise<PaginatedResult<DroneRealTimeStatusModel>>} 分頁結果
      */
-    findById = async (id: number): Promise<DroneRealTimeStatusModel | null> => {
+    findPaginated = async (
+        pagination: PaginationRequestDto,
+        filters: Record<string, any> = {}
+    ): Promise<PaginatedResult<DroneRealTimeStatusModel>> => {
         try {
-            this.logger.info('Finding real-time status by ID', { id });
-            const status = await DroneRealTimeStatusModel.findByPk(id, {
-                include: [DroneStatusModel]
-            });
+            const { page = 1, pageSize = 20, sortBy = 'last_seen', sortOrder = 'DESC', search } = pagination;
+            const offset = (page - 1) * pageSize;
 
-            if (status) {
-                this.logger.info('Real-time status found', { id });
-            } else {
-                this.logger.warn('Real-time status not found', { id });
-            }
+            this.logger.info('Fetching paginated real-time status', { pagination, filters });
 
-            return status;
-        } catch (error) {
-            this.logger.error('Error finding real-time status by ID', { id, error });
-            throw error;
-        }
-    }
+            // 建立查詢條件
+            let whereCondition: any = { ...filters };
 
-    /**
-     * 根據無人機 ID 查詢即時狀態記錄
-     * 
-     * @param droneId - 無人機 ID
-     * @returns Promise<DroneRealTimeStatusModel | null>
-     */
-    findByDroneId = async (droneId: number): Promise<DroneRealTimeStatusModel | null> => {
-        try {
-            this.logger.info('Finding real-time status by drone ID', { droneId });
-            const status = await DroneRealTimeStatusModel.findOne({
-                where: { drone_id: droneId },
-                include: [DroneStatusModel]
-            });
-
-            if (status) {
-                this.logger.info('Real-time status found for drone', { droneId });
-            } else {
-                this.logger.warn('Real-time status not found for drone', { droneId });
-            }
-
-            return status;
-        } catch (error) {
-            this.logger.error('Error finding real-time status by drone ID', { droneId, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 查詢所有即時狀態記錄
-     * 
-     * @returns Promise<DroneRealTimeStatusModel[]>
-     */
-    findAll = async (): Promise<DroneRealTimeStatusModel[]> => {
-        try {
-            this.logger.info('Finding all real-time status records');
-            const statuses = await DroneRealTimeStatusModel.findAll({
-                include: [DroneStatusModel],
-                order: [['updatedAt', 'DESC']]
-            });
-
-            this.logger.info(`Found ${statuses.length} real-time status records`);
-            return statuses;
-        } catch (error) {
-            this.logger.error('Error finding all real-time status records', { error });
-            throw error;
-        }
-    }
-
-    /**
-     * 根據狀態查詢即時狀態記錄
-     * 
-     * @param status - 即時狀態
-     * @returns Promise<DroneRealTimeStatusModel[]>
-     */
-    findByStatus = async (status: DroneRealTimeStatus): Promise<DroneRealTimeStatusModel[]> => {
-        try {
-            this.logger.info('Finding real-time status records by status', { status });
-            const statuses = await DroneRealTimeStatusModel.findAll({
-                where: { current_status: status },
-                include: [DroneStatusModel],
-                order: [['updatedAt', 'DESC']]
-            });
-
-            this.logger.info(`Found ${statuses.length} real-time status records with status ${status}`);
-            return statuses;
-        } catch (error) {
-            this.logger.error('Error finding real-time status records by status', { status, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 查詢所有在線的無人機
-     * 
-     * @returns Promise<DroneRealTimeStatusModel[]>
-     */
-    findOnlineDrones = async (): Promise<DroneRealTimeStatusModel[]> => {
-        try {
-            this.logger.info('Finding online drones');
-            const statuses = await DroneRealTimeStatusModel.findAll({
-                where: { is_connected: true },
-                include: [DroneStatusModel],
-                order: [['updatedAt', 'DESC']]
-            });
-
-            this.logger.info(`Found ${statuses.length} online drones`);
-            return statuses;
-        } catch (error) {
-            this.logger.error('Error finding online drones', { error });
-            throw error;
-        }
-    }
-
-    /**
-     * 查詢離線的無人機
-     * 
-     * @param thresholdMinutes - 離線判定時間閾值（分鐘），預設 5 分鐘
-     * @returns Promise<DroneRealTimeStatusModel[]>
-     */
-    findOfflineDrones = async (thresholdMinutes: number = 5): Promise<DroneRealTimeStatusModel[]> => {
-        try {
-            this.logger.info('Finding offline drones', { thresholdMinutes });
-            const thresholdTime = new Date(Date.now() - thresholdMinutes * 60 * 1000);
-            
-            const statuses = await DroneRealTimeStatusModel.findAll({
-                where: {
+            // 搜尋條件 - 可以根據實際需求調整搜尋欄位
+            if (search) {
+                whereCondition = {
+                    ...whereCondition,
                     [Op.or]: [
-                        { is_connected: false },
-                        { last_seen: { [Op.lt]: thresholdTime } }
+                        { '$current_status$': { [Op.like]: `%${search}%` } }
                     ]
-                },
+                };
+            }
+
+            // 查詢分頁數據
+            const { count: totalCount, rows: data } = await DroneRealTimeStatusModel.findAndCountAll({
+                where: whereCondition,
                 include: [DroneStatusModel],
-                order: [['last_seen', 'DESC']]
+                order: [[sortBy, sortOrder]],
+                limit: pageSize,
+                offset: offset
             });
 
-            this.logger.info(`Found ${statuses.length} offline drones`);
-            return statuses;
+            const result: PaginatedResult<DroneRealTimeStatusModel> = {
+                data,
+                totalCount,
+                currentPage: page,
+                pageSize
+            };
+
+            this.logger.info(`Successfully fetched paginated real-time status: page ${page}, ${data.length}/${totalCount} records`);
+            return result;
         } catch (error) {
-            this.logger.error('Error finding offline drones', { thresholdMinutes, error });
+            this.logger.error('Error fetching paginated real-time status', { pagination, filters, error });
             throw error;
         }
-    }
+    };
 
     /**
-     * 獲取電池統計資訊
+     * 根據無人機 ID 分頁查詢即時狀態
      * 
-     * @returns Promise<any>
+     * @param {number} droneId - 無人機 ID
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @returns {Promise<PaginatedResult<DroneRealTimeStatusModel>>} 分頁結果
      */
-    getBatteryStatistics = async (): Promise<any> => {
-        try {
-            this.logger.info('Getting battery statistics');
-            const stats = await DroneRealTimeStatusModel.findAll({
-                attributes: [
-                    [DroneRealTimeStatusModel.sequelize!.fn('AVG', DroneRealTimeStatusModel.sequelize!.col('current_battery_level')), 'avg_battery'],
-                    [DroneRealTimeStatusModel.sequelize!.fn('MIN', DroneRealTimeStatusModel.sequelize!.col('current_battery_level')), 'min_battery'],
-                    [DroneRealTimeStatusModel.sequelize!.fn('MAX', DroneRealTimeStatusModel.sequelize!.col('current_battery_level')), 'max_battery'],
-                    [DroneRealTimeStatusModel.sequelize!.fn('COUNT', DroneRealTimeStatusModel.sequelize!.col('id')), 'total_count']
-                ],
-                raw: true
-            });
-
-            this.logger.info('Battery statistics retrieved');
-            return stats[0];
-        } catch (error) {
-            this.logger.error('Error getting battery statistics', { error });
-            throw error;
-        }
-    }
+    findByDroneIdPaginated = async (
+        droneId: number,
+        pagination: PaginationRequestDto
+    ): Promise<PaginatedResult<DroneRealTimeStatusModel>> => {
+        return this.findPaginated(pagination, { drone_id: droneId });
+    };
 
     /**
-     * 獲取狀態統計資訊
+     * 根據狀態分頁查詢即時狀態
      * 
-     * @returns Promise<any>
+     * @param {DroneRealTimeStatus} status - 即時狀態
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @returns {Promise<PaginatedResult<DroneRealTimeStatusModel>>} 分頁結果
      */
-    getStatusStatistics = async (): Promise<any> => {
-        try {
-            this.logger.info('Getting status statistics');
-            const stats = await DroneRealTimeStatusModel.findAll({
-                attributes: [
-                    'current_status',
-                    [DroneRealTimeStatusModel.sequelize!.fn('COUNT', DroneRealTimeStatusModel.sequelize!.col('id')), 'count']
-                ],
-                group: ['current_status'],
-                raw: true
-            });
-
-            this.logger.info(`Status statistics retrieved with ${stats.length} status types`);
-            return stats;
-        } catch (error) {
-            this.logger.error('Error getting status statistics', { error });
-            throw error;
-        }
-    }
+    findByStatusPaginated = async (
+        status: DroneRealTimeStatus,
+        pagination: PaginationRequestDto
+    ): Promise<PaginatedResult<DroneRealTimeStatusModel>> => {
+        return this.findPaginated(pagination, { current_status: status });
+    };
 
     /**
-     * 檢查無人機是否在線
+     * 根據連線狀態分頁查詢即時狀態
      * 
-     * @param droneId - 無人機 ID
-     * @param thresholdMinutes - 線上判定時間閾值（分鐘），預設 5 分鐘
-     * @returns Promise<boolean>
+     * @param {boolean} isConnected - 是否連線
+     * @param {PaginationRequestDto} pagination - 分頁參數
+     * @returns {Promise<PaginatedResult<DroneRealTimeStatusModel>>} 分頁結果
      */
-    isDroneOnline = async (droneId: number, thresholdMinutes: number = 5): Promise<boolean> => {
-        try {
-            this.logger.debug('Checking if drone is online', { droneId, thresholdMinutes });
-            const thresholdTime = new Date(Date.now() - thresholdMinutes * 60 * 1000);
-            
-            const status = await DroneRealTimeStatusModel.findOne({
-                where: { 
-                    drone_id: droneId,
-                    is_connected: true,
-                    last_seen: { [Op.gte]: thresholdTime }
-                }
-            });
-
-            const isOnline = status !== null;
-            this.logger.debug(`Drone ${droneId} is ${isOnline ? 'online' : 'offline'}`);
-            return isOnline;
-        } catch (error) {
-            this.logger.error('Error checking if drone is online', { droneId, thresholdMinutes, error });
-            throw error;
-        }
-    }
-
-    /**
-     * 統計連線的無人機數量
-     * 
-     * @returns Promise<number>
-     */
-    countConnectedDrones = async (): Promise<number> => {
-        try {
-            this.logger.info('Counting connected drones');
-            const count = await DroneRealTimeStatusModel.count({
-                where: { is_connected: true }
-            });
-
-            this.logger.info(`Connected drones count: ${count}`);
-            return count;
-        } catch (error) {
-            this.logger.error('Error counting connected drones', { error });
-            throw error;
-        }
-    }
-
-    /**
-     * 統計總的即時狀態記錄數
-     * 
-     * @returns Promise<number>
-     */
-    count = async (): Promise<number> => {
-        try {
-            this.logger.info('Counting total real-time status records');
-            const count = await DroneRealTimeStatusModel.count();
-
-            this.logger.info(`Total real-time status records: ${count}`);
-            return count;
-        } catch (error) {
-            this.logger.error('Error counting total real-time status records', { error });
-            throw error;
-        }
-    }
+    findByConnectionPaginated = async (
+        isConnected: boolean,
+        pagination: PaginationRequestDto
+    ): Promise<PaginatedResult<DroneRealTimeStatusModel>> => {
+        return this.findPaginated(pagination, { is_connected: isConnected });
+    };
 }

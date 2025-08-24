@@ -12,6 +12,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Application, Router } from 'express';
 import { TYPES } from '../container/types.js';
+import { RBACMCPRoutes } from './mcpRoutes.js';
 
 /**
  * RBAC Service 路由註冊器
@@ -22,7 +23,8 @@ import { TYPES } from '../container/types.js';
 export class RouteRegistrar {
     constructor(
         @inject(TYPES.RBACRoutes) private rbacRoutes: Router,
-        @inject(TYPES.DocsRoutes) private docsRoutes: Router
+        @inject(TYPES.DocsRoutes) private docsRoutes: Router,
+        @inject(TYPES.RBACMCPRoutes) private mcpRoutes: RBACMCPRoutes
     ) {}
 
     /**
@@ -53,7 +55,11 @@ export class RouteRegistrar {
             app.use('/', this.rbacRoutes);
             console.log('✅ RBAC routes registered at /');
 
-            console.log('🚀 All RBAC routes registered successfully');
+            // 註冊 MCP 路由 (供 LLM AI Engine 調用)
+            app.use('/api/mcp', this.mcpRoutes.getRouter());
+            console.log('✅ MCP routes registered at /api/mcp');
+
+            console.log('🚀 All RBAC routes registered successfully (including MCP support)');
         } catch (error) {
             console.error('❌ Failed to register RBAC routes:', error);
             throw error;

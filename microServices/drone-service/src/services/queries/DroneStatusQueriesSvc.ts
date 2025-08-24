@@ -21,6 +21,13 @@ import type { IDroneStatusRepository } from '../../types/repositories/IDroneStat
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
+import { PaginationRequestDto } from '../../dto/index.js';
+import { DtoMapper } from '../../utils/dtoMapper.js';
+import {
+    DroneStatusResponseDto,
+    DroneStatusListResponseDto,
+    DroneStatusStatisticsResponseDto
+} from '../../dto/index.js';
 
 const logger = createLogger('DroneStatusQueriesSvc');
 
@@ -43,341 +50,121 @@ export class DroneStatusQueriesSvc {
         this.droneStatusRepo = droneStatusRepo;
     }
 
-
     /**
-     * 根據 ID 取得無人機狀態資料
+     * 分頁查詢所有無人機狀態（新增統一方法）
      */
-    getDroneStatusById = async (id: number): Promise<DroneStatusAttributes> => {
+    getAllStatusesPaginated = async (
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            if (!id || id <= 0) {
-                throw new Error('無效的無人機狀態資料 ID');
-            }
+            logger.info('分頁查詢所有無人機狀態', { pagination });
 
-            logger.info('Getting drone status data by ID', { id });
-            const droneStatus = await this.droneStatusRepo.findById(id);
+            const result = await this.droneStatusRepo.findPaginated(pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneStatusResponse(result);
 
-            if (!droneStatus) {
-                throw new Error(`找不到 ID 為 ${id} 的無人機狀態資料`);
-            }
-
-            logger.info('Successfully retrieved drone status data', { id });
-            return droneStatus;
+            logger.info(`成功獲取 ${result.data.length} 個無人機狀態，總共 ${result.totalCount} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('分頁查詢無人機狀態失敗', { error });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據無人機序號取得無人機狀態資料
+     * 根據狀態分頁查詢無人機（新增統一方法）
      */
-    getDroneStatusBySerial = async (droneSerial: string): Promise<DroneStatusAttributes> => {
+    getStatusesByStatusPaginated = async (
+        status: DroneStatus,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            if (!droneSerial || droneSerial.trim() === '') {
-                throw new Error('無效的無人機序號');
-            }
+            logger.info('根據狀態分頁查詢無人機狀態', { status, pagination });
 
-            logger.info('Getting drone status data by serial', { droneSerial });
-            const droneStatus = await this.droneStatusRepo.findByDroneSerial(droneSerial);
+            const result = await this.droneStatusRepo.findByStatusPaginated(status, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneStatusResponse(result);
 
-            if (!droneStatus) {
-                throw new Error(`找不到序號為 ${droneSerial} 的無人機資料`);
-            }
-
-            logger.info('Successfully retrieved drone status data by serial', { droneSerial });
-            return droneStatus;
+            logger.info(`成功獲取狀態為 ${status} 的無人機狀態 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('根據狀態分頁查詢無人機狀態失敗', { error, status });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據狀態查詢無人機
+     * 根據無人機 ID 分頁查詢狀態
      */
-    getDronesByStatus = async (status: DroneStatus): Promise<DroneStatusAttributes[]> => {
+    getStatusesByDroneIdPaginated = async (
+        droneId: number,
+        pagination: PaginationRequestDto
+    ): Promise<any> => {
         try {
-            if (!Object.values(DroneStatus).includes(status)) {
-                throw new Error('無效的無人機狀態');
-            }
+            logger.info('根據無人機 ID 分頁查詢狀態', { droneId, pagination });
 
-            logger.info('Getting drones by status', { status });
-            const droneStatuses = await this.droneStatusRepo.findByStatus(status);
+            const result = await this.droneStatusRepo.findByDroneIdPaginated(droneId, pagination);
+            const paginatedResponse = DtoMapper.toPaginatedDroneStatusResponse(result);
 
-            logger.info(`Retrieved ${droneStatuses.length} drones with status ${status}`);
-            return droneStatuses;
+            logger.info(`成功獲取無人機 ${droneId} 的狀態 ${result.data.length} 個`);
+            return paginatedResponse;
         } catch (error) {
+            logger.error('根據無人機 ID 分頁查詢狀態失敗', { error, droneId });
             throw error;
         }
-    }
+    };
 
     /**
-     * 根據擁有者 ID 查詢無人機
+     * 檢查無人機序列號是否存在
      */
-    getDronesByOwner = async (ownerUserId: number): Promise<DroneStatusAttributes[]> => {
+    isDroneSerialExists = async (serial: string): Promise<boolean> => {
         try {
-            if (!ownerUserId || ownerUserId <= 0) {
-                throw new Error('無效的擁有者用戶 ID');
-            }
-
-            logger.info('Getting drones by owner', { ownerUserId });
-            const droneStatuses = await this.droneStatusRepo.findByOwner(ownerUserId);
-
-            logger.info(`Retrieved ${droneStatuses.length} drones for owner ${ownerUserId}`);
-            return droneStatuses;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 根據製造商查詢無人機
-     */
-    getDronesByManufacturer = async (manufacturer: string): Promise<DroneStatusAttributes[]> => {
-        try {
-            if (!manufacturer || manufacturer.trim() === '') {
-                throw new Error('無效的製造商名稱');
-            }
-
-            logger.info('Getting drones by manufacturer', { manufacturer });
-            const droneStatuses = await this.droneStatusRepo.findByManufacturer(manufacturer);
-
-            logger.info(`Retrieved ${droneStatuses.length} drones from manufacturer ${manufacturer}`);
-            return droneStatuses;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 檢查無人機序號是否已存在
-     */
-    isDroneSerialExists = async (droneSerial: string, excludeId?: number): Promise<boolean> => {
-        try {
-            const existingDrone = await this.droneStatusRepo.findByDroneSerial(droneSerial);
-
-            if (!existingDrone) {
-                return false;
-            }
-
-            // 如果有排除 ID，檢查是否為同一筆資料
-            if (excludeId && existingDrone.id === excludeId) {
-                return false;
-            }
-
-            return true;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 取得無人機狀態統計
-     */
-    getDroneStatusStatistics = async (): Promise<{ [key in DroneStatus]: number }> => {
-        try {
-            logger.info('Getting drone status statistics');
-
-            const statistics: { [key in DroneStatus]: number } = {
-                [DroneStatus.ACTIVE]: 0,
-                [DroneStatus.INACTIVE]: 0,
-                [DroneStatus.MAINTENANCE]: 0,
-                [DroneStatus.FLYING]: 0
-            };
-
-            // 並行查詢各狀態的數量
-            const promises = Object.values(DroneStatus).map(async (status) => {
-                const drones = await this.droneStatusRepo.findByStatus(status);
-                return { status, count: drones.length };
-            });
-
-            const results = await Promise.all(promises);
-
-            results.forEach(({ status, count }) => {
-                statistics[status] = count;
-            });
-
-            logger.info('Successfully retrieved drone status statistics', { statistics });
-            return statistics;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 取得總無人機數量
-     */
-    getTotalDroneCount = async (): Promise<number> => {
-        try {
-            logger.info('Getting total drone count');
-            const droneStatuses = await this.droneStatusRepo.findAll();
-            const count = droneStatuses.length;
+            logger.info('檢查無人機序列號是否存在', { serial });
             
-            logger.info(`Total drone count: ${count}`);
-            return count;
+            // 假設在無人機狀態表中檢查
+            const result = await this.droneStatusRepo.findBySerial(serial);
+            return result !== null;
         } catch (error) {
+            logger.error('檢查無人機序列號失敗', { error, serial });
             throw error;
         }
-    }
+    };
 
     /**
-     * 取得活躍無人機數量
+     * 根據 ID 獲取無人機狀態
      */
-    getActiveDroneCount = async (): Promise<number> => {
+    getDroneStatusById = async (id: number): Promise<any> => {
         try {
-            logger.info('Getting active drone count');
-            const activeDrones = await this.droneStatusRepo.findByStatus(DroneStatus.ACTIVE);
-            const count = activeDrones.length;
-            
-            logger.info(`Active drone count: ${count}`);
-            return count;
-        } catch (error) {
-            throw error;
-        }
-    }
+            logger.info('根據 ID 獲取無人機狀態', { id });
 
-    /**
-     * 取得飛行中無人機數量
-     */
-    getFlyingDroneCount = async (): Promise<number> => {
-        try {
-            logger.info('Getting flying drone count');
-            const flyingDrones = await this.droneStatusRepo.findByStatus(DroneStatus.FLYING);
-            const count = flyingDrones.length;
-            
-            logger.info(`Flying drone count: ${count}`);
-            return count;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 取得需要維護的無人機數量
-     */
-    getMaintenanceDroneCount = async (): Promise<number> => {
-        try {
-            logger.info('Getting maintenance drone count');
-            const maintenanceDrones = await this.droneStatusRepo.findByStatus(DroneStatus.MAINTENANCE);
-            const count = maintenanceDrones.length;
-            
-            logger.info(`Maintenance drone count: ${count}`);
-            return count;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 取得離線無人機數量
-     */
-    getInactiveDroneCount = async (): Promise<number> => {
-        try {
-            logger.info('Getting inactive drone count');
-            const inactiveDrones = await this.droneStatusRepo.findByStatus(DroneStatus.INACTIVE);
-            const count = inactiveDrones.length;
-            
-            logger.info(`Inactive drone count: ${count}`);
-            return count;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /**
-     * 根據型號查詢無人機
-     */
-    getDronesByModel = async (model: string): Promise<DroneStatusAttributes[]> => {
-        try {
-            if (!model || model.trim() === '') {
-                throw new Error('無效的型號名稱');
+            const result = await this.droneStatusRepo.findById(id);
+            if (!result) {
+                return null;
             }
 
-            logger.info('Getting drones by model', { model });
-            const droneStatuses = await this.droneStatusRepo.findAll();
-            const filteredDrones = droneStatuses.filter((drone: any) => drone.model === model);
-
-            logger.info(`Retrieved ${filteredDrones.length} drones with model ${model}`);
-            return filteredDrones;
+            const dto = DtoMapper.toDroneStatusResponseDto(result);
+            logger.info(`成功獲取無人機狀態 ${id}`);
+            return dto;
         } catch (error) {
+            logger.error('根據 ID 獲取無人機狀態失敗', { error, id });
             throw error;
         }
-    }
+    };
 
     /**
-     * 搜尋無人機（根據名稱或序號）
+     * 根據狀態獲取無人機列表
      */
-    searchDrones = async (searchTerm: string): Promise<DroneStatusAttributes[]> => {
+    getDronesByStatus = async (status: DroneStatus): Promise<any[]> => {
         try {
-            if (!searchTerm || searchTerm.trim() === '') {
-                throw new Error('搜尋條件不能為空');
-            }
+            logger.info('根據狀態獲取無人機列表', { status });
 
-            logger.info('Searching drones', { searchTerm });
-            const allDrones = await this.droneStatusRepo.findAll();
-            const searchResults = allDrones.filter((drone: any) => 
-                drone.drone_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                drone.drone_serial.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            const result = await this.droneStatusRepo.findAllByStatus(status);
+            const dtos = result.map(item => DtoMapper.toDroneStatusResponseDto(item));
 
-            logger.info(`Found ${searchResults.length} drones matching search term: ${searchTerm}`);
-            return searchResults;
+            logger.info(`成功獲取狀態為 ${status} 的無人機 ${result.length} 個`);
+            return dtos;
         } catch (error) {
+            logger.error('根據狀態獲取無人機列表失敗', { error, status });
             throw error;
         }
-    }
+    };
 
-    /**
-     * 獲取所有無人機狀態列表（支持分頁）
-     * 
-     * @param params 分頁參數，默認 page=1, pageSize=20
-     * @returns 分頁無人機狀態結果
-     */
-    public async getAllDroneStatuses(params: PaginationParams = { page: 1, pageSize: 20, sortBy: 'id', sortOrder: 'DESC' }): Promise<PaginatedResult<DroneStatusAttributes>> {
-        try {
-            logger.debug('Getting drone statuses with pagination', params);
-
-            // 驗證分頁參數
-            const validatedParams = PaginationUtils.validatePaginationParams(params, {
-                defaultPage: 1,
-                defaultPageSize: 10,
-                maxPageSize: 100,
-                defaultSortBy: 'id',
-                defaultSortOrder: 'DESC',
-                allowedSortFields: ['id', 'drone_name', 'drone_serial', 'status', 'createdAt', 'updatedAt']
-            });
-
-            // 從存儲庫獲取分頁數據
-            const offset = PaginationUtils.calculateOffset(validatedParams.page, validatedParams.pageSize);
-            
-            // 獲取總數和分頁數據
-            const [droneStatuses, total] = await Promise.all([
-                this.droneStatusRepo.findPaginatedUnified(
-                    validatedParams.pageSize, 
-                    offset, 
-                    validatedParams.sortBy, 
-                    validatedParams.sortOrder
-                ),
-                this.droneStatusRepo.count()
-            ]);
-
-            // 創建分頁結果
-            const result = PaginationUtils.createPaginatedResult(
-                droneStatuses,
-                total,
-                validatedParams.page,
-                validatedParams.pageSize
-            );
-
-            logger.info('Successfully fetched drone statuses with pagination', {
-                page: result.page,
-                pageSize: result.pageSize,
-                total: result.total,
-                totalPages: result.totalPages
-            });
-
-            return result;
-        } catch (error) {
-            logger.error('Error fetching drone statuses with pagination:', error);
-            throw new Error('Failed to fetch drone statuses with pagination');
-        }
-    }
 }

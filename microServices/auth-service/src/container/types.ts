@@ -469,7 +469,12 @@ export const TYPES = {
   /**
    * 路由註冊器類型
    */
-  RouteRegistrar: Symbol.for('RouteRegistrar')
+  RouteRegistrar: Symbol.for('RouteRegistrar'),
+
+  /**
+   * Auth MCP 路由類型
+   */
+  AuthMCPRoutes: Symbol.for('AuthMCPRoutes')
 } as const;
 
 /**

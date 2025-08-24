@@ -22,6 +22,7 @@ import {DroneRealtimeRoutes} from './droneRealtimeRoutes.js';
 import docsRoutes from './docsRoutes.js';
 import {TYPES} from '../container/types.js';
 import {ResResult} from 'aiot-shared-packages';
+import {DroneMCPRoutes} from './mcpRoutes.js';
 
 /**
  * 路由註冊器類別
@@ -37,7 +38,8 @@ export class RouteRegistrar {
         @inject(TYPES.DronePositionRoutes) private readonly dronePositionRoutes: DronePositionRoutes,
         @inject(TYPES.DroneStatusRoutes) private readonly droneStatusRoutes: DroneStatusRoutes,
         @inject(TYPES.DroneCommandRoutes) private readonly droneCommandRoutes: DroneCommandRoutes,
-        @inject(TYPES.DroneRealtimeRoutes) private readonly droneRealtimeRoutes: DroneRealtimeRoutes
+        @inject(TYPES.DroneRealtimeRoutes) private readonly droneRealtimeRoutes: DroneRealtimeRoutes,
+        @inject(TYPES.DroneMCPRoutes) private readonly mcpRoutes: DroneMCPRoutes
     ) {
     }
 
@@ -71,6 +73,10 @@ export class RouteRegistrar {
             app.use('/realtime', this.droneRealtimeRoutes.getRouter());
             console.log('✅ Drone realtime routes registered at /realtime');
 
+            // 註冊 MCP 路由 (供 LLM AI Engine 調用)
+            app.use('/api/mcp', this.mcpRoutes.getRouter());
+            console.log('✅ MCP routes registered at /api/mcp');
+
             // 註冊文檔路由
             app.use('/', docsRoutes);
             console.log('✅ Documentation routes registered at /docs and /typedoc');
@@ -87,11 +93,11 @@ export class RouteRegistrar {
      *
      * @param app Express 應用程式實例
      */
-    private registerHealthRoutes(app: Express): void {
+    private registerHealthRoutes(app: Application): void {
         const healthRouter = Router();
 
         // 基本健康檢查
-        healthRouter.get('/health', (req, res) => {
+        healthRouter.get('/health', (req, res, next) => {
             const healthStatus = {
                 status: 'healthy',
                 service: 'drone-service',
@@ -105,7 +111,7 @@ export class RouteRegistrar {
         });
 
         // 詳細健康檢查
-        healthRouter.get('/health/detailed', (req, res) => {
+        healthRouter.get('/health/detailed', (req, res, next) => {
             const healthStatus = {
                 status: 'healthy',
                 service: 'drone-service',

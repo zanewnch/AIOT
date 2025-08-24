@@ -13,11 +13,13 @@
 
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {DroneStatusArchiveQueriesSvc} from '../../services/queries/DroneStatusArchiveQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
+import {PaginationRequestDto} from '../../dto/index.js';
+import {DroneStatus} from '../../models/DroneStatusModel.js';
 
 const logger = createLogger('DroneStatusArchiveQueriesCtrl');
 
@@ -37,59 +39,40 @@ export class DroneStatusArchiveQueriesCtrl {
     ) {
     }
 
-    /**
-     * 取得所有狀態歷史歸檔
-     * @route GET /api/drone-status-archive/data
-     */
-    getAllStatusArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const limit = parseInt(req.query.limit as string) || 100;
-            const archives = await this.queryService.getAllStatusArchives(limit);
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
 
+    /**
+     * 分頁查詢所有狀態歷史歸檔（新增統一方法）
+     * @route GET /api/drone-status-archive/data/paginated
+     */
+    getAllStatusArchivesPaginated = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'archived_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
+
+            const paginatedResult = await this.queryService.getAllStatusArchivesPaginated(pagination);
+            const result = ResResult.fromPaginatedResponse('狀態歷史歸檔分頁查詢成功', paginatedResult);
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據 ID 取得狀態歷史歸檔
-     * @route GET /api/drone-status-archive/data/:id
-     */
-    getStatusArchiveById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const id = parseInt(req.params.id);
-
-            if (isNaN(id)) {
-                const result = ResResult.badRequest('無效的狀態歷史歸檔 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archive = await this.queryService.getStatusArchiveById(id);
-
-            if (!archive) {
-                const result = ResResult.notFound('找不到指定的狀態歷史歸檔');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archive);
+            logger.error('分頁查詢狀態歷史歸檔失敗', { error });
+            const result = ResResult.internalError('分頁查詢狀態歷史歸檔失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
     /**
-     * 根據無人機 ID 獲取狀態歷史
-     * @route GET /api/drone-status-archive/data/drone/:droneId
+     * 根據無人機 ID 分頁查詢狀態歷史歸檔（新增統一方法）
+     * @route GET /api/drone-status-archive/data/drone/:droneId/paginated
      */
-    getStatusArchivesByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getStatusArchivesByDroneIdPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const droneId = parseInt(req.params.droneId);
-            const limit = parseInt(req.query.limit as string) || 50;
 
             if (isNaN(droneId)) {
                 const result = ResResult.badRequest('無效的無人機 ID 格式');
@@ -97,72 +80,74 @@ export class DroneStatusArchiveQueriesCtrl {
                 return;
             }
 
-            const archives = await this.queryService.getStatusArchivesByDroneId(droneId, limit);
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'archived_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.queryService.getStatusArchivesByDroneIdPaginated(droneId, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `無人機 ${droneId} 的狀態歷史歸檔分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
+            logger.error('根據無人機 ID 分頁查詢狀態歷史歸檔失敗', { error });
+            const result = ResResult.internalError('根據無人機 ID 分頁查詢狀態歷史歸檔失敗');
+            res.status(result.status).json(result);
         }
-    }
+    };
 
     /**
-     * 根據狀態獲取歷史記錄
-     * @route GET /api/drone-status-archive/data/status/:status
+     * 根據狀態分頁查詢歷史記錄（新增統一方法）
+     * @route GET /api/drone-status-archive/data/status/:status/paginated
      */
-    getStatusArchivesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getStatusArchivesByStatusPaginated = async (req: Request, res: Response): Promise<void> => {
         try {
-            const status = req.params.status;
-            const limit = parseInt(req.query.limit as string) || 50;
+            const status = req.params.status as DroneStatus;
 
-            if (!status || typeof status !== 'string' || status.trim().length === 0) {
-                const result = ResResult.badRequest('狀態參數不能為空');
+            if (!status || !Object.values(DroneStatus).includes(status)) {
+                const result = ResResult.badRequest('無效的狀態參數');
                 res.status(result.status).json(result);
                 return;
             }
 
-            const archives = await this.queryService.getStatusArchivesByStatus(status as any, limit);
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'archived_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.queryService.getStatusArchivesByStatusPaginated(status, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                `狀態為 ${status} 的歷史記錄分頁查詢成功`, 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據創建者獲取歷史記錄
-     * @route GET /api/drone-status-archive/data/created-by/:userId
-     */
-    getStatusArchivesByCreatedBy = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const createdBy = parseInt(req.params.userId);
-            const limit = parseInt(req.query.limit as string) || 50;
-
-            if (isNaN(createdBy)) {
-                const result = ResResult.badRequest('無效的用戶 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archives = await this.queryService.getStatusArchivesByCreatedBy(createdBy, limit);
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
-
+            logger.error('根據狀態分頁查詢歷史記錄失敗', { error });
+            const result = ResResult.internalError('根據狀態分頁查詢歷史記錄失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
+    };
 
     /**
-     * 根據時間範圍獲取歷史記錄
-     * @route GET /api/drone-status-archive/data/date-range
+     * 根據時間範圍分頁查詢歷史記錄（新增統一方法）
+     * @route GET /api/drone-status-archive/data/date-range/paginated
      */
-    getStatusArchivesByDateRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getStatusArchivesByDateRangePaginated = async (req: Request, res: Response): Promise<void> => {
         try {
             const startDate = new Date(req.query.startDate as string);
             const endDate = new Date(req.query.endDate as string);
-            const limit = parseInt(req.query.limit as string) || 100;
 
             // 驗證日期參數
             if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
@@ -171,132 +156,26 @@ export class DroneStatusArchiveQueriesCtrl {
                 return;
             }
 
-            const archives = await this.queryService.getStatusArchivesByDateRange(startDate, endDate, limit);
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
+            const pagination = {
+                page: parseInt(req.query.page as string) || 1,
+                pageSize: parseInt(req.query.pageSize as string) || 20,
+                sortBy: req.query.sortBy as string || 'archived_at',
+                sortOrder: (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC',
+                search: req.query.search as string,
+                get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
+            } as PaginationRequestDto;
 
+            const paginatedResult = await this.queryService.getStatusArchivesByDateRangePaginated(startDate, endDate, pagination);
+            const result = ResResult.fromPaginatedResponse(
+                '時間範圍內的歷史記錄分頁查詢成功', 
+                paginatedResult
+            );
+            
             res.status(result.status).json(result);
         } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 根據變更原因獲取歷史記錄
-     * @route GET /api/drone-status-archive/data/reason/:reason
-     */
-    getStatusArchivesByReason = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const reason = req.params.reason;
-            const limit = parseInt(req.query.limit as string) || 50;
-
-            if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
-                const result = ResResult.badRequest('變更原因參數不能為空');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archives = await this.queryService.getStatusArchivesByReason(reason, limit);
-            const result = ResResult.success('狀態歷史歸檔資料獲取成功', archives);
-
+            logger.error('根據時間範圍分頁查詢歷史記錄失敗', { error });
+            const result = ResResult.internalError('根據時間範圍分頁查詢歷史記錄失敗');
             res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
         }
-    }
-
-    /**
-     * 獲取最新狀態歷史記錄
-     * @route GET /api/drone-status-archive/data/latest
-     */
-    getLatestStatusArchives = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const limit = parseInt(req.query.limit as string) || 20;
-            const archives = await this.queryService.getLatestStatusArchives(limit);
-            const result = ResResult.success('最新狀態歷史歸檔資料獲取成功', archives);
-
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 獲取特定無人機的最新狀態歷史
-     * @route GET /api/drone-status-archive/data/drone/:droneId/latest
-     */
-    getLatestStatusArchiveByDroneId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const droneId = parseInt(req.params.droneId);
-
-            if (isNaN(droneId)) {
-                const result = ResResult.badRequest('無效的無人機 ID 格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archive = await this.queryService.getLatestStatusArchiveByDroneId(droneId);
-            const result = ResResult.success('最新狀態歷史歸檔資料獲取成功', archive);
-
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 獲取狀態轉換歷史記錄
-     * @route GET /api/drone-status-archive/data/transition
-     */
-    getStatusArchivesByTransition = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const fromStatus = req.query.fromStatus as string;
-            const toStatus = req.query.toStatus as string;
-            const limit = parseInt(req.query.limit as string) || 50;
-
-            if (!fromStatus || !toStatus) {
-                const result = ResResult.badRequest('fromStatus 和 toStatus 參數為必填項');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const archives = await this.queryService.getStatusArchivesByTransition(fromStatus as any, toStatus as any, limit);
-            const result = ResResult.success('狀態轉換歷史歸檔資料獲取成功', archives);
-
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * 獲取狀態變更統計資料
-     * @route GET /api/drone-status-archive/statistics
-     */
-    getStatusChangeStatistics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const droneId = req.query.droneId ? parseInt(req.query.droneId as string) : undefined;
-            const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
-            const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
-
-            // 驗證日期參數
-            if (startDate && isNaN(startDate.getTime())) {
-                const result = ResResult.badRequest('無效的開始日期格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            if (endDate && isNaN(endDate.getTime())) {
-                const result = ResResult.badRequest('無效的結束日期格式');
-                res.status(result.status).json(result);
-                return;
-            }
-
-            const statistics = await this.queryService.getStatusChangeStatistics(startDate, endDate);
-            const result = ResResult.success('狀態變更統計資料獲取成功', statistics);
-
-            res.status(result.status).json(result);
-        } catch (error) {
-            next(error);
-        }
-    }
+    };
 }

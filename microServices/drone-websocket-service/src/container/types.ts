@@ -25,6 +25,10 @@ export const TYPES = {
     DroneRealTimeStatusQueriesRepo: Symbol.for('DroneRealTimeStatusQueriesRepo'),
     DroneRealTimeStatusCommandsRepository: Symbol.for('DroneRealTimeStatusCommandsRepository'),
     
+    // === 控制器層 ===
+    IDroneRealTimeStatusQueries: Symbol.for('IDroneRealTimeStatusQueries'),
+    DroneRealTimeStatusQueriesCtrl: Symbol.for('DroneRealTimeStatusQueriesCtrl'),
+    
     // === 路由層 ===
     // DroneRealtimeRoutes 已移除 - 微服務專注於 WebSocket 實時通信
     HealthRoutes: Symbol.for('HealthRoutes'),

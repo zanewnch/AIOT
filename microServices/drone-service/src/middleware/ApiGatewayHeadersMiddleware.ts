@@ -60,22 +60,24 @@ export class ApiGatewayHeadersMiddleware {
             
             if (!consumerUsername || !consumerId) {
                 logger.warn(`JWT authentication failed - missing API Gateway consumer headers for path: ${req.path}`);
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication required - JWT verification failed',
                     error: 'JWT_AUTH_FAILED'
                 });
+                return;
             }
 
             // 從 Cookie 中獲取 JWT 並解析用戶信息
             const authToken = req.cookies?.auth_token;
             if (!authToken) {
                 logger.warn(`Authentication token not found in cookies for path: ${req.path}`);
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication token not found',
                     error: 'TOKEN_NOT_FOUND'
                 });
+                return;
             }
 
             // 解析 JWT payload (不驗證簽名，因為 API Gateway 已經驗證過了)
@@ -103,11 +105,12 @@ export class ApiGatewayHeadersMiddleware {
 
         } catch (error) {
             logger.error('JWT user extraction error:', error);
-            return res.status(401).json({
+            res.status(401).json({
                 status: 401,
                 message: 'Invalid authentication token',
                 error: 'INVALID_TOKEN'
             });
+            return;
         }
     };
 
@@ -122,10 +125,11 @@ export class ApiGatewayHeadersMiddleware {
             const userInfo = req.gatewayUser;
 
             if (!userInfo) {
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication required'
                 });
+                return;
             }
 
             // 檢查用戶是否有超級管理員權限
@@ -139,11 +143,12 @@ export class ApiGatewayHeadersMiddleware {
             }
 
             logger.warn(`Permission denied for user ${userInfo.username}: required ${requiredPermission}`);
-            return res.status(403).json({
+            res.status(403).json({
                 status: 403,
                 message: 'Insufficient permissions',
                 required: requiredPermission
             });
+            return;
         };
     };
 
@@ -158,10 +163,11 @@ export class ApiGatewayHeadersMiddleware {
             const userInfo = req.gatewayUser;
 
             if (!userInfo) {
-                return res.status(401).json({
+                res.status(401).json({
                     status: 401,
                     message: 'Authentication required'
                 });
+                return;
             }
 
             // 檢查用戶是否有超級管理員角色
@@ -175,11 +181,12 @@ export class ApiGatewayHeadersMiddleware {
             }
 
             logger.warn(`Role check failed for user ${userInfo.username}: required ${requiredRole}`);
-            return res.status(403).json({
+            res.status(403).json({
                 status: 403,
                 message: 'Insufficient role',
                 required: requiredRole
             });
+            return;
         };
     };
 
