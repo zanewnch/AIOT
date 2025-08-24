@@ -57,7 +57,7 @@ dist/
 # dotenv environment variables file
 .env
 .env.test
-.env.production
+
 
 # parcel-bundler cache
 .cache
@@ -83,13 +83,6 @@ dist/
 
 # TernJS port file
 .tern-port
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
 
 # OS generated files
 .DS_Store
@@ -127,5 +120,4 @@ yarn-error.log*
 
 # Windows Zone.Identifier files
 *:Zone.Identifier
-be/
-*/be/
+
