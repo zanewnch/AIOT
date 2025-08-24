@@ -12,12 +12,8 @@ RUN apt-get update && apt-get install -y curl netcat && rm -rf /var/lib/apt/list
 # 複製源代碼（包含 package.json）
 COPY microServices/general-service .
 
-# 複製 shared-packages 到服務目錄
-COPY aiot-shared-packages ./aiot-shared-packages
-
-# 安裝 shared-packages 並安裝依賴
-RUN cd aiot-shared-packages && npm install && npm run build && cd .. && \
-    npm cache clean --force && npm install ./aiot-shared-packages --no-package-lock
+# 安裝 shared-packages 從 GitHub
+RUN npm cache clean --force && npm install git+https://github.com/zanewnch/aiot-shared-packages.git --no-package-lock
 
 # 安裝開發必要的全域套件
 RUN npm install -g nodemon tsx ts-node

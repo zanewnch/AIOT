@@ -12,7 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "aiot-shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",,
+    "aiot-shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",
     "amqplib": "^0.10.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
