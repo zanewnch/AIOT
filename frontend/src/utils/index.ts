@@ -8,8 +8,9 @@
  * @since 2025-08-18
  */
 
-// 請求結果處理相關 - 從 aiot-shared-packages 導入
-export { ReqResult, ApiResponseFormat } from 'aiot-shared-packages';
+// 請求結果處理相關 - 本地實作
+export { ReqResult } from './ReqResult';
+export type { ApiResponseFormat } from '../types/ApiResponseTypes';
 
 // HTTP 請求工具相關
 export { ResUtils, resUtilsInstance } from './ResUtils';

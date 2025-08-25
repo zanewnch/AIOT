@@ -657,8 +657,8 @@ services:
     ports:
       - "3000:3000"   # Vite 開發服務器
     volumes:
-      - ../../frontend:/app/frontend
-      - ../../frontend/node_modules:/app/frontend/node_modules
+      - ../../frontend:/app
+      - /app/node_modules
       # 快取 node_modules 以提升效能
     networks:
       - aiot-network

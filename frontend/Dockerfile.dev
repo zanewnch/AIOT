@@ -1,27 +1,18 @@
-FROM node:18-bullseye
+FROM node:20-bullseye
 
-WORKDIR /app/frontend
+WORKDIR /app
 
 # 複製 package 檔案
 COPY package*.json ./
 
-# 建置階段：安裝依賴
-RUN npm install
+# 安裝依賴（包括 devDependencies）
+RUN npm install --verbose
 
-# 建置階段：安裝全域套件（如果真的需要）
-RUN npm install -g @anthropic-ai/claude-code @google/gemini-cli
-
-# 建置階段：設定 Git（如果真的需要）
-RUN git config --global user.name "zanewnch" && \
-    git config --global user.email "zanewnch@gmail.com"
-
-# 複製 .env 檔案（如果存在）
-COPY .env* ./
-
-# 複製程式碼
+# 複製所有源代碼
 COPY . .
 
+# 暴露端口
 EXPOSE 3000
 
-# 執行階段：啟動開發服務器
-CMD ["npm", "run", "dev"]
+# 直接運行 npm run dev
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

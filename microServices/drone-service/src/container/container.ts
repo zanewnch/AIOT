@@ -202,11 +202,7 @@ export function createContainer(): Container {
     // App 類 - 使用依賴注入
     container.bind(TYPES.App).to(App).inSingletonScope();
 
-    // DroneHttpServer 類 - HTTP 伺服器管理（延遲綁定以避免循環依賴）
-    container.bind(TYPES.DroneHttpServer).toDynamicValue(async () => {
-        const { DroneHttpServer } = await import('../server.js');
-        return new DroneHttpServer(container.get(TYPES.App));
-    }).inSingletonScope();
+    // 移除 DroneHttpServer 綁定 - HTTP 伺服器應該在應用層創建，不在容器中管理
 
     // WebSocket 服務已移至 drone-websocket-service
 

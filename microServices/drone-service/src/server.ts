@@ -96,8 +96,9 @@ export class DroneHttpServer {
  */
 async function main(): Promise<void> {
   try {
-    // 使用 IoC 容器獲取伺服器實例
-    const server = ContainerUtils.get<DroneHttpServer>(TYPES.DroneHttpServer);
+    // 直接創建伺服器實例，使用容器獲取 App 依賴
+    const app = ContainerUtils.get<App>(TYPES.App);
+    const server = new DroneHttpServer(app);
     await server.start();
   } catch (error) {
     console.error('❌ Unhandled error in main:', error);
