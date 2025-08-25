@@ -33,14 +33,14 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { UserCommandsRepository } from '../../repositories/commands/UserCommandsRepository.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
-import { UserQueriesService } from.*Service.js';
+import { UserQueriesService } from '../queries/UserQueriesService.js';
 import type { UserDTO, CreateUserRequest, UpdateUserRequest } from '../../types/index.js';
 
 const logger = createLogger('UserCommandsService');

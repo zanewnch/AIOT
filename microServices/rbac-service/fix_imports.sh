@@ -1,14 +1,15 @@
 #!/bin/bash
+# 批量修復 RBAC 服務的導入路徑錯誤
 
-# 修復破損的導入語句
-echo "Fixing broken import statements in rbac-service..."
+echo "🔧 開始修復 RBAC 服務導入路徑..."
 
-# 修復 service 相關的導入
-find ./src -name "*.ts" -type f | xargs sed -i 's/from\.\*Service\.js'\'';//g'
-find ./src -name "*.ts" -type f | xargs sed -i 's/from\.\*Controller\.js'\'';//g'
-find ./src -name "*.ts" -type f | xargs sed -i 's/from\.\*Repository\.js'\'';//g'
+# 進入 RBAC 服務目錄
+cd /home/user/GitHub/AIOT/microServices/rbac-service
 
-# 修復 Repository 名稱錯誤
-find ./src -name "*.ts" -type f | xargs sed -i 's/Repositorysitory/Repository/g'
+# 修復所有 .*Repositorysitorysitory.js 導入
+find src/ -name "*.ts" -exec sed -i 's/from.*Repositorysitorysitory\.js/from "..\/..\/repositories\/queries\/Repository.js"/g' {} \;
 
-echo "Import statements fixed. Manual review and proper path correction needed."
+# 修復所有 .*Service.js 導入  
+find src/ -name "*.ts" -exec sed -i 's/from.*Service\.js/from "..\/Service.js"/g' {} \;
+
+echo "✅ RBAC 服務導入路徑修復完成"

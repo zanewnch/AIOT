@@ -23,18 +23,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // 導入控制器
-import { DroneStatusQueriesController } from.*Controller.js';
-import { DroneStatusCommandsController } from.*Controller.js';
-import { DronePositionQueriesController } from.*Controller.js';
-import { DronePositionCommandsController } from.*Controller.js';
-import { DroneCommandQueriesController } from.*Controller.js';
-import { DroneCommandCommandsController } from.*Controller.js';
-import { DroneCommandQueueQueriesController } from.*Controller.js';
-import { DroneCommandQueueCommandsController } from.*Controller.js';
-import { DroneRealTimeStatusQueriesController } from.*Controller.js';
-import { DroneRealTimeStatusCommandsController } from.*Controller.js';
-import { ArchiveTaskQueriesController } from.*Controller.js';
-import { ArchiveTaskCommandsController } from.*Controller.js';
+import { DroneStatusQueriesController } from '../controllers/queries/DroneStatusQueriesController.js';
+import { DroneStatusCommandsController } from '../controllers/commands/DroneStatusCommandsController.js';
+import { DronePositionQueriesController } from '../controllers/queries/DronePositionQueriesController.js';
+import { DronePositionCommandsController } from '../controllers/commands/DronePositionCommandsController.js';
+import { DroneCommandQueriesController } from '../controllers/queries/DroneCommandQueriesController.js';
+import { DroneCommandCommandsController } from '../controllers/commands/DroneCommandCommandsController.js';
+import { DroneCommandQueueQueriesController } from '../controllers/queries/DroneCommandQueueQueriesController.js';
+import { DroneCommandQueueCommandsController } from '../controllers/commands/DroneCommandQueueCommandsController.js';
+import { DroneRealTimeStatusQueriesController } from '../controllers/queries/DroneRealTimeStatusQueriesController.js';
+import { DroneRealTimeStatusCommandsController } from '../controllers/commands/DroneRealTimeStatusCommandsController.js';
+import { ArchiveTaskQueriesController } from '../controllers/queries/ArchiveTaskQueriesController.js';
+import { ArchiveTaskCommandsController } from '../controllers/commands/ArchiveTaskCommandsController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

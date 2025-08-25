@@ -14,10 +14,10 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { DronePositionCommandsRepositorysitorysitory } from.*Repositorysitorysitory.js';
-import { DronePositionQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { DronePositionCommandsRepository } from '../../repositories/commands/DronePositionCommandsRepository.js';
+import { DronePositionQueriesRepository } from '../../repositories/queries/DronePositionQueriesRepository.js';
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
-import type { IDronePositionRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
+import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
 import { DronePositionQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';

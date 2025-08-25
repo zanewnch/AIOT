@@ -26,8 +26,8 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { RoleCommandsRepositorysitory } from.*Repositorysitorysitory.js';
-import { RoleQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { RoleCommandsRepository } from '../../repositories/commands/RoleCommandsRepository.js';
+import { RoleQueriesRepository } from '../../repositories/queries/RoleQueriesRepository.js';
 import type { RoleModel } from '../../models/RoleModel.js';
 
 import type { RedisClientType } from 'redis';

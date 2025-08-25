@@ -20,12 +20,12 @@ import { IntegratedWebSocketService } from '../configs/websocket/service.js';
 import { IntegratedDroneStatusEventHandler } from '../configs/websocket/handlers/DroneStatusEventHandler.js';
 
 // 導入服務層
-import { DroneRealTimeStatusQueriesService } from.*Service.js';
-import { DroneRealTimeStatusCommandsService } from.*Service.js';
+import { DroneRealTimeStatusQueriesService } from '../services/queries/DroneRealTimeStatusQueriesService.js';
+import { DroneRealTimeStatusCommandsService } from '../services/commands/DroneRealTimeStatusCommandsService.js';
 
 // 導入儲存庫層
-import { DroneRealTimeStatusQueriesRepositorysitory } from.*Repositorysitorysitory.js';
-import { DroneRealTimeStatusCommandsRepositorysitorysitory } from.*Repositorysitorysitory.js';
+import { DroneRealTimeStatusQueriesRepositorysitorysitory } from '../repo/queries/DroneRealTimeStatusQueriesRepository.js';
+import { DroneRealTimeStatusCommandsRepositorysitorysitorysitory } from '../repo/commands/DroneRealTimeStatusCommandsRepository.js';
 
 /**
  * 創建並配置 Drone WebSocket Service 的 IoC 容器
@@ -44,12 +44,12 @@ export function createContainer(): Container {
   container.bind<RouteRegistrar>(TYPES.RouteRegistrar).to(RouteRegistrar);
   
   // 儲存庫層
-  container.bind<DroneRealTimeStatusQueriesRepositorysitory>(TYPES.DroneRealTimeStatusQueriesRepositorysitory).to(DroneRealTimeStatusQueriesRepositorysitory);
-  container.bind<DroneRealTimeStatusCommandsRepositorysitorysitory>(TYPES.DroneRealTimeStatusCommandsRepositorysitorysitory).to(DroneRealTimeStatusCommandsRepositorysitorysitory);
+  container.bind<DroneRealTimeStatusQueriesRepositorysitorysitory>(TYPES.DroneRealTimeStatusQueriesRepositorysitory).to(DroneRealTimeStatusQueriesRepositorysitorysitory);
+  container.bind<DroneRealTimeStatusCommandsRepositorysitorysitorysitory>(TYPES.DroneRealTimeStatusCommandsRepositorysitorysitory).to(DroneRealTimeStatusCommandsRepositorysitorysitorysitory);
   
   // 服務層
   container.bind<DroneRealTimeStatusQueriesService>(TYPES.IDroneRealTimeStatusQueriesService).to(DroneRealTimeStatusQueriesService);
-  container.bind<DroneRealTimeStatusCommandsService>(TYPES.IDroneRealTimeStatusCommandsService).to(DroneRealTimeStatusCommandsService);
+  container.bind<DroneRealTimeStatusCommandsService>(TYPES.DroneRealTimeStatusCommandsService).to(DroneRealTimeStatusCommandsService);
   
   // WebSocket 相關服務
   container.bind<IntegratedDroneStatusEventHandler>(TYPES.DroneStatusEventHandler).to(IntegratedDroneStatusEventHandler);
@@ -59,8 +59,8 @@ export function createContainer(): Container {
   console.log('📦 已註冊的服務：');
   console.log('  - HealthRoutes');
   console.log('  - RouteRegistrar');
-  console.log('  - DroneRealTimeStatusQueriesRepositorysitory');
-  console.log('  - DroneRealTimeStatusCommandsRepositorysitorysitory');
+  console.log('  - DroneRealTimeStatusQueriesRepository');
+  console.log('  - DroneRealTimeStatusCommandsRepository');
   console.log('  - DroneRealTimeStatusQueriesService');
   console.log('  - DroneRealTimeStatusCommandsService');
   console.log('  - IntegratedDroneStatusEventHandler');
