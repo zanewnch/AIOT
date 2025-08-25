@@ -1,0 +1,58 @@
+{
+  "sidebarRoutes": [
+    {
+      "path": "/",
+      "label": "首頁",
+      "icon": "🏠",
+      "testId": "home-content"
+    },
+    {
+      "path": "/tableviewer",
+      "label": "Table Viewer",
+      "icon": "📊",
+      "testId": "table-viewer"
+    },
+    {
+      "path": "/chat",
+      "label": "AI 聊天",
+      "icon": "🤖",
+      "testId": "chat-page"
+    },
+    {
+      "path": "/mappage",
+      "label": "地圖頁面",
+      "icon": "🗺️",
+      "testId": "map-page"
+    },
+    {
+      "path": "/flyingpage",
+      "label": "飛行頁面",
+      "icon": "✈️",
+      "testId": "flying-page"
+    },
+    {
+      "path": "/command-history",
+      "label": "指令歷史",
+      "icon": "📋",
+      "testId": "command-history"
+    },
+    {
+      "path": "/drone-fleet",
+      "label": "機隊管理",
+      "icon": "🚁",
+      "testId": "drone-fleet"
+    },
+    {
+      "path": "/command-queue",
+      "label": "指令佇列",
+      "icon": "⚡",
+      "testId": "command-queue"
+    },
+    {
+      "path": "/data-analytics",
+      "label": "資料分析",
+      "icon": "📈",
+      "testId": "data-analytics"
+    }
+  ]
+}

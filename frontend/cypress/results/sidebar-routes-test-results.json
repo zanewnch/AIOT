@@ -1,0 +1,130 @@
+{
+  "timestamp": "2025-08-25T19:14:06.523Z",
+  "summary": {
+    "totalRoutes": 9,
+    "successfulRoutes": 9,
+    "failedRoutes": 0,
+    "totalErrors": 0,
+    "totalWarnings": 0,
+    "averageLoadTime": 2066
+  },
+  "results": [
+    {
+      "route": {
+        "path": "/",
+        "label": "首頁",
+        "icon": "🏠",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 2481,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:13:48.563Z"
+    },
+    {
+      "route": {
+        "path": "/tableviewer",
+        "label": "Table Viewer",
+        "icon": "📊",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 2167,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:13:51.018Z"
+    },
+    {
+      "route": {
+        "path": "/chat",
+        "label": "AI 聊天",
+        "icon": "🤖",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 2230,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:13:53.392Z"
+    },
+    {
+      "route": {
+        "path": "/mappage",
+        "label": "地圖頁面",
+        "icon": "🗺️",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 2157,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:13:55.735Z"
+    },
+    {
+      "route": {
+        "path": "/flyingpage",
+        "label": "飛行頁面",
+        "icon": "✈️",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 1846,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:13:57.870Z"
+    },
+    {
+      "route": {
+        "path": "/command-history",
+        "label": "指令歷史",
+        "icon": "📋",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 2537,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:14:00.645Z"
+    },
+    {
+      "route": {
+        "path": "/drone-fleet",
+        "label": "機隊管理",
+        "icon": "🚁",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 1691,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:14:02.513Z"
+    },
+    {
+      "route": {
+        "path": "/command-queue",
+        "label": "指令佇列",
+        "icon": "⚡",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 1750,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:14:04.446Z"
+    },
+    {
+      "route": {
+        "path": "/data-analytics",
+        "label": "資料分析",
+        "icon": "📈",
+        "selector": "body, div, main"
+      },
+      "success": true,
+      "loadTime": 1735,
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2025-08-25T19:14:06.446Z"
+    }
+  ]
+}

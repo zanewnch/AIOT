@@ -52,7 +52,7 @@ export const permissionTableConfig: TableConfig = {
   
   useData: (params?: PaginationParams) => {
     const permissionQuery = new PermissionQuery();
-    const queryResult = permissionQuery.useAllPermissionData(params);
+    const queryResult = permissionQuery.getAllPermissions(params);
     
     // 根據參數自動判斷分頁模式
     if (params) {

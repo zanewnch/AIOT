@@ -39,6 +39,16 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+### `npm run cypress:open`
+
+Opens the Cypress Test Runner with an interactive GUI for running and debugging tests.\
+Allows you to select specific test files and see real-time test execution.
+
+### `npm run cypress:run`
+
+Runs all Cypress tests in headless mode directly in the command line.\
+This is the mode typically used in CI/CD pipelines for automated testing.
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).

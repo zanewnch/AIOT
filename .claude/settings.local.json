@@ -35,7 +35,11 @@
       "Bash(for file in *Controller.ts)",
       "Bash(done)",
       "Bash(for file in *Service.ts)",
-      "Bash(do mv \"$file\" \"$file/Service/Svc\")"
+      "Bash(do mv \"$file\" \"$file/Service/Svc\")",
+      "Bash(npm run test:selenium:*)",
+      "Bash(del run-sidebar-tests.js sidebar-routes.selenium.test.ts selenium.config.ts setup.ts)",
+      "Bash(npm run cypress:open:*)",
+      "Bash(npm run cypress:run:*)"
     ],
     "deny": [],
     "ask": [],
