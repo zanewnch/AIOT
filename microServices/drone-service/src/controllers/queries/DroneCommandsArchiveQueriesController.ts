@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { DroneCommandsArchiveQueriesService } from '../../services/queries/DroneCommandsArchiveQueriesService.js';
+import { DroneCommandsArchiveQueriesSvc } from '../../services/queries/DroneCommandsArchiveQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -32,10 +32,10 @@ const logger = createLogger('DroneCommandsArchiveQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandsArchiveQueriesController {
+export class DroneCommandsArchiveQueriesCtrl {
     
     constructor(
-        @inject(TYPES.DroneCommandsArchiveQueriesService) private readonly queryService: DroneCommandsArchiveQueriesService
+        @inject(TYPES.DroneCommandsArchiveQueriesSvc) private readonly droneCommandsArchiveQueriesSvc: DroneCommandsArchiveQueriesSvc
     ) {
     }
 
@@ -54,7 +54,7 @@ export class DroneCommandsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getAllCommandsArchivePaginated(pagination);
+            const paginatedResult = await this.droneCommandsArchiveQueriesSvc.getAllCommandsArchivePaginated(pagination);
             const result = ResResult.fromPaginatedResponse('指令歷史歸檔分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -88,7 +88,7 @@ export class DroneCommandsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getCommandsArchiveByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.droneCommandsArchiveQueriesSvc.getCommandsArchiveByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的指令歷史歸檔分頁查詢成功`, 
                 paginatedResult
@@ -125,7 +125,7 @@ export class DroneCommandsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getCommandsArchiveByCommandTypePaginated(commandType, pagination);
+            const paginatedResult = await this.droneCommandsArchiveQueriesSvc.getCommandsArchiveByCommandTypePaginated(commandType, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `指令類型為 ${commandType} 的歷史歸檔分頁查詢成功`, 
                 paginatedResult
@@ -162,7 +162,7 @@ export class DroneCommandsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getCommandsArchiveByStatusPaginated(status, pagination);
+            const paginatedResult = await this.droneCommandsArchiveQueriesSvc.getCommandsArchiveByStatusPaginated(status, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `狀態為 ${status} 的歷史歸檔分頁查詢成功`, 
                 paginatedResult

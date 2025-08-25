@@ -1,20 +1,20 @@
 /**
- * @fileoverview Unit tests for DronePositionQueriesRepositorysitorysitory
+ * @fileoverview Unit tests for DronePositionQueriesRepositorysitory
  */
 
-import { DronePositionQueriesRepositorysitorysitory, PaginatedResult } from.*Repositorysitorysitorysitory';
+import { DronePositionQueriesRepositorysitory, PaginatedResult } from.*Repositorysitorysitory';
 import { DronePositionModel } from '../../../models/DronePositionModel';
 import { testHelpers, setupTestDb, cleanupTestDb } from '../../setup';
 import { Sequelize } from 'sequelize';
 import { PaginationRequestDto } from '../../../dto';
 
-describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
+describe('DronePositionQueriesRepositorysitory - Unit Tests', () => {
   let sequelize: Sequelize;
-  let dronePositionRepositorysitorysitory: DronePositionQueriesRepositorysitorysitory;
+  let dronePositionRepositorysitory: DronePositionQueriesRepositorysitory;
 
   beforeAll(async () => {
     sequelize = await setupTestDb();
-    dronePositionRepositorysitorysitory = new DronePositionQueriesRepositorysitorysitory();
+    dronePositionRepositorysitory = new DronePositionQueriesRepositorysitory();
   });
 
   afterAll(async () => {
@@ -39,7 +39,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result: PaginatedResult<DronePositionModel> = await dronePositionRepositorysitorysitory.findPaginated(pagination);
+      const result: PaginatedResult<DronePositionModel> = await dronePositionRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(5);
@@ -56,7 +56,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findPaginated(pagination);
+      const result = await dronePositionRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(0);
@@ -85,7 +85,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findPaginated(pagination);
+      const result = await dronePositionRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -110,7 +110,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const filters = { droneId: droneId1 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findPaginated(pagination, filters);
+      const result = await dronePositionRepositorysitory.findPaginated(pagination, filters);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -147,7 +147,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findPaginated(pagination);
+      const result = await dronePositionRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(3);
@@ -169,7 +169,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByDroneIdPaginated(droneId1, pagination);
+      const result = await dronePositionRepositorysitory.findByDroneIdPaginated(droneId1, pagination);
 
       // Assert
       expect(result.data).toHaveLength(3);
@@ -183,7 +183,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByDroneIdPaginated('non-existent-drone', pagination);
+      const result = await dronePositionRepositorysitory.findByDroneIdPaginated('non-existent-drone', pagination);
 
       // Assert
       expect(result.data).toHaveLength(0);
@@ -203,7 +203,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByIdPaginated(position.id, pagination);
+      const result = await dronePositionRepositorysitory.findByIdPaginated(position.id, pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -236,7 +236,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByTimeRangePaginated(startTime, endTime, pagination);
+      const result = await dronePositionRepositorysitory.findByTimeRangePaginated(startTime, endTime, pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -253,7 +253,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByTimeRangePaginated(futureStart, futureEnd, pagination);
+      const result = await dronePositionRepositorysitory.findByTimeRangePaginated(futureStart, futureEnd, pagination);
 
       // Assert
       expect(result.data).toHaveLength(0);
@@ -286,7 +286,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByTimeRangePaginated(startTime, endTime, pagination);
+      const result = await dronePositionRepositorysitory.findByTimeRangePaginated(startTime, endTime, pagination);
 
       // Assert
       expect(result.data).toHaveLength(3);
@@ -310,7 +310,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findPaginated(pagination);
+      const result = await dronePositionRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -338,7 +338,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findPaginated(pagination);
+      const result = await dronePositionRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(3);
@@ -356,7 +356,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
 
       // Act & Assert - Should not throw error
       await expect(async () => {
-        await dronePositionRepositorysitorysitory.findPaginated(invalidPagination);
+        await dronePositionRepositorysitory.findPaginated(invalidPagination);
       }).not.toThrow();
     });
 
@@ -368,7 +368,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
 
       // Act & Assert - Should not throw error
       await expect(async () => {
-        await dronePositionRepositorysitorysitory.findByTimeRangePaginated(startTime, endTime, pagination);
+        await dronePositionRepositorysitory.findByTimeRangePaginated(startTime, endTime, pagination);
       }).not.toThrow();
     });
   });
@@ -389,7 +389,7 @@ describe('DronePositionQueriesRepositorysitorysitory - Unit Tests', () => {
       const startTime = Date.now();
 
       // Act
-      const result = await dronePositionRepositorysitorysitory.findByDroneIdPaginated(droneId, pagination);
+      const result = await dronePositionRepositorysitory.findByDroneIdPaginated(droneId, pagination);
 
       const endTime = Date.now();
       const executionTime = endTime - startTime;

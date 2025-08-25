@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { DroneStatusQueriesService } from '../../services/queries/DroneStatusQueriesService.js';
+import { DroneStatusQueriesSvc } from '../../services/queries/DroneStatusQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -33,9 +33,9 @@ const logger = createLogger('DroneStatusQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneStatusQueriesController {
+export class DroneStatusQueriesCtrl {
     constructor(
-        @inject(TYPES.DroneStatusQueriesSvc) private readonly droneStatusService: DroneStatusQueriesService
+        @inject(TYPES.DroneStatusQueriesSvc) private readonly droneStatusQueriesSvc: DroneStatusQueriesSvc
     ) {
     }
 
@@ -54,7 +54,7 @@ export class DroneStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneStatusService.getAllStatusesPaginated(pagination);
+            const paginatedResult = await this.droneStatusQueriesSvc.getAllStatusesPaginated(pagination);
             const result = ResResult.fromPaginatedResponse('無人機狀態分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -88,7 +88,7 @@ export class DroneStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneStatusService.getStatusesByStatusPaginated(status, pagination);
+            const paginatedResult = await this.droneStatusQueriesSvc.getStatusesByStatusPaginated(status, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `狀態為 ${status} 的無人機分頁查詢成功`, 
                 paginatedResult
@@ -125,7 +125,7 @@ export class DroneStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneStatusService.getStatusesByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.droneStatusQueriesSvc.getStatusesByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的狀態分頁查詢成功`, 
                 paginatedResult

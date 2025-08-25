@@ -16,17 +16,17 @@
 // AuthService has been refactored to CQRS pattern - see AuthCommandsService and AuthQueriesService below
 
 // 匯出角色基礎存取控制初始化服務，負責設定權限系統
-// export { RbacInitService } from './RbacInitService.js'; // TODO: 實作此服務
+// export { RbacInitService } from './RbacInitSvc.js'; // TODO: 實作此服務
 
 // 匯出 CQRS 模式的使用者服務
-// export { UserQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"'; // TODO: 實作此服務
-// export { UserCommandsService } from "./../../services/commands/from.*Service.jsCommandsService.js"'; // TODO: 實作此服務
+// export { UserQueriesService } from "./../../services/commands/from.*Svc.jsCommandsSvc.js"'; // TODO: 實作此服務
+// export { UserCommandsService } from "./../../services/commands/from.*Svc.jsCommandsSvc.js"'; // TODO: 實作此服務
 
 // 匯出 CQRS 模式的認證服務
-// export { AuthQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"'; // TODO: 實作此服務
-// export { AuthCommandsService } from "./../../services/commands/from.*Service.jsCommandsService.js"'; // TODO: 實作此服務
+// export { AuthQueriesService } from "./../../services/commands/from.*Svc.jsCommandsSvc.js"'; // TODO: 實作此服務
+// export { AuthCommandsService } from "./../../services/commands/from.*Svc.jsCommandsSvc.js"'; // TODO: 實作此服務
 
 // 匯出 CQRS 模式的會話服務
-// export { SessionQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"'; // TODO: 實作此服務
-// export { SessionCommandsService } from "./../../services/commands/from.*Service.jsCommandsService.js"'; // TODO: 實作此服務
+// export { SessionQueriesService } from "./../../services/commands/from.*Svc.jsCommandsSvc.js"'; // TODO: 實作此服務
+// export { SessionCommandsService } from "./../../services/commands/from.*Svc.jsCommandsSvc.js"'; // TODO: 實作此服務
 

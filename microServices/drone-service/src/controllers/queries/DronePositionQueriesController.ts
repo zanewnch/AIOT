@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { DronePositionQueriesService } from '../../services/queries/DronePositionQueriesService.js';
+import { DronePositionQueriesSvc } from '../../services/queries/DronePositionQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {IDronePositionQueries} from '../../types/controllers/queries/IDronePositionQueries.js';
@@ -33,9 +33,9 @@ const logger = createLogger('DronePositionQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionQueriesController implements IDronePositionQueries {
+export class DronePositionQueriesCtrl implements IDronePositionQueries {
     constructor(
-        @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesService: DronePositionQueriesService
+        @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesSvc: DronePositionQueriesSvc
     ) {
     }
 
@@ -54,7 +54,7 @@ export class DronePositionQueriesController implements IDronePositionQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.dronePositionQueriesService.getAllPositionsPaginated(pagination);
+            const paginatedResult = await this.dronePositionQueriesSvc.getAllPositionsPaginated(pagination);
             const result = ResResult.fromPaginatedResponse('無人機位置分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -88,7 +88,7 @@ export class DronePositionQueriesController implements IDronePositionQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.dronePositionQueriesService.getPositionsByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.dronePositionQueriesSvc.getPositionsByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的位置分頁查詢成功`, 
                 paginatedResult
@@ -124,7 +124,7 @@ export class DronePositionQueriesController implements IDronePositionQueries {
                 get offset() { return 0; }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.dronePositionQueriesService.getPositionsByIdPaginated(id, pagination);
+            const paginatedResult = await this.dronePositionQueriesSvc.getPositionsByIdPaginated(id, pagination);
             const result = ResResult.fromPaginatedResponse('無人機位置資料獲取成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -159,7 +159,7 @@ export class DronePositionQueriesController implements IDronePositionQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.dronePositionQueriesService.getPositionsByTimeRangePaginated(
+            const paginatedResult = await this.dronePositionQueriesSvc.getPositionsByTimeRangePaginated(
                 startTime, 
                 endTime, 
                 pagination

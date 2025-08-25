@@ -19,7 +19,7 @@ import type { IDronePositionsArchiveQueries } from '../types/controllers/queries
 import type { IDronePositionsArchiveCommands } from '../types/controllers/commands/IDronePositionsArchiveCommands.js';
 import { TYPES } from '../container/types.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
-import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
+import { ApiGatewayHeadersMiddleware } from '../middlewares/ApiGatewayHeadersMiddleware.js';
 
 /**
  * 無人機位置路由類別

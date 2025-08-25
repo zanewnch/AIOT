@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { DroneCommandQueueQueriesService } from '../../services/queries/DroneCommandQueueQueriesService.js';
+import { DroneCommandQueueQueriesSvc } from '../../services/queries/DroneCommandQueueQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -33,9 +33,9 @@ const logger = createLogger('DroneCommandQueueQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandQueueQueriesController {
+export class DroneCommandQueueQueriesCtrl {
     constructor(
-        @inject(TYPES.DroneCommandQueueQueriesService) private readonly queryService: DroneCommandQueueQueriesService
+        @inject(TYPES.DroneCommandQueueQueriesSvc) private readonly droneCommandQueueQueriesSvc: DroneCommandQueueQueriesSvc
     ) {
     }
 
@@ -54,7 +54,7 @@ export class DroneCommandQueueQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getAllDroneCommandQueuesPaginated(pagination);
+            const paginatedResult = await this.droneCommandQueueQueriesSvc.getAllDroneCommandQueuesPaginated(pagination);
             const result = ResResult.fromPaginatedResponse('指令佇列分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -88,7 +88,7 @@ export class DroneCommandQueueQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getDroneCommandQueuesByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.droneCommandQueueQueriesSvc.getDroneCommandQueuesByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的指令佇列分頁查詢成功`, 
                 paginatedResult
@@ -125,7 +125,7 @@ export class DroneCommandQueueQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getDroneCommandQueuesByStatusPaginated(status as DroneCommandQueueStatus, pagination);
+            const paginatedResult = await this.droneCommandQueueQueriesSvc.getDroneCommandQueuesByStatusPaginated(status as DroneCommandQueueStatus, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `狀態為 ${status} 的指令佇列分頁查詢成功`, 
                 paginatedResult
@@ -162,7 +162,7 @@ export class DroneCommandQueueQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getDroneCommandQueuesByPriorityPaginated(priority, pagination);
+            const paginatedResult = await this.droneCommandQueueQueriesSvc.getDroneCommandQueuesByPriorityPaginated(priority, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `優先級為 ${priority} 的指令佇列分頁查詢成功`, 
                 paginatedResult

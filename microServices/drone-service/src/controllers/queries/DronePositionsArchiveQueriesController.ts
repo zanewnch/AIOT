@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DronePositionsArchiveQueriesService } from '../../services/queries/DronePositionsArchiveQueriesService.js';
+import { DronePositionsArchiveQueriesSvc } from '../../services/queries/DronePositionsArchiveQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -32,9 +32,9 @@ const logger = createLogger('DronePositionsArchiveQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionsArchiveQueriesController {
+export class DronePositionsArchiveQueriesCtrl {
     constructor(
-        @inject(TYPES.DronePositionsArchiveQueriesService) private readonly archiveService: DronePositionsArchiveQueriesService
+        @inject(TYPES.DronePositionsArchiveQueriesSvc) private readonly dronePositionsArchiveQueriesSvc: DronePositionsArchiveQueriesSvc
     ) {
     }
 
@@ -53,7 +53,7 @@ export class DronePositionsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.archiveService.getAllPositionsArchivePaginated(pagination);
+            const paginatedResult = await this.dronePositionsArchiveQueriesSvc.getAllPositionsArchivePaginated(pagination);
             const result = ResResult.fromPaginatedResponse('位置歷史歸檔分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -87,7 +87,7 @@ export class DronePositionsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.archiveService.getPositionsArchiveByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.dronePositionsArchiveQueriesSvc.getPositionsArchiveByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的位置歷史歸檔分頁查詢成功`, 
                 paginatedResult
@@ -124,7 +124,7 @@ export class DronePositionsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.archiveService.getPositionsArchiveByBatchIdPaginated(batchId, pagination);
+            const paginatedResult = await this.dronePositionsArchiveQueriesSvc.getPositionsArchiveByBatchIdPaginated(batchId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `批次 ${batchId} 的位置歷史歸檔分頁查詢成功`, 
                 paginatedResult
@@ -163,7 +163,7 @@ export class DronePositionsArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.archiveService.getPositionsArchiveByTimeRangePaginated(startTime, endTime, pagination);
+            const paginatedResult = await this.dronePositionsArchiveQueriesSvc.getPositionsArchiveByTimeRangePaginated(startTime, endTime, pagination);
             const result = ResResult.fromPaginatedResponse(
                 '時間範圍內的位置歷史歸檔分頁查詢成功', 
                 paginatedResult

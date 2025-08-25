@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { ArchiveTaskQueriesService } from '../../services/queries/ArchiveTaskQueriesService.js';
+import { ArchiveTaskQueriesSvc } from '../../services/queries/ArchiveTaskQueriesSvc.js';
 import {ArchiveJobType, ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
@@ -41,11 +41,11 @@ import {PaginationRequestDto} from '../../dto/index.js';
  * ```
  */
 @injectable()
-export class ArchiveTaskQueriesController implements IArchiveTaskQueries {
+export class ArchiveTaskQueriesCtrl implements IArchiveTaskQueries {
     private readonly logger = createLogger('ArchiveTaskQueriesController');
 
     constructor(
-        @inject(TYPES.ArchiveTaskQueriesService) private readonly queryService: ArchiveTaskQueriesService
+        @inject(TYPES.ArchiveTaskQueriesSvc) private readonly archiveTaskQueriesSvc: ArchiveTaskQueriesSvc
     ) {
     }
 
@@ -64,7 +64,7 @@ export class ArchiveTaskQueriesController implements IArchiveTaskQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getAllTasksPaginated(pagination);
+            const paginatedResult = await this.archiveTaskQueriesSvc.getAllTasksPaginated(pagination);
             const result = ResResult.fromPaginatedResponse('歸檔任務分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -98,7 +98,7 @@ export class ArchiveTaskQueriesController implements IArchiveTaskQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getTasksByStatusPaginated(status, pagination);
+            const paginatedResult = await this.archiveTaskQueriesSvc.getTasksByStatusPaginated(status, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `狀態為 ${status} 的歸檔任務分頁查詢成功`, 
                 paginatedResult
@@ -135,7 +135,7 @@ export class ArchiveTaskQueriesController implements IArchiveTaskQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getTasksByJobTypePaginated(jobType, pagination);
+            const paginatedResult = await this.archiveTaskQueriesSvc.getTasksByJobTypePaginated(jobType, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `任務類型為 ${jobType} 的歸檔任務分頁查詢成功`, 
                 paginatedResult
@@ -172,7 +172,7 @@ export class ArchiveTaskQueriesController implements IArchiveTaskQueries {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getTasksByBatchIdPaginated(batchId, pagination);
+            const paginatedResult = await this.archiveTaskQueriesSvc.getTasksByBatchIdPaginated(batchId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `批次 ${batchId} 的歸檔任務分頁查詢成功`, 
                 paginatedResult

@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { DroneStatusArchiveQueriesService } from '../../services/queries/DroneStatusArchiveQueriesService.js';
+import { DroneStatusArchiveQueriesSvc } from '../../services/queries/DroneStatusArchiveQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -33,9 +33,9 @@ const logger = createLogger('DroneStatusArchiveQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneStatusArchiveQueriesController {
+export class DroneStatusArchiveQueriesCtrl {
     constructor(
-        @inject(TYPES.DroneStatusArchiveQueriesService) private readonly queryService: DroneStatusArchiveQueriesService
+        @inject(TYPES.DroneStatusArchiveQueriesSvc) private readonly droneStatusArchiveQueriesSvc: DroneStatusArchiveQueriesSvc
     ) {
     }
 
@@ -55,7 +55,7 @@ export class DroneStatusArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getAllStatusArchivesPaginated(pagination);
+            const paginatedResult = await this.droneStatusArchiveQueriesSvc.getAllStatusArchivesPaginated(pagination);
             const result = ResResult.fromPaginatedResponse('狀態歷史歸檔分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -89,7 +89,7 @@ export class DroneStatusArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getStatusArchivesByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.droneStatusArchiveQueriesSvc.getStatusArchivesByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的狀態歷史歸檔分頁查詢成功`, 
                 paginatedResult
@@ -126,7 +126,7 @@ export class DroneStatusArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getStatusArchivesByStatusPaginated(status, pagination);
+            const paginatedResult = await this.droneStatusArchiveQueriesSvc.getStatusArchivesByStatusPaginated(status, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `狀態為 ${status} 的歷史記錄分頁查詢成功`, 
                 paginatedResult
@@ -165,7 +165,7 @@ export class DroneStatusArchiveQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.queryService.getStatusArchivesByDateRangePaginated(startDate, endDate, pagination);
+            const paginatedResult = await this.droneStatusArchiveQueriesSvc.getStatusArchivesByDateRangePaginated(startDate, endDate, pagination);
             const result = ResResult.fromPaginatedResponse(
                 '時間範圍內的歷史記錄分頁查詢成功', 
                 paginatedResult

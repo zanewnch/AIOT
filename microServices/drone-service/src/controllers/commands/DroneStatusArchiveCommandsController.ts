@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DroneStatusArchiveCommandsService } from '../../services/commands/DroneStatusArchiveCommandsService.js';
+import { DroneStatusArchiveCommandsSvc } from '../../services/commands/DroneStatusArchiveCommandsSvc.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import type {DroneStatusArchiveCreationAttributes} from '../../models/DroneStatusArchiveModel.js';
@@ -30,9 +30,9 @@ import type {DroneStatusArchiveCreationAttributes} from '../../models/DroneStatu
  * @since 1.0.0
  */
 @injectable()
-export class DroneStatusArchiveCommandsController {
+export class DroneStatusArchiveCommandsCtrl {
     constructor(
-        @inject(TYPES.DroneStatusArchiveCommandsService) private readonly commandService: DroneStatusArchiveCommandsService
+        @inject(TYPES.DroneStatusArchiveCommandsSvc) private readonly droneStatusArchiveCommandsSvc: DroneStatusArchiveCommandsSvc
     ) {
     }
 
@@ -57,7 +57,7 @@ export class DroneStatusArchiveCommandsController {
                 return;
             }
 
-            const createdArchive = await this.commandService.createStatusArchive(archiveData);
+            const createdArchive = await this.droneStatusArchiveCommandsSvc.createStatusArchive(archiveData);
             const result = ResResult.created('狀態歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
@@ -87,7 +87,7 @@ export class DroneStatusArchiveCommandsController {
                 return;
             }
 
-            const updatedArchive = await this.commandService.updateStatusArchive(id, updateData);
+            const updatedArchive = await this.droneStatusArchiveCommandsSvc.updateStatusArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ResResult.notFound('找不到指定的狀態歷史歸檔記錄');
@@ -116,7 +116,7 @@ export class DroneStatusArchiveCommandsController {
                 return;
             }
 
-            await this.commandService.deleteStatusArchive(id);
+            await this.droneStatusArchiveCommandsSvc.deleteStatusArchive(id);
 
             const result = ResResult.success('狀態歷史歸檔資料刪除成功');
             res.status(result.status).json(result);

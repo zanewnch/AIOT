@@ -27,12 +27,18 @@
       "Bash(docker restart:*)",
       "Bash(npm uninstall:*)",
       "Bash(docker-compose:*)",
-      "Bash(winpty docker exec -it aiot-drone-service /bin/bash)"
+      "Bash(winpty docker exec -it aiot-drone-service /bin/bash)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": [],
     "additionalDirectories": [
-      "C:\\c\\Users\\user\\Documents\\GitHub\\AIOT\\infrastructure"
+      "C:\\c\\Users\\user\\Documents\\GitHub\\AIOT\\infrastructure",
+      "C:\\c\\Users\\user\\Documents\\GitHub\\AIOT\\microServices",
+      "C:\\c\\Users\\user\\Documents\\GitHub\\AIOT"
     ]
   }
 }

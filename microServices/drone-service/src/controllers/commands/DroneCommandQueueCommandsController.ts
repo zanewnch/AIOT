@@ -14,12 +14,12 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DroneCommandQueueCommandsService } from '../../services/commands/DroneCommandQueueCommandsService.js';
+import { DroneCommandQueueCommandsSvc } from '../../services/commands/DroneCommandQueueCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {DroneCommandQueueStatus} from '../../models/DroneCommandQueueModel.js';
-import type {DroneCommandQueueCreationAttributes} from '../../types/services/IDroneCommandQueueService.js';
+import type {DroneCommandQueueCreationAttributes} from '../../types/services/IDroneCommandQueueSvc.js';
 
 const logger = createLogger('DroneCommandQueueCommandsController');
 
@@ -33,9 +33,9 @@ const logger = createLogger('DroneCommandQueueCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandQueueCommandsController {
+export class DroneCommandQueueCommandsCtrl {
     constructor(
-        @inject(TYPES.DroneCommandQueueCommandsService) private readonly commandService: DroneCommandQueueCommandsService
+        @inject(TYPES.DroneCommandQueueCommandsSvc) private readonly droneCommandQueueCommandsSvc: DroneCommandQueueCommandsSvc
     ) {
     }
 
@@ -60,7 +60,7 @@ export class DroneCommandQueueCommandsController {
                 return;
             }
 
-            const createdData = await this.commandService.createDroneCommandQueue(queueData);
+            const createdData = await this.droneCommandQueueCommandsSvc.createDroneCommandQueue(queueData);
 
             const result = ResResult.created('無人機指令佇列創建成功', createdData);
             res.status(result.status).json(result);
@@ -83,7 +83,7 @@ export class DroneCommandQueueCommandsController {
                 res.status(result.status).json(result);
                 return;
             }
-            const updatedData = await this.commandService.updateDroneCommandQueue(id, updateData);
+            const updatedData = await this.droneCommandQueueCommandsSvc.updateDroneCommandQueue(id, updateData);
 
             if (!updatedData) {
                 const result = ResResult.notFound('找不到指定的無人機指令佇列');
@@ -111,7 +111,7 @@ export class DroneCommandQueueCommandsController {
                 res.status(result.status).json(result);
                 return;
             }
-            const deletedRows = await this.commandService.deleteDroneCommandQueue(id);
+            const deletedRows = await this.droneCommandQueueCommandsSvc.deleteDroneCommandQueue(id);
 
             if (deletedRows === 0) {
                 const result = ResResult.notFound('找不到指定的無人機指令佇列');
@@ -146,7 +146,7 @@ export class DroneCommandQueueCommandsController {
                 res.status(result.status).json(result);
                 return;
             }
-            const enqueuedCommand = await this.commandService.enqueueDroneCommand(
+            const enqueuedCommand = await this.droneCommandQueueCommandsSvc.enqueueDroneCommand(
                 droneId,
                 commandType,
                 commandData,
@@ -173,7 +173,7 @@ export class DroneCommandQueueCommandsController {
                 res.status(result.status).json(result);
                 return;
             }
-            const dequeuedCommand = await this.commandService.dequeueDroneCommand(droneId);
+            const dequeuedCommand = await this.droneCommandQueueCommandsSvc.dequeueDroneCommand(droneId);
 
             if (!dequeuedCommand) {
                 const result = ResResult.notFound('沒有待執行的無人機指令');
@@ -201,7 +201,7 @@ export class DroneCommandQueueCommandsController {
                 res.status(result.status).json(result);
                 return;
             }
-            const clearedCount = await this.commandService.clearDroneCommandQueue(droneId);
+            const clearedCount = await this.droneCommandQueueCommandsSvc.clearDroneCommandQueue(droneId);
 
             const result = ResResult.success(`已清空 ${clearedCount} 個無人機指令`, {clearedCount});
             res.status(result.status).json(result);
@@ -238,7 +238,7 @@ export class DroneCommandQueueCommandsController {
                 res.status(result.status).json(result);
                 return;
             }
-            const updatedData = await this.commandService.updateDroneCommandQueueStatus(id, status as DroneCommandQueueStatus);
+            const updatedData = await this.droneCommandQueueCommandsSvc.updateDroneCommandQueueStatus(id, status as DroneCommandQueueStatus);
 
             if (!updatedData) {
                 const result = ResResult.notFound('找不到指定的無人機指令佇列');

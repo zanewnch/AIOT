@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DronePositionCommandsService } from '../../services/commands/DronePositionCommandsService.js';
+import { DronePositionCommandsSvc } from '../../services/commands/DronePositionCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -33,7 +33,7 @@ const logger = createLogger('DronePositionCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionCommandsController {
+export class DronePositionCommandsCtrl {
     /**
      * 創建新的無人機位置資料
      * @route POST /api/drone-position/data
@@ -56,7 +56,7 @@ export class DronePositionCommandsController {
             }
 
             // 呼叫命令服務層創建資料
-            const createdData = await this.dronePositionCommandsService.createDronePosition(dronePositionData);
+            const createdData = await this.dronePositionCommandsSvc.createDronePosition(dronePositionData);
 
             // 建立成功回應
             const result = ResResult.created('無人機位置資料創建成功', createdData);
@@ -103,7 +103,7 @@ export class DronePositionCommandsController {
             }
 
             // 呼叫命令服務層更新資料
-            const updatedData = await this.dronePositionCommandsService.updateDronePosition(id, updateData);
+            const updatedData = await this.dronePositionCommandsSvc.updateDronePosition(id, updateData);
 
             if (!updatedData) {
                 const result = ResResult.notFound('找不到指定的無人機位置資料');
@@ -133,7 +133,7 @@ export class DronePositionCommandsController {
             }
 
             // 呼叫命令服務層刪除資料
-            await this.dronePositionCommandsService.deleteDronePosition(id);
+            await this.dronePositionCommandsSvc.deleteDronePosition(id);
 
             // 刪除成功（如果沒有拋出錯誤）
             const result = ResResult.success('無人機位置資料刪除成功');
@@ -173,7 +173,7 @@ export class DronePositionCommandsController {
             }
 
             // 呼叫命令服務層批量創建資料
-            const createdData = await this.dronePositionCommandsService.createDronePositionsBatch(dronePositionsData);
+            const createdData = await this.dronePositionCommandsSvc.createDronePositionsBatch(dronePositionsData);
 
             const result = ResResult.created('批量無人機位置資料創建成功', createdData);
             res.status(result.status).json(result);
@@ -183,7 +183,7 @@ export class DronePositionCommandsController {
     }, 'createDronePositionsBatch')
 
     constructor(
-        @inject(TYPES.DronePositionCommandsSvc) private readonly dronePositionCommandsService: DronePositionCommandsService
+        @inject(TYPES.DronePositionCommandsSvc) private readonly dronePositionCommandsSvc: DronePositionCommandsSvc
     ) {
     }
 }

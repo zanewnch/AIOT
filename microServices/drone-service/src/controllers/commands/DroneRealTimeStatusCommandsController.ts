@@ -14,13 +14,13 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DroneRealTimeStatusCommandsService } from '../../services/commands/DroneRealTimeStatusCommandsService.js';
+import { DroneRealTimeStatusCommandsSvc } from '../../services/commands/DroneRealTimeStatusCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import type {
     DroneRealTimeStatusCreationAttributes as ExternalCreationAttributes
-} from '../../types/services/IDroneRealTimeStatusService.js';
+} from '../../types/services/IDroneRealTimeStatusSvc.js';
 
 const logger = createLogger('DroneRealTimeStatusCommandsController');
 
@@ -34,9 +34,9 @@ const logger = createLogger('DroneRealTimeStatusCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneRealTimeStatusCommandsController {
+export class DroneRealTimeStatusCommandsCtrl {
     constructor(
-        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsService
+        @inject(TYPES.DroneRealTimeStatusCommandsSvc) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsSvc
     ) {
     }
 

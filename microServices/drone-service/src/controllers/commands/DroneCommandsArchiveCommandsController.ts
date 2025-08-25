@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DroneCommandsArchiveCommandsService } from '../../services/commands/DroneCommandsArchiveCommandsService.js';
+import { DroneCommandsArchiveCommandsSvc } from '../../services/commands/DroneCommandsArchiveCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -32,9 +32,9 @@ const logger = createLogger('DroneCommandsArchiveCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandsArchiveCommandsController {
+export class DroneCommandsArchiveCommandsCtrl {
     constructor(
-        @inject(TYPES.DroneCommandsArchiveCommandsService) private readonly commandService: DroneCommandsArchiveCommandsService
+        @inject(TYPES.DroneCommandsArchiveCommandsSvc) private readonly droneCommandsArchiveCommandsSvc: DroneCommandsArchiveCommandsSvc
     ) {
     }
 
@@ -59,7 +59,7 @@ export class DroneCommandsArchiveCommandsController {
                 return;
             }
 
-            const createdArchive = await this.commandService.createCommandArchive(archiveData);
+            const createdArchive = await this.droneCommandsArchiveCommandsSvc.createCommandArchive(archiveData);
             const result = ResResult.created('指令歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
@@ -89,7 +89,7 @@ export class DroneCommandsArchiveCommandsController {
                 return;
             }
 
-            const updatedArchive = await this.commandService.updateCommandArchive(id, updateData);
+            const updatedArchive = await this.droneCommandsArchiveCommandsSvc.updateCommandArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ResResult.notFound('找不到指定的指令歷史歸檔記錄');
@@ -118,7 +118,7 @@ export class DroneCommandsArchiveCommandsController {
                 return;
             }
 
-            const isDeleted = await this.commandService.deleteCommandArchive(id);
+            const isDeleted = await this.droneCommandsArchiveCommandsSvc.deleteCommandArchive(id);
 
             if (!isDeleted) {
                 const result = ResResult.notFound('找不到指定的指令歷史歸檔記錄');

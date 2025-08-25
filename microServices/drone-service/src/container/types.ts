@@ -31,7 +31,7 @@ export const TYPES = {
   /**
    * 無人機命令服務類型
    */
-  DroneCommandService: Symbol.for('DroneCommandService'),
+  DroneCommandSvc: Symbol.for('DroneCommandSvc'),
 
   /**
    * 無人機位置查詢服務類型
@@ -46,7 +46,7 @@ export const TYPES = {
   /**
    * 無人機狀態服務類型 (向下相容)
    */
-  DroneStatusService: Symbol.for('DroneStatusService'),
+  DroneStatusSvc: Symbol.for('DroneStatusSvc'),
 
   /**
    * 無人機即時狀態查詢服務類型
@@ -455,7 +455,7 @@ export const TYPES = {
    */
   UserToRoleQueriesCtrl: Symbol.for('UserToRoleQueriesCtrl'),
 
-  // ===== Repository Types =====
+  // ===== Repo Types =====
   /**
    * 無人機位置查詢儲存庫類型
    */
@@ -464,7 +464,7 @@ export const TYPES = {
   /**
    * 無人機位置命令儲存庫類型
    */
-  DronePositionCommandsRepository: Symbol.for('DronePositionCommandsRepository'),
+  DronePositionCommandsRepo: Symbol.for('DronePositionCommandsRepo'),
 
   /**
    * 無人機狀態查詢儲存庫類型
@@ -474,7 +474,7 @@ export const TYPES = {
   /**
    * 無人機狀態命令儲存庫類型
    */
-  DroneStatusCommandsRepository: Symbol.for('DroneStatusCommandsRepository'),
+  DroneStatusCommandsRepo: Symbol.for('DroneStatusCommandsRepo'),
 
   /**
    * 無人機即時狀態查詢儲存庫類型
@@ -484,7 +484,7 @@ export const TYPES = {
   /**
    * 無人機即時狀態命令儲存庫類型
    */
-  DroneRealTimeStatusCommandsRepository: Symbol.for('DroneRealTimeStatusCommandsRepository'),
+  DroneRealTimeStatusCommandsRepo: Symbol.for('DroneRealTimeStatusCommandsRepo'),
 
   /**
    * 無人機命令查詢儲存庫類型
@@ -494,12 +494,17 @@ export const TYPES = {
   /**
    * 無人機命令命令儲存庫類型
    */
-  DroneCommandCommandsRepository: Symbol.for('DroneCommandCommandsRepository'),
+  DroneCommandCommandsRepo: Symbol.for('DroneCommandCommandsRepo'),
 
   /**
    * 無人機命令佇列查詢儲存庫類型
    */
   DroneCommandQueueQueriesRepo: Symbol.for('DroneCommandQueueQueriesRepo'),
+
+  /**
+   * 無人機命令佇列命令儲存庫類型
+   */
+  DroneCommandQueueCommandsRepo: Symbol.for('DroneCommandQueueCommandsRepo'),
 
   /**
    * 歸檔任務查詢儲存庫類型
@@ -509,7 +514,7 @@ export const TYPES = {
   /**
    * 歸檔任務命令儲存庫類型
    */
-  ArchiveTaskCommandsRepository: Symbol.for('ArchiveTaskCommandsRepository'),
+  ArchiveTaskCommandsRepo: Symbol.for('ArchiveTaskCommandsRepo'),
 
   /**
    * 無人機狀態歷史查詢儲存庫類型
@@ -519,7 +524,7 @@ export const TYPES = {
   /**
    * 無人機狀態歷史命令儲存庫類型
    */
-  DroneStatusArchiveCommandsRepository: Symbol.for('DroneStatusArchiveCommandsRepository'),
+  DroneStatusArchiveCommandsRepo: Symbol.for('DroneStatusArchiveCommandsRepo'),
 
   /**
    * 無人機命令歷史查詢儲存庫類型
@@ -529,7 +534,7 @@ export const TYPES = {
   /**
    * 無人機命令歷史命令儲存庫類型
    */
-  DroneCommandsArchiveCommandsRepository: Symbol.for('DroneCommandsArchiveCommandsRepository'),
+  DroneCommandsArchiveCommandsRepo: Symbol.for('DroneCommandsArchiveCommandsRepo'),
 
   /**
    * 無人機位置歷史查詢儲存庫類型
@@ -539,7 +544,7 @@ export const TYPES = {
   /**
    * 無人機位置歷史命令儲存庫類型
    */
-  DronePositionsArchiveCommandsRepository: Symbol.for('DronePositionsArchiveCommandsRepository'),
+  DronePositionsArchiveCommandsRepo: Symbol.for('DronePositionsArchiveCommandsRepo'),
 
   // ===== Route Types =====
   /**

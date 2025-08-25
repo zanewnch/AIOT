@@ -14,8 +14,8 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {CreateArchiveTaskRequest} from '../../types/services/IArchiveTaskService.js';
-import { ArchiveTaskCommandsService } from '../../services/commands/ArchiveTaskCommandsService.js';
+import {CreateArchiveTaskRequest} from '../../types/services/IArchiveTaskSvc.js';
+import { ArchiveTaskCommandsSvc } from '../../services/commands/ArchiveTaskCommandsSvc.js';
 import {ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
@@ -40,11 +40,11 @@ import {TYPES} from '../../container/types.js';
  * ```
  */
 @injectable()
-export class ArchiveTaskCommandsController {
+export class ArchiveTaskCommandsCtrl {
     private readonly logger = createLogger('ArchiveTaskCommandsController');
 
     constructor(
-        @inject(TYPES.ArchiveTaskCommandsService) private readonly commandService: ArchiveTaskCommandsService
+        @inject(TYPES.ArchiveTaskCommandsSvc) private readonly archiveTaskCommandsSvc: ArchiveTaskCommandsSvc
     ) {
     }
 
@@ -79,7 +79,7 @@ export class ArchiveTaskCommandsController {
                 request.date_range_end = new Date(request.date_range_end);
             }
 
-            const task = await this.commandService.createTask(request);
+            const task = await this.archiveTaskCommandsSvc.createTask(request);
 
             this.logger.info('歸檔任務創建成功', {
                 taskId: task.id,
@@ -132,7 +132,7 @@ export class ArchiveTaskCommandsController {
                 }
             });
 
-            const result = await this.commandService.createBatchTasks(requests);
+            const result = await this.archiveTaskCommandsSvc.createBatchTasks(requests);
 
             this.logger.info('批次創建歸檔任務完成', {
                 total: requests.length,
@@ -177,7 +177,7 @@ export class ArchiveTaskCommandsController {
 
             this.logger.info('執行歸檔任務請求', {taskId});
 
-            const result = await this.commandService.executeTask(taskId);
+            const result = await this.archiveTaskCommandsSvc.executeTask(taskId);
 
             this.logger.info('歸檔任務執行完成', {
                 taskId,
@@ -231,7 +231,7 @@ export class ArchiveTaskCommandsController {
 
             this.logger.info('取消歸檔任務請求', {taskId, reason});
 
-            const task = await this.commandService.cancelTask(taskId, reason);
+            const task = await this.archiveTaskCommandsSvc.cancelTask(taskId, reason);
 
             this.logger.info('歸檔任務取消成功', {taskId, reason});
 
@@ -271,7 +271,7 @@ export class ArchiveTaskCommandsController {
 
             this.logger.info('重試歸檔任務請求', {taskId});
 
-            const result = await this.commandService.retryTask(taskId);
+            const result = await this.archiveTaskCommandsSvc.retryTask(taskId);
 
             this.logger.info('歸檔任務重試完成', {
                 taskId,
@@ -329,7 +329,7 @@ export class ArchiveTaskCommandsController {
 
             this.logger.info('清理舊歸檔任務記錄請求', {daysOld: daysOldNum, status: statusFilter});
 
-            const cleanedCount = await this.commandService.cleanupOldTasks(daysOldNum, statusFilter);
+            const cleanedCount = await this.archiveTaskCommandsSvc.cleanupOldTasks(daysOldNum, statusFilter);
 
             this.logger.info('舊歸檔任務記錄清理完成', {
                 daysOld: daysOldNum,

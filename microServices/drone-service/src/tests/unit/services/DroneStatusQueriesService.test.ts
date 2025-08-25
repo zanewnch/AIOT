@@ -2,11 +2,11 @@
  * @fileoverview Unit tests for DroneStatusQueriesService
  */
 
-import { DroneStatusQueriesService } from.*Service';
-import { DroneStatusQueriesRepositorysitorysitory } from.*Repositorysitorysitorysitory';
+import { DroneStatusQueriesSvc } from.*Service';
+import { DroneStatusQueriesRepositorysitory } from.*Repositorysitorysitory';
 import { DroneStatusModel, DroneStatus } from '../../../models/DroneStatusModel';
 import { PaginationRequestDto } from '../../../dto';
-import { createMockRepository } from '../../setup';
+import { createMockRepo } from '../../setup';
 
 // Mock the DtoMapper
 jest.mock('../../../utils/dtoMapper', () => ({
@@ -31,11 +31,11 @@ jest.mock('../../../utils/dtoMapper', () => ({
 
 describe('DroneStatusQueriesService - Unit Tests', () => {
   let droneStatusService: DroneStatusQueriesService;
-  let mockDroneStatusRepositorysitorysitory: jest.Mocked<DroneStatusQueriesRepositorysitorysitory>;
+  let mockDroneStatusRepositorysitory: jest.Mocked<DroneStatusQueriesRepositorysitory>;
 
   beforeEach(() => {
     // Create mock repository
-    mockDroneStatusRepositorysitorysitory = {
+    mockDroneStatusRepositorysitory = {
       findPaginated: jest.fn(),
       findByStatusPaginated: jest.fn(),
       findByDroneIdPaginated: jest.fn(),
@@ -44,7 +44,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       findAllByStatus: jest.fn()
     } as any;
 
-    droneStatusService = new DroneStatusQueriesService(mockDroneStatusRepositorysitorysitory);
+    droneStatusService = new DroneStatusQueriesService(mockDroneStatusRepositorysitory);
   });
 
   describe('getAllStatusesPaginated', () => {
@@ -69,13 +69,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         pageSize: 10
       };
 
-      mockDroneStatusRepositorysitorysitory.findPaginated.mockResolvedValue(mockResult as any);
+      mockDroneStatusRepositorysitory.findPaginated.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await droneStatusService.getAllStatusesPaginated(pagination);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findPaginated).toHaveBeenCalledWith(pagination);
+      expect(mockDroneStatusRepositorysitory.findPaginated).toHaveBeenCalledWith(pagination);
       expect(result).toBeDefined();
       expect(result.data).toHaveLength(2);
       expect(result.pagination.totalCount).toBe(2);
@@ -91,7 +91,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         pageSize: 10
       };
 
-      mockDroneStatusRepositorysitorysitory.findPaginated.mockResolvedValue(emptyResult as any);
+      mockDroneStatusRepositorysitory.findPaginated.mockResolvedValue(emptyResult as any);
 
       // Act
       const result = await droneStatusService.getAllStatusesPaginated(pagination);
@@ -106,7 +106,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
       const error = new Error('Database connection failed');
 
-      mockDroneStatusRepositorysitorysitory.findPaginated.mockRejectedValue(error);
+      mockDroneStatusRepositorysitory.findPaginated.mockRejectedValue(error);
 
       // Act & Assert
       await expect(droneStatusService.getAllStatusesPaginated(pagination))
@@ -132,13 +132,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         pageSize: 10
       };
 
-      mockDroneStatusRepositorysitorysitory.findByStatusPaginated.mockResolvedValue(mockResult as any);
+      mockDroneStatusRepositorysitory.findByStatusPaginated.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await droneStatusService.getStatusesByStatusPaginated(status, pagination);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findByStatusPaginated).toHaveBeenCalledWith(status, pagination);
+      expect(mockDroneStatusRepositorysitory.findByStatusPaginated).toHaveBeenCalledWith(status, pagination);
       expect(result.data).toHaveLength(2);
       result.data.forEach(item => {
         expect(item.status).toBe(DroneStatus.ACTIVE);
@@ -163,17 +163,17 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
           pageSize: 10
         };
 
-        mockDroneStatusRepositorysitorysitory.findByStatusPaginated.mockResolvedValue(mockResult as any);
+        mockDroneStatusRepositorysitory.findByStatusPaginated.mockResolvedValue(mockResult as any);
 
         // Act
         const result = await droneStatusService.getStatusesByStatusPaginated(status, pagination);
 
         // Assert
-        expect(mockDroneStatusRepositorysitorysitory.findByStatusPaginated).toHaveBeenCalledWith(status, pagination);
+        expect(mockDroneStatusRepositorysitory.findByStatusPaginated).toHaveBeenCalledWith(status, pagination);
         expect(result.data[0].status).toBe(status);
 
         // Reset mock for next iteration
-        mockDroneStatusRepositorysitorysitory.findByStatusPaginated.mockClear();
+        mockDroneStatusRepositorysitory.findByStatusPaginated.mockClear();
       }
     });
   });
@@ -196,13 +196,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         pageSize: 10
       };
 
-      mockDroneStatusRepositorysitorysitory.findByDroneIdPaginated.mockResolvedValue(mockResult as any);
+      mockDroneStatusRepositorysitory.findByDroneIdPaginated.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await droneStatusService.getStatusesByDroneIdPaginated(droneId, pagination);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findByDroneIdPaginated).toHaveBeenCalledWith(droneId, pagination);
+      expect(mockDroneStatusRepositorysitory.findByDroneIdPaginated).toHaveBeenCalledWith(droneId, pagination);
       expect(result.data).toHaveLength(2);
     });
 
@@ -218,7 +218,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         pageSize: 10
       };
 
-      mockDroneStatusRepositorysitorysitory.findByDroneIdPaginated.mockResolvedValue(emptyResult as any);
+      mockDroneStatusRepositorysitory.findByDroneIdPaginated.mockResolvedValue(emptyResult as any);
 
       // Act
       const result = await droneStatusService.getStatusesByDroneIdPaginated(nonExistentDroneId, pagination);
@@ -235,13 +235,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       const serial = 'TEST-SERIAL-001';
       const mockDroneStatus = { id: 1, serial, droneId: 'drone-001' };
 
-      mockDroneStatusRepositorysitorysitory.findBySerial.mockResolvedValue(mockDroneStatus as any);
+      mockDroneStatusRepositorysitory.findBySerial.mockResolvedValue(mockDroneStatus as any);
 
       // Act
       const result = await droneStatusService.isDroneSerialExists(serial);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findBySerial).toHaveBeenCalledWith(serial);
+      expect(mockDroneStatusRepositorysitory.findBySerial).toHaveBeenCalledWith(serial);
       expect(result).toBe(true);
     });
 
@@ -249,13 +249,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       // Arrange
       const serial = 'NON-EXISTENT-SERIAL';
 
-      mockDroneStatusRepositorysitorysitory.findBySerial.mockResolvedValue(null);
+      mockDroneStatusRepositorysitory.findBySerial.mockResolvedValue(null);
 
       // Act
       const result = await droneStatusService.isDroneSerialExists(serial);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findBySerial).toHaveBeenCalledWith(serial);
+      expect(mockDroneStatusRepositorysitory.findBySerial).toHaveBeenCalledWith(serial);
       expect(result).toBe(false);
     });
 
@@ -264,7 +264,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       const serial = 'TEST-SERIAL';
       const error = new Error('Database error');
 
-      mockDroneStatusRepositorysitorysitory.findBySerial.mockRejectedValue(error);
+      mockDroneStatusRepositorysitory.findBySerial.mockRejectedValue(error);
 
       // Act & Assert
       await expect(droneStatusService.isDroneSerialExists(serial))
@@ -283,13 +283,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         batteryLevel: 85
       };
 
-      mockDroneStatusRepositorysitorysitory.findById.mockResolvedValue(mockDroneStatus as any);
+      mockDroneStatusRepositorysitory.findById.mockResolvedValue(mockDroneStatus as any);
 
       // Act
       const result = await droneStatusService.getDroneStatusById(id);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findById).toHaveBeenCalledWith(id);
+      expect(mockDroneStatusRepositorysitory.findById).toHaveBeenCalledWith(id);
       expect(result).toBeDefined();
       expect(result.id).toBe(id);
       expect(result.droneId).toBe('drone-001');
@@ -299,13 +299,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       // Arrange
       const id = 99999;
 
-      mockDroneStatusRepositorysitorysitory.findById.mockResolvedValue(null);
+      mockDroneStatusRepositorysitory.findById.mockResolvedValue(null);
 
       // Act
       const result = await droneStatusService.getDroneStatusById(id);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findById).toHaveBeenCalledWith(id);
+      expect(mockDroneStatusRepositorysitory.findById).toHaveBeenCalledWith(id);
       expect(result).toBeNull();
     });
   });
@@ -320,13 +320,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         { id: 3, droneId: 'drone-003', status: DroneStatus.ACTIVE }
       ];
 
-      mockDroneStatusRepositorysitorysitory.findAllByStatus.mockResolvedValue(mockDrones as any);
+      mockDroneStatusRepositorysitory.findAllByStatus.mockResolvedValue(mockDrones as any);
 
       // Act
       const result = await droneStatusService.getDronesByStatus(status);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findAllByStatus).toHaveBeenCalledWith(status);
+      expect(mockDroneStatusRepositorysitory.findAllByStatus).toHaveBeenCalledWith(status);
       expect(result).toHaveLength(3);
       result.forEach(drone => {
         expect(drone.status).toBe(DroneStatus.ACTIVE);
@@ -337,13 +337,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       // Arrange
       const status = DroneStatus.EMERGENCY;
 
-      mockDroneStatusRepositorysitorysitory.findAllByStatus.mockResolvedValue([]);
+      mockDroneStatusRepositorysitory.findAllByStatus.mockResolvedValue([]);
 
       // Act
       const result = await droneStatusService.getDronesByStatus(status);
 
       // Assert
-      expect(mockDroneStatusRepositorysitorysitory.findAllByStatus).toHaveBeenCalledWith(status);
+      expect(mockDroneStatusRepositorysitory.findAllByStatus).toHaveBeenCalledWith(status);
       expect(result).toEqual([]);
     });
 
@@ -361,7 +361,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
           { id: 1, droneId: 'test-drone', status }
         ];
 
-        mockDroneStatusRepositorysitorysitory.findAllByStatus.mockResolvedValue(mockDrones as any);
+        mockDroneStatusRepositorysitory.findAllByStatus.mockResolvedValue(mockDrones as any);
 
         // Act
         const result = await droneStatusService.getDronesByStatus(status);
@@ -371,7 +371,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         expect(result[0].status).toBe(status);
 
         // Reset mock for next iteration
-        mockDroneStatusRepositorysitorysitory.findAllByStatus.mockClear();
+        mockDroneStatusRepositorysitory.findAllByStatus.mockClear();
       }
     });
   });
@@ -380,13 +380,13 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
     it('should propagate repository errors', async () => {
       // Arrange
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
-      const error = new Error('Repositorysitorysitorysitory error');
+      const error = new Error('Repositorysitorysitory error');
 
-      mockDroneStatusRepositorysitorysitory.findPaginated.mockRejectedValue(error);
+      mockDroneStatusRepositorysitory.findPaginated.mockRejectedValue(error);
 
       // Act & Assert
       await expect(droneStatusService.getAllStatusesPaginated(pagination))
-        .rejects.toThrow('Repositorysitorysitorysitory error');
+        .rejects.toThrow('Repositorysitorysitory error');
     });
 
     it('should handle network timeouts gracefully', async () => {
@@ -395,7 +395,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
       const timeoutError = new Error('Request timeout');
       timeoutError.name = 'TimeoutError';
 
-      mockDroneStatusRepositorysitorysitory.findPaginated.mockRejectedValue(timeoutError);
+      mockDroneStatusRepositorysitory.findPaginated.mockRejectedValue(timeoutError);
 
       // Act & Assert
       await expect(droneStatusService.getAllStatusesPaginated(pagination))
@@ -420,7 +420,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
           pageSize: pagination.pageSize
         };
 
-        mockDroneStatusRepositorysitorysitory.findPaginated.mockResolvedValue(mockResult as any);
+        mockDroneStatusRepositorysitory.findPaginated.mockResolvedValue(mockResult as any);
 
         // Act
         const result = await droneStatusService.getAllStatusesPaginated(pagination);
@@ -430,7 +430,7 @@ describe('DroneStatusQueriesService - Unit Tests', () => {
         expect(result.pagination.pageSize).toBe(pagination.pageSize);
 
         // Reset mock
-        mockDroneStatusRepositorysitorysitory.findPaginated.mockClear();
+        mockDroneStatusRepositorysitory.findPaginated.mockClear();
       }
     });
   });

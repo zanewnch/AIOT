@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import { DroneRealTimeStatusQueriesService } from '../../services/queries/DroneRealTimeStatusQueriesService.js';
+import { DroneRealTimeStatusQueriesSvc } from '../../services/queries/DroneRealTimeStatusQueriesSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -33,9 +33,9 @@ const logger = createLogger('DroneRealTimeStatusQueriesController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneRealTimeStatusQueriesController {
+export class DroneRealTimeStatusQueriesCtrl {
     constructor(
-        @inject(TYPES.DroneRealTimeStatusQueriesService) private readonly droneRealTimeStatusQueriesService: DroneRealTimeStatusQueriesService
+        @inject(TYPES.DroneRealTimeStatusQueriesSvc) private readonly droneRealTimeStatusQueriesSvc: DroneRealTimeStatusQueriesSvc
     ) {
     }
 
@@ -54,7 +54,7 @@ export class DroneRealTimeStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneRealTimeStatusQueriesService.getAllRealTimeStatusesPaginated(pagination);
+            const paginatedResult = await this.droneRealTimeStatusQueriesSvc.getAllRealTimeStatusesPaginated(pagination);
             const result = ResResult.fromPaginatedResponse('即時狀態分頁查詢成功', paginatedResult);
             
             res.status(result.status).json(result);
@@ -88,7 +88,7 @@ export class DroneRealTimeStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneRealTimeStatusQueriesService.getRealTimeStatusesByDroneIdPaginated(droneId, pagination);
+            const paginatedResult = await this.droneRealTimeStatusQueriesSvc.getRealTimeStatusesByDroneIdPaginated(droneId, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `無人機 ${droneId} 的即時狀態分頁查詢成功`, 
                 paginatedResult
@@ -125,7 +125,7 @@ export class DroneRealTimeStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneRealTimeStatusQueriesService.getRealTimeStatusesByStatusPaginated(status, pagination);
+            const paginatedResult = await this.droneRealTimeStatusQueriesSvc.getRealTimeStatusesByStatusPaginated(status, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `狀態為 ${status} 的即時狀態分頁查詢成功`, 
                 paginatedResult
@@ -156,7 +156,7 @@ export class DroneRealTimeStatusQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.droneRealTimeStatusQueriesService.getRealTimeStatusesByConnectionPaginated(isConnected, pagination);
+            const paginatedResult = await this.droneRealTimeStatusQueriesSvc.getRealTimeStatusesByConnectionPaginated(isConnected, pagination);
             const result = ResResult.fromPaginatedResponse(
                 `連線狀態為 ${isConnected ? '已連線' : '未連線'} 的即時狀態分頁查詢成功`, 
                 paginatedResult

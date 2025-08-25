@@ -33,8 +33,8 @@ import { ConsulConfig } from './configs/consulConfig.js';
 //     IWebSocketService,
 //     IWebSocketAuthMiddleware
 // } from './types/websocket-interfaces.js';
-import { DronePositionQueriesService } from './services/queries/DronePositionQueriesService.js';
-import { DronePositionCommandsService } from './services/commands/DronePositionCommandsService.js';
+import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
+import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
 
 /**
  * Express 應用程式配置類別 (重構版 - 使用 InversifyJS 依賴注入)
@@ -396,8 +396,8 @@ export class App {
      * @method getDronePositionQueriesService
      * @returns {DronePositionQueriesService} 無人機位置查詢服務實例
      */
-    getDronePositionQueriesService(): DronePositionQueriesService {
-        return ContainerUtils.get<DronePositionQueriesService>(TYPES.DronePositionQueriesSvc);
+    getDronePositionQueriesService(): DronePositionQueriesSvc {
+        return ContainerUtils.get<DronePositionQueriesSvc>(TYPES.DronePositionQueriesSvc);
     }
 
     /**
@@ -407,8 +407,8 @@ export class App {
      * @method getDronePositionCommandsService
      * @returns {DronePositionCommandsService} 無人機位置命令服務實例
      */
-    getDronePositionCommandsService(): DronePositionCommandsService {
-        return ContainerUtils.get<DronePositionCommandsService>(TYPES.DronePositionCommandsSvc);
+    getDronePositionCommandsService(): DronePositionCommandsSvc {
+        return ContainerUtils.get<DronePositionCommandsSvc>(TYPES.DronePositionCommandsSvc);
     }
 
     /**

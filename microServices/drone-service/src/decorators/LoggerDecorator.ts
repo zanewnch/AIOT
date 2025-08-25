@@ -178,10 +178,10 @@ export function LogService(options: LoggerOptions = {}) {
 }
 
 /**
- * Repositorysitorysitory 專用的日誌裝飾器
+ * Repositorysitory 專用的日誌裝飾器
  * 針對資料存取層優化
  */
-export function LogRepositorysitorysitory(options: LoggerOptions = {}) {
+export function LogRepositorysitory(options: LoggerOptions = {}) {
     const config = { 
         ...DEFAULT_LOGGER_OPTIONS, 
         logRequest: false,

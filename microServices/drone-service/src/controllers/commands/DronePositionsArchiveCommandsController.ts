@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DronePositionsArchiveCommandsService } from '../../services/commands/DronePositionsArchiveCommandsService.js';
+import { DronePositionsArchiveCommandsSvc } from '../../services/commands/DronePositionsArchiveCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -32,9 +32,9 @@ const logger = createLogger('DronePositionsArchiveCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DronePositionsArchiveCommandsController {
+export class DronePositionsArchiveCommandsCtrl {
     constructor(
-        @inject(TYPES.DronePositionsArchiveCommandsService) private readonly archiveService: DronePositionsArchiveCommandsService
+        @inject(TYPES.DronePositionsArchiveCommandsSvc) private readonly dronePositionsArchiveCommandsSvc: DronePositionsArchiveCommandsSvc
     ) {
     }
 
@@ -59,7 +59,7 @@ export class DronePositionsArchiveCommandsController {
                 return;
             }
 
-            const createdArchive = await this.archiveService.createPositionArchive(archiveData);
+            const createdArchive = await this.dronePositionsArchiveCommandsSvc.createPositionArchive(archiveData);
             const result = ResResult.created('位置歷史歸檔記錄創建成功', createdArchive);
 
             res.status(result.status).json(result);
@@ -93,7 +93,7 @@ export class DronePositionsArchiveCommandsController {
                 }
             }
 
-            const createdArchives = await this.archiveService.bulkCreatePositionArchives(archivesData);
+            const createdArchives = await this.dronePositionsArchiveCommandsSvc.bulkCreatePositionArchives(archivesData);
             const result = ResResult.created('批量位置歷史歸檔記錄創建成功', {
                 created: createdArchives.length,
                 data: createdArchives
@@ -126,7 +126,7 @@ export class DronePositionsArchiveCommandsController {
                 return;
             }
 
-            const updatedArchive = await this.archiveService.updatePositionArchive(id, updateData);
+            const updatedArchive = await this.dronePositionsArchiveCommandsSvc.updatePositionArchive(id, updateData);
 
             if (!updatedArchive) {
                 const result = ResResult.notFound('找不到指定的位置歷史歸檔記錄');
@@ -155,7 +155,7 @@ export class DronePositionsArchiveCommandsController {
                 return;
             }
 
-            const isDeleted = await this.archiveService.deletePositionArchive(id);
+            const isDeleted = await this.dronePositionsArchiveCommandsSvc.deletePositionArchive(id);
 
             if (!isDeleted) {
                 const result = ResResult.notFound('找不到指定的位置歷史歸檔記錄');
@@ -184,7 +184,7 @@ export class DronePositionsArchiveCommandsController {
                 return;
             }
 
-            const deletedCount = await this.archiveService.deleteArchivesBeforeDate(beforeDate);
+            const deletedCount = await this.dronePositionsArchiveCommandsSvc.deleteArchivesBeforeDate(beforeDate);
             const result = ResResult.success(`已刪除 ${deletedCount} 筆歷史歸檔記錄`, {deletedCount});
 
             res.status(result.status).json(result);
@@ -207,7 +207,7 @@ export class DronePositionsArchiveCommandsController {
                 return;
             }
 
-            const deletedCount = await this.archiveService.deleteArchiveBatch(batchId);
+            const deletedCount = await this.dronePositionsArchiveCommandsSvc.deleteArchiveBatch(batchId);
             const result = ResResult.success(`已刪除批次 ${batchId} 的 ${deletedCount} 筆記錄`, {
                 deletedCount,
                 batchId

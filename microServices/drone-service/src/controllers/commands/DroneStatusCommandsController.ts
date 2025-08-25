@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DroneStatusCommandsService } from '../../services/commands/DroneStatusCommandsService.js';
+import { DroneStatusCommandsSvc } from '../../services/commands/DroneStatusCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -33,7 +33,7 @@ const logger = createLogger('DroneStatusCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneStatusCommandsController {
+export class DroneStatusCommandsCtrl {
     /**
      * 創建新的無人機狀態資料
      * @route POST /api/drone-status/data
@@ -43,7 +43,7 @@ export class DroneStatusCommandsController {
             const droneStatusData: DroneStatusCreationAttributes = req.body;
 
             // 呼叫服務層創建資料
-            const createdData = await this.droneStatusService.createDroneStatus(droneStatusData);
+            const createdData = await this.droneStatusCommandsSvc.createDroneStatus(droneStatusData);
 
             // 建立成功回應
             const result = ResResult.created('無人機狀態資料創建成功', createdData);
@@ -71,7 +71,7 @@ export class DroneStatusCommandsController {
             }
 
             // 呼叫服務層更新資料
-            const updatedData = await this.droneStatusService.updateDroneStatus(id, updateData);
+            const updatedData = await this.droneStatusCommandsSvc.updateDroneStatus(id, updateData);
 
             if (!updatedData) {
                 const result = ResResult.notFound('找不到指定的無人機狀態資料');
@@ -101,7 +101,7 @@ export class DroneStatusCommandsController {
             }
 
             // 呼叫服務層刪除資料
-            await this.droneStatusService.deleteDroneStatus(id);
+            await this.droneStatusCommandsSvc.deleteDroneStatus(id);
 
             // 刪除成功（如果沒有拋出錯誤）
             const result = ResResult.success('無人機狀態資料刪除成功');
@@ -134,7 +134,7 @@ export class DroneStatusCommandsController {
             }
 
             // 呼叫服務層更新狀態
-            const updatedData = await this.droneStatusService.updateDroneStatusOnly(id, status as DroneStatus);
+            const updatedData = await this.droneStatusCommandsSvc.updateDroneStatusOnly(id, status as DroneStatus);
 
             if (!updatedData) {
                 const result = ResResult.notFound('找不到指定的無人機狀態資料');
@@ -150,7 +150,7 @@ export class DroneStatusCommandsController {
     }, 'updateDroneStatusOnly')
 
     constructor(
-        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneStatusService: DroneStatusCommandsService
+        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneStatusCommandsSvc: DroneStatusCommandsSvc
     ) {
     }
 }

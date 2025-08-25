@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import { DroneCommandCommandsService } from '../../services/commands/DroneCommandCommandsService.js';
+import { DroneCommandCommandsSvc } from '../../services/commands/DroneCommandCommandsSvc.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -32,9 +32,9 @@ const logger = createLogger('DroneCommandCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class DroneCommandCommandsController {
+export class DroneCommandCommandsCtrl {
     constructor(
-        @inject(TYPES.DroneCommandCommandsService) private readonly commandService: DroneCommandCommandsService
+        @inject(TYPES.DroneCommandCommandsSvc) private readonly droneCommandCommandsSvc: DroneCommandCommandsSvc
     ) {
     }
 
@@ -88,7 +88,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.createCommand(commandData);
+            const result = await this.droneCommandCommandsSvc.createCommand(commandData);
 
             if (result.success) {
                 const response = ResResult.created('無人機指令創建成功', result.command);
@@ -164,7 +164,7 @@ export class DroneCommandCommandsController {
                 }
             }
 
-            const result = await this.commandService.createBatchCommands(commandsData);
+            const result = await this.droneCommandCommandsSvc.createBatchCommands(commandsData);
 
             if (result.successCount > 0) {
                 const response = ResResult.created('批量無人機指令創建成功', result.successful);
@@ -221,7 +221,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.updateCommand(id, updateData);
+            const result = await this.droneCommandCommandsSvc.updateCommand(id, updateData);
 
             if (result) {
                 const response = ResResult.success('無人機指令更新成功', result);
@@ -280,7 +280,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.deleteCommand(id);
+            const result = await this.droneCommandCommandsSvc.deleteCommand(id);
 
             if (result) {
                 const response = ResResult.success('無人機指令刪除成功');
@@ -338,7 +338,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendTakeoffCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendTakeoffCommand(droneId, 1, {
                 altitude,
                 speed: parameters?.speed
             });
@@ -396,7 +396,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendLandCommand(droneId, 1, parameters);
+            const result = await this.droneCommandCommandsSvc.sendLandCommand(droneId, 1, parameters);
 
             if (result.success) {
                 const response = ResResult.success('降落指令發送成功', result.command);
@@ -451,7 +451,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendHoverCommand(droneId, 1, {duration});
+            const result = await this.droneCommandCommandsSvc.sendHoverCommand(droneId, 1, {duration});
 
             if (result.success) {
                 const response = ResResult.success('懸停指令發送成功', result.command);
@@ -515,7 +515,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendMoveCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendMoveCommand(droneId, 1, {
                 latitude,
                 longitude,
                 altitude,
@@ -575,7 +575,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendReturnCommand(droneId, 1, parameters);
+            const result = await this.droneCommandCommandsSvc.sendReturnCommand(droneId, 1, parameters);
 
             if (result.success) {
                 const response = ResResult.success('返航指令發送成功', result.command);
@@ -631,7 +631,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendMoveForwardCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendMoveForwardCommand(droneId, 1, {
                 distance,
                 speed: parameters?.speed
             });
@@ -690,7 +690,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendMoveBackwardCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendMoveBackwardCommand(droneId, 1, {
                 distance,
                 speed: parameters?.speed
             });
@@ -749,7 +749,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendMoveLeftCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendMoveLeftCommand(droneId, 1, {
                 distance,
                 speed: parameters?.speed
             });
@@ -808,7 +808,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendMoveRightCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendMoveRightCommand(droneId, 1, {
                 distance,
                 speed: parameters?.speed
             });
@@ -867,7 +867,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendRotateLeftCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendRotateLeftCommand(droneId, 1, {
                 degrees,
                 speed: parameters?.speed
             });
@@ -926,7 +926,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendRotateRightCommand(droneId, 1, {
+            const result = await this.droneCommandCommandsSvc.sendRotateRightCommand(droneId, 1, {
                 degrees,
                 speed: parameters?.speed
             });
@@ -987,7 +987,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendEmergencyCommand(droneId, 1, parameters);
+            const result = await this.droneCommandCommandsSvc.sendEmergencyCommand(droneId, 1, parameters);
 
             if (result.success) {
                 const response = ResResult.success('緊急停止指令發送成功', result.command);
@@ -1041,7 +1041,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.executeCommand(id);
+            const result = await this.droneCommandCommandsSvc.executeCommand(id);
 
             if (result.success) {
                 const response = ResResult.success('指令執行成功', result.command);
@@ -1093,7 +1093,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.completeCommand(id);
+            const result = await this.droneCommandCommandsSvc.completeCommand(id);
 
             if (result.success) {
                 const response = ResResult.success('指令完成成功', result.command);
@@ -1149,7 +1149,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.failCommand(id, reason);
+            const result = await this.droneCommandCommandsSvc.failCommand(id, reason);
 
             if (result.success) {
                 const response = ResResult.success('指令標記失敗成功', result.command);
@@ -1205,7 +1205,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.cancelCommand(id, reason);
+            const result = await this.droneCommandCommandsSvc.cancelCommand(id, reason);
 
             if (result.success) {
                 const response = ResResult.success('指令取消成功', result.command);
@@ -1277,7 +1277,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.sendFlyToCommand(droneId, issuedBy, {
+            const result = await this.droneCommandCommandsSvc.sendFlyToCommand(droneId, issuedBy, {
                 latitude,
                 longitude,
                 altitude,
@@ -1345,7 +1345,7 @@ export class DroneCommandCommandsController {
                 return;
             }
 
-            const result = await this.commandService.retryFailedCommand(commandId, issuedBy);
+            const result = await this.droneCommandCommandsSvc.retryFailedCommand(commandId, issuedBy);
 
             if (result.success && result.command) {
                 const response = ResResult.created('指令重試成功', result.command);

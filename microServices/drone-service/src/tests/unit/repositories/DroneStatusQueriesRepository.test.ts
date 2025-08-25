@@ -1,20 +1,20 @@
 /**
- * @fileoverview Unit tests for DroneStatusQueriesRepositorysitorysitory
+ * @fileoverview Unit tests for DroneStatusQueriesRepositorysitory
  */
 
-import { DroneStatusQueriesRepositorysitorysitory, PaginatedResult } from.*Repositorysitorysitorysitory';
+import { DroneStatusQueriesRepositorysitory, PaginatedResult } from.*Repositorysitorysitory';
 import { DroneStatusModel, DroneStatus } from '../../../models/DroneStatusModel';
 import { testHelpers, setupTestDb, cleanupTestDb } from '../../setup';
 import { Sequelize } from 'sequelize';
 import { PaginationRequestDto } from '../../../dto';
 
-describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
+describe('DroneStatusQueriesRepositorysitory - Unit Tests', () => {
   let sequelize: Sequelize;
-  let droneStatusRepositorysitorysitory: DroneStatusQueriesRepositorysitorysitory;
+  let droneStatusRepositorysitory: DroneStatusQueriesRepositorysitory;
 
   beforeAll(async () => {
     sequelize = await setupTestDb();
-    droneStatusRepositorysitorysitory = new DroneStatusQueriesRepositorysitorysitory();
+    droneStatusRepositorysitory = new DroneStatusQueriesRepositorysitory();
   });
 
   afterAll(async () => {
@@ -37,7 +37,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result: PaginatedResult<DroneStatusModel> = await droneStatusRepositorysitorysitory.findPaginated(pagination);
+      const result: PaginatedResult<DroneStatusModel> = await droneStatusRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(3);
@@ -54,7 +54,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result: PaginatedResult<DroneStatusModel> = await droneStatusRepositorysitorysitory.findPaginated(pagination);
+      const result: PaginatedResult<DroneStatusModel> = await droneStatusRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(0);
@@ -79,7 +79,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findPaginated(pagination);
+      const result = await droneStatusRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -102,7 +102,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       const filters = { status: DroneStatus.ACTIVE };
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findPaginated(pagination, filters);
+      const result = await droneStatusRepositorysitory.findPaginated(pagination, filters);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -133,7 +133,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findPaginated(pagination);
+      const result = await droneStatusRepositorysitory.findPaginated(pagination);
 
       // Assert
       expect(result.data).toHaveLength(2);
@@ -158,7 +158,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findByStatusPaginated(DroneStatus.ACTIVE, pagination);
+      const result = await droneStatusRepositorysitory.findByStatusPaginated(DroneStatus.ACTIVE, pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -182,7 +182,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       const pagination: PaginationRequestDto = { page: 1, pageSize: 10 };
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findByDroneIdPaginated(droneId, pagination);
+      const result = await droneStatusRepositorysitory.findByDroneIdPaginated(droneId, pagination);
 
       // Assert
       expect(result.data).toHaveLength(1);
@@ -200,7 +200,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       });
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findBySerial(serial);
+      const result = await droneStatusRepositorysitory.findBySerial(serial);
 
       // Assert
       expect(result).toBeDefined();
@@ -209,7 +209,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
 
     it('should return null for non-existent serial', async () => {
       // Act
-      const result = await droneStatusRepositorysitorysitory.findBySerial('NON-EXISTENT-SERIAL');
+      const result = await droneStatusRepositorysitory.findBySerial('NON-EXISTENT-SERIAL');
 
       // Assert
       expect(result).toBeNull();
@@ -222,7 +222,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       const droneStatus = await testHelpers.createTestDroneStatus(sequelize);
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findById(droneStatus.id);
+      const result = await droneStatusRepositorysitory.findById(droneStatus.id);
 
       // Assert
       expect(result).toBeDefined();
@@ -232,7 +232,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
 
     it('should return null for non-existent ID', async () => {
       // Act
-      const result = await droneStatusRepositorysitorysitory.findById(99999);
+      const result = await droneStatusRepositorysitory.findById(99999);
 
       // Assert
       expect(result).toBeNull();
@@ -258,7 +258,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       });
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findAllByStatus(DroneStatus.ACTIVE);
+      const result = await droneStatusRepositorysitory.findAllByStatus(DroneStatus.ACTIVE);
 
       // Assert
       expect(result).toHaveLength(2);
@@ -269,7 +269,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
 
     it('should return empty array for status with no drones', async () => {
       // Act
-      const result = await droneStatusRepositorysitorysitory.findAllByStatus(DroneStatus.EMERGENCY);
+      const result = await droneStatusRepositorysitory.findAllByStatus(DroneStatus.EMERGENCY);
 
       // Assert
       expect(result).toEqual([]);
@@ -287,7 +287,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
 
       // The method should handle invalid input gracefully
       await expect(async () => {
-        await droneStatusRepositorysitorysitory.findPaginated(pagination);
+        await droneStatusRepositorysitory.findPaginated(pagination);
       }).not.toThrow(); // Should not crash
     });
   });
@@ -305,7 +305,7 @@ describe('DroneStatusQueriesRepositorysitorysitory - Unit Tests', () => {
       const startTime = Date.now();
 
       // Act
-      const result = await droneStatusRepositorysitorysitory.findPaginated(pagination);
+      const result = await droneStatusRepositorysitory.findPaginated(pagination);
 
       const endTime = Date.now();
       const executionTime = endTime - startTime;

@@ -23,18 +23,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // 導入控制器
-import { DroneStatusQueriesController } from '../controllers/queries/DroneStatusQueriesController.js';
-import { DroneStatusCommandsController } from '../controllers/commands/DroneStatusCommandsController.js';
-import { DronePositionQueriesController } from '../controllers/queries/DronePositionQueriesController.js';
-import { DronePositionCommandsController } from '../controllers/commands/DronePositionCommandsController.js';
-import { DroneCommandQueriesController } from '../controllers/queries/DroneCommandQueriesController.js';
-import { DroneCommandCommandsController } from '../controllers/commands/DroneCommandCommandsController.js';
-import { DroneCommandQueueQueriesController } from '../controllers/queries/DroneCommandQueueQueriesController.js';
-import { DroneCommandQueueCommandsController } from '../controllers/commands/DroneCommandQueueCommandsController.js';
-import { DroneRealTimeStatusQueriesController } from '../controllers/queries/DroneRealTimeStatusQueriesController.js';
-import { DroneRealTimeStatusCommandsController } from '../controllers/commands/DroneRealTimeStatusCommandsController.js';
-import { ArchiveTaskQueriesController } from '../controllers/queries/ArchiveTaskQueriesController.js';
-import { ArchiveTaskCommandsController } from '../controllers/commands/ArchiveTaskCommandsController.js';
+import { DroneStatusQueriesCtrl } from '../controllers/queries/DroneStatusQueriesController.js';
+import { DroneStatusCommandsCtrl } from '../controllers/commands/DroneStatusCommandsController.js';
+import { DronePositionQueriesCtrl } from '../controllers/queries/DronePositionQueriesController.js';
+import { DronePositionCommandsCtrl } from '../controllers/commands/DronePositionCommandsController.js';
+import { DroneCommandQueriesCtrl } from '../controllers/queries/DroneCommandQueriesController.js';
+import { DroneCommandCommandsCtrl } from '../controllers/commands/DroneCommandCommandsController.js';
+import { DroneCommandQueueQueriesCtrl } from '../controllers/queries/DroneCommandQueueQueriesController.js';
+import { DroneCommandQueueCommandsCtrl } from '../controllers/commands/DroneCommandQueueCommandsController.js';
+import { DroneRealTimeStatusQueriesCtrl } from '../controllers/queries/DroneRealTimeStatusQueriesController.js';
+import { DroneRealTimeStatusCommandsCtrl } from '../controllers/commands/DroneRealTimeStatusCommandsController.js';
+import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesController.js';
+import { ArchiveTaskCommandsCtrl } from '../controllers/commands/ArchiveTaskCommandsController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -83,18 +83,18 @@ export class DroneGrpcServer {
     });
     
     // 注入依賴
-    this.droneStatusQueries = container.get<DroneStatusQueriesController>(TYPES.DroneStatusQueriesCtrl);
-    this.droneStatusCommands = container.get<DroneStatusCommandsController>(TYPES.DroneStatusCommandsCtrl);
-    this.dronePositionQueries = container.get<DronePositionQueriesController>(TYPES.DronePositionQueriesCtrl);
-    this.dronePositionCommands = container.get<DronePositionCommandsController>(TYPES.DronePositionCommandsCtrl);
-    this.droneCommandQueries = container.get<DroneCommandQueriesController>(TYPES.DroneCommandQueriesCtrl);
-    this.droneCommandCommands = container.get<DroneCommandCommandsController>(TYPES.DroneCommandCommandsCtrl);
-    this.droneCommandQueueQueries = container.get<DroneCommandQueueQueriesController>(TYPES.DroneCommandQueueQueriesCtrl);
-    this.droneCommandQueueCommands = container.get<DroneCommandQueueCommandsController>(TYPES.DroneCommandQueueCommandsCtrl);
-    this.droneRealTimeStatusQueries = container.get<DroneRealTimeStatusQueriesController>(TYPES.DroneRealTimeStatusQueriesCtrl);
-    this.droneRealTimeStatusCommands = container.get<DroneRealTimeStatusCommandsController>(TYPES.DroneRealTimeStatusCommandsCtrl);
-    this.archiveTaskQueries = container.get<ArchiveTaskQueriesController>(TYPES.ArchiveTaskQueriesCtrl);
-    this.archiveTaskCommands = container.get<ArchiveTaskCommandsController>(TYPES.ArchiveTaskCommandsCtrl);
+    this.droneStatusQueries = container.get<DroneStatusQueriesCtrl>(TYPES.DroneStatusQueriesCtrl);
+    this.droneStatusCommands = container.get<DroneStatusCommandsCtrl>(TYPES.DroneStatusCommandsCtrl);
+    this.dronePositionQueries = container.get<DronePositionQueriesCtrl>(TYPES.DronePositionQueriesCtrl);
+    this.dronePositionCommands = container.get<DronePositionCommandsCtrl>(TYPES.DronePositionCommandsCtrl);
+    this.droneCommandQueries = container.get<DroneCommandQueriesCtrl>(TYPES.DroneCommandQueriesCtrl);
+    this.droneCommandCommands = container.get<DroneCommandCommandsCtrl>(TYPES.DroneCommandCommandsCtrl);
+    this.droneCommandQueueQueries = container.get<DroneCommandQueueQueriesCtrl>(TYPES.DroneCommandQueueQueriesCtrl);
+    this.droneCommandQueueCommands = container.get<DroneCommandQueueCommandsCtrl>(TYPES.DroneCommandQueueCommandsCtrl);
+    this.droneRealTimeStatusQueries = container.get<DroneRealTimeStatusQueriesCtrl>(TYPES.DroneRealTimeStatusQueriesCtrl);
+    this.droneRealTimeStatusCommands = container.get<DroneRealTimeStatusCommandsCtrl>(TYPES.DroneRealTimeStatusCommandsCtrl);
+    this.archiveTaskQueries = container.get<ArchiveTaskQueriesCtrl>(TYPES.ArchiveTaskQueriesCtrl);
+    this.archiveTaskCommands = container.get<ArchiveTaskCommandsCtrl>(TYPES.ArchiveTaskCommandsCtrl);
 
     this.initializeGrpcServices();
     this.loadProtoAndAddService();
