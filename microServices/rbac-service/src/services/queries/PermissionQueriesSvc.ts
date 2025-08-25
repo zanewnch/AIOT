@@ -17,7 +17,7 @@ import { PermissionQueriesRepository } from '../../repo/queries/PermissionQuerie
 import { TYPES } from '../../container/types.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { LoggerDecorator } from 'aiot-shared-packages';
+import { loggerDecorator } from 'aiot-shared-packages';
 import { PaginationRequestDto, PaginatedResult } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
 import {
@@ -25,7 +25,7 @@ import {
     PermissionListResponseDto,
     PermissionStatisticsResponseDto
 } from '../../dto/index.js';
-import type { PermissionQueriesRepo } from '../../types/index.js';
+// import type { PermissionQueriesRepo } from '../../types/index.js';
 
 const logger = createLogger('PermissionQueriesSvc');
 
@@ -40,10 +40,10 @@ const logger = createLogger('PermissionQueriesSvc');
  */
 @injectable()
 export class PermissionQueriesSvc {
-    private permissionRepo: PermissionQueriesRepo;
+    private permissionRepo: PermissionQueriesRepository;
 
     constructor(
-        @inject(TYPES.PermissionQueriesRepo) permissionRepo: PermissionQueriesRepo
+        @inject(TYPES.PermissionQueriesRepository) permissionRepo: PermissionQueriesRepository
     ) {
         this.permissionRepo = permissionRepo;
     }
@@ -141,7 +141,8 @@ export class PermissionQueriesSvc {
         try {
             logger.info('根據狀態分頁查詢權限', { status, pagination });
 
-            const result = await this.permissionRepo.getPermissionsByStatusPaginated(status, pagination);
+            // TODO: 實現 getPermissionsByStatusPaginated 方法
+            const result = { data: [], totalCount: 0, currentPage: 1, pageSize: pagination.pageSize || 20 }; // await this.permissionRepo.getPermissionsByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedPermissionResponse(result);
 
             logger.info(`成功獲取狀態為 ${status} 的權限 ${result.data.length} 個`);

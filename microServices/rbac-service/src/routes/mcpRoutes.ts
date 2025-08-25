@@ -26,8 +26,18 @@ import { UserToRoleQueriesSvc } from '../services/queries/UserToRoleQueriesSvc.j
 import { RoleToPermissionQueriesSvc } from '../services/queries/RoleToPermissionQueriesSvc.js';
 import { createLogger } from '../configs/loggerConfig.js';
 import { ResResult } from 'aiot-shared-packages';
+import { PaginationRequestDto } from '../dto/common/PaginationDto.js';
 
 const logger = createLogger('MCPRoutes');
+
+/**
+ * Helper function to create PaginationRequestDto objects
+ */
+const createPagination = (page = 1, pageSize = 100): PaginationRequestDto => {
+    const pagination = new PaginationRequestDto();
+    Object.assign(pagination, { page, pageSize });
+    return pagination;
+};
 
 /**
  * RBAC MCP 工具定義
@@ -306,7 +316,7 @@ export class RBACMCPRoutes {
             let roles = null;
             if (includeRoles) {
                 try {
-                    const pagination = { page: 1, limit: 100, offset: 0 };
+                    const pagination = createPagination(1, 100);
                     roles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, pagination);
                 } catch (error) {
                     logger.warn(`Failed to get roles for user ${userId}:`, error);
@@ -339,7 +349,7 @@ export class RBACMCPRoutes {
         } = args;
 
         try {
-            const pagination = { page, limit, offset: (page - 1) * limit };
+            const pagination = createPagination(page, limit);
             const filters = { status, searchKeyword };
 
             const users = await this.userQueriesService.getAllUsersPaginated(pagination);
@@ -371,7 +381,7 @@ export class RBACMCPRoutes {
         }
 
         try {
-            const roles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, { page: 1, limit: 100, offset: 0 });
+            const roles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, createPagination(1, 100));
 
             return {
                 success: true,
@@ -399,13 +409,13 @@ export class RBACMCPRoutes {
 
         try {
             // 這裡可能需要調用多個服務來組合權限資訊
-            const userRoles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, { page: 1, limit: 100, offset: 0 });
+            const userRoles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, createPagination(1, 100));
             let permissions: any[] = [];
 
             if (includeInherited && userRoles && userRoles.length > 0) {
                 for (const role of userRoles) {
                     try {
-                        const rolePermissions = await this.roleToPermissionQueriesSvc.getPermissionsByRoleId(role.id);
+                        const rolePermissions = await this.roleToPermissionQueriesSvc.getRolePermissionsByRoleIdPaginated(role.id, createPagination(1, 100));
                         if (rolePermissions) {
                             permissions.push(...rolePermissions);
                         }
@@ -442,13 +452,13 @@ export class RBACMCPRoutes {
         const { page = 1, limit = 10, includePermissions = false } = args;
 
         try {
-            const pagination = { page, limit, offset: (page - 1) * limit };
-            const roles = await this.roleQueriesService.getAllRoles(pagination);
+            const pagination = createPagination(page, limit);
+            const roles = await this.roleQueriesService.getAllRolesPaginated(pagination);
 
             if (includePermissions && roles.data) {
                 for (const role of roles.data) {
                     try {
-                        const permissions = await this.roleToPermissionQueriesSvc.getPermissionsByRoleId(role.id);
+                        const permissions = await this.roleToPermissionQueriesSvc.getRolePermissionsByRoleIdPaginated(role.id, createPagination(1, 100));
                         role.permissions = permissions || [];
                     } catch (error) {
                         logger.warn(`Failed to get permissions for role ${role.id}:`, error);
@@ -497,7 +507,7 @@ export class RBACMCPRoutes {
             let users = null;
             if (includeUsers) {
                 try {
-                    users = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId);
+                    users = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId, createPagination(1, 100));
                 } catch (error) {
                     logger.warn(`Failed to get users for role ${roleId}:`, error);
                 }
@@ -528,7 +538,7 @@ export class RBACMCPRoutes {
         }
 
         try {
-            const permissions = await this.roleToPermissionQueriesSvc.getPermissionsByRoleId(roleId);
+            const permissions = await this.roleToPermissionQueriesSvc.getRolePermissionsByRoleIdPaginated(roleId, createPagination(1, 100));
 
             return {
                 success: true,
@@ -551,10 +561,10 @@ export class RBACMCPRoutes {
         const { page = 1, limit = 10, category = null } = args;
 
         try {
-            const pagination = { page, limit, offset: (page - 1) * limit };
+            const pagination = createPagination(page, limit);
             const filters = { category };
 
-            const permissions = await this.permissionQueriesService.getAllPermissions(pagination, filters);
+            const permissions = await this.permissionQueriesService.getAllPermissionsPaginated(pagination);
 
             return {
                 success: true,
@@ -621,7 +631,7 @@ export class RBACMCPRoutes {
         }
 
         try {
-            const pagination = { page, limit, offset: (page - 1) * limit };
+            const pagination = createPagination(page, limit);
             const users = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId, pagination);
 
             return {

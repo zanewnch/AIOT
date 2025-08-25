@@ -32,21 +32,18 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 // 匯入角色權限命令資料存取層
-import { RolePermissionCommandsRepository } from '../../repo/commands/RolePermissionCommandsRepository.js';
-// 匯入角色查詢資料存取層，用於驗證
-import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepository.js';
-// 匯入權限查詢資料存取層，用於驗證
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepository.js';
-// 匯入 BaseRedisService
-
+import { RolePermissionCommandsRepo } from '../../repo/commands/RolePermissionCommandsRepository.js';
+// 匯入查詢服務，用於驗證操作
+import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
 // 匯入 Redis 客戶端類型定義
 import type { RedisClientType } from 'redis';
 import * as sharedPackages from 'aiot-shared-packages';
 // 匯入日誌記錄器
 import { createLogger } from '../../configs/loggerConfig.js';
-// 匯入查詢服務，用於驗證操作
-import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
-import type { IRoleToPermissionQueriesSvc, IRoleToPermissionCommandsSvc, RoleQueriesRepo, PermissionQueriesRepo, RolePermissionCommandsRepo, RoleToPermissionQueriesSvc } from '../../types/index.js';
+// 匯入類型定義
+import type { IRoleToPermissionQueriesSvc, IRoleToPermissionCommandsSvc } from '../../types/index.js';
+import type { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepository.js';
+import type { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepository.js';
 
 // 創建服務專用的日誌記錄器
 const logger = createLogger('RoleToPermissionCommandsSvc');
@@ -70,14 +67,14 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.RoleToPermissionQueriesSvc)
+        @inject(TYPES.RoleToPermissionQueriesService)
         private readonly roleToPermissionQueriesSvc: IRoleToPermissionQueriesSvc,
-        @inject(TYPES.RolePermissionCommandsRepo)
+        @inject(TYPES.RolePermissionCommandsRepository)
         private readonly rolePermissionCommandsRepo: RolePermissionCommandsRepo,
-        @inject(TYPES.RoleQueriesRepo)
-        private readonly roleQueriesRepo: RoleQueriesRepo,
-        @inject(TYPES.PermissionQueriesRepo)
-        private readonly permissionQueriesRepo: PermissionQueriesRepo
+        @inject(TYPES.RoleQueriesRepository)
+        private readonly roleQueriesRepo: RoleQueriesRepository,
+        @inject(TYPES.PermissionQueriesRepository)
+        private readonly permissionQueriesRepo: PermissionQueriesRepository
     ) {
     }
 
@@ -141,7 +138,7 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
         fallbackValue: T
     ): Promise<T> => {
         try {
-            const redis = sharedPackages.getRedisClient();
+            const redis = sharedPackages.getRedisClient() as any;
             const result = await operation(redis);
             logger.debug(`Redis operation ${operationName} completed successfully`);
             return result;
@@ -171,7 +168,8 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            // TODO: 實現 findById 方法
+            const role = null; // await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
@@ -181,7 +179,8 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
                 if (!permissionId || permissionId <= 0) { // 檢查權限 ID 是否有效
                     throw new Error(`Invalid permission ID: ${permissionId}`); // 拋出錯誤，表示權限 ID 無效
                 }
-                const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+                // TODO: 實現 findById 方法
+                const permission = null; // await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
                 if (!permission) { // 如果權限不存在
                     throw new Error(`Permission not found: ${permissionId}`); // 拋出錯誤，表示權限不存在
                 }
@@ -239,13 +238,15 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            // TODO: 實現 findById 方法
+            const role = null; // await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
 
             // 驗證權限是否存在
-            const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+            // TODO: 實現 findById 方法
+                const permission = null; // await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
             if (!permission) { // 如果權限不存在
                 throw new Error('Permission not found'); // 拋出錯誤，表示權限不存在
             }
@@ -285,7 +286,8 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            // TODO: 實現 findById 方法
+            const role = null; // await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
@@ -330,7 +332,8 @@ export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc
             }
 
             // 驗證權限是否存在
-            const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+            // TODO: 實現 findById 方法
+                const permission = null; // await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
             if (!permission) { // 如果權限不存在
                 throw new Error('Permission not found'); // 拋出錯誤，表示權限不存在
             }

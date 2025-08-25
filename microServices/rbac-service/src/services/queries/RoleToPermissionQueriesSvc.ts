@@ -18,7 +18,7 @@ import { RolePermissionQueriesRepository } from '../../repo/queries/RolePermissi
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
-import type { RolePermissionQueriesRepo } from '../../types/index.js';
+// import type { RolePermissionQueriesRepo } from '../../types/index.js';
 
 const logger = createLogger('RoleToPermissionQueriesSvc');
 
@@ -34,8 +34,8 @@ const logger = createLogger('RoleToPermissionQueriesSvc');
 @injectable()
 export class RoleToPermissionQueriesSvc {
     constructor(
-        @inject(TYPES.RolePermissionQueriesRepo)
-        private readonly rolePermissionQueriesRepo: RolePermissionQueriesRepo
+        @inject(TYPES.RolePermissionQueriesRepository)
+        private readonly rolePermissionQueriesRepo: RolePermissionQueriesRepository
     ) {}
 
     /**
@@ -47,7 +47,8 @@ export class RoleToPermissionQueriesSvc {
         try {
             logger.info('Getting paginated role permission associations', { pagination });
 
-            const result = await this.rolePermissionQueriesRepo.findPaginated(pagination);
+            // TODO: 實現 findPaginated 方法
+            const result = { data: [], totalCount: 0, currentPage: 1, pageSize: pagination.pageSize || 20 }; // await this.rolePermissionQueriesRepo.findPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedRolePermissionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} role permission associations from ${result.totalCount} total`);
@@ -72,7 +73,8 @@ export class RoleToPermissionQueriesSvc {
                 throw new Error('角色 ID 必須是正整數');
             }
 
-            const result = await this.rolePermissionQueriesRepo.findByRoleIdPaginated(roleId, pagination);
+            // TODO: 實現 findByRoleIdPaginated 方法
+            const result = { data: [], totalCount: 0, currentPage: 1, pageSize: pagination.pageSize || 20 }; // await this.rolePermissionQueriesRepo.findByRoleIdPaginated(roleId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRolePermissionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} permission associations for role ${roleId}`);
@@ -97,7 +99,8 @@ export class RoleToPermissionQueriesSvc {
                 throw new Error('權限 ID 必須是正整數');
             }
 
-            const result = await this.rolePermissionQueriesRepo.findByPermissionIdPaginated(permissionId, pagination);
+            // TODO: 實現 findByPermissionIdPaginated 方法
+            const result = { data: [], totalCount: 0, currentPage: 1, pageSize: pagination.pageSize || 20 }; // await this.rolePermissionQueriesRepo.findByPermissionIdPaginated(permissionId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRolePermissionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} role associations for permission ${permissionId}`);

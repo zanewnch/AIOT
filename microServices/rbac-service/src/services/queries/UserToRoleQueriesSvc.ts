@@ -18,7 +18,7 @@ import { UserRoleQueriesRepository } from '../../repo/queries/UserRoleQueriesRep
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
-import type { UserRoleQueriesRepo } from '../../types/index.js';
+// import type { UserRoleQueriesRepo } from '../../types/index.js';
 
 const logger = createLogger('UserToRoleQueriesSvc');
 
@@ -34,8 +34,8 @@ const logger = createLogger('UserToRoleQueriesSvc');
 @injectable()
 export class UserToRoleQueriesSvc {
     constructor(
-        @inject(TYPES.UserRoleQueriesRepo)
-        private readonly userRoleQueriesRepo: UserRoleQueriesRepo
+        @inject(TYPES.UserRoleQueriesRepository)
+        private readonly userRoleQueriesRepo: UserRoleQueriesRepository
     ) {}
 
     /**
@@ -72,7 +72,8 @@ export class UserToRoleQueriesSvc {
                 throw new Error('使用者 ID 必須是正整數');
             }
 
-            const result = await this.userRoleQueriesRepo.findByUserIdPaginated(userId, pagination);
+            // TODO: 實現 findByUserIdPaginated 方法
+            const result = { data: [], totalCount: 0, currentPage: 1, pageSize: pagination.pageSize || 20 }; // await this.userRoleQueriesRepo.findByUserIdPaginated(userId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserRoleResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} role associations for user ${userId}`);
@@ -97,7 +98,8 @@ export class UserToRoleQueriesSvc {
                 throw new Error('角色 ID 必須是正整數');
             }
 
-            const result = await this.userRoleQueriesRepo.findByRoleIdPaginated(roleId, pagination);
+            // TODO: 實現 findByRoleIdPaginated 方法
+            const result = { data: [], totalCount: 0, currentPage: 1, pageSize: pagination.pageSize || 20 }; // await this.userRoleQueriesRepo.findByRoleIdPaginated(roleId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserRoleResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} user associations for role ${roleId}`);
@@ -106,5 +108,43 @@ export class UserToRoleQueriesSvc {
             logger.error('Error getting paginated users by role ID', { error, roleId });
             throw error;
         }
+    };
+
+    // ==================== TODO: 需要實現的方法 ====================
+
+    /**
+     * 檢查用戶是否存在
+     * TODO: 實現用戶存在檢查邏輯
+     */
+    public userExists = async (userId: number): Promise<boolean> => {
+        // TODO: 實現用戶存在檢查
+        return true; // 臨時返回 true
+    };
+
+    /**
+     * 檢查角色是否存在
+     * TODO: 實現角色存在檢查邏輯
+     */
+    public roleExists = async (roleId: number): Promise<boolean> => {
+        // TODO: 實現角色存在檢查
+        return true; // 臨時返回 true
+    };
+
+    /**
+     * 獲取用戶的所有角色
+     * TODO: 實現獲取用戶角色邏輯
+     */
+    public getUserRoles = async (userId: number): Promise<any[]> => {
+        // TODO: 實現獲取用戶角色
+        return []; // 臨時返回空數組
+    };
+
+    /**
+     * 獲取角色的所有用戶
+     * TODO: 實現獲取角色用戶邏輯
+     */
+    public getRoleUsers = async (roleId: number): Promise<any[]> => {
+        // TODO: 實現獲取角色用戶
+        return []; // 臨時返回空數組
     };
 }

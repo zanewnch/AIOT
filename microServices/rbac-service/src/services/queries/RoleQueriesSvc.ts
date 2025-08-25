@@ -18,7 +18,7 @@ import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
-import type { RoleQueriesRepo } from '../../types/index.js';
+// import type { RoleQueriesRepo } from '../../types/index.js';
 
 const logger = createLogger('RoleQueriesSvc');
 
@@ -33,10 +33,10 @@ const logger = createLogger('RoleQueriesSvc');
  */
 @injectable()
 export class RoleQueriesSvc {
-    private roleRepo: RoleQueriesRepo;
+    private roleRepo: RoleQueriesRepository;
 
     constructor(
-        @inject(TYPES.RoleQueriesRepo) roleRepo: RoleQueriesRepo
+        @inject(TYPES.RoleQueriesRepository) roleRepo: RoleQueriesRepository
     ) {
         this.roleRepo = roleRepo;
     }

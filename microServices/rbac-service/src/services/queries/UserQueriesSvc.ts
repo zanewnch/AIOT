@@ -17,7 +17,7 @@ import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepository.
 import { TYPES } from '../../container/types.js';
 import { UserModel } from '../../models/UserModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { LoggerDecorator } from 'aiot-shared-packages';
+import { loggerDecorator } from 'aiot-shared-packages';
 import { PaginationRequestDto, PaginatedResult } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
 import {
@@ -25,7 +25,7 @@ import {
     UserListResponseDto,
     UserStatisticsResponseDto
 } from '../../dto/index.js';
-import type { UserQueriesRepo } from '../../types/index.js';
+// import type { UserQueriesRepo } from '../../types/index.js';
 
 const logger = createLogger('UserQueriesSvc');
 
@@ -41,10 +41,10 @@ const logger = createLogger('UserQueriesSvc');
  */
 @injectable()
 export class UserQueriesSvc {
-    private userRepo: UserQueriesRepo;
+    private userRepo: UserQueriesRepository;
 
     constructor(
-        @inject(TYPES.UserQueriesRepo) userRepo: UserQueriesRepo
+        @inject(TYPES.UserQueriesRepository) userRepo: UserQueriesRepository
     ) {
         this.userRepo = userRepo;
     }

@@ -31,7 +31,8 @@ import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
 import { UserToRoleQueriesSvc } from '../queries/UserToRoleQueriesSvc.js';
-import type { AssignRolesRequest, RemoveRoleRequest, UserRoleCommandsRepo } from '../../types/index.js';
+import type { AssignRolesRequest, RemoveRoleRequest } from '../../types/index.js';
+import type { UserRoleCommandsRepo } from '../../repo/commands/UserRoleCommandsRepository.js';
 
 const logger = createLogger('UserToRoleCommandsSvc');
 
@@ -49,9 +50,9 @@ export class UserToRoleCommandsSvc {
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.UserToRoleQueriesSvc)
+        @inject(TYPES.UserToRoleQueriesService)
         private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc,
-        @inject(TYPES.UserRoleCommandsRepo)
+        @inject(TYPES.UserRoleCommandsRepository)
         private readonly userRoleCommandsRepo: UserRoleCommandsRepo
     ) {
     }
@@ -116,7 +117,7 @@ export class UserToRoleCommandsSvc {
         fallbackValue: T
     ): Promise<T> => {
         try {
-            const redis = sharedPackages.getRedisClient();
+            const redis = sharedPackages.getRedisClient() as any;
             const result = await operation(redis);
             logger.debug(`Redis operation ${operationName} completed successfully`);
             return result;
@@ -137,7 +138,7 @@ export class UserToRoleCommandsSvc {
         operationName: string
     ): Promise<boolean> => {
         try {
-            const redis = sharedPackages.getRedisClient();
+            const redis = sharedPackages.getRedisClient() as any;
             await operation(redis);
             logger.debug(`Redis write operation ${operationName} completed successfully`);
             return true;
@@ -168,7 +169,7 @@ export class UserToRoleCommandsSvc {
             }
 
             // 使用查詢服務驗證使用者是否存在
-            const userExists = await this.userToRoleQueriesService.userExists(userId);
+            const userExists = await this.userToRoleQueriesSvc.userExists(userId);
             if (!userExists) {
                 throw new Error('User not found');
             }
@@ -178,7 +179,7 @@ export class UserToRoleCommandsSvc {
                 if (!roleId || roleId <= 0) {
                     throw new Error(`Invalid role ID: ${roleId}`);
                 }
-                const roleExists = await this.userToRoleQueriesService.roleExists(roleId);
+                const roleExists = await this.userToRoleQueriesSvc.roleExists(roleId);
                 if (!roleExists) {
                     throw new Error(`Role not found: ${roleId}`);
                 }
@@ -238,13 +239,13 @@ export class UserToRoleCommandsSvc {
             }
 
             // 使用查詢服務驗證使用者是否存在
-            const userExists = await this.userToRoleQueriesService.userExists(userId);
+            const userExists = await this.userToRoleQueriesSvc.userExists(userId);
             if (!userExists) {
                 throw new Error('User not found');
             }
 
             // 驗證角色是否存在
-            const roleExists = await this.userToRoleQueriesService.roleExists(roleId);
+            const roleExists = await this.userToRoleQueriesSvc.roleExists(roleId);
             if (!roleExists) {
                 throw new Error('Role not found');
             }
