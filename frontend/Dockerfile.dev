@@ -1,6 +1,6 @@
 FROM node:18-bullseye
 
-WORKDIR /app/fe
+WORKDIR /app/frontend
 
 # 複製 package 檔案
 COPY package*.json ./

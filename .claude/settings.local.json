@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker-compose build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

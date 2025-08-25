@@ -651,14 +651,14 @@ services:
   frontend-app:
     build:
       context: ../../frontend
-      dockerfile: Dockerfile.fe
+      dockerfile: Dockerfile.dev
     logging: *default-logging
     container_name: aiot-frontend
     ports:
       - "3000:3000"   # Vite 開發服務器
     volumes:
-      - ../../frontend:/app/fe
-      - ../../frontend/node_modules:/app/fe/node_modules
+      - ../../frontend:/app/frontend
+      - ../../frontend/node_modules:/app/frontend/node_modules
       # 快取 node_modules 以提升效能
     networks:
       - aiot-network
