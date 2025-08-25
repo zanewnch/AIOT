@@ -25,8 +25,8 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { PermissionCommandsRepositorysitory } from.*Repositorysitorysitory.js';
-import { PermissionQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { PermissionCommandsRepositorysitorysitory } from '../../repo/commands/PermissionCommandsRepository.js';
+import { PermissionQueriesRepositorysitorysitory } from '../../repo/queries/PermissionQueriesRepository.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -40,7 +40,7 @@ import type {
     UserPermissions
 } from '../../types/index.js';
 
-import { PermissionQueriesService } from.*Service.js';
+import { PermissionQueriesService } from '../queries/PermissionQueriesService.js';
 
 const logger = createLogger('PermissionCommandsService');
 

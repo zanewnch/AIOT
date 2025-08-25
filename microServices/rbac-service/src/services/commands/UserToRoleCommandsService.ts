@@ -26,12 +26,12 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserRoleCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { UserRoleCommandsRepositorysitorysitory } from '../../repo/commands/UserRoleCommandsRepository.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
-import { UserToRoleQueriesService } from.*Service.js';
+import { UserToRoleQueriesService } from '../queries/UserToRoleQueriesService.js';
 import type { AssignRolesRequest, RemoveRoleRequest } from '../../types/index.js';
 
 const logger = createLogger('UserToRoleCommandsService');

@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {PermissionQueriesService} from.*Service.js';
+import {PermissionQueriesService} from '../../services/queries/PermissionQueriesService.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {PaginationRequestDto} from '../../dto/index.js';

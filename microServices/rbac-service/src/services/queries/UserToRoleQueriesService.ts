@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserRoleQueriesRepository } from '../../repositories/queries/UserToRoleQueriesRepository.js';
+import { UserRoleQueriesRepositorysitorysitory } from '../../repo/queries/UserRoleQueriesRepository.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';

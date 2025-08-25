@@ -26,14 +26,14 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { RoleCommandsRepository } from '../../repositories/commands/RoleCommandsRepository.js';
-import { RoleQueriesRepository } from '../../repositories/queries/RoleQueriesRepository.js';
+import { RoleCommandsRepositorysitorysitory } from '../../repo/commands/RoleCommandsRepository.js';
+import { RoleQueriesRepositorysitorysitory } from '../../repo/queries/RoleQueriesRepository.js';
 import type { RoleModel } from '../../models/RoleModel.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
-import { RoleQueriesService } from.*Service.js';
+import { RoleQueriesService } from '../queries/RoleQueriesService.js';
 import type { RoleDTO, CacheOptions, CreateRoleRequest, UpdateRoleRequest, IRoleCommandsService } from '../../types/index.js';
 
 const logger = createLogger('RoleCommandsService');

@@ -19,11 +19,11 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router, Request, Response } from 'express';
 import { TYPES } from '../container/types.js';
-import { UserQueriesService } from.*Service.js';
-import { RoleQueriesService } from.*Service.js';
-import { PermissionQueriesService } from.*Service.js';
-import { UserToRoleQueriesService } from.*Service.js';
-import { RoleToPermissionQueriesService } from.*Service.js';
+import { UserQueriesService } from '../services/queries/UserQueriesService.js';
+import { RoleQueriesService } from '../services/queries/RoleQueriesService.js';
+import { PermissionQueriesService } from '../services/queries/PermissionQueriesService.js';
+import { UserToRoleQueriesService } from '../services/queries/UserToRoleQueriesService.js';
+import { RoleToPermissionQueriesService } from '../services/queries/RoleToPermissionQueriesService.js';
 import { createLogger } from '../configs/loggerConfig.js';
 import { ResResult } from 'aiot-shared-packages';
 

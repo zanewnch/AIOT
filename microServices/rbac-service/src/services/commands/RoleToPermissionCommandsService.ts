@@ -32,11 +32,11 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 // 匯入角色權限命令資料存取層
-import { RolePermissionCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { RolePermissionCommandsRepositorysitorysitory } from '../../repo/commands/RolePermissionCommandsRepository.js';
 // 匯入角色查詢資料存取層，用於驗證
-import { RoleQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { RoleQueriesRepositorysitorysitory } from '../../repo/queries/RoleQueriesRepository.js';
 // 匯入權限查詢資料存取層，用於驗證
-import { PermissionQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { PermissionQueriesRepositorysitorysitory } from '../../repo/queries/PermissionQueriesRepository.js';
 // 匯入 BaseRedisService
 
 // 匯入 Redis 客戶端類型定義
@@ -45,7 +45,7 @@ import * as sharedPackages from 'aiot-shared-packages';
 // 匯入日誌記錄器
 import { createLogger } from '../../configs/loggerConfig.js';
 // 匯入查詢服務，用於驗證操作
-import { RoleToPermissionQueriesService } from.*Service.js';
+import { RoleToPermissionQueriesService } from '../queries/RoleToPermissionQueriesService.js';
 import type { IRoleToPermissionQueriesService, IRoleToPermissionCommandsService } from '../../types/index.js';
 
 // 創建服務專用的日誌記錄器

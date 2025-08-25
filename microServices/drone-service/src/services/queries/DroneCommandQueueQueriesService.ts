@@ -18,7 +18,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { TYPES } from '../../container/types.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
-import { DroneCommandQueueQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { DroneCommandQueueQueriesRepository } from '../../repositories/queries/DroneCommandQueueQueriesRepository.js';
 
 const logger = createLogger('DroneCommandQueueQueriesService');
 

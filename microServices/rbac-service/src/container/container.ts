@@ -42,15 +42,15 @@ import { RoleToPermissionQueriesController } from '../controllers/queries/RoleTo
 
 // Repository 導入
 import { UserQueriesRepository } from '../repo/queries/UserQueriesRepository.js';
-import { PermissionQueriesRepository } from '../repo/queries/PermissionQueriesRepository.js';
-import { RoleQueriesRepository } from '../repo/queries/RoleQueriesRepository.js';
-import { UserRoleQueriesRepository } from '../repo/queries/UserRoleQueriesRepository.js';
-import { RolePermissionQueriesRepository } from '../repo/queries/RolePermissionQueriesRepository.js';
-import { UserCommandsRepository } from '../repo/commands/UserCommandsRepository.js';
-import { PermissionCommandsRepository } from '../repo/commands/PermissionCommandsRepository.js';
-import { RoleCommandsRepository } from '../repo/commands/RoleCommandsRepository.js';
-import { UserRoleCommandsRepository } from '../repo/commands/UserRoleCommandsRepository.js';
-import { RolePermissionCommandsRepository } from '../repo/commands/RolePermissionCommandsRepository.js';
+import { PermissionQueriesRepositorysitorysitory } from '../repo/queries/PermissionQueriesRepository.js';
+import { RoleQueriesRepositorysitorysitory } from '../repo/queries/RoleQueriesRepository.js';
+import { UserRoleQueriesRepositorysitorysitory } from '../repo/queries/UserRoleQueriesRepository.js';
+import { RolePermissionQueriesRepositorysitorysitory } from '../repo/queries/RolePermissionQueriesRepository.js';
+import { UserCommandsRepositorysitorysitory } from '../repo/commands/UserCommandsRepository.js';
+import { PermissionCommandsRepositorysitorysitory } from '../repo/commands/PermissionCommandsRepository.js';
+import { RoleCommandsRepositorysitorysitory } from '../repo/commands/RoleCommandsRepository.js';
+import { UserRoleCommandsRepositorysitorysitory } from '../repo/commands/UserRoleCommandsRepository.js';
+import { RolePermissionCommandsRepositorysitorysitory } from '../repo/commands/RolePermissionCommandsRepository.js';
 
 // 路由相關導入
 import { RouteRegistrar } from '../routes/RouteRegistrar.js';
@@ -173,45 +173,45 @@ export function createContainer(): Container {
   // ===== Repository 註冊 =====
   
   // Queries Repositories
-  container.bind<UserQueriesRepository>(TYPES.UserQueriesRepository)
-    .to(UserQueriesRepository)
+  container.bind<UserQueriesRepositorysitorysitory>(TYPES.UserQueriesRepository)
+    .to(UserQueriesRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<PermissionQueriesRepository>(TYPES.PermissionQueriesRepository)
-    .to(PermissionQueriesRepository)
+  container.bind<PermissionQueriesRepositorysitorysitory>(TYPES.PermissionQueriesRepository)
+    .to(PermissionQueriesRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<RoleQueriesRepository>(TYPES.RoleQueriesRepository)
-    .to(RoleQueriesRepository)
+  container.bind<RoleQueriesRepositorysitorysitory>(TYPES.RoleQueriesRepository)
+    .to(RoleQueriesRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<UserRoleQueriesRepository>(TYPES.UserRoleQueriesRepository)
-    .to(UserRoleQueriesRepository)
+  container.bind<UserRoleQueriesRepositorysitorysitory>(TYPES.UserRoleQueriesRepository)
+    .to(UserRoleQueriesRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<RolePermissionQueriesRepository>(TYPES.RolePermissionQueriesRepository)
-    .to(RolePermissionQueriesRepository)
+  container.bind<RolePermissionQueriesRepositorysitorysitory>(TYPES.RolePermissionQueriesRepository)
+    .to(RolePermissionQueriesRepositorysitorysitory)
     .inSingletonScope();
 
   // Commands Repositories
-  container.bind<UserCommandsRepository>(TYPES.UserCommandsRepository)
-    .to(UserCommandsRepository)
+  container.bind<UserCommandsRepositorysitorysitory>(TYPES.UserCommandsRepository)
+    .to(UserCommandsRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<PermissionCommandsRepository>(TYPES.PermissionCommandsRepository)
-    .to(PermissionCommandsRepository)
+  container.bind<PermissionCommandsRepositorysitorysitory>(TYPES.PermissionCommandsRepository)
+    .to(PermissionCommandsRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<RoleCommandsRepository>(TYPES.RoleCommandsRepository)
-    .to(RoleCommandsRepository)
+  container.bind<RoleCommandsRepositorysitorysitory>(TYPES.RoleCommandsRepository)
+    .to(RoleCommandsRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<UserRoleCommandsRepository>(TYPES.UserRoleCommandsRepository)
-    .to(UserRoleCommandsRepository)
+  container.bind<UserRoleCommandsRepositorysitorysitory>(TYPES.UserRoleCommandsRepository)
+    .to(UserRoleCommandsRepositorysitorysitory)
     .inSingletonScope();
 
-  container.bind<RolePermissionCommandsRepository>(TYPES.RolePermissionCommandsRepository)
-    .to(RolePermissionCommandsRepository)
+  container.bind<RolePermissionCommandsRepositorysitorysitory>(TYPES.RolePermissionCommandsRepository)
+    .to(RolePermissionCommandsRepositorysitorysitory)
     .inSingletonScope();
 
   // ===== 路由服務註冊 =====

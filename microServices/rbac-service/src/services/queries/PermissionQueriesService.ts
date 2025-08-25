@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { PermissionQueriesRepository } from '../../repositories/queries/PermissionQueriesRepository.js';
+import { PermissionQueriesRepositorysitorysitory } from '../../repo/queries/PermissionQueriesRepository.js';
 import { TYPES } from '../../container/types.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';

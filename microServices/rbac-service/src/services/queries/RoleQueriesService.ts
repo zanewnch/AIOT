@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { RoleQueriesRepository } from '../../repositories/queries/RoleQueriesRepository.js';
+import { RoleQueriesRepositorysitorysitory } from '../../repo/queries/RoleQueriesRepository.js';
 import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';

@@ -33,7 +33,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserCommandsRepository } from '../../repositories/commands/UserCommandsRepository.js';
+import { UserCommandsRepositorysitorysitory } from '../../repo/commands/UserCommandsRepository.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
 

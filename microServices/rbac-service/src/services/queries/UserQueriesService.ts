@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { UserQueriesRepository } from '../../repositories/queries/UserQueriesRepository.js';
+import { UserQueriesRepositorysitorysitory } from '../../repo/queries/UserQueriesRepository.js';
 import { TYPES } from '../../container/types.js';
 import { UserModel } from '../../models/UserModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
