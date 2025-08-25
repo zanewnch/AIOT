@@ -18,7 +18,7 @@ import { DronePositionCommandsRepository } from '../../repositories/commands/Dro
 import { DronePositionQueriesRepository } from '../../repositories/queries/DronePositionQueriesRepository.js';
 import type { DronePositionAttributes, DronePositionCreationAttributes } from '../../models/DronePositionModel.js';
 import type { IDronePositionRepository } from '../../types/repositories/IDronePositionRepository.js';
-import { DronePositionQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DronePositionQueriesService } from '../queries/DronePositionQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 

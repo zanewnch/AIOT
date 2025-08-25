@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {DroneRealTimeStatusQueriesService} from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DroneRealTimeStatusQueriesService } from '../../services/queries/DroneRealTimeStatusQueriesService.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';

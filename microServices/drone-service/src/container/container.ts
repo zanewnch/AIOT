@@ -26,28 +26,28 @@ import { DroneCommandQueueQueriesService } from '../services/queries/DroneComman
 import { DroneCommandQueueCommandsService } from '../services/commands/DroneCommandQueueCommandsService.js';
 
 // Repositorysitorysitory 層導入
-import { DronePositionQueriesRepository } from '../repo/queries/DronePositionQueriesRepository.js';
-import { DronePositionCommandsRepository } from '../repo/commands/DronePositionCommandsRepository.js';
+import { DronePositionQueriesRepositorysitorysitory } from '../repo/queries/DronePositionQueriesRepository.js';
+import { DronePositionCommandsRepositorysitorysitorysitory } from '../repo/commands/DronePositionCommandsRepository.js';
 
 // 配置模組導入
 import { createSequelizeInstance } from '../configs/dbConfig.js';
 import { RabbitMQManager } from '../configs/rabbitmqConfig.js';
 import { ConsulConfig } from '../configs/consulConfig.js';
-import { DroneStatusQueriesRepository } from '../repo/queries/DroneStatusQueriesRepository.js';
-import { DroneStatusCommandsRepository } from '../repo/commands/DroneStatusCommandsRepository.js';
-import { DroneRealTimeStatusQueriesRepository } from '../repo/queries/DroneRealTimeStatusQueriesRepository.js';
-import { DroneRealTimeStatusCommandsRepository } from '../repo/commands/DroneRealTimeStatusCommandsRepository.js';
-import { ArchiveTaskQueriesRepository } from '../repo/queries/ArchiveTaskQueriesRepository.js';
-import { ArchiveTaskCommandsRepository } from '../repo/commands/ArchiveTaskCommandsRepository.js';
-import { DroneStatusArchiveQueriesRepository } from '../repo/queries/DroneStatusArchiveQueriesRepository.js';
-import { DroneStatusArchiveCommandsRepository } from '../repo/commands/DroneStatusArchiveCommandsRepository.js';
-import { DroneCommandQueriesRepository } from '../repo/queries/DroneCommandQueriesRepository.js';
-import { DroneCommandCommandsRepository } from '../repo/commands/DroneCommandCommandsRepository.js';
-import { DroneCommandsArchiveQueriesRepository } from '../repo/queries/DroneCommandsArchiveQueriesRepository.js';
-import { DroneCommandsArchiveCommandsRepository } from '../repo/commands/DroneCommandsArchiveCommandsRepository.js';
-import { DroneCommandQueueQueriesRepository } from '../repo/queries/DroneCommandQueueQueriesRepository.js';
-import { DronePositionsArchiveQueriesRepository } from '../repo/queries/DronePositionsArchiveQueriesRepository.js';
-import { DronePositionsArchiveCommandsRepository } from '../repo/commands/DronePositionsArchiveCommandsRepository.js';
+import { DroneStatusQueriesRepositorysitorysitory } from '../repo/queries/DroneStatusQueriesRepository.js';
+import { DroneStatusCommandsRepositorysitorysitorysitory } from '../repo/commands/DroneStatusCommandsRepository.js';
+import { DroneRealTimeStatusQueriesRepositorysitorysitory } from '../repo/queries/DroneRealTimeStatusQueriesRepository.js';
+import { DroneRealTimeStatusCommandsRepositorysitorysitorysitory } from '../repo/commands/DroneRealTimeStatusCommandsRepository.js';
+import { ArchiveTaskQueriesRepositorysitorysitory } from '../repo/queries/ArchiveTaskQueriesRepository.js';
+import { ArchiveTaskCommandsRepositorysitorysitorysitory } from '../repo/commands/ArchiveTaskCommandsRepository.js';
+import { DroneStatusArchiveQueriesRepositorysitorysitory } from '../repo/queries/DroneStatusArchiveQueriesRepository.js';
+import { DroneStatusArchiveCommandsRepositorysitorysitorysitory } from '../repo/commands/DroneStatusArchiveCommandsRepository.js';
+import { DroneCommandQueriesRepositorysitorysitory } from '../repo/queries/DroneCommandQueriesRepository.js';
+import { DroneCommandCommandsRepositorysitorysitorysitory } from '../repo/commands/DroneCommandCommandsRepository.js';
+import { DroneCommandsArchiveQueriesRepositorysitorysitory } from '../repo/queries/DroneCommandsArchiveQueriesRepository.js';
+import { DroneCommandsArchiveCommandsRepositorysitorysitorysitory } from '../repo/commands/DroneCommandsArchiveCommandsRepository.js';
+import { DroneCommandQueueQueriesRepositorysitorysitory } from '../repo/queries/DroneCommandQueueQueriesRepository.js';
+import { DronePositionsArchiveQueriesRepositorysitorysitory } from '../repo/queries/DronePositionsArchiveQueriesRepository.js';
+import { DronePositionsArchiveCommandsRepositorysitorysitorysitory } from '../repo/commands/DronePositionsArchiveCommandsRepository.js';
 
 // 歷史歸檔服務
 import { ArchiveTaskQueriesService } from '../services/queries/ArchiveTaskQueriesService.js';
@@ -100,49 +100,49 @@ export function createContainer(): Container {
     const container = new Container();
 
     // === Repositorysitorysitory 層 ===
-    container.bind(TYPES.DronePositionQueriesRepo).to(DronePositionQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DronePositionCommandsRepository).to(DronePositionCommandsRepository).inSingletonScope();
-    container.bind(TYPES.DroneStatusQueriesRepo).to(DroneStatusQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DroneStatusCommandsRepository).to(DroneStatusCommandsRepository).inSingletonScope();
-    container.bind(TYPES.DroneRealTimeStatusQueriesRepo).to(DroneRealTimeStatusQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DroneRealTimeStatusCommandsRepository).to(DroneRealTimeStatusCommandsRepository).inSingletonScope();
-    container.bind(TYPES.ArchiveTaskQueriesRepo).to(ArchiveTaskQueriesRepository).inSingletonScope();
-    container.bind(TYPES.ArchiveTaskCommandsRepository).to(ArchiveTaskCommandsRepository).inSingletonScope();
-    container.bind(TYPES.DroneStatusArchiveQueriesRepo).to(DroneStatusArchiveQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DroneStatusArchiveCommandsRepository).to(DroneStatusArchiveCommandsRepository).inSingletonScope();
-    container.bind(TYPES.DroneCommandQueriesRepo).to(DroneCommandQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DroneCommandCommandsRepository).to(DroneCommandCommandsRepository).inSingletonScope();
-    container.bind(TYPES.DroneCommandsArchiveQueriesRepo).to(DroneCommandsArchiveQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DroneCommandsArchiveCommandsRepository).to(DroneCommandsArchiveCommandsRepository).inSingletonScope();
-    container.bind(TYPES.DroneCommandQueueQueriesRepo).to(DroneCommandQueueQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DronePositionsArchiveQueriesRepo).to(DronePositionsArchiveQueriesRepository).inSingletonScope();
-    container.bind(TYPES.DronePositionsArchiveCommandsRepository).to(DronePositionsArchiveCommandsRepository).inSingletonScope();
+    container.bind(TYPES.DronePositionQueriesRepo).to(DronePositionQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DronePositionCommandsRepository).to(DronePositionCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneStatusQueriesRepo).to(DroneStatusQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneStatusCommandsRepository).to(DroneStatusCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneRealTimeStatusQueriesRepo).to(DroneRealTimeStatusQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneRealTimeStatusCommandsRepository).to(DroneRealTimeStatusCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskQueriesRepo).to(ArchiveTaskQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskCommandsRepository).to(ArchiveTaskCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneStatusArchiveQueriesRepo).to(DroneStatusArchiveQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneStatusArchiveCommandsRepository).to(DroneStatusArchiveCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneCommandQueriesRepo).to(DroneCommandQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneCommandCommandsRepository).to(DroneCommandCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneCommandsArchiveQueriesRepo).to(DroneCommandsArchiveQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneCommandsArchiveCommandsRepository).to(DroneCommandsArchiveCommandsRepositorysitorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DroneCommandQueueQueriesRepo).to(DroneCommandQueueQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DronePositionsArchiveQueriesRepo).to(DronePositionsArchiveQueriesRepositorysitorysitory).inSingletonScope();
+    container.bind(TYPES.DronePositionsArchiveCommandsRepository).to(DronePositionsArchiveCommandsRepositorysitorysitorysitory).inSingletonScope();
 
     // === 無人機位置服務 ===
-    container.bind(TYPES.DronePositionQueriesService).to(DronePositionQueriesService).inSingletonScope();
-    container.bind(TYPES.DronePositionCommandsService).to(DronePositionCommandsService).inSingletonScope();
+    container.bind(TYPES.DronePositionQueriesSvc).to(DronePositionQueriesService).inSingletonScope();
+    container.bind(TYPES.DronePositionCommandsSvc).to(DronePositionCommandsService).inSingletonScope();
 
     // === 無人機狀態服務 ===
-    container.bind(TYPES.DroneStatusQueriesService).to(DroneStatusQueriesService).inSingletonScope();
-    container.bind(TYPES.DroneStatusCommandsService).to(DroneStatusCommandsService).inSingletonScope();
+    container.bind(TYPES.DroneStatusQueriesSvc).to(DroneStatusQueriesService).inSingletonScope();
+    container.bind(TYPES.DroneStatusCommandsSvc).to(DroneStatusCommandsService).inSingletonScope();
 
     // === 無人機即時狀態服務 ===
-    container.bind(TYPES.DroneRealTimeStatusQueriesService).to(DroneRealTimeStatusQueriesService).inSingletonScope();
-    container.bind(TYPES.DroneRealTimeStatusCommandsService).to(DroneRealTimeStatusCommandsService).inSingletonScope();
+    container.bind(TYPES.DroneRealTimeStatusQueriesSvc).to(DroneRealTimeStatusQueriesService).inSingletonScope();
+    container.bind(TYPES.DroneRealTimeStatusCommandsSvc).to(DroneRealTimeStatusCommandsService).inSingletonScope();
 
     // === 無人機命令服務 ===
-    container.bind(TYPES.DroneCommandQueriesService).to(DroneCommandQueriesService).inSingletonScope();
-    container.bind(TYPES.DroneCommandCommandsService).to(DroneCommandCommandsService).inSingletonScope();
+    container.bind(TYPES.DroneCommandQueriesSvc).to(DroneCommandQueriesService).inSingletonScope();
+    container.bind(TYPES.DroneCommandCommandsSvc).to(DroneCommandCommandsService).inSingletonScope();
 
     // === 無人機命令佇列服務 ===
-    container.bind(TYPES.DroneCommandQueueQueriesService).to(DroneCommandQueueQueriesService).inSingletonScope();
-    container.bind(TYPES.DroneCommandQueueCommandsService).to(DroneCommandQueueCommandsService).inSingletonScope();
+    container.bind(TYPES.DroneCommandQueueQueriesSvc).to(DroneCommandQueueQueriesService).inSingletonScope();
+    container.bind(TYPES.DroneCommandQueueCommandsSvc).to(DroneCommandQueueCommandsService).inSingletonScope();
 
     // === 歷史歸檔服務 ===
-    container.bind(TYPES.ArchiveTaskQueriesService).to(ArchiveTaskQueriesService).inSingletonScope();
-    container.bind(TYPES.ArchiveTaskCommandsService).to(ArchiveTaskCommandsService).inSingletonScope();
-    container.bind(TYPES.DroneCommandsArchiveQueriesService).to(DroneCommandsArchiveQueriesService).inSingletonScope();
-    container.bind(TYPES.DroneCommandsArchiveCommandsService).to(DroneCommandsArchiveCommandsService).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskQueriesSvc).to(ArchiveTaskQueriesService).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskCommandsSvc).to(ArchiveTaskCommandsService).inSingletonScope();
+    container.bind(TYPES.DroneCommandsArchiveQueriesSvc).to(DroneCommandsArchiveQueriesService).inSingletonScope();
+    container.bind(TYPES.DroneCommandsArchiveCommandsSvc).to(DroneCommandsArchiveCommandsService).inSingletonScope();
     container.bind(TYPES.DronePositionsArchiveQueriesService).to(DronePositionsArchiveQueriesService).inSingletonScope();
     container.bind(TYPES.DronePositionsArchiveCommandsService).to(DronePositionsArchiveCommandsService).inSingletonScope();
     container.bind(TYPES.DroneStatusArchiveQueriesService).to(DroneStatusArchiveQueriesService).inSingletonScope();

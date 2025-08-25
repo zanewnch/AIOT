@@ -18,7 +18,7 @@ import { DroneRealTimeStatusModel } from '../models/DroneRealTimeStatusModel.js'
 import { DroneStatusArchiveModel } from '../models/DroneStatusArchiveModel.js';
 import { DroneCommandResponseDto } from '../dto/index.js';
 import { PaginatedListResponseDto, PaginationResponseDto } from '../dto/index.js';
-import type { PaginatedResult } from.*Repositorysitorysitory.js';
+import type { PaginatedResult } from '../repositories/queries/DronePositionQueriesRepository.js';
 
 /**
  * DTO 映射器類別

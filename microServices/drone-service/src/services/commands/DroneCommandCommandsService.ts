@@ -18,10 +18,10 @@ import type {
     CommandExecutionResult,
     BatchCommandResult
 } from '../../types/services/IDroneCommandService.js';
-import type { IDroneCommandRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
+import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
-import { DroneCommandQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DroneCommandQueriesService } from '../queries/DroneCommandQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 

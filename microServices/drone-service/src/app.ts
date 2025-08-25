@@ -397,7 +397,7 @@ export class App {
      * @returns {DronePositionQueriesService} 無人機位置查詢服務實例
      */
     getDronePositionQueriesService(): DronePositionQueriesService {
-        return ContainerUtils.get<DronePositionQueriesService>(TYPES.DronePositionQueriesService);
+        return ContainerUtils.get<DronePositionQueriesService>(TYPES.DronePositionQueriesSvc);
     }
 
     /**
@@ -408,7 +408,7 @@ export class App {
      * @returns {DronePositionCommandsService} 無人機位置命令服務實例
      */
     getDronePositionCommandsService(): DronePositionCommandsService {
-        return ContainerUtils.get<DronePositionCommandsService>(TYPES.DronePositionCommandsService);
+        return ContainerUtils.get<DronePositionCommandsService>(TYPES.DronePositionCommandsSvc);
     }
 
     /**

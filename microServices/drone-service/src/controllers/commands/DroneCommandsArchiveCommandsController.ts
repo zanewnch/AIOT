@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {NextFunction, Request, Response} from 'express';
-import {DroneCommandsArchiveCommandsService} from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DroneCommandsArchiveCommandsService } from '../../services/commands/DroneCommandsArchiveCommandsService.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';

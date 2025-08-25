@@ -16,8 +16,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
-import type { IDroneStatusRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
-import { DroneStatusQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import type { IDroneStatusRepository } from '../../types/repositories/IDroneStatusRepository.js';
+import { DroneStatusQueriesService } from '../queries/DroneStatusQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 

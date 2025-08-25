@@ -16,11 +16,11 @@ import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
 
 // 導入查詢控制器
-import { DronePositionQueriesController } from.*Controller.js';
-import { DroneCommandQueriesController } from.*Controller.js';
-import { DroneStatusQueriesController } from.*Controller.js';
-import { DroneRealTimeStatusQueriesController } from.*Controller.js';
-import { ArchiveTaskQueriesController } from.*Controller.js';
+import { DronePositionQueriesController } from '../controllers/queries/DronePositionQueriesController.js';
+import { DroneCommandQueriesController } from '../controllers/queries/DroneCommandQueriesController.js';
+import { DroneStatusQueriesController } from '../controllers/queries/DroneStatusQueriesController.js';
+import { DroneRealTimeStatusQueriesController } from '../controllers/queries/DroneRealTimeStatusQueriesController.js';
+import { ArchiveTaskQueriesController } from '../controllers/queries/ArchiveTaskQueriesController.js';
 
 /**
  * Drone Service MCP 工具定義

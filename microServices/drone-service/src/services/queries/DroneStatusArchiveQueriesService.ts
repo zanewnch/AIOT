@@ -16,7 +16,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusArchiveAttributes } from '../../models/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
-import { DroneStatusArchiveQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { DroneStatusArchiveQueriesRepository } from '../../repositories/queries/DroneStatusArchiveQueriesRepository.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
 import { createLogger } from '../../configs/loggerConfig.js';

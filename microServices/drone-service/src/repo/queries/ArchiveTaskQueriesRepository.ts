@@ -11,7 +11,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { ArchiveTaskModel, ArchiveTaskStatus, ArchiveJobType } from '../../models/ArchiveTaskModel.js';
-import { ArchiveTaskQueryOptions } from.*Repositorysitorysitorysitory.js';
+import { ArchiveTaskQueryOptions } from '../../types/repositories/IArchiveTaskRepository.js';
 import { Op, WhereOptions } from 'sequelize';
 import { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import { PaginationRequestDto } from '../../dto/index.js';

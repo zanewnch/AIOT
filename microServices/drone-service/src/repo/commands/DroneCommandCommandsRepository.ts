@@ -11,7 +11,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneCommandModel, DroneCommandCreationAttributes, DroneCommandStatus } from '../../models/DroneCommandModel.js';
-import type { IDroneCommandRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
+import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import { Op } from 'sequelize';
 import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 

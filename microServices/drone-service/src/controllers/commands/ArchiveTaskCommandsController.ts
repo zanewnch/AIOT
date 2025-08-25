@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
 import {CreateArchiveTaskRequest} from '../../types/services/IArchiveTaskService.js';
-import {ArchiveTaskCommandsService} from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { ArchiveTaskCommandsService } from '../../services/commands/ArchiveTaskCommandsService.js';
 import {ArchiveTaskStatus} from '../../models/ArchiveTaskModel.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';

@@ -21,7 +21,7 @@ import {
     PaginationRequestDto
 } from '../../dto/index.js';
 
-import { ArchiveTaskQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { ArchiveTaskQueriesRepository } from '../../repositories/queries/ArchiveTaskQueriesRepository.js';
 import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';

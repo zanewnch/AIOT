@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { DronePositionsArchiveQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { DronePositionsArchiveQueriesRepository } from '../../repositories/queries/DronePositionsArchiveQueriesRepository.js';
 import type { DronePositionsArchiveAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';

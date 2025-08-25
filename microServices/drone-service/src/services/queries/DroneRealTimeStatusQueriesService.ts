@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { DroneRealTimeStatusQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { DroneRealTimeStatusQueriesRepository } from '../../repositories/queries/DroneRealTimeStatusQueriesRepository.js';
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatus,

@@ -23,10 +23,10 @@ import type {
 } from '../../types/services/IArchiveTaskService.js';
 import type {
     IArchiveTaskRepositorysitorysitory
-} from.*Repositorysitorysitorysitory.js';
-import { ArchiveTaskCommandsRepositorysitorysitory } from.*Repositorysitorysitory.js';
-import { ArchiveTaskQueriesRepositorysitory } from.*Repositorysitorysitory.js';
-import { ArchiveTaskQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+} from '../../types/repositories/IArchiveTaskRepository.js';
+import { ArchiveTaskCommandsRepository } from '../../repositories/commands/ArchiveTaskCommandsRepository.js';
+import { ArchiveTaskQueriesRepository } from '../../repositories/queries/ArchiveTaskQueriesRepository.js';
+import { ArchiveTaskQueriesService } from '../queries/ArchiveTaskQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 

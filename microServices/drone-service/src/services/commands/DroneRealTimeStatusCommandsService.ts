@@ -14,9 +14,9 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { DroneRealTimeStatusCommandsRepositorysitorysitory } from.*Repositorysitorysitory.js';
+import { DroneRealTimeStatusCommandsRepository } from '../../repositories/commands/DroneRealTimeStatusCommandsRepository.js';
 // 暫時註解掉不存在的類型導入，使用 any 作為臨時解決方案
-// import type { IDroneRealTimeStatusRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
+// import type { IDroneRealTimeStatusRepository } from '../../types/repositories/IDroneRealTimeStatusRepository.js';
 import { 
     DroneRealTimeStatusModel, 
     DroneRealTimeStatusAttributes, 
@@ -27,7 +27,7 @@ import type {
     DroneRealTimeStatusCreationAttributes as ExternalCreationAttributesLocal,
     DroneRealTimeStatusAttributes as ExternalAttributes
 } from '../../types/services/IDroneRealTimeStatusService.js';
-import { DroneRealTimeStatusQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DroneRealTimeStatusQueriesService } from '../queries/DroneRealTimeStatusQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 

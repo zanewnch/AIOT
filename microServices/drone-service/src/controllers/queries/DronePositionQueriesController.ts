@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {DronePositionQueriesService} from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DronePositionQueriesService } from '../../services/queries/DronePositionQueriesService.js';
 import {createLogger} from '../../configs/loggerConfig.js';
 import {ResResult} from 'aiot-shared-packages';
 import {IDronePositionQueries} from '../../types/controllers/queries/IDronePositionQueries.js';

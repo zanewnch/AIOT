@@ -14,9 +14,9 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import type { IDronePositionsArchiveRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
+import type { IDronePositionsArchiveRepository } from '../../types/repositories/IDronePositionsArchiveRepository.js';
 import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
-import { DronePositionsArchiveQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DronePositionsArchiveQueriesService } from '../queries/DronePositionsArchiveQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 

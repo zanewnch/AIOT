@@ -19,13 +19,13 @@ import type {
     CommandTypeStatistics,
     DroneCommandSummary
 } from '../../types/services/IDroneCommandService.js';
-import type { IDroneCommandRepositorysitorysitory } from.*Repositorysitorysitorysitory.js';
+import type { IDroneCommandRepository } from '../../types/repositories/IDroneCommandRepository.js';
 import type { DroneCommandAttributes, DroneCommandCreationAttributes, DroneCommandType, DroneCommandStatus } from '../../models/DroneCommandModel.js';
 import { DroneCommandType as CommandType, DroneCommandStatus as CommandStatus } from '../../models/DroneCommandModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 import { PaginationRequestDto, PaginatedListResponseDto, DroneCommandResponseDto } from '../../dto/index.js';
-import { DroneCommandQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { DroneCommandQueriesRepository } from '../../repositories/queries/DroneCommandQueriesRepository.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
 
 const logger = createLogger('DroneCommandQueriesService');

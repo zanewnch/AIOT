@@ -18,7 +18,7 @@ import type {
     DroneCommandQueueCreationAttributes
 } from '../../types/services/IDroneCommandQueueService.js';
 import { DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
-import { DroneCommandQueueQueriesService } from "./../../services/commands/from.*Service.jsCommandsService.js"';
+import { DroneCommandQueueQueriesService } from '../queries/DroneCommandQueueQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 
