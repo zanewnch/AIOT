@@ -108,9 +108,9 @@ export class DroneRealTimeStatusCommandsSvc {
                 throw new Error('無效的記錄 ID');
             }
 
-            // 檢查記錄是否存在
-            const existingRecord = await this.repo.findById(id);
-            if (!existingRecord) {
+            // 檢查記錄是否存在（通過查詢分頁方法）
+            const existingRecords = await this.queryService.getRealTimeStatusesByDroneIdPaginated(id, { page: 1, pageSize: 1, sortBy: 'id', sortOrder: 'DESC', offset: 0 });
+            if (existingRecords.length === 0) {
                 throw new Error('即時狀態記錄不存在');
             }
 
@@ -158,9 +158,9 @@ export class DroneRealTimeStatusCommandsSvc {
                 throw new Error('無效的記錄 ID');
             }
 
-            // 檢查記錄是否存在
-            const existingRecord = await this.repo.findById(id);
-            if (!existingRecord) {
+            // 檢查記錄是否存在（通過查詢分頁方法）
+            const existingRecords = await this.queryService.getRealTimeStatusesByDroneIdPaginated(id, { page: 1, pageSize: 1, sortBy: 'id', sortOrder: 'DESC', offset: 0 });
+            if (existingRecords.length === 0) {
                 throw new Error('即時狀態記錄不存在');
             }
 

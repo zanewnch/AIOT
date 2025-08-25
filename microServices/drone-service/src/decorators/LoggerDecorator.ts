@@ -59,7 +59,7 @@ const DEFAULT_LOGGER_OPTIONS: LoggerOptions = {
 export function Logger(name?: string) {
     return function <T extends { new (...args: any[]): {} }>(constructor: T) {
         return class extends constructor {
-            protected readonly logger = createLogger(name || constructor.name);
+            public readonly logger = createLogger(name || constructor.name);
             
             constructor(...args: any[]) {
                 super(...args);
