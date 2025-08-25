@@ -7,7 +7,7 @@
 import { injectable, inject } from 'inversify';
 import amqp, { Connection, Channel, Message } from 'amqplib';
 import { Logger } from 'winston';
-import { EXCHANGES, QUEUES, QUEUE_CONFIGS, RETRY_CONFIG } from '../config/queue.config';
+import { EXCHANGES, QUEUES, QUEUE_CONFIGS, RETRY_CONFIG } from '../configs/queue.config';
 import { 
   BaseScheduleTask, 
   TaskResultMessage,

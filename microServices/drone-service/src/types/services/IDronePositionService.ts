@@ -14,7 +14,7 @@ import type { PaginationParams, PaginatedResult } from '../PaginationTypes.js';
 /**
  * 無人機位置查詢服務介面
  */
-export interface IDronePositionQueriesSvc {
+export interface IDronePositionQueriesService {
     getAllDronePositions(params?: PaginationParams): Promise<PaginatedResult<DronePositionAttributes>>;
     getDronePositionById(id: number): Promise<DronePositionAttributes | null>;
     getDronePositionsByDroneId(droneId: number, limit?: number): Promise<DronePositionAttributes[]>;
@@ -34,7 +34,7 @@ export interface IDronePositionQueriesSvc {
 /**
  * 無人機位置命令服務介面
  */
-export interface IDronePositionCommandsSvc {
+export interface IDronePositionCommandsService {
     createDronePosition(position: Partial<DronePositionAttributes>): Promise<DronePositionAttributes>;
     updateDronePosition(id: number, position: Partial<DronePositionAttributes>): Promise<DronePositionAttributes | null>;
     deleteDronePosition(id: number): Promise<boolean>;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Archive Task Repository Interface
+ * @fileoverview Archive Task Repositorysitorysitory Interface
  * 
  * 定義歷史任務儲存庫的介面規範
  * 
@@ -22,7 +22,7 @@ export interface ArchiveTaskQueryOptions {
   sortOrder?: 'ASC' | 'DESC';
 }
 
-export interface IArchiveTaskRepository {
+export interface IArchiveTaskRepositorysitorysitorysitory {
   /**
    * 創建歷史任務
    */

@@ -76,7 +76,7 @@ export interface CacheOptions {
  * @interface IRoleQueriesService
  * @example
  * ```typescript
- * class RoleQueriesSvc implements IRoleQueriesService {
+ * class RoleQueriesService implements IRoleQueriesService {
  *   async getRolesPaginated(params: PaginationParams): Promise<PaginatedResult<RoleDTO>> {
  *     // 實現邏輯
  *   }

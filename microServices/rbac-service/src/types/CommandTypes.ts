@@ -163,7 +163,7 @@ export interface RemoveRoleRequest {
  * @interface IRoleCommandsService
  * @example
  * ```typescript
- * class RoleCommandsSvc implements IRoleCommandsService {
+ * class RoleCommandsService implements IRoleCommandsService {
  *   async createRole(roleData: CreateRoleRequest): Promise<RoleDTO> {
  *     // 實現邏輯
  *   }
@@ -208,7 +208,7 @@ export interface IRoleCommandsService {
  * @interface IRoleToPermissionCommandsService
  * @example
  * ```typescript
- * class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsService {
+ * class RoleToPermissionCommandsService implements IRoleToPermissionCommandsService {
  *   async assignPermissionsToRole(roleId: number, permissionIds: number[]): Promise<void> {
  *     // 實現邏輯
  *   }

@@ -8,5 +8,5 @@
  * @since 2025-08-12
  */
 
-export type { IDroneRealTimeStatusQueriesSvc } from './IDroneRealTimeStatusQueriesSvc.js';
-export type { IDroneRealTimeStatusCommandsSvc } from './IDroneRealTimeStatusCommandsSvc.js';
+export type { IDroneRealTimeStatusQueriesService } from.*Service.js';
+export type { IDroneRealTimeStatusCommandsService } from.*Service.js';

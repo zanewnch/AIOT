@@ -12,29 +12,27 @@ export const TYPES = {
   
   // 基礎設施服務
   Logger: Symbol.for('Logger'),
-  LoggerService: Symbol.for('LoggerService'),
   DatabaseService: Symbol.for('DatabaseService'),
-  DatabaseConnection: Symbol.for('DatabaseConnection'),
   RabbitMQService: Symbol.for('RabbitMQService'),
-  MonitoringService: Symbol.for('MonitoringService'),
   NotificationService: Symbol.for('NotificationService'),
-  
+  MonitoringService: Symbol.for('MonitoringService'),
   // 儲存庫
   ArchiveTaskRepository: Symbol.for('ArchiveTaskRepository'),
-  
+  ArchiveTaskService: Symbol.for('ArchiveTaskService'),
   // 排程器
   ArchiveScheduler: Symbol.for('ArchiveScheduler'),
-  
   // 控制器
   HealthController: Symbol.for('HealthController'),
-  MetricsController: Symbol.for('MetricsController'),
   ScheduleController: Symbol.for('ScheduleController'),
-  AlertsController: Symbol.for('AlertsController'),
   NotificationController: Symbol.for('NotificationController'),
-  
+  ArchiveTaskController: Symbol.for('ArchiveTaskController'),
   // 配置
   DatabaseConfig: Symbol.for('DatabaseConfig'),
+  DatabaseConnection: Symbol.for('DatabaseConnection'),
   RabbitMQConfig: Symbol.for('RabbitMQConfig'),
   RedisConfig: Symbol.for('RedisConfig'),
-  NotificationConfig: Symbol.for('NotificationConfig')
+  NotificationConfig: Symbol.for('NotificationConfig'),
+  LoggerService: Symbol.for('LoggerService'),
+  MetricsController: Symbol.for('MetricsController'),
+  AlertsController: Symbol.for('AlertsController')
 } as const;

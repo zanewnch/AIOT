@@ -2,7 +2,7 @@
  * @fileoverview 無人機指令請求 DTO
  * 
  * 定義所有與無人機指令相關的請求資料結構
- * 基於 DroneCommandCommandsSvc 和 DroneCommandQueriesSvc 的業務需求設計
+ * 基於 DroneCommandCommandsService 和 DroneCommandQueriesService 的業務需求設計
  * 
  * @author AIOT Team
  * @version 1.0.0

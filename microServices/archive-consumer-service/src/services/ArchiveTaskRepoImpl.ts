@@ -1,19 +1,19 @@
 /**
- * @fileoverview Archive Task Repository 實作
+ * @fileoverview Archive Task Repositorysitorysitory 實作
  * 
  * 【設計意圖 (Intention)】
  * 實作歷史任務數據存取層，提供任務狀態更新和查詢功能
  * 確保任務處理過程中的狀態追蹤和數據一致性
  * 
  * 【實作架構 (Implementation Architecture)】
- * - 實作 ArchiveTaskRepo 介面定義的方法
+ * - 實作 ArchiveTaskRepositorysitory 介面定義的方法
  * - 使用 DatabaseConnection 進行數據操作
  * - 提供事務支援確保數據一致性
  */
 
 import { injectable, inject } from 'inversify';
 import { Logger } from 'winston';
-import { ArchiveTaskRepo, DatabaseConnection } from '../types/processor.types';
+import { ArchiveTaskRepositorysitory, DatabaseConnection } from '../types/processor.types';
 import { TYPES } from '../container/types';
 
 export interface ArchiveTask {
@@ -32,7 +32,7 @@ export interface ArchiveTask {
 }
 
 @injectable()
-export class ArchiveTaskRepoImpl implements ArchiveTaskRepo {
+export class ArchiveTaskRepositorysitoryImpl implements ArchiveTaskRepositorysitory {
   
   constructor(
     @inject(TYPES.DatabaseConnection) private readonly db: DatabaseConnection,

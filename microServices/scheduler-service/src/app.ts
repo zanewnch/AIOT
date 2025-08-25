@@ -27,6 +27,7 @@ import { HealthController } from './controllers/HealthController';
 import { MetricsController } from './controllers/MetricsController';
 import { ScheduleController } from './controllers/ScheduleController';
 import { AlertsController } from './controllers/AlertsController';
+import { ArchiveTaskController } from './controllers/ArchiveTaskController';
 
 /**
  * Scheduler Service 應用程式類別
@@ -52,7 +53,8 @@ export class App {
     @inject(TYPES.HealthController) private readonly healthController: HealthController,
     @inject(TYPES.MetricsController) private readonly metricsController: MetricsController,
     @inject(TYPES.ScheduleController) private readonly scheduleController: ScheduleController,
-    @inject(TYPES.AlertsController) private readonly alertsController: AlertsController
+    @inject(TYPES.AlertsController) private readonly alertsController: AlertsController,
+    @inject(TYPES.ArchiveTaskController) private readonly archiveTaskController: ArchiveTaskController
   ) {
     // 初始化 Express 應用程式
     this.app = express();
@@ -240,6 +242,15 @@ export class App {
 
     // 警報路由
     this.app.get('/alerts', this.alertsController.getAlerts);
+
+    // 歸檔任務路由
+    this.app.get('/archive-tasks', this.archiveTaskController.getTasks);
+    this.app.get('/archive-tasks/statistics', this.archiveTaskController.getStatistics);
+    this.app.post('/archive-tasks/batch-status', this.archiveTaskController.batchUpdateStatus);
+    this.app.get('/archive-tasks/:id', this.archiveTaskController.getTaskById);
+    this.app.post('/archive-tasks', this.archiveTaskController.createTask);
+    this.app.put('/archive-tasks/:id/status', this.archiveTaskController.updateTaskStatus);
+    this.app.delete('/archive-tasks/:id', this.archiveTaskController.deleteTask);
 
     // README 文檔路由
     this.app.get('/readme', (_req: Request, res: Response) => {

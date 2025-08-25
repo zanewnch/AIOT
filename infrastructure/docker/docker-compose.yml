@@ -343,8 +343,7 @@ services:
       - ../../microServices/auth-service/package.json:/app/package.json
       - ../../microServices/auth-service/tsconfig.json:/app/tsconfig.json
       - ../../microServices/auth-service/nodemon.json:/app/nodemon.json
-      - /app/node_modules
-      - /app/aiot-shared-packages
+      - ../../microServices/auth-service/node_modules:/app/node_modules
     networks:
       - aiot-network
     depends_on:
@@ -380,8 +379,7 @@ services:
       - ../../microServices/rbac-service/package.json:/app/package.json
       - ../../microServices/rbac-service/tsconfig.json:/app/tsconfig.json
       - ../../microServices/rbac-service/nodemon.json:/app/nodemon.json
-      - /app/node_modules
-      - /app/aiot-shared-packages
+      - ../../microServices/rbac-service/node_modules:/app/node_modules
     networks:
       - aiot-network
     depends_on:
@@ -417,8 +415,7 @@ services:
       - ../../microServices/drone-service/package.json:/app/package.json
       - ../../microServices/drone-service/tsconfig.json:/app/tsconfig.json
       - ../../microServices/drone-service/nodemon.json:/app/nodemon.json
-      - /app/node_modules
-      - /app/aiot-shared-packages
+      - ../../microServices/drone-service/node_modules:/app/node_modules
     networks:
       - aiot-network
     depends_on:
@@ -452,7 +449,7 @@ services:
       - ../../microServices/drone-websocket-service/.env
     volumes:
       - ../../microServices/drone-websocket-service:/app
-      - /app/node_modules
+      - ../../microServices/drone-websocket-service/node_modules:/app/node_modules
     networks:
       - aiot-network
     depends_on:
@@ -488,8 +485,7 @@ services:
       - ../../microServices/general-service/package.json:/app/package.json
       - ../../microServices/general-service/tsconfig.json:/app/tsconfig.json
       - ../../microServices/general-service/nodemon.json:/app/nodemon.json
-      - /app/node_modules
-      - /app/aiot-shared-packages
+      - ../../microServices/general-service/node_modules:/app/node_modules
     networks:
       - aiot-network
     depends_on:
@@ -522,7 +518,7 @@ services:
       - ../../microServices/scheduler-service/.env
     volumes:
       - ../../microServices/scheduler-service:/app
-      - /app/node_modules
+      - ../../microServices/scheduler-service/node_modules:/app/node_modules
       - scheduler_logs:/app/logs
     networks:
       - aiot-network
@@ -557,7 +553,7 @@ services:
       - ../../microServices/archive-consumer-service/.env
     volumes:
       - ../../microServices/archive-consumer-service:/app
-      - /app/node_modules
+      - ../../microServices/archive-consumer-service/node_modules:/app/node_modules
       - archive_consumer_logs:/app/logs
     networks:
       - aiot-network
@@ -628,7 +624,7 @@ services:
       - ../../microServices/gateway-service/.env
     volumes:
       - ../../microServices/gateway-service:/app
-      - /app/node_modules
+      - ../../microServices/gateway-service/node_modules:/app/node_modules
     networks:
       - aiot-network
     depends_on:
@@ -662,7 +658,7 @@ services:
       - "3000:3000"   # Vite 開發服務器
     volumes:
       - ../../frontend:/app/fe
-      - /app/fe/node_modules
+      - ../../frontend/node_modules:/app/fe/node_modules
       # 快取 node_modules 以提升效能
     networks:
       - aiot-network

@@ -29,9 +29,13 @@ const customFormat = winston.format.combine(
   winston.format.printf(({ timestamp, level, message, service, ...meta }: any) => {
     let logMessage = `${timestamp} [${service || 'GATEWAY'}] ${level.toUpperCase()}: ${message}`;
     
-    // 如果有額外的 metadata，將其附加到日誌中
+    // 如果有額外的 metadata，將其附加到日誌中（處理循環引用）
     if (Object.keys(meta).length > 0) {
-      logMessage += ` ${JSON.stringify(meta)}`;
+      try {
+        logMessage += ` ${JSON.stringify(meta)}`;
+      } catch (error) {
+        logMessage += ` [Metadata contains circular reference]`;
+      }
     }
     
     return logMessage;
@@ -49,7 +53,11 @@ const consoleFormat = winston.format.combine(
     let logMessage = `${timestamp} [${service || 'GATEWAY'}] ${level}: ${message}`;
     
     if (Object.keys(meta).length > 0) {
-      logMessage += ` ${JSON.stringify(meta, null, 2)}`;
+      try {
+        logMessage += ` ${JSON.stringify(meta, null, 2)}`;
+      } catch (error) {
+        logMessage += ` [Metadata contains circular reference]`;
+      }
     }
     
     return logMessage;

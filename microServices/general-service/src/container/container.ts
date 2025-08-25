@@ -13,17 +13,17 @@ import { Container } from 'inversify';
 import { TYPES } from './types.js';
 
 // Repository 層 imports
-import { UserPreferenceCommandsRepository } from '../repo/commands/UserPreferenceCommandsRepo.js';
-import { UserPreferenceQueriesRepo } from '../repo/queries/UserPreferenceQueriesRepo.js';
+import { UserPreferenceCommandsRepository } from '../repo/commands/UserPreferenceCommandsRepository.js';
+import { UserPreferenceQueriesRepository } from '../repo/queries/UserPreferenceQueriesRepository.js';
 
 // Service 層 imports
-import { UserPreferenceCommandsSvc } from '../services/commands/UserPreferenceCommandsSvc.js';
-import { UserPreferenceQueriesSvc } from '../services/queries/UserPreferenceQueriesSvc.js';
+import { UserPreferenceCommandsService } from '../services/commands/UserPreferenceCommandsService.js';
+import { UserPreferenceQueriesService } from '../services/queries/UserPreferenceQueriesService.js';
 
 // Controller 層 imports
-import { UserPreferenceCommandsCtrl } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
-import { UserPreferenceQueriesCtrl } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
-import { DocsQueriesCtrl } from '../controllers/queries/DocsQueriesCtrl.js';
+import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsController.js';
+import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesController.js';
+import { DocsQueriesController } from '../controllers/queries/DocsQueriesController.js';
 
 // Routes 層 imports
 import { UserPreferenceRoutes } from '../routes/userPreferenceRoutes.js';
@@ -41,38 +41,38 @@ export function createContainer(): Container {
     const container = new Container();
 
     // ===== Repository 層註冊 =====
-    container.bind<UserPreferenceCommandsRepository>(TYPES.UserPreferenceCommandsRepo)
+    container.bind<UserPreferenceCommandsRepository>(TYPES.UserPreferenceCommandsRepository)
         .to(UserPreferenceCommandsRepository)
         .inSingletonScope();
 
-    container.bind<UserPreferenceQueriesRepo>(TYPES.UserPreferenceQueriesRepo)
-        .to(UserPreferenceQueriesRepo)
+    container.bind<UserPreferenceQueriesRepository>(TYPES.UserPreferenceQueriesRepository)
+        .to(UserPreferenceQueriesRepository)
         .inSingletonScope();
 
     // ===== Service 層註冊 =====
-    container.bind<UserPreferenceCommandsSvc>(TYPES.UserPreferenceCommandsSvc)
-        .to(UserPreferenceCommandsSvc)
+    container.bind<UserPreferenceCommandsService>(TYPES.UserPreferenceCommandsService)
+        .to(UserPreferenceCommandsService)
         .inSingletonScope();
 
-    container.bind<UserPreferenceQueriesSvc>(TYPES.UserPreferenceQueriesSvc)
-        .to(UserPreferenceQueriesSvc)
+    container.bind<UserPreferenceQueriesService>(TYPES.UserPreferenceQueriesService)
+        .to(UserPreferenceQueriesService)
         .inSingletonScope();
 
     // ===== Controller 層註冊 =====
-    container.bind<UserPreferenceCommandsCtrl>(TYPES.UserPreferenceCommandsCtrl)
-        .to(UserPreferenceCommandsCtrl)
+    container.bind<UserPreferenceCommandsController>(TYPES.UserPreferenceCommandsController)
+        .to(UserPreferenceCommandsController)
         .inSingletonScope();
 
-    container.bind<UserPreferenceQueriesCtrl>(TYPES.UserPreferenceQueriesCtrl)
-        .to(UserPreferenceQueriesCtrl)
+    container.bind<UserPreferenceQueriesController>(TYPES.UserPreferenceQueriesController)
+        .to(UserPreferenceQueriesController)
         .inSingletonScope();
 
     /**
      * 動態文檔 Controller
      * 處理微服務架構文檔展示（EJS 渲染、服務狀態監控）
      */
-    container.bind<DocsQueriesCtrl>(TYPES.DocsController)
-        .to(DocsQueriesCtrl)
+    container.bind<DocsQueriesController>(TYPES.DocsController)
+        .to(DocsQueriesController)
         .inSingletonScope();
 
     // ===== Routes 層註冊 =====

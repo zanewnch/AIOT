@@ -88,7 +88,7 @@ export interface RabbitMQService {
  * 歸檔任務儲存庫介面
  * 定義歸檔任務數據操作的基本方法
  */
-export interface ArchiveTaskRepo {
+export interface ArchiveTaskRepositorysitory {
   findById(id: number): Promise<any>;
   findByTaskId(taskId: string): Promise<any>;
   create(data: any): Promise<any>;

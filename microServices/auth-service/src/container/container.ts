@@ -13,13 +13,13 @@ import { Container } from 'inversify';
 import { TYPES } from '../container/types.js';
 
 // 認證服務
-import { AuthCommandsSvc } from '../services/commands/AuthCommandsSvc.js';
-import { AuthQueriesSvc } from '../services/queries/AuthQueriesSvc.js';
-import { SessionQueriesSvc } from '../services/queries/SessionQueriesSvc.js';
+import { AuthCommandsService } from '../services/commands/AuthCommandsService.js';
+import { AuthQueriesService } from '../services/queries/AuthQueriesService.js';
+import { SessionQueriesService } from '../services/queries/SessionQueriesService.js';
 
 // 認證控制器
-import { AuthCommandsCtrl } from '../controllers/commands/AuthCommandsCtrl.js';
-import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthCommandsController } from '../controllers/commands/AuthCommandsController.js';
+import { AuthQueriesController } from '../controllers/queries/AuthQueriesController.js';
 
 // gRPC 和路由服務
 import { AuthGrpcServer } from '../grpc/authGrpcServer.js';
@@ -41,18 +41,18 @@ export function createContainer(): Container {
   // ===== 認證服務註冊 =====
   
   // 認證服務
-  container.bind<AuthCommandsSvc>(TYPES.AuthCommandsSvc)
-    .to(AuthCommandsSvc)
+  container.bind<AuthCommandsService>(TYPES.AuthCommandsService)
+    .to(AuthCommandsService)
     .inSingletonScope();
   // 說明: 註冊認證命令服務為 singleton，供全域注入使用
   
-  container.bind<AuthQueriesSvc>(TYPES.AuthQueriesSvc)
-    .to(AuthQueriesSvc)
+  container.bind<AuthQueriesService>(TYPES.AuthQueriesService)
+    .to(AuthQueriesService)
     .inSingletonScope();
   // 說明: 查詢服務同樣以 singleton 註冊，避免多次建立 DB 連線
     
-  container.bind<SessionQueriesSvc>(TYPES.SessionQueriesSvc)
-    .to(SessionQueriesSvc)
+  container.bind<SessionQueriesService>(TYPES.SessionQueriesService)
+    .to(SessionQueriesService)
     .inSingletonScope();
   // 說明: 會話查詢服務，用於驗證與查詢 session 資訊
 
@@ -61,12 +61,12 @@ export function createContainer(): Container {
   // ===== 認證控制器註冊 =====
   
   // 認證控制器
-  container.bind<AuthCommandsCtrl>(TYPES.AuthCommandsCtrl)
-    .to(AuthCommandsCtrl)
+  container.bind<AuthCommandsController>(TYPES.AuthCommandsController)
+    .to(AuthCommandsController)
     .inSingletonScope();
   
-  container.bind<AuthQueriesCtrl>(TYPES.AuthQueriesCtrl)
-    .to(AuthQueriesCtrl)
+  container.bind<AuthQueriesController>(TYPES.AuthQueriesController)
+    .to(AuthQueriesController)
     .inSingletonScope();
 
   // ===== gRPC 和路由服務註冊 =====

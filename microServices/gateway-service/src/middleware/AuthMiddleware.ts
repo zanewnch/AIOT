@@ -26,7 +26,7 @@ export interface AuthMiddlewareOptions extends JwtMiddlewareOptions {
  */
 export class AuthMiddleware {
     // 暫時註解掉黑名單服務，避免依賴問題
-    // private static blacklistService: JwtBlacklistSvc;
+    // private static blacklistService: JwtBlacklistService;
     private static logger = loggerConfig;
 
     /**
@@ -35,7 +35,7 @@ export class AuthMiddleware {
     public static initialize(): void {
         // 暫時跳過黑名單服務初始化
         // if (!AuthMiddleware.blacklistService) {
-        //     AuthMiddleware.blacklistService = new JwtBlacklistSvc();
+        //     AuthMiddleware.blacklistService = new JwtBlacklistService();
         //     AuthMiddleware.logger.info('✅ Auth middleware initialized with blacklist service');
         // }
         AuthMiddleware.logger.info('✅ Auth middleware initialized');

@@ -34,12 +34,12 @@ export class DroneCommandRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.DroneCommandQueriesCtrl) private readonly droneCommandQueries: IDroneCommandQueries,
-        @inject(TYPES.DroneCommandCommandsCtrl) private readonly droneCommandCommands: IDroneCommandCommands,
-        @inject(TYPES.DroneCommandQueueQueriesCtrl) private readonly droneCommandQueueQueries: IDroneCommandQueueQueries,
-        @inject(TYPES.DroneCommandQueueCommandsCtrl) private readonly droneCommandQueueCommands: IDroneCommandQueueCommands,
-        @inject(TYPES.DroneCommandsArchiveQueriesCtrl) private readonly droneCommandsArchiveQueries: IDroneCommandsArchiveQueries,
-        @inject(TYPES.DroneCommandsArchiveCommandsCtrl) private readonly droneCommandsArchiveCommands: IDroneCommandsArchiveCommands
+        @inject(TYPES.DroneCommandQueriesController) private readonly droneCommandQueries: IDroneCommandQueries,
+        @inject(TYPES.DroneCommandCommandsController) private readonly droneCommandCommands: IDroneCommandCommands,
+        @inject(TYPES.DroneCommandQueueQueriesController) private readonly droneCommandQueueQueries: IDroneCommandQueueQueries,
+        @inject(TYPES.DroneCommandQueueCommandsController) private readonly droneCommandQueueCommands: IDroneCommandQueueCommands,
+        @inject(TYPES.DroneCommandsArchiveQueriesController) private readonly droneCommandsArchiveQueries: IDroneCommandsArchiveQueries,
+        @inject(TYPES.DroneCommandsArchiveCommandsController) private readonly droneCommandsArchiveCommands: IDroneCommandsArchiveCommands
     ) {
         this.router = Router();
         this.setupRoutes();

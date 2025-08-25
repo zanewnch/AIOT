@@ -21,13 +21,13 @@ import { config } from '../configs/environment';
 import { 
   DatabaseConnection, 
   RabbitMQService as IRabbitMQService,
-  ArchiveTaskRepo
+  ArchiveTaskRepositorysitory
 } from '../types/processor.types';
 
 // 服務實作
 import { PostgreSQLDatabaseConnection } from '../configs/database';
 import { RabbitMQService } from '../services/RabbitMQService';
-import { ArchiveTaskRepoImpl } from '../services/ArchiveTaskRepoImpl';
+import { ArchiveTaskRepositorysitoryImpl } from.*RepositorysitorysitoryImpl';
 import { ArchiveProcessor } from '../processors/ArchiveProcessor';
 import { ArchiveConsumer } from '../consumers/ArchiveConsumer';
 import { RouteRegistrar } from '../routes/RouteRegistrar';
@@ -62,8 +62,8 @@ export const createContainer = (): Container => {
     .inSingletonScope();
 
   // === 儲存庫服務 ===
-  container.bind<ArchiveTaskRepo>(TYPES.ArchiveTaskRepo)
-    .to(ArchiveTaskRepoImpl)
+  container.bind<ArchiveTaskRepositorysitory>(TYPES.ArchiveTaskRepositorysitory)
+    .to(ArchiveTaskRepositorysitoryImpl)
     .inSingletonScope();
 
   // === 核心處理器 ===

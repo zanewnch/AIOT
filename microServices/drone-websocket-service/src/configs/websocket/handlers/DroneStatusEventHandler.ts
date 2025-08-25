@@ -16,8 +16,8 @@ import { injectable, inject } from 'inversify';
 import { Socket } from 'socket.io';
 import { TYPES } from '@/container';
 import type { 
-    IDroneRealTimeStatusQueriesSvc,
-    IDroneRealTimeStatusCommandsSvc
+    IDroneRealTimeStatusQueriesService,
+    IDroneRealTimeStatusCommandsService
 } from '@/interfaces/services';
 import { createLogger } from '@/configs/loggerConfig.js';
 import type { IDroneEventHandler } from '@/types/websocket-interfaces.js';
@@ -37,10 +37,10 @@ export class IntegratedDroneStatusEventHandler implements IDroneEventHandler {
     private statusSubscriptionCount = 0;
 
     constructor(
-        @inject(TYPES.IDroneRealTimeStatusQueriesSvc) 
-        private readonly droneStatusQueriesService: IDroneRealTimeStatusQueriesSvc,
-        @inject(TYPES.IDroneRealTimeStatusCommandsSvc) 
-        private readonly droneStatusCommandsService: IDroneRealTimeStatusCommandsSvc
+        @inject(TYPES.IDroneRealTimeStatusQueriesService) 
+        private readonly droneStatusQueriesService: IDroneRealTimeStatusQueriesService,
+        @inject(TYPES.IDroneRealTimeStatusCommandsService) 
+        private readonly droneStatusCommandsService: IDroneRealTimeStatusCommandsService
     ) {}
 
     /**

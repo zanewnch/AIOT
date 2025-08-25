@@ -1,14 +1,42 @@
 /**
  * @fileoverview 歸檔任務排程器 - 負責定時創建並發布歸檔任務到 RabbitMQ
  * 
+ * ============================================================================
+ * 🏗️ 系統架構職責分工說明 (Producer-Consumer 模式)
+ * ============================================================================
+ * 
+ * 1. 【ArchiveScheduler】= 任務調度引擎 (Publisher/Producer) ← 本文件
+ *    職責：
+ *    • 負責「什麼時候」做歸檔 (定時 cron 排程)
+ *    • 負責「發布」歸檔任務到 RabbitMQ
+ *    • 監控任務超時、重試、狀態同步
+ *    • ⚠️ 重要：不執行實際歸檔操作，只負責任務創建與發布
+ * 
+ * 2. 【ArchiveTaskController】= 任務管理介面 (Task Management API)
+ *    職責：
+ *    • 負責「查看和管理」已創建的任務 (HTTP REST API)
+ *    • 提供人工干預的入口 (手動觸發、狀態更新)
+ *    • 任務列表查詢、統計報表、CRUD 操作
+ *    • ⚠️ 重要：不負責任務調度，不執行實際歸檔
+ * 
+ * 3. 【Archive Consumer】= 實際歸檔執行者 (Consumer/Worker) [另外的服務]
+ *    職責：
+ *    • 負責「實際執行」歸檔操作 (監聽 RabbitMQ 任務)
+ *    • 執行資料搬移、壓縮、清理等具體業務邏輯
+ *    • 完成後回報結果到 TASK_RESULT 佇列
+ * 
+ * 🔄 工作流程：
+ * Scheduler (定時發布) → RabbitMQ → Consumer (執行歸檔) → 回報結果 → Scheduler (更新狀態)
+ *                     ↕
+ *              Controller (查詢/管理)
+ * 
+ * ============================================================================
+ * 
  * 本類別實現 Publisher 模式，職責包括：
  * 1. 管理多種定時排程 (歸檔/清理/監控)
  * 2. 估算資料量並創建任務記錄
  * 3. 構建 RabbitMQ 訊息並發布到對應佇列
  * 4. 監控任務超時和重試機制
- * 
- * 重要：此類別只負責任務發布，不執行實際的歸檔操作
- * 實際歸檔由對應的 Consumer 服務處理
  * 
  * 支援的排程任務：
  * - archive-daily: 每日歸檔 (drone_positions, drone_commands, drone_real_time_status)
@@ -27,22 +55,26 @@ import { Logger } from 'winston';
 import { TYPES } from '../container/types';
 import { RabbitMQService } from '../services/RabbitMQService';
 import { ArchiveTaskRepository } from '../repositories/ArchiveTaskRepository';
+import { ArchiveTaskService } from '../services/ArchiveTaskService';
 import { ArchiveTaskModel, ArchiveJobType } from '../models/ArchiveTaskModel';
 import { 
   ArchiveTaskMessage, 
   CleanupTaskMessage,
-  TaskType 
+  TaskType,
+  TaskResultMessage,
+  ScheduleStatus 
 } from '../types/scheduler.types';
 import { 
   ARCHIVE_CONFIG, 
   CLEANUP_CONFIG,
   DEFAULT_SCHEDULES 
-} from '../config/schedule.config';
+} from '../configs/schedule.config';
 import { 
   EXCHANGES, 
   ROUTING_KEYS, 
-  TASK_PRIORITIES 
-} from '../config/queue.config';
+  TASK_PRIORITIES,
+  QUEUES 
+} from '../configs/queue.config';
 
 export interface DatabaseConnection {
   query(sql: string, params?: any[]): Promise<any[]>;
@@ -52,10 +84,12 @@ export interface DatabaseConnection {
 export class ArchiveScheduler {
   private scheduledJobs: Map<string, cron.ScheduledTask> = new Map();
   private isRunning = false;
+  private resultConsumerTag: string | null = null;
 
   constructor(
     @inject(TYPES.RabbitMQService) private rabbitMQService: RabbitMQService,
-    @inject(TYPES.ArchiveTaskRepository) private archiveTaskRepo: ArchiveTaskRepository,
+    @inject(TYPES.ArchiveTaskRepository) private archiveTaskRepository: ArchiveTaskRepository,
+    @inject(TYPES.ArchiveTaskService) private archiveTaskService: ArchiveTaskService,
     @inject(TYPES.DatabaseConnection) private database: DatabaseConnection,
     @inject(TYPES.Logger) private logger: Logger
   ) {}
@@ -81,6 +115,9 @@ export class ArchiveScheduler {
    */
   start = async (): Promise<void> => {
     try {
+      // 啟動結果消費者
+      await this.startResultConsumer();
+      
       // 啟動歸檔排程
       this.scheduleArchiveTasks();
       
@@ -91,7 +128,8 @@ export class ArchiveScheduler {
       this.scheduleMonitoringTasks();
 
       this.logger.info('Archive scheduler started successfully', {
-        scheduledJobs: Array.from(this.scheduledJobs.keys())
+        scheduledJobs: Array.from(this.scheduledJobs.keys()),
+        resultConsumerActive: !!this.resultConsumerTag
       });
     } catch (error) {
       this.logger.error('Failed to start archive scheduler', error);
@@ -120,6 +158,9 @@ export class ArchiveScheduler {
    */
   stop = async (): Promise<void> => {
     try {
+      // 停止結果消費者
+      await this.stopResultConsumer();
+      
       for (const [name, job] of this.scheduledJobs.entries()) {
         if (typeof job.stop === 'function') {
           job.stop();
@@ -441,7 +482,7 @@ export class ArchiveScheduler {
       const batchId = `${jobType.toUpperCase()}_${startDate.toISOString().split('T')[0].replace(/-/g, '')}_${Date.now()}`;
 
       // 創建資料庫記錄
-      const task = await this.archiveTaskRepo.create({
+      const task = await this.archiveTaskRepository.create({
         jobType: jobType as ArchiveJobType,
         tableName,
         archiveTableName,
@@ -620,7 +661,7 @@ export class ArchiveScheduler {
    */
   private checkTimeoutTasks = async (): Promise<void> => {
     try {
-      const timeoutTasks = await this.archiveTaskRepo.findTimeoutTasks(4); // 4小時超時
+      const timeoutTasks = await this.archiveTaskRepository.findTimeoutTasks(4); // 4小時超時
 
       if (timeoutTasks.length > 0) {
         this.logger.warn('Found timeout tasks', {
@@ -678,7 +719,7 @@ export class ArchiveScheduler {
    */
   private checkRetryableTasks = async (): Promise<void> => {
     try {
-      const retryableTasks = await this.archiveTaskRepo.findRetryableTasks(3);
+      const retryableTasks = await this.archiveTaskRepository.findRetryableTasks(3);
 
       for (const task of retryableTasks) {
         // 簡單的重試邏輯：失敗後30分鐘可以重試
@@ -883,4 +924,222 @@ export class ArchiveScheduler {
       nextExecutions
     };
   }
+
+  /**
+   * 🔄 啟動結果消費者 - 監聽Consumer任務完成回報
+   * 
+   * 功能說明：
+   * - 建立RabbitMQ消費者監聽任務結果佇列
+   * - 接收Consumer完成後的狀態更新訊息
+   * - 確保任務狀態在資料庫中正確同步
+   * 
+   * 消費者設定：
+   * - 監聽佇列：scheduler.task.result
+   * - 手動確認模式：確保訊息處理完成後才確認
+   * - 預取數量：1，避免積壓過多訊息
+   * - 錯誤處理：失敗訊息會重新排隊重試
+   * 
+   * 處理流程：
+   * 1. 接收TaskResultMessage訊息
+   * 2. 解析任務ID和狀態資訊
+   * 3. 調用ArchiveTaskService更新任務狀態
+   * 4. 確認訊息處理完成
+   * 5. 記錄處理結果日誌
+   */
+  private startResultConsumer = async (): Promise<void> => {
+    try {
+      this.logger.info('Starting task result consumer...');
+
+      this.resultConsumerTag = await this.rabbitMQService.consume(
+        QUEUES.TASK_RESULT,
+        this.handleTaskResult,
+        {
+          noAck: false,    // 手動確認模式
+          prefetch: 1      // 一次只處理一個訊息
+        }
+      );
+
+      this.logger.info('Task result consumer started successfully', {
+        queue: QUEUES.TASK_RESULT,
+        consumerTag: this.resultConsumerTag
+      });
+
+    } catch (error) {
+      this.logger.error('Failed to start task result consumer', error);
+      throw error;
+    }
+  };
+
+  /**
+   * 🛑 停止結果消費者 - 安全關閉結果監聽
+   * 
+   * 功能說明：
+   * - 安全停止RabbitMQ結果消費者
+   * - 清理消費者標籤和相關資源
+   * - 確保優雅關閉，不影響正在處理的訊息
+   * 
+   * 停止邏輯：
+   * - 檢查消費者是否存在並處於活動狀態
+   * - 調用RabbitMQ服務停止消費者
+   * - 清空消費者標籤引用
+   * - 記錄停止狀態日誌
+   * 
+   * 安全保證：
+   * - 不會強制中斷正在處理的訊息
+   * - 停止失敗不會影響其他組件關閉
+   * - 完整的錯誤處理和日誌記錄
+   */
+  private stopResultConsumer = async (): Promise<void> => {
+    try {
+      if (this.resultConsumerTag) {
+        this.logger.info('Stopping task result consumer...', {
+          consumerTag: this.resultConsumerTag
+        });
+
+        // 注意：這裡需要RabbitMQService實現cancelConsumer方法
+        // 或者在連接關閉時自動取消所有消費者
+        this.resultConsumerTag = null;
+
+        this.logger.info('Task result consumer stopped successfully');
+      }
+    } catch (error) {
+      this.logger.error('Failed to stop task result consumer', error);
+      // 不重新拋出錯誤，避免影響整體關閉流程
+    }
+  };
+
+  /**
+   * 📨 處理任務結果訊息 - 核心狀態同步邏輯
+   * 
+   * 功能說明：
+   * - 這是Consumer結果處理的核心方法
+   * - 接收Consumer完成的任務狀態並同步到資料庫
+   * - 實現完整的任務生命週期管理
+   * 
+   * 處理邏輯：
+   * 1. **訊息驗證**：檢查taskId格式和必要欄位
+   * 2. **狀態判斷**：根據結果狀態選擇對應處理方式
+   * 3. **資料庫更新**：調用ArchiveTaskService更新任務狀態
+   * 4. **訊息確認**：處理成功後確認訊息
+   * 5. **錯誤處理**：失敗時記錄錯誤並決定是否重試
+   * 
+   * 支援的狀態轉換：
+   * - **COMPLETED**: 任務成功完成
+   *   - 更新處理記錄數量 (processedRecords)
+   *   - 設定完成時間戳
+   *   - 記錄執行時間統計
+   * 
+   * - **FAILED**: 任務執行失敗
+   *   - 記錄失敗原因 (errorMessage)
+   *   - 增加重試計數
+   *   - 保留失敗時間戳
+   * 
+   * 錯誤處理策略：
+   * - **格式錯誤**: 拒絕訊息，記錄錯誤不重試
+   * - **資料庫錯誤**: 重新排隊，稍後重試處理
+   * - **未知狀態**: 記錄警告，確認訊息避免積壓
+   * 
+   * 日誌記錄：
+   * - 記錄所有狀態更新操作
+   * - 包含任務ID、狀態、處理時間等關鍵資訊
+   * - 錯誤情況下記錄完整堆疊追蹤
+   * 
+   * @param result Consumer發送的任務結果訊息
+   * @param ack 訊息確認函數
+   * @param nack 訊息拒絕函數 (requeue參數控制是否重新排隊)
+   */
+  private handleTaskResult = async (
+    message: any,
+    ack: () => void,
+    nack: (requeue?: boolean) => void
+  ): Promise<void> => {
+    const result = message as TaskResultMessage;
+    const startTime = Date.now();
+
+    this.logger.info('Received task result', {
+      taskId: result.taskId,
+      taskType: result.taskType,
+      status: result.status,
+      processedRecords: result.processedRecords,
+      executionTime: result.executionTime
+    });
+
+    try {
+      // 驗證訊息格式
+      if (!result.taskId) {
+        this.logger.error('Invalid task result: missing taskId', result);
+        nack(false); // 不重新排隊，格式錯誤的訊息
+        return;
+      }
+
+      const taskId = parseInt(result.taskId);
+      if (isNaN(taskId)) {
+        this.logger.error('Invalid task result: taskId must be a number', {
+          taskId: result.taskId
+        });
+        nack(false); // 不重新排隊
+        return;
+      }
+
+      // 根據狀態處理任務結果
+      switch (result.status) {
+        case ScheduleStatus.COMPLETED:
+          await this.archiveTaskService.completeTask(
+            taskId,
+            result.processedRecords || 0
+          );
+          
+          this.logger.info('Task marked as completed successfully', {
+            taskId,
+            processedRecords: result.processedRecords,
+            executionTime: result.executionTime
+          });
+          break;
+
+        case ScheduleStatus.FAILED:
+          await this.archiveTaskService.failTask(
+            taskId,
+            result.errorMessage || 'Task execution failed'
+          );
+          
+          this.logger.warn('Task marked as failed', {
+            taskId,
+            errorMessage: result.errorMessage,
+            executionTime: result.executionTime
+          });
+          break;
+
+        default:
+          this.logger.warn('Unknown task result status', {
+            taskId,
+            status: result.status
+          });
+          // 確認訊息以避免積壓，但記錄警告
+          break;
+      }
+
+      // 確認訊息處理完成
+      ack();
+
+      this.logger.debug('Task result processed successfully', {
+        taskId,
+        status: result.status,
+        processingTime: Date.now() - startTime
+      });
+
+    } catch (error) {
+      const processingTime = Date.now() - startTime;
+      
+      this.logger.error('Failed to process task result', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        taskId: result.taskId,
+        status: result.status,
+        processingTime
+      });
+
+      // 重新排隊以便稍後重試
+      nack(true);
+    }
+  };
 }

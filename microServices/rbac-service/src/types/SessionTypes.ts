@@ -47,7 +47,7 @@ export interface SessionData {
  * @interface ISessionQueriesService
  * @example
  * ```typescript
- * class SessionQueriesSvc implements ISessionQueriesService {
+ * class SessionQueriesService implements ISessionQueriesService {
  *   async getSessionData(sessionId: string): Promise<SessionData | null> {
  *     // 實現邏輯
  *   }

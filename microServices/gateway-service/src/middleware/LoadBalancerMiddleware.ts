@@ -504,7 +504,7 @@ export class LoadBalancerMiddleware {
     /**
      * 獲取服務健康狀態報告
      */
-    public getHealthReport(serviceName?: string): Record<string, ServiceHealth[]> {
+    public getHealthRepositorysitoryrt(serviceName?: string): Record<string, ServiceHealth[]> {
         const report: Record<string, ServiceHealth[]> = {};
         
         const serviceNames = serviceName ? [serviceName] : Array.from(this.serviceHealthMap.keys());

@@ -29,6 +29,7 @@
     "@types/cors": "^2.8.19",
     "@types/ejs": "^3.1.5",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/marked": "^5.0.2",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
     "@types/socket.io": "^3.0.1",
@@ -51,12 +52,13 @@
     "jade": "^0.29.0",
     "js-yaml": "^3.14.1",
     "jsonwebtoken": "^9.0.2",
+    "marked": "^15.0.12",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.0",
     "morgan": "^1.10.1",
-    "pg": "^8.8.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pg": "^8.8.0",
     "pug": "^3.0.3",
     "redis": "^5.8.2",
     "reflect-metadata": "^0.2.2",
@@ -78,7 +80,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/mongodb": "^4.0.6",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^20.19.1",
+    "@types/node": "^20.19.11",
     "@types/supertest": "^6.0.3",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/uuid": "^10.0.0",
@@ -91,6 +93,6 @@
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.7",
     "typedoc-theme-hierarchy": "^6.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }

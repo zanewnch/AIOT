@@ -17,6 +17,8 @@ import { MonitoringService } from '../services/MonitoringService';
 import { NotificationService } from '../services/NotificationService';
 import { ArchiveScheduler } from '../schedulers/ArchiveScheduler';
 import { ArchiveTaskRepository } from '../repositories/ArchiveTaskRepository';
+import { ArchiveTaskService } from '../services/ArchiveTaskService';
+import { ArchiveTaskController } from '../controllers/ArchiveTaskController';
 
 // 應用程式導入
 import { App } from '../app';
@@ -150,6 +152,9 @@ export class ContainerUtils {
     // 儲存庫
     container.bind(TYPES.ArchiveTaskRepository).to(ArchiveTaskRepository).inSingletonScope();
     
+    // 服務層
+    container.bind(TYPES.ArchiveTaskService).to(ArchiveTaskService).inSingletonScope();
+    
     // 排程器
     container.bind(TYPES.ArchiveScheduler).to(ArchiveScheduler).inSingletonScope();
     
@@ -166,6 +171,7 @@ export class ContainerUtils {
     container.bind(TYPES.ScheduleController).to(ScheduleController).inSingletonScope();
     container.bind(TYPES.AlertsController).to(AlertsController).inSingletonScope();
     container.bind(TYPES.NotificationController).to(NotificationController).inSingletonScope();
+    container.bind(TYPES.ArchiveTaskController).to(ArchiveTaskController).inSingletonScope();
   }
 
   /**

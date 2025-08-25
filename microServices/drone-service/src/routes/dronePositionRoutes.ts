@@ -33,10 +33,10 @@ export class DronePositionRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.DronePositionQueriesCtrl) private readonly dronePositionQueries: IDronePositionQueries,
-        @inject(TYPES.DronePositionCommandsCtrl) private readonly dronePositionCommands: IDronePositionCommands,
-        @inject(TYPES.DronePositionsArchiveQueriesCtrl) private readonly dronePositionsArchiveQueries: IDronePositionsArchiveQueries,
-        @inject(TYPES.DronePositionsArchiveCommandsCtrl) private readonly dronePositionsArchiveCommands: IDronePositionsArchiveCommands
+        @inject(TYPES.DronePositionQueriesController) private readonly dronePositionQueries: IDronePositionQueries,
+        @inject(TYPES.DronePositionCommandsController) private readonly dronePositionCommands: IDronePositionCommands,
+        @inject(TYPES.DronePositionsArchiveQueriesController) private readonly dronePositionsArchiveQueries: IDronePositionsArchiveQueries,
+        @inject(TYPES.DronePositionsArchiveCommandsController) private readonly dronePositionsArchiveCommands: IDronePositionsArchiveCommands
     ) {
         this.router = Router();
         this.setupRoutes();

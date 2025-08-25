@@ -33,8 +33,8 @@ import { ConsulConfig } from './configs/consulConfig.js';
 //     IWebSocketService,
 //     IWebSocketAuthMiddleware
 // } from './types/websocket-interfaces.js';
-import { DronePositionQueriesSvc } from './services/queries/DronePositionQueriesSvc.js';
-import { DronePositionCommandsSvc } from './services/commands/DronePositionCommandsSvc.js';
+import { DronePositionQueriesService } from './services/queries/DronePositionQueriesService.js';
+import { DronePositionCommandsService } from './services/commands/DronePositionCommandsService.js';
 
 /**
  * Express 應用程式配置類別 (重構版 - 使用 InversifyJS 依賴注入)
@@ -386,29 +386,29 @@ export class App {
 
     /**
      * 無人機命令服務已重構為 CQRS 模式
-     * 請使用 DroneCommandQueriesSvc 和 DroneCommandCommandsSvc
+     * 請使用 DroneCommandQueriesService 和 DroneCommandCommandsService
      */
 
     /**
      * 獲取無人機位置查詢服務實例（透過 IoC 容器）
      *
      * @public
-     * @method getDronePositionQueriesSvc
-     * @returns {DronePositionQueriesSvc} 無人機位置查詢服務實例
+     * @method getDronePositionQueriesService
+     * @returns {DronePositionQueriesService} 無人機位置查詢服務實例
      */
-    getDronePositionQueriesSvc(): DronePositionQueriesSvc {
-        return ContainerUtils.get<DronePositionQueriesSvc>(TYPES.DronePositionQueriesSvc);
+    getDronePositionQueriesService(): DronePositionQueriesService {
+        return ContainerUtils.get<DronePositionQueriesService>(TYPES.DronePositionQueriesService);
     }
 
     /**
      * 獲取無人機位置命令服務實例（透過 IoC 容器）
      *
      * @public
-     * @method getDronePositionCommandsSvc
-     * @returns {DronePositionCommandsSvc} 無人機位置命令服務實例
+     * @method getDronePositionCommandsService
+     * @returns {DronePositionCommandsService} 無人機位置命令服務實例
      */
-    getDronePositionCommandsSvc(): DronePositionCommandsSvc {
-        return ContainerUtils.get<DronePositionCommandsSvc>(TYPES.DronePositionCommandsSvc);
+    getDronePositionCommandsService(): DronePositionCommandsService {
+        return ContainerUtils.get<DronePositionCommandsService>(TYPES.DronePositionCommandsService);
     }
 
     /**

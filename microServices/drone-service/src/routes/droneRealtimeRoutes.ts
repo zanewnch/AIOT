@@ -31,8 +31,8 @@ export class DroneRealtimeRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.DroneRealTimeStatusQueriesCtrl) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
-        @inject(TYPES.DroneRealTimeStatusCommandsCtrl) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands
+        @inject(TYPES.DroneRealTimeStatusQueriesController) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
+        @inject(TYPES.DroneRealTimeStatusCommandsController) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands
     ) {
         this.router = Router();
         this.setupRoutes();

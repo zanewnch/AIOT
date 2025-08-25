@@ -415,7 +415,7 @@ export class ArchiveConsumer {
 
     // 註冊系統信號處理器
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));  // Docker stop 信號
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'));    // Ctrl+C 信號
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));    // Controller+C 信號
   };
 
   /**

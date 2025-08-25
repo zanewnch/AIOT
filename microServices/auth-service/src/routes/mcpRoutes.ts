@@ -16,7 +16,7 @@ import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
 
 // 導入查詢控制器
-import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthQueriesController } from.*Controller.js';
 
 /**
  * Auth Service MCP 工具定義
@@ -131,7 +131,7 @@ export class AuthMCPRoutes {
     private router: Router;
 
     constructor(
-        @inject(TYPES.AuthQueriesCtrl) private authQueriesCtrl: AuthQueriesCtrl
+        @inject(TYPES.AuthQueriesController) private authQueriesController: AuthQueriesController
     ) {
         this.router = Router();
         this.initializeRoutes();
@@ -227,7 +227,7 @@ export class AuthMCPRoutes {
         };
 
         // 呼叫現有的控制器方法
-        await this.authQueriesCtrl.me(req, res, () => {});
+        await this.authQueriesController.me(req, res, () => {});
     };
 
     /**
@@ -244,7 +244,7 @@ export class AuthMCPRoutes {
                 includeTokenInfo: args.includeTokenInfo?.toString() || 'false'
             };
 
-            // 這裡可以調用 authQueriesCtrl 的驗證方法，或創建新的驗證邏輯
+            // 這裡可以調用 authQueriesController 的驗證方法，或創建新的驗證邏輯
             const validationResult = {
                 isValid: true, // 這裡應該實際驗證令牌
                 tokenInfo: args.includeTokenInfo ? {

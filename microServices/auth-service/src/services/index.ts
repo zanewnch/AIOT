@@ -13,13 +13,13 @@
  * @since 2025-07-18
  */
 
-// AuthService has been refactored to CQRS pattern - see AuthCommandsSvc and AuthQueriesSvc below
+// AuthService has been refactored to CQRS pattern - see AuthCommandsService and AuthQueriesService below
 // NOTE: This index file re-exports CQRS services to provide a single import surface for other modules.
 
 // 匯出 CQRS 模式的認證服務
-export { AuthQueriesSvc } from './queries/AuthQueriesSvc.js';
-export { AuthCommandsSvc } from './commands/AuthCommandsSvc.js';
+export { AuthQueriesService } from.*Service.js';
+export { AuthCommandsService } from.*Service.js';
 
 // 匯出 CQRS 模式的會話服務
-export { SessionQueriesSvc } from './queries/SessionQueriesSvc.js';
+export { SessionQueriesService } from.*Service.js';
 

@@ -14,7 +14,7 @@ import type { PaginationParams, PaginatedResult } from '../PaginationTypes.js';
 /**
  * 無人機狀態查詢服務介面
  */
-export interface IDroneStatusQueriesSvc {
+export interface IDroneStatusQueriesService {
     getAllDroneStatuses(params?: PaginationParams): Promise<PaginatedResult<DroneStatusAttributes>>;
     getDroneStatusById(id: number): Promise<DroneStatusAttributes | null>;
     getDroneStatusesByDroneId(droneId: string): Promise<DroneStatusAttributes[]>;
@@ -26,7 +26,7 @@ export interface IDroneStatusQueriesSvc {
 /**
  * 無人機狀態命令服務介面
  */
-export interface IDroneStatusCommandsSvc {
+export interface IDroneStatusCommandsService {
     createDroneStatus(status: Partial<DroneStatusAttributes>): Promise<DroneStatusAttributes>;
     updateDroneStatus(id: number, status: Partial<DroneStatusAttributes>): Promise<DroneStatusAttributes | null>;
     deleteDroneStatus(id: number): Promise<boolean>;

@@ -201,7 +201,7 @@ export function LogService(options: LoggerOptions = {}) {
 }
 
 /**
- * Repository 專用的日誌裝飾器
+ * Repositorysitorysitory 專用的日誌裝飾器
  * 針對資料存取層優化
  */
 export function LogRepository(options: LoggerOptions = {}) {

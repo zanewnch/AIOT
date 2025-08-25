@@ -13,18 +13,18 @@
  * @since 2025-07-18
  */
 
-// AuthService has been refactored to CQRS pattern - see AuthCommandsSvc and AuthQueriesSvc below
+// AuthService has been refactored to CQRS pattern - see AuthCommandsService and AuthQueriesService below
 
 // 角色基礎存取控制初始化服務已移除 - 不再需要
 // export { RbacInitService } from './RbacInitService.js';
 
 // 匯出 CQRS 模式的使用者服務
-export { UserQueriesSvc } from './queries/UserQueriesSvc.js';
-export { UserCommandsSvc } from './commands/UserCommandsSvc.js';
+export { UserQueriesService } from.*Service.js';
+export { UserCommandsService } from.*Service.js';
 
 
 // 匯出 CQRS 模式的會話服務
-export { SessionQueriesSvc } from './queries/SessionQueriesSvc.js';
-// SessionCommandsSvc 尚未實現
-// export { SessionCommandsSvc } from './commands/SessionCommandsSvc.js';
+export { SessionQueriesService } from.*Service.js';
+// SessionCommandsService 尚未實現
+// export { SessionCommandsService } from.*Service.js';
 

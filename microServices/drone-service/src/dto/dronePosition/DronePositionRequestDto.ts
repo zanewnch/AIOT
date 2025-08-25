@@ -2,7 +2,7 @@
  * @fileoverview 無人機位置請求 DTO
  * 
  * 定義所有與無人機位置相關的請求資料結構
- * 基於 DronePositionCommandsSvc 和 DronePositionQueriesSvc 的業務需求設計
+ * 基於 DronePositionCommandsService 和 DronePositionQueriesService 的業務需求設計
  * 
  * @author AIOT Team
  * @version 1.0.0

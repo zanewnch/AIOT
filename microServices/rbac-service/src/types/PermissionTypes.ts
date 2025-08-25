@@ -82,7 +82,7 @@ export interface RolePermissionAssignmentDTO {
  * @interface IRoleToPermissionQueriesService
  * @example
  * ```typescript
- * class RoleToPermissionQueriesSvc implements IRoleToPermissionQueriesService {
+ * class RoleToPermissionQueriesService implements IRoleToPermissionQueriesService {
  *   async getRolePermissions(roleId: number): Promise<PermissionDTO[]> {
  *     // 實現邏輯
  *   }
@@ -181,7 +181,7 @@ export interface UpdatePermissionRequest {
  * @interface IPermissionCommandsService
  * @example
  * ```typescript
- * class PermissionCommandsSvc implements IPermissionCommandsService {
+ * class PermissionCommandsService implements IPermissionCommandsService {
  *   async createPermission(permissionData: CreatePermissionRequest): Promise<PermissionDTO> {
  *     // 實現邏輯
  *   }
@@ -284,7 +284,7 @@ export interface CacheOptions {
  * @interface IPermissionQueriesService
  * @example
  * ```typescript
- * class PermissionQueriesSvc implements IPermissionQueriesService {
+ * class PermissionQueriesService implements IPermissionQueriesService {
  *   async getUserPermissions(userId: number, options?: CacheOptions): Promise<UserPermissions | null> {
  *     // 實現邏輯
  *   }

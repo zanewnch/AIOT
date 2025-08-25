@@ -2,7 +2,7 @@
  * @fileoverview 無人機指令佇列回應 DTO
  * 
  * 定義所有與無人機指令佇列相關的回應資料結構
- * 基於 DroneCommandQueueCommandsSvc 和 DroneCommandQueueQueriesSvc 的回應需求設計
+ * 基於 DroneCommandQueueCommandsService 和 DroneCommandQueueQueriesService 的回應需求設計
  * 
  * @author AIOT Team
  * @version 1.0.0

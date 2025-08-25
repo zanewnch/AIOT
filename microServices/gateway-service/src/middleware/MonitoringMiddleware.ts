@@ -471,7 +471,7 @@ export class MonitoringMiddleware {
     /**
      * 獲取端點性能報告
      */
-    public getEndpointPerformanceReport(): Array<{
+    public getEndpointPerformanceRepositorysitoryrt(): Array<{
         endpoint: string;
         performance: 'excellent' | 'good' | 'poor' | 'critical';
         avgResponseTime: number;
@@ -506,7 +506,7 @@ export class MonitoringMiddleware {
     /**
      * 獲取熱門用戶報告
      */
-    public getTopUsersReport(limit: number = 10): Array<{
+    public getTopUsersRepositorysitoryrt(limit: number = 10): Array<{
         userId: string;
         username?: string;
         requestCount: number;

@@ -155,6 +155,12 @@ export class ProxyMiddleware {
                 service: 'drone-websocket-service',
                 id: 'drone-websocket-service-fallback'
             },
+            'archive-consumer-service': {
+                address: process.env.ARCHIVE_SERVICE_HOST || 'aiot-archive-consumer-service',
+                port: parseInt(process.env.ARCHIVE_SERVICE_PORT || '3005'),
+                service: 'archive-consumer-service',
+                id: 'archive-consumer-service-fallback'
+            },
             'llm-service': {
                 address: process.env.LLM_AI_ENGINE_HOST || 'aiot-llm-service',
                 port: parseInt(process.env.LLM_AI_ENGINE_PORT || '8021'),
@@ -550,10 +556,10 @@ export class ProxyMiddleware {
     public createProxy = () => {
         const proxyConfigs: ProxyConfig[] = [
             {
-                target: 'rbac-service',
+                target: 'auth-service',
                 pathPrefix: '/auth',
                 useGrpc: true,
-                httpPort: 3051,
+                httpPort: 3055,
                 timeout: 30000,
                 retries: 3
             },
@@ -587,6 +593,22 @@ export class ProxyMiddleware {
                 useGrpc: false,
                 timeout: 60000,
                 retries: 2
+            },
+            {
+                target: 'archive-consumer-service',
+                pathPrefix: '/archive',
+                useGrpc: false,
+                httpPort: 3005,
+                timeout: 60000,
+                retries: 2
+            },
+            {
+                target: 'drone-websocket-service',
+                pathPrefix: '/drone-websocket',
+                useGrpc: false,
+                httpPort: 3004,
+                timeout: 30000,
+                retries: 3
             }
         ];
 

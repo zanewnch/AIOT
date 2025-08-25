@@ -1,5 +1,5 @@
 /**
- * @fileoverview Drone Positions Archive Repository Interface
+ * @fileoverview Drone Positions Archive Repositorysitorysitory Interface
  * 
  * 定義無人機位置歷史儲存庫的介面規範
  * 
@@ -10,7 +10,7 @@
 
 import { DronePositionsArchiveModel, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 
-export interface IDronePositionsArchiveRepository {
+export interface IDronePositionsArchiveRepositorysitorysitorysitory {
   /**
    * 創建位置歷史記錄
    */

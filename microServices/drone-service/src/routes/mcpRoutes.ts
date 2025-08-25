@@ -16,11 +16,11 @@ import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
 
 // 導入查詢控制器
-import { DronePositionQueriesCtrl } from '../controllers/queries/DronePositionQueriesCtrl.js';
-import { DroneCommandQueriesCtrl } from '../controllers/queries/DroneCommandQueriesCtrl.js';
-import { DroneStatusQueriesCtrl } from '../controllers/queries/DroneStatusQueriesCtrl.js';
-import { DroneRealTimeStatusQueriesCtrl } from '../controllers/queries/DroneRealTimeStatusQueriesCtrl.js';
-import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesCtrl.js';
+import { DronePositionQueriesController } from.*Controller.js';
+import { DroneCommandQueriesController } from.*Controller.js';
+import { DroneStatusQueriesController } from.*Controller.js';
+import { DroneRealTimeStatusQueriesController } from.*Controller.js';
+import { ArchiveTaskQueriesController } from.*Controller.js';
 
 /**
  * Drone Service MCP 工具定義
@@ -165,11 +165,11 @@ export class DroneMCPRoutes {
     private router: Router;
 
     constructor(
-        @inject(TYPES.DronePositionQueriesCtrl) private dronePositionQueriesCtrl: DronePositionQueriesCtrl,
-        @inject(TYPES.DroneCommandQueriesCtrl) private droneCommandQueriesCtrl: DroneCommandQueriesCtrl,
-        @inject(TYPES.DroneStatusQueriesCtrl) private droneStatusQueriesCtrl: DroneStatusQueriesCtrl,
-        @inject(TYPES.DroneRealTimeStatusQueriesCtrl) private droneRealtimeQueriesCtrl: DroneRealTimeStatusQueriesCtrl,
-        @inject(TYPES.ArchiveTaskQueriesCtrl) private archiveTaskQueriesCtrl: ArchiveTaskQueriesCtrl
+        @inject(TYPES.DronePositionQueriesController) private dronePositionQueriesController: DronePositionQueriesController,
+        @inject(TYPES.DroneCommandQueriesController) private droneCommandQueriesController: DroneCommandQueriesController,
+        @inject(TYPES.DroneStatusQueriesController) private droneStatusQueriesController: DroneStatusQueriesController,
+        @inject(TYPES.DroneRealTimeStatusQueriesController) private droneRealtimeQueriesController: DroneRealTimeStatusQueriesController,
+        @inject(TYPES.ArchiveTaskQueriesController) private archiveTaskQueriesController: ArchiveTaskQueriesController
     ) {
         this.router = Router();
         this.initializeRoutes();
@@ -277,7 +277,7 @@ export class DroneMCPRoutes {
         };
 
         // 呼叫現有的控制器方法
-        await this.dronePositionQueriesCtrl.getAllPositionsPaginated(req, res);
+        await this.dronePositionQueriesController.getAllPositionsPaginated(req, res);
     };
 
     /**
@@ -290,7 +290,7 @@ export class DroneMCPRoutes {
         }
 
         req.params = { id: args.positionId };
-        await this.dronePositionQueriesCtrl.getPositionById(req, res);
+        await this.dronePositionQueriesController.getPositionById(req, res);
     };
 
     /**
@@ -306,7 +306,7 @@ export class DroneMCPRoutes {
             commandType: args.commandType || ''
         };
 
-        await this.droneCommandQueriesCtrl.getAllCommandsPaginated(req, res);
+        await this.droneCommandQueriesController.getAllCommandsPaginated(req, res);
     };
 
     /**
@@ -319,7 +319,7 @@ export class DroneMCPRoutes {
         }
 
         req.params = { id: args.commandId };
-        await this.droneCommandQueriesCtrl.getCommandById(req, res);
+        await this.droneCommandQueriesController.getCommandById(req, res);
     };
 
     /**
@@ -335,7 +335,7 @@ export class DroneMCPRoutes {
             connectionStatus: args.connectionStatus || ''
         };
 
-        await this.droneStatusQueriesCtrl.getAllStatusesPaginated(req, res);
+        await this.droneStatusQueriesController.getAllStatusesPaginated(req, res);
     };
 
     /**
@@ -348,7 +348,7 @@ export class DroneMCPRoutes {
         }
 
         req.params = { id: args.statusId };
-        await this.droneStatusQueriesCtrl.getStatusById(req, res);
+        await this.droneStatusQueriesController.getStatusById(req, res);
     };
 
     /**
@@ -360,7 +360,7 @@ export class DroneMCPRoutes {
             includeHistory: args.includeHistory?.toString() || 'false'
         };
 
-        await this.droneRealtimeQueriesCtrl.getAllRealTimeStatusPaginated(req, res);
+        await this.droneRealtimeQueriesController.getAllRealTimeStatusPaginated(req, res);
     };
 
     /**
@@ -374,7 +374,7 @@ export class DroneMCPRoutes {
             taskType: args.taskType || ''
         };
 
-        await this.archiveTaskQueriesCtrl.getAllArchiveTasksPaginated(req, res);
+        await this.archiveTaskQueriesController.getAllArchiveTasksPaginated(req, res);
     };
 
     /**

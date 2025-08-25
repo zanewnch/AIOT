@@ -1,4 +1,4 @@
-export interface IDroneStatusRepository {
+export interface IDroneStatusRepositorysitorysitorysitory {
   create(data: any): Promise<any>;
   findById(id: number): Promise<any>;
   selectAll(limit?: number): Promise<any[]>;

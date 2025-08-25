@@ -81,7 +81,7 @@ export const testDocumentData = {
 };
 
 // Mock 函數工具
-export const createMockRepository = () => ({
+export const createMockRepositorysitorysitory = () => ({
   findAll: jest.fn(),
   findOne: jest.fn(),
   findByPk: jest.fn(),
@@ -287,7 +287,7 @@ export default {
   cleanupTestDb,
   testUserPreferenceData,
   testDocumentData,
-  createMockRepository,
+  createMockRepositorysitorysitory,
   testHelpers,
   apiTestHelpers,
   preferenceHelpers,

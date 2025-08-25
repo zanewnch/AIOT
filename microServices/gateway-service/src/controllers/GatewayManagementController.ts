@@ -34,7 +34,7 @@ export class GatewayManagementController {
         try {
             const realtimeMetrics = this.monitoringMiddleware.getRealtimeMetrics();
             const stats = this.monitoringMiddleware.getStats();
-            const loadBalancerReport = this.loadBalancerMiddleware.getHealthReport();
+            const loadBalancerRepositorysitoryrt = this.loadBalancerMiddleware.getHealthRepositorysitoryrt();
 
             const gatewayStatus = {
                 status: 'healthy',
@@ -62,8 +62,8 @@ export class GatewayManagementController {
                 },
                 
                 // 服務健康狀態
-                services: Object.keys(loadBalancerReport).map(serviceName => {
-                    const instances = loadBalancerReport[serviceName];
+                services: Object.keys(loadBalancerRepositorysitoryrt).map(serviceName => {
+                    const instances = loadBalancerRepositorysitoryrt[serviceName];
                     const healthyInstances = instances.filter(instance => instance.healthy).length;
                     return {
                         name: serviceName,
@@ -88,8 +88,8 @@ export class GatewayManagementController {
         try {
             const stats = this.monitoringMiddleware.getStats();
             const realtimeMetrics = this.monitoringMiddleware.getRealtimeMetrics();
-            const performanceReport = this.monitoringMiddleware.getEndpointPerformanceReport();
-            const topUsersReport = this.monitoringMiddleware.getTopUsersReport();
+            const performanceRepositorysitoryrt = this.monitoringMiddleware.getEndpointPerformanceRepositorysitoryrt();
+            const topUsersRepositorysitoryrt = this.monitoringMiddleware.getTopUsersRepositorysitoryrt();
 
             const monitoringData = {
                 overview: {
@@ -107,9 +107,9 @@ export class GatewayManagementController {
                 
                 statusCodes: stats.statusCodes,
                 
-                endpoints: performanceReport,
+                endpoints: performanceRepositorysitoryrt,
                 
-                topUsers: topUsersReport,
+                topUsers: topUsersRepositorysitoryrt,
                 
                 topIPs: Object.values(stats.ips)
                     .sort((a, b) => b.totalRequests - a.totalRequests)
@@ -137,9 +137,9 @@ export class GatewayManagementController {
     public getLoadBalancerStatus = async (req: Request, res: Response): Promise<void> => {
         try {
             const serviceName = req.params.serviceName;
-            const healthReport = this.loadBalancerMiddleware.getHealthReport(serviceName);
+            const healthRepositorysitoryrt = this.loadBalancerMiddleware.getHealthRepositorysitoryrt(serviceName);
 
-            const loadBalancerStatus = Object.entries(healthReport).map(([service, instances]) => ({
+            const loadBalancerStatus = Object.entries(healthRepositorysitoryrt).map(([service, instances]) => ({
                 serviceName: service,
                 algorithm: 'health-aware', // 可以從配置中獲取
                 totalInstances: instances.length,
@@ -199,17 +199,17 @@ export class GatewayManagementController {
      */
     public getEndpointPerformance = async (req: Request, res: Response): Promise<void> => {
         try {
-            const performanceReport = this.monitoringMiddleware.getEndpointPerformanceReport();
+            const performanceRepositorysitoryrt = this.monitoringMiddleware.getEndpointPerformanceRepositorysitoryrt();
             
             ResResult.success(res, {
-                endpoints: performanceReport,
+                endpoints: performanceRepositorysitoryrt,
                 timestamp: new Date().toISOString(),
                 summary: {
-                    totalEndpoints: performanceReport.length,
-                    excellentPerformance: performanceReport.filter(ep => ep.performance === 'excellent').length,
-                    goodPerformance: performanceReport.filter(ep => ep.performance === 'good').length,
-                    poorPerformance: performanceReport.filter(ep => ep.performance === 'poor').length,
-                    criticalPerformance: performanceReport.filter(ep => ep.performance === 'critical').length
+                    totalEndpoints: performanceRepositorysitoryrt.length,
+                    excellentPerformance: performanceRepositorysitoryrt.filter(ep => ep.performance === 'excellent').length,
+                    goodPerformance: performanceRepositorysitoryrt.filter(ep => ep.performance === 'good').length,
+                    poorPerformance: performanceRepositorysitoryrt.filter(ep => ep.performance === 'poor').length,
+                    criticalPerformance: performanceRepositorysitoryrt.filter(ep => ep.performance === 'critical').length
                 }
             }, 'Endpoint performance report retrieved successfully');
         } catch (error) {
@@ -224,16 +224,16 @@ export class GatewayManagementController {
     public getUserActivity = async (req: Request, res: Response): Promise<void> => {
         try {
             const limit = parseInt(req.query.limit as string) || 20;
-            const topUsersReport = this.monitoringMiddleware.getTopUsersReport(limit);
+            const topUsersRepositorysitoryrt = this.monitoringMiddleware.getTopUsersRepositorysitoryrt(limit);
             
             ResResult.success(res, {
-                topUsers: topUsersReport,
+                topUsers: topUsersRepositorysitoryrt,
                 timestamp: new Date().toISOString(),
                 summary: {
-                    totalActiveUsers: topUsersReport.length,
-                    totalRequests: topUsersReport.reduce((sum, user) => sum + user.requestCount, 0),
-                    avgRequestsPerUser: topUsersReport.length > 0 ? 
-                        Math.round(topUsersReport.reduce((sum, user) => sum + user.requestCount, 0) / topUsersReport.length) : 0
+                    totalActiveUsers: topUsersRepositorysitoryrt.length,
+                    totalRequests: topUsersRepositorysitoryrt.reduce((sum, user) => sum + user.requestCount, 0),
+                    avgRequestsPerUser: topUsersRepositorysitoryrt.length > 0 ? 
+                        Math.round(topUsersRepositorysitoryrt.reduce((sum, user) => sum + user.requestCount, 0) / topUsersRepositorysitoryrt.length) : 0
                 }
             }, 'User activity report retrieved successfully');
         } catch (error) {

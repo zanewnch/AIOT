@@ -3,7 +3,7 @@
  */
 
 import { UserService } from '../../../services/UserService';
-import { UserRepository } from '../../../repositories/UserRepository';
+import { UserRepositorysitorysitorysitory } from.*Repositorysitorysitorysitorysitory';
 import { createMockRepository } from '../../setup';
 import bcrypt from 'bcryptjs';
 
@@ -13,11 +13,11 @@ const mockedBcrypt = bcrypt as jest.Mocked<typeof bcrypt>;
 
 describe('UserService - Unit Tests', () => {
   let userService: UserService;
-  let mockUserRepository: jest.Mocked<UserRepository>;
+  let mockUserRepositorysitorysitorysitory: jest.Mocked<UserRepositorysitorysitorysitory>;
 
   beforeEach(() => {
     // Create mock repository
-    mockUserRepository = {
+    mockUserRepositorysitorysitorysitory = {
       createUser: jest.fn(),
       getUserById: jest.fn(),
       getUserByUsername: jest.fn(),
@@ -30,7 +30,7 @@ describe('UserService - Unit Tests', () => {
       searchUsers: jest.fn()
     } as any;
 
-    userService = new UserService(mockUserRepository);
+    userService = new UserService(mockUserRepositorysitorysitorysitory);
   });
 
   describe('createUser', () => {
@@ -52,14 +52,14 @@ describe('UserService - Unit Tests', () => {
       };
 
       mockedBcrypt.hash.mockResolvedValue(hashedPassword as never);
-      mockUserRepository.createUser.mockResolvedValue(createdUser as any);
+      mockUserRepositorysitorysitorysitory.createUser.mockResolvedValue(createdUser as any);
 
       // Act
       const result = await userService.createUser(userData);
 
       // Assert
       expect(mockedBcrypt.hash).toHaveBeenCalledWith(userData.password, 10);
-      expect(mockUserRepository.createUser).toHaveBeenCalledWith({
+      expect(mockUserRepositorysitorysitorysitory.createUser).toHaveBeenCalledWith({
         username: userData.username,
         email: userData.email,
         passwordHash: hashedPassword,
@@ -76,7 +76,7 @@ describe('UserService - Unit Tests', () => {
         password: 'password'
       };
 
-      mockUserRepository.getUserByUsername.mockResolvedValue({} as any);
+      mockUserRepositorysitorysitorysitory.getUserByUsername.mockResolvedValue({} as any);
 
       // Act & Assert
       await expect(userService.createUser(userData)).rejects.toThrow('Username already exists');
@@ -90,8 +90,8 @@ describe('UserService - Unit Tests', () => {
         password: 'password'
       };
 
-      mockUserRepository.getUserByUsername.mockResolvedValue(null);
-      mockUserRepository.getUserByEmail.mockResolvedValue({} as any);
+      mockUserRepositorysitorysitorysitory.getUserByUsername.mockResolvedValue(null);
+      mockUserRepositorysitorysitorysitory.getUserByEmail.mockResolvedValue({} as any);
 
       // Act & Assert
       await expect(userService.createUser(userData)).rejects.toThrow('Email already exists');
@@ -137,14 +137,14 @@ describe('UserService - Unit Tests', () => {
         isActive: true
       };
 
-      mockUserRepository.getUserByUsername.mockResolvedValue(user as any);
+      mockUserRepositorysitorysitorysitory.getUserByUsername.mockResolvedValue(user as any);
       mockedBcrypt.compare.mockResolvedValue(true as never);
 
       // Act
       const result = await userService.authenticateUser(credentials);
 
       // Assert
-      expect(mockUserRepository.getUserByUsername).toHaveBeenCalledWith(credentials.username);
+      expect(mockUserRepositorysitorysitorysitory.getUserByUsername).toHaveBeenCalledWith(credentials.username);
       expect(mockedBcrypt.compare).toHaveBeenCalledWith(credentials.password, user.passwordHash);
       expect(result).toEqual(user);
     });
@@ -156,7 +156,7 @@ describe('UserService - Unit Tests', () => {
         password: 'password'
       };
 
-      mockUserRepository.getUserByUsername.mockResolvedValue(null);
+      mockUserRepositorysitorysitorysitory.getUserByUsername.mockResolvedValue(null);
 
       // Act
       const result = await userService.authenticateUser(credentials);
@@ -179,7 +179,7 @@ describe('UserService - Unit Tests', () => {
         isActive: true
       };
 
-      mockUserRepository.getUserByUsername.mockResolvedValue(user as any);
+      mockUserRepositorysitorysitorysitory.getUserByUsername.mockResolvedValue(user as any);
       mockedBcrypt.compare.mockResolvedValue(false as never);
 
       // Act
@@ -203,7 +203,7 @@ describe('UserService - Unit Tests', () => {
         isActive: false
       };
 
-      mockUserRepository.getUserByUsername.mockResolvedValue(user as any);
+      mockUserRepositorysitorysitorysitory.getUserByUsername.mockResolvedValue(user as any);
 
       // Act
       const result = await userService.authenticateUser(credentials);
@@ -219,13 +219,13 @@ describe('UserService - Unit Tests', () => {
       const userId = 1;
       const user = { id: userId, username: 'testuser' };
       
-      mockUserRepository.getUserById.mockResolvedValue(user as any);
+      mockUserRepositorysitorysitorysitory.getUserById.mockResolvedValue(user as any);
 
       // Act
       const result = await userService.getUserById(userId);
 
       // Assert
-      expect(mockUserRepository.getUserById).toHaveBeenCalledWith(userId);
+      expect(mockUserRepositorysitorysitorysitory.getUserById).toHaveBeenCalledWith(userId);
       expect(result).toEqual(user);
     });
 
@@ -233,7 +233,7 @@ describe('UserService - Unit Tests', () => {
       // Arrange
       const userId = 999;
       
-      mockUserRepository.getUserById.mockResolvedValue(null);
+      mockUserRepositorysitorysitorysitory.getUserById.mockResolvedValue(null);
 
       // Act
       const result = await userService.getUserById(userId);
@@ -266,13 +266,13 @@ describe('UserService - Unit Tests', () => {
         isActive: true
       };
 
-      mockUserRepository.updateUser.mockResolvedValue(updatedUser as any);
+      mockUserRepositorysitorysitorysitory.updateUser.mockResolvedValue(updatedUser as any);
 
       // Act
       const result = await userService.updateUser(userId, updateData);
 
       // Assert
-      expect(mockUserRepository.updateUser).toHaveBeenCalledWith(userId, updateData);
+      expect(mockUserRepositorysitorysitorysitory.updateUser).toHaveBeenCalledWith(userId, updateData);
       expect(result).toEqual(updatedUser);
     });
 
@@ -290,14 +290,14 @@ describe('UserService - Unit Tests', () => {
       };
 
       mockedBcrypt.hash.mockResolvedValue(hashedPassword as never);
-      mockUserRepository.updateUser.mockResolvedValue(updatedUser as any);
+      mockUserRepositorysitorysitorysitory.updateUser.mockResolvedValue(updatedUser as any);
 
       // Act
       const result = await userService.updateUser(userId, updateData);
 
       // Assert
       expect(mockedBcrypt.hash).toHaveBeenCalledWith(updateData.password, 10);
-      expect(mockUserRepository.updateUser).toHaveBeenCalledWith(userId, {
+      expect(mockUserRepositorysitorysitorysitory.updateUser).toHaveBeenCalledWith(userId, {
         passwordHash: hashedPassword
       });
     });
@@ -307,7 +307,7 @@ describe('UserService - Unit Tests', () => {
       const userId = 999;
       const updateData = { email: 'test@example.com' };
       
-      mockUserRepository.updateUser.mockResolvedValue(null);
+      mockUserRepositorysitorysitorysitory.updateUser.mockResolvedValue(null);
 
       // Act & Assert
       await expect(userService.updateUser(userId, updateData)).rejects.toThrow('User not found');
@@ -330,13 +330,13 @@ describe('UserService - Unit Tests', () => {
       // Arrange
       const userId = 1;
       
-      mockUserRepository.deleteUser.mockResolvedValue(true);
+      mockUserRepositorysitorysitorysitory.deleteUser.mockResolvedValue(true);
 
       // Act
       const result = await userService.deleteUser(userId);
 
       // Assert
-      expect(mockUserRepository.deleteUser).toHaveBeenCalledWith(userId);
+      expect(mockUserRepositorysitorysitorysitory.deleteUser).toHaveBeenCalledWith(userId);
       expect(result).toBe(true);
     });
 
@@ -344,7 +344,7 @@ describe('UserService - Unit Tests', () => {
       // Arrange
       const userId = 999;
       
-      mockUserRepository.deleteUser.mockResolvedValue(false);
+      mockUserRepositorysitorysitorysitory.deleteUser.mockResolvedValue(false);
 
       // Act
       const result = await userService.deleteUser(userId);
@@ -370,19 +370,19 @@ describe('UserService - Unit Tests', () => {
         { id: 2, username: 'user2' }
       ];
       
-      mockUserRepository.getAllUsers.mockResolvedValue(users as any);
+      mockUserRepositorysitorysitorysitory.getAllUsers.mockResolvedValue(users as any);
 
       // Act
       const result = await userService.getAllUsers();
 
       // Assert
-      expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
+      expect(mockUserRepositorysitorysitorysitory.getAllUsers).toHaveBeenCalled();
       expect(result).toEqual(users);
     });
 
     it('should return empty array when no users exist', async () => {
       // Arrange
-      mockUserRepository.getAllUsers.mockResolvedValue([]);
+      mockUserRepositorysitorysitorysitory.getAllUsers.mockResolvedValue([]);
 
       // Act
       const result = await userService.getAllUsers();
@@ -401,13 +401,13 @@ describe('UserService - Unit Tests', () => {
         { id: 2, name: 'write_users' }
       ];
       
-      mockUserRepository.getUserPermissions.mockResolvedValue(permissions as any);
+      mockUserRepositorysitorysitorysitory.getUserPermissions.mockResolvedValue(permissions as any);
 
       // Act
       const result = await userService.getUserPermissions(userId);
 
       // Assert
-      expect(mockUserRepository.getUserPermissions).toHaveBeenCalledWith(userId);
+      expect(mockUserRepositorysitorysitorysitory.getUserPermissions).toHaveBeenCalledWith(userId);
       expect(result).toEqual(permissions);
     });
 
@@ -429,13 +429,13 @@ describe('UserService - Unit Tests', () => {
         { id: 2, username: 'testuser2' }
       ];
       
-      mockUserRepository.searchUsers.mockResolvedValue(searchResults as any);
+      mockUserRepositorysitorysitorysitory.searchUsers.mockResolvedValue(searchResults as any);
 
       // Act
       const result = await userService.searchUsers(searchCriteria);
 
       // Assert
-      expect(mockUserRepository.searchUsers).toHaveBeenCalledWith(searchCriteria, undefined);
+      expect(mockUserRepositorysitorysitorysitory.searchUsers).toHaveBeenCalledWith(searchCriteria, undefined);
       expect(result).toEqual(searchResults);
     });
 
@@ -445,13 +445,13 @@ describe('UserService - Unit Tests', () => {
       const pagination = { limit: 10, offset: 0 };
       const searchResults = [{ id: 1, username: 'testuser1' }];
       
-      mockUserRepository.searchUsers.mockResolvedValue(searchResults as any);
+      mockUserRepositorysitorysitorysitory.searchUsers.mockResolvedValue(searchResults as any);
 
       // Act
       const result = await userService.searchUsers(searchCriteria, pagination);
 
       // Assert
-      expect(mockUserRepository.searchUsers).toHaveBeenCalledWith(searchCriteria, pagination);
+      expect(mockUserRepositorysitorysitorysitory.searchUsers).toHaveBeenCalledWith(searchCriteria, pagination);
       expect(result).toEqual(searchResults);
     });
 
@@ -459,7 +459,7 @@ describe('UserService - Unit Tests', () => {
       // Arrange
       const searchCriteria = { username: 'nonexistent' };
       
-      mockUserRepository.searchUsers.mockResolvedValue([]);
+      mockUserRepositorysitorysitorysitory.searchUsers.mockResolvedValue([]);
 
       // Act
       const result = await userService.searchUsers(searchCriteria);
@@ -487,10 +487,10 @@ describe('UserService - Unit Tests', () => {
         passwordHash: hashedNewPassword
       };
 
-      mockUserRepository.getUserById.mockResolvedValue(user as any);
+      mockUserRepositorysitorysitorysitory.getUserById.mockResolvedValue(user as any);
       mockedBcrypt.compare.mockResolvedValue(true as never);
       mockedBcrypt.hash.mockResolvedValue(hashedNewPassword as never);
-      mockUserRepository.updateUser.mockResolvedValue(updatedUser as any);
+      mockUserRepositorysitorysitorysitory.updateUser.mockResolvedValue(updatedUser as any);
 
       // Act
       const result = await userService.changePassword(userId, oldPassword, newPassword);
@@ -498,7 +498,7 @@ describe('UserService - Unit Tests', () => {
       // Assert
       expect(mockedBcrypt.compare).toHaveBeenCalledWith(oldPassword, user.passwordHash);
       expect(mockedBcrypt.hash).toHaveBeenCalledWith(newPassword, 10);
-      expect(mockUserRepository.updateUser).toHaveBeenCalledWith(userId, {
+      expect(mockUserRepositorysitorysitorysitory.updateUser).toHaveBeenCalledWith(userId, {
         passwordHash: hashedNewPassword
       });
       expect(result).toBe(true);
@@ -515,7 +515,7 @@ describe('UserService - Unit Tests', () => {
         passwordHash: 'hashedpassword'
       };
 
-      mockUserRepository.getUserById.mockResolvedValue(user as any);
+      mockUserRepositorysitorysitorysitory.getUserById.mockResolvedValue(user as any);
       mockedBcrypt.compare.mockResolvedValue(false as never);
 
       // Act & Assert
@@ -527,7 +527,7 @@ describe('UserService - Unit Tests', () => {
       // Arrange
       const userId = 999;
       
-      mockUserRepository.getUserById.mockResolvedValue(null);
+      mockUserRepositorysitorysitorysitory.getUserById.mockResolvedValue(null);
 
       // Act & Assert
       await expect(userService.changePassword(userId, 'old', 'new'))

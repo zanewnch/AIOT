@@ -67,7 +67,7 @@ export interface UserRoleCacheOptions {
  * @interface IUserToRoleQueriesService
  * @example
  * ```typescript
- * class UserToRoleQueriesSvc implements IUserToRoleQueriesService {
+ * class UserToRoleQueriesService implements IUserToRoleQueriesService {
  *   async getUserRoles(userId: number): Promise<RoleDTO[]> {
  *     // 實現邏輯
  *   }

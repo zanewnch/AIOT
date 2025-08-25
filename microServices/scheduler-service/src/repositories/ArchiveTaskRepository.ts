@@ -349,7 +349,7 @@ export class ArchiveTaskRepository {
           ],
           group: ['status'],
           raw: true
-        }) as any[],
+        }) as any,
         
         // 執行時間統計 (僅包括已完成的任務)
         ArchiveTaskModel.findOne({

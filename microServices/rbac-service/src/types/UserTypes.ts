@@ -73,7 +73,7 @@ export interface UserCacheOptions {
  * @interface IUserQueriesService
  * @example
  * ```typescript
- * class UserQueriesSvc implements IUserQueriesService {
+ * class UserQueriesService implements IUserQueriesService {
  *   async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<UserDTO>> {
  *     // 實現邏輯
  *   }

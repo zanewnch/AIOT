@@ -86,7 +86,7 @@ export const testDroneStatusData = {
 };
 
 // Mock 函數工具
-export const createMockRepository = () => ({
+export const createMockRepositorysitorysitory = () => ({
   findAll: jest.fn(),
   findOne: jest.fn(),
   findByPk: jest.fn(),
@@ -258,7 +258,7 @@ export default {
   testDroneData,
   testPositionData,
   testCommandData,
-  createMockRepository,
+  createMockRepositorysitorysitory,
   testHelpers,
   apiTestHelpers,
   geoHelpers

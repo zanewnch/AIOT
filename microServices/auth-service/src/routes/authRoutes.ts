@@ -16,8 +16,8 @@
 
 import { Router } from 'express';
 import { inject, injectable } from 'inversify';
-import { AuthQueriesCtrl } from '../controllers/queries/AuthQueriesCtrl.js';
-import { AuthCommandsCtrl } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthQueriesController } from.*Controller.js';
+import { AuthCommandsController } from.*Controller.js';
 import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
 import { TYPES } from '../container/types.js';
 
@@ -38,8 +38,8 @@ class AuthRoutes {
   } as const;
 
   constructor(
-    @inject(TYPES.AuthQueriesCtrl) private authQueries: AuthQueriesCtrl,
-    @inject(TYPES.AuthCommandsCtrl) private authCommands: AuthCommandsCtrl
+    @inject(TYPES.AuthQueriesController) private authQueries: AuthQueriesController,
+    @inject(TYPES.AuthCommandsController) private authCommands: AuthCommandsController
   ) {
     this.router = Router();
     this.setupAuthRoutes();

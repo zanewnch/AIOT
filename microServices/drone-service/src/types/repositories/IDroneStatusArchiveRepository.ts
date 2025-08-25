@@ -1,4 +1,4 @@
-export interface IDroneStatusArchiveRepository {
+export interface IDroneStatusArchiveRepositorysitorysitorysitory {
   create(data: any): Promise<any>;
   update(id: number, data: any): Promise<any>;
   delete(id: number): Promise<void>;

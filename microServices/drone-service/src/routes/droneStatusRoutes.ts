@@ -34,12 +34,12 @@ export class DroneStatusRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.DroneStatusQueriesCtrl) private readonly droneStatusQueries: IDroneStatusQueries,
-        @inject(TYPES.DroneStatusCommandsCtrl) private readonly droneStatusCommands: IDroneStatusCommands,
-        @inject(TYPES.DroneRealTimeStatusQueriesCtrl) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
-        @inject(TYPES.DroneRealTimeStatusCommandsCtrl) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands,
-        @inject(TYPES.DroneStatusArchiveQueriesCtrl) private readonly droneStatusArchiveQueries: IDroneStatusArchiveQueries,
-        @inject(TYPES.DroneStatusArchiveCommandsCtrl) private readonly droneStatusArchiveCommands: IDroneStatusArchiveCommands
+        @inject(TYPES.DroneStatusQueriesController) private readonly droneStatusQueries: IDroneStatusQueries,
+        @inject(TYPES.DroneStatusCommandsController) private readonly droneStatusCommands: IDroneStatusCommands,
+        @inject(TYPES.DroneRealTimeStatusQueriesController) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
+        @inject(TYPES.DroneRealTimeStatusCommandsController) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands,
+        @inject(TYPES.DroneStatusArchiveQueriesController) private readonly droneStatusArchiveQueries: IDroneStatusArchiveQueries,
+        @inject(TYPES.DroneStatusArchiveCommandsController) private readonly droneStatusArchiveCommands: IDroneStatusArchiveCommands
     ) {
         this.router = Router();
         this.setupRoutes();

@@ -49,7 +49,7 @@ import {
   ArchiveTaskMessage,    // 歸檔任務訊息格式
   CleanupTaskMessage,    // 清理任務訊息格式
   DatabaseConnection,    // 資料庫連接介面
-  ArchiveTaskRepo        // 歸檔任務儲存庫介面
+  ArchiveTaskRepositorysitory        // 歸檔任務儲存庫介面
 } from '../types/processor.types';
 // 依賴注入的類型常數定義
 import { TYPES } from '../container/types';
@@ -89,12 +89,12 @@ export class ArchiveProcessor {
   /**
    * 建構子 - 使用依賴注入方式初始化所需的服務
    * @param database - 資料庫連接服務，負責所有 SQL 操作和事務管理
-   * @param archiveTaskRepo - 歸檔任務儲存庫，管理任務狀態的持久化
+   * @param archiveTaskRepositorysitory - 歸檔任務儲存庫，管理任務狀態的持久化
    * @param logger - Winston 日誌服務，記錄處理過程和錯誤資訊
    */
   constructor(
     @inject(TYPES.DatabaseConnection) private database: DatabaseConnection,
-    @inject(TYPES.ArchiveTaskRepo) private archiveTaskRepo: ArchiveTaskRepo,
+    @inject(TYPES.ArchiveTaskRepositorysitory) private archiveTaskRepositorysitory: ArchiveTaskRepositorysitory,
     @inject(TYPES.Logger) private logger: Logger
   ) {}
 
@@ -146,10 +146,10 @@ export class ArchiveProcessor {
         });
 
         // 在資料庫中查找現有的任務記錄，用於追蹤任務狀態
-        let task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        let task = await this.archiveTaskRepositorysitory.findByTaskId(message.taskId);
         if (!task) {
           // 如果任務記錄不存在，創建新的任務記錄
-          task = await this.archiveTaskRepo.create({
+          task = await this.archiveTaskRepositorysitory.create({
             task_id: message.taskId,      // 任務ID
             job_type: message.jobType,    // 工作類型
             status: 'running',            // 設置為運行狀態
@@ -158,7 +158,7 @@ export class ArchiveProcessor {
           });
         } else {
           // 如果任務記錄已存在，更新為運行狀態（可能是重試的情況）
-          await this.archiveTaskRepo.update(task.id, {
+          await this.archiveTaskRepositorysitory.update(task.id, {
             status: 'running',            // 更新狀態為運行中
             started_at: new Date()        // 更新開始時間
           });
@@ -170,7 +170,7 @@ export class ArchiveProcessor {
         processedRecords = result.processedRecords; // 取得實際處理的記錄數
 
         // 更新任務狀態為完成，並記錄處理結果統計
-        await this.archiveTaskRepo.update(task.id, {
+        await this.archiveTaskRepositorysitory.update(task.id, {
           status: 'completed',                    // 完成狀態
           total_records: totalRecords,            // 總記錄數
           processed_records: processedRecords,    // 處理記錄數
@@ -203,9 +203,9 @@ export class ArchiveProcessor {
         });
 
         // 更新資料庫中的任務狀態為失敗
-        const task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        const task = await this.archiveTaskRepositorysitory.findByTaskId(message.taskId);
         if (task) {
-          await this.archiveTaskRepo.update(task.id, {
+          await this.archiveTaskRepositorysitory.update(task.id, {
             status: 'failed',                                               // 失敗狀態
             error_message: error instanceof Error ? error.message : String(error), // 錯誤訊息
             completed_at: new Date()                                        // 完成時間（失敗也是一種完成）
@@ -259,10 +259,10 @@ export class ArchiveProcessor {
         });
 
         // 在資料庫中查找或創建任務記錄
-        let task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        let task = await this.archiveTaskRepositorysitory.findByTaskId(message.taskId);
         if (!task) {
           // 創建新的清理任務記錄
-          task = await this.archiveTaskRepo.create({
+          task = await this.archiveTaskRepositorysitory.create({
             task_id: message.taskId,      // 任務ID
             job_type: message.jobType,    // 工作類型
             status: 'running',            // 運行狀態
@@ -270,7 +270,7 @@ export class ArchiveProcessor {
           });
         } else {
           // 更新現有任務為運行狀態
-          await this.archiveTaskRepo.update(task.id, {
+          await this.archiveTaskRepositorysitory.update(task.id, {
             status: 'running',            // 更新為運行狀態
             started_at: new Date()        // 更新開始時間
           });
@@ -282,7 +282,7 @@ export class ArchiveProcessor {
         processedRecords = result.processedRecords; // 實際處理記錄數
 
         // 更新任務狀態為完成
-        await this.archiveTaskRepo.update(task.id, {
+        await this.archiveTaskRepositorysitory.update(task.id, {
           status: 'completed',                    // 完成狀態
           total_records: totalRecords,            // 記錄總數
           processed_records: processedRecords,    // 處理記錄數
@@ -312,9 +312,9 @@ export class ArchiveProcessor {
         });
 
         // 更新任務狀態為失敗
-        const task = await this.archiveTaskRepo.findByTaskId(message.taskId);
+        const task = await this.archiveTaskRepositorysitory.findByTaskId(message.taskId);
         if (task) {
-          await this.archiveTaskRepo.update(task.id, {
+          await this.archiveTaskRepositorysitory.update(task.id, {
             status: 'failed',                                               // 失敗狀態
             error_message: error instanceof Error ? error.message : String(error), // 錯誤訊息
             completed_at: new Date()                                        // 完成時間

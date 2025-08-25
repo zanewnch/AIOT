@@ -13,44 +13,44 @@ import { Container } from 'inversify';
 import { TYPES } from '../container/types.js';
 
 // RBAC 認證服務
-import { UserCommandsSvc } from '../services/commands/UserCommandsSvc.js';
-import { UserQueriesSvc } from '../services/queries/UserQueriesSvc.js';
-import { RoleCommandsSvc } from '../services/commands/RoleCommandsSvc.js';
-import { RoleQueriesSvc } from '../services/queries/RoleQueriesSvc.js';
-import { PermissionCommandsSvc } from '../services/commands/PermissionCommandsSvc.js';
-import { PermissionQueriesSvc } from '../services/queries/PermissionQueriesSvc.js';
-import { UserToRoleCommandsSvc } from '../services/commands/UserToRoleCommandsSvc.js';
-import { UserToRoleQueriesSvc } from '../services/queries/UserToRoleQueriesSvc.js';
-import { RoleToPermissionCommandsSvc } from '../services/commands/RoleToPermissionCommandsSvc.js';
-import { RoleToPermissionQueriesSvc } from '../services/queries/RoleToPermissionQueriesSvc.js';
-import { SessionQueriesSvc } from '../services/queries/SessionQueriesSvc.js';
+import { UserCommandsService } from.*Service.js';
+import { UserQueriesService } from.*Service.js';
+import { RoleCommandsService } from.*Service.js';
+import { RoleQueriesService } from.*Service.js';
+import { PermissionCommandsService } from.*Service.js';
+import { PermissionQueriesService } from.*Service.js';
+import { UserToRoleCommandsService } from.*Service.js';
+import { UserToRoleQueriesService } from.*Service.js';
+import { RoleToPermissionCommandsService } from.*Service.js';
+import { RoleToPermissionQueriesService } from.*Service.js';
+import { SessionQueriesService } from.*Service.js';
 
 // RBAC 控制器
-import { UserCommandsCtrl } from '../controllers/commands/UserCommandsCtrl.js';
-import { UserQueriesCtrl } from '../controllers/queries/UserQueriesCtrl.js';
-import { RoleCommandsCtrl } from '../controllers/commands/RoleCommandsCtrl.js';
-import { RoleQueriesCtrl } from '../controllers/queries/RoleQueriesCtrl.js';
-import { PermissionCommandsCtrl } from '../controllers/commands/PermissionCommandsCtrl.js';
-import { PermissionQueriesCtrl } from '../controllers/queries/PermissionQueriesCtrl.js';
-import { UserToRoleCommandsCtrl } from '../controllers/commands/UserToRoleCommandsCtrl.js';
-import { UserToRoleQueriesCtrl } from '../controllers/queries/UserToRoleQueriesCtrl.js';
-import { RoleToPermissionCommandsCtrl } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
-import { RoleToPermissionQueriesCtrl } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { UserCommandsController } from.*Controller.js';
+import { UserQueriesController } from.*Controller.js';
+import { RoleCommandsController } from.*Controller.js';
+import { RoleQueriesController } from.*Controller.js';
+import { PermissionCommandsController } from.*Controller.js';
+import { PermissionQueriesController } from.*Controller.js';
+import { UserToRoleCommandsController } from.*Controller.js';
+import { UserToRoleQueriesController } from.*Controller.js';
+import { RoleToPermissionCommandsController } from.*Controller.js';
+import { RoleToPermissionQueriesController } from.*Controller.js';
 
 // JWT 安全服務
 // import { JwtBlacklistService } from 'aiot-shared-packages';
 
-// Repo 導入
-import { UserQueriesRepo } from '../repo/queries/UserQueriesRepo.js';
-import { PermissionQueriesRepo } from '../repo/queries/PermissionQueriesRepo.js';
-import { RoleQueriesRepo } from '../repo/queries/RoleQueriesRepo.js';
-import { UserRoleQueriesRepo } from '../repo/queries/UserRoleQueriesRepo.js';
-import { RolePermissionQueriesRepo } from '../repo/queries/RolePermissionQueriesRepo.js';
-import { UserCommandsRepo } from '../repo/commands/UserCommandsRepo.js';
-import { PermissionCommandsRepo } from '../repo/commands/PermissionCommandsRepo.js';
-import { RoleCommandsRepo } from '../repo/commands/RoleCommandsRepo.js';
-import { UserRoleCommandsRepo } from '../repo/commands/UserRoleCommandsRepo.js';
-import { RolePermissionCommandsRepo } from '../repo/commands/RolePermissionCommandsRepo.js';
+// Repositorysitory 導入
+import { UserQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { PermissionQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { RoleQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { UserRoleQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { RolePermissionQueriesRepositorysitory } from.*Repositorysitorysitory.js';
+import { UserCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { PermissionCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { RoleCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { UserRoleCommandsRepositorysitory } from.*Repositorysitorysitory.js';
+import { RolePermissionCommandsRepositorysitory } from.*Repositorysitorysitory.js';
 
 // 路由相關導入
 import { RouteRegistrar } from '../routes/RouteRegistrar.js';
@@ -69,53 +69,53 @@ export function createContainer(): Container {
   // ===== RBAC 服務註冊 =====
   
   // 用戶服務
-  container.bind<UserCommandsSvc>(TYPES.UserCommandsSvc)
-    .to(UserCommandsSvc)
+  container.bind<UserCommandsService>(TYPES.UserCommandsService)
+    .to(UserCommandsService)
     .inSingletonScope();
 
-  container.bind<UserQueriesSvc>(TYPES.UserQueriesSvc)
-    .to(UserQueriesSvc)
+  container.bind<UserQueriesService>(TYPES.UserQueriesService)
+    .to(UserQueriesService)
     .inSingletonScope();
 
   // 角色服務
-  container.bind<RoleCommandsSvc>(TYPES.RoleCommandsSvc)
-    .to(RoleCommandsSvc)
+  container.bind<RoleCommandsService>(TYPES.RoleCommandsService)
+    .to(RoleCommandsService)
     .inSingletonScope();
 
-  container.bind<RoleQueriesSvc>(TYPES.RoleQueriesSvc)
-    .to(RoleQueriesSvc)
+  container.bind<RoleQueriesService>(TYPES.RoleQueriesService)
+    .to(RoleQueriesService)
     .inSingletonScope();
 
   // 權限服務
-  container.bind<PermissionCommandsSvc>(TYPES.PermissionCommandsSvc)
-    .to(PermissionCommandsSvc)
+  container.bind<PermissionCommandsService>(TYPES.PermissionCommandsService)
+    .to(PermissionCommandsService)
     .inSingletonScope();
 
-  container.bind<PermissionQueriesSvc>(TYPES.PermissionQueriesSvc)
-    .to(PermissionQueriesSvc)
+  container.bind<PermissionQueriesService>(TYPES.PermissionQueriesService)
+    .to(PermissionQueriesService)
     .inSingletonScope();
 
   // 用戶角色關聯服務
-  container.bind<UserToRoleCommandsSvc>(TYPES.UserToRoleCommandsSvc)
-    .to(UserToRoleCommandsSvc)
+  container.bind<UserToRoleCommandsService>(TYPES.UserToRoleCommandsService)
+    .to(UserToRoleCommandsService)
     .inSingletonScope();
 
-  container.bind<UserToRoleQueriesSvc>(TYPES.UserToRoleQueriesSvc)
-    .to(UserToRoleQueriesSvc)
+  container.bind<UserToRoleQueriesService>(TYPES.UserToRoleQueriesService)
+    .to(UserToRoleQueriesService)
     .inSingletonScope();
 
   // 角色權限關聯服務
-  container.bind<RoleToPermissionCommandsSvc>(TYPES.RoleToPermissionCommandsSvc)
-    .to(RoleToPermissionCommandsSvc)
+  container.bind<RoleToPermissionCommandsService>(TYPES.RoleToPermissionCommandsService)
+    .to(RoleToPermissionCommandsService)
     .inSingletonScope();
 
-  container.bind<RoleToPermissionQueriesSvc>(TYPES.RoleToPermissionQueriesSvc)
-    .to(RoleToPermissionQueriesSvc)
+  container.bind<RoleToPermissionQueriesService>(TYPES.RoleToPermissionQueriesService)
+    .to(RoleToPermissionQueriesService)
     .inSingletonScope();
 
     
-  container.bind<SessionQueriesSvc>(TYPES.SessionQueriesSvc)
-    .to(SessionQueriesSvc)
+  container.bind<SessionQueriesService>(TYPES.SessionQueriesService)
+    .to(SessionQueriesService)
     .inSingletonScope();
 
   // JWT 安全服務
@@ -126,92 +126,92 @@ export function createContainer(): Container {
   // ===== RBAC 控制器註冊 =====
   
   // 用戶控制器
-  container.bind<UserCommandsCtrl>(TYPES.UserCommandsCtrl)
-    .to(UserCommandsCtrl)
+  container.bind<UserCommandsController>(TYPES.UserCommandsController)
+    .to(UserCommandsController)
     .inSingletonScope();
 
-  container.bind<UserQueriesCtrl>(TYPES.UserQueriesCtrl)
-    .to(UserQueriesCtrl)
+  container.bind<UserQueriesController>(TYPES.UserQueriesController)
+    .to(UserQueriesController)
     .inSingletonScope();
 
   // 角色控制器
-  container.bind<RoleCommandsCtrl>(TYPES.RoleCommandsCtrl)
-    .to(RoleCommandsCtrl)
+  container.bind<RoleCommandsController>(TYPES.RoleCommandsController)
+    .to(RoleCommandsController)
     .inSingletonScope();
 
-  container.bind<RoleQueriesCtrl>(TYPES.RoleQueriesCtrl)
-    .to(RoleQueriesCtrl)
+  container.bind<RoleQueriesController>(TYPES.RoleQueriesController)
+    .to(RoleQueriesController)
     .inSingletonScope();
 
   // 權限控制器
-  container.bind<PermissionCommandsCtrl>(TYPES.PermissionCommandsCtrl)
-    .to(PermissionCommandsCtrl)
+  container.bind<PermissionCommandsController>(TYPES.PermissionCommandsController)
+    .to(PermissionCommandsController)
     .inSingletonScope();
 
-  container.bind<PermissionQueriesCtrl>(TYPES.PermissionQueriesCtrl)
-    .to(PermissionQueriesCtrl)
+  container.bind<PermissionQueriesController>(TYPES.PermissionQueriesController)
+    .to(PermissionQueriesController)
     .inSingletonScope();
 
   // 關聯命令控制器
-  container.bind<UserToRoleCommandsCtrl>(TYPES.UserToRoleCommandsCtrl)
-    .to(UserToRoleCommandsCtrl)
+  container.bind<UserToRoleCommandsController>(TYPES.UserToRoleCommandsController)
+    .to(UserToRoleCommandsController)
     .inSingletonScope();
 
-  container.bind<RoleToPermissionCommandsCtrl>(TYPES.RoleToPermissionCommandsCtrl)
-    .to(RoleToPermissionCommandsCtrl)
+  container.bind<RoleToPermissionCommandsController>(TYPES.RoleToPermissionCommandsController)
+    .to(RoleToPermissionCommandsController)
     .inSingletonScope();
 
   // 關聯查詢控制器
-  container.bind<UserToRoleQueriesCtrl>(TYPES.UserToRoleQueriesCtrl)
-    .to(UserToRoleQueriesCtrl)
+  container.bind<UserToRoleQueriesController>(TYPES.UserToRoleQueriesController)
+    .to(UserToRoleQueriesController)
     .inSingletonScope();
 
-  container.bind<RoleToPermissionQueriesCtrl>(TYPES.RoleToPermissionQueriesCtrl)
-    .to(RoleToPermissionQueriesCtrl)
+  container.bind<RoleToPermissionQueriesController>(TYPES.RoleToPermissionQueriesController)
+    .to(RoleToPermissionQueriesController)
     .inSingletonScope();
 
-  // ===== Repo 註冊 =====
+  // ===== Repositorysitory 註冊 =====
   
-  // Queries Repositories
-  container.bind<UserQueriesRepo>(TYPES.UserQueriesRepo)
-    .to(UserQueriesRepo)
+  // Queries Repositorysitorysitories
+  container.bind<UserQueriesRepositorysitory>(TYPES.UserQueriesRepositorysitory)
+    .to(UserQueriesRepositorysitory)
     .inSingletonScope();
 
-  container.bind<PermissionQueriesRepo>(TYPES.PermissionQueriesRepo)
-    .to(PermissionQueriesRepo)
+  container.bind<PermissionQueriesRepositorysitory>(TYPES.PermissionQueriesRepositorysitory)
+    .to(PermissionQueriesRepositorysitory)
     .inSingletonScope();
 
-  container.bind<RoleQueriesRepo>(TYPES.RoleQueriesRepo)
-    .to(RoleQueriesRepo)
+  container.bind<RoleQueriesRepositorysitory>(TYPES.RoleQueriesRepositorysitory)
+    .to(RoleQueriesRepositorysitory)
     .inSingletonScope();
 
-  container.bind<UserRoleQueriesRepo>(TYPES.UserRoleQueriesRepo)
-    .to(UserRoleQueriesRepo)
+  container.bind<UserRoleQueriesRepositorysitory>(TYPES.UserRoleQueriesRepositorysitory)
+    .to(UserRoleQueriesRepositorysitory)
     .inSingletonScope();
 
-  container.bind<RolePermissionQueriesRepo>(TYPES.RolePermissionQueriesRepo)
-    .to(RolePermissionQueriesRepo)
+  container.bind<RolePermissionQueriesRepositorysitory>(TYPES.RolePermissionQueriesRepositorysitory)
+    .to(RolePermissionQueriesRepositorysitory)
     .inSingletonScope();
 
-  // Commands Repositories
-  container.bind<UserCommandsRepo>(TYPES.UserCommandsRepo)
-    .to(UserCommandsRepo)
+  // Commands Repositorysitorysitories
+  container.bind<UserCommandsRepositorysitory>(TYPES.UserCommandsRepositorysitory)
+    .to(UserCommandsRepositorysitory)
     .inSingletonScope();
 
-  container.bind<PermissionCommandsRepo>(TYPES.PermissionCommandsRepo)
-    .to(PermissionCommandsRepo)
+  container.bind<PermissionCommandsRepositorysitory>(TYPES.PermissionCommandsRepositorysitory)
+    .to(PermissionCommandsRepositorysitory)
     .inSingletonScope();
 
-  container.bind<RoleCommandsRepo>(TYPES.RoleCommandsRepo)
-    .to(RoleCommandsRepo)
+  container.bind<RoleCommandsRepositorysitory>(TYPES.RoleCommandsRepositorysitory)
+    .to(RoleCommandsRepositorysitory)
     .inSingletonScope();
 
-  container.bind<UserRoleCommandsRepo>(TYPES.UserRoleCommandsRepo)
-    .to(UserRoleCommandsRepo)
+  container.bind<UserRoleCommandsRepositorysitory>(TYPES.UserRoleCommandsRepositorysitory)
+    .to(UserRoleCommandsRepositorysitory)
     .inSingletonScope();
 
-  container.bind<RolePermissionCommandsRepo>(TYPES.RolePermissionCommandsRepo)
-    .to(RolePermissionCommandsRepo)
+  container.bind<RolePermissionCommandsRepositorysitory>(TYPES.RolePermissionCommandsRepositorysitory)
+    .to(RolePermissionCommandsRepositorysitory)
     .inSingletonScope();
 
   // ===== 路由服務註冊 =====

@@ -2,7 +2,7 @@
  * @fileoverview 無人機狀態回應 DTO
  * 
  * 定義所有與無人機狀態相關的回應資料結構
- * 基於 DroneStatusCommandsSvc 和 DroneStatusQueriesSvc 的回應需求設計
+ * 基於 DroneStatusCommandsService 和 DroneStatusQueriesService 的回應需求設計
  * 
  * @author AIOT Team
  * @version 1.0.0

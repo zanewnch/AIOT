@@ -1,5 +1,5 @@
 /**
- * @fileoverview Drone Command Repository Interface
+ * @fileoverview Drone Command Repositorysitorysitory Interface
  * 
  * 定義無人機命令儲存庫的介面規範
  * 
@@ -10,7 +10,7 @@
 
 import { DroneCommandModel, DroneCommandCreationAttributes } from '../../models/DroneCommandModel.js';
 
-export interface IDroneCommandRepository {
+export interface IDroneCommandRepositorysitorysitorysitory {
   /**
    * 創建命令
    */

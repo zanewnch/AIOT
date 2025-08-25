@@ -4,12 +4,12 @@
  */
 
 import { MCPServer, Tool, CallToolRequestSchema } from '@modelcontextprotocol/sdk/server/index.js';
-import { UserPreferenceQueriesCtrl } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
-import { UserPreferenceCommandsCtrl } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
+import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesController.js';
+import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsController.js';
 
 export class GeneralServiceMCP extends MCPServer {
-  private queriesController: UserPreferenceQueriesCtrl;
-  private commandsController: UserPreferenceCommandsCtrl;
+  private queriesController: UserPreferenceQueriesController;
+  private commandsController: UserPreferenceCommandsController;
 
   constructor() {
     super(

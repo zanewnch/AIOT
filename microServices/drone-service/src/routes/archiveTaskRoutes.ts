@@ -30,8 +30,8 @@ export class ArchiveTaskRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.ArchiveTaskQueriesCtrl) private readonly archiveTaskQueries: IArchiveTaskQueries,
-        @inject(TYPES.ArchiveTaskCommandsCtrl) private readonly archiveTaskCommands: IArchiveTaskCommands
+        @inject(TYPES.ArchiveTaskQueriesController) private readonly archiveTaskQueries: IArchiveTaskQueries,
+        @inject(TYPES.ArchiveTaskCommandsController) private readonly archiveTaskCommands: IArchiveTaskCommands
     ) {
         this.router = Router();
         this.setupRoutes();
