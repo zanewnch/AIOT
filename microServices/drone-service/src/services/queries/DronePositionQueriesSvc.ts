@@ -137,8 +137,9 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getDronePositionById = async (id: number): Promise<any> => {
         try {
-            const position = await this.dronePositionQueriesRepo.findById(id);
-            return position ? DtoMapper.toDronePositionResponseDto(position) : null;
+            const pagination = { page: 1, pageSize: 1, sortBy: 'timestamp', sortOrder: 'DESC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findByIdPaginated(id, pagination);
+            return result.data.length > 0 ? DtoMapper.toDronePositionResponseDto(result.data[0]) : null;
         } catch (error) {
             logger.error('獲取位置記錄失敗', { id, error });
             return null;
@@ -147,8 +148,9 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getDronePositionsByDroneId = async (droneId: number, limit?: number): Promise<any[]> => {
         try {
-            const positions = await this.dronePositionQueriesRepo.findByDroneId(droneId, limit || 50);
-            return positions.map(position => DtoMapper.toDronePositionResponseDto(position));
+            const pagination = { page: 1, pageSize: limit || 50, sortBy: 'timestamp', sortOrder: 'DESC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findByDroneIdPaginated(droneId, pagination);
+            return result.data.map(position => DtoMapper.toDronePositionResponseDto(position));
         } catch (error) {
             logger.error('根據無人機ID獲取位置記錄失敗', { droneId, error });
             return [];
@@ -157,8 +159,9 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getLatestDronePosition = async (droneId: number): Promise<any> => {
         try {
-            const position = await this.dronePositionQueriesRepo.findLatestByDroneId(droneId);
-            return position ? DtoMapper.toDronePositionResponseDto(position) : null;
+            const pagination = { page: 1, pageSize: 1, sortBy: 'timestamp', sortOrder: 'DESC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findByDroneIdPaginated(droneId, pagination);
+            return result.data.length > 0 ? DtoMapper.toDronePositionResponseDto(result.data[0]) : null;
         } catch (error) {
             logger.error('獲取最新位置記錄失敗', { droneId, error });
             return null;
@@ -167,8 +170,11 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getDronePositionsByTimeRange = async (droneId: number, startDate: Date, endDate: Date): Promise<any[]> => {
         try {
-            const positions = await this.dronePositionQueriesRepo.findByTimeRange(droneId, startDate, endDate);
-            return positions.map(position => DtoMapper.toDronePositionResponseDto(position));
+            const pagination = { page: 1, pageSize: 100, sortBy: 'timestamp', sortOrder: 'ASC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findByTimeRangePaginated(startDate, endDate, pagination);
+            // 再根據 droneId 過濾（如果分頁方法不支持同時按時間和droneId過濾）
+            const filteredData = result.data.filter(position => position.drone_id === droneId);
+            return filteredData.map(position => DtoMapper.toDronePositionResponseDto(position));
         } catch (error) {
             logger.error('根據時間範圍獲取位置記錄失敗', { droneId, startDate, endDate, error });
             return [];
@@ -177,8 +183,9 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getDronePositionStatistics = async (): Promise<{total: number}> => {
         try {
-            const total = await this.dronePositionQueriesRepo.count();
-            return { total };
+            const pagination = { page: 1, pageSize: 1, sortBy: 'id', sortOrder: 'ASC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findPaginated(pagination);
+            return { total: result.totalCount };
         } catch (error) {
             logger.error('獲取位置統計失敗', { error });
             return { total: 0 };
@@ -187,7 +194,9 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getTotalPositionCount = async (): Promise<number> => {
         try {
-            return await this.dronePositionQueriesRepo.count();
+            const pagination = { page: 1, pageSize: 1, sortBy: 'id', sortOrder: 'ASC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findPaginated(pagination);
+            return result.totalCount;
         } catch (error) {
             logger.error('獲取位置總數失敗', { error });
             return 0;
@@ -196,7 +205,9 @@ export class DronePositionQueriesSvc implements IDronePositionQueriesSvc {
 
     getPositionCountByDrone = async (droneId: number): Promise<number> => {
         try {
-            return await this.dronePositionQueriesRepo.countByDroneId(droneId);
+            const pagination = { page: 1, pageSize: 1, sortBy: 'id', sortOrder: 'ASC' as const, offset: 0 };
+            const result = await this.dronePositionQueriesRepo.findByDroneIdPaginated(droneId, pagination);
+            return result.totalCount;
         } catch (error) {
             logger.error('根據無人機ID獲取位置計數失敗', { droneId, error });
             return 0;

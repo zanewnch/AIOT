@@ -59,12 +59,12 @@ interface ExternalCreationAttributesLocalLocal {
  */
 @injectable()
 export class DroneRealTimeStatusCommandsSvc {
-    private repo: DroneRealTimeStatusCommandsRepository;
-    private readonly queryService: DroneRealTimeStatusQueriesService;
+    private repo: DroneRealTimeStatusCommandsRepo;
+    private readonly queryService: DroneRealTimeStatusQueriesSvc;
 
     constructor(
-        @inject(TYPES.DroneRealTimeStatusCommandsRepositorysitory) repo: DroneRealTimeStatusCommandsRepositorysitory,
-        @inject(TYPES.DroneRealTimeStatusQueriesService) queryService: DroneRealTimeStatusQueriesService
+        @inject(TYPES.DroneRealTimeStatusCommandsRepo) repo: DroneRealTimeStatusCommandsRepo,
+        @inject(TYPES.DroneRealTimeStatusQueriesSvc) queryService: DroneRealTimeStatusQueriesSvc
     ) {
         this.repo = repo;
         this.queryService = queryService;
@@ -109,7 +109,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             // 檢查記錄是否存在
-            const existingRecord = await this.queryService.getRealTimeStatusById(id);
+            const existingRecord = await this.repo.findById(id);
             if (!existingRecord) {
                 throw new Error('即時狀態記錄不存在');
             }
@@ -159,7 +159,7 @@ export class DroneRealTimeStatusCommandsSvc {
             }
 
             // 檢查記錄是否存在
-            const existingRecord = await this.queryService.getRealTimeStatusById(id);
+            const existingRecord = await this.repo.findById(id);
             if (!existingRecord) {
                 throw new Error('即時狀態記錄不存在');
             }

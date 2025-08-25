@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import type { IDronePositionsArchiveRepository } from '../../types/repo/IDronePositionsArchiveRepo.js';
+import type { IDronePositionsArchiveRepo } from '../../types/repositories/IDronePositionsArchiveRepo.js';
 import type { DronePositionsArchiveAttributes, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 import { DronePositionsArchiveQueriesSvc } from '../queries/DronePositionsArchiveQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -34,29 +34,27 @@ const logger = createLogger('DronePositionsArchiveCommandsService');
 @injectable()
 export class DronePositionsArchiveCommandsSvc {
     constructor(
-        @inject(TYPES.DronePositionsArchiveCommandsRepositorysitory)
-        private readonly archiveRepository: IDronePositionsArchiveRepositorysitory,
-        @inject(TYPES.DronePositionsArchiveQueriesService)
-        private readonly queryService: DronePositionsArchiveQueriesService
-    ) {}
+        @inject(TYPES.DronePositionsArchiveCommandsRepo)
+        private readonly dronePositionsArchiveCommandsRepo: IDronePositionsArchiveRepo,
+        @inject(TYPES.DronePositionsArchiveQueriesSvc)
+        private readonly dronePositionsArchiveQueriesSvc: DronePositionsArchiveQueriesSvc
+    ) { }
 
     /**
      * 建立新的位置歷史歸檔記錄
      */
     createPositionArchive = async (data: DronePositionsArchiveCreationAttributes): Promise<DronePositionsArchiveAttributes> => {
         try {
-// 驗證資料完整性
+            // 驗證資料完整性
             if (!await this.validateArchiveData(data)) {
                 throw new Error('歸檔資料驗證失敗');
             }
 
             // 驗證座標有效性
-            if (!await this.queryService.validateCoordinates(data.latitude, data.longitude)) {
-                throw new Error('無效的座標資料');
-            }
+            this.validateCoordinates(data.latitude, data.longitude);
 
-            const createdArchive = await this.archiveRepository.create(data);
-return createdArchive;
+            const createdArchive = await this.dronePositionsArchiveCommandsRepo.create(data);
+            return createdArchive;
         } catch (error) {
             throw error;
         }
@@ -67,7 +65,7 @@ return createdArchive;
      */
     bulkCreatePositionArchives = async (dataArray: DronePositionsArchiveCreationAttributes[]): Promise<DronePositionsArchiveAttributes[]> => {
         try {
-// 驗證批量資料
+            // 驗證批量資料
             if (!dataArray || dataArray.length === 0) {
                 throw new Error('批量建立資料不能為空');
             }
@@ -81,13 +79,11 @@ return createdArchive;
                 if (!await this.validateArchiveData(data)) {
                     throw new Error('批量資料中包含無效的歸檔記錄');
                 }
-                if (!await this.queryService.validateCoordinates(data.latitude, data.longitude)) {
-                    throw new Error(`無效的座標資料: ${data.latitude}, ${data.longitude}`);
-                }
+                this.validateCoordinates(data.latitude, data.longitude);
             }
 
-            const createdArchives = await this.archiveRepository.bulkCreate(dataArray);
-return createdArchives;
+            const createdArchives = await this.dronePositionsArchiveCommandsRepo.bulkCreate(dataArray);
+            return createdArchives;
         } catch (error) {
             throw error;
         }
@@ -98,13 +94,13 @@ return createdArchives;
      */
     updatePositionArchive = async (id: number, data: Partial<DronePositionsArchiveCreationAttributes>): Promise<DronePositionsArchiveAttributes | null> => {
         try {
-// 驗證 ID 參數
+            // 驗證 ID 參數
             if (!id || id <= 0) {
                 throw new Error('ID 必須是正整數');
             }
 
             // 檢查記錄是否存在
-            const existingArchive = await this.queryService.getPositionArchiveById(id);
+            const existingArchive = await this.dronePositionsArchiveCommandsRepo.findById(id);
             if (!existingArchive) {
                 throw new Error('指定的位置歷史歸檔不存在');
             }
@@ -115,16 +111,14 @@ return createdArchives;
                 if (data.latitude === undefined || data.longitude === undefined) {
                     throw new Error('緯度和經度必須同時提供');
                 }
-                if (!await this.queryService.validateCoordinates(data.latitude, data.longitude)) {
-                    throw new Error('無效的座標資料');
-                }
+                this.validateCoordinates(data.latitude, data.longitude);
             }
 
-            const updatedArchive = await this.archiveRepository.update(id, data);
+            const updatedArchive = await this.dronePositionsArchiveCommandsRepo.update(id, data);
 
             if (updatedArchive) {
-} else {
-}
+            } else {
+            }
 
             return updatedArchive;
         } catch (error) {
@@ -137,19 +131,19 @@ return createdArchives;
      */
     deletePositionArchive = async (id: number): Promise<boolean> => {
         try {
-// 驗證 ID 參數
+            // 驗證 ID 參數
             if (!id || id <= 0) {
                 throw new Error('ID 必須是正整數');
             }
 
             // 檢查記錄是否存在
-            const existingArchive = await this.queryService.getPositionArchiveById(id);
+            const existingArchive = await this.dronePositionsArchiveCommandsRepo.findById(id);
             if (!existingArchive) {
                 throw new Error('指定的位置歷史歸檔不存在');
             }
 
-            await this.archiveRepository.delete(id);
-return true;
+            await this.dronePositionsArchiveCommandsRepo.delete(id);
+            return true;
         } catch (error) {
             throw error;
         }
@@ -160,13 +154,13 @@ return true;
      */
     deleteArchivesBeforeDate = async (beforeDate: Date): Promise<number> => {
         try {
-// 驗證日期
+            // 驗證日期
             if (!beforeDate || beforeDate > new Date()) {
                 throw new Error('無效的刪除日期');
             }
 
-            const deletedCount = await this.archiveRepository.deleteBeforeDate(beforeDate);
-return deletedCount;
+            const deletedCount = await this.dronePositionsArchiveCommandsRepo.deleteBeforeDate(beforeDate);
+            return deletedCount;
         } catch (error) {
             throw error;
         }
@@ -177,19 +171,19 @@ return deletedCount;
      */
     deleteArchiveBatch = async (batchId: string): Promise<number> => {
         try {
-// 驗證批次 ID
+            // 驗證批次 ID
             if (!batchId || batchId.trim() === '') {
                 throw new Error('歸檔批次 ID 不能為空');
             }
 
             // 檢查批次是否存在
-            const batchData = await this.queryService.getPositionArchivesByBatchId(batchId);
+            const batchData = await this.dronePositionsArchiveCommandsRepo.findByBatchId(batchId);
             if (batchData.length === 0) {
                 throw new Error('指定的歸檔批次不存在');
             }
 
-            const deletedCount = await this.archiveRepository.deleteBatch(batchId);
-return deletedCount;
+            const deletedCount = await this.dronePositionsArchiveCommandsRepo.deleteBatch(batchId);
+            return deletedCount;
         } catch (error) {
             throw error;
         }
@@ -200,7 +194,7 @@ return deletedCount;
      */
     bulkDeletePositionArchives = async (ids: number[]): Promise<number> => {
         try {
-if (!ids || ids.length === 0) {
+            if (!ids || ids.length === 0) {
                 throw new Error('刪除 ID 陣列不能為空');
             }
 
@@ -218,12 +212,12 @@ if (!ids || ids.length === 0) {
             let deletedCount = 0;
             for (const id of ids) {
                 try {
-                    await this.archiveRepository.delete(id);
+                    await this.dronePositionsArchiveCommandsRepo.delete(id);
                     deletedCount++;
                 } catch (error) {
-}
+                }
             }
-return deletedCount;
+            return deletedCount;
         } catch (error) {
             throw error;
         }
@@ -239,11 +233,11 @@ return deletedCount;
         maxBattery?: number;
     }): Promise<number> => {
         try {
-let deletedCount = 0;
+            let deletedCount = 0;
 
             // 根據無人機 ID 刪除
             if (conditions.droneId) {
-                const archives = await this.queryService.getPositionArchivesByDroneId(conditions.droneId, 10000);
+                const archives = await this.dronePositionsArchiveCommandsRepo.findByDroneId(conditions.droneId, 10000);
                 const ids = archives
                     .filter(archive => {
                         if (conditions.beforeDate && archive.timestamp >= conditions.beforeDate) {
@@ -265,7 +259,7 @@ let deletedCount = 0;
             else if (conditions.beforeDate) {
                 deletedCount = await this.deleteArchivesBeforeDate(conditions.beforeDate);
             }
-return deletedCount;
+            return deletedCount;
         } catch (error) {
             throw error;
         }
@@ -276,7 +270,7 @@ return deletedCount;
      */
     cleanupOldArchives = async (daysOld: number): Promise<number> => {
         try {
-if (daysOld <= 0) {
+            if (daysOld <= 0) {
                 throw new Error('清理天數必須是正整數');
             }
 
@@ -284,7 +278,7 @@ if (daysOld <= 0) {
             cutoffDate.setDate(cutoffDate.getDate() - daysOld);
 
             const deletedCount = await this.deleteArchivesBeforeDate(cutoffDate);
-return deletedCount;
+            return deletedCount;
         } catch (error) {
             throw error;
         }
@@ -299,7 +293,7 @@ return deletedCount;
         totalRemoved: number;
     }> => {
         try {
-const trajectory = await this.queryService.getTrajectoryByDroneAndTime(
+            const trajectory = await this.dronePositionsArchiveCommandsRepo.findTrajectoryByDroneAndTime(
                 droneId, timeRange.start, timeRange.end, 10000
             );
 
@@ -307,9 +301,10 @@ const trajectory = await this.queryService.getTrajectoryByDroneAndTime(
                 return { duplicatesRemoved: 0, anomaliesRemoved: 0, totalRemoved: 0 };
             }
 
-            // 檢測異常資料
-            const anomalies = await this.queryService.detectAnomalousPositions(
-                droneId, timeRange.start, timeRange.end
+            // 檢測異常資料（簡化版本，基於速度和座標異常）
+            const anomalies = trajectory.filter(point => 
+                point.speed > 200 || // 異常速度
+                Math.abs(point.latitude) > 90 || Math.abs(point.longitude) > 180 // 座標異常
             );
 
             // 檢測重複資料（相同時間戳和位置的記錄）
@@ -336,7 +331,7 @@ const trajectory = await this.queryService.getTrajectoryByDroneAndTime(
                 anomaliesRemoved: anomalies.length,
                 totalRemoved
             };
-return result;
+            return result;
         } catch (error) {
             throw error;
         }
@@ -347,7 +342,7 @@ return result;
      */
     updateArchiveBatchId = async (oldBatchId: string, newBatchId: string): Promise<number> => {
         try {
-if (!oldBatchId || oldBatchId.trim() === '') {
+            if (!oldBatchId || oldBatchId.trim() === '') {
                 throw new Error('舊批次 ID 不能為空');
             }
             if (!newBatchId || newBatchId.trim() === '') {
@@ -355,7 +350,7 @@ if (!oldBatchId || oldBatchId.trim() === '') {
             }
 
             // 檢查舊批次是否存在
-            const oldBatchData = await this.queryService.getPositionArchivesByBatchId(oldBatchId);
+            const oldBatchData = await this.dronePositionsArchiveCommandsRepo.findByBatchId(oldBatchId);
             if (oldBatchData.length === 0) {
                 throw new Error('指定的舊批次不存在');
             }
@@ -363,18 +358,33 @@ if (!oldBatchId || oldBatchId.trim() === '') {
             let updatedCount = 0;
             for (const archive of oldBatchData) {
                 try {
-                    const updated = await this.archiveRepository.update(archive.id, {
+                    const updated = await this.dronePositionsArchiveCommandsRepo.update(archive.id, {
                         archive_batch_id: newBatchId
                     });
                     if (updated) {
                         updatedCount++;
                     }
                 } catch (error) {
-}
+                }
             }
-return updatedCount;
+            return updatedCount;
         } catch (error) {
             throw error;
+        }
+    }
+
+    /**
+     * 驗證座標
+     */
+    private validateCoordinates = (latitude: number, longitude: number): void => {
+        if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+            throw new Error('緯度和經度必須是數字');
+        }
+        if (latitude < -90 || latitude > 90) {
+            throw new Error('緯度必須在 -90 到 90 度之間');
+        }
+        if (longitude < -180 || longitude > 180) {
+            throw new Error('經度必須在 -180 到 180 度之間');
         }
     }
 
@@ -394,32 +404,32 @@ return updatedCount;
             for (const field of requiredFields) {
                 if (data[field as keyof DronePositionsArchiveCreationAttributes] === undefined ||
                     data[field as keyof DronePositionsArchiveCreationAttributes] === null) {
-return false;
+                    return false;
                 }
             }
 
             // 驗證數值範圍
             if (data.battery_level < 0 || data.battery_level > 100) {
-return false;
+                return false;
             }
 
             if (data.signal_strength < 0 || data.signal_strength > 100) {
-return false;
+                return false;
             }
 
             if (data.speed < 0) {
-return false;
+                return false;
             }
 
             if (data.heading < 0 || data.heading >= 360) {
-return false;
+                return false;
             }
 
             // 驗證字串欄位
             if (!data.archive_batch_id || data.archive_batch_id.trim() === '') {
-return false;
+                return false;
             }
-return true;
+            return true;
         } catch (error) {
             return false;
         }

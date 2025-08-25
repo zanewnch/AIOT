@@ -10,7 +10,7 @@
 
 import { DronePositionsArchiveModel, DronePositionsArchiveCreationAttributes } from '../../models/DronePositionsArchiveModel.js';
 
-export interface IDronePositionsArchiveRepositorysitory {
+export interface IDronePositionsArchiveRepo {
   /**
    * 創建位置歷史記錄
    */

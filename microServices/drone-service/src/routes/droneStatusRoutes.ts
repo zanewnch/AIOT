@@ -34,12 +34,12 @@ export class DroneStatusRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.DroneStatusQueriesController) private readonly droneStatusQueries: IDroneStatusQueries,
-        @inject(TYPES.DroneStatusCommandsController) private readonly droneStatusCommands: IDroneStatusCommands,
-        @inject(TYPES.DroneRealTimeStatusQueriesController) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
-        @inject(TYPES.DroneRealTimeStatusCommandsController) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands,
-        @inject(TYPES.DroneStatusArchiveQueriesController) private readonly droneStatusArchiveQueries: IDroneStatusArchiveQueries,
-        @inject(TYPES.DroneStatusArchiveCommandsController) private readonly droneStatusArchiveCommands: IDroneStatusArchiveCommands
+        @inject(TYPES.DroneStatusQueriesCtrl) private readonly droneStatusQueries: IDroneStatusQueries,
+        @inject(TYPES.DroneStatusCommandsCtrl) private readonly droneStatusCommands: IDroneStatusCommands,
+        @inject(TYPES.DroneRealTimeStatusQueriesCtrl) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
+        @inject(TYPES.DroneRealTimeStatusCommandsCtrl) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands,
+        @inject(TYPES.DroneStatusArchiveQueriesCtrl) private readonly droneStatusArchiveQueries: IDroneStatusArchiveQueries,
+        @inject(TYPES.DroneStatusArchiveCommandsCtrl) private readonly droneStatusArchiveCommands: IDroneStatusArchiveCommands
     ) {
         this.router = Router();
         this.setupRoutes();
@@ -76,19 +76,19 @@ export class DroneStatusRoutes {
      */
     private setupCommandRoutes(): void {
         // 建立新的無人機狀態記錄
-        this.router.post('/', (req, res, next) => this.droneStatusCommands.createDroneStatus(req, res));
+        this.router.post('/', (req, res, next) => this.droneStatusCommands.createDroneStatus(req, res, next));
 
         // 批次建立無人機狀態記錄
-        this.router.post('/batch', (req, res, next) => this.droneStatusCommands.bulkCreateDroneStatuses(req, res));
+        this.router.post('/batch', (req, res, next) => this.droneStatusCommands.bulkCreateDroneStatuses(req, res, next));
 
         // 更新無人機狀態
-        this.router.put('/:id', (req, res, next) => this.droneStatusCommands.updateDroneStatus(req, res));
+        this.router.put('/:id', (req, res, next) => this.droneStatusCommands.updateDroneStatus(req, res, next));
 
         // 刪除無人機狀態記錄
-        this.router.delete('/:id', (req, res, next) => this.droneStatusCommands.deleteDroneStatus(req, res));
+        this.router.delete('/:id', (req, res, next) => this.droneStatusCommands.deleteDroneStatus(req, res, next));
 
         // 清空指定無人機的所有狀態記錄
-        this.router.delete('/drone/:droneId', (req, res, next) => this.droneStatusCommands.clearStatusesByDroneId(req, res));
+        this.router.delete('/drone/:droneId', (req, res, next) => this.droneStatusCommands.clearStatusesByDroneId(req, res, next));
     }
 
     /**
@@ -110,16 +110,16 @@ export class DroneStatusRoutes {
 
         // === 命令操作路由 ===
         // 更新即時狀態
-        this.router.put('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res));
+        this.router.put('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res, next));
 
         // 廣播訊息
-        this.router.post('/realtime/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res));
+        this.router.post('/realtime/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res, next));
 
         // 發送通知
-        this.router.post('/realtime/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res));
+        this.router.post('/realtime/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res, next));
 
         // 斷開無人機連線
-        this.router.delete('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res));
+        this.router.delete('/realtime/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res, next));
     }
 
     /**
@@ -141,16 +141,16 @@ export class DroneStatusRoutes {
 
         // === 命令操作路由 ===
         // 歸檔狀態記錄
-        this.router.post('/archive', (req, res, next) => this.droneStatusArchiveCommands.archiveStatus(req, res));
+        this.router.post('/archive', (req, res, next) => this.droneStatusArchiveCommands.archiveStatus(req, res, next));
 
         // 批次歸檔狀態記錄
-        this.router.post('/archive/batch', (req, res, next) => this.droneStatusArchiveCommands.bulkArchiveStatuses(req, res));
+        this.router.post('/archive/batch', (req, res, next) => this.droneStatusArchiveCommands.bulkArchiveStatuses(req, res, next));
 
         // 刪除歷史狀態記錄
-        this.router.delete('/archive/:id', (req, res, next) => this.droneStatusArchiveCommands.deleteArchivedStatus(req, res));
+        this.router.delete('/archive/:id', (req, res, next) => this.droneStatusArchiveCommands.deleteArchivedStatus(req, res, next));
 
         // 清理舊的歷史狀態記錄
-        this.router.delete('/archive/cleanup', (req, res, next) => this.droneStatusArchiveCommands.cleanupOldArchives(req, res));
+        this.router.delete('/archive/cleanup', (req, res, next) => this.droneStatusArchiveCommands.cleanupOldArchives(req, res, next));
     }
 
     /**

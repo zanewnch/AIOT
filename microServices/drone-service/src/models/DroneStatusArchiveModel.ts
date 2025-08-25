@@ -88,6 +88,36 @@ export type DroneStatusArchiveAttributes = {
     current_status: DroneStatus;
     
     /** 
+     * 變更後狀態
+     * @type {DroneStatus} 狀態變更後的狀態值
+     */
+    status: DroneStatus;
+    
+    /** 
+     * 變更前狀態
+     * @type {DroneStatus | null} 狀態變更前的狀態值，初始狀態時為null
+     */
+    previous_status: DroneStatus | null;
+    
+    /** 
+     * 變更原因
+     * @type {string} 狀態變更的原因說明
+     */
+    reason: string;
+    
+    /** 
+     * 詳細資訊
+     * @type {any} 結構化詳細資訊，如任務ID、天氣條件等
+     */
+    details: any;
+    
+    /** 
+     * 狀態變更時間
+     * @type {Date} 狀態變更發生的精確時間
+     */
+    timestamp: Date;
+    
+    /** 
      * 最後連線時間
      * @type {Date} 無人機最後一次連線的時間戳記
      */
@@ -228,6 +258,41 @@ export class DroneStatusArchiveModel extends Model<DroneStatusArchiveAttributes,
     @AllowNull(false)
     @Column(DataType.ENUM('idle', 'flying', 'charging', 'maintenance', 'offline', 'error'))
     declare current_status: DroneStatus;
+
+    /**
+     * 變更後狀態
+     */
+    @AllowNull(false)
+    @Column(DataType.ENUM('idle', 'flying', 'charging', 'maintenance', 'offline', 'error'))
+    declare status: DroneStatus;
+
+    /**
+     * 變更前狀態
+     */
+    @AllowNull(true)
+    @Column(DataType.ENUM('idle', 'flying', 'charging', 'maintenance', 'offline', 'error'))
+    declare previous_status: DroneStatus | null;
+
+    /**
+     * 變更原因
+     */
+    @AllowNull(false)
+    @Column(DataType.STRING)
+    declare reason: string;
+
+    /**
+     * 詳細資訊
+     */
+    @AllowNull(true)
+    @Column(DataType.JSON)
+    declare details: any;
+
+    /**
+     * 狀態變更時間
+     */
+    @AllowNull(false)
+    @Column(DataType.DATE)
+    declare timestamp: Date;
 
     /**
      * 最後連線時間

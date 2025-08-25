@@ -1,4 +1,4 @@
-export interface IDroneCommandsArchiveRepositorysitory {
+export interface IDroneCommandsArchiveRepo {
   create(data: any): Promise<any>;
   insert(data: any): Promise<any>;
   update(id: number, data: any): Promise<any>;

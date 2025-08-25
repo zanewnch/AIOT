@@ -37,12 +37,12 @@ const logger = createLogger('DroneRealTimeStatusQueriesService');
  */
 @injectable()
 export class DroneRealTimeStatusQueriesSvc {
-    private repo: DroneRealTimeStatusQueriesRepo;
+    private droneRealTimeStatusQueriesRepo: DroneRealTimeStatusQueriesRepo;
 
     constructor(
-        @inject(TYPES.DroneRealTimeStatusQueriesRepo) repo: DroneRealTimeStatusQueriesRepo
+        @inject(TYPES.DroneRealTimeStatusQueriesRepo) droneRealTimeStatusQueriesRepo: DroneRealTimeStatusQueriesRepo
     ) {
-        this.repo = repo;
+        this.droneRealTimeStatusQueriesRepo = droneRealTimeStatusQueriesRepo;
     }
 
     /**

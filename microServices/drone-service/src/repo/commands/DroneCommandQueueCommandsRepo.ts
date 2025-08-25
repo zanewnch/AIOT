@@ -11,7 +11,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DroneCommandQueueModel, DroneCommandQueueCreationAttributes, DroneCommandQueueStatus } from '../../models/DroneCommandQueueModel.js';
-import type { IDroneCommandQueueRepo } from '../../types/repositories/IDroneCommandQueueRepository.js';
+import type { IDroneCommandQueueRepo } from '../../types/repositories/IDroneCommandQueueRepo.js';
 import { Op } from 'sequelize';
 import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
@@ -34,11 +34,13 @@ export class DroneCommandQueueCommandsRepo implements IDroneCommandQueueRepo {
     return command;
   }, 'update')
 
-  delete = loggerDecorator(async (id: number): Promise<void> => {
+  delete = loggerDecorator(async (id: number): Promise<boolean> => {
     const command = await this.findById(id);
     if (command) {
       await command.destroy();
+      return true;
     }
+    return false;
   }, 'delete')
 
   markAsExecuting = async (id: number): Promise<DroneCommandQueueModel | null> => {
@@ -46,7 +48,7 @@ export class DroneCommandQueueCommandsRepo implements IDroneCommandQueueRepo {
     if (!command) return null;
     
     await command.update({
-      status: DroneCommandQueueStatus.EXECUTING,
+      status: DroneCommandQueueStatus.RUNNING,
       executed_at: new Date()
     });
     return command;
@@ -126,5 +128,31 @@ export class DroneCommandQueueCommandsRepo implements IDroneCommandQueueRepo {
     });
 
     return result;
+  }
+
+  findAllPaginated = async (params: any): Promise<any> => {
+    const offset = (params.page - 1) * params.pageSize;
+    const result = await DroneCommandQueueModel.findAndCountAll({
+      offset,
+      limit: params.pageSize,
+      order: [[params.sortBy || 'created_at', params.sortOrder || 'DESC']]
+    });
+    
+    return {
+      data: result.rows,
+      totalCount: result.count,
+      currentPage: params.page,
+      pageSize: params.pageSize
+    };
+  }
+
+  getNextPendingCommand = async (droneId: number): Promise<DroneCommandQueueModel | null> => {
+    return await DroneCommandQueueModel.findOne({
+      where: {
+        drone_id: droneId,
+        status: DroneCommandQueueStatus.PENDING
+      },
+      order: [['priority', 'DESC'], ['created_at', 'ASC']]
+    });
   }
 }

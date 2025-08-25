@@ -17,7 +17,7 @@ import { DroneStatusQueriesRepo } from '../../repo/queries/DroneStatusQueriesRep
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
-import type { IDroneStatusRepository } from '../../types/repo/IDroneStatusRepo.js';
+import type { IDroneStatusQueriesSvc } from '../../types/services/IDroneStatusSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
 import { PaginationParams, PaginatedResult, PaginationUtils } from '../../types/PaginationTypes.js';
@@ -41,7 +41,7 @@ const logger = createLogger('DroneStatusQueriesService');
  * @since 1.0.0
  */
 @injectable()
-export class DroneStatusQueriesSvc {
+export class DroneStatusQueriesSvc implements IDroneStatusQueriesSvc {
     private droneStatusQueriesRepo: DroneStatusQueriesRepo;
 
     constructor(
@@ -164,6 +164,76 @@ export class DroneStatusQueriesSvc {
         } catch (error) {
             logger.error('根據狀態獲取無人機列表失敗', { error, status });
             throw error;
+        }
+    };
+
+    // 接口要求的方法實現
+
+    /**
+     * 獲取所有無人機狀態
+     */
+    getAllDroneStatuses = async (params?: any): Promise<any> => {
+        const pagination = params || { page: 1, pageSize: 20, sortBy: 'updatedAt', sortOrder: 'DESC', offset: 0 };
+        return this.getAllStatusesPaginated(pagination);
+    };
+
+    /**
+     * 根據無人機 ID 獲取狀態列表
+     */
+    getDroneStatusesByDroneId = async (droneId: string): Promise<DroneStatusAttributes[]> => {
+        try {
+            const pagination = { page: 1, pageSize: 50, sortBy: 'updatedAt', sortOrder: 'DESC' as const, offset: 0 };
+            const result = await this.droneStatusQueriesRepo.findByDroneIdPaginated(parseInt(droneId), pagination);
+            return result.data;
+        } catch (error) {
+            logger.error('根據無人機ID獲取狀態記錄失敗', { droneId, error });
+            return [];
+        }
+    };
+
+    /**
+     * 獲取無人機最新狀態
+     */
+    getLatestDroneStatus = async (): Promise<DroneStatusAttributes | null> => {
+        try {
+            const pagination = { page: 1, pageSize: 1, sortBy: 'updatedAt', sortOrder: 'DESC' as const, offset: 0 };
+            const result = await this.droneStatusQueriesRepo.findPaginated(pagination);
+            return result.data.length > 0 ? result.data[0] : null;
+        } catch (error) {
+            logger.error('獲取最新狀態記錄失敗', { error });
+            return null;
+        }
+    };
+
+    /**
+     * 根據時間範圍獲取狀態記錄
+     */
+    getDroneStatusesByTimeRange = async (startDate: Date, endDate: Date): Promise<DroneStatusAttributes[]> => {
+        try {
+            const pagination = { page: 1, pageSize: 100, sortBy: 'updatedAt', sortOrder: 'ASC' as const, offset: 0 };
+            const result = await this.droneStatusQueriesRepo.findPaginated(pagination);
+            // 根據時間範圍過濾
+            const filteredData = result.data.filter(status => 
+                status.createdAt >= startDate && status.createdAt <= endDate
+            );
+            return filteredData;
+        } catch (error) {
+            logger.error('根據時間範圍獲取狀態記錄失敗', { startDate, endDate, error });
+            return [];
+        }
+    };
+
+    /**
+     * 獲取狀態統計
+     */
+    getDroneStatusStatistics = async (): Promise<{total: number}> => {
+        try {
+            const pagination = { page: 1, pageSize: 1, sortBy: 'id', sortOrder: 'ASC' as const, offset: 0 };
+            const result = await this.droneStatusQueriesRepo.findPaginated(pagination);
+            return { total: result.totalCount };
+        } catch (error) {
+            logger.error('獲取狀態統計失敗', { error });
+            return { total: 0 };
         }
     };
 

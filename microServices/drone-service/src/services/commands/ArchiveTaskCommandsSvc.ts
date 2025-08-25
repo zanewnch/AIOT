@@ -23,7 +23,7 @@ import type {
 } from '../../types/services/IArchiveTaskSvc.js';
 import type {
     IArchiveTaskRepo
-} from '../../types/repo/IArchiveTaskRepo.js';
+} from '../../types/repositories/IArchiveTaskRepo.js';
 import { ArchiveTaskCommandsRepo } from '../../repo/commands/ArchiveTaskCommandsRepo.js';
 import { ArchiveTaskQueriesRepo } from '../../repo/queries/ArchiveTaskQueriesRepo.js';
 import { ArchiveTaskQueriesSvc } from '../queries/ArchiveTaskQueriesSvc.js';
@@ -46,19 +46,19 @@ export class ArchiveTaskCommandsSvc {
 
     constructor(
         @inject(TYPES.ArchiveTaskCommandsRepo) 
-        private readonly commandsRepository: ArchiveTaskCommandsRepo,
+        private readonly archiveTaskCommandsRepo: ArchiveTaskCommandsRepo,
         
         @inject(TYPES.ArchiveTaskQueriesRepo) 
-        private readonly queriesRepository: ArchiveTaskQueriesRepo,
+        private readonly archiveTaskQueriesRepo: ArchiveTaskQueriesRepo,
         
         @inject(TYPES.ArchiveTaskQueriesSvc) 
-        private readonly queryService: ArchiveTaskQueriesSvc
+        private readonly archiveTaskQueriesSvc: ArchiveTaskQueriesSvc
     ) {
         // 創建組合repository，支持完整的IArchiveTaskRepo接口
         this.repo = Object.assign(
-            Object.create(Object.getPrototypeOf(this.commandsRepository)),
-            this.commandsRepository,
-            this.queriesRepository
+            Object.create(Object.getPrototypeOf(this.archiveTaskCommandsRepo)),
+            this.archiveTaskCommandsRepo,
+            this.archiveTaskQueriesRepo
         ) as IArchiveTaskRepo;
     }
 
@@ -178,14 +178,13 @@ export class ArchiveTaskCommandsSvc {
         try {
             this.logger.info('開始執行歸檔任務', { id: id });
 
-            const task = await this.queryService.getTaskById(id);
+            const task = await this.repo.findById(id);
             if (!task) {
                 throw new Error(`任務 ${id} 不存在`);
             }
 
-            // 檢查任務是否可以執行
-            const canExecute = await this.queryService.canExecuteTask(id);
-            if (!canExecute) {
+            // 檢查任務是否可以執行（簡化檢查）
+            if (task.status !== ArchiveTaskStatus.PENDING) {
                 throw new Error(`任務 ${id} 無法執行，當前狀態: ${task.status}`);
             }
 
@@ -279,8 +278,13 @@ export class ArchiveTaskCommandsSvc {
         try {
             this.logger.info('取消歸檔任務', { id: id, reason });
 
-            const canCancel = await this.queryService.canCancelTask(id);
-            if (!canCancel) {
+            const task = await this.repo.findById(id);
+            if (!task) {
+                throw new Error(`任務 ${id} 不存在`);
+            }
+
+            // 檢查任務是否可以取消（簡化檢查）
+            if (task.status === ArchiveTaskStatus.COMPLETED || task.status === ArchiveTaskStatus.FAILED) {
                 throw new Error(`任務 ${id} 無法取消`);
             }
 
@@ -317,7 +321,7 @@ export class ArchiveTaskCommandsSvc {
         try {
             this.logger.info('重試歸檔任務', { id: id });
 
-            const task = await this.queryService.getTaskById(id);
+            const task = await this.repo.findById(id);
             if (!task) {
                 throw new Error(`任務 ${id} 不存在`);
             }
@@ -355,7 +359,7 @@ export class ArchiveTaskCommandsSvc {
         try {
             this.logger.debug('更新任務進度', { id: id, archivedCount });
 
-            const task = await this.queryService.getTaskById(id);
+            const task = await this.repo.findById(id);
             if (!task) {
                 throw new Error(`任務 ${id} 不存在`);
             }
@@ -417,7 +421,7 @@ export class ArchiveTaskCommandsSvc {
         try {
             this.logger.info('標記任務為失敗', { id: id, errorMessage });
 
-            const task = await this.queryService.getTaskById(id);
+            const task = await this.repo.findById(id);
             if (!task) {
                 throw new Error(`任務 ${id} 不存在`);
             }

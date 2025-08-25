@@ -18,7 +18,7 @@ import { DroneStatusArchiveQueriesRepo } from '../../repo/queries/DroneStatusArc
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusArchiveAttributes, DroneStatusArchiveCreationAttributes } from '../../models/DroneStatusArchiveModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
-import type { IDroneStatusArchiveRepository } from '../../types/repo/IDroneStatusArchiveRepo.js';
+import type { IDroneStatusArchiveRepo } from '../../types/repositories/IDroneStatusArchiveRepo.js';
 import { DroneStatusArchiveQueriesSvc } from '../queries/DroneStatusArchiveQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
@@ -36,15 +36,15 @@ const logger = createLogger('DroneStatusArchiveCommandsService');
  */
 @injectable()
 export class DroneStatusArchiveCommandsSvc {
-    private commandsRepository: DroneStatusArchiveCommandsRepository;
-    private queriesRepository: DroneStatusArchiveQueriesRepository;
-    private archiveRepository: IDroneStatusArchiveRepository; // 組合介面
-    private queryService: DroneStatusArchiveQueriesService;
+    private commandsRepository: DroneStatusArchiveCommandsRepo;
+    private queriesRepository: DroneStatusArchiveQueriesRepo;
+    private archiveRepository: IDroneStatusArchiveRepo; // 組合介面
+    private queryService: DroneStatusArchiveQueriesSvc;
 
     constructor(
-        @inject(TYPES.DroneStatusArchiveCommandsRepositorysitory) commandsRepository: DroneStatusArchiveCommandsRepositorysitory,
-        @inject(TYPES.DroneStatusArchiveQueriesRepo) queriesRepository: DroneStatusArchiveQueriesRepository,
-        @inject(TYPES.DroneStatusArchiveQueriesService) queryService: DroneStatusArchiveQueriesService
+        @inject(TYPES.DroneStatusArchiveCommandsRepo) commandsRepository: DroneStatusArchiveCommandsRepo,
+        @inject(TYPES.DroneStatusArchiveQueriesRepo) queriesRepository: DroneStatusArchiveQueriesRepo,
+        @inject(TYPES.DroneStatusArchiveQueriesSvc) queryService: DroneStatusArchiveQueriesSvc
     ) {
         this.commandsRepository = commandsRepository;
         this.queriesRepository = queriesRepository;
@@ -54,7 +54,7 @@ export class DroneStatusArchiveCommandsSvc {
             Object.create(Object.getPrototypeOf(this.commandsRepository)),
             this.commandsRepository,
             this.queriesRepository
-        ) as IDroneStatusArchiveRepository;
+        ) as IDroneStatusArchiveRepo;
         
         this.queryService = queryService;
     }
@@ -102,7 +102,7 @@ export class DroneStatusArchiveCommandsSvc {
             }
 
             // 檢查記錄是否存在
-            const existingArchive = await this.queryService.getStatusArchiveById(id);
+            const existingArchive = await this.archiveRepository.findById(id);
             if (!existingArchive) {
                 throw new Error(`找不到 ID 為 ${id} 的狀態歷史資料`);
             }
@@ -111,7 +111,7 @@ export class DroneStatusArchiveCommandsSvc {
             this.validatePartialStatusArchiveData(data);
 
             logger.info('Updating status archive', { id, data });
-            const updatedArchive = await this.archiveRepositorysitory.update(id, data);
+            const updatedArchive = await this.archiveRepository.update(id, data);
 
             if (!updatedArchive) {
                 throw new Error(`找不到 ID 為 ${id} 的狀態歷史資料`);
@@ -139,13 +139,13 @@ export class DroneStatusArchiveCommandsSvc {
             }
 
             // 檢查記錄是否存在
-            const existsArchive = await this.queryService.isArchiveExists(id);
+            const existsArchive = await this.archiveRepository.findById(id);
             if (!existsArchive) {
                 throw new Error(`找不到 ID 為 ${id} 的狀態歷史資料`);
             }
 
             logger.info('Deleting status archive', { id });
-            await this.archiveRepositorysitory.delete(id);
+            await this.archiveRepository.delete(id);
 
             logger.info('Successfully deleted status archive', { id });
         } catch (error) {
@@ -199,17 +199,26 @@ export class DroneStatusArchiveCommandsSvc {
             }
 
             const archiveData: DroneStatusArchiveCreationAttributes = {
+                original_id: droneId, // 假設使用 drone_id 作為 original_id
                 drone_id: droneId,
+                current_battery_level: 50, // 預設值
+                current_status: newStatus,
                 status: newStatus,
                 previous_status: previousStatus,
                 reason: reason.trim(),
                 details: details || null,
                 timestamp: new Date(),
-                created_by: createdBy || null
+                last_seen: new Date(),
+                current_altitude: null,
+                current_speed: null,
+                is_connected: true,
+                archived_at: new Date(),
+                archive_batch_id: `BATCH_${Date.now()}`,
+                created_at: new Date()
             };
 
             logger.info('Recording status change', { archiveData });
-            const archive = await this.archiveRepositorysitory.create(archiveData);
+            const archive = await this.archiveRepository.create(archiveData);
 
             logger.info('Successfully recorded status change', {
                 id: archive.id,
@@ -280,7 +289,7 @@ export class DroneStatusArchiveCommandsSvc {
             logger.info('Deleting all archives by drone ID', { droneId });
 
             // 獲取該無人機的所有歷史記錄
-            const archives = await this.queryService.getStatusArchivesByDroneId(droneId, 10000); // 大量限制以獲取所有記錄
+            const archives = await this.archiveRepository.findByDroneId(droneId);
             const archiveIds = archives.map(archive => archive.id);
 
             if (archiveIds.length === 0) {
@@ -314,8 +323,8 @@ export class DroneStatusArchiveCommandsSvc {
 
             // 獲取指定日期之前的所有記錄
             const oldDate = new Date('1970-01-01');
-            const archives = await this.queryService.getStatusArchivesByDateRange(oldDate, beforeDate, 10000);
-            const archiveIds = archives.map(archive => archive.id);
+            const archives = await this.archiveRepository.findByDateRange(oldDate, beforeDate);
+            const archiveIds = archives.map((archive: any) => archive.id);
 
             if (archiveIds.length === 0) {
                 logger.info('No old archives found', { beforeDate });

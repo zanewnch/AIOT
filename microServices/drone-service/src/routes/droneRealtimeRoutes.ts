@@ -31,8 +31,8 @@ export class DroneRealtimeRoutes {
     private readonly router: Router;
 
     constructor(
-        @inject(TYPES.DroneRealTimeStatusQueriesController) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
-        @inject(TYPES.DroneRealTimeStatusCommandsController) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands
+        @inject(TYPES.DroneRealTimeStatusQueriesCtrl) private readonly droneRealTimeStatusQueries: IDroneRealTimeStatusQueries,
+        @inject(TYPES.DroneRealTimeStatusCommandsCtrl) private readonly droneRealTimeStatusCommands: IDroneRealTimeStatusCommands
     ) {
         this.router = Router();
         this.setupRoutes();
@@ -72,13 +72,13 @@ export class DroneRealtimeRoutes {
         this.router.put('/status/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.updateRealTimeStatus(req, res, next));
 
         // 廣播訊息到所有連線的無人機
-        this.router.post('/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res));
+        this.router.post('/broadcast', (req, res, next) => this.droneRealTimeStatusCommands.broadcastMessage(req, res, next));
 
         // 發送通知到指定無人機
-        this.router.post('/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res));
+        this.router.post('/notify/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.sendNotification(req, res, next));
 
         // 強制斷開無人機連線
-        this.router.delete('/connections/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res));
+        this.router.delete('/connections/:droneId', (req, res, next) => this.droneRealTimeStatusCommands.disconnectDrone(req, res, next));
     }
 
     /**

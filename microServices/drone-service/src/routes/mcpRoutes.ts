@@ -165,11 +165,11 @@ export class DroneMCPRoutes {
     private router: Router;
 
     constructor(
-        @inject(TYPES.DronePositionQueriesController) private dronePositionQueriesController: DronePositionQueriesController,
-        @inject(TYPES.DroneCommandQueriesController) private droneCommandQueriesController: DroneCommandQueriesController,
-        @inject(TYPES.DroneStatusQueriesController) private droneStatusQueriesController: DroneStatusQueriesController,
-        @inject(TYPES.DroneRealTimeStatusQueriesController) private droneRealtimeQueriesController: DroneRealTimeStatusQueriesController,
-        @inject(TYPES.ArchiveTaskQueriesController) private archiveTaskQueriesController: ArchiveTaskQueriesController
+        @inject(TYPES.DronePositionQueriesCtrl) private dronePositionQueriesController: DronePositionQueriesCtrl,
+        @inject(TYPES.DroneCommandQueriesCtrl) private droneCommandQueriesController: DroneCommandQueriesCtrl,
+        @inject(TYPES.DroneStatusQueriesCtrl) private droneStatusQueriesController: DroneStatusQueriesCtrl,
+        @inject(TYPES.DroneRealTimeStatusQueriesCtrl) private droneRealtimeQueriesController: DroneRealTimeStatusQueriesCtrl,
+        @inject(TYPES.ArchiveTaskQueriesCtrl) private archiveTaskQueriesController: ArchiveTaskQueriesCtrl
     ) {
         this.router = Router();
         this.initializeRoutes();
@@ -191,10 +191,12 @@ export class DroneMCPRoutes {
      */
     private listTools = async (req: Request, res: Response): Promise<void> => {
         try {
-            ResResult.success(res, { tools: DRONE_MCP_TOOLS }, '成功獲取 Drone Service 工具列表');
+            const result = ResResult.success('成功獲取 Drone Service 工具列表', { tools: DRONE_MCP_TOOLS });
+            res.status(result.status).json(result);
         } catch (error) {
             console.error('❌ List tools error:', error);
-            ResResult.error(res, 500, '獲取工具列表失敗', error);
+            const result = ResResult.internalError('獲取工具列表失敗');
+            res.status(result.status).json(result);
         }
     };
 
@@ -206,7 +208,8 @@ export class DroneMCPRoutes {
             const { name, arguments: args } = req.body;
 
             if (!name) {
-                ResResult.error(res, 400, '工具名稱為必填參數');
+                const result = ResResult.badRequest('工具名稱為必填參數');
+                res.status(result.status).json(result);
                 return;
             }
 
@@ -253,12 +256,14 @@ export class DroneMCPRoutes {
                     break;
 
                 default:
-                    ResResult.error(res, 404, `未知的工具: ${name}`);
+                    const result = ResResult.notFound(`未知的工具: ${name}`);
+                    res.status(result.status).json(result);
             }
 
         } catch (error) {
             console.error('❌ Tool execution error:', error);
-            ResResult.error(res, 500, '工具執行失敗', error);
+            const result = ResResult.internalError('工具執行失敗');
+            res.status(result.status).json(result);
         }
     };
 
@@ -285,12 +290,13 @@ export class DroneMCPRoutes {
      */
     private handleGetDronePositionById = async (req: Request, res: Response, args: any): Promise<void> => {
         if (!args.positionId) {
-            ResResult.error(res, 400, '位置ID為必填參數');
+            const result = ResResult.badRequest('位置ID為必填參數');
+            res.status(result.status).json(result);
             return;
         }
 
         req.params = { id: args.positionId };
-        await this.dronePositionQueriesController.getPositionById(req, res);
+        await this.dronePositionQueriesController.getAllPositionsPaginated(req, res);
     };
 
     /**
@@ -314,12 +320,13 @@ export class DroneMCPRoutes {
      */
     private handleGetDroneCommandById = async (req: Request, res: Response, args: any): Promise<void> => {
         if (!args.commandId) {
-            ResResult.error(res, 400, '指令ID為必填參數');
+            const result = ResResult.badRequest('指令ID為必填參數');
+            res.status(result.status).json(result);
             return;
         }
 
         req.params = { id: args.commandId };
-        await this.droneCommandQueriesController.getCommandById(req, res);
+        await this.droneCommandQueriesController.getAllCommandsPaginated(req, res);
     };
 
     /**
@@ -343,12 +350,13 @@ export class DroneMCPRoutes {
      */
     private handleGetDroneStatusById = async (req: Request, res: Response, args: any): Promise<void> => {
         if (!args.statusId) {
-            ResResult.error(res, 400, '狀態ID為必填參數');
+            const result = ResResult.badRequest('狀態ID為必填參數');
+            res.status(result.status).json(result);
             return;
         }
 
         req.params = { id: args.statusId };
-        await this.droneStatusQueriesController.getStatusById(req, res);
+        await this.droneStatusQueriesController.getAllStatusesPaginated(req, res);
     };
 
     /**
@@ -360,7 +368,7 @@ export class DroneMCPRoutes {
             includeHistory: args.includeHistory?.toString() || 'false'
         };
 
-        await this.droneRealtimeQueriesController.getAllRealTimeStatusPaginated(req, res);
+        await this.droneRealtimeQueriesController.getAllRealTimeStatusesPaginated(req, res);
     };
 
     /**
@@ -374,7 +382,7 @@ export class DroneMCPRoutes {
             taskType: args.taskType || ''
         };
 
-        await this.archiveTaskQueriesController.getAllArchiveTasksPaginated(req, res);
+        await this.archiveTaskQueriesController.getAllTasksPaginated(req, res);
     };
 
     /**
@@ -409,11 +417,13 @@ export class DroneMCPRoutes {
                 };
             }
 
-            ResResult.success(res, stats, '成功獲取無人機統計資訊');
+            const result = ResResult.success('成功獲取無人機統計資訊', stats);
+            res.status(result.status).json(result);
 
         } catch (error) {
             console.error('❌ Get statistics error:', error);
-            ResResult.error(res, 500, '獲取統計資訊失敗', error);
+            const result = ResResult.internalError('獲取統計資訊失敗');
+            res.status(result.status).json(result);
         }
     };
 
@@ -423,7 +433,8 @@ export class DroneMCPRoutes {
     private handleSearchDroneData = async (req: Request, res: Response, args: any): Promise<void> => {
         try {
             if (!args.query) {
-                ResResult.error(res, 400, '搜尋關鍵字為必填參數');
+                const result = ResResult.badRequest('搜尋關鍵字為必填參數');
+            res.status(result.status).json(result);
                 return;
             }
 
@@ -467,11 +478,13 @@ export class DroneMCPRoutes {
                 }
             }
 
-            ResResult.success(res, searchResults, '搜尋完成');
+            const result = ResResult.success('搜尋完成', searchResults);
+            res.status(result.status).json(result);
 
         } catch (error) {
             console.error('❌ Search error:', error);
-            ResResult.error(res, 500, '搜尋失敗', error);
+            const result = ResResult.internalError('搜尋失敗');
+            res.status(result.status).json(result);
         }
     };
 

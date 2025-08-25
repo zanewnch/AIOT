@@ -11,13 +11,13 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { ArchiveTaskModel, ArchiveTaskCreationAttributes, ArchiveTaskStatus } from '../../models/ArchiveTaskModel.js';
-import type { IArchiveTaskRepository, ArchiveTaskQueryOptions } from '../../types/repo/IArchiveTaskRepo.js';
+import type { IArchiveTaskRepo, ArchiveTaskQueryOptions } from '../../types/repositories/IArchiveTaskRepo.js';
 import type { PaginationParams, PaginatedResponse } from '../../types/ApiResponseType.js';
 import { Op } from 'sequelize';
 import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 @injectable()
-export class ArchiveTaskCommandsRepo implements IArchiveTaskRepository {
+export class ArchiveTaskCommandsRepo implements IArchiveTaskRepo {
   
   create = loggerDecorator(async (data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> => {
     return await ArchiveTaskModel.create(data);

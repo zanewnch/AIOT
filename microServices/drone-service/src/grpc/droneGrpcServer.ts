@@ -46,28 +46,28 @@ export class DroneGrpcServer {
   private server: grpc.Server;
   
   // 狀態控制器
-  private droneStatusQueries: DroneStatusQueriesController;
-  private droneStatusCommands: DroneStatusCommandsController;
+  private droneStatusQueries: DroneStatusQueriesCtrl;
+  private droneStatusCommands: DroneStatusCommandsCtrl;
   
   // 位置控制器
-  private dronePositionQueries: DronePositionQueriesController;
-  private dronePositionCommands: DronePositionCommandsController;
+  private dronePositionQueries: DronePositionQueriesCtrl;
+  private dronePositionCommands: DronePositionCommandsCtrl;
   
   // 命令控制器
-  private droneCommandQueries: DroneCommandQueriesController;
-  private droneCommandCommands: DroneCommandCommandsController;
+  private droneCommandQueries: DroneCommandQueriesCtrl;
+  private droneCommandCommands: DroneCommandCommandsCtrl;
   
   // 命令佇列控制器
-  private droneCommandQueueQueries: DroneCommandQueueQueriesController;
-  private droneCommandQueueCommands: DroneCommandQueueCommandsController;
+  private droneCommandQueueQueries: DroneCommandQueueQueriesCtrl;
+  private droneCommandQueueCommands: DroneCommandQueueCommandsCtrl;
   
   // 即時狀態控制器
-  private droneRealTimeStatusQueries: DroneRealTimeStatusQueriesController;
-  private droneRealTimeStatusCommands: DroneRealTimeStatusCommandsController;
+  private droneRealTimeStatusQueries: DroneRealTimeStatusQueriesCtrl;
+  private droneRealTimeStatusCommands: DroneRealTimeStatusCommandsCtrl;
   
   // 封存任務控制器
-  private archiveTaskQueries: ArchiveTaskQueriesController;
-  private archiveTaskCommands: ArchiveTaskCommandsController;
+  private archiveTaskQueries: ArchiveTaskQueriesCtrl;
+  private archiveTaskCommands: ArchiveTaskCommandsCtrl;
 
   constructor() {
     this.server = new grpc.Server({

@@ -16,7 +16,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import type { DroneStatusAttributes, DroneStatusCreationAttributes } from '../../models/DroneStatusModel.js';
 import { DroneStatus } from '../../models/DroneStatusModel.js';
-import type { IDroneStatusRepository } from '../../types/repo/IDroneStatusRepo.js';
+import type { IDroneStatusRepo } from '../../types/repositories/IDroneStatusRepo.js';
 import { DroneStatusQueriesSvc } from '../queries/DroneStatusQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { Logger, LogService } from '../../decorators/LoggerDecorator.js';
@@ -35,10 +35,10 @@ const logger = createLogger('DroneStatusCommandsService');
 @injectable()
 export class DroneStatusCommandsSvc {
     constructor(
-        @inject(TYPES.DroneStatusQueriesService)
-        private readonly queryService: DroneStatusQueriesService,
-        @inject(TYPES.DroneStatusCommandsRepositorysitory)
-        private readonly droneStatusRepository: IDroneStatusRepositorysitory
+        @inject(TYPES.DroneStatusQueriesSvc)
+        private readonly queryService: DroneStatusQueriesSvc,
+        @inject(TYPES.DroneStatusCommandsRepo)
+        private readonly droneStatusRepository: IDroneStatusRepo
     ) {}
 
     /**

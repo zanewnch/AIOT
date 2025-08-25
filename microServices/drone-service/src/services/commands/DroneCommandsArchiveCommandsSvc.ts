@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import type { IDroneCommandsArchiveRepository } from '../../types/repo/IDroneCommandsArchiveRepo.js';
+import type { IDroneCommandsArchiveRepo } from '../../types/repositories/IDroneCommandsArchiveRepo.js';
 import type { DroneCommandsArchiveAttributes, DroneCommandsArchiveCreationAttributes } from '../../models/DroneCommandsArchiveModel.js';
 import { DroneCommandsArchiveQueriesSvc } from '../queries/DroneCommandsArchiveQueriesSvc.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -44,10 +44,10 @@ export interface ArchiveOperationResult {
 @injectable()
 export class DroneCommandsArchiveCommandsSvc {
     constructor(
-        @inject(TYPES.DroneCommandsArchiveCommandsRepositorysitory)
-        private readonly archiveRepository: IDroneCommandsArchiveRepositorysitory,
-        @inject(TYPES.DroneCommandsArchiveQueriesService)
-        private readonly queryService: DroneCommandsArchiveQueriesService
+        @inject(TYPES.DroneCommandsArchiveCommandsRepo)
+        private readonly archiveRepository: IDroneCommandsArchiveRepo,
+        @inject(TYPES.DroneCommandsArchiveQueriesSvc)
+        private readonly queryService: DroneCommandsArchiveQueriesSvc
     ) {}
 
     /**
@@ -65,7 +65,7 @@ export class DroneCommandsArchiveCommandsSvc {
 
             // 檢查是否有重複的歸檔記錄
             if (data.original_id) {
-                const existingArchives = await this.queryService.getCommandArchivesByDroneId(data.drone_id);
+                const existingArchives = await this.archiveRepository.findByDroneId(data.drone_id);
                 const duplicateArchive = existingArchives.find(archive => 
                     archive.original_id === data.original_id
                 );
@@ -105,7 +105,7 @@ export class DroneCommandsArchiveCommandsSvc {
             }
 
             // 檢查歸檔記錄是否存在
-            const existingArchive = await this.queryService.getCommandArchiveById(id);
+            const existingArchive = await this.archiveRepository.findById(id);
             if (!existingArchive) {
                 logger.warn('Command archive not found for update', { id });
                 return null;
@@ -160,7 +160,7 @@ export class DroneCommandsArchiveCommandsSvc {
             }
 
             // 檢查歸檔記錄是否存在
-            const existingArchive = await this.queryService.getCommandArchiveById(id);
+            const existingArchive = await this.archiveRepository.findById(id);
             if (!existingArchive) {
                 logger.warn('Command archive not found for deletion', { id });
                 return false;
@@ -309,7 +309,7 @@ export class DroneCommandsArchiveCommandsSvc {
             cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
             // 獲取過期記錄
-            const expiredArchives = await this.queryService.getCommandArchivesByTimeRange(
+            const expiredArchives = await this.archiveRepository.selectByTimeRange(
                 new Date('1970-01-01'),
                 cutoffDate,
                 1000

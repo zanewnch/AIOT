@@ -228,7 +228,9 @@ export class DroneCommandQueueCommandsSvc {
             }
 
             // 取得下一個待執行的指令
-            const nextCommand = await this.droneCommandQueueQueriesSvc.getNextDroneCommand(droneId);
+            // 獲取該無人機的所有待執行指令，按優先級排序
+            const pendingCommands = await this.droneCommandQueueCommandsRepo.findByDroneId(droneId);
+            const nextCommand = pendingCommands.find(cmd => cmd.status === DroneCommandQueueStatus.PENDING);
             if (!nextCommand) {
                 logger.info('No pending commands found for dequeue', { droneId });
                 return null;
@@ -258,7 +260,8 @@ export class DroneCommandQueueCommandsSvc {
             }
 
             // 取得該無人機的所有佇列項目
-            const droneQueues = await this.droneCommandQueueQueriesSvc.getDroneCommandQueueByDroneId(droneId);
+            // 獲取無人機的所有指令佇列
+            const droneQueues = await this.droneCommandQueueCommandsRepo.findByDroneId(droneId);
             
             // 過濾出可以刪除的項目（非運行中狀態）
             const deletableQueues = droneQueues.filter(queue => queue.status !== DroneCommandQueueStatus.RUNNING);
