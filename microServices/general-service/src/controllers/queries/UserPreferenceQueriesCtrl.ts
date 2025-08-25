@@ -30,7 +30,7 @@ import type { PaginationParams } from '../../types/ApiResponseType.js';
  * @since 1.0.0
  */
 @injectable()
-export class UserPreferenceQueriesController {
+export class class UserPreferenceQueriesCtrl {Ctrl {
     constructor(
         @inject(TYPES.UserPreferenceQueriesService) 
         private readonly userPreferenceQueriesService: UserPreferenceQueriesService

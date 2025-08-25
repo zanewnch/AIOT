@@ -12,25 +12,25 @@
 // ======================== 基礎實體類型 ========================
 
 // 角色相關類型
-export type { RoleDTO, CacheOptions, IRoleQueriesService } from './RoleTypes';
+export type { RoleDTO, CacheOptions, IRoleQueriesSvc } from './RoleTypes';
 
 // 用戶相關類型
-export type { UserDTO, UserCacheOptions, IUserQueriesService } from './UserTypes';
+export type { UserDTO, UserCacheOptions, IUserQueriesSvc } from './UserTypes';
 
 // 權限相關類型
 export type { 
   PermissionDTO, 
   RolePermissionAssignmentDTO, 
-  IRoleToPermissionQueriesService,
+  IRoleToPermissionQueriesSvc,
   CreatePermissionRequest,
   UpdatePermissionRequest,
-  IPermissionCommandsService,
+  IPermissionCommandsSvc,
   UserPermissions,
-  IPermissionQueriesService
+  IPermissionQueriesSvc
 } from './PermissionTypes';
 
 // 會話相關類型
-export type { SessionData, ISessionQueriesService } from './SessionTypes';
+export type { SessionData, ISessionQueriesSvc } from './SessionTypes';
 
 // ======================== 關聯關係類型 ========================
 
@@ -38,7 +38,7 @@ export type { SessionData, ISessionQueriesService } from './SessionTypes';
 export type { 
   UserRoleBasicDTO, 
   UserRoleCacheOptions, 
-  IUserToRoleQueriesService 
+  IUserToRoleQueriesSvc 
 } from './RelationshipTypes';
 
 // ======================== 命令操作類型 ========================
@@ -55,8 +55,8 @@ export type {
 
 // 服務介面類型
 export type { 
-  IRoleCommandsService, 
-  IRoleToPermissionCommandsService 
+  IRoleCommandsSvc, 
+  IRoleToPermissionCommandsSvc 
 } from './CommandTypes';
 
 // ======================== 工具類型 ========================

@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import type {IRoleToPermissionCommandsService} from '../../types/index.js';
+import type {IRoleToPermissionCommandsSvc} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -31,9 +31,9 @@ const logger = createLogger('RoleToPermissionCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class RoleToPermissionCommandsController {
+export class RoleToPermissionCommandsCtrl {
     constructor(
-        @inject(TYPES.RoleToPermissionCommandsService) private readonly roleToPermissionService: IRoleToPermissionCommandsService
+        @inject(TYPES.RoleToPermissionCommandsService) private readonly roleToPermissionSvc: IRoleToPermissionCommandsSvc
     ) {
     }
 
@@ -75,7 +75,7 @@ export class RoleToPermissionCommandsController {
                 return;
             }
 
-            await this.roleToPermissionService.assignPermissionsToRole(id, validPermissionIds);
+            await this.roleToPermissionSvc.assignPermissionsToRole(id, validPermissionIds);
 
             logger.info(`Successfully assigned permissions to role ID: ${roleId}`);
             const result = sharedPackages.ResResult.success('權限分配至角色成功');
@@ -117,7 +117,7 @@ export class RoleToPermissionCommandsController {
                 return;
             }
 
-            const removed = await this.roleToPermissionService.removePermissionFromRole(roleIdNum, permissionIdNum);
+            const removed = await this.roleToPermissionSvc.removePermissionFromRole(roleIdNum, permissionIdNum);
 
             if (removed) {
                 logger.info(`Successfully removed permission ID: ${permissionId} from role ID: ${roleId}`);
@@ -167,7 +167,7 @@ export class RoleToPermissionCommandsController {
                 return;
             }
 
-            await this.roleToPermissionService.assignPermissionsToRole(roleIdNum, [permissionIdNum]);
+            await this.roleToPermissionSvc.assignPermissionsToRole(roleIdNum, [permissionIdNum]);
 
             const result = sharedPackages.ResResult.created('角色權限關聯創建成功');
             res.status(result.status).json(result);

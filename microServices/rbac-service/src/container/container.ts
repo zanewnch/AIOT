@@ -26,16 +26,16 @@ import { RoleToPermissionQueriesService } from '../services/queries/RoleToPermis
 import { SessionQueriesService } from '../services/queries/SessionQueriesService.js';
 
 // RBAC 控制器
-import { UserCommandsController } from '../controllers/commands/UserCommandsController.js';
-import { UserQueriesController } from '../controllers/queries/UserQueriesController.js';
-import { RoleCommandsController } from '../controllers/commands/RoleCommandsController.js';
-import { RoleQueriesController } from '../controllers/queries/RoleQueriesController.js';
-import { PermissionCommandsController } from '../controllers/commands/PermissionCommandsController.js';
-import { PermissionQueriesController } from '../controllers/queries/PermissionQueriesController.js';
-import { UserToRoleCommandsController } from '../controllers/commands/UserToRoleCommandsController.js';
-import { UserToRoleQueriesController } from '../controllers/queries/UserToRoleQueriesController.js';
-import { RoleToPermissionCommandsController } from '../controllers/commands/RoleToPermissionCommandsController.js';
-import { RoleToPermissionQueriesController } from '../controllers/queries/RoleToPermissionQueriesController.js';
+import { UserCommandsController } from '../controllers/commands/UserCommandsCtrl.js';
+import { UserQueriesController } from '../controllers/queries/UserQueriesCtrl.js';
+import { RoleCommandsController } from '../controllers/commands/RoleCommandsCtrl.js';
+import { RoleQueriesController } from '../controllers/queries/RoleQueriesCtrl.js';
+import { PermissionCommandsController } from '../controllers/commands/PermissionCommandsCtrl.js';
+import { PermissionQueriesController } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { UserToRoleCommandsController } from '../controllers/commands/UserToRoleCommandsCtrl.js';
+import { UserToRoleQueriesController } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { RoleToPermissionCommandsController } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+import { RoleToPermissionQueriesController } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
 
 // JWT 安全服務
 // import { JwtBlacklistService } from 'aiot-shared-packages';

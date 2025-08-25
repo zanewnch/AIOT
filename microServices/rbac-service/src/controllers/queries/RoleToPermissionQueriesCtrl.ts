@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {RoleToPermissionQueriesService} from '../../services/queries/RoleToPermissionQueriesService.js';
+import {RoleToPermissionQueriesSvc} from '../../services/queries/RoleToPermissionQueriesSvc.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {PaginationRequestDto} from '../../dto/index.js';
@@ -29,9 +29,9 @@ import {PaginationRequestDto} from '../../dto/index.js';
  * @since 1.0.0
  */
 @injectable()
-export class RoleToPermissionQueriesController {
+export class RoleToPermissionQueriesCtrl {
     constructor(
-        @inject(TYPES.RoleToPermissionQueriesService) private readonly roleToPermissionQueriesService: RoleToPermissionQueriesService
+        @inject(TYPES.RoleToPermissionQueriesService) private readonly roleToPermissionQueriesSvc: RoleToPermissionQueriesSvc
     ) {}
 
     /**
@@ -49,7 +49,7 @@ export class RoleToPermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleToPermissionQueriesService.getAllRolePermissionsPaginated(pagination);
+            const paginatedResult = await this.roleToPermissionQueriesSvc.getAllRolePermissionsPaginated(pagination);
             const result = ResResult.success('角色權限關聯分頁查詢成功', paginatedResult); 
             res.status(result.status).json(result);
             
@@ -84,7 +84,7 @@ export class RoleToPermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleToPermissionQueriesService.getRolePermissionsByRoleIdPaginated(roleId, pagination);
+            const paginatedResult = await this.roleToPermissionQueriesSvc.getRolePermissionsByRoleIdPaginated(roleId, pagination);
             const result = ResResult.success(`角色 ${roleId} 的權限關聯分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
             
@@ -119,7 +119,7 @@ export class RoleToPermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleToPermissionQueriesService.getRolePermissionsByPermissionIdPaginated(permissionId, pagination);
+            const paginatedResult = await this.roleToPermissionQueriesSvc.getRolePermissionsByPermissionIdPaginated(permissionId, pagination);
             const result = ResResult.success(`權限 ${permissionId} 的角色關聯分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
             

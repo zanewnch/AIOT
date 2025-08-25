@@ -59,7 +59,7 @@ const logger = createLogger('AuthCommandsController'); // 建立 module 專屬 l
  * @public
  */
 @injectable() // 標記可注入
-export class AuthCommandsController { // 控制器類別
+export class class AuthCommandsCtrl {Ctrl { // 控制器類別
     /**
      * AuthCommandsController 控制器建構函數
      *

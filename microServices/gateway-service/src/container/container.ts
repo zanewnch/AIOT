@@ -17,8 +17,8 @@ import { ConsulConfig } from '../configs/consulConfig.js';
 import { HealthConfig } from '../configs/healthConfig.js';
 
 // 控制器
-import { GatewayController } from '../controllers/GatewayController.js';
-import { AuthTestController } from '../controllers/AuthTestController.js';
+import { GatewayController } from '../controllers/GatewayCtrl.js';
+import { AuthTestController } from '../controllers/AuthTestCtrl.js';
 
 // 中間件
 import { ProxyMiddleware } from '../middleware/ProxyMiddleware.js';

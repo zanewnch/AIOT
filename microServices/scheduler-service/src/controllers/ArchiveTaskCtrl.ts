@@ -77,7 +77,7 @@ import {
  * - 採用輸入驗證確保資料安全性
  */
 @injectable()
-export class ArchiveTaskController {
+export class class ArchiveTaskCtrl {Ctrl {
   constructor(
     @inject(TYPES.ArchiveTaskService) private readonly archiveTaskService: ArchiveTaskService,
     @inject(TYPES.Logger) private readonly logger: any

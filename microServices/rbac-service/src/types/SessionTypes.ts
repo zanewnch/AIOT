@@ -44,7 +44,7 @@ export interface SessionData {
  * 
  * 定義會話查詢相關操作的標準介面
  * 
- * @interface ISessionQueriesService
+ * @interface ISessionQueriesSvc
  * @example
  * ```typescript
  * class SessionQueriesService implements ISessionQueriesService {
@@ -54,7 +54,7 @@ export interface SessionData {
  * }
  * ```
  */
-export interface ISessionQueriesService {
+export interface ISessionQueriesSvc {
     /**
      * 根據會話 ID 獲取會話資料
      * 

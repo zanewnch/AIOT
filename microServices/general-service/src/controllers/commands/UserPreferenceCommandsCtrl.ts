@@ -30,7 +30,7 @@ import type { UserPreferenceCreationAttributes, UserPreferenceAttributes } from 
  * @since 1.0.0
  */
 @injectable()
-export class UserPreferenceCommandsController {
+export class class UserPreferenceCommandsCtrl {Ctrl {
     constructor(
         @inject(TYPES.UserPreferenceCommandsService) 
         private readonly userPreferenceCommandsService: UserPreferenceCommandsService

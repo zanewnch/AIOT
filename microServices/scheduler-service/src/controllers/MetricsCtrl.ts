@@ -55,7 +55,7 @@ import { MonitoringService } from '../services/MonitoringService';
  * - 安全性：根據環境變數控制錯誤訊息詳細程度
  */
 @injectable()
-export class MetricsController {
+export class class MetricsCtrl {Ctrl {
   /**
    * 建構子 - 依賴注入初始化
    * 

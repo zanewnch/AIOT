@@ -18,8 +18,8 @@ import { AuthQueriesService } from '../services/queries/AuthQueriesService.js';
 import { SessionQueriesService } from '../services/queries/SessionQueriesService.js';
 
 // 認證控制器
-import { AuthCommandsController } from '../controllers/commands/AuthCommandsController.js';
-import { AuthQueriesController } from '../controllers/queries/AuthQueriesController.js';
+import { AuthCommandsController } from '../controllers/commands/AuthCommandsCtrl.js';
+import { AuthQueriesController } from '../controllers/queries/AuthQueriesCtrl.js';
 
 // gRPC 和路由服務
 import { AuthGrpcServer } from '../grpc/authGrpcServer.js';

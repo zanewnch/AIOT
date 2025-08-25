@@ -9,7 +9,7 @@
  */
 
 // ===== 控制器實現 =====
-export { DroneRealTimeStatusQueriesController } from.*Controller.js';
+export { DroneRealTimeStatusQueriesController } from.*Ctrl.js';
 
 // ===== 控制器介面 =====
 export type { IDroneRealTimeStatusQueries } from '../../types/controllers/queries/IDroneRealTimeStatusQueries.js';

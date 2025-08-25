@@ -45,7 +45,7 @@ import { MonitoringService } from '../services/MonitoringService';
  * @injectable 標記為可注入的服務類別
  */
 @injectable()
-export class HealthController {
+export class class HealthCtrl {Ctrl {
   constructor(
     @inject(TYPES.Logger) private readonly logger: any,
     @inject(TYPES.MonitoringService) private readonly monitoringService: MonitoringService

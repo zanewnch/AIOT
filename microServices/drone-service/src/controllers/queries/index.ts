@@ -4,12 +4,12 @@
  * 匯出所有查詢控制器模組
  */
 
-export * from './ArchiveTaskQueriesController.js';
-export * from './DroneCommandQueriesController.js';
-export * from './DroneCommandQueueQueriesController.js';
-export * from './DroneCommandsArchiveQueriesController.js';
-export * from './DronePositionQueriesController.js';
-export * from './DronePositionsArchiveQueriesController.js';
-export * from './DroneRealTimeStatusQueriesController.js';
-export * from './DroneStatusArchiveQueriesController.js';
-export * from './DroneStatusQueriesController.js';
+export * from './ArchiveTaskQueriesCtrl.js';
+export * from './DroneCommandQueriesCtrl.js';
+export * from './DroneCommandQueueQueriesCtrl.js';
+export * from './DroneCommandsArchiveQueriesCtrl.js';
+export * from './DronePositionQueriesCtrl.js';
+export * from './DronePositionsArchiveQueriesCtrl.js';
+export * from './DroneRealTimeStatusQueriesCtrl.js';
+export * from './DroneStatusArchiveQueriesCtrl.js';
+export * from './DroneStatusQueriesCtrl.js';

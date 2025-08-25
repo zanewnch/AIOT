@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import type {IRoleCommandsService} from '../../types/index.js';
+import type {IRoleCommandsSvc} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -31,9 +31,9 @@ const logger = createLogger('RoleCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class RoleCommandsController {
+export class RoleCommandsCtrl {
     constructor(
-        @inject(TYPES.RoleCommandsService) private readonly roleCommandsService: IRoleCommandsService
+        @inject(TYPES.RoleCommandsService) private readonly roleCommandsSvc: IRoleCommandsSvc
     ) {
     }
 
@@ -55,7 +55,7 @@ export class RoleCommandsController {
             logRequest(req, `Creating new role: ${name}`, 'info');
             logger.debug('Creating new role via service', {name, description});
 
-            const newRole = await this.roleCommandsService.createRole({
+            const newRole = await this.roleCommandsSvc.createRole({
                 name: name.trim(),
                 displayName: description?.trim() || undefined
             });
@@ -117,7 +117,7 @@ export class RoleCommandsController {
                 return;
             }
 
-            const updatedRole = await this.roleCommandsService.updateRole(roleId, updateData);
+            const updatedRole = await this.roleCommandsSvc.updateRole(roleId, updateData);
 
             if (!updatedRole) {
                 const result = sharedPackages.ResResult.notFound('角色不存在');
@@ -166,7 +166,7 @@ export class RoleCommandsController {
             logRequest(req, `Deleting role with ID: ${roleId}`, 'info');
             logger.debug('Deleting role via service', {roleId});
 
-            const deleted = await this.roleCommandsService.deleteRole(roleId);
+            const deleted = await this.roleCommandsSvc.deleteRole(roleId);
 
             if (!deleted) {
                 const result = sharedPackages.ResResult.notFound('角色不存在');

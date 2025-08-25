@@ -23,18 +23,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // 導入控制器
-import { DroneStatusQueriesCtrl } from '../controllers/queries/DroneStatusQueriesController.js';
-import { DroneStatusCommandsCtrl } from '../controllers/commands/DroneStatusCommandsController.js';
-import { DronePositionQueriesCtrl } from '../controllers/queries/DronePositionQueriesController.js';
-import { DronePositionCommandsCtrl } from '../controllers/commands/DronePositionCommandsController.js';
-import { DroneCommandQueriesCtrl } from '../controllers/queries/DroneCommandQueriesController.js';
-import { DroneCommandCommandsCtrl } from '../controllers/commands/DroneCommandCommandsController.js';
-import { DroneCommandQueueQueriesCtrl } from '../controllers/queries/DroneCommandQueueQueriesController.js';
-import { DroneCommandQueueCommandsCtrl } from '../controllers/commands/DroneCommandQueueCommandsController.js';
-import { DroneRealTimeStatusQueriesCtrl } from '../controllers/queries/DroneRealTimeStatusQueriesController.js';
-import { DroneRealTimeStatusCommandsCtrl } from '../controllers/commands/DroneRealTimeStatusCommandsController.js';
-import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesController.js';
-import { ArchiveTaskCommandsCtrl } from '../controllers/commands/ArchiveTaskCommandsController.js';
+import { DroneStatusQueriesCtrl } from '../controllers/queries/DroneStatusQueriesCtrl.js';
+import { DroneStatusCommandsCtrl } from '../controllers/commands/DroneStatusCommandsCtrl.js';
+import { DronePositionQueriesCtrl } from '../controllers/queries/DronePositionQueriesCtrl.js';
+import { DronePositionCommandsCtrl } from '../controllers/commands/DronePositionCommandsCtrl.js';
+import { DroneCommandQueriesCtrl } from '../controllers/queries/DroneCommandQueriesCtrl.js';
+import { DroneCommandCommandsCtrl } from '../controllers/commands/DroneCommandCommandsCtrl.js';
+import { DroneCommandQueueQueriesCtrl } from '../controllers/queries/DroneCommandQueueQueriesCtrl.js';
+import { DroneCommandQueueCommandsCtrl } from '../controllers/commands/DroneCommandQueueCommandsCtrl.js';
+import { DroneRealTimeStatusQueriesCtrl } from '../controllers/queries/DroneRealTimeStatusQueriesCtrl.js';
+import { DroneRealTimeStatusCommandsCtrl } from '../controllers/commands/DroneRealTimeStatusCommandsCtrl.js';
+import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesCtrl.js';
+import { ArchiveTaskCommandsCtrl } from '../controllers/commands/ArchiveTaskCommandsCtrl.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -21,9 +21,9 @@ import { UserPreferenceCommandsService } from '../services/commands/UserPreferen
 import { UserPreferenceQueriesService } from '../services/queries/UserPreferenceQueriesService.js';
 
 // Controller 層 imports
-import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsController.js';
-import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesController.js';
-import { DocsQueriesController } from '../controllers/queries/DocsQueriesController.js';
+import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
+import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
+import { DocsQueriesController } from '../controllers/queries/DocsQueriesCtrl.js';
 
 // Routes 層 imports
 import { UserPreferenceRoutes } from '../routes/userPreferenceRoutes.js';

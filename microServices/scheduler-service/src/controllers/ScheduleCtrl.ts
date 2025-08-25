@@ -58,7 +58,7 @@ import { ArchiveScheduler } from '../schedulers/ArchiveScheduler';
  * - 錯誤隔離：完整的 try-catch 錯誤處理
  */
 @injectable()
-export class ScheduleController {
+export class class ScheduleCtrl {Ctrl {
   /**
    * 建構子 - 依賴注入初始化
    * 

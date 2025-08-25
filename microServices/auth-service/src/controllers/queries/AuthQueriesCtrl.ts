@@ -31,7 +31,7 @@ const logger = createLogger('AuthQueriesController'); // 建立 logger 實例，
  * @public
  */
 @injectable()
-export class AuthQueriesController {
+export class class AuthQueriesCtrl {Ctrl {
     constructor(
         @inject(TYPES.AuthQueriesService) private readonly authQueriesService: AuthQueriesService // 注入 AuthQueriesService 以獲取資料與邏輯
     ) {

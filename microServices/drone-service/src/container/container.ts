@@ -62,24 +62,24 @@ import { DroneStatusArchiveCommandsSvc } from '../services/commands/DroneStatusA
 
 
 // 控制器導入
-import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesController.js';
-import { ArchiveTaskCommandsCtrl } from '../controllers/commands/ArchiveTaskCommandsController.js';
-import { DroneCommandQueriesCtrl } from '../controllers/queries/DroneCommandQueriesController.js';
-import { DroneCommandCommandsCtrl } from '../controllers/commands/DroneCommandCommandsController.js';
-import { DroneCommandQueueQueriesCtrl } from '../controllers/queries/DroneCommandQueueQueriesController.js';
-import { DroneCommandQueueCommandsCtrl } from '../controllers/commands/DroneCommandQueueCommandsController.js';
-import { DroneCommandsArchiveQueriesCtrl } from '../controllers/queries/DroneCommandsArchiveQueriesController.js';
-import { DroneCommandsArchiveCommandsCtrl } from '../controllers/commands/DroneCommandsArchiveCommandsController.js';
-import { DronePositionQueriesCtrl } from '../controllers/queries/DronePositionQueriesController.js';
-import { DronePositionCommandsCtrl } from '../controllers/commands/DronePositionCommandsController.js';
-import { DronePositionsArchiveQueriesCtrl } from '../controllers/queries/DronePositionsArchiveQueriesController.js';
-import { DronePositionsArchiveCommandsCtrl } from '../controllers/commands/DronePositionsArchiveCommandsController.js';
-import { DroneRealTimeStatusQueriesCtrl } from '../controllers/queries/DroneRealTimeStatusQueriesController.js';
-import { DroneRealTimeStatusCommandsCtrl } from '../controllers/commands/DroneRealTimeStatusCommandsController.js';
-import { DroneStatusArchiveQueriesCtrl } from '../controllers/queries/DroneStatusArchiveQueriesController.js';
-import { DroneStatusArchiveCommandsCtrl } from '../controllers/commands/DroneStatusArchiveCommandsController.js';
-import { DroneStatusQueriesCtrl } from '../controllers/queries/DroneStatusQueriesController.js';
-import { DroneStatusCommandsCtrl } from '../controllers/commands/DroneStatusCommandsController.js';
+import { ArchiveTaskQueriesCtrl } from '../controllers/queries/ArchiveTaskQueriesCtrl.js';
+import { ArchiveTaskCommandsCtrl } from '../controllers/commands/ArchiveTaskCommandsCtrl.js';
+import { DroneCommandQueriesCtrl } from '../controllers/queries/DroneCommandQueriesCtrl.js';
+import { DroneCommandCommandsCtrl } from '../controllers/commands/DroneCommandCommandsCtrl.js';
+import { DroneCommandQueueQueriesCtrl } from '../controllers/queries/DroneCommandQueueQueriesCtrl.js';
+import { DroneCommandQueueCommandsCtrl } from '../controllers/commands/DroneCommandQueueCommandsCtrl.js';
+import { DroneCommandsArchiveQueriesCtrl } from '../controllers/queries/DroneCommandsArchiveQueriesCtrl.js';
+import { DroneCommandsArchiveCommandsCtrl } from '../controllers/commands/DroneCommandsArchiveCommandsCtrl.js';
+import { DronePositionQueriesCtrl } from '../controllers/queries/DronePositionQueriesCtrl.js';
+import { DronePositionCommandsCtrl } from '../controllers/commands/DronePositionCommandsCtrl.js';
+import { DronePositionsArchiveQueriesCtrl } from '../controllers/queries/DronePositionsArchiveQueriesCtrl.js';
+import { DronePositionsArchiveCommandsCtrl } from '../controllers/commands/DronePositionsArchiveCommandsCtrl.js';
+import { DroneRealTimeStatusQueriesCtrl } from '../controllers/queries/DroneRealTimeStatusQueriesCtrl.js';
+import { DroneRealTimeStatusCommandsCtrl } from '../controllers/commands/DroneRealTimeStatusCommandsCtrl.js';
+import { DroneStatusArchiveQueriesCtrl } from '../controllers/queries/DroneStatusArchiveQueriesCtrl.js';
+import { DroneStatusArchiveCommandsCtrl } from '../controllers/commands/DroneStatusArchiveCommandsCtrl.js';
+import { DroneStatusQueriesCtrl } from '../controllers/queries/DroneStatusQueriesCtrl.js';
+import { DroneStatusCommandsCtrl } from '../controllers/commands/DroneStatusCommandsCtrl.js';
 
 // 路由導入
 import { ArchiveTaskRoutes } from '../routes/archiveTaskRoutes.js';

@@ -18,7 +18,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router } from 'express';
 import { TYPES } from '../container/types.js';
-import { DocsQueriesController } from '../controllers/queries/DocsQueriesController.js';
+import { DocsQueriesController } from '../controllers/queries/DocsQueriesCtrl.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 
 /**

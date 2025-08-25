@@ -64,7 +64,7 @@ export interface UserRoleCacheOptions {
  * 定義用戶角色關聯查詢相關操作的標準介面
  * 處理用戶和角色之間的多對多關係查詢
  * 
- * @interface IUserToRoleQueriesService
+ * @interface IUserToRoleQueriesSvc
  * @example
  * ```typescript
  * class UserToRoleQueriesService implements IUserToRoleQueriesService {
@@ -74,7 +74,7 @@ export interface UserRoleCacheOptions {
  * }
  * ```
  */
-export interface IUserToRoleQueriesService {
+export interface IUserToRoleQueriesSvc {
     /**
      * 獲取用戶的所有角色
      * 

@@ -16,8 +16,8 @@
 
 import { Router } from 'express';
 import { inject, injectable } from 'inversify';
-import { AuthQueriesController } from '../controllers/queries/AuthQueriesController.js';
-import { AuthCommandsController } from '../controllers/commands/AuthCommandsController.js';
+import { AuthQueriesController } from '../controllers/queries/AuthQueriesCtrl.js';
+import { AuthCommandsController } from '../controllers/commands/AuthCommandsCtrl.js';
 import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
 import { TYPES } from '../container/types.js';
 

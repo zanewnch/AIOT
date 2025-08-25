@@ -79,7 +79,7 @@ export interface RolePermissionAssignmentDTO {
  * 定義角色權限關聯查詢相關操作的標準介面
  * 處理角色和權限之間的多對多關係查詢
  * 
- * @interface IRoleToPermissionQueriesService
+ * @interface IRoleToPermissionQueriesSvc
  * @example
  * ```typescript
  * class RoleToPermissionQueriesService implements IRoleToPermissionQueriesService {
@@ -89,7 +89,7 @@ export interface RolePermissionAssignmentDTO {
  * }
  * ```
  */
-export interface IRoleToPermissionQueriesService {
+export interface IRoleToPermissionQueriesSvc {
     /**
      * 獲取角色的所有權限
      * 
@@ -178,7 +178,7 @@ export interface UpdatePermissionRequest {
  * 
  * 定義權限相關寫操作的標準介面
  * 
- * @interface IPermissionCommandsService
+ * @interface IPermissionCommandsSvc
  * @example
  * ```typescript
  * class PermissionCommandsService implements IPermissionCommandsService {
@@ -188,7 +188,7 @@ export interface UpdatePermissionRequest {
  * }
  * ```
  */
-export interface IPermissionCommandsService {
+export interface IPermissionCommandsSvc {
     /**
      * 創建新權限
      * 
@@ -281,7 +281,7 @@ export interface CacheOptions {
  * 
  * 定義權限相關查詢操作的標準介面
  * 
- * @interface IPermissionQueriesService
+ * @interface IPermissionQueriesSvc
  * @example
  * ```typescript
  * class PermissionQueriesService implements IPermissionQueriesService {
@@ -291,7 +291,7 @@ export interface CacheOptions {
  * }
  * ```
  */
-export interface IPermissionQueriesService {
+export interface IPermissionQueriesSvc {
     /**
      * 獲取用戶的所有權限和角色信息
      * 

@@ -14,7 +14,7 @@
  */
 
 import {Request, Response} from 'express';
-import {UserCommands} from '../../../src/controllers/commands/UserCommandsController.js';
+import {UserCommands} from '../../../src/controllers/commands/UserCommandsCtrl.js';
 import {UserCommandsService} from '../../../src/services/commands/UserCommandsService.js';
 import {ResResult} from '../../../src/utils/ResResult.js';
 

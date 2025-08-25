@@ -34,7 +34,7 @@ import path from 'path';
  * @since 1.0.0
  */
 @injectable()
-export class DocsQueriesController {
+export class class DocsQueriesCtrl {Ctrl {
     
     private readonly microservices = [
         { name: 'general', url: 'http://aiot-fesetting:8000', description: '前端設定管理服務' },

@@ -29,7 +29,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {UserCommandsService} from '../../services/commands/UserCommandsService.js';
+import {UserCommandsSvc} from '../../services/commands/UserCommandsSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -72,7 +72,7 @@ const logger = createLogger('UserCommandsController');
  * @public
  */
 @injectable()
-export class UserCommandsController {
+export class UserCommandsCtrl {
     /**
      * UserCommandsController 控制器建構函數
      *
@@ -81,7 +81,7 @@ export class UserCommandsController {
      * @param userCommandsService - 使用者命令服務實例，負責執行具體的業務邏輯
      */
     constructor(
-        @inject(TYPES.UserCommandsService) private readonly userCommandsService: UserCommandsService // 注入使用者命令服務，用於處理具體的業務邏輯
+        @inject(TYPES.UserCommandsService) private readonly userCommandsSvc: UserCommandsSvc // 注入使用者命令服務，用於處理具體的業務邏輯
     ) {
     }
 
@@ -158,7 +158,7 @@ export class UserCommandsController {
             logRequest(req, `Creating new user: ${username}`, 'info');
             logger.debug('Creating new user via service', {username, email});
 
-            const newUser = await this.userCommandsService.createUser({
+            const newUser = await this.userCommandsSvc.createUser({
                 username,
                 email,
                 password
@@ -260,7 +260,7 @@ export class UserCommandsController {
             if (email) updateData.email = email;
             if (password) updateData.password = password;
 
-            const updatedUser = await this.userCommandsService.updateUser(userId, updateData);
+            const updatedUser = await this.userCommandsSvc.updateUser(userId, updateData);
 
             if (!updatedUser) {
                 const result = sharedPackages.ResResult.notFound('使用者不存在');
@@ -356,7 +356,7 @@ export class UserCommandsController {
             logRequest(req, `Deleting user with ID: ${userId}`, 'info');
             logger.debug('Deleting user via service', {userId});
 
-            const deleted = await this.userCommandsService.deleteUser(userId);
+            const deleted = await this.userCommandsSvc.deleteUser(userId);
 
             if (!deleted) {
                 const result = sharedPackages.ResResult.notFound('使用者不存在');

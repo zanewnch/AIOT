@@ -160,7 +160,7 @@ export interface RemoveRoleRequest {
  * 
  * 定義角色相關寫操作的標準介面
  * 
- * @interface IRoleCommandsService
+ * @interface IRoleCommandsSvc
  * @example
  * ```typescript
  * class RoleCommandsService implements IRoleCommandsService {
@@ -170,7 +170,7 @@ export interface RemoveRoleRequest {
  * }
  * ```
  */
-export interface IRoleCommandsService {
+export interface IRoleCommandsSvc {
     /**
      * 創建新角色
      * 
@@ -205,7 +205,7 @@ export interface IRoleCommandsService {
  * 
  * 定義角色權限關聯相關寫操作的標準介面
  * 
- * @interface IRoleToPermissionCommandsService
+ * @interface IRoleToPermissionCommandsSvc
  * @example
  * ```typescript
  * class RoleToPermissionCommandsService implements IRoleToPermissionCommandsService {
@@ -215,7 +215,7 @@ export interface IRoleCommandsService {
  * }
  * ```
  */
-export interface IRoleToPermissionCommandsService {
+export interface IRoleToPermissionCommandsSvc {
     /**
      * 為角色分配多個權限
      * 

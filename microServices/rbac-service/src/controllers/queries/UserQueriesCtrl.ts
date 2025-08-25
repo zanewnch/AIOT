@@ -29,9 +29,9 @@ import {PaginationRequestDto} from '../../dto/index.js';
  * @since 1.0.0
  */
 @injectable()
-export class UserQueriesController {
+export class UserQueriesCtrl {
     constructor(
-        @inject(TYPES.UserQueriesService) private readonly userQueriesService: UserQueriesService
+        @inject(TYPES.UserQueriesService) private readonly userQueriesSvc: UserQueriesService
     ) {}
 
     /**
@@ -49,7 +49,7 @@ export class UserQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userQueriesService.getAllUsersPaginated(pagination);
+            const paginatedResult = await this.userQueriesSvc.getAllUsersPaginated(pagination);
             const result = ResResult.success('使用者分頁查詢成功', paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('分頁查詢使用者失敗'); res.status(result.status).json(result);
@@ -80,7 +80,7 @@ export class UserQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userQueriesService.getUsersByRolePaginated(roleId, pagination);
+            const paginatedResult = await this.userQueriesSvc.getUsersByRolePaginated(roleId, pagination);
             const result = ResResult.success(`角色 ${roleId} 的使用者分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據角色分頁查詢使用者失敗'); res.status(result.status).json(result);
@@ -111,7 +111,7 @@ export class UserQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userQueriesService.getUsersByStatusPaginated(status, pagination);
+            const paginatedResult = await this.userQueriesSvc.getUsersByStatusPaginated(status, pagination);
             const result = ResResult.success(`狀態為 ${status} 的使用者分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據狀態分頁查詢使用者失敗'); res.status(result.status).json(result);
@@ -142,7 +142,7 @@ export class UserQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userQueriesService.getUsersByPermissionPaginated(permissionId, pagination);
+            const paginatedResult = await this.userQueriesSvc.getUsersByPermissionPaginated(permissionId, pagination);
             const result = ResResult.success(`權限 ${permissionId} 的使用者分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據權限分頁查詢使用者失敗'); res.status(result.status).json(result);
@@ -174,7 +174,7 @@ export class UserQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userQueriesService.getUsersByVerificationPaginated(isVerified, pagination);
+            const paginatedResult = await this.userQueriesSvc.getUsersByVerificationPaginated(isVerified, pagination);
             const result = ResResult.success(`驗證狀態為 ${isVerified} 的使用者分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據驗證狀態分頁查詢使用者失敗'); res.status(result.status).json(result);
@@ -187,7 +187,7 @@ export class UserQueriesController {
      */
     getUsers = async (req: Request, res: Response): Promise<void> => {
         try {
-            const users = await this.userQueriesService.getUsers();
+            const users = await this.userQueriesSvc.getUsers();
             const result = ResResult.success('使用者資料獲取成功', users);
             res.status(result.status).json(result);
         } catch (error) {
@@ -202,7 +202,7 @@ export class UserQueriesController {
     getUserById = async (req: Request, res: Response): Promise<void> => {
         try {
             const userId = req.params.id;
-            const user = await this.userQueriesService.getUserById(userId);
+            const user = await this.userQueriesSvc.getUserById(userId);
             if (!user) {
                 const result = ResResult.notFound('使用者不存在');
                 res.status(result.status).json(result);

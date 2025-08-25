@@ -29,9 +29,9 @@ import {PaginationRequestDto} from '../../dto/index.js';
  * @since 1.0.0
  */
 @injectable()
-export class UserToRoleQueriesController {
+export class UserToRoleQueriesCtrl {
     constructor(
-        @inject(TYPES.UserToRoleQueriesService) private readonly userToRoleQueriesService: UserToRoleQueriesService
+        @inject(TYPES.UserToRoleQueriesService) private readonly userToRoleQueriesSvc: UserToRoleQueriesService
     ) {}
 
     /**
@@ -49,7 +49,7 @@ export class UserToRoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userToRoleQueriesService.getAllUserRolesPaginated(pagination);
+            const paginatedResult = await this.userToRoleQueriesSvc.getAllUserRolesPaginated(pagination);
             const result = ResResult.success('使用者角色關聯分頁查詢成功', paginatedResult);
             res.status(result.status).json(result);
             
@@ -84,7 +84,7 @@ export class UserToRoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userToRoleQueriesService.getUserRolesByUserIdPaginated(userId, pagination);
+            const paginatedResult = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, pagination);
             const result = ResResult.success(`使用者 ${userId} 的角色關聯分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
             
@@ -119,7 +119,7 @@ export class UserToRoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.userToRoleQueriesService.getUserRolesByRoleIdPaginated(roleId, pagination);
+            const paginatedResult = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId, pagination);
             const result = ResResult.success(`角色 ${roleId} 的使用者關聯分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
             

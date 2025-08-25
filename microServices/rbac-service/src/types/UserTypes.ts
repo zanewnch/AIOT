@@ -70,7 +70,7 @@ export interface UserCacheOptions {
  * 定義用戶查詢相關操作的標準介面
  * 所有用戶查詢服務都應該實現此介面
  * 
- * @interface IUserQueriesService
+ * @interface IUserQueriesSvc
  * @example
  * ```typescript
  * class UserQueriesService implements IUserQueriesService {
@@ -80,7 +80,7 @@ export interface UserCacheOptions {
  * }
  * ```
  */
-export interface IUserQueriesService {
+export interface IUserQueriesSvc {
     /**
      * 獲取所有用戶列表（支持分頁）
      * 

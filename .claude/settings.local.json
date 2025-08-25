@@ -31,7 +31,9 @@
       "Bash(find:*)",
       "Bash(sed:*)",
       "Bash(grep:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(for file in *Controller.ts)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": [],

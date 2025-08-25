@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {UserToRoleCommandsService} from '../../services/commands/UserToRoleCommandsService.js';
+import {UserToRoleCommandsSvc} from '../../services/commands/UserToRoleCommandsSvc.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -31,9 +31,9 @@ const logger = createLogger('UserToRoleCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class UserToRoleCommandsController {
+export class UserToRoleCommandsCtrl {
     constructor(
-        @inject(TYPES.UserToRoleCommandsService) private readonly userToRoleCommandsService: UserToRoleCommandsService
+        @inject(TYPES.UserToRoleCommandsService) private readonly userToRoleCommandsSvc: UserToRoleCommandsSvc
     ) {
     }
 
@@ -75,7 +75,7 @@ export class UserToRoleCommandsController {
                 return;
             }
 
-            await this.userToRoleCommandsService.assignRolesToUser({
+            await this.userToRoleCommandsSvc.assignRolesToUser({
                 userId: id,
                 roleIds: validRoleIds
             });
@@ -120,7 +120,7 @@ export class UserToRoleCommandsController {
                 return;
             }
 
-            const removed = await this.userToRoleCommandsService.removeRoleFromUser({
+            const removed = await this.userToRoleCommandsSvc.removeRoleFromUser({
                 userId: userIdNum,
                 roleId: roleIdNum
             });
@@ -173,7 +173,7 @@ export class UserToRoleCommandsController {
                 return;
             }
 
-            await this.userToRoleCommandsService.assignRoleToUser(userIdNum, roleIdNum);
+            await this.userToRoleCommandsSvc.assignRoleToUser(userIdNum, roleIdNum);
 
             const result = sharedPackages.ResResult.created('使用者角色關聯創建成功');
             res.status(result.status).json(result);

@@ -18,7 +18,7 @@ import { loggerConfig } from '../configs/loggerConfig.js';
  * Gateway 管理控制器類別
  */
 @injectable()
-export class GatewayManagementController {
+export class class GatewayManagementCtrl {Ctrl {
     private logger = loggerConfig.child({ service: 'GatewayManagement' });
     
     constructor(

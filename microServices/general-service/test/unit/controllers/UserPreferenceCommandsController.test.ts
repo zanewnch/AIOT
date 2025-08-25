@@ -14,7 +14,7 @@
  */
 
 import {NextFunction, Request, Response} from 'express';
-import {UserPreferenceCommands} from '../../../src/controllers/commands/UserPreferenceCommandsController.js';
+import {UserPreferenceCommands} from '../../../src/controllers/commands/UserPreferenceCommandsCtrl.js';
 import {UserPreferenceCommandsService} from '../../../src/services/commands/UserPreferenceCommandsService.js';
 import {ControllerResult} from '../../../src/utils/ControllerResult.js';
 import type {

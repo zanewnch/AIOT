@@ -14,8 +14,8 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router, Request, Response } from 'express';
 import { TYPES } from '../container/types.js';
-import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsController.js';
-import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesController.js';
+import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
+import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
 import { createLogger } from '../configs/loggerConfig.js';
 

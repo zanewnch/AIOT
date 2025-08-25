@@ -45,7 +45,7 @@ import { MonitoringService } from '../services/MonitoringService';
  * - 錯誤隔離：完整的 try-catch 錯誤處理
  */
 @injectable()
-export class AlertsController {
+export class class AlertsCtrl {Ctrl {
   /**
    * 建構子 - 依賴注入初始化
    * 

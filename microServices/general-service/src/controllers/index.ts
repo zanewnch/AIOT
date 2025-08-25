@@ -9,4 +9,4 @@
  */
 
 // 目前只匯出文檔控制器
-export * from './queries/DocsQueriesController.js';
+export * from './queries/DocsQueriesCtrl.js';

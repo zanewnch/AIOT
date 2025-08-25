@@ -14,7 +14,7 @@
  */
 
 import {NextFunction, Request, Response} from 'express';
-import {DroneCommandCommands} from '../../../src/controllers/commands/DroneCommandCommandsController.js';
+import {DroneCommandCommands} from '../../../src/controllers/commands/DroneCommandCommandsCtrl.js';
 import {DroneCommandCommandsService} from '../../../src/services/commands/DroneCommandCommandsService.js';
 import {ControllerResult} from '@aiot/shared-packages/ResResult.js';
 import {DroneCommandCreationAttributes} from '../../../src/models/DroneCommandModel.js';

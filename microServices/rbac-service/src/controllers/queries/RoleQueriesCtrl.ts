@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {RoleQueriesService} from '../../services/queries/RoleQueriesService.js';
+import {RoleQueriesSvc} from '../../services/queries/RoleQueriesSvc.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {PaginationRequestDto} from '../../dto/index.js';
@@ -29,9 +29,9 @@ import {PaginationRequestDto} from '../../dto/index.js';
  * @since 1.0.0
  */
 @injectable()
-export class RoleQueriesController {
+export class RoleQueriesCtrl {
     constructor(
-        @inject(TYPES.RoleQueriesService) private readonly roleQueriesService: RoleQueriesService
+        @inject(TYPES.RoleQueriesService) private readonly roleQueriesSvc: RoleQueriesSvc
     ) {}
 
     /**
@@ -49,7 +49,7 @@ export class RoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleQueriesService.getAllRolesPaginated(pagination);
+            const paginatedResult = await this.roleQueriesSvc.getAllRolesPaginated(pagination);
             const result = ResResult.success('角色分頁查詢成功', paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('分頁查詢角色失敗'); res.status(result.status).json(result);
@@ -78,7 +78,7 @@ export class RoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleQueriesService.getRolesByTypePaginated(type, pagination);
+            const paginatedResult = await this.roleQueriesSvc.getRolesByTypePaginated(type, pagination);
             const result = ResResult.success(`類型為 ${type} 的角色分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據類型分頁查詢角色失敗'); res.status(result.status).json(result);
@@ -107,7 +107,7 @@ export class RoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleQueriesService.getRolesByStatusPaginated(status, pagination);
+            const paginatedResult = await this.roleQueriesSvc.getRolesByStatusPaginated(status, pagination);
             const result = ResResult.success(`狀態為 ${status} 的角色分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據狀態分頁查詢角色失敗'); res.status(result.status).json(result);
@@ -136,7 +136,7 @@ export class RoleQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.roleQueriesService.getRolesByPermissionPaginated(permissionId, pagination);
+            const paginatedResult = await this.roleQueriesSvc.getRolesByPermissionPaginated(permissionId, pagination);
             const result = ResResult.success(`權限 ${permissionId} 的角色分頁查詢成功`, paginatedResult); res.status(result.status).json(result);
         } catch (error) {
             const result = ResResult.internalError('根據權限分頁查詢角色失敗'); res.status(result.status).json(result);
@@ -148,7 +148,7 @@ export class RoleQueriesController {
      */
     getRoles = async (req: Request, res: Response): Promise<void> => {
         try {
-            const roles = await this.roleQueriesService.getRoles();
+            const roles = await this.roleQueriesSvc.getRoles();
             const result = ResResult.success('角色資料獲取成功', roles);
             res.status(result.status).json(result);
         } catch (error) {
@@ -163,7 +163,7 @@ export class RoleQueriesController {
     getRoleById = async (req: Request, res: Response): Promise<void> => {
         try {
             const roleId = req.params.id;
-            const role = await this.roleQueriesService.getRoleById(roleId);
+            const role = await this.roleQueriesSvc.getRoleById(roleId);
             if (!role) {
                 const result = ResResult.notFound('角色不存在');
                 res.status(result.status).json(result);

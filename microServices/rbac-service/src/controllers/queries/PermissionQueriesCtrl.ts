@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {PermissionQueriesService} from '../../services/queries/PermissionQueriesService.js';
+import {PermissionQueriesSvc} from '../../services/queries/PermissionQueriesSvc.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {PaginationRequestDto} from '../../dto/index.js';
@@ -29,9 +29,9 @@ import {PaginationRequestDto} from '../../dto/index.js';
  * @since 1.0.0
  */
 @injectable()
-export class PermissionQueriesController {
+export class PermissionQueriesCtrl {
     constructor(
-        @inject(TYPES.PermissionQueriesService) private readonly permissionQueriesService: PermissionQueriesService
+        @inject(TYPES.PermissionQueriesService) private readonly permissionQueriesSvc: PermissionQueriesSvc
     ) {}
 
     /**
@@ -49,7 +49,7 @@ export class PermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.permissionQueriesService.getAllPermissionsPaginated(pagination);
+            const paginatedResult = await this.permissionQueriesSvc.getAllPermissionsPaginated(pagination);
             const result = ResResult.success('權限分頁查詢成功', paginatedResult);
             res.status(result.status).json(result);
         } catch (error) {
@@ -81,7 +81,7 @@ export class PermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.permissionQueriesService.getPermissionsByResourcePaginated(resource, pagination);
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByResourcePaginated(resource, pagination);
             const result = ResResult.success(`資源 ${resource} 的權限分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
         } catch (error) {
@@ -113,7 +113,7 @@ export class PermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.permissionQueriesService.getPermissionsByActionPaginated(action, pagination);
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByActionPaginated(action, pagination);
             const result = ResResult.success(`動作 ${action} 的權限分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
         } catch (error) {
@@ -145,7 +145,7 @@ export class PermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.permissionQueriesService.getPermissionsByTypePaginated(type, pagination);
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByTypePaginated(type, pagination);
             const result = ResResult.success(`類型為 ${type} 的權限分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
         } catch (error) {
@@ -177,7 +177,7 @@ export class PermissionQueriesController {
                 get offset() { return ((this.page || 1) - 1) * (this.pageSize || 20); }
             } as PaginationRequestDto;
 
-            const paginatedResult = await this.permissionQueriesService.getPermissionsByStatusPaginated(status, pagination);
+            const paginatedResult = await this.permissionQueriesSvc.getPermissionsByStatusPaginated(status, pagination);
             const result = ResResult.success(`狀態為 ${status} 的權限分頁查詢成功`, paginatedResult);
             res.status(result.status).json(result);
         } catch (error) {

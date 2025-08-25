@@ -15,7 +15,7 @@ import { loggerConfig } from '../configs/loggerConfig.js';
  * 認證測試控制器類別
  */
 @injectable()
-export class AuthTestController {
+export class class AuthTestCtrl {Ctrl {
     private logger = loggerConfig;
 
     /**

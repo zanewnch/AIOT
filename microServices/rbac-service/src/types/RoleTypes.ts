@@ -73,7 +73,7 @@ export interface CacheOptions {
  * 定義角色查詢相關操作的標準介面
  * 所有角色查詢服務都應該實現此介面
  * 
- * @interface IRoleQueriesService
+ * @interface IRoleQueriesSvc
  * @example
  * ```typescript
  * class RoleQueriesService implements IRoleQueriesService {
@@ -83,7 +83,7 @@ export interface CacheOptions {
  * }
  * ```
  */
-export interface IRoleQueriesService {
+export interface IRoleQueriesSvc {
     /**
      * 根據角色 ID 獲取角色（分頁格式）
      * 

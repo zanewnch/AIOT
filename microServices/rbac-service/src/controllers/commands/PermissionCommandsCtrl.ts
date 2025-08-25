@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import type {IPermissionCommandsService} from '../../types/index.js';
+import type {IPermissionCommandsSvc} from '../../types/index.js';
 import {createLogger, logRequest} from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
@@ -31,9 +31,9 @@ const logger = createLogger('PermissionCommandsController');
  * @since 1.0.0
  */
 @injectable()
-export class PermissionCommandsController {
+export class PermissionCommandsCtrl {
     constructor(
-        @inject(TYPES.PermissionCommandsService) private readonly permissionService: IPermissionCommandsService
+        @inject(TYPES.PermissionCommandsService) private readonly permissionSvc: IPermissionCommandsSvc
     ) {
     }
 
@@ -55,7 +55,7 @@ export class PermissionCommandsController {
             logRequest(req, `Creating new permission: ${name}`, 'info');
             logger.debug('Creating new permission via service', {name, resource, action});
 
-            const newPermission = await this.permissionService.createPermission({
+            const newPermission = await this.permissionSvc.createPermission({
                 name: name.trim(),
                 description: description?.trim() || ''
             });
@@ -123,7 +123,7 @@ export class PermissionCommandsController {
                 return;
             }
 
-            const updatedPermission = await this.permissionService.updatePermission(permissionId, updateData);
+            const updatedPermission = await this.permissionSvc.updatePermission(permissionId, updateData);
 
             if (!updatedPermission) {
                 const result = sharedPackages.ResResult.notFound('權限不存在');
@@ -172,7 +172,7 @@ export class PermissionCommandsController {
             logRequest(req, `Deleting permission with ID: ${permissionId}`, 'info');
             logger.debug('Deleting permission via service', {permissionId});
 
-            const deleted = await this.permissionService.deletePermission(permissionId);
+            const deleted = await this.permissionSvc.deletePermission(permissionId);
 
             if (!deleted) {
                 const result = sharedPackages.ResResult.notFound('權限不存在');

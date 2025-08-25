@@ -30,7 +30,7 @@ interface ServiceRouteConfig {
  * Gateway 控制器類別
  */
 @injectable()
-export class GatewayController {
+export class class GatewayCtrl {Ctrl {
     private logger = loggerConfig;
 
     // 微服務路由配置

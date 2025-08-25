@@ -6,7 +6,7 @@
  */
 
 import { Router } from 'express';
-import { GatewayManagementController } from '../controllers/GatewayManagementController.js';
+import { GatewayManagementController } from '../controllers/GatewayManagementCtrl.js';
 import { MonitoringMiddleware } from '../middleware/MonitoringMiddleware.js';
 import { LoadBalancerMiddleware } from '../middleware/LoadBalancerMiddleware.js';
 import { RateLimitMiddleware } from '../middleware/RateLimitMiddleware.js';

@@ -12,8 +12,8 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Application } from 'express';
 import { TYPES } from '../container/types.js';
-import { GatewayController } from '../controllers/GatewayController.js';
-import { AuthTestController } from '../controllers/AuthTestController.js';
+import { GatewayController } from '../controllers/GatewayCtrl.js';
+import { AuthTestController } from '../controllers/AuthTestCtrl.js';
 import { ProxyMiddleware } from '../middleware/ProxyMiddleware.js';
 import { createMainRoutes } from './index.js';
 

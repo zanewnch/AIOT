@@ -76,7 +76,7 @@ interface UpdateRuleRequest {
  * - 錯誤隔離：完整的 try-catch 錯誤處理
  */
 @injectable()
-export class NotificationController {
+export class class NotificationCtrl {Ctrl {
   constructor(
     @inject(TYPES.Logger) private readonly logger: any,
     @inject(TYPES.NotificationService) private readonly notificationService: NotificationService,

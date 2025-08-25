@@ -7,10 +7,10 @@
 
 import { Router } from 'express';
 import { ProxyMiddleware } from '../middleware/ProxyMiddleware.js';
-import { GatewayController } from '../controllers/GatewayController.js';
+import { GatewayController } from '../controllers/GatewayCtrl.js';
 import { HealthConfig } from '../configs/healthConfig.js';
 import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
-import { AuthTestController } from '../controllers/AuthTestController.js';
+import { AuthTestController } from '../controllers/AuthTestCtrl.js';
 import { loggerConfig } from '../configs/loggerConfig.js';
 import { ResResult } from '../utils/ResResult.js';
 import docsRoutes from './docsRoutes.js';
