@@ -16,7 +16,7 @@
  * - 刪除後清除相關快取
  * - 支援強制快取刷新
  *
- * @module PermissionCommandsService
+ * @module PermissionCommandsSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -25,8 +25,8 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepository.js';
-import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepository.js';
+import { PermissionCommandsRepo } from '../../repo/commands/PermissionCommandsRepository.js';
+import { PermissionQueriesRepo } from '../../repo/queries/PermissionQueriesRepository.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -36,13 +36,13 @@ import type {
     PermissionDTO,
     CreatePermissionRequest,
     UpdatePermissionRequest,
-    IPermissionCommandsService,
+    IPermissionCommandsSvc,
     UserPermissions
 } from '../../types/index.js';
 
-import { PermissionQueriesService } from '../queries/PermissionQueriesService.js';
+import { PermissionQueriesSvc } from '../queries/PermissionQueriesSvc.js';
 
-const logger = createLogger('PermissionCommandsService');
+const logger = createLogger('PermissionCommandsSvc');
 
 /**
  * 權限命令服務實現類別
@@ -50,12 +50,12 @@ const logger = createLogger('PermissionCommandsService');
  * 專門處理權限相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  * 
- * @class PermissionCommandsService
+ * @class PermissionCommandsSvc
  * @implements {IPermissionCommandsService}
  * @since 1.0.0
  */
 @injectable()
-export class PermissionCommandsService implements IPermissionCommandsService {
+export class PermissionCommandsSvc implements IPermissionCommandsSvc {
     private static readonly PERMISSIONS_CACHE_PREFIX = 'user_permissions:';
     private static readonly ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly PERMISSION_CACHE_PREFIX = 'permission:';
@@ -63,9 +63,9 @@ export class PermissionCommandsService implements IPermissionCommandsService {
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.PermissionQueriesService) private readonly queryService: PermissionQueriesService,
-        @inject(TYPES.PermissionCommandsRepository) private readonly permissionCommandsRepository: PermissionCommandsRepository,
-        @inject(TYPES.PermissionQueriesRepository) private readonly permissionQueriesRepository: PermissionQueriesRepository
+        @inject(TYPES.PermissionQueriesService) private readonly permissionQueriesSvc: PermissionQueriesSvc,
+        @inject(TYPES.PermissionCommandsRepository) private readonly permissionCommandsRepo: PermissionCommandsRepo,
+        @inject(TYPES.PermissionQueriesRepository) private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
     }
 
@@ -78,7 +78,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
      * @private
      */
     private getPermissionsCacheKey = (userId: number): string => {
-        return `${PermissionCommandsService.PERMISSIONS_CACHE_PREFIX}${userId}`;
+        return `${PermissionCommandsSvc.PERMISSIONS_CACHE_PREFIX}${userId}`;
     }
 
     /**
@@ -88,7 +88,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
      * @private
      */
     private getRolesCacheKey = (userId: number): string => {
-        return `${PermissionCommandsService.ROLES_CACHE_PREFIX}${userId}`;
+        return `${PermissionCommandsSvc.ROLES_CACHE_PREFIX}${userId}`;
     }
 
     /**
@@ -97,7 +97,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
      * @private
      */
     private getPermissionCacheKey = (permissionId: number): string => {
-        return `${PermissionCommandsService.PERMISSION_CACHE_PREFIX}${permissionId}`;
+        return `${PermissionCommandsSvc.PERMISSION_CACHE_PREFIX}${permissionId}`;
     }
 
     /**
@@ -110,7 +110,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
     private async setCachedUserPermissions(
         userId: number,
         permissions: UserPermissions,
-        ttl = PermissionCommandsService.DEFAULT_CACHE_TTL
+        ttl = PermissionCommandsSvc.DEFAULT_CACHE_TTL
     ): Promise<void> {
         const cacheKey = this.getPermissionsCacheKey(userId);
         await this.safeRedisWrite(
@@ -147,7 +147,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
         const key = this.getPermissionCacheKey(permission.id);
         await this.safeRedisWrite(
             async (redis: RedisClientType) => {
-                await redis.setEx(key, PermissionCommandsService.DEFAULT_CACHE_TTL, JSON.stringify(permission));
+                await redis.setEx(key, PermissionCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(permission));
             },
             `cachePermission(${permission.id})`
         );
@@ -171,7 +171,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
 
         // 清除所有權限列表快取
         await this.safeRedisOperation(
-            async (redis: RedisClientType) => await redis.del(PermissionCommandsService.ALL_PERMISSIONS_KEY),
+            async (redis: RedisClientType) => await redis.del(PermissionCommandsSvc.ALL_PERMISSIONS_KEY),
             'clearAllPermissionsCache',
             0
         );
@@ -255,12 +255,12 @@ export class PermissionCommandsService implements IPermissionCommandsService {
      */
     public async refreshUserPermissionsCache(
         userId: number,
-        options = { ttl: PermissionCommandsService.DEFAULT_CACHE_TTL, forceRefresh: true }
+        options = { ttl: PermissionCommandsSvc.DEFAULT_CACHE_TTL, forceRefresh: true }
     ): Promise<UserPermissions | null> {
-        const permissions = await this.queryService.getUserPermissions(userId, { ...options, forceRefresh: true });
+        const permissions = await this.permissionQueriesSvc.getUserPermissions(userId, { ...options, forceRefresh: true });
         
         if (permissions) {
-            const ttl = options.ttl || PermissionCommandsService.DEFAULT_CACHE_TTL;
+            const ttl = options.ttl || PermissionCommandsSvc.DEFAULT_CACHE_TTL;
             await this.setCachedUserPermissions(userId, permissions, ttl);
         }
         
@@ -283,13 +283,13 @@ export class PermissionCommandsService implements IPermissionCommandsService {
             }
 
             // 檢查權限是否已存在
-            const exists = await this.permissionQueriesRepository.exists(permissionData.name.trim());
+            const exists = await this.permissionQueriesRepo.exists(permissionData.name.trim());
             if (exists) {
                 throw new Error(`Permission with name '${permissionData.name}' already exists`);
             }
 
             // 建立權限
-            const permission = await this.permissionCommandsRepository.create({
+            const permission = await this.permissionCommandsRepo.create({
                 name: permissionData.name.trim(),
                 description: permissionData.description?.trim()
             });
@@ -337,7 +337,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
 
                 // 檢查新名稱是否已被其他權限使用
                 if (updatePayload.name) {
-                    const existingPermission = await this.permissionQueriesRepository.findByName(updatePayload.name);
+                    const existingPermission = await this.permissionQueriesRepo.findByName(updatePayload.name);
                     if (existingPermission && existingPermission.id !== permissionId) {
                         throw new Error(`Permission with name '${updatePayload.name}' already exists`);
                     }
@@ -348,7 +348,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
             }
 
             // 更新權限
-            const updatedPermission = await this.permissionCommandsRepository.update(permissionId, updatePayload);
+            const updatedPermission = await this.permissionCommandsRepo.update(permissionId, updatePayload);
             if (!updatedPermission) {
                 logger.warn(`Permission update failed - permission not found for ID: ${permissionId}`);
                 return null;
@@ -386,14 +386,14 @@ export class PermissionCommandsService implements IPermissionCommandsService {
             }
 
             // 檢查權限是否存在
-            const existingPermission = await this.permissionQueriesRepository.findById(permissionId);
+            const existingPermission = await this.permissionQueriesRepo.findById(permissionId);
             if (!existingPermission) {
                 logger.warn(`Permission deletion failed - permission not found for ID: ${permissionId}`);
                 return false;
             }
 
             // 刪除權限
-            const deleted = await this.permissionCommandsRepository.delete(permissionId);
+            const deleted = await this.permissionCommandsRepo.delete(permissionId);
             if (deleted) {
                 // 清除快取
                 await this.clearPermissionManagementCache(permissionId);

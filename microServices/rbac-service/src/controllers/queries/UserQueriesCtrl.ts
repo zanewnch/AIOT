@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Request, Response} from 'express';
-import {UserQueriesService} from '../../services/queries/UserQueriesService.js';
+import {UserQueriesSvc} from '../../services/queries/UserQueriesSvc.js';
 import {ResResult} from 'aiot-shared-packages';
 import {TYPES} from '../../container/types.js';
 import {PaginationRequestDto} from '../../dto/index.js';
@@ -31,7 +31,7 @@ import {PaginationRequestDto} from '../../dto/index.js';
 @injectable()
 export class UserQueriesCtrl {
     constructor(
-        @inject(TYPES.UserQueriesService) private readonly userQueriesSvc: UserQueriesService
+        @inject(TYPES.UserQueriesService) private readonly userQueriesSvc: UserQueriesSvc
     ) {}
 
     /**

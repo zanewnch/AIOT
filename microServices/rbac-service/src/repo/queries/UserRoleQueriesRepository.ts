@@ -68,14 +68,14 @@ export class UserRoleQueriesRepository {
 
             // 搜尋條件 - 在用戶名、角色名中搜尋
             if (search) {
-                includeConditions[0].where = {
+                (includeConditions[0] as any).where = {
                     [Op.or]: [
                         { username: { [Op.like]: `%${search}%` } },
                         { email: { [Op.like]: `%${search}%` } },
                         { displayName: { [Op.like]: `%${search}%` } }
                     ]
-                } as any;
-                includeConditions[1].where = {
+                };
+                (includeConditions[1] as any).where = {
                     [Op.or]: [
                         { name: { [Op.like]: `%${search}%` } },
                         { displayName: { [Op.like]: `%${search}%` } }

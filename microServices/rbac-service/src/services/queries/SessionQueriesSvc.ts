@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的業務操作。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module SessionQueriesService
+ * @module SessionQueriesSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -18,8 +18,9 @@ import { SessionQueriesRepository } from '../../repo/queries/SessionQueriesRepos
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
+import type { SessionQueriesRepo } from '../../types/index.js';
 
-const logger = createLogger('SessionQueriesService');
+const logger = createLogger('SessionQueriesSvc');
 
 /**
  * 會話查詢 Service 實現類別
@@ -27,14 +28,14 @@ const logger = createLogger('SessionQueriesService');
  * 專門處理會話相關的查詢請求，包含分頁查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class SessionQueriesService
+ * @class SessionQueriesSvc
  * @since 1.0.0
  */
 @injectable()
-export class SessionQueriesService {
+export class SessionQueriesSvc {
     constructor(
-        @inject(TYPES.SessionQueriesRepository)
-        private readonly sessionQueriesRepository: SessionQueriesRepository
+        @inject(TYPES.SessionQueriesRepo)
+        private readonly sessionQueriesRepo: SessionQueriesRepo
     ) {}
 
     /**
@@ -46,7 +47,7 @@ export class SessionQueriesService {
         try {
             logger.info('Getting paginated sessions', { pagination });
 
-            const result = await this.sessionQueriesRepository.findPaginated(pagination);
+            const result = await this.sessionQueriesRepo.findPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedSessionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} sessions from ${result.totalCount} total`);
@@ -71,7 +72,7 @@ export class SessionQueriesService {
                 throw new Error('使用者 ID 必須是正整數');
             }
 
-            const result = await this.sessionQueriesRepository.findByUserIdPaginated(userId, pagination);
+            const result = await this.sessionQueriesRepo.findByUserIdPaginated(userId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedSessionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} sessions for user ${userId}`);
@@ -92,7 +93,7 @@ export class SessionQueriesService {
         try {
             logger.info('Getting paginated sessions by status', { status, pagination });
 
-            const result = await this.sessionQueriesRepository.findByStatusPaginated(status, pagination);
+            const result = await this.sessionQueriesRepo.findByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedSessionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} sessions with status ${status}`);

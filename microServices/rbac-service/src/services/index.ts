@@ -18,13 +18,28 @@
 // 角色基礎存取控制初始化服務已移除 - 不再需要
 // export { RbacInitService } from './RbacInitService.js';
 
-// 匯出 CQRS 模式的使用者服務
-export { UserQueriesService } from './queries/UserQueriesService.js';
-export { UserCommandsService } from './commands/UserCommandsService.js';
+// 匯出 CQRS 模式的權限服務
+export { PermissionCommandsSvc } from './commands/PermissionCommandsSvc.js';
+export { PermissionQueriesSvc } from './queries/PermissionQueriesSvc.js';
 
+// 匯出 CQRS 模式的角色服務
+export { RoleCommandsSvc } from './commands/RoleCommandsSvc.js';
+export { RoleQueriesSvc } from './queries/RoleQueriesSvc.js';
+
+// 匯出 CQRS 模式的角色權限關聯服務
+export { RoleToPermissionCommandsSvc } from './commands/RoleToPermissionCommandsSvc.js';
+export { RoleToPermissionQueriesSvc } from './queries/RoleToPermissionQueriesSvc.js';
+
+// 匯出 CQRS 模式的使用者服務
+export { UserQueriesSvc } from './queries/UserQueriesSvc.js';
+export { UserCommandsSvc } from './commands/UserCommandsSvc.js';
+
+// 匯出 CQRS 模式的使用者角色關聯服務
+export { UserToRoleCommandsSvc } from './commands/UserToRoleCommandsSvc.js';
+export { UserToRoleQueriesSvc } from './queries/UserToRoleQueriesSvc.js';
 
 // 匯出 CQRS 模式的會話服務
-export { SessionQueriesService } from './queries/SessionQueriesService.js';
+export { SessionQueriesSvc } from './queries/SessionQueriesSvc.js';
 // SessionCommandsService 尚未實現
 // export { SessionCommandsService } from './commands/SessionCommandsService.js';
 

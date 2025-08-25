@@ -18,16 +18,16 @@
 import 'reflect-metadata';
 import { Router } from 'express';
 import { inject, injectable } from 'inversify';
-import { UserQueriesController } from '../controllers/queries/UserQueriesCtrl.js';
-import { UserCommandsController } from '../controllers/commands/UserCommandsCtrl.js';
-import { RoleQueriesController } from '../controllers/queries/RoleQueriesCtrl.js';
-import { RoleCommandsController } from '../controllers/commands/RoleCommandsCtrl.js';
-import { PermissionQueriesController } from '../controllers/queries/PermissionQueriesCtrl.js';
-import { PermissionCommandsController } from '../controllers/commands/PermissionCommandsCtrl.js';
-import { UserToRoleQueriesController } from '../controllers/queries/UserToRoleQueriesCtrl.js';
-import { UserToRoleCommandsController } from '../controllers/commands/UserToRoleCommandsCtrl.js';
-import { RoleToPermissionQueriesController } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
-import { RoleToPermissionCommandsController } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
+import { UserQueriesCtrl } from '../controllers/queries/UserQueriesCtrl.js';
+import { UserCommandsCtrl } from '../controllers/commands/UserCommandsCtrl.js';
+import { RoleQueriesCtrl } from '../controllers/queries/RoleQueriesCtrl.js';
+import { RoleCommandsCtrl } from '../controllers/commands/RoleCommandsCtrl.js';
+import { PermissionQueriesCtrl } from '../controllers/queries/PermissionQueriesCtrl.js';
+import { PermissionCommandsCtrl } from '../controllers/commands/PermissionCommandsCtrl.js';
+import { UserToRoleQueriesCtrl } from '../controllers/queries/UserToRoleQueriesCtrl.js';
+import { UserToRoleCommandsCtrl } from '../controllers/commands/UserToRoleCommandsCtrl.js';
+import { RoleToPermissionQueriesCtrl } from '../controllers/queries/RoleToPermissionQueriesCtrl.js';
+import { RoleToPermissionCommandsCtrl } from '../controllers/commands/RoleToPermissionCommandsCtrl.js';
 import { TYPES } from '../container/types.js';
 
 /**
@@ -63,16 +63,16 @@ export class RbacRoutes {
   } as const;
 
   constructor(
-    @inject(TYPES.UserQueriesController) private readonly userQueries: UserQueriesController,
-    @inject(TYPES.UserCommandsController) private readonly userCommands: UserCommandsController,
-    @inject(TYPES.RoleQueriesController) private readonly roleQueries: RoleQueriesController,
-    @inject(TYPES.RoleCommandsController) private readonly roleCommands: RoleCommandsController,
-    @inject(TYPES.PermissionQueriesController) private readonly permissionQueries: PermissionQueriesController,
-    @inject(TYPES.PermissionCommandsController) private readonly permissionCommands: PermissionCommandsController,
-    @inject(TYPES.UserToRoleQueriesController) private readonly userToRoleQueries: UserToRoleQueriesController,
-    @inject(TYPES.UserToRoleCommandsController) private readonly userToRoleCommands: UserToRoleCommandsController,
-    @inject(TYPES.RoleToPermissionQueriesController) private readonly roleToPermissionQueries: RoleToPermissionQueriesController,
-    @inject(TYPES.RoleToPermissionCommandsController) private readonly roleToPermissionCommands: RoleToPermissionCommandsController
+    @inject(TYPES.UserQueriesController) private readonly userQueries: UserQueriesCtrl,
+    @inject(TYPES.UserCommandsController) private readonly userCommands: UserCommandsCtrl,
+    @inject(TYPES.RoleQueriesController) private readonly roleQueries: RoleQueriesCtrl,
+    @inject(TYPES.RoleCommandsController) private readonly roleCommands: RoleCommandsCtrl,
+    @inject(TYPES.PermissionQueriesController) private readonly permissionQueries: PermissionQueriesCtrl,
+    @inject(TYPES.PermissionCommandsController) private readonly permissionCommands: PermissionCommandsCtrl,
+    @inject(TYPES.UserToRoleQueriesController) private readonly userToRoleQueries: UserToRoleQueriesCtrl,
+    @inject(TYPES.UserToRoleCommandsController) private readonly userToRoleCommands: UserToRoleCommandsCtrl,
+    @inject(TYPES.RoleToPermissionQueriesController) private readonly roleToPermissionQueries: RoleToPermissionQueriesCtrl,
+    @inject(TYPES.RoleToPermissionCommandsController) private readonly roleToPermissionCommands: RoleToPermissionCommandsCtrl
   ) {
     this.router = Router();
     this.setupUserRoutes();

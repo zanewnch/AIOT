@@ -25,10 +25,10 @@ const logger = createLogger('RoleCommandsRepository');
  * 
  * 專門處理角色資料的寫入操作，遵循 CQRS 模式
  * 
- * @class RoleCommandsRepository
+ * @class RoleCommandsRepo
  */
 @injectable()
-export class RoleCommandsRepository {
+export class RoleCommandsRepo {
   /**
    * 建立新角色
    * @param roleData 角色資料

@@ -19,11 +19,11 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Router, Request, Response } from 'express';
 import { TYPES } from '../container/types.js';
-import { UserQueriesService } from '../services/queries/UserQueriesService.js';
-import { RoleQueriesService } from '../services/queries/RoleQueriesService.js';
-import { PermissionQueriesService } from '../services/queries/PermissionQueriesService.js';
-import { UserToRoleQueriesService } from '../services/queries/UserToRoleQueriesService.js';
-import { RoleToPermissionQueriesService } from '../services/queries/RoleToPermissionQueriesService.js';
+import { UserQueriesSvc } from '../services/queries/UserQueriesSvc.js';
+import { RoleQueriesSvc } from '../services/queries/RoleQueriesSvc.js';
+import { PermissionQueriesSvc } from '../services/queries/PermissionQueriesSvc.js';
+import { UserToRoleQueriesSvc } from '../services/queries/UserToRoleQueriesSvc.js';
+import { RoleToPermissionQueriesSvc } from '../services/queries/RoleToPermissionQueriesSvc.js';
 import { createLogger } from '../configs/loggerConfig.js';
 import { ResResult } from 'aiot-shared-packages';
 
@@ -164,11 +164,11 @@ const RBAC_MCP_TOOLS = [
 @injectable()
 export class RBACMCPRoutes {
     constructor(
-        @inject(TYPES.UserQueriesService) private userQueriesService: UserQueriesService,
-        @inject(TYPES.RoleQueriesService) private roleQueriesService: RoleQueriesService,
-        @inject(TYPES.PermissionQueriesService) private permissionQueriesService: PermissionQueriesService,
-        @inject(TYPES.UserToRoleQueriesService) private userToRoleQueriesService: UserToRoleQueriesService,
-        @inject(TYPES.RoleToPermissionQueriesService) private roleToPermissionQueriesService: RoleToPermissionQueriesService
+        @inject(TYPES.UserQueriesService) private userQueriesService: UserQueriesSvc,
+        @inject(TYPES.RoleQueriesService) private roleQueriesService: RoleQueriesSvc,
+        @inject(TYPES.PermissionQueriesService) private permissionQueriesService: PermissionQueriesSvc,
+        @inject(TYPES.UserToRoleQueriesService) private userToRoleQueriesSvc: UserToRoleQueriesSvc,
+        @inject(TYPES.RoleToPermissionQueriesService) private roleToPermissionQueriesSvc: RoleToPermissionQueriesSvc
     ) {}
 
     /**
@@ -192,15 +192,17 @@ export class RBACMCPRoutes {
     private getTools = async (req: Request, res: Response): Promise<void> => {
         try {
             logger.info('📋 Returning RBAC MCP tools list');
-            ResResult.success(res, {
+            const result = ResResult.success('RBAC MCP tools retrieved successfully', {
                 service: 'rbac-service',
                 version: '1.0.0',
                 tools: RBAC_MCP_TOOLS,
                 total: RBAC_MCP_TOOLS.length
-            }, 'RBAC MCP tools retrieved successfully');
+            });
+            res.status(result.status).json(result);
         } catch (error) {
             logger.error('❌ Failed to get RBAC MCP tools:', error);
-            ResResult.error(res, 500, 'Failed to retrieve MCP tools', error);
+            const result = ResResult.internalError('Failed to retrieve MCP tools');
+            res.status(result.status).json(result);
         }
     };
 
@@ -212,66 +214,70 @@ export class RBACMCPRoutes {
             const { tool_name, arguments: args = {} } = req.body;
 
             if (!tool_name) {
-                ResResult.error(res, 400, 'tool_name is required');
+                const result = ResResult.badRequest('tool_name is required');
+                res.status(result.status).json(result);
                 return;
             }
 
             logger.info(`🔧 Executing RBAC MCP tool: ${tool_name}`, { arguments: args });
 
-            let result: any;
+            let toolResult: any;
 
             switch (tool_name) {
                 case 'get_user_info':
-                    result = await this.handleGetUserInfo(args);
+                    toolResult = await this.handleGetUserInfo(args);
                     break;
                     
                 case 'list_users':
-                    result = await this.handleListUsers(args);
+                    toolResult = await this.handleListUsers(args);
                     break;
                     
                 case 'get_user_roles':
-                    result = await this.handleGetUserRoles(args);
+                    toolResult = await this.handleGetUserRoles(args);
                     break;
                     
                 case 'get_user_permissions':
-                    result = await this.handleGetUserPermissions(args);
+                    toolResult = await this.handleGetUserPermissions(args);
                     break;
                     
                 case 'list_roles':
-                    result = await this.handleListRoles(args);
+                    toolResult = await this.handleListRoles(args);
                     break;
                     
                 case 'get_role_info':
-                    result = await this.handleGetRoleInfo(args);
+                    toolResult = await this.handleGetRoleInfo(args);
                     break;
                     
                 case 'get_role_permissions':
-                    result = await this.handleGetRolePermissions(args);
+                    toolResult = await this.handleGetRolePermissions(args);
                     break;
                     
                 case 'list_permissions':
-                    result = await this.handleListPermissions(args);
+                    toolResult = await this.handleListPermissions(args);
                     break;
                     
                 case 'check_user_permission':
-                    result = await this.handleCheckUserPermission(args);
+                    toolResult = await this.handleCheckUserPermission(args);
                     break;
                     
                 case 'get_users_with_role':
-                    result = await this.handleGetUsersWithRole(args);
+                    toolResult = await this.handleGetUsersWithRole(args);
                     break;
                     
                 default:
-                    ResResult.error(res, 404, `Unknown tool: ${tool_name}`);
+                    const result = ResResult.notFound(`Unknown tool: ${tool_name}`);
+                    res.status(result.status).json(result);
                     return;
             }
 
             logger.info(`✅ RBAC MCP tool executed successfully: ${tool_name}`);
-            ResResult.success(res, result, `Tool ${tool_name} executed successfully`);
+            const response = ResResult.success(`Tool ${tool_name} executed successfully`, toolResult);
+            res.status(response.status).json(response);
 
         } catch (error: any) {
             logger.error(`❌ RBAC MCP tool execution failed:`, error);
-            ResResult.error(res, 500, `Tool execution failed: ${error.message}`, error);
+            const result = ResResult.internalError(`Tool execution failed: ${error.message}`);
+            res.status(result.status).json(result);
         }
     };
 
@@ -286,7 +292,7 @@ export class RBACMCPRoutes {
         }
 
         try {
-            // 使用現有的 UserQueriesService 方法
+            // 使用現有的 UserQueriesSvc 方法
             const userInfo = await this.userQueriesService.getUserById(userId);
             
             if (!userInfo) {
@@ -300,7 +306,8 @@ export class RBACMCPRoutes {
             let roles = null;
             if (includeRoles) {
                 try {
-                    roles = await this.userToRoleQueriesService.getRolesByUserId(userId);
+                    const pagination = { page: 1, limit: 100, offset: 0 };
+                    roles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, pagination);
                 } catch (error) {
                     logger.warn(`Failed to get roles for user ${userId}:`, error);
                 }
@@ -335,7 +342,7 @@ export class RBACMCPRoutes {
             const pagination = { page, limit, offset: (page - 1) * limit };
             const filters = { status, searchKeyword };
 
-            const users = await this.userQueriesService.getAllUsers(pagination, filters);
+            const users = await this.userQueriesService.getAllUsersPaginated(pagination);
 
             return {
                 success: true,
@@ -364,7 +371,7 @@ export class RBACMCPRoutes {
         }
 
         try {
-            const roles = await this.userToRoleQueriesService.getRolesByUserId(userId);
+            const roles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, { page: 1, limit: 100, offset: 0 });
 
             return {
                 success: true,
@@ -392,13 +399,13 @@ export class RBACMCPRoutes {
 
         try {
             // 這裡可能需要調用多個服務來組合權限資訊
-            const userRoles = await this.userToRoleQueriesService.getRolesByUserId(userId);
+            const userRoles = await this.userToRoleQueriesSvc.getUserRolesByUserIdPaginated(userId, { page: 1, limit: 100, offset: 0 });
             let permissions: any[] = [];
 
             if (includeInherited && userRoles && userRoles.length > 0) {
                 for (const role of userRoles) {
                     try {
-                        const rolePermissions = await this.roleToPermissionQueriesService.getPermissionsByRoleId(role.id);
+                        const rolePermissions = await this.roleToPermissionQueriesSvc.getPermissionsByRoleId(role.id);
                         if (rolePermissions) {
                             permissions.push(...rolePermissions);
                         }
@@ -441,7 +448,7 @@ export class RBACMCPRoutes {
             if (includePermissions && roles.data) {
                 for (const role of roles.data) {
                     try {
-                        const permissions = await this.roleToPermissionQueriesService.getPermissionsByRoleId(role.id);
+                        const permissions = await this.roleToPermissionQueriesSvc.getPermissionsByRoleId(role.id);
                         role.permissions = permissions || [];
                     } catch (error) {
                         logger.warn(`Failed to get permissions for role ${role.id}:`, error);
@@ -490,7 +497,7 @@ export class RBACMCPRoutes {
             let users = null;
             if (includeUsers) {
                 try {
-                    users = await this.userToRoleQueriesService.getUsersByRoleId(roleId);
+                    users = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId);
                 } catch (error) {
                     logger.warn(`Failed to get users for role ${roleId}:`, error);
                 }
@@ -521,7 +528,7 @@ export class RBACMCPRoutes {
         }
 
         try {
-            const permissions = await this.roleToPermissionQueriesService.getPermissionsByRoleId(roleId);
+            const permissions = await this.roleToPermissionQueriesSvc.getPermissionsByRoleId(roleId);
 
             return {
                 success: true,
@@ -615,7 +622,7 @@ export class RBACMCPRoutes {
 
         try {
             const pagination = { page, limit, offset: (page - 1) * limit };
-            const users = await this.userToRoleQueriesService.getUsersByRoleId(roleId, pagination);
+            const users = await this.userToRoleQueriesSvc.getUserRolesByRoleIdPaginated(roleId, pagination);
 
             return {
                 success: true,

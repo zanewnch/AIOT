@@ -132,7 +132,7 @@ const getPoolConfig = () => {
     }
   };
   
-  return baseConfigs[env]?.[serviceType] || baseConfigs.development.balanced;
+  return (baseConfigs as any)[env]?.[serviceType] || baseConfigs.development.balanced;
 };
 
 /**

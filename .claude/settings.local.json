@@ -33,7 +33,9 @@
       "Bash(grep:*)",
       "mcp__ide__getDiagnostics",
       "Bash(for file in *Controller.ts)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(for file in *Service.ts)",
+      "Bash(do mv \"$file\" \"$file/Service/Svc\")"
     ],
     "deny": [],
     "ask": [],

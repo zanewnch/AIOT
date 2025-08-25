@@ -33,17 +33,18 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserCommandsRepo } from '../../repo/commands/UserCommandsRepo.js';
+import { UserCommandsRepository } from '../../repo/commands/UserCommandsRepository.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
-import { getRedisClient } from 'aiot-shared-packages';
+import * as sharedPackages from 'aiot-shared-packages';
 import { UserQueriesSvc } from '../queries/UserQueriesSvc.js';
-import type { UserDTO, CreateUserRequest, UpdateUserRequest } from '../../types/index.js';
+import type { UserDTO, CreateUserRequest, UpdateUserRequest, UserCommandsRepo, UserQueriesSvc } from '../../types/index.js';
 
 const logger = createLogger('UserCommandsSvc');
+
 
 /**
  * 使用者命令服務類別
@@ -65,10 +66,9 @@ export class UserCommandsSvc {
     ) {
     }
 
-    /**
+
     /**
      * 產生使用者快取鍵值
-     */
      * 
      * 根據使用者 ID 生成統一的 Redis 快取鍵值
      * 遵循命名約定，确保快取鍵值的一致性
@@ -89,9 +89,7 @@ export class UserCommandsSvc {
     }
 
     /**
-    /**
      * 將模型轉換為 DTO（過濾敏感資訊）
-     */
      * 
      * 將內部使用者模型轉換為安全的數據傳輸物件
      * 自動過濾敏感資訊如密碼和內部標記
@@ -107,6 +105,7 @@ export class UserCommandsSvc {
      * ```
      * 
      * @private
+     */
     private modelToDTO = (model: UserModel): UserDTO => {
         return {
             id: model.id,
@@ -119,17 +118,15 @@ export class UserCommandsSvc {
 
     /**
      * 加密密碼
-     */
      * @param password 明文密碼
      * @private
+     */
     private hashPassword = async (password: string): Promise<string> => {
         return bcrypt.hash(password, UserCommandsSvc.BCRYPT_SALT_ROUNDS);
     }
 
     /**
-    /**
      * 安全執行 Redis 操作
-     */
      * @param operation Redis 操作函式
      * @param operationName 操作名稱
      * @param fallbackValue 操作失敗時的預設返回值
@@ -141,7 +138,7 @@ export class UserCommandsSvc {
         fallbackValue: T
     ): Promise<T> => {
         try {
-            const redis = getRedisClient();
+            const redis = sharedPackages.getRedisClient();
             const result = await operation(redis);
             logger.debug(`Redis operation ${operationName} completed successfully`);
             return result;
@@ -152,9 +149,7 @@ export class UserCommandsSvc {
     }
 
     /**
-    /**
      * 安全執行 Redis 寫入操作
-     */
      * @param operation Redis 寫入操作函式
      * @param operationName 操作名稱
      * @private
@@ -164,7 +159,7 @@ export class UserCommandsSvc {
         operationName: string
     ): Promise<boolean> => {
         try {
-            const redis = getRedisClient();
+            const redis = sharedPackages.getRedisClient();
             await operation(redis);
             logger.debug(`Redis write operation ${operationName} completed successfully`);
             return true;
@@ -175,9 +170,7 @@ export class UserCommandsSvc {
     }
 
     /**
-    /**
      * 清除使用者管理快取
-     */
      * @param userId 使用者 ID（可選）
      * @private
      */
@@ -203,9 +196,7 @@ export class UserCommandsSvc {
     }
 
     /**
-    /**
      * 快取單一使用者
-     */
      * @param user 使用者資料
      * @private
      */
@@ -221,9 +212,7 @@ export class UserCommandsSvc {
     }
 
     /**
-    /**
      * 建立新使用者
-     */
      * @param userData 使用者資料
      */
     public createUser = async (userData: CreateUserRequest): Promise<UserDTO> => {
@@ -245,13 +234,13 @@ export class UserCommandsSvc {
             const trimmedEmail = userData.email.trim();
 
             // 檢查使用者名稱是否已存在
-            const usernameExists = await this.userQueriesSvc.usernameExists(trimmedUsername);
+            const usernameExists = await this.userQueriesService.usernameExists(trimmedUsername);
             if (usernameExists) {
                 throw new Error(`User with username '${trimmedUsername}' already exists`);
             }
 
             // 檢查電子郵件是否已存在
-            const emailExists = await this.userQueriesSvc.emailExists(trimmedEmail);
+            const emailExists = await this.userQueriesService.emailExists(trimmedEmail);
             if (emailExists) {
                 throw new Error(`User with email '${trimmedEmail}' already exists`);
             }
@@ -286,9 +275,9 @@ export class UserCommandsSvc {
 
     /**
      * 更新使用者
-     */
      * @param userId 使用者 ID
      * @param updateData 更新資料
+     */
     public updateUser = async (userId: number, updateData: UpdateUserRequest): Promise<UserDTO | null> => {
         try {
             logger.info(`Updating user ID: ${userId}`);
@@ -303,8 +292,8 @@ export class UserCommandsSvc {
             }
 
             // 檢查使用者是否存在
-            const userExists = await this.userQueriesSvc.userExists(userId);
-            if (!userExists) {
+            const existingUser = await this.userQueriesSvc.getUserById(userId);
+            if (!existingUser) {
                 logger.warn(`User update failed - user not found for ID: ${userId}`);
                 return null;
             }
@@ -372,8 +361,8 @@ export class UserCommandsSvc {
 
     /**
      * 刪除使用者
-     */
      * @param userId 使用者 ID
+     */
     public deleteUser = async (userId: number): Promise<boolean> => {
         try {
             logger.info(`Deleting user ID: ${userId}`);
@@ -384,8 +373,8 @@ export class UserCommandsSvc {
             }
 
             // 檢查使用者是否存在
-            const userExists = await this.userQueriesSvc.userExists(userId);
-            if (!userExists) {
+            const existingUser = await this.userQueriesSvc.getUserById(userId);
+            if (!existingUser) {
                 logger.warn(`User deletion failed - user not found for ID: ${userId}`);
                 return false;
             }
@@ -410,9 +399,9 @@ export class UserCommandsSvc {
 
     /**
      * 驗證使用者登入
-     */
      * @param username 使用者名稱
      * @param password 密碼
+     */
     public validateUserLogin = async (username: string, password: string): Promise<UserDTO | null> => {
         try {
             logger.info(`Validating login for user: ${username}`);
@@ -447,9 +436,7 @@ export class UserCommandsSvc {
     }
 
     /**
-    /**
      * 驗證密碼
-     */
      * @param password 明文密碼
      * @param hash 密碼雜湊
      */

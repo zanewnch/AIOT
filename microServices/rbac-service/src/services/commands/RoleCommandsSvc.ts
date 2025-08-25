@@ -17,7 +17,7 @@
  * - 刪除後清除相關快取
  * - 支援強制快取刷新
  *
- * @module RoleCommandsService
+ * @module RoleCommandsSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -33,10 +33,10 @@ import type { RoleModel } from '../../models/RoleModel.js';
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
-import { RoleQueriesService } from '../queries/RoleQueriesService.js';
-import type { RoleDTO, CacheOptions, CreateRoleRequest, UpdateRoleRequest, IRoleCommandsService } from '../../types/index.js';
+import { RoleQueriesSvc } from '../queries/RoleQueriesSvc.js';
+import type { RoleDTO, CacheOptions, CreateRoleRequest, UpdateRoleRequest, IRoleCommandsSvc } from '../../types/index.js';
 
-const logger = createLogger('RoleCommandsService');
+const logger = createLogger('RoleCommandsSvc');
 
 
 /**
@@ -45,20 +45,20 @@ const logger = createLogger('RoleCommandsService');
  * 專門處理角色相關的命令請求，包含創建、更新、刪除等功能。
  * 所有方法都會修改系統狀態，遵循 CQRS 模式的命令端原則。
  * 
- * @class RoleCommandsService
+ * @class RoleCommandsSvc
  * @implements {IRoleCommandsService}
  * @since 1.0.0
  */
 @injectable()
-export class RoleCommandsService implements IRoleCommandsService {
+export class RoleCommandsSvc implements IRoleCommandsSvc {
     private static readonly ROLE_CACHE_PREFIX = 'role:';
     private static readonly ALL_ROLES_KEY = 'roles:all';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.RoleQueriesService) private readonly queryService: RoleQueriesService,
-        @inject(TYPES.RoleCommandsRepository) private readonly roleCommandsRepository: RoleCommandsRepository,
-        @inject(TYPES.RoleQueriesRepository) private readonly roleQueriesRepository: RoleQueriesRepository
+        @inject(TYPES.RoleQueriesService) private readonly roleQueriesSvc: RoleQueriesSvc,
+        @inject(TYPES.RoleCommandsRepo) private readonly roleCommandsRepo: RoleCommandsRepo,
+        @inject(TYPES.RoleQueriesRepo) private readonly roleQueriesRepo: RoleQueriesRepo
     ) {
     }
 
@@ -70,7 +70,7 @@ export class RoleCommandsService implements IRoleCommandsService {
      * @private
      */
     private getRoleCacheKey = (roleId: number): string => {
-        return `${RoleCommandsService.ROLE_CACHE_PREFIX}${roleId}`;
+        return `${RoleCommandsSvc.ROLE_CACHE_PREFIX}${roleId}`;
     }
 
     /**
@@ -98,7 +98,7 @@ export class RoleCommandsService implements IRoleCommandsService {
         
         await this.safeRedisWrite(
             async (redis: RedisClientType) => {
-                await redis.setEx(RoleCommandsService.ALL_ROLES_KEY, RoleCommandsService.DEFAULT_CACHE_TTL, JSON.stringify(roles));
+                await redis.setEx(RoleCommandsSvc.ALL_ROLES_KEY, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(roles));
             },
             'cacheAllRoles'
         );
@@ -119,7 +119,7 @@ export class RoleCommandsService implements IRoleCommandsService {
         const key = this.getRoleCacheKey(role.id);
         await this.safeRedisWrite(
             async (redis: RedisClientType) => {
-                await redis.setEx(key, RoleCommandsService.DEFAULT_CACHE_TTL, JSON.stringify(role));
+                await redis.setEx(key, RoleCommandsSvc.DEFAULT_CACHE_TTL, JSON.stringify(role));
             },
             `cacheRole(${role.id})`
         );
@@ -143,7 +143,7 @@ export class RoleCommandsService implements IRoleCommandsService {
 
         // 清除所有角色列表快取
         await this.safeRedisOperation(
-            async (redis: RedisClientType) => await redis.del(RoleCommandsService.ALL_ROLES_KEY),
+            async (redis: RedisClientType) => await redis.del(RoleCommandsSvc.ALL_ROLES_KEY),
             'clearAllRolesCache',
             0
         );
@@ -211,13 +211,13 @@ export class RoleCommandsService implements IRoleCommandsService {
             }
 
             // 檢查角色是否已存在
-            const exists = await this.roleQueriesRepository.exists(roleData.name.trim());
+            const exists = await this.roleQueriesRepo.exists(roleData.name.trim());
             if (exists) {
                 throw new Error(`Role with name '${roleData.name}' already exists`);
             }
 
             // 建立角色
-            const role = await this.roleCommandsRepository.create({
+            const role = await this.roleCommandsRepo.create({
                 name: roleData.name.trim(),
                 displayName: roleData.displayName?.trim() || roleData.name.trim()
             });
@@ -263,7 +263,7 @@ export class RoleCommandsService implements IRoleCommandsService {
 
                 // 檢查新名稱是否已被其他角色使用
                 if (updatePayload.name) {
-                    const existingRole = await this.roleQueriesRepository.findByName(updatePayload.name);
+                    const existingRole = await this.roleQueriesRepo.findByName(updatePayload.name);
                     if (existingRole && existingRole.id !== roleId) {
                         throw new Error(`Role with name '${updatePayload.name}' already exists`);
                     }
@@ -274,7 +274,7 @@ export class RoleCommandsService implements IRoleCommandsService {
             }
 
             // 更新角色
-            const updatedRole = await this.roleCommandsRepository.update(roleId, updatePayload);
+            const updatedRole = await this.roleCommandsRepo.update(roleId, updatePayload);
             if (!updatedRole) {
                 logger.warn(`Role update failed - role not found for ID: ${roleId}`);
                 return null;
@@ -310,14 +310,14 @@ export class RoleCommandsService implements IRoleCommandsService {
             }
 
             // 檢查角色是否存在
-            const existingRole = await this.roleQueriesRepository.findById(roleId);
+            const existingRole = await this.roleQueriesRepo.findById(roleId);
             if (!existingRole) {
                 logger.warn(`Role deletion failed - role not found for ID: ${roleId}`);
                 return false;
             }
 
             // 刪除角色
-            const deleted = await this.roleCommandsRepository.delete(roleId);
+            const deleted = await this.roleCommandsRepo.delete(roleId);
             if (deleted) {
                 // 清除快取
                 await this.clearRoleManagementCache(roleId);

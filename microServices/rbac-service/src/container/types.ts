@@ -58,7 +58,7 @@ export const TYPES = {
   // 歸檔任務查詢服務類型
   ArchiveTaskQueriesService: Symbol.for('ArchiveTaskQueriesService'),
   // 會話查詢服務類型
-  SessionQueriesService: Symbol.for('SessionQueriesService'),
+  SessionQueriesService: Symbol.for('SessionQueriesSvc'),
   // 無人機命令命令服務類型
   DroneCommandCommandsService: Symbol.for('DroneCommandCommandsService'),
   // 無人機命令查詢服務類型
@@ -82,25 +82,25 @@ export const TYPES = {
   // 無人機狀態歷史查詢服務類型
   DroneStatusArchiveQueriesService: Symbol.for('DroneStatusArchiveQueriesService'),
   // 權限命令服務類型
-  PermissionCommandsService: Symbol.for('PermissionCommandsService'),
+  PermissionCommandsService: Symbol.for('PermissionCommandsSvc'),
   // 權限查詢服務類型
-  PermissionQueriesService: Symbol.for('PermissionQueriesService'),
+  PermissionQueriesService: Symbol.for('PermissionQueriesSvc'),
   // 角色命令服務類型
-  RoleCommandsService: Symbol.for('RoleCommandsService'),
+  RoleCommandsService: Symbol.for('RoleCommandsSvc'),
   // 角色查詢服務類型
-  RoleQueriesService: Symbol.for('RoleQueriesService'),
+  RoleQueriesService: Symbol.for('RoleQueriesSvc'),
   // 角色權限命令服務類型
-  RoleToPermissionCommandsService: Symbol.for('RoleToPermissionCommandsService'),
+  RoleToPermissionCommandsService: Symbol.for('RoleToPermissionCommandsSvc'),
   // 角色權限查詢服務類型
-  RoleToPermissionQueriesService: Symbol.for('RoleToPermissionQueriesService'),
+  RoleToPermissionQueriesService: Symbol.for('RoleToPermissionQueriesSvc'),
   // 用戶命令服務類型
-  UserCommandsService: Symbol.for('UserCommandsService'),
+  UserCommandsService: Symbol.for('UserCommandsSvc'),
   // 用戶查詢服務類型
-  UserQueriesService: Symbol.for('UserQueriesService'),
+  UserQueriesService: Symbol.for('UserQueriesSvc'),
   // 用戶角色命令服務類型
-  UserToRoleCommandsService: Symbol.for('UserToRoleCommandsService'),
+  UserToRoleCommandsService: Symbol.for('UserToRoleCommandsSvc'),
   // 用戶角色查詢服務類型
-  UserToRoleQueriesService: Symbol.for('UserToRoleQueriesService'),
+  UserToRoleQueriesService: Symbol.for('UserToRoleQueriesSvc'),
   // 會話命令服務類型
   SessionCommandsService: Symbol.for('SessionCommandsService'),
   // WebSocket 服務工廠類型

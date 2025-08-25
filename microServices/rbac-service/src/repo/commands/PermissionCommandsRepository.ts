@@ -25,10 +25,10 @@ const logger = createLogger('PermissionCommandsRepository');
  * 
  * 專門處理權限資料的寫入操作，遵循 CQRS 模式
  * 
- * @class PermissionCommandsRepository
+ * @class PermissionCommandsRepo
  */
 @injectable()
-export class PermissionCommandsRepository {
+export class PermissionCommandsRepo {
   /**
    * 建立新權限
    * @param permissionData 權限資料

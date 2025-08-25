@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的業務操作。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module RoleQueriesService
+ * @module RoleQueriesSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -18,8 +18,9 @@ import { TYPES } from '../../container/types.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
+import type { RoleQueriesRepo } from '../../types/index.js';
 
-const logger = createLogger('RoleQueriesService');
+const logger = createLogger('RoleQueriesSvc');
 
 /**
  * 角色查詢 Service 實現類別
@@ -27,17 +28,17 @@ const logger = createLogger('RoleQueriesService');
  * 專門處理角色相關的查詢請求，包含取得角色資料、統計等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class RoleQueriesService
+ * @class RoleQueriesSvc
  * @since 1.0.0
  */
 @injectable()
-export class RoleQueriesService {
-    private roleRepository: RoleQueriesRepository;
+export class RoleQueriesSvc {
+    private roleRepo: RoleQueriesRepo;
 
     constructor(
-        @inject(TYPES.RoleQueriesRepository) roleRepository: RoleQueriesRepository
+        @inject(TYPES.RoleQueriesRepo) roleRepo: RoleQueriesRepo
     ) {
-        this.roleRepository = roleRepository;
+        this.roleRepo = roleRepo;
     }
 
     /**
@@ -49,7 +50,7 @@ export class RoleQueriesService {
         try {
             logger.info('分頁查詢所有角色', { pagination });
 
-            const result = await this.roleRepository.getAllRolesPaginated(pagination);
+            const result = await this.roleRepo.getAllRolesPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedRoleResponse(result);
 
             logger.info(`成功獲取 ${result.data.length} 個角色，總共 ${result.totalCount} 個`);
@@ -70,7 +71,7 @@ export class RoleQueriesService {
         try {
             logger.info('根據類型分頁查詢角色', { type, pagination });
 
-            const result = await this.roleRepository.getRolesByTypePaginated(type, pagination);
+            const result = await this.roleRepo.getRolesByTypePaginated(type, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRoleResponse(result);
 
             logger.info(`成功獲取類型為 ${type} 的角色 ${result.data.length} 個`);
@@ -91,7 +92,7 @@ export class RoleQueriesService {
         try {
             logger.info('根據狀態分頁查詢角色', { status, pagination });
 
-            const result = await this.roleRepository.getRolesByStatusPaginated(status, pagination);
+            const result = await this.roleRepo.getRolesByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRoleResponse(result);
 
             logger.info(`成功獲取狀態為 ${status} 的角色 ${result.data.length} 個`);
@@ -112,7 +113,7 @@ export class RoleQueriesService {
         try {
             logger.info('根據權限分頁查詢角色', { permissionId, pagination });
 
-            const result = await this.roleRepository.getRolesByPermissionPaginated(permissionId, pagination);
+            const result = await this.roleRepo.getRolesByPermissionPaginated(permissionId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRoleResponse(result);
 
             logger.info(`成功獲取權限 ${permissionId} 的角色 ${result.data.length} 個`);

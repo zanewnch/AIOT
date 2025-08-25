@@ -23,10 +23,11 @@ const logger = createLogger('UserRoleCommandsRepository');
  * 
  * 專門處理使用者角色關聯資料的寫入操作，遵循 CQRS 模式
  * 
- * @class UserRoleCommandsRepository
+ * @class UserRoleCommandsRepo
  */
+
 @injectable()
-export class UserRoleCommandsRepository {
+export class UserRoleCommandsRepo {
   /**
    * 建立使用者角色關聯
    * @param userRoleData 使用者角色關聯資料

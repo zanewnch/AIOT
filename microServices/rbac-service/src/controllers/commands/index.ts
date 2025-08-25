@@ -2,8 +2,8 @@
  * @fileoverview Commands Controllers 統一導出
  */
 
-export { PermissionCommandsController } from './PermissionCommandsCtrl.js';
-export { RoleCommandsController } from './RoleCommandsCtrl.js';
-export { RoleToPermissionCommandsController } from './RoleToPermissionCommandsCtrl.js';
-export { UserCommandsController } from './UserCommandsCtrl.js';
-export { UserToRoleCommandsController } from './UserToRoleCommandsCtrl.js';
+export { PermissionCommandsCtrl } from './PermissionCommandsCtrl.js';
+export { RoleCommandsCtrl } from './RoleCommandsCtrl.js';
+export { RoleToPermissionCommandsCtrl } from './RoleToPermissionCommandsCtrl.js';
+export { UserCommandsCtrl } from './UserCommandsCtrl.js';
+export { UserToRoleCommandsCtrl } from './UserToRoleCommandsCtrl.js';

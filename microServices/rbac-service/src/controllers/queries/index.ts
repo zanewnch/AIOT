@@ -2,8 +2,8 @@
  * @fileoverview Queries Controllers 統一導出
  */
 
-export { PermissionQueriesController } from './PermissionQueriesCtrl.js';
-export { RoleQueriesController } from './RoleQueriesCtrl.js';
-export { RoleToPermissionQueriesController } from './RoleToPermissionQueriesCtrl.js';
-export { UserQueriesController } from './UserQueriesCtrl.js';
-export { UserToRoleQueriesController } from './UserToRoleQueriesCtrl.js';
+export { PermissionQueriesCtrl } from './PermissionQueriesCtrl.js';
+export { RoleQueriesCtrl } from './RoleQueriesCtrl.js';
+export { RoleToPermissionQueriesCtrl } from './RoleToPermissionQueriesCtrl.js';
+export { UserQueriesCtrl } from './UserQueriesCtrl.js';
+export { UserToRoleQueriesCtrl } from './UserToRoleQueriesCtrl.js';

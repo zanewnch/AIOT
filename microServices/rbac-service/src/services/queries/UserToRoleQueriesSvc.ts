@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的業務操作。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module UserToRoleQueriesService
+ * @module UserToRoleQueriesSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -18,8 +18,9 @@ import { UserRoleQueriesRepository } from '../../repo/queries/UserRoleQueriesRep
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
+import type { UserRoleQueriesRepo } from '../../types/index.js';
 
-const logger = createLogger('UserToRoleQueriesService');
+const logger = createLogger('UserToRoleQueriesSvc');
 
 /**
  * 使用者角色關聯查詢 Service 實現類別
@@ -27,14 +28,14 @@ const logger = createLogger('UserToRoleQueriesService');
  * 專門處理使用者角色關聯相關的查詢請求，包含分頁查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class UserToRoleQueriesService
+ * @class UserToRoleQueriesSvc
  * @since 1.0.0
  */
 @injectable()
-export class UserToRoleQueriesService {
+export class UserToRoleQueriesSvc {
     constructor(
-        @inject(TYPES.UserRoleQueriesRepository)
-        private readonly userRoleQueriesRepository: UserRoleQueriesRepository
+        @inject(TYPES.UserRoleQueriesRepo)
+        private readonly userRoleQueriesRepo: UserRoleQueriesRepo
     ) {}
 
     /**
@@ -46,7 +47,7 @@ export class UserToRoleQueriesService {
         try {
             logger.info('Getting paginated user role associations', { pagination });
 
-            const result = await this.userRoleQueriesRepository.findPaginated(pagination);
+            const result = await this.userRoleQueriesRepo.findPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserRoleResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} user role associations from ${result.totalCount} total`);
@@ -71,7 +72,7 @@ export class UserToRoleQueriesService {
                 throw new Error('使用者 ID 必須是正整數');
             }
 
-            const result = await this.userRoleQueriesRepository.findByUserIdPaginated(userId, pagination);
+            const result = await this.userRoleQueriesRepo.findByUserIdPaginated(userId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserRoleResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} role associations for user ${userId}`);
@@ -96,7 +97,7 @@ export class UserToRoleQueriesService {
                 throw new Error('角色 ID 必須是正整數');
             }
 
-            const result = await this.userRoleQueriesRepository.findByRoleIdPaginated(roleId, pagination);
+            const result = await this.userRoleQueriesRepo.findByRoleIdPaginated(roleId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserRoleResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} user associations for role ${roleId}`);

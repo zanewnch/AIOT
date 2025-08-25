@@ -22,7 +22,7 @@
  * - 權限分配和撤銷
  * - 批量權限操作
  *
- * @module RoleToPermissionCommandsService
+ * @module RoleToPermissionCommandsSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -45,11 +45,11 @@ import * as sharedPackages from 'aiot-shared-packages';
 // 匯入日誌記錄器
 import { createLogger } from '../../configs/loggerConfig.js';
 // 匯入查詢服務，用於驗證操作
-import { RoleToPermissionQueriesService } from '../queries/RoleToPermissionQueriesService.js';
-import type { IRoleToPermissionQueriesService, IRoleToPermissionCommandsService } from '../../types/index.js';
+import { RoleToPermissionQueriesSvc } from '../queries/RoleToPermissionQueriesSvc.js';
+import type { IRoleToPermissionQueriesSvc, IRoleToPermissionCommandsSvc, RoleQueriesRepo, PermissionQueriesRepo, RolePermissionCommandsRepo, RoleToPermissionQueriesSvc } from '../../types/index.js';
 
 // 創建服務專用的日誌記錄器
-const logger = createLogger('RoleToPermissionCommandsService');
+const logger = createLogger('RoleToPermissionCommandsSvc');
 
 
 /**
@@ -59,25 +59,25 @@ const logger = createLogger('RoleToPermissionCommandsService');
  * 所有方法都會修改系統狀態，遵循 CQRS 原則。
  * 依賴查詢服務進行資料驗證和檢查。
  * 
- * @class RoleToPermissionCommandsService
+ * @class RoleToPermissionCommandsSvc
  * @implements IRoleToPermissionCommandsService
  * @since 1.0.0
  */
 @injectable()
-export class RoleToPermissionCommandsService implements IRoleToPermissionCommandsService {
+export class RoleToPermissionCommandsSvc implements IRoleToPermissionCommandsSvc {
     private static readonly ROLE_PERMISSIONS_CACHE_PREFIX = 'role_permissions:'; // Redis 中儲存角色權限關聯的鍵值前綴
     private static readonly PERMISSION_ROLES_CACHE_PREFIX = 'permission_roles:'; // Redis 中儲存權限角色關聯的鍵值前綴
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.RoleToPermissionQueriesService)
-        private readonly roleToPermissionQueriesService: IRoleToPermissionQueriesService,
-        @inject(TYPES.RolePermissionCommandsRepository)
-        private readonly rolePermissionCommandsRepository: RolePermissionCommandsRepository,
-        @inject(TYPES.RoleQueriesRepository)
-        private readonly roleQueriesRepository: RoleQueriesRepository,
-        @inject(TYPES.PermissionQueriesRepository)
-        private readonly permissionQueriesRepository: PermissionQueriesRepository
+        @inject(TYPES.RoleToPermissionQueriesSvc)
+        private readonly roleToPermissionQueriesSvc: IRoleToPermissionQueriesSvc,
+        @inject(TYPES.RolePermissionCommandsRepo)
+        private readonly rolePermissionCommandsRepo: RolePermissionCommandsRepo,
+        @inject(TYPES.RoleQueriesRepo)
+        private readonly roleQueriesRepo: RoleQueriesRepo,
+        @inject(TYPES.PermissionQueriesRepo)
+        private readonly permissionQueriesRepo: PermissionQueriesRepo
     ) {
     }
 
@@ -88,7 +88,7 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
      * @private
      */
     private getRolePermissionsCacheKey = (roleId: number): string => { // 私有方法：產生角色權限快取鍵值
-        return `${RoleToPermissionCommandsService.ROLE_PERMISSIONS_CACHE_PREFIX}${roleId}`; // 結合角色權限快取前綴和角色 ID 產生唯一的快取鍵值
+        return `${RoleToPermissionCommandsSvc.ROLE_PERMISSIONS_CACHE_PREFIX}${roleId}`; // 結合角色權限快取前綴和角色 ID 產生唯一的快取鍵值
     }
 
     /**
@@ -97,7 +97,7 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
      * @private
      */
     private getPermissionRolesCacheKey = (permissionId: number): string => { // 私有方法：產生權限角色快取鍵值
-        return `${RoleToPermissionCommandsService.PERMISSION_ROLES_CACHE_PREFIX}${permissionId}`; // 結合權限角色快取前綴和權限 ID 產生唯一的快取鍵值
+        return `${RoleToPermissionCommandsSvc.PERMISSION_ROLES_CACHE_PREFIX}${permissionId}`; // 結合權限角色快取前綴和權限 ID 產生唯一的快取鍵值
     }
 
     /**
@@ -181,7 +181,7 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
                 if (!permissionId || permissionId <= 0) { // 檢查權限 ID 是否有效
                     throw new Error(`Invalid permission ID: ${permissionId}`); // 拋出錯誤，表示權限 ID 無效
                 }
-                const permission = await this.permissionQueriesRepository.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+                const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
                 if (!permission) { // 如果權限不存在
                     throw new Error(`Permission not found: ${permissionId}`); // 拋出錯誤，表示權限不存在
                 }
@@ -193,7 +193,7 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
                 try { // 嘗試為當前權限分配給角色
                     const whereCondition = { roleId, permissionId };
                     const defaults = { roleId, permissionId };
-                    const [, created] = await this.rolePermissionCommandsRepository.findOrCreate(whereCondition, defaults); // 調用角色權限命令資料存取層的尋找或建立方法
+                    const [, created] = await this.rolePermissionCommandsRepo.findOrCreate(whereCondition, defaults); // 調用角色權限命令資料存取層的尋找或建立方法
                     if (created) { // 如果成功建立了新的角色權限關聯
                         successfullyAssigned.push(permissionId); // 將權限 ID 加入成功分配列表
                         logger.debug(`Permission ${permissionId} assigned to role ${roleId}`); // 記錄權限分配成功的除錯日誌
@@ -239,19 +239,19 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
 
             // 驗證權限是否存在
-            const permission = await this.permissionQueriesRepository.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+            const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
             if (!permission) { // 如果權限不存在
                 throw new Error('Permission not found'); // 拋出錯誤，表示權限不存在
             }
 
             // 撤銷權限
-            const removed = await this.rolePermissionCommandsRepository.deleteByRoleAndPermission(roleId, permissionId); // 調用角色權限命令資料存取層刪除角色權限關聯
+            const removed = await this.rolePermissionCommandsRepo.deleteByRoleAndPermission(roleId, permissionId); // 調用角色權限命令資料存取層刪除角色權限關聯
 
             if (removed) { // 如果成功撤銷了權限
                 // 清除相關快取
@@ -285,17 +285,17 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
             }
 
             // 驗證角色是否存在
-            const role = await this.roleQueriesRepository.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
+            const role = await this.roleQueriesRepo.findById(roleId); // 調用角色查詢資料存取層檢查角色是否存在
             if (!role) { // 如果角色不存在
                 throw new Error('Role not found'); // 拋出錯誤，表示角色不存在
             }
 
             // 獲取角色目前的權限
-            const currentPermissions = await this.roleToPermissionQueriesService.getRolePermissions(roleId); // 調用查詢服務取得角色當前擁有的所有權限
+            const currentPermissions = await this.roleToPermissionQueriesSvc.getRolePermissions(roleId); // 調用查詢服務取得角色當前擁有的所有權限
             const permissionIds = currentPermissions.map(p => p.id); // 提取所有權限的 ID 列表，用於後續快取清理
 
             // 撤銷所有權限
-            const removedCount = await this.rolePermissionCommandsRepository.deleteByRoleId(roleId); // 調用角色權限命令資料存取層批次刪除角色的所有權限關聯
+            const removedCount = await this.rolePermissionCommandsRepo.deleteByRoleId(roleId); // 調用角色權限命令資料存取層批次刪除角色的所有權限關聯
 
             if (removedCount > 0) { // 如果成功撤銷了至少一個權限
                 // 清除相關快取
@@ -330,17 +330,17 @@ export class RoleToPermissionCommandsService implements IRoleToPermissionCommand
             }
 
             // 驗證權限是否存在
-            const permission = await this.permissionQueriesRepository.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
+            const permission = await this.permissionQueriesRepo.findById(permissionId); // 調用權限查詢資料存取層檢查權限是否存在
             if (!permission) { // 如果權限不存在
                 throw new Error('Permission not found'); // 拋出錯誤，表示權限不存在
             }
 
             // 獲取權限目前的角色
-            const currentRoles = await this.roleToPermissionQueriesService.getPermissionRoles(permissionId); // 調用查詢服務取得權限當前關聯的所有角色
+            const currentRoles = await this.roleToPermissionQueriesSvc.getPermissionRoles(permissionId); // 調用查詢服務取得權限當前關聯的所有角色
             const roleIds = currentRoles.map(r => r.id); // 提取所有角色的 ID 列表，用於後續快取清理
 
             // 撤銷所有角色
-            const removedCount = await this.rolePermissionCommandsRepository.deleteByPermissionId(permissionId); // 調用角色權限命令資料存取層批次刪除權限的所有角色關聯
+            const removedCount = await this.rolePermissionCommandsRepo.deleteByPermissionId(permissionId); // 調用角色權限命令資料存取層批次刪除權限的所有角色關聯
 
             if (removedCount > 0) { // 如果成功撤銷了至少一個角色
                 // 清除相關快取

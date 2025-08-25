@@ -18,7 +18,7 @@ import { TYPES } from '../container/types.js';
 import { UserPreferenceCommandsController } from '../controllers/commands/UserPreferenceCommandsCtrl.js';
 import { UserPreferenceQueriesController } from '../controllers/queries/UserPreferenceQueriesCtrl.js';
 import { Logger, LogRoute } from '../decorators/LoggerDecorator.js';
-import { ApiGatewayHeadersMiddleware } from '../middleware/ApiGatewayHeadersMiddleware.js';
+import { ApiGatewayHeadersMiddleware } from '../middlewares/ApiGatewayHeadersMiddleware.js';
 
 /**
  * 用戶偏好設定路由類別

@@ -22,10 +22,10 @@ const logger = createLogger('UserCommandsRepository');
  * 
  * 專門處理使用者資料的寫入操作，遵循 CQRS 模式
  * 
- * @class UserCommandsRepository
+ * @class UserCommandsRepo
  */
 @injectable()
-export class UserCommandsRepository {
+export class UserCommandsRepo {
     /**
      * 建立新的使用者記錄
      * 

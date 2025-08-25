@@ -5,7 +5,7 @@
  * 專注於處理所有讀取相關的業務操作。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  *
- * @module UserQueriesService
+ * @module UserQueriesSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -25,8 +25,9 @@ import {
     UserListResponseDto,
     UserStatisticsResponseDto
 } from '../../dto/index.js';
+import type { UserQueriesRepo } from '../../types/index.js';
 
-const logger = createLogger('UserQueriesService');
+const logger = createLogger('UserQueriesSvc');
 
 
 /**
@@ -35,17 +36,17 @@ const logger = createLogger('UserQueriesService');
  * 專門處理用戶相關的查詢請求，包含取得用戶資料、統計等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class UserQueriesService
+ * @class UserQueriesSvc
  * @since 1.0.0
  */
 @injectable()
-export class UserQueriesService {
-    private userRepository: UserQueriesRepository;
+export class UserQueriesSvc {
+    private userRepo: UserQueriesRepo;
 
     constructor(
-        @inject(TYPES.UserQueriesRepository) userRepository: UserQueriesRepository
+        @inject(TYPES.UserQueriesRepo) userRepo: UserQueriesRepo
     ) {
-        this.userRepository = userRepository;
+        this.userRepo = userRepo;
     }
 
     /**
@@ -57,7 +58,7 @@ export class UserQueriesService {
         try {
             logger.info('分頁查詢所有用戶', { pagination });
 
-            const result = await this.userRepository.getAllUsersPaginated(pagination);
+            const result = await this.userRepo.getAllUsersPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取 ${result.data.length} 個用戶，總共 ${result.totalCount} 個`);
@@ -78,7 +79,7 @@ export class UserQueriesService {
         try {
             logger.info('根據角色分頁查詢用戶', { roleId, pagination });
 
-            const result = await this.userRepository.getUsersByRolePaginated(roleId, pagination);
+            const result = await this.userRepo.getUsersByRolePaginated(roleId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取角色 ${roleId} 的用戶 ${result.data.length} 個`);
@@ -99,7 +100,7 @@ export class UserQueriesService {
         try {
             logger.info('根據狀態分頁查詢用戶', { status, pagination });
 
-            const result = await this.userRepository.getUsersByStatusPaginated(status, pagination);
+            const result = await this.userRepo.getUsersByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取狀態為 ${status} 的用戶 ${result.data.length} 個`);
@@ -120,7 +121,7 @@ export class UserQueriesService {
         try {
             logger.info('根據權限分頁查詢用戶', { permissionId, pagination });
 
-            const result = await this.userRepository.getUsersByPermissionPaginated(permissionId, pagination);
+            const result = await this.userRepo.getUsersByPermissionPaginated(permissionId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取權限 ${permissionId} 的用戶 ${result.data.length} 個`);
@@ -141,7 +142,7 @@ export class UserQueriesService {
         try {
             logger.info('根據電子郵件驗證狀態分頁查詢用戶', { isVerified, pagination });
 
-            const result = await this.userRepository.getUsersByVerificationPaginated(isVerified, pagination);
+            const result = await this.userRepo.getUsersByVerificationPaginated(isVerified, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取驗證狀態為 ${isVerified} 的用戶 ${result.data.length} 個`);
@@ -157,7 +158,7 @@ export class UserQueriesService {
      */
     getUsers = async (): Promise<UserResponseDto[]> => {
         try {
-            const users = await this.userRepository.findAll();
+            const users = await this.userRepo.findAll();
             return DtoMapper.toUserResponseDtoArray(users);
         } catch (error) {
             logger.error('獲取所有使用者失敗', { error });
@@ -170,7 +171,7 @@ export class UserQueriesService {
      */
     getUserById = async (id: string): Promise<UserResponseDto | null> => {
         try {
-            const user = await this.userRepository.findById(id);
+            const user = await this.userRepo.findById(id);
             if (!user) {
                 return null;
             }

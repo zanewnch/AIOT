@@ -17,7 +17,7 @@
  * - 刪除後清除相關快取
  * - 支援強制快取刷新
  *
- * @module UserToRoleCommandsService
+ * @module UserToRoleCommandsSvc
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -26,15 +26,14 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserRoleCommandsRepository } from '../../repo/commands/UserRoleCommandsRepository.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
 import * as sharedPackages from 'aiot-shared-packages';
-import { UserToRoleQueriesService } from '../queries/UserToRoleQueriesService.js';
-import type { AssignRolesRequest, RemoveRoleRequest } from '../../types/index.js';
+import { UserToRoleQueriesSvc } from '../queries/UserToRoleQueriesSvc.js';
+import type { AssignRolesRequest, RemoveRoleRequest, UserRoleCommandsRepo } from '../../types/index.js';
 
-const logger = createLogger('UserToRoleCommandsService');
+const logger = createLogger('UserToRoleCommandsSvc');
 
 
 /**
@@ -44,16 +43,16 @@ const logger = createLogger('UserToRoleCommandsService');
  * 包含快取管理、資料寫入和驗證邏輯。
  */
 @injectable()
-export class UserToRoleCommandsService {
+export class UserToRoleCommandsSvc {
     private static readonly USER_ROLES_CACHE_PREFIX = 'user_roles:';
     private static readonly ROLE_USERS_CACHE_PREFIX = 'role_users:';
     private static readonly DEFAULT_CACHE_TTL = 3600; // 1 小時
 
     constructor(
-        @inject(TYPES.UserToRoleQueriesService)
-        private readonly userToRoleQueriesService: UserToRoleQueriesService,
-        @inject(TYPES.UserRoleCommandsRepository)
-        private readonly userRoleCommandsRepository: UserRoleCommandsRepository
+        @inject(TYPES.UserToRoleQueriesSvc)
+        private readonly userToRoleQueriesSvc: UserToRoleQueriesSvc,
+        @inject(TYPES.UserRoleCommandsRepo)
+        private readonly userRoleCommandsRepo: UserRoleCommandsRepo
     ) {
     }
 
@@ -64,7 +63,7 @@ export class UserToRoleCommandsService {
      * @private
      */
     private getUserRolesCacheKey = (userId: number): string => {
-        return `${UserToRoleCommandsService.USER_ROLES_CACHE_PREFIX}${userId}`;
+        return `${UserToRoleCommandsSvc.USER_ROLES_CACHE_PREFIX}${userId}`;
     }
 
     /**
@@ -73,7 +72,7 @@ export class UserToRoleCommandsService {
      * @private
      */
     private getRoleUsersCacheKey = (roleId: number): string => {
-        return `${UserToRoleCommandsService.ROLE_USERS_CACHE_PREFIX}${roleId}`;
+        return `${UserToRoleCommandsSvc.ROLE_USERS_CACHE_PREFIX}${roleId}`;
     }
 
     /**
@@ -189,7 +188,7 @@ export class UserToRoleCommandsService {
             const successfullyAssigned: number[] = [];
             for (const roleId of roleIds) {
                 try {
-                    const [, created] = await this.userRoleCommandsRepository.findOrCreate(
+                    const [, created] = await this.userRoleCommandsRepo.findOrCreate(
                         { userId, roleId },
                         { userId, roleId }
                     );
@@ -251,7 +250,7 @@ export class UserToRoleCommandsService {
             }
 
             // 撤銷角色
-            const removed = await this.userRoleCommandsRepository.deleteByUserAndRole(userId, roleId);
+            const removed = await this.userRoleCommandsRepo.deleteByUserAndRole(userId, roleId);
 
             if (removed) {
                 // 清除相關快取
@@ -286,17 +285,17 @@ export class UserToRoleCommandsService {
             }
 
             // 使用查詢服務驗證使用者是否存在
-            const userExists = await this.userToRoleQueriesService.userExists(userId);
+            const userExists = await this.userToRoleQueriesSvc.userExists(userId);
             if (!userExists) {
                 throw new Error('User not found');
             }
 
             // 獲取使用者目前的角色
-            const currentRoles = await this.userToRoleQueriesService.getUserRoles(userId);
+            const currentRoles = await this.userToRoleQueriesSvc.getUserRoles(userId);
             const roleIds = currentRoles.map(r => r.id);
 
             // 撤銷所有角色
-            const removedCount = await this.userRoleCommandsRepository.deleteByUserId(userId);
+            const removedCount = await this.userRoleCommandsRepo.deleteByUserId(userId);
 
             if (removedCount > 0) {
                 // 清除相關快取
@@ -332,17 +331,17 @@ export class UserToRoleCommandsService {
             }
 
             // 驗證角色是否存在
-            const roleExists = await this.userToRoleQueriesService.roleExists(roleId);
+            const roleExists = await this.userToRoleQueriesSvc.roleExists(roleId);
             if (!roleExists) {
                 throw new Error('Role not found');
             }
 
             // 獲取角色目前的使用者
-            const currentUsers = await this.userToRoleQueriesService.getRoleUsers(roleId);
+            const currentUsers = await this.userToRoleQueriesSvc.getRoleUsers(roleId);
             const userIds = currentUsers.map(u => u.id);
 
             // 撤銷所有使用者
-            const removedCount = await this.userRoleCommandsRepository.deleteByRoleId(roleId);
+            const removedCount = await this.userRoleCommandsRepo.deleteByRoleId(roleId);
 
             if (removedCount > 0) {
                 // 清除相關快取
@@ -392,7 +391,7 @@ export class UserToRoleCommandsService {
             }
 
             // 使用查詢服務驗證使用者是否存在
-            const userExists = await this.userToRoleQueriesService.userExists(userId);
+            const userExists = await this.userToRoleQueriesSvc.userExists(userId);
             if (!userExists) {
                 throw new Error('User not found');
             }
