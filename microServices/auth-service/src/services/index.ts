@@ -17,9 +17,9 @@
 // NOTE: This index file re-exports CQRS services to provide a single import surface for other modules.
 
 // 匯出 CQRS 模式的認證服務
-export { AuthQueriesService } from.*Service.js';
-export { AuthCommandsService } from.*Service.js';
+export { AuthQueriesService } from './queries/AuthQueriesService.js';
+export { AuthCommandsService } from './commands/AuthCommandsService.js';
 
 // 匯出 CQRS 模式的會話服務
-export { SessionQueriesService } from.*Service.js';
+export { SessionQueriesService } from './queries/SessionQueriesService.js';
 

@@ -16,6 +16,10 @@ import { RabbitMQService } from '../services/RabbitMQService';
 import { MonitoringService } from '../services/MonitoringService';
 import { NotificationService } from '../services/NotificationService';
 import { ArchiveScheduler } from '../schedulers/ArchiveScheduler';
+import { DroneArchiveScheduler } from '../schedulers/DroneArchiveScheduler';
+import { DataCleanupScheduler } from '../schedulers/DataCleanupScheduler';
+import { TaskMonitorScheduler } from '../schedulers/TaskMonitorScheduler';
+import { TaskResultHandler } from '../handlers/TaskResultHandler';
 import { ArchiveTaskRepository } from '../repositories/ArchiveTaskRepository';
 import { ArchiveTaskService } from '../services/ArchiveTaskService';
 import { ArchiveTaskController } from '../controllers/ArchiveTaskController';
@@ -155,8 +159,12 @@ export class ContainerUtils {
     // 服務層
     container.bind(TYPES.ArchiveTaskService).to(ArchiveTaskService).inSingletonScope();
     
-    // 排程器
-    container.bind(TYPES.ArchiveScheduler).to(ArchiveScheduler).inSingletonScope();
+    // 排程器 (重構後的組件)
+    container.bind(TYPES.DroneArchiveScheduler).to(DroneArchiveScheduler).inSingletonScope();
+    container.bind(TYPES.DataCleanupScheduler).to(DataCleanupScheduler).inSingletonScope();
+    container.bind(TYPES.TaskMonitorScheduler).to(TaskMonitorScheduler).inSingletonScope();
+    container.bind(TYPES.TaskResultHandler).to(TaskResultHandler).inSingletonScope();
+    container.bind(TYPES.ArchiveScheduler).to(ArchiveScheduler).inSingletonScope(); // 協調者
     
     // 應用程式
     container.bind(TYPES.App).to(App).inSingletonScope();

@@ -157,7 +157,7 @@ export class DroneStatusQueriesService {
             logger.info('根據狀態獲取無人機列表', { status });
 
             const result = await this.droneStatusRepositorysitory.findAllByStatus(status);
-            const dtos = result.map(item => DtoMapper.toDroneStatusResponseDto(item));
+            const dtos = result.map((item: any) => DtoMapper.toDroneStatusResponseDto(item));
 
             logger.info(`成功獲取狀態為 ${status} 的無人機 ${result.length} 個`);
             return dtos;

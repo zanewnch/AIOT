@@ -16,7 +16,7 @@ import { TYPES } from '../container/types.js';
 import { ResResult } from 'aiot-shared-packages';
 
 // 導入查詢控制器
-import { AuthQueriesController } from.*Controller.js';
+import { AuthQueriesController } from '../controllers/queries/AuthQueriesController.js';
 
 /**
  * Auth Service MCP 工具定義

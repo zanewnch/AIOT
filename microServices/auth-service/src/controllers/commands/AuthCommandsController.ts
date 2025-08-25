@@ -22,7 +22,7 @@
 import 'reflect-metadata'; // 支援 TypeScript 裝飾器反射
 import {inject, injectable} from 'inversify'; // Inversify DI 裝飾器
 import {NextFunction, Request, Response} from 'express'; // Express 型別
-import {AuthCommandsService} from.*Service.js'; // 命令服務介面/實作
+import {AuthCommandsService} from '../../services/commands/AuthCommandsService.js'; // 命令服務介面/實作
 import {createLogger, logAuthEvent, logRequest} from '../../configs/loggerConfig.js'; // 日誌與事件記錄函式
 import {ResResult} from 'aiot-shared-packages'; // 統一 API 回應封裝
 import {TYPES} from '../../container/types.js'; // DI container key

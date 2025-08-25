@@ -13,7 +13,7 @@
 import 'reflect-metadata'; // 引入 reflect-metadata 以支援裝飾器反射 (Inversify 依賴)
 import {inject, injectable} from 'inversify'; // 引入 Inversify 的 DI 裝飾器
 import {NextFunction, Request, Response} from 'express'; // 引入 Express 的型別定義
-import {AuthQueriesService} from.*Service.js'; // 引入查詢服務介面/實作
+import {AuthQueriesService} from '../../services/queries/AuthQueriesService.js'; // 引入查詢服務介面/實作
 import {createLogger, logRequest} from '../../configs/loggerConfig.js'; // 引入 logger 設定與請求記錄 helper
 import {ResResult} from 'aiot-shared-packages'; // 引入標準回應封裝工具
 import {TYPES} from '../../container/types.js'; // 引入 DI container 的型別 key

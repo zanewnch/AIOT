@@ -19,8 +19,12 @@ export const TYPES = {
   // 儲存庫
   ArchiveTaskRepository: Symbol.for('ArchiveTaskRepository'),
   ArchiveTaskService: Symbol.for('ArchiveTaskService'),
-  // 排程器
-  ArchiveScheduler: Symbol.for('ArchiveScheduler'),
+  // 排程器 (重構後的組件)
+  ArchiveScheduler: Symbol.for('ArchiveScheduler'), // 協調者
+  DroneArchiveScheduler: Symbol.for('DroneArchiveScheduler'), // Drone 歸檔專用
+  DataCleanupScheduler: Symbol.for('DataCleanupScheduler'), // 數據清理專用
+  TaskMonitorScheduler: Symbol.for('TaskMonitorScheduler'), // 任務監控專用
+  TaskResultHandler: Symbol.for('TaskResultHandler'), // 結果處理專用
   // 控制器
   HealthController: Symbol.for('HealthController'),
   ScheduleController: Symbol.for('ScheduleController'),

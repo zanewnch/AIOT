@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
 import { UserModel } from '../../models/UserModel.js';
-import { SessionQueriesService } from.*Service.js';
+import { SessionQueriesService } from './SessionQueriesService.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
 const logger = createLogger('AuthQueriesService');

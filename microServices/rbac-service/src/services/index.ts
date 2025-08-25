@@ -19,12 +19,12 @@
 // export { RbacInitService } from './RbacInitService.js';
 
 // 匯出 CQRS 模式的使用者服務
-export { UserQueriesService } from.*Service.js';
-export { UserCommandsService } from.*Service.js';
+export { UserQueriesService } from './queries/UserQueriesService.js';
+export { UserCommandsService } from './commands/UserCommandsService.js';
 
 
 // 匯出 CQRS 模式的會話服務
-export { SessionQueriesService } from.*Service.js';
+export { SessionQueriesService } from './queries/SessionQueriesService.js';
 // SessionCommandsService 尚未實現
-// export { SessionCommandsService } from.*Service.js';
+// export { SessionCommandsService } from './commands/SessionCommandsService.js';
 

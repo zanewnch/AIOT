@@ -34,7 +34,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.15.5",
     "@types/socket.io": "^3.0.1",
-    "aiot-shared-packages": "git+https://github.com/zanewnch/aiot-shared-packages.git",
+    "aiot-shared-packages": "github:zanewnch/aiot-shared-packages",
     "amqplib": "^0.10.3",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",

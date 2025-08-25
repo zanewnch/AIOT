@@ -84,7 +84,7 @@ const getServiceType = (): ServiceType => {
  * 根據微服務特性和運行環境提供優化的連接池參數
  */
 const getPoolConfig = () => {
-  const env = process.env.NODE_ENV || 'development';
+  const env = (process.env.NODE_ENV as 'production' | 'test' | 'development') || 'development';
   const serviceType = getServiceType();
   
   // 基礎配置
