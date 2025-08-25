@@ -16,7 +16,7 @@ import { Op } from 'sequelize';
 import { loggerDecorator } from "../../patterns/LoggerDecorator.js";
 
 @injectable()
-export class DroneCommandCommandsRepositorysitorysitorysitory implements IDroneCommandRepositorysitorysitory {
+export class DroneCommandCommandsRepository implements IDroneCommandRepository {
   
   create = loggerDecorator(async (data: DroneCommandCreationAttributes): Promise<DroneCommandModel> => {
     return await DroneCommandModel.create(data);
@@ -132,7 +132,7 @@ export class DroneCommandCommandsRepositorysitorysitorysitory implements IDroneC
     });
   }, 'findPendingCommandsByDroneId')
 
-  // Additional query methods required by IDroneCommandRepositorysitorysitory interface
+  // Additional query methods required by IDroneCommandRepository interface
   selectAll = async (limit: number = 100): Promise<DroneCommandModel[]> => {
     return await DroneCommandModel.findAll({
       order: [['createdAt', 'DESC']],

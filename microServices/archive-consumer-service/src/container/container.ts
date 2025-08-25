@@ -27,7 +27,7 @@ import {
 // 服務實作
 import { PostgreSQLDatabaseConnection } from '../configs/database';
 import { RabbitMQService } from '../services/RabbitMQService';
-import { ArchiveTaskRepositorysitoryImpl } from.*RepositorysitorysitoryImpl';
+import { ArchiveTaskRepositorysitoryImpl } from '../services/ArchiveTaskRepoImpl';
 import { ArchiveProcessor } from '../processors/ArchiveProcessor';
 import { ArchiveConsumer } from '../consumers/ArchiveConsumer';
 import { RouteRegistrar } from '../routes/RouteRegistrar';
@@ -62,7 +62,7 @@ export const createContainer = (): Container => {
     .inSingletonScope();
 
   // === 儲存庫服務 ===
-  container.bind<ArchiveTaskRepositorysitory>(TYPES.ArchiveTaskRepositorysitory)
+  container.bind<ArchiveTaskRepository>(TYPES.ArchiveTaskRepository)
     .to(ArchiveTaskRepositorysitoryImpl)
     .inSingletonScope();
 

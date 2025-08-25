@@ -34,7 +34,7 @@ export interface PaginatedResult<T> {
  * @class DronePositionQueriesRepositorysitory
  */
 @injectable()
-export class DronePositionQueriesRepositorysitorysitory {
+export class DronePositionQueriesRepository {
     private readonly logger = createLogger('DronePositionQueriesRepositorysitory');
 
 

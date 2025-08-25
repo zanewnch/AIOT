@@ -42,19 +42,20 @@ import { RoleToPermissionQueriesController } from '../controllers/queries/RoleTo
 
 // Repository 導入
 import { UserQueriesRepository } from '../repo/queries/UserQueriesRepository.js';
-import { PermissionQueriesRepositorysitorysitory } from '../repo/queries/PermissionQueriesRepository.js';
-import { RoleQueriesRepositorysitorysitory } from '../repo/queries/RoleQueriesRepository.js';
-import { UserRoleQueriesRepositorysitorysitory } from '../repo/queries/UserRoleQueriesRepository.js';
-import { RolePermissionQueriesRepositorysitorysitory } from '../repo/queries/RolePermissionQueriesRepository.js';
-import { UserCommandsRepositorysitorysitory } from '../repo/commands/UserCommandsRepository.js';
-import { PermissionCommandsRepositorysitorysitory } from '../repo/commands/PermissionCommandsRepository.js';
-import { RoleCommandsRepositorysitorysitory } from '../repo/commands/RoleCommandsRepository.js';
-import { UserRoleCommandsRepositorysitorysitory } from '../repo/commands/UserRoleCommandsRepository.js';
-import { RolePermissionCommandsRepositorysitorysitory } from '../repo/commands/RolePermissionCommandsRepository.js';
+import { PermissionQueriesRepository } from '../repo/queries/PermissionQueriesRepository.js';
+import { RoleQueriesRepository } from '../repo/queries/RoleQueriesRepository.js';
+import { UserRoleQueriesRepository } from '../repo/queries/UserRoleQueriesRepository.js';
+import { RolePermissionQueriesRepository } from '../repo/queries/RolePermissionQueriesRepository.js';
+import { SessionQueriesRepository } from '../repo/queries/SessionQueriesRepository.js';
+import { UserCommandsRepository } from '../repo/commands/UserCommandsRepository.js';
+import { PermissionCommandsRepository } from '../repo/commands/PermissionCommandsRepository.js';
+import { RoleCommandsRepository } from '../repo/commands/RoleCommandsRepository.js';
+import { UserRoleCommandsRepository } from '../repo/commands/UserRoleCommandsRepository.js';
+import { RolePermissionCommandsRepository } from '../repo/commands/RolePermissionCommandsRepository.js';
 
 // 路由相關導入
 import { RouteRegistrar } from '../routes/RouteRegistrar.js';
-import { createRbacRouter } from '../routes/rbacRoutes.js';
+import { RbacRoutes } from '../routes/rbacRoutes.js';
 import docsRoutes from '../routes/docsRoutes.js';
 import { RBACMCPRoutes } from '../routes/mcpRoutes.js';
 
@@ -173,45 +174,49 @@ export function createContainer(): Container {
   // ===== Repository 註冊 =====
   
   // Queries Repositories
-  container.bind<UserQueriesRepositorysitorysitory>(TYPES.UserQueriesRepository)
-    .to(UserQueriesRepositorysitorysitory)
+  container.bind<UserQueriesRepository>(TYPES.UserQueriesRepository)
+    .to(UserQueriesRepository)
     .inSingletonScope();
 
-  container.bind<PermissionQueriesRepositorysitorysitory>(TYPES.PermissionQueriesRepository)
-    .to(PermissionQueriesRepositorysitorysitory)
+  container.bind<PermissionQueriesRepository>(TYPES.PermissionQueriesRepository)
+    .to(PermissionQueriesRepository)
     .inSingletonScope();
 
-  container.bind<RoleQueriesRepositorysitorysitory>(TYPES.RoleQueriesRepository)
-    .to(RoleQueriesRepositorysitorysitory)
+  container.bind<RoleQueriesRepository>(TYPES.RoleQueriesRepository)
+    .to(RoleQueriesRepository)
     .inSingletonScope();
 
-  container.bind<UserRoleQueriesRepositorysitorysitory>(TYPES.UserRoleQueriesRepository)
-    .to(UserRoleQueriesRepositorysitorysitory)
+  container.bind<UserRoleQueriesRepository>(TYPES.UserRoleQueriesRepository)
+    .to(UserRoleQueriesRepository)
     .inSingletonScope();
 
-  container.bind<RolePermissionQueriesRepositorysitorysitory>(TYPES.RolePermissionQueriesRepository)
-    .to(RolePermissionQueriesRepositorysitorysitory)
+  container.bind<RolePermissionQueriesRepository>(TYPES.RolePermissionQueriesRepository)
+    .to(RolePermissionQueriesRepository)
+    .inSingletonScope();
+
+  container.bind<SessionQueriesRepository>(TYPES.SessionQueriesRepository)
+    .to(SessionQueriesRepository)
     .inSingletonScope();
 
   // Commands Repositories
-  container.bind<UserCommandsRepositorysitorysitory>(TYPES.UserCommandsRepository)
-    .to(UserCommandsRepositorysitorysitory)
+  container.bind<UserCommandsRepository>(TYPES.UserCommandsRepository)
+    .to(UserCommandsRepository)
     .inSingletonScope();
 
-  container.bind<PermissionCommandsRepositorysitorysitory>(TYPES.PermissionCommandsRepository)
-    .to(PermissionCommandsRepositorysitorysitory)
+  container.bind<PermissionCommandsRepository>(TYPES.PermissionCommandsRepository)
+    .to(PermissionCommandsRepository)
     .inSingletonScope();
 
-  container.bind<RoleCommandsRepositorysitorysitory>(TYPES.RoleCommandsRepository)
-    .to(RoleCommandsRepositorysitorysitory)
+  container.bind<RoleCommandsRepository>(TYPES.RoleCommandsRepository)
+    .to(RoleCommandsRepository)
     .inSingletonScope();
 
-  container.bind<UserRoleCommandsRepositorysitorysitory>(TYPES.UserRoleCommandsRepository)
-    .to(UserRoleCommandsRepositorysitorysitory)
+  container.bind<UserRoleCommandsRepository>(TYPES.UserRoleCommandsRepository)
+    .to(UserRoleCommandsRepository)
     .inSingletonScope();
 
-  container.bind<RolePermissionCommandsRepositorysitorysitory>(TYPES.RolePermissionCommandsRepository)
-    .to(RolePermissionCommandsRepositorysitorysitory)
+  container.bind<RolePermissionCommandsRepository>(TYPES.RolePermissionCommandsRepository)
+    .to(RolePermissionCommandsRepository)
     .inSingletonScope();
 
   // ===== 路由服務註冊 =====
@@ -220,9 +225,10 @@ export function createContainer(): Container {
     .to(RouteRegistrar)
     .inSingletonScope();
 
-  // 綁定路由實例 (使用工廠函數延遲創建)
-  container.bind(TYPES.RBACRoutes)
-    .toDynamicValue(() => createRbacRouter());
+  // 綁定 RBAC 路由類別 (使用 DI)
+  container.bind<RbacRoutes>(TYPES.RBACRoutes)
+    .to(RbacRoutes)
+    .inSingletonScope();
 
   container.bind(TYPES.DocsRoutes)
     .toConstantValue(docsRoutes);

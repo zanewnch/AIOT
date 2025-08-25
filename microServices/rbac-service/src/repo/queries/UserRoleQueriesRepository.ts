@@ -1,5 +1,5 @@
 /**
- * @fileoverview 用戶角色關係查詢 Repositorysitorysitory - CQRS 查詢端
+ * @fileoverview 用戶角色關係查詢 Repository - CQRS 查詢端
  * 
  * 專門處理用戶角色關係資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -12,23 +12,23 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { Op } from 'sequelize';
-import { UserRoleModel } from '../../models/UserToRoleModel.js';
+import { UserRoleModel } from '../../models/UserRoleModel.js';
 import { UserModel } from '../../models/UserModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
 import { PaginationRequestDto, PaginatedResult } from '../../dto/index.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('UserRoleQueriesRepositorysitory');
+const logger = createLogger('UserRoleQueriesRepository');
 
 /**
- * 用戶角色關係查詢 Repositorysitorysitory 實現類別 - CQRS 查詢端
+ * 用戶角色關係查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理用戶角色關係資料的查詢操作，遵循 CQRS 模式
  * 
- * @class UserRoleQueriesRepositorysitory
+ * @class UserRoleQueriesRepository
  */
 @injectable()
-export class UserRoleQueriesRepositorysitorysitory {
+export class UserRoleQueriesRepository {
 
     /**
      * 統一分頁查詢方法

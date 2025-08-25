@@ -1,5 +1,5 @@
 /**
- * @fileoverview 使用者角色關聯命令 Repositorysitory - CQRS 命令端
+ * @fileoverview 使用者角色關聯命令 Repository - CQRS 命令端
  * 
  * 專門處理使用者角色關聯資料的寫入操作，遵循 CQRS 模式的命令端原則。
  * 只包含寫入相關的操作方法，不包含任何查詢操作。
@@ -11,22 +11,22 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { UserRoleModel, UserRoleCreationAttributes, UserRoleAttributes } from '../../models/UserToRoleModel.js';
+import { UserRoleModel, UserRoleCreationAttributes, UserRoleAttributes } from '../../models/UserRoleModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
 import { Op } from 'sequelize';
 
-const logger = createLogger('UserRoleCommandsRepositorysitory');
+const logger = createLogger('UserRoleCommandsRepository');
 
 /**
- * 使用者角色關聯命令 Repositorysitory 實現類別 - CQRS 命令端
+ * 使用者角色關聯命令 Repository 實現類別 - CQRS 命令端
  * 
  * 專門處理使用者角色關聯資料的寫入操作，遵循 CQRS 模式
  * 
- * @class UserRoleCommandsRepositorysitory
+ * @class UserRoleCommandsRepository
  */
 @injectable()
-export class UserRoleCommandsRepositorysitorysitory {
+export class UserRoleCommandsRepository {
   /**
    * 建立使用者角色關聯
    * @param userRoleData 使用者角色關聯資料

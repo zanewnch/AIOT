@@ -37,7 +37,7 @@ export interface PaginatedResult<T> {
  * @class DroneCommandsArchiveQueriesRepositorysitory
  */
 @injectable()
-export class DroneCommandsArchiveQueriesRepositorysitorysitory {
+export class DroneCommandsArchiveQueriesRepository {
 
     /**
      * 統一分頁查詢方法

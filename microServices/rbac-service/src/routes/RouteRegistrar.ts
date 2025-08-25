@@ -12,6 +12,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { Application, Router } from 'express';
 import { TYPES } from '../container/types.js';
+import { RbacRoutes } from './rbacRoutes.js';
 import { RBACMCPRoutes } from './mcpRoutes.js';
 import readmeRoutes from './readmeRoutes.js';
 
@@ -23,7 +24,7 @@ import readmeRoutes from './readmeRoutes.js';
 @injectable()
 export class RouteRegistrar {
     constructor(
-        @inject(TYPES.RBACRoutes) private rbacRoutes: Router,
+        @inject(TYPES.RBACRoutes) private rbacRoutes: RbacRoutes,
         @inject(TYPES.DocsRoutes) private docsRoutes: Router,
         @inject(TYPES.RBACMCPRoutes) private mcpRoutes: RBACMCPRoutes
     ) {}
@@ -57,7 +58,7 @@ export class RouteRegistrar {
             console.log('✅ README route registered at /readme');
 
             // 註冊 RBAC 路由
-            app.use('/', this.rbacRoutes);
+            app.use('/', this.rbacRoutes.getRouter());
             console.log('✅ RBAC routes registered at /');
 
             // 註冊 MCP 路由 (供 LLM AI Engine 調用)

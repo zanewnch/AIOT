@@ -33,7 +33,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserCommandsRepositorysitorysitory } from '../../repo/commands/UserCommandsRepository.js';
+import { UserCommandsRepository } from '../../repo/commands/UserCommandsRepository.js';
 import { UserModel } from '../../models/UserModel.js';
 import bcrypt from 'bcrypt';
 
@@ -61,7 +61,7 @@ export class UserCommandsService {
      * 初始化使用者命令服務，設定資料存取層和查詢服務實例
      */
     constructor(
-        @inject(TYPES.UserCommandsRepositorysitory) private readonly userCommandsRepositorysitory: UserCommandsRepositorysitory,
+        @inject(TYPES.UserCommandsRepository) private readonly userCommandsRepository: UserCommandsRepository,
         @inject(TYPES.UserQueriesService) private readonly userQueriesService: UserQueriesService
     ) {
     }
@@ -249,7 +249,7 @@ export class UserCommandsService {
             const passwordHash = await this.hashPassword(userData.password);
 
             // 建立使用者
-            const user = await this.userCommandsRepositorysitory.create({
+            const user = await this.userCommandsRepository.create({
                 username: trimmedUsername,
                 email: trimmedEmail,
                 passwordHash
@@ -335,7 +335,7 @@ export class UserCommandsService {
             }
 
             // 更新使用者
-            const updatedUser = await this.userCommandsRepositorysitory.update(userId, updatePayload);
+            const updatedUser = await this.userCommandsRepository.update(userId, updatePayload);
             if (!updatedUser) {
                 logger.warn(`User update failed - user not found for ID: ${userId}`);
                 return null;
@@ -380,7 +380,7 @@ export class UserCommandsService {
             }
 
             // 刪除使用者
-            const deleted = await this.userCommandsRepositorysitory.delete(userId);
+            const deleted = await this.userCommandsRepository.delete(userId);
             if (deleted) {
                 // 清除快取
                 await this.clearUserManagementCache(userId);

@@ -24,7 +24,7 @@ const logger = createLogger('DroneStatusCommandsRepositorysitorysitory');
  * @class DroneStatusCommandsRepositorysitorysitory
  */
 @injectable()
-export class DroneStatusCommandsRepositorysitorysitorysitory {
+export class DroneStatusCommandsRepository {
     /**
      * 建立新的無人機狀態記錄
      * 

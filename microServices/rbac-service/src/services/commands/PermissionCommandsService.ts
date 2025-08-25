@@ -25,8 +25,8 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { PermissionCommandsRepositorysitorysitory } from '../../repo/commands/PermissionCommandsRepository.js';
-import { PermissionQueriesRepositorysitorysitory } from '../../repo/queries/PermissionQueriesRepository.js';
+import { PermissionCommandsRepository } from '../../repo/commands/PermissionCommandsRepository.js';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepository.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -64,8 +64,8 @@ export class PermissionCommandsService implements IPermissionCommandsService {
 
     constructor(
         @inject(TYPES.PermissionQueriesService) private readonly queryService: PermissionQueriesService,
-        @inject(TYPES.PermissionCommandsRepositorysitory) private readonly permissionCommandsRepositorysitory: PermissionCommandsRepositorysitory,
-        @inject(TYPES.PermissionQueriesRepositorysitory) private readonly permissionQueriesRepositorysitory: PermissionQueriesRepositorysitory
+        @inject(TYPES.PermissionCommandsRepository) private readonly permissionCommandsRepository: PermissionCommandsRepository,
+        @inject(TYPES.PermissionQueriesRepository) private readonly permissionQueriesRepository: PermissionQueriesRepository
     ) {
     }
 
@@ -283,13 +283,13 @@ export class PermissionCommandsService implements IPermissionCommandsService {
             }
 
             // 檢查權限是否已存在
-            const exists = await this.permissionQueriesRepositorysitory.exists(permissionData.name.trim());
+            const exists = await this.permissionQueriesRepository.exists(permissionData.name.trim());
             if (exists) {
                 throw new Error(`Permission with name '${permissionData.name}' already exists`);
             }
 
             // 建立權限
-            const permission = await this.permissionCommandsRepositorysitory.create({
+            const permission = await this.permissionCommandsRepository.create({
                 name: permissionData.name.trim(),
                 description: permissionData.description?.trim()
             });
@@ -337,7 +337,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
 
                 // 檢查新名稱是否已被其他權限使用
                 if (updatePayload.name) {
-                    const existingPermission = await this.permissionQueriesRepositorysitory.findByName(updatePayload.name);
+                    const existingPermission = await this.permissionQueriesRepository.findByName(updatePayload.name);
                     if (existingPermission && existingPermission.id !== permissionId) {
                         throw new Error(`Permission with name '${updatePayload.name}' already exists`);
                     }
@@ -348,7 +348,7 @@ export class PermissionCommandsService implements IPermissionCommandsService {
             }
 
             // 更新權限
-            const updatedPermission = await this.permissionCommandsRepositorysitory.update(permissionId, updatePayload);
+            const updatedPermission = await this.permissionCommandsRepository.update(permissionId, updatePayload);
             if (!updatedPermission) {
                 logger.warn(`Permission update failed - permission not found for ID: ${permissionId}`);
                 return null;
@@ -386,14 +386,14 @@ export class PermissionCommandsService implements IPermissionCommandsService {
             }
 
             // 檢查權限是否存在
-            const existingPermission = await this.permissionQueriesRepositorysitory.findById(permissionId);
+            const existingPermission = await this.permissionQueriesRepository.findById(permissionId);
             if (!existingPermission) {
                 logger.warn(`Permission deletion failed - permission not found for ID: ${permissionId}`);
                 return false;
             }
 
             // 刪除權限
-            const deleted = await this.permissionCommandsRepositorysitory.delete(permissionId);
+            const deleted = await this.permissionCommandsRepository.delete(permissionId);
             if (deleted) {
                 // 清除快取
                 await this.clearPermissionManagementCache(permissionId);

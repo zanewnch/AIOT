@@ -1,5 +1,5 @@
 /**
- * @fileoverview 用戶查詢 Repositorysitorysitory - CQRS 查詢端
+ * @fileoverview 用戶查詢 Repository - CQRS 查詢端
  * 
  * 專門處理用戶資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -18,17 +18,17 @@ import { PermissionModel } from '../../models/PermissionModel.js';
 import { PaginationRequestDto, PaginatedResult } from '../../dto/index.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 
-const logger = createLogger('UserQueriesRepositorysitory');
+const logger = createLogger('UserQueriesRepository');
 
 /**
- * 用戶查詢 Repositorysitorysitory 實現類別 - CQRS 查詢端
+ * 用戶查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理用戶資料的查詢操作，遵循 CQRS 模式
  * 
- * @class UserQueriesRepositorysitory
+ * @class UserQueriesRepository
  */
 @injectable()
-export class UserQueriesRepositorysitorysitory {
+export class UserQueriesRepository {
 
     /**
      * 統一分頁查詢方法

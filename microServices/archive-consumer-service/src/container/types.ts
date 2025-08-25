@@ -19,7 +19,7 @@ export const TYPES = {
   // 訊息隊列相關
   RabbitMQService: Symbol.for('RabbitMQService'),
   // 儲存庫相關
-  ArchiveTaskRepositorysitory: Symbol.for('ArchiveTaskRepositorysitory'),
+  ArchiveTaskRepository: Symbol.for('ArchiveTaskRepository'),
   // 處理器相關
   ArchiveProcessor: Symbol.for('ArchiveProcessor'),
   // 消費者相關

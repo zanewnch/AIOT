@@ -26,8 +26,8 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { RoleCommandsRepositorysitorysitory } from '../../repo/commands/RoleCommandsRepository.js';
-import { RoleQueriesRepositorysitorysitory } from '../../repo/queries/RoleQueriesRepository.js';
+import { RoleCommandsRepository } from '../../repo/commands/RoleCommandsRepository.js';
+import { RoleQueriesRepository } from '../../repo/queries/RoleQueriesRepository.js';
 import type { RoleModel } from '../../models/RoleModel.js';
 
 import type { RedisClientType } from 'redis';
@@ -57,8 +57,8 @@ export class RoleCommandsService implements IRoleCommandsService {
 
     constructor(
         @inject(TYPES.RoleQueriesService) private readonly queryService: RoleQueriesService,
-        @inject(TYPES.RoleCommandsRepositorysitory) private readonly roleCommandsRepositorysitory: RoleCommandsRepositorysitory,
-        @inject(TYPES.RoleQueriesRepositorysitory) private readonly roleQueriesRepositorysitory: RoleQueriesRepositorysitory
+        @inject(TYPES.RoleCommandsRepository) private readonly roleCommandsRepository: RoleCommandsRepository,
+        @inject(TYPES.RoleQueriesRepository) private readonly roleQueriesRepository: RoleQueriesRepository
     ) {
     }
 
@@ -211,13 +211,13 @@ export class RoleCommandsService implements IRoleCommandsService {
             }
 
             // 檢查角色是否已存在
-            const exists = await this.roleQueriesRepositorysitory.exists(roleData.name.trim());
+            const exists = await this.roleQueriesRepository.exists(roleData.name.trim());
             if (exists) {
                 throw new Error(`Role with name '${roleData.name}' already exists`);
             }
 
             // 建立角色
-            const role = await this.roleCommandsRepositorysitory.create({
+            const role = await this.roleCommandsRepository.create({
                 name: roleData.name.trim(),
                 displayName: roleData.displayName?.trim() || roleData.name.trim()
             });
@@ -263,7 +263,7 @@ export class RoleCommandsService implements IRoleCommandsService {
 
                 // 檢查新名稱是否已被其他角色使用
                 if (updatePayload.name) {
-                    const existingRole = await this.roleQueriesRepositorysitory.findByName(updatePayload.name);
+                    const existingRole = await this.roleQueriesRepository.findByName(updatePayload.name);
                     if (existingRole && existingRole.id !== roleId) {
                         throw new Error(`Role with name '${updatePayload.name}' already exists`);
                     }
@@ -274,7 +274,7 @@ export class RoleCommandsService implements IRoleCommandsService {
             }
 
             // 更新角色
-            const updatedRole = await this.roleCommandsRepositorysitory.update(roleId, updatePayload);
+            const updatedRole = await this.roleCommandsRepository.update(roleId, updatePayload);
             if (!updatedRole) {
                 logger.warn(`Role update failed - role not found for ID: ${roleId}`);
                 return null;
@@ -310,14 +310,14 @@ export class RoleCommandsService implements IRoleCommandsService {
             }
 
             // 檢查角色是否存在
-            const existingRole = await this.roleQueriesRepositorysitory.findById(roleId);
+            const existingRole = await this.roleQueriesRepository.findById(roleId);
             if (!existingRole) {
                 logger.warn(`Role deletion failed - role not found for ID: ${roleId}`);
                 return false;
             }
 
             // 刪除角色
-            const deleted = await this.roleCommandsRepositorysitory.delete(roleId);
+            const deleted = await this.roleCommandsRepository.delete(roleId);
             if (deleted) {
                 // 清除快取
                 await this.clearRoleManagementCache(roleId);

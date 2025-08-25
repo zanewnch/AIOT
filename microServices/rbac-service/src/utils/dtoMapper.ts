@@ -11,8 +11,8 @@
 import { UserModel } from '../models/UserModel.js';
 import { RoleModel } from '../models/RoleModel.js';
 import { PermissionModel } from '../models/PermissionModel.js';
-import { UserRoleModel } from '../models/UserToRoleModel.js';
-import { RolePermissionModel } from '../models/RoleToPermissionModel.js';
+import { UserRoleModel } from '../models/UserRoleModel.js';
+import { RolePermissionModel } from '../models/RolePermissionModel.js';
 import {
     UserResponseDto,
     UserDetailResponseDto,
@@ -192,9 +192,9 @@ export class DtoMapper {
     };
 
     /**
-     * 將 UserToRoleModel 轉換為 UserRoleResponseDto
+     * 將 UserRoleModel 轉換為 UserRoleResponseDto
      */
-    static toUserRoleResponseDto = (model: UserToRoleModel): UserRoleResponseDto => {
+    static toUserRoleResponseDto = (model: UserRoleModel): UserRoleResponseDto => {
         return {
             id: model.id?.toString(),
             userId: model.user_id?.toString(),
@@ -220,9 +220,9 @@ export class DtoMapper {
     };
 
     /**
-     * 將 UserToRoleModel 陣列轉換為 UserRoleResponseDto 陣列
+     * 將 UserRoleModel 陣列轉換為 UserRoleResponseDto 陣列
      */
-    static toUserRoleResponseDtoArray = (models: UserToRoleModel[]): UserRoleResponseDto[] => {
+    static toUserRoleResponseDtoArray = (models: UserRoleModel[]): UserRoleResponseDto[] => {
         return models.map(DtoMapper.toUserRoleResponseDto);
     };
 
@@ -230,7 +230,7 @@ export class DtoMapper {
      * 將分頁查詢結果轉換為分頁 UserRole DTO
      */
     static toPaginatedUserRoleResponse = (
-        result: PaginatedResult<UserToRoleModel>
+        result: PaginatedResult<UserRoleModel>
     ): PaginatedListResponseDto<UserRoleResponseDto> => {
         const dtoArray = DtoMapper.toUserRoleResponseDtoArray(result.data);
         const pagination = {
@@ -255,9 +255,9 @@ export class DtoMapper {
     };
 
     /**
-     * 將 RoleToPermissionModel 轉換為 RolePermissionResponseDto
+     * 將 RolePermissionModel 轉換為 RolePermissionResponseDto
      */
-    static toRolePermissionResponseDto = (model: RoleToPermissionModel): RolePermissionResponseDto => {
+    static toRolePermissionResponseDto = (model: RolePermissionModel): RolePermissionResponseDto => {
         return {
             id: model.id?.toString(),
             roleId: model.role_id?.toString(),
@@ -282,9 +282,9 @@ export class DtoMapper {
     };
 
     /**
-     * 將 RoleToPermissionModel 陣列轉換為 RolePermissionResponseDto 陣列
+     * 將 RolePermissionModel 陣列轉換為 RolePermissionResponseDto 陣列
      */
-    static toRolePermissionResponseDtoArray = (models: RoleToPermissionModel[]): RolePermissionResponseDto[] => {
+    static toRolePermissionResponseDtoArray = (models: RolePermissionModel[]): RolePermissionResponseDto[] => {
         return models.map(DtoMapper.toRolePermissionResponseDto);
     };
 
@@ -292,7 +292,7 @@ export class DtoMapper {
      * 將分頁查詢結果轉換為分頁 RolePermission DTO
      */
     static toPaginatedRolePermissionResponse = (
-        result: PaginatedResult<RoleToPermissionModel>
+        result: PaginatedResult<RolePermissionModel>
     ): PaginatedListResponseDto<RolePermissionResponseDto> => {
         const dtoArray = DtoMapper.toRolePermissionResponseDtoArray(result.data);
         const pagination = {

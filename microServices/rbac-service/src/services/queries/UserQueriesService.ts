@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { UserQueriesRepositorysitorysitory } from '../../repo/queries/UserQueriesRepository.js';
+import { UserQueriesRepository } from '../../repo/queries/UserQueriesRepository.js';
 import { TYPES } from '../../container/types.js';
 import { UserModel } from '../../models/UserModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -40,12 +40,12 @@ const logger = createLogger('UserQueriesService');
  */
 @injectable()
 export class UserQueriesService {
-    private userRepositorysitory: UserQueriesRepositorysitory;
+    private userRepository: UserQueriesRepository;
 
     constructor(
-        @inject(TYPES.UserQueriesRepositorysitory) userRepositorysitory: UserQueriesRepositorysitory
+        @inject(TYPES.UserQueriesRepository) userRepository: UserQueriesRepository
     ) {
-        this.userRepositorysitory = userRepositorysitory;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,7 +57,7 @@ export class UserQueriesService {
         try {
             logger.info('分頁查詢所有用戶', { pagination });
 
-            const result = await this.userRepositorysitory.getAllUsersPaginated(pagination);
+            const result = await this.userRepository.getAllUsersPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取 ${result.data.length} 個用戶，總共 ${result.totalCount} 個`);
@@ -78,7 +78,7 @@ export class UserQueriesService {
         try {
             logger.info('根據角色分頁查詢用戶', { roleId, pagination });
 
-            const result = await this.userRepositorysitory.getUsersByRolePaginated(roleId, pagination);
+            const result = await this.userRepository.getUsersByRolePaginated(roleId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取角色 ${roleId} 的用戶 ${result.data.length} 個`);
@@ -99,7 +99,7 @@ export class UserQueriesService {
         try {
             logger.info('根據狀態分頁查詢用戶', { status, pagination });
 
-            const result = await this.userRepositorysitory.getUsersByStatusPaginated(status, pagination);
+            const result = await this.userRepository.getUsersByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取狀態為 ${status} 的用戶 ${result.data.length} 個`);
@@ -120,7 +120,7 @@ export class UserQueriesService {
         try {
             logger.info('根據權限分頁查詢用戶', { permissionId, pagination });
 
-            const result = await this.userRepositorysitory.getUsersByPermissionPaginated(permissionId, pagination);
+            const result = await this.userRepository.getUsersByPermissionPaginated(permissionId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取權限 ${permissionId} 的用戶 ${result.data.length} 個`);
@@ -141,7 +141,7 @@ export class UserQueriesService {
         try {
             logger.info('根據電子郵件驗證狀態分頁查詢用戶', { isVerified, pagination });
 
-            const result = await this.userRepositorysitory.getUsersByVerificationPaginated(isVerified, pagination);
+            const result = await this.userRepository.getUsersByVerificationPaginated(isVerified, pagination);
             const paginatedResponse = DtoMapper.toPaginatedUserResponse(result);
 
             logger.info(`成功獲取驗證狀態為 ${isVerified} 的用戶 ${result.data.length} 個`);
@@ -157,7 +157,7 @@ export class UserQueriesService {
      */
     getUsers = async (): Promise<UserResponseDto[]> => {
         try {
-            const users = await this.userQueriesRepositorysitory.findAll();
+            const users = await this.userRepository.findAll();
             return DtoMapper.toUserResponseDtoArray(users);
         } catch (error) {
             logger.error('獲取所有使用者失敗', { error });
@@ -170,7 +170,7 @@ export class UserQueriesService {
      */
     getUserById = async (id: string): Promise<UserResponseDto | null> => {
         try {
-            const user = await this.userQueriesRepositorysitory.findById(id);
+            const user = await this.userRepository.findById(id);
             if (!user) {
                 return null;
             }

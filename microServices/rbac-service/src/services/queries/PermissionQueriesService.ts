@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { PermissionQueriesRepositorysitorysitory } from '../../repo/queries/PermissionQueriesRepository.js';
+import { PermissionQueriesRepository } from '../../repo/queries/PermissionQueriesRepository.js';
 import { TYPES } from '../../container/types.js';
 import type { PermissionModel } from '../../models/PermissionModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -39,12 +39,12 @@ const logger = createLogger('PermissionQueriesService');
  */
 @injectable()
 export class PermissionQueriesService {
-    private permissionRepositorysitory: PermissionQueriesRepositorysitory;
+    private permissionRepository: PermissionQueriesRepository;
 
     constructor(
-        @inject(TYPES.PermissionQueriesRepositorysitory) permissionRepositorysitory: PermissionQueriesRepositorysitory
+        @inject(TYPES.PermissionQueriesRepository) permissionRepository: PermissionQueriesRepository
     ) {
-        this.permissionRepositorysitory = permissionRepositorysitory;
+        this.permissionRepository = permissionRepository;
     }
 
     /**
@@ -56,7 +56,7 @@ export class PermissionQueriesService {
         try {
             logger.info('分頁查詢所有權限', { pagination });
 
-            const result = await this.permissionRepositorysitory.getAllPermissionsPaginated(pagination);
+            const result = await this.permissionRepository.getAllPermissionsPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedPermissionResponse(result);
 
             logger.info(`成功獲取 ${result.data.length} 個權限，總共 ${result.totalCount} 個`);
@@ -77,7 +77,7 @@ export class PermissionQueriesService {
         try {
             logger.info('根據資源分頁查詢權限', { resource, pagination });
 
-            const result = await this.permissionRepositorysitory.getPermissionsByResourcePaginated(resource, pagination);
+            const result = await this.permissionRepository.getPermissionsByResourcePaginated(resource, pagination);
             const paginatedResponse = DtoMapper.toPaginatedPermissionResponse(result);
 
             logger.info(`成功獲取資源 ${resource} 的權限 ${result.data.length} 個`);
@@ -98,7 +98,7 @@ export class PermissionQueriesService {
         try {
             logger.info('根據動作分頁查詢權限', { action, pagination });
 
-            const result = await this.permissionRepositorysitory.getPermissionsByActionPaginated(action, pagination);
+            const result = await this.permissionRepository.getPermissionsByActionPaginated(action, pagination);
             const paginatedResponse = DtoMapper.toPaginatedPermissionResponse(result);
 
             logger.info(`成功獲取動作 ${action} 的權限 ${result.data.length} 個`);
@@ -119,7 +119,7 @@ export class PermissionQueriesService {
         try {
             logger.info('根據類型分頁查詢權限', { type, pagination });
 
-            const result = await this.permissionRepositorysitory.getPermissionsByTypePaginated(type, pagination);
+            const result = await this.permissionRepository.getPermissionsByTypePaginated(type, pagination);
             const paginatedResponse = DtoMapper.toPaginatedPermissionResponse(result);
 
             logger.info(`成功獲取類型為 ${type} 的權限 ${result.data.length} 個`);
@@ -140,7 +140,7 @@ export class PermissionQueriesService {
         try {
             logger.info('根據狀態分頁查詢權限', { status, pagination });
 
-            const result = await this.permissionRepositorysitory.getPermissionsByStatusPaginated(status, pagination);
+            const result = await this.permissionRepository.getPermissionsByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedPermissionResponse(result);
 
             logger.info(`成功獲取狀態為 ${status} 的權限 ${result.data.length} 個`);

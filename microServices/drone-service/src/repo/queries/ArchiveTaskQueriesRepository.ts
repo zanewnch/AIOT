@@ -27,7 +27,7 @@ export interface PaginatedResult<T> {
 }
 
 @injectable()
-export class ArchiveTaskQueriesRepositorysitorysitory {
+export class ArchiveTaskQueriesRepository {
   
 
   /**

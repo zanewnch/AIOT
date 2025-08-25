@@ -1,5 +1,5 @@
 /**
- * @fileoverview 權限命令 Repositorysitory - CQRS 命令端
+ * @fileoverview 權限命令 Repository - CQRS 命令端
  * 
  * 專門處理權限資料的寫入操作，遵循 CQRS 模式的命令端原則。
  * 只包含寫入相關的操作方法，不包含任何查詢操作。
@@ -18,17 +18,17 @@ import {
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { Transaction } from 'sequelize';
 
-const logger = createLogger('PermissionCommandsRepositorysitory');
+const logger = createLogger('PermissionCommandsRepository');
 
 /**
- * 權限命令 Repositorysitory 實現類別 - CQRS 命令端
+ * 權限命令 Repository 實現類別 - CQRS 命令端
  * 
  * 專門處理權限資料的寫入操作，遵循 CQRS 模式
  * 
- * @class PermissionCommandsRepositorysitory
+ * @class PermissionCommandsRepository
  */
 @injectable()
-export class PermissionCommandsRepositorysitorysitory {
+export class PermissionCommandsRepository {
   /**
    * 建立新權限
    * @param permissionData 權限資料

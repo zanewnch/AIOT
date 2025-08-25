@@ -4,7 +4,7 @@
  * 此文件實作了會話查詢資料存取層，專注於處理所有讀取相關的資料庫操作。
  * 遵循 CQRS 模式，只處理查詢操作，不包含任何寫入邏輯。
  * 
- * @module SessionQueriesRepositorysitory
+ * @module SessionQueriesRepository
  * @author AIOT Team
  * @since 1.0.0
  * @version 1.0.0
@@ -32,11 +32,11 @@ interface SessionModel {
  * 專門處理會話相關的查詢請求，包含分頁查詢等功能。
  * 所有方法都是唯讀操作，不會修改系統狀態。
  *
- * @class SessionQueriesRepositorysitory
+ * @class SessionQueriesRepository
  * @since 1.0.0
  */
 @injectable()
-export class SessionQueriesRepositorysitorysitory {
+export class SessionQueriesRepository {
 
     /**
      * 分頁查詢所有會話

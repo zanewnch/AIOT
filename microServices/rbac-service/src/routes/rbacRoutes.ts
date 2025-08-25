@@ -15,7 +15,9 @@
  * @author AIOT Team
  */
 
+import 'reflect-metadata';
 import { Router } from 'express';
+import { inject, injectable } from 'inversify';
 import { UserQueriesController } from '../controllers/queries/UserQueriesController.js';
 import { UserCommandsController } from '../controllers/commands/UserCommandsController.js';
 import { RoleQueriesController } from '../controllers/queries/RoleQueriesController.js';
@@ -26,7 +28,6 @@ import { UserToRoleQueriesController } from '../controllers/queries/UserToRoleQu
 import { UserToRoleCommandsController } from '../controllers/commands/UserToRoleCommandsController.js';
 import { RoleToPermissionQueriesController } from '../controllers/queries/RoleToPermissionQueriesController.js';
 import { RoleToPermissionCommandsController } from '../controllers/commands/RoleToPermissionCommandsController.js';
-import { container } from '../container/container.js';
 import { TYPES } from '../container/types.js';
 
 /**
@@ -34,18 +35,9 @@ import { TYPES } from '../container/types.js';
  *
  * 所有認證和權限檢查現在由 Express.js Gateway 處理
  */
-class RbacRoutes {
+@injectable()
+export class RbacRoutes {
   private router: Router;
-  private userQueries: UserQueriesController;
-  private userCommands: UserCommandsController;
-  private roleQueries: RoleQueriesController;
-  private roleCommands: RoleCommandsController;
-  private permissionQueries: PermissionQueriesController;
-  private permissionCommands: PermissionCommandsController;
-  private userToRoleQueries: UserToRoleQueriesController;
-  private userToRoleCommands: UserToRoleCommandsController;
-  private roleToPermissionQueries: RoleToPermissionQueriesController;
-  private roleToPermissionCommands: RoleToPermissionCommandsController;
 
   // 路由端點常數 - 集中管理所有 API 路徑
   private readonly ROUTES = {
@@ -70,19 +62,19 @@ class RbacRoutes {
     ROLE_PERMISSION_BY_ID: '/role-permissions/:rolePermissionId'
   } as const;
 
-  constructor() {
+  constructor(
+    @inject(TYPES.UserQueriesController) private readonly userQueries: UserQueriesController,
+    @inject(TYPES.UserCommandsController) private readonly userCommands: UserCommandsController,
+    @inject(TYPES.RoleQueriesController) private readonly roleQueries: RoleQueriesController,
+    @inject(TYPES.RoleCommandsController) private readonly roleCommands: RoleCommandsController,
+    @inject(TYPES.PermissionQueriesController) private readonly permissionQueries: PermissionQueriesController,
+    @inject(TYPES.PermissionCommandsController) private readonly permissionCommands: PermissionCommandsController,
+    @inject(TYPES.UserToRoleQueriesController) private readonly userToRoleQueries: UserToRoleQueriesController,
+    @inject(TYPES.UserToRoleCommandsController) private readonly userToRoleCommands: UserToRoleCommandsController,
+    @inject(TYPES.RoleToPermissionQueriesController) private readonly roleToPermissionQueries: RoleToPermissionQueriesController,
+    @inject(TYPES.RoleToPermissionCommandsController) private readonly roleToPermissionCommands: RoleToPermissionCommandsController
+  ) {
     this.router = Router();
-    this.userQueries = container.get<UserQueriesController>(TYPES.UserQueriesController);
-    this.userCommands = container.get<UserCommandsController>(TYPES.UserCommandsController);
-    this.roleQueries = container.get<RoleQueriesController>(TYPES.RoleQueriesController);
-    this.roleCommands = container.get<RoleCommandsController>(TYPES.RoleCommandsController);
-    this.permissionQueries = container.get<PermissionQueriesController>(TYPES.PermissionQueriesController);
-    this.permissionCommands = container.get<PermissionCommandsController>(TYPES.PermissionCommandsController);
-    this.userToRoleQueries = container.get<UserToRoleQueriesController>(TYPES.UserToRoleQueriesController);
-    this.userToRoleCommands = container.get<UserToRoleCommandsController>(TYPES.UserToRoleCommandsController);
-    this.roleToPermissionQueries = container.get<RoleToPermissionQueriesController>(TYPES.RoleToPermissionQueriesController);
-    this.roleToPermissionCommands = container.get<RoleToPermissionCommandsController>(TYPES.RoleToPermissionCommandsController);
-    
     this.setupUserRoutes();
     this.setupRoleRoutes();
     this.setupPermissionRoutes();
@@ -129,7 +121,7 @@ class RbacRoutes {
   private setupUserRoleRoutes = (): void => {
     this.router.get(this.ROUTES.USER_ROLES, (req, res) => this.userToRoleQueries.getUserRoles(req, res));
     this.router.post(this.ROUTES.USER_ROLES, (req, res) => this.userToRoleCommands.createUserRole(req, res));
-    this.router.get(this.ROUTES.USER_ROLE_BY_ID, (req, res) => this.userToRoleQueries.getUserRoleById(req, res));
+    // Note: Individual user role queries by ID are handled through other endpoints
     this.router.put(this.ROUTES.USER_ROLE_BY_ID, (req, res) => this.userToRoleCommands.updateUserRole(req, res));
     this.router.delete(this.ROUTES.USER_ROLE_BY_ID, (req, res) => this.userToRoleCommands.deleteUserRole(req, res));
   }
@@ -140,7 +132,7 @@ class RbacRoutes {
   private setupRolePermissionRoutes = (): void => {
     this.router.get(this.ROUTES.ROLE_PERMISSIONS, (req, res) => this.roleToPermissionQueries.getRolePermissions(req, res));
     this.router.post(this.ROUTES.ROLE_PERMISSIONS, (req, res) => this.roleToPermissionCommands.createRolePermission(req, res));
-    this.router.get(this.ROUTES.ROLE_PERMISSION_BY_ID, (req, res) => this.roleToPermissionQueries.getRolePermissionById(req, res));
+    // Note: Individual role permission queries by ID are handled through other endpoints
     this.router.put(this.ROUTES.ROLE_PERMISSION_BY_ID, (req, res) => this.roleToPermissionCommands.updateRolePermission(req, res));
     this.router.delete(this.ROUTES.ROLE_PERMISSION_BY_ID, (req, res) => this.roleToPermissionCommands.deleteRolePermission(req, res));
   }
@@ -155,12 +147,3 @@ class RbacRoutes {
   }
 }
 
-/**
- * 建立 RBAC 路由實例的工廠函數
- * 
- * @returns {Router} Express 路由器實例
- */
-export const createRbacRouter = (): Router => {
-  const rbacRoutes = new RbacRoutes();
-  return rbacRoutes.getRouter();
-};

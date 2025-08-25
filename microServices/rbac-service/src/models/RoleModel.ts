@@ -26,8 +26,8 @@ import {
 // 導入相關的模型類別
 import { UserModel } from './UserModel.js';                          // 使用者模型，用於建立多對多關聯
 import { PermissionModel } from './PermissionModel.js';              // 權限模型，用於建立多對多關聯
-import { UserRoleModel } from './UserToRoleModel.js';                // 使用者角色關聯表模型
-import { RolePermissionModel } from './RoleToPermissionModel.js';    // 角色權限關聯表模型
+import { UserRoleModel } from './UserRoleModel.js';                // 使用者角色關聯表模型
+import { RolePermissionModel } from './RolePermissionModel.js';    // 角色權限關聯表模型
 import type { Optional } from 'sequelize';                           // Sequelize 的選擇性類型定義
 
 /**

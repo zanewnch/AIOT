@@ -150,7 +150,7 @@ export class DroneStatusCommandsController {
     }, 'updateDroneStatusOnly')
 
     constructor(
-        @inject(TYPES.DroneStatusCommandsService) private readonly droneStatusService: DroneStatusCommandsService
+        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneStatusService: DroneStatusCommandsService
     ) {
     }
 }

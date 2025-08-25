@@ -35,7 +35,7 @@ const logger = createLogger('DronePositionQueriesController');
 @injectable()
 export class DronePositionQueriesController implements IDronePositionQueries {
     constructor(
-        @inject(TYPES.DronePositionQueriesService) private readonly dronePositionQueriesService: DronePositionQueriesService
+        @inject(TYPES.DronePositionQueriesSvc) private readonly dronePositionQueriesService: DronePositionQueriesService
     ) {
     }
 

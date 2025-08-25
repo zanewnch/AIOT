@@ -1,18 +1,18 @@
 /**
- * @fileoverview Unit tests for UserRepositorysitorysitorysitory
+ * @fileoverview Unit tests for UserRepository
  */
 
-import { UserRepositorysitorysitorysitory } from.*Repositorysitorysitorysitorysitory';
+import { UserRepository } from '../../../repo/queries/UserQueriesRepository.js';
 import { testHelpers, setupTestDb, cleanupTestDb } from '../../setup';
 import { Sequelize } from 'sequelize';
 
-describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
+describe('UserRepository - Unit Tests', () => {
   let sequelize: Sequelize;
-  let userRepositorysitorysitorysitory: UserRepositorysitorysitorysitory;
+  let userRepository: UserRepository;
 
   beforeAll(async () => {
     sequelize = await setupTestDb();
-    userRepositorysitorysitorysitory = new UserRepositorysitorysitorysitory();
+    userRepository = new UserRepository();
   });
 
   afterAll(async () => {
@@ -34,7 +34,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await userRepositorysitorysitorysitory.createUser(userData);
+      const result = await userRepository.createUser(userData);
 
       // Assert
       expect(result).toBeDefined();
@@ -52,10 +52,10 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
         isActive: true
       };
       
-      await userRepositorysitorysitorysitory.createUser(userData);
+      await userRepository.createUser(userData);
 
       // Act & Assert
-      await expect(userRepositorysitorysitorysitory.createUser({
+      await expect(userRepository.createUser({
         ...userData,
         email: 'test2@example.com'
       })).rejects.toThrow();
@@ -71,7 +71,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       };
 
       // Act & Assert
-      await expect(userRepositorysitorysitorysitory.createUser(userData)).rejects.toThrow();
+      await expect(userRepository.createUser(userData)).rejects.toThrow();
     });
   });
 
@@ -81,7 +81,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       const user = await testHelpers.createTestUser(sequelize);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserById(user.id);
+      const result = await userRepository.getUserById(user.id);
 
       // Assert
       expect(result).toBeDefined();
@@ -91,7 +91,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return null when id does not exist', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserById(99999);
+      const result = await userRepository.getUserById(99999);
 
       // Assert
       expect(result).toBeNull();
@@ -99,7 +99,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should throw error for invalid id', async () => {
       // Act & Assert
-      await expect(userRepositorysitorysitorysitory.getUserById('invalid' as any)).rejects.toThrow();
+      await expect(userRepository.getUserById('invalid' as any)).rejects.toThrow();
     });
   });
 
@@ -109,7 +109,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       const user = await testHelpers.createTestUser(sequelize);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserByUsername(user.username);
+      const result = await userRepository.getUserByUsername(user.username);
 
       // Assert
       expect(result).toBeDefined();
@@ -118,7 +118,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return null when username does not exist', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserByUsername('nonexistent');
+      const result = await userRepository.getUserByUsername('nonexistent');
 
       // Assert
       expect(result).toBeNull();
@@ -134,7 +134,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       });
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserByUsername('casesensitive');
+      const result = await userRepository.getUserByUsername('casesensitive');
 
       // Assert
       expect(result).toBeNull();
@@ -147,7 +147,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       const user = await testHelpers.createTestUser(sequelize);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserByEmail(user.email);
+      const result = await userRepository.getUserByEmail(user.email);
 
       // Assert
       expect(result).toBeDefined();
@@ -156,7 +156,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return null when email does not exist', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserByEmail('nonexistent@example.com');
+      const result = await userRepository.getUserByEmail('nonexistent@example.com');
 
       // Assert
       expect(result).toBeNull();
@@ -173,7 +173,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       };
 
       // Act
-      const result = await userRepositorysitorysitorysitory.updateUser(user.id, updateData);
+      const result = await userRepository.updateUser(user.id, updateData);
 
       // Assert
       expect(result).toBeDefined();
@@ -183,7 +183,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return null when user does not exist', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.updateUser(99999, { email: 'test@example.com' });
+      const result = await userRepository.updateUser(99999, { email: 'test@example.com' });
 
       // Assert
       expect(result).toBeNull();
@@ -195,7 +195,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       const originalUsername = user.username;
 
       // Act
-      const result = await userRepositorysitorysitorysitory.updateUser(user.id, { 
+      const result = await userRepository.updateUser(user.id, { 
         username: 'newusername' 
       } as any);
 
@@ -210,18 +210,18 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       const user = await testHelpers.createTestUser(sequelize);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.deleteUser(user.id);
+      const result = await userRepository.deleteUser(user.id);
 
       // Assert
       expect(result).toBe(true);
       
-      const deletedUser = await userRepositorysitorysitorysitory.getUserById(user.id);
+      const deletedUser = await userRepository.getUserById(user.id);
       expect(deletedUser.isActive).toBe(false);
     });
 
     it('should return false when user does not exist', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.deleteUser(99999);
+      const result = await userRepository.deleteUser(99999);
 
       // Assert
       expect(result).toBe(false);
@@ -246,7 +246,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       });
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getAllUsers();
+      const result = await userRepository.getAllUsers();
 
       // Assert
       expect(result).toHaveLength(1);
@@ -255,7 +255,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return empty array when no users exist', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.getAllUsers();
+      const result = await userRepository.getAllUsers();
 
       // Assert
       expect(result).toEqual([]);
@@ -270,7 +270,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       await testHelpers.createUserRole(sequelize, user.id, role.id);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUsersWithRoles();
+      const result = await userRepository.getUsersWithRoles();
 
       // Assert
       expect(result).toHaveLength(1);
@@ -284,7 +284,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       await testHelpers.createTestUser(sequelize);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUsersWithRoles();
+      const result = await userRepository.getUsersWithRoles();
 
       // Assert
       expect(result).toHaveLength(1);
@@ -303,7 +303,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       await testHelpers.createRolePermission(sequelize, role.id, permission.id);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserPermissions(user.id);
+      const result = await userRepository.getUserPermissions(user.id);
 
       // Assert
       expect(result).toHaveLength(1);
@@ -315,7 +315,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
       const user = await testHelpers.createTestUser(sequelize);
 
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserPermissions(user.id);
+      const result = await userRepository.getUserPermissions(user.id);
 
       // Assert
       expect(result).toEqual([]);
@@ -323,7 +323,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return empty array for non-existent user', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.getUserPermissions(99999);
+      const result = await userRepository.getUserPermissions(99999);
 
       // Assert
       expect(result).toEqual([]);
@@ -349,7 +349,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should search users by username', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.searchUsers({ username: 'john' });
+      const result = await userRepository.searchUsers({ username: 'john' });
 
       // Assert
       expect(result).toHaveLength(1);
@@ -358,7 +358,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should search users by email', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.searchUsers({ email: 'jane@' });
+      const result = await userRepository.searchUsers({ email: 'jane@' });
 
       // Assert
       expect(result).toHaveLength(1);
@@ -367,7 +367,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should return empty array for no matches', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.searchUsers({ username: 'nonexistent' });
+      const result = await userRepository.searchUsers({ username: 'nonexistent' });
 
       // Assert
       expect(result).toEqual([]);
@@ -375,7 +375,7 @@ describe('UserRepositorysitorysitorysitory - Unit Tests', () => {
 
     it('should handle pagination', async () => {
       // Act
-      const result = await userRepositorysitorysitorysitory.searchUsers({}, { limit: 1, offset: 0 });
+      const result = await userRepository.searchUsers({}, { limit: 1, offset: 0 });
 
       // Assert
       expect(result).toHaveLength(1);

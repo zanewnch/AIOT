@@ -35,7 +35,7 @@ const logger = createLogger('DroneStatusQueriesController');
 @injectable()
 export class DroneStatusQueriesController {
     constructor(
-        @inject(TYPES.DroneStatusQueriesService) private readonly droneStatusService: DroneStatusQueriesService
+        @inject(TYPES.DroneStatusQueriesSvc) private readonly droneStatusService: DroneStatusQueriesService
     ) {
     }
 

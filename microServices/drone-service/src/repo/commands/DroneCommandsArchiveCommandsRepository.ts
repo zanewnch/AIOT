@@ -28,7 +28,7 @@ const logger = createLogger('DroneCommandsArchiveCommandsRepositorysitorysitory'
  * @class DroneCommandsArchiveCommandsRepositorysitorysitory
  */
 @injectable()
-export class DroneCommandsArchiveCommandsRepositorysitorysitorysitory {
+export class DroneCommandsArchiveCommandsRepository {
     /**
      * 創建新的指令歷史歸檔資料
      *

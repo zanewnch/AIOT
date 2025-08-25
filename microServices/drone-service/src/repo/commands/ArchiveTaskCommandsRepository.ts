@@ -17,7 +17,7 @@ import { Op } from 'sequelize';
 import { loggerDecorator } from '../../patterns/LoggerDecorator.js';
 
 @injectable()
-export class ArchiveTaskCommandsRepositorysitorysitorysitory implements IArchiveTaskRepositorysitorysitory {
+export class ArchiveTaskCommandsRepository implements IArchiveTaskRepository {
   
   create = loggerDecorator(async (data: ArchiveTaskCreationAttributes): Promise<ArchiveTaskModel> => {
     return await ArchiveTaskModel.create(data);

@@ -1,5 +1,5 @@
 /**
- * @fileoverview 角色權限關聯查詢 Repositorysitory - CQRS 查詢端
+ * @fileoverview 角色權限關聯查詢 Repository - CQRS 查詢端
  * 
  * 專門處理角色權限關聯資料的查詢操作，遵循 CQRS 模式的查詢端原則。
  * 只包含讀取相關的操作方法，不包含任何寫入操作。
@@ -11,23 +11,23 @@
 
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { RolePermissionModel } from '../../models/RoleToPermissionModel.js';
+import { RolePermissionModel } from '../../models/RolePermissionModel.js';
 import { RoleModel } from '../../models/RoleModel.js';
 import { PermissionModel } from '../../models/PermissionModel.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import type { PaginationParams, PaginatedResult } from '../../types/PaginationTypes.js';
 
-const logger = createLogger('RolePermissionQueriesRepositorysitory');
+const logger = createLogger('RolePermissionQueriesRepository');
 
 /**
- * 角色權限關聯查詢 Repositorysitory 實現類別 - CQRS 查詢端
+ * 角色權限關聯查詢 Repository 實現類別 - CQRS 查詢端
  * 
  * 專門處理角色權限關聯資料的查詢操作，遵循 CQRS 模式
  * 
- * @class RolePermissionQueriesRepositorysitory
+ * @class RolePermissionQueriesRepository
  */
 @injectable()
-export class RolePermissionQueriesRepositorysitorysitory {
+export class RolePermissionQueriesRepository {
   /**
    * 根據 ID 查詢角色權限關聯
    * @param id 關聯 ID
@@ -63,7 +63,7 @@ export class RolePermissionQueriesRepositorysitorysitory {
    * **設計意圖說明：**
    * 此方法從獨立的資料庫查詢實現重構為使用 findPaginated 統一介面。
    * 重構的戰略目標：
-   * 1. **關聯查詢標準化**：角色-權限關聯查詢與其他 Repositorysitorysitory 使用統一模式
+   * 1. **關聯查詢標準化**：角色-權限關聯查詢與其他 Repository 使用統一模式
    * 2. **include 邏輯統一**：所有 Sequelize include 操作都在 findPaginated 中處理
    * 3. **排序策略一致**：確保關聯資料的排序行為在各查詢方法間保持一致
    * 4. **查詢效能監控**：統一的 logger 和效能追蹤機制

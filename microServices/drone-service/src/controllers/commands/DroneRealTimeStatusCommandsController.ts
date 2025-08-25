@@ -36,7 +36,7 @@ const logger = createLogger('DroneRealTimeStatusCommandsController');
 @injectable()
 export class DroneRealTimeStatusCommandsController {
     constructor(
-        @inject(TYPES.DroneStatusCommandsService) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsService
+        @inject(TYPES.DroneStatusCommandsSvc) private readonly droneRealTimeStatusCommandsService: DroneRealTimeStatusCommandsService
     ) {
     }
 

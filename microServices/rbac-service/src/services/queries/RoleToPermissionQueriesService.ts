@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { RolePermissionQueriesRepositorysitorysitory } from '../../repo/queries/RolePermissionQueriesRepository.js';
+import { RolePermissionQueriesRepository } from '../../repo/queries/RolePermissionQueriesRepository.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
@@ -33,8 +33,8 @@ const logger = createLogger('RoleToPermissionQueriesService');
 @injectable()
 export class RoleToPermissionQueriesService {
     constructor(
-        @inject(TYPES.RolePermissionQueriesRepositorysitory)
-        private readonly rolePermissionQueriesRepositorysitory: RolePermissionQueriesRepositorysitory
+        @inject(TYPES.RolePermissionQueriesRepository)
+        private readonly rolePermissionQueriesRepository: RolePermissionQueriesRepository
     ) {}
 
     /**
@@ -46,7 +46,7 @@ export class RoleToPermissionQueriesService {
         try {
             logger.info('Getting paginated role permission associations', { pagination });
 
-            const result = await this.rolePermissionQueriesRepositorysitory.findPaginated(pagination);
+            const result = await this.rolePermissionQueriesRepository.findPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedRolePermissionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} role permission associations from ${result.totalCount} total`);
@@ -71,7 +71,7 @@ export class RoleToPermissionQueriesService {
                 throw new Error('角色 ID 必須是正整數');
             }
 
-            const result = await this.rolePermissionQueriesRepositorysitory.findByRoleIdPaginated(roleId, pagination);
+            const result = await this.rolePermissionQueriesRepository.findByRoleIdPaginated(roleId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRolePermissionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} permission associations for role ${roleId}`);
@@ -96,7 +96,7 @@ export class RoleToPermissionQueriesService {
                 throw new Error('權限 ID 必須是正整數');
             }
 
-            const result = await this.rolePermissionQueriesRepositorysitory.findByPermissionIdPaginated(permissionId, pagination);
+            const result = await this.rolePermissionQueriesRepository.findByPermissionIdPaginated(permissionId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedRolePermissionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} role associations for permission ${permissionId}`);

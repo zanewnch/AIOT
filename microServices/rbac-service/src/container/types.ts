@@ -214,6 +214,8 @@ export const TYPES = {
   UserRoleCommandsRepository: Symbol.for('UserRoleCommandsRepository'),
   // 角色權限命令 Repository 類型
   RolePermissionCommandsRepository: Symbol.for('RolePermissionCommandsRepository'),
+  // 會話查詢 Repository 類型
+  SessionQueriesRepository: Symbol.for('SessionQueriesRepository'),
   // RBAC MCP 路由類型
   RBACMCPRoutes: Symbol.for('RBACMCPRoutes')
 } as const;

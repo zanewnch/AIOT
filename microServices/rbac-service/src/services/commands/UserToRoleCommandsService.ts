@@ -26,7 +26,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { UserRoleCommandsRepositorysitorysitory } from '../../repo/commands/UserRoleCommandsRepository.js';
+import { UserRoleCommandsRepository } from '../../repo/commands/UserRoleCommandsRepository.js';
 
 import type { RedisClientType } from 'redis';
 import { createLogger } from '../../configs/loggerConfig.js';
@@ -52,8 +52,8 @@ export class UserToRoleCommandsService {
     constructor(
         @inject(TYPES.UserToRoleQueriesService)
         private readonly userToRoleQueriesService: UserToRoleQueriesService,
-        @inject(TYPES.UserRoleCommandsRepositorysitory)
-        private readonly userRoleCommandsRepositorysitory: UserRoleCommandsRepositorysitory
+        @inject(TYPES.UserRoleCommandsRepository)
+        private readonly userRoleCommandsRepository: UserRoleCommandsRepository
     ) {
     }
 
@@ -189,7 +189,7 @@ export class UserToRoleCommandsService {
             const successfullyAssigned: number[] = [];
             for (const roleId of roleIds) {
                 try {
-                    const [, created] = await this.userRoleCommandsRepositorysitory.findOrCreate(
+                    const [, created] = await this.userRoleCommandsRepository.findOrCreate(
                         { userId, roleId },
                         { userId, roleId }
                     );
@@ -251,7 +251,7 @@ export class UserToRoleCommandsService {
             }
 
             // 撤銷角色
-            const removed = await this.userRoleCommandsRepositorysitory.deleteByUserAndRole(userId, roleId);
+            const removed = await this.userRoleCommandsRepository.deleteByUserAndRole(userId, roleId);
 
             if (removed) {
                 // 清除相關快取
@@ -296,7 +296,7 @@ export class UserToRoleCommandsService {
             const roleIds = currentRoles.map(r => r.id);
 
             // 撤銷所有角色
-            const removedCount = await this.userRoleCommandsRepositorysitory.deleteByUserId(userId);
+            const removedCount = await this.userRoleCommandsRepository.deleteByUserId(userId);
 
             if (removedCount > 0) {
                 // 清除相關快取
@@ -342,7 +342,7 @@ export class UserToRoleCommandsService {
             const userIds = currentUsers.map(u => u.id);
 
             // 撤銷所有使用者
-            const removedCount = await this.userRoleCommandsRepositorysitory.deleteByRoleId(roleId);
+            const removedCount = await this.userRoleCommandsRepository.deleteByRoleId(roleId);
 
             if (removedCount > 0) {
                 // 清除相關快取

@@ -28,7 +28,7 @@ import { createLogger } from '../../configs/loggerConfig.js';
  * @class DroneRealTimeStatusCommandsRepositorysitorysitory
  */
 @injectable()
-export class DroneRealTimeStatusCommandsRepositorysitorysitorysitory {
+export class DroneRealTimeStatusCommandsRepository {
     private readonly logger = createLogger('DroneRealTimeStatusCommandsRepositorysitorysitory');
 
     /**

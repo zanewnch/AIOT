@@ -183,7 +183,7 @@ export class DronePositionCommandsController {
     }, 'createDronePositionsBatch')
 
     constructor(
-        @inject(TYPES.DronePositionCommandsService) private readonly dronePositionCommandsService: DronePositionCommandsService
+        @inject(TYPES.DronePositionCommandsSvc) private readonly dronePositionCommandsService: DronePositionCommandsService
     ) {
     }
 }

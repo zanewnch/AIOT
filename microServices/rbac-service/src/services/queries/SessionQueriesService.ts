@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../container/types.js';
-import { SessionQueriesRepositorysitorysitory } from '../../repo/queries/SessionQueriesRepository.js';
+import { SessionQueriesRepository } from '../../repo/queries/SessionQueriesRepository.js';
 import { createLogger } from '../../configs/loggerConfig.js';
 import { PaginationRequestDto } from '../../dto/index.js';
 import { DtoMapper } from '../../utils/dtoMapper.js';
@@ -33,8 +33,8 @@ const logger = createLogger('SessionQueriesService');
 @injectable()
 export class SessionQueriesService {
     constructor(
-        @inject(TYPES.SessionQueriesRepositorysitory)
-        private readonly sessionQueriesRepositorysitory: SessionQueriesRepositorysitory
+        @inject(TYPES.SessionQueriesRepository)
+        private readonly sessionQueriesRepository: SessionQueriesRepository
     ) {}
 
     /**
@@ -46,7 +46,7 @@ export class SessionQueriesService {
         try {
             logger.info('Getting paginated sessions', { pagination });
 
-            const result = await this.sessionQueriesRepositorysitory.findPaginated(pagination);
+            const result = await this.sessionQueriesRepository.findPaginated(pagination);
             const paginatedResponse = DtoMapper.toPaginatedSessionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} sessions from ${result.totalCount} total`);
@@ -71,7 +71,7 @@ export class SessionQueriesService {
                 throw new Error('使用者 ID 必須是正整數');
             }
 
-            const result = await this.sessionQueriesRepositorysitory.findByUserIdPaginated(userId, pagination);
+            const result = await this.sessionQueriesRepository.findByUserIdPaginated(userId, pagination);
             const paginatedResponse = DtoMapper.toPaginatedSessionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} sessions for user ${userId}`);
@@ -92,7 +92,7 @@ export class SessionQueriesService {
         try {
             logger.info('Getting paginated sessions by status', { status, pagination });
 
-            const result = await this.sessionQueriesRepositorysitory.findByStatusPaginated(status, pagination);
+            const result = await this.sessionQueriesRepository.findByStatusPaginated(status, pagination);
             const paginatedResponse = DtoMapper.toPaginatedSessionResponse(result);
 
             logger.info(`Successfully retrieved ${result.data.length} sessions with status ${status}`);

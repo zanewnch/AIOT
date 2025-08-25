@@ -31,7 +31,7 @@ import type { Optional } from 'sequelize';  // Sequelize 的選擇性類型定�
 
 // 導入相關的模型類別
 import { RoleModel } from './RoleModel.js';           // 角色模型，用於建立多對多關聯
-import { UserRoleModel } from './UserToRoleModel.js'; // 使用者角色關聯表模型
+import { UserRoleModel } from './UserRoleModel.js'; // 使用者角色關聯表模型
 
 /**
  * 使用者屬性介面
